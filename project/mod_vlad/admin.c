@@ -110,8 +110,10 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   for (i = 0; i <  tlen; i++) {
     const char *tt_name = NULL;
-    unsigned int tt_listlen;
+    apr_array_header_t *tt_list = NULL;
     unsigned int j;
+
+    tt_list = apr_array_make(a_r->pool, 1, sizeof(char *));
 
     modvlad_client_trans_get(a_r->pool,
                              a_conf->pipe_cli[0],
@@ -119,11 +121,11 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
                              a_conf->mutex,
                              i,
                              &tt_name,
-                             &tt_listlen);
+                             tt_list);
 
     ap_rprintf(a_r, "    <form name=\"addform%d\" method=\"POST\" action=\"%s\">\n", i, uri);
     ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"add\"/>\n");
-    ap_rprintf(a_r, "      <input type=\"hidden\" name=\"args\" value=\"%d\"/>\n",  tt_listlen);
+    ap_rprintf(a_r, "      <input type=\"hidden\" name=\"args\" value=\"%d\"/>\n",  tt_list->nelts);
     ap_rprintf(a_r, "      <input type=\"hidden\" name=\"trans\" value=\"%s\"/>\n", tt_name);
     ap_rprintf(a_r, "      <table cols=\"3\" border=\"1\">\n");
     ap_rprintf(a_r, "        <tr>\n");
@@ -132,9 +134,9 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     ap_rprintf(a_r, "        <tr>\n");
 
     /* the parameters of this transformation */
-    for (j = 0; j < tt_listlen; j++) {
+    for (j = 0; j < tt_list->nelts; j++) {
       ap_rprintf(a_r, "     <tr>\n");
-      ap_rprintf(a_r, "       <td align=\"center\">parameter %d</td>\n", j);
+      ap_rprintf(a_r, "       <td align=\"center\">parameter %d (%s)</td>\n", j, ((char **)tt_list->elts)[j]);
       ap_rprintf(a_r, "       <td align=\"center\"><input type=\"text\" name=\"arg%d\" value=\"\" readonly=\"1\"/></td>\n", j);
       ap_rprintf(a_r, "       <td align=\"center\"><input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\"/></td>\n", i, j);
       ap_rprintf(a_r, "     </tr>\n");

@@ -4,7 +4,7 @@
 	* proc.c :
 	* proc.h :
 
-	  - Now manipulator gui shows trans sequences with parameters.
+	  - Now manipulator gui shows transformations with parameters.
 
 	* mod_vlad.c :
 	* proc.c :

@@ -45,7 +45,7 @@ int modvlad_client_trans_get(apr_pool_t *a_p,
                              apr_proc_mutex_t *a_mx,
                              unsigned int a_index,
                              const char **a_name,
-                             unsigned int *a_tot);
+                             apr_array_header_t *a_parm);
 
 int modvlad_client_ident_total(apr_pool_t *a_p,
                                apr_file_t *a_fdin,
