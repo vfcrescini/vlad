@@ -12,7 +12,8 @@ PICFLAG = @PICFLAG@
 VERSION = @VERSION@
 LIBS = mod_vlad.so
 OBJECTS = mod_vlad.o policy_p.o policy_s.o util.o admin.o proc.o
-TEMP = lex.*.c *.tab.c *.tab.h
+TEMP1 = lex.*.c *.tab.c *.tab.h
+TEMP2 = config.h
 
 .PHONY :    \
   all       \
@@ -58,7 +59,7 @@ lex.policy.c : policy.l
 	$(LEX) -Ppolicy policy.l
 
 clean :
-	$(RM) $(OBJECTS) $(TEMP)
+	$(RM) $(OBJECTS) $(TEMP1)
 
 distclean : clean
-	$(RM) -r $(LIBS) Makefile config.status config.log autom4te.cache
+	$(RM) -r $(LIBS) $(TEMP2) Makefile config.status config.log autom4te.cache
