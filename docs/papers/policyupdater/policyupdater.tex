@@ -69,7 +69,8 @@
   \end{abstract}
 
   \keywords{
-    access control, authorisation, AI, logic programming, belief revision
+    access control, authorisation, artificial intelligence, logic programming,
+    belief revision
   }
 
   \section{Introduction}
@@ -334,7 +335,7 @@
           \end{vverbatim}
 
           $upd\_id$ is the policy update identifier to be used in referencing
-          this policy update. The optional parameter $var\_id$ is a list
+          this policy update. The optional parameter $var\_id$ is a list which
           contains the variable identifiers occurring in the expressions $exp1$
           and $exp2$ and will eventually be replaced by entity identifiers when
           the update is referenced. The postcondition expression $exp1$ is an
@@ -354,7 +355,7 @@
         \paragraph{Policy Update Directives.}
 
         The policy update sequence list contains a list of references to
-        defined policy updates in the domain. The policy updates in the
+        define policy updates in the domain. The policy updates in the
         sequence list are applied to the current state of the policy base one
         at a time to produce a policy base state upon which queries can be
         evaluated.
@@ -446,8 +447,8 @@
           subject group $grp2$, which is a subset of group $grp1$. The group
           $grp1$ also initially holds a $read$ access right for the object
           $file$. The constraint states that if the group $grp1$ has $read$
-          access for $file$, and no other information is present to conclude
-          that $grp3$ do not have $write$ access for $file$, then the group
+          access for $file$, and no other information is present to indicate
+          that $grp3$ does not have $write$ access for $file$, then the group
           $grp1$ is granted $write$ access for $file$. For simplicity, we only
           consider one policy update $delete\_read$ and a few queries that are
           evaluated after the policy update is performed.
@@ -2004,7 +2005,7 @@
   \section{Domain Consistency Checking and Evaluation}
     \label{sec-cons}
 
-    A domain description of language ${\cal L}$ must be consistent in order
+    A domain description of language ${\cal L}$ must be consistent in orde to
     generate a consistent answer set for the evaluation of queries. This
     section considers two issues: the problem of identifying whether a given
     domain description is consistent, and how query evaluation is performed
@@ -2452,7 +2453,7 @@
 
         In Section \ref{subsec-semantics}, it is shown that policy updates are
         performed by treating each update as a constraint. This constraint is
-        composed of a premise, which are the preconditions in the current state
+        composed of a premise, which is the precondition in the current state
         and a consequent, which is the postcondition of the resulting state
         after the application of the policy update. The resulting state in this
         procedure represents the updated policy.
@@ -2461,7 +2462,7 @@
         of the policy updates into normal logic program constraints. This step
         involves identifying which policy updates are to be applied from the
         update sequence table and then composing the required constraint from
-        the update definition the policy base. Once the policy update
+        the update definition in the policy base. Once the policy update
         constraints are composed, they are then treated as any other
         constraint rules and are translated with the rest of the policy into
         a normal logic program.
@@ -2604,8 +2605,8 @@
         in the storage structure, a set of answer sets may then be generated
         by using the stable model semantics \cite{SIM} with the
         {\em smodels}\footnotemark program. Query evaluation then becomes
-        possible by checking whether each fact of a given query holds in each
-        generated answer set of the normal logic program.
+        possible by checking whether each fact of a given query expression
+        holds in each generated answer set of the normal logic program.
 
         \footnotetext{
           Smodels ({\tt \scriptsize http://www.tcs.hut.fi/Software/smodels})
@@ -2615,7 +2616,8 @@
         evaluated to be true. On the other hand, if the negation of a fact
         holds in every answer set, then it is evaluated to be false. A fact
         or its negation that does not hold in every answer set is neither true
-        nor false.
+        nor false, in which case the system concludes that the truth value of
+        the fact is unknown.
 
   \section{Case Study: Web Server Application}
     \label{sec-case}
@@ -2794,6 +2796,133 @@
     systems such as e-commerce applications where authorisations are granted
     or denied based on policies that are time dependent.
 
+  \begin{thebibliography}{5}
+    \bibitem{AP}
+      Apache Software Foundation,
+      Authentication, Authorization and Access Control.
+      {\em Apache HTTP Server Version 2.1 Documentation},
+      {\tt \scriptsize http://httpd.apache.org/docs-2.1/}, 2004.
+
+    \bibitem{BA1}
+      Bai, Y., Varadharajan, V.,
+      On Formal Languages for Sequences of Authorization Transformations.
+      In {\em Proceedings of Safety, Reliability and Security of Computer
+      Systems}. Also in {\em Lecture Notes in Computer Science},
+      Vol. 1698, pp. 375-384. Springer-Verlag, 1999.
+
+    \bibitem{BA2}
+      Bai, Y., Varadharajan, V.,
+      On Transformation of Authorization Policies.
+      In {\em Data and Knowledge Engineering},
+      Vol. 45, No. 3, pp. 333-357, 2003.
+
+    \bibitem{BAR}
+      Baral, C.,
+      {\em Knowledge, Representation, Reasoning and Declarative Problem
+      Solving}.
+      pp. 99-100, Cambridge University Press, UK, 2003.
+
+    \bibitem{BE1}
+      Bertino, E., Buccafurri, F., Ferrari, E., Rullo, P.,
+      A Logic-based Approach for Enforcing Access Control.
+      {\em Journal of Computer Security},
+      Vol. 8, No. 2-3, pp. 109-140, IOS Press, 2000.
+
+    \bibitem{BE2}
+      Bertino, E., Mileo, A., Provetti, A.
+      Policy Monitoring with User-Preferences in PDL.
+      In {\em Proceedings of IJCAI-03 Workshop for Nonmonotonic Reasoning,
+      Action and Change},
+      pp. 37-44, 2003.
+
+    \bibitem{CHO}
+      Chomicki, J., Lobo, J., Naqvi, S.,
+      A Logic Programming Approach to Conflict Resolution in Policy Management.
+      In {\em Proceedings of KR2000, 7th International Conference on Principles
+      of Knowledge Representation and Reasoning},
+      pp. 121-132, Kaufmann, 2000.
+
+    \bibitem{CR1}
+      Crescini, V. F., Zhang, Y.,
+      A Logic Based Approach for Dynamic Access Control.
+      In {\em Proceedings of the 17th Australian Joint Conference on Artificial
+      Intelligence},
+      2004. (to be published)
+
+    \bibitem{CR2}
+      Crescini, V. F., Zhang, Y., Wang, W.,
+      Web Server Authorisation with the PolicyUpdater Access Control System.
+      In {\em Proceedings of the 2004 IADIS WWW/Internet Conference},
+      2004. (to be published)
+
+    \bibitem{GEL}
+      Gelfond, M., Lifschitz, V.,
+      The Stable Model Semantics for Logic Programming.
+      In {\em Proceedings of the 5th Joint International Conference and
+      Symposium},
+      pp. 1070-1080, MIT Press, 1998.
+
+    \bibitem{HAL}
+      Halpern, J. Y., Weissman, V.,
+      Using First-Order Logic to Reason About Policies.
+      In {\em Proceedings of the 16th IEEE Computer Security Foundations
+      Workshop}, pp. 187-201, 2003.
+
+    \bibitem{JAJ}
+      Jajodia, S., Samarati, P., Sapino, M. L., Subrahmanian, V. S.,
+      Flexible Support for Multiple Access Control Policies.
+      {\em ACM Transactions on Database Systems},
+      Vol. 29, No. 2, pp. 214-260, ACM, 2001.
+
+    \bibitem{LAU}
+      Laurie, B., Laurie, P.,
+      {\em Apache: The Definitive Guide} (3rd Edition).
+      O'Reilly \& Associates Inc., 2003.
+
+    \bibitem{LI}
+      Li, N., Grosof, B. N., Feigenbaum, J.,
+      Delegation Logic: A Logic-Based Approach to Distributed Authorization.
+      {\em ACM Transactions on Information and System Security (TISSEC)},
+      Vol. 6, No. 1, pp. 128-171, 2003.
+
+    \bibitem{LIN}
+      Lin, F., Zhao, X.,
+      On Odd and Even Cycles in Normal Logic Programs.
+      In {\em Proceedings of AAAI 19th National Conference on Artificial
+      Intelligence and 16th Conference on Innovative Applications of Artificial
+      Intelligence},
+      pp. 80, AAAI Press, 2004.
+
+    \bibitem{LOB}
+      Lobo, J., Bhatia, R., Naqvi, S.,
+      A Policy Description Language.
+      In {\em Proceedings of AAAI 16th National Conference on Artificial
+      Intelligence and 11th Conference on Innovative Applications of Artificial
+      Intelligence},
+      pp. 291-298, AAAI Press, 1999.
+
+    \bibitem{HTTP1}
+      Network Working Group,
+      {\em HTTP 1.1 (RFC 2616)}.
+      The Internet Society,
+      {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2616.txt},
+      1999.
+
+    \bibitem{HTTP2}
+      Network Working Group,
+      {\em HTTP Authentication: Basic and Digest Access Authentication (RFC 2617)}.
+      The Internet Society,
+      {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2617.txt},
+      1999.
+
+    \bibitem{SIM}
+      Simons., P.,
+      Efficient Implementation of the Stable Model Semantics for Normal Logic
+      Programs.
+      {\em Research Reports, Helsinki University of Technology},
+      No. 35, 1995.
+  \end{thebibliography}
+
   \appendix
 
   \vappsection{Storage Structures}
@@ -2969,130 +3098,4 @@
         \end{tabular}
       \end{vquote}
 
-  \begin{thebibliography}{5}
-    \bibitem{AP}
-      Apache Software Foundation,
-      Authentication, Authorization and Access Control.
-      {\em Apache HTTP Server 2.1 Documentation},
-      {\tt \scriptsize http://httpd.apache.org/docs-2.1/}, 2004.
-
-    \bibitem{BA1}
-      Bai, Y., Varadharajan, V.,
-      On Formal Languages for Sequences of Authorization Transformations.
-      In {\em Proceedings of Safety, Reliability and Security of Computer
-      Systems}. Also in {\em Lecture Notes in Computer Science},
-      Vol. 1698, pp. 375-384. Springer-Verlag, 1999.
-
-    \bibitem{BA2}
-      Bai, Y., Varadharajan, V.,
-      On Transformation of Authorization Policies.
-      In {\em Data and Knowledge Engineering},
-      Vol. 45, No. 3, pp. 333-357, 2003.
-
-    \bibitem{BAR}
-      Baral, C.,
-      {\em Knowledge, Representation, Reasoning and Declarative Problem
-      Solving}.
-      pp. 99-100, Cambridge University Press, UK, 2003.
-
-    \bibitem{BE1}
-      Bertino, E., Buccafurri, F., Ferrari, E., Rullo, P.,
-      A Logic-based Approach for Enforcing Access Control.
-      {\em Journal of Computer Security},
-      Vol. 8, No. 2-3, pp. 109-140, IOS Press, 2000.
-
-    \bibitem{BE2}
-      Bertino, E., Mileo, A., Provetti, A.
-      Policy Monitoring with User-Preferences in PDL.
-      In {\em Proceedings of IJCAI-03 Workshop for Nonmonotonic Reasoning,
-      Action and Change},
-      pp. 37-44, 2003.
-
-    \bibitem{CHO}
-      Chomicki, J., Lobo, J., Naqvi, S.,
-      A Logic Programming Approach to Conflict Resolution in Policy Management.
-      In {\em Proceedings of KR2000, 7th International Conference on Principles
-      of Knowledge Representation and Reasoning},
-      pp. 121-132, Kaufmann, 2000.
-
-    \bibitem{CR1}
-      Crescini, V. F., Zhang, Y.,
-      A Logic Based Approach for Dynamic Access Control.
-      In {\em Proceedings of the 17th Australian Joint Conference on Artificial
-      Intelligence},
-      2004. (to be published)
-
-    \bibitem{CR2}
-      Crescini, V. F., Zhang, Y., Wang, W.,
-      Web Server Authorisation with the PolicyUpdater Access Control System.
-      In {\em Proceedings of the 2004 IADIS WWW/Internet Conference},
-      2004. (to be published)
-
-    \bibitem{GEL}
-      Gelfond, M., Lifschitz, V.,
-      The Stable Model Semantics for Logic Programming.
-      In {\em Proceedings of the 5th Joint International Conference and
-      Symposium},
-      pp. 1070-1080, MIT Press, 1998.
-
-    \bibitem{HAL}
-      Halpern, J. Y., Weissman, V.,
-      Using First-Order Logic to Reason About Policies.
-      In {\em Proceedings of the 16th IEEE Computer Security Foundations
-      Workshop}, pp. 187-201, 2003.
-
-    \bibitem{JAJ}
-      Jajodia, S., Samarati, P., Sapino, M. L., Subrahmanian, V. S.,
-      Flexible Support for Multiple Access Control Policies.
-      {\em ACM Transactions on Database Systems},
-      Vol. 29, No. 2, pp. 214-260, ACM, 2001.
-
-    \bibitem{LAU}
-      Laurie, B., Laurie, P.,
-      {\em Apache: The Definitive Guide} (3rd Edition).
-      O'Reilly \& Associates Inc., 2003.
-
-    \bibitem{LI}
-      Li, N., Grosof, B. N., Feigenbaum, J.,
-      Delegation Logic: A Logic-based Approach to Distributed Authorization.
-      {\em ACM Transactions on Information and System Security (TISSEC)},
-      Vol. 6, No. 1, pp. 128-171, 2003.
-
-    \bibitem{LIN}
-      Lin, F., Zhao, X.,
-      On Odd and Even Cycles in Normal Logic Programs.
-      In {\em Proceedings of AAAI 19th National Conference on Artificial
-      Intelligence and 16th Conference on Innovative Applications of Artificial
-      Intelligence},
-      pp. 80, AAAI Press, 2004.
-
-    \bibitem{LOB}
-      Lobo, J., Bhatia, R., Naqvi, S.,
-      A Policy Description Language.
-      In {\em Proceedings of AAAI 16th National Conference on Artificial
-      Intelligence and 11th Conference on Innovative Applications of Artificial
-      Intelligence},
-      pp. 291-298, AAAI Press, 1999.
-
-    \bibitem{HTTP1}
-      Network Working Group,
-      {\em HTTP 1.1 (RFC 2616)}.
-      The Internet Society,
-      {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2616.txt},
-      1999.
-
-    \bibitem{HTTP2}
-      Network Working Group,
-      {\em HTTP Authentication (RFC 2617)}.
-      The Internet Society,
-      {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2617.txt},
-      1999.
-
-    \bibitem{SIM}
-      Simons., P.,
-      Efficient Implementation of the Stable Model Semantics for Normal Logic
-      Programs.
-      {\em Research Reports, Helsinki University of Technology},
-      No. 35, 1995.
-  \end{thebibliography}
 \end{document}
