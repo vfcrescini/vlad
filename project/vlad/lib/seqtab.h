@@ -1,6 +1,6 @@
 /*
  * seqtab.h
- * Vino Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #ifndef __VLAD_SEQTAB_H
