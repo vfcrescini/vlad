@@ -422,6 +422,35 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
     delete tmp_atom;
   }
+ 
+  /* identity rules */
+  fprintf(f, "Identity  Rules\n");
+  
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(s); i++) {
+    unsigned int i_group;
+    /* subject groups */
+    for (i_group = 0; i_group < sg_len; i_group++)
+      fprintf(f,
+              "  %d %s %s\n",
+              (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * sg_len) + i_group,
+              VLAD_STR_ARROW,
+              VLAD_STR_TRUE);
+    /* access groups */
+    for (i_group = 0; i_group < ag_len; i_group++)
+      fprintf(f,
+              "  %d %s %s\n",
+              (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * ag_len) + i_group,
+              VLAD_STR_ARROW,
+              VLAD_STR_TRUE);
+    /* object groups */
+    for (i_group = 0; i_group < og_len; i_group++)
+      fprintf(f,
+              "  %d %s %s\n",
+              (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * og_len) + i_group,
+              VLAD_STR_ARROW,
+              VLAD_STR_TRUE);
+  }
 
   /* inheritance rules */
   fprintf(f, "Inheritance Rules\n");
@@ -746,6 +775,34 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
   }
 
   wrap->close_atom();
+
+  /* identity rules */
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(s); i++) {
+    unsigned int i_group;
+    /* subject groups */
+    for (i_group = 0; i_group < sg_len; i_group++) {
+      unsigned int tmp_num;
+      tmp_num = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * sg_len) + i_group;
+      if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
+        return retval;
+    }
+    /* access groups */
+    for (i_group = 0; i_group < ag_len; i_group++) {
+      unsigned int tmp_num;
+      tmp_num = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * ag_len) + i_group;
+      if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
+        return retval;
+    }
+    /* object groups */
+    for (i_group = 0; i_group < og_len; i_group++) {
+      unsigned int tmp_num;
+      tmp_num = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * og_len) + i_group;
+      if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
+        return retval;
+    }
+  }
 
   /* inheritance rules */
 

@@ -6,6 +6,8 @@
 
 	* kb/kb.cpp :
 
+	  - Added identity rules (ie. each set is a subset of itself).
+
 	  - Query now works properly.
 
 	  - Fixed bug with the generation of some rules.
