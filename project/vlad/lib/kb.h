@@ -98,6 +98,10 @@ class kb {
     unsigned int s_tot;
     unsigned int pos_tot;
     unsigned char stage;
+#ifdef VLAD_SMODELS
+    /* checks whether the given atom is true, false or unknown */
+    int evaluate_atom(unsigned int a_atom, unsigned char *a_res);
+#endif
     /* make sure atom a is valid */
     int verify_atom(atom *a, stringlist *v);
     /* make sure expression e is valid */
@@ -130,6 +134,12 @@ class kb {
     int encode_atom(atom *a, unsigned int s, unsigned int *n);
     /* returns the atom details given the id */
     int decode_atom(atom **a, unsigned int *s, unsigned int n);
+    /* returns the id of the negation of the given atom id */
+    unsigned int negate_atom(unsigned int a_atm);
+    /* returns an atom id based on the info given */
+    unsigned int compute_atom(unsigned int a_st,
+                              bool a_tr,
+                              unsigned int a_atm);
     /* returns a holds atom id based on the info given */
     unsigned int compute_holds(unsigned int a_st, bool a_tr, unsigned int a_sub, unsigned int a_acc, unsigned int a_obj);
     /* returns a member atom id based on the info given */

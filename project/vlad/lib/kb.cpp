@@ -15,14 +15,6 @@
   #include <vlad/smwrap.h>
 #endif
 
-/* returns the id of the negation of the given atom id */
-static unsigned int negate_atom(unsigned int a_ptot, unsigned int a_atm);
-/* returns an atom id based on the info given */
-static unsigned int compute_atom(unsigned int a_ptot,
-                                 unsigned int a_st,
-                                 bool a_tr,
-                                 unsigned int a_atm);
-
 kb::kb()
 {
   stable = NULL;
@@ -921,9 +913,9 @@ int kb::compute_generate(FILE *f)
               "  %s %s %d %s %d\n",
               VLAD_STR_FALSE,
               VLAD_STR_ARROW,
-              compute_atom(pos_tot, i, true, i_atom),
+              compute_atom(i, true, i_atom),
               VLAD_STR_AND,
-              compute_atom(pos_tot, i, false, i_atom));
+              compute_atom(i, false, i_atom));
     }
   }
 
@@ -936,20 +928,20 @@ int kb::compute_generate(FILE *f)
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
       fprintf(f,
               "  %d %s %d %s %s %d\n",
-              compute_atom(pos_tot, i + 1, true, i_atom),
+              compute_atom(i + 1, true, i_atom),
               VLAD_STR_ARROW,
-              compute_atom(pos_tot, i, true, i_atom),
+              compute_atom(i, true, i_atom),
               VLAD_STR_AND,
               VLAD_STR_NOT,
-              compute_atom(pos_tot, i + 1, false, i_atom));
+              compute_atom(i + 1, false, i_atom));
       fprintf(f,
               "  %d %s %d %s %s %d\n",
-              compute_atom(pos_tot, i + 1, false, i_atom),
+              compute_atom(i + 1, false, i_atom),
               VLAD_STR_ARROW,
-              compute_atom(pos_tot, i, false, i_atom),
+              compute_atom(i, false, i_atom),
               VLAD_STR_AND,
               VLAD_STR_NOT,
-              compute_atom(pos_tot, i + 1, true, i_atom));
+              compute_atom(i + 1, true, i_atom));
     }
   }
 
@@ -1386,8 +1378,8 @@ int kb::compute_evaluate()
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
     unsigned int i_atom;
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
-      unsigned int tmp_num1 = compute_atom(pos_tot, i, true, i_atom);
-      unsigned int tmp_num2 = compute_atom(pos_tot, i, false, i_atom);
+      unsigned int tmp_num1 = compute_atom(i, true, i_atom);
+      unsigned int tmp_num2 = compute_atom(i, false, i_atom);
       if ((retval = smobject->add_axiom(false, 2, tmp_num1, tmp_num2)) != VLAD_OK)
         return retval;
     }
@@ -1403,16 +1395,16 @@ int kb::compute_evaluate()
       unsigned int tmp_num2;
       unsigned int tmp_num3;
 
-      tmp_num1 = compute_atom(pos_tot, i + 1, true, i_atom);
-      tmp_num2 = compute_atom(pos_tot, i, true, i_atom);
-      tmp_num3 = compute_atom(pos_tot, i + 1, false, i_atom);
+      tmp_num1 = compute_atom(i + 1, true, i_atom);
+      tmp_num2 = compute_atom(i, true, i_atom);
+      tmp_num3 = compute_atom(i + 1, false, i_atom);
 
       if ((retval = smobject->add_rule(1, 1, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
         return retval;
 
-      tmp_num1 = compute_atom(pos_tot, i + 1, false, i_atom);
-      tmp_num2 = compute_atom(pos_tot, i, false, i_atom);
-      tmp_num3 = compute_atom(pos_tot, i + 1, true, i_atom);
+      tmp_num1 = compute_atom(i + 1, false, i_atom);
+      tmp_num2 = compute_atom(i, false, i_atom);
+      tmp_num3 = compute_atom(i + 1, true, i_atom);
 
       if ((retval = smobject->add_rule(1, 1, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
         return retval;
@@ -1555,7 +1547,8 @@ int kb::query_evaluate(expression *e, unsigned char *r)
 {
   int retval;
   unsigned int i;
-  numberlist *exp_list = NULL;
+
+  *r = VLAD_RESULT_TRUE;
 
   /* we only allow this after a call to compute() */
   if (stage != 4)
@@ -1565,27 +1558,30 @@ int kb::query_evaluate(expression *e, unsigned char *r)
   if ((retval = verify_expression(e)) != VLAD_OK)
     return retval;
 
-  /* init */
-  if ((exp_list = VLAD_NEW(numberlist)) == NULL)
-    return VLAD_MALLOCFAILED;
-
   /* go through the atoms to test */
   for (i = 0; i < VLAD_LIST_LENGTH(e); i++) {
     atom *tmp_atom;
     unsigned int tmp_num;
+    unsigned char tmp_res;
 
     if ((retval = e->get(i, &tmp_atom)) != VLAD_OK)
       return retval;
     if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(setable), &tmp_num)) != VLAD_OK)
       return retval;
-    if ((retval = exp_list->add(tmp_num)) != VLAD_OK)
+
+    if ((retval = evaluate_atom(tmp_num, &tmp_res)) != VLAD_OK)
       return retval;
+
+    switch (tmp_res) {
+      case VLAD_RESULT_TRUE :
+        continue;
+      case VLAD_RESULT_FALSE :
+        *r = VLAD_RESULT_FALSE;
+        return VLAD_OK;
+      default :
+        *r = VLAD_RESULT_UNKNOWN;
+    }
   }
-
-  if ((retval = smobject->ask(exp_list, negate_atom, pos_tot, r)) != VLAD_OK)
-    return retval;
-
-  delete exp_list;
 
   return VLAD_OK;
 }
@@ -2097,10 +2093,35 @@ int kb::decode_atom(atom **a, unsigned int *s, unsigned int n)
   return VLAD_OK;
 }
 
+/* returns the id of the negation of the given atom id */
+unsigned int kb::negate_atom(unsigned int a_atm)
+{
+  unsigned int s;
+  bool tr;
+
+  /* first extract the state */
+  s = a_atm / (pos_tot * 2);
+  a_atm = a_atm % (pos_tot * 2);
+
+  /* then get truth value */
+  tr = ! (a_atm >= pos_tot);
+  a_atm = a_atm % pos_tot;
+
+  return compute_atom(s, tr, a_atm);
+}
+
+/* returns an atom id based on the info given */
+unsigned int kb::compute_atom(unsigned int a_st,
+                              bool a_tr,
+                              unsigned int a_atm)
+{
+  return (a_st * pos_tot * 2) + (a_tr ? pos_tot : 0) + a_atm;
+}
+
 /* returns a holds atom id based on the info given */
 unsigned int kb::compute_holds(unsigned int a_st, bool a_tr, unsigned int a_sub, unsigned int a_acc, unsigned int a_obj)
 {
-  return compute_atom(pos_tot, a_st, a_tr, (a_sub * (a_len + ag_len) * (o_len + og_len)) + (a_acc * (o_len + og_len)) + a_obj);
+  return compute_atom(a_st, a_tr, (a_sub * (a_len + ag_len) * (o_len + og_len)) + (a_acc * (o_len + og_len)) + a_obj);
 }
 
 /* returns a member atom id based on the info given */
@@ -2108,11 +2129,11 @@ unsigned int kb::compute_member(unsigned int a_st, bool a_tr, char a_ty, unsigne
 {
   switch(VLAD_IDENT_BASETYPE(a_ty)) {
     case VLAD_IDENT_SUBJECT :
-      return compute_atom(pos_tot, a_st, a_tr, h_tot + (a_elt * sg_len) + a_grp);
+      return compute_atom(a_st, a_tr, h_tot + (a_elt * sg_len) + a_grp);
     case VLAD_IDENT_ACCESS :
-      return compute_atom(pos_tot, a_st, a_tr, h_tot + (s_len * sg_len) + (a_elt * ag_len) + a_grp);
+      return compute_atom(a_st, a_tr, h_tot + (s_len * sg_len) + (a_elt * ag_len) + a_grp);
     case VLAD_IDENT_OBJECT :
-      return compute_atom(pos_tot, a_st, a_tr, h_tot + (s_len * sg_len) + (a_len * ag_len) + (a_elt * og_len) + a_grp);
+      return compute_atom(a_st, a_tr, h_tot + (s_len * sg_len) + (a_len * ag_len) + (a_elt * og_len) + a_grp);
   }
 
   return 0;
@@ -2123,38 +2144,40 @@ unsigned int kb::compute_subset(unsigned int a_st, bool a_tr, char a_ty, unsigne
 {
   switch(VLAD_IDENT_BASETYPE(a_ty)) {
     case VLAD_IDENT_SUBJECT :
-      return compute_atom(pos_tot, a_st, a_tr, h_tot + m_tot + (a_grp1 * sg_len) + a_grp2);
+      return compute_atom(a_st, a_tr, h_tot + m_tot + (a_grp1 * sg_len) + a_grp2);
     case VLAD_IDENT_ACCESS :
-      return compute_atom(pos_tot, a_st, a_tr, h_tot + m_tot + (sg_len * sg_len) + (a_grp1 * ag_len) + a_grp2);
+      return compute_atom(a_st, a_tr, h_tot + m_tot + (sg_len * sg_len) + (a_grp1 * ag_len) + a_grp2);
     case VLAD_IDENT_OBJECT :
-      return compute_atom(pos_tot, a_st, a_tr, h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (a_grp1 * og_len) + a_grp2);
+      return compute_atom(a_st, a_tr, h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (a_grp1 * og_len) + a_grp2);
   }
 
   return 0;
 }
 
-/* returns the id of the negation of the given atom id */
-static unsigned int negate_atom(unsigned int a_ptot, unsigned int a_atm)
+#ifdef VLAD_SMODELS
+/* checks whether the given atom is true, false or unknown */
+int kb::evaluate_atom(unsigned int a_atom, unsigned char *a_res)
 {
-  unsigned int s;
-  bool tr;
+  int retval;
+  bool tmp_res;
 
-  /* first extract the state */
-  s = a_atm / (a_ptot * 2);
-  a_atm = a_atm % (a_ptot * 2);
+  if (stage != 4)
+    return VLAD_INVALIDOP;
+  if (a_res == NULL)
+    return VLAD_NULLPTR;
 
-  /* then get truth value */
-  tr = ! (a_atm >= a_ptot);
-  a_atm = a_atm % a_ptot;
+  if ((retval = smobject->ask(a_atom, &tmp_res)) != VLAD_OK)
+    return retval;
 
-  return compute_atom(a_ptot, s, tr, a_atm);
+  if (tmp_res)
+    *a_res = VLAD_RESULT_TRUE;
+  else {
+    /* false, so we must try the negation */
+    if ((retval = smobject->ask(negate_atom(a_atom), &tmp_res)) != VLAD_OK)
+      return retval;
+
+    *a_res = (tmp_res ? VLAD_RESULT_FALSE : VLAD_RESULT_UNKNOWN);
+  }
+  return VLAD_OK;
 }
-
-/* returns an atom id based on the info given */
-static unsigned int compute_atom(unsigned int a_ptot,
-                                 unsigned int a_st,
-                                 bool a_tr,
-                                 unsigned int a_atm)
-{
-  return (a_st * a_ptot * 2) + (a_tr ? a_ptot : 0) + a_atm;
-}
+#endif

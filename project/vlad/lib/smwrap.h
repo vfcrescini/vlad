@@ -31,11 +31,8 @@ class smwrap
     int add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int a_head, ...);
     /* add rule: numberlist */
     int add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbody);
-    /* return true, false or unknown */
-    int ask(numberlist *a_exp,
-            unsigned int (*a_negate)(unsigned int, unsigned int),
-            unsigned int a_parm,
-            unsigned char *a_res);
+    /* give T or F depending on whether atom is in ALL models or not */
+    int ask(unsigned int a_atom, bool *a_res);
   private :
     Smodels *pr_smod;
     Api *pr_api;

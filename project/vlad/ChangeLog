@@ -1,3 +1,19 @@
+2003-07-25  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+	* lib/kb.h :
+	* lib/smwrap.cpp :
+	* lib/smwrap.h :
+
+	  - Changed the way atoms are queried against the stable models.
+	    Previously, each atom in an expression is checked against every
+	    single model until we find a false atom or check all the models.
+	    Now, models are generated under the assertion that the atom we
+	    are checking is NOT in the model. So if no model is generated,
+	    we can conclude that the atom is consistently in all models and is
+	    therefore true. If at least one model is found, we conclude that
+	    the atom is inconsistent so it is false.
+
 2003-07-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :
