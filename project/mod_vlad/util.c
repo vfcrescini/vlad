@@ -142,7 +142,7 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
     user = ap_getword(a_p, &lineptr, ':');
 
     /* now that we have the user, we can then add it to the kb */
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
     ap_log_perror(APLOG_MARK,
                   MODVLAD_LOGLEVEL,
                   0,
@@ -180,7 +180,7 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
 
   while((access = *(array_ptr++)) != NULL) {
 
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
     ap_log_perror(APLOG_MARK,
                   MODVLAD_LOGLEVEL,
                   0,
@@ -233,7 +233,7 @@ static int add_object(apr_pool_t *a_p,
                              realrelpath,
                              NULL);
 
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
                 0,

@@ -67,7 +67,7 @@ AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & c
 
 if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
   AC_SUBST(DEBUG,[yes])
-  MODVLAD_CFLAGS="-g -DDEBUG $MODVLAD_CFLAGS"
+  MODVLAD_CFLAGS="-g -DMODVLAD_DEBUG $MODVLAD_CFLAGS"
 else
   MODVLAD_CFLAGS="-O3 $MODVLAD_CFLAGS"
 fi

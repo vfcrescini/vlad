@@ -69,7 +69,7 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
   if (!a_d)
     return NULL;
 
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
                 0,
@@ -138,7 +138,7 @@ static int modvlad_authenticate(request_rec *a_r)
   apr_status_t invalid_passwd;
   int retval;
 
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
   ap_log_rerror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
                 0,
@@ -220,7 +220,7 @@ static int modvlad_authorize(request_rec *a_r)
     return DECLINED;
   }
 
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
   ap_log_rerror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
                 0,
@@ -240,17 +240,12 @@ static int modvlad_authorize(request_rec *a_r)
                 conf->path);
 #endif
 
-#ifdef DEBUG
-  vlad_kb_compute_generate(conf->kb, stderr);
-  fflush(stderr);
-#endif
-
   return OK;
 }
 
 static void modvlad_register_hooks(apr_pool_t *a_p)
 {
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
                 0,
@@ -271,7 +266,7 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
   apr_file_t *polfile;
   void *const_exp;
 
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
                 0,
@@ -314,6 +309,15 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
   policyparse();
 
   apr_file_close(polfile);
+
+  /* finally, compute */
+
+  vlad_kb_compute_evaluate(conf->kb);
+
+#ifdef MODVLAD_DEBUG
+  vlad_kb_compute_generate(conf->kb, stderr);
+  fflush(stderr);
+#endif
 
   return NULL;
 }

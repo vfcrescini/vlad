@@ -10,7 +10,7 @@
 #include "httpd.h"
 #include "apr_pools.h"
 
-#ifdef DEBUG
+#ifdef MODVLAD_DEBUG
 #define MODVLAD_LOGLEVEL APLOG_NOTICE
 #endif
 
