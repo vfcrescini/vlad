@@ -36,7 +36,6 @@ implies            implies
 with               with
 absence            absence
 always             always
-transform          trans
 causes             causes
 if                 if
 is                 is
@@ -86,8 +85,6 @@ everything         .
 <INITIAL>{absence} return VLAD_SYM_ABSENCE;
 
 <INITIAL>{always} return VLAD_SYM_ALWAYS;
-
-<INITIAL>{transform} return VLAD_SYM_TRANS;
 
 <INITIAL>{causes} return VLAD_SYM_CAUSES;
 

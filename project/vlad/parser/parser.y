@@ -40,7 +40,6 @@ FILE *yyerr;
 %token <terminal> VLAD_SYM_WITH
 %token <terminal> VLAD_SYM_ABSENCE
 %token <terminal> VLAD_SYM_ALWAYS
-%token <terminal> VLAD_SYM_TRANS
 %token <terminal> VLAD_SYM_CAUSES
 %token <terminal> VLAD_SYM_IF
 %token <terminal> VLAD_SYM_IS
@@ -233,16 +232,13 @@ always_stmt :
   ;
 
 trans_stmt : 
-  VLAD_SYM_TRANS VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES comp_exp VLAD_SYM_IF comp_exp VLAD_SYM_SEMICOLON {
+  VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES comp_exp if_clause VLAD_SYM_SEMICOLON {
   }
   ;
 
-query_stmt : 
-  is_clause after_clause VLAD_SYM_SEMICOLON {
+if_clause :
+  | VLAD_SYM_IF comp_exp {
   }
-  | is_clause VLAD_SYM_SEMICOLON {
-  }
-  ;
 
 trans_var_def : 
   VLAD_SYM_OPEN_PARENT VLAD_SYM_CLOSE_PARENT {
@@ -258,13 +254,13 @@ trans_var_list :
   }
   ;
 
-is_clause : 
-  VLAD_SYM_IS ground_exp {
+query_stmt : 
+  VLAD_SYM_IS ground_exp after_clause VLAD_SYM_SEMICOLON {
   }
   ;
 
 after_clause : 
-  VLAD_SYM_AFTER trans_ref_list {
+  | VLAD_SYM_AFTER trans_ref_list {
   }
   ;
 
@@ -276,7 +272,12 @@ trans_ref_list :
   ;
 
 trans_ref_def : 
-  VLAD_SYM_IDENTIFIER VLAD_SYM_OPEN_PARENT trans_ref_ident_list VLAD_SYM_CLOSE_PARENT {
+  VLAD_SYM_IDENTIFIER VLAD_SYM_OPEN_PARENT trans_ref_ident_args VLAD_SYM_CLOSE_PARENT {
+  }
+  ;
+
+trans_ref_ident_args :
+  | trans_ref_ident_list {
   }
   ;
 
