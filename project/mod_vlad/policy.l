@@ -14,15 +14,17 @@
 
 #include "policy.tab.h"
 
-#include "util.h"
-
 #undef YY_INPUT
 #define YY_INPUT(a_buf, a_res, a_max) \
   (a_res = custom_yyinput(custom_stream, a_buf, a_max))
 
+/* func to register a new yyinput func */
 void policy_set_yyinput(int (*a_func)(void *, char *, int), void *a_stream);
 
-static int (*custom_yyinput)(void *, char *, int) = &modvlad_default_yyinput;
+/* the default libc fread yyinput */
+static int default_yyinput(void *a_stream, char *a_buf, int a_max);
+/* some vars */
+static int (*custom_yyinput)(void *, char *, int) = &default_yyinput;
 static void *custom_stream = &policyin;
 %}
 
@@ -144,9 +146,24 @@ everything         .
 
 %%
 
+/* the default libc fread yyinput */
+static int default_yyinput(void *a_stream, char *a_buf, int a_max)
+{
+  int size;
+  FILE *tmp = (FILE *) a_stream;
+                                                                                                                           
+  /* if an error is encountered, assume EOF */
+  if (((size = fread(a_buf, 1, a_max, tmp)) == 0) && ferror(tmp)) {
+    *a_buf = EOF;
+    return 1;
+  }
+ 
+  return size;
+}
+
 /* func to register a new yyinput func */
 void policy_set_yyinput(int (*a_func)(void *, char *, int), void *a_stream)
 {
-  custom_yyinput = (a_func) ? a_func : &modvlad_default_yyinput;
+  custom_yyinput = (a_func) ? a_func : &default_yyinput;
   custom_stream = (a_stream) ? a_stream : (void *) policyin;
 }

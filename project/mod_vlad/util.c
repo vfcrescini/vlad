@@ -19,6 +19,13 @@
 
 #include "util.h"
 
+/* some external functions from the parser & lexer */
+extern void policyparse();
+extern void policy_set_kb(void *a_kb);
+extern void policy_set_ct(void *a_exp);
+extern void policy_set_yyinput(int (*a_func)(void *, char *, int),
+                               void *a_stream);
+
 /* register the users into the kb */
 static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname);
 /* add built in access rights into the kb */
@@ -29,57 +36,25 @@ static int add_object(apr_pool_t *a_p,
                       void *a_exp,
                       const char *a_basepath,
                       const char *a_relpath);
-/* converts / to docroot */
-static const char *get_docroot(apr_pool_t *a_p,
-                               const char *a_path,
-                               server_rec *a_s);
+/* gets the document root without request_rec */
+static const char *get_docroot(apr_pool_t *a_p, server_rec *a_s);
 /* returns the parent of the given filepath */
 static const char *get_parent(apr_pool_t *a_p, const char *a_path);
 /* strips out everything after ? */
 static const char *strip_question(apr_pool_t *a_p, const char *a_str);
 /* strips out the trailing / from a_str */
 static const char *strip_slash(apr_pool_t *a_p, const char *a_str);
-
 /* a version of yyinput that uses apache apr */
-int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max)
+static int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max);
+
+/* initialze kb */
+int modvlad_init_kb(apr_pool_t *a_p,
+                    server_rec *a_s,
+                    modvlad_config_rec *a_conf,
+                    void **a_exp)
 {
-  apr_size_t size = (apr_size_t) a_max;
-  apr_file_t *file = (apr_file_t *) a_stream;
-
-  apr_file_read(file, (void *) a_buf, &size);
-
-  return size;
-}
-
-/* a version of yyinput that uses libc fread */
-int modvlad_default_yyinput(void *a_stream, char *a_buf, int a_maxsize)
-{
-  int size;
-  FILE *tmp = (FILE *) a_stream;
-
-  /* if an error is encountered, assume EOF */
-  if (((size = fread(a_buf, 1, a_maxsize, tmp)) == 0) && ferror(tmp)) {
-    *a_buf = EOF;
-    return 1;
-  }
-
-  return size;
-}
-
-/* initialze conf */
-int modvlad_init(apr_pool_t *a_p,
-                 server_rec *a_s,
-                 modvlad_config_rec *a_conf,
-                 void **a_exp, 
-                 const char *a_uname,
-                 const char *a_pname)
-{
-  if (!a_p || !a_s || !a_exp || !a_conf || !a_uname || !a_pname)
+  if (!a_p || !a_s || !a_exp || !a_conf)
     return -1;
-
-  /* setup filenames */
-  a_conf->user_file = ap_server_root_relative(a_p, a_uname);
-  a_conf->policy_file = ap_server_root_relative(a_p, a_pname);
 
   /* create and init kb */
   if (vlad_kb_create(&(a_conf->kb)) != VLAD_OK)
@@ -92,7 +67,6 @@ int modvlad_init(apr_pool_t *a_p,
   if (vlad_exp_create(a_exp) != VLAD_OK)
     return -1;
 
-
   /* register the kb to be destroyed with this pool */
   apr_pool_cleanup_register(a_p,
                             a_conf->kb,
@@ -103,8 +77,30 @@ int modvlad_init(apr_pool_t *a_p,
     return -1;
   if (add_access(a_p, a_conf->kb))
     return -1;
-  if (add_object(a_p, a_conf->kb, *a_exp, get_docroot(a_p, "/", a_s), NULL))
+  if (add_object(a_p, a_conf->kb, *a_exp, get_docroot(a_p, a_s), NULL))
     return -1;
+
+  return 0;
+}
+
+/* read the policy file into kb */
+int modvlad_load_kb(apr_pool_t *a_p,
+                    apr_file_t *a_polfile,
+                    void *a_kb,
+                    void *a_exp)
+{
+  if (!a_p || !a_polfile || !a_kb || !a_exp)
+    return -1;
+
+  /* give the lexer the proper yyinput function */
+  policy_set_yyinput(modvlad_apache_yyinput, (void *)a_polfile);
+  /* give the parser a kb handle */
+  policy_set_kb(a_kb);
+  /* give the parser a handle to the extra constraints expression */
+  policy_set_ct(a_exp);
+
+  /* now, we parse */
+  policyparse();
 
   return 0;
 }
@@ -112,6 +108,78 @@ int modvlad_init(apr_pool_t *a_p,
 const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url)
 {
   return strip_slash(a_p, strip_question(a_p, a_url));
+}
+
+/* parse args */
+int modvlad_parse_args(apr_pool_t *a_p,
+                       const char *a_str,
+                       apr_table_t **a_tab)
+{
+  char buf[MODVLAD_MAXSTR_LEN];
+  char *ptr = buf;
+  char *name = NULL;
+  char *value = NULL;
+  int found = 0;
+  int novalue = 0;
+
+  if (!a_str || !a_tab)
+   return -1;
+
+  memset(buf, 0, MODVLAD_MAXSTR_LEN);
+  strcpy(ptr, a_str);
+
+  *a_tab = apr_table_make(a_p, 0);
+
+  while (*ptr != '\0') {
+    name = ptr;
+    found = 0;
+    novalue = 0;
+    while (*ptr != '\0') {
+      if (*ptr == '=') {
+        *ptr = '\0';
+        ptr++;
+        found = 1;
+        break;
+      }
+      else if (*ptr == '\0' || *ptr == '&' || *ptr == EOF) {
+        *ptr = '\0';
+        ptr++;
+        found = 1;
+        novalue = 1;
+
+        break;
+      }
+      ptr++;
+    }
+    
+    if (!found)
+      break;
+
+    if (!novalue) {
+      value = ptr;
+      found = 0;
+
+      while(*ptr != '\0') {
+        if (*ptr == '&') {
+          *ptr = '\0';
+          ptr++;
+          found = 1;
+          break;
+        }
+
+        ptr++;
+      }
+
+      if (!found)
+        *ptr = '\0';
+    }
+    else
+      value = NULL;
+
+    apr_table_set(*a_tab, name, value);
+  }
+
+  return 0;
 }
 
 /* register the users into the kb */
@@ -158,6 +226,10 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
                   "mod_vlad: adding subject %s into kb",
                   user);
 #endif
+
+    /* do not add administrator */
+    if (!strcmp(user, MODVLAD_ADMIN_USERNAME))
+      continue;
 
     retval = vlad_kb_add_symtab(a_kb, user, VLAD_IDENT_SUBJECT);
 
@@ -343,21 +415,18 @@ static int add_object(apr_pool_t *a_p,
   return 0;
 }
 
-/* converts / to docroot */
-static const char *get_docroot(apr_pool_t *a_p,
-                               const char *a_path,
-                               server_rec *a_s)
+/* gets the document root without request_rec */
+static const char *get_docroot(apr_pool_t *a_p, server_rec *a_s)
 {
   core_server_config *conf;
 
   conf = (core_server_config *) ap_get_module_config(a_s->module_config,
                                                      &core_module);
 
-  if (!a_path || !conf)
+  if (!conf)
     return NULL;
 
-  return apr_pstrdup(a_p,
-                     strcmp("/", a_path) ? a_path : conf->ap_document_root);
+  return apr_pstrdup(a_p, conf->ap_document_root);
 }
 
 /* returns the parent of the given filepath */
@@ -434,74 +503,13 @@ static const char *strip_question(apr_pool_t *a_p, const char *a_str)
   return apr_pstrdup(a_p, tmpstring);
 }
 
-/* parse args */
-int modvlad_parse_args(apr_pool_t *a_p,
-                       const char *a_str,
-                       apr_table_t **a_tab)
+/* a version of yyinput that uses apache apr */
+static int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max)
 {
-  char buf[MODVLAD_MAXSTR_LEN];
-  char *ptr = buf;
-  char *name = NULL;
-  char *value = NULL;
-  int found = 0;
-  int novalue = 0;
+  apr_size_t size = (apr_size_t) a_max;
+  apr_file_t *file = (apr_file_t *) a_stream;
 
-  if (!a_str || !a_tab)
-   return -1;
+  apr_file_read(file, (void *) a_buf, &size);
 
-  memset(buf, 0, MODVLAD_MAXSTR_LEN);
-  strcpy(ptr, a_str);
-
-  *a_tab = apr_table_make(a_p, 0);
-
-  while (*ptr != '\0') {
-    name = ptr;
-    found = 0;
-    novalue = 0;
-    while (*ptr != '\0') {
-      if (*ptr == '=') {
-        *ptr = '\0';
-        ptr++;
-        found = 1;
-        break;
-      }
-      else if (*ptr == '\0' || *ptr == '&' || *ptr == EOF) {
-        *ptr = '\0';
-        ptr++;
-        found = 1;
-        novalue = 1;
-
-        break;
-      }
-      ptr++;
-    }
-    
-    if (!found)
-      break;
-
-    if (!novalue) {
-      value = ptr;
-      found = 0;
-
-      while(*ptr != '\0') {
-        if (*ptr == '&') {
-          *ptr = '\0';
-          ptr++;
-          found = 1;
-          break;
-        }
-
-        ptr++;
-      }
-
-      if (!found)
-        *ptr = '\0';
-    }
-    else
-      value = NULL;
-
-    apr_table_set(*a_tab, name, value);
-  }
-
-  return 0;
+  return size;
 }

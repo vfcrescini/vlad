@@ -14,18 +14,12 @@
 #include "apr_strings.h"
 #include "apr_md5.h"
 
+#include <unistd.h>
 #include <vlad/vlad.h>
 #include <vlad/wrapper.h>
 
 #include "util.h"
 #include "admin.h"
-
-/* some external functions from the parser & lexer */
-extern void policyparse();
-extern void policy_set_kb(void *a_kb);
-extern void policy_set_ct(void *a_exp);
-extern void policy_set_yyinput(int (*a_func)(void *, char *, int),
-                               void *a_stream);
 
 /* some static functions */
 static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s);
@@ -42,20 +36,39 @@ static void *modvlad_create_query(request_rec *a_r,
                                   const char *a_object);
 static int modvlad_access(request_rec *a_r);
 static int modvlad_handler(request_rec *a_r);
+static int modvlad_postconfig(apr_pool_t *a_pconf, 
+                              apr_pool_t *a_plog,
+                              apr_pool_t *a_ptmp,
+                              server_rec *a_s);
 static void modvlad_register_hooks (apr_pool_t *a_p);
-static const char *modvlad_set_init(cmd_parms *a_cmd,
-                                    void *a_config,
-                                    const char *a_uname,
-                                    const char *a_pname);
+static const char *modvlad_set_userfile(cmd_parms *a_cmd,
+                                        void *a_config,
+                                        const char *a_filename);
+static const char *modvlad_set_policyfile(cmd_parms *a_cmd,
+                                          void *a_config,
+                                          const char *a_filename);
+static const char *modvlad_set_enable(cmd_parms *a_cmd,
+                                      void *a_config,
+                                      int a_flag);
 
 /* our command rec */
 static const command_rec modvlad_auth_cmds[] =
 {
-  AP_INIT_TAKE2("VladFiles",
-                modvlad_set_init,
+  AP_INIT_TAKE1("VladUserFile",
+                modvlad_set_userfile,
                 NULL,
                 RSRC_CONF,
-                "\"user-file\" \"policy-file\""),
+                "\"path to user-file\""),
+  AP_INIT_TAKE1("VladPolicyFile",
+                modvlad_set_policyfile,
+                NULL,
+                RSRC_CONF,
+                "\"path to policy-file\""),
+  AP_INIT_FLAG("VladEnable",
+               modvlad_set_enable,
+               NULL,
+               RSRC_CONF,
+               "\"on/off to enable/disable mod_vlad\""),
   {NULL},
 };
 
@@ -87,6 +100,7 @@ static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
     conf->user_file = NULL;
     conf->policy_file = NULL;
     conf->kb = NULL;
+    conf->enabled = 0;
   }
 
   return conf;
@@ -245,10 +259,10 @@ static int modvlad_access(request_rec *a_r)
   modvlad_config_rec *conf = NULL;
   void *exp;
 
-  ap_log_perror(APLOG_MARK,
+  ap_log_rerror(APLOG_MARK,
                 APLOG_NOTICE,
                 0,
-                a_r->pool,
+                a_r,
                 "mod_vlad: checking for request subject=%s access=%s object=%s",
                 a_r->user,
                 a_r->method,
@@ -274,6 +288,10 @@ static int modvlad_access(request_rec *a_r)
                   "mod_vlad: conf is null");
     return HTTP_INTERNAL_SERVER_ERROR;
   }
+
+  /* first check if we are enabled */
+  if (!conf->enabled)
+    return DECLINED;
 
   /* parse the incoming header to get the authorization line */
   if ((authline = apr_table_get(a_r->headers_in, "Authorization"))) {
@@ -411,15 +429,18 @@ static int modvlad_handler(request_rec *a_r)
   conf = (modvlad_config_rec *) ap_get_module_config(a_r->server->module_config,
                                                      &modvlad_module);
 
-  /* first we make sure we are activated */
-  if (!conf || !conf->kb) {
+  if (!conf) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_NOTICE,
                   0,
                   a_r,
-                  "mod_vlad: kb uninitialized, declining");
-    return DECLINED;
+                  "mod_vlad: conf is NULL");
+    return HTTP_INTERNAL_SERVER_ERROR;
   }
+
+  /* first check if we are enabled */
+  if (!conf->enabled)
+    return DECLINED;
 
   filepath = apr_pstrdup(a_r->pool, modvlad_strip_url(a_r->pool, a_r->uri));
   apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
@@ -452,6 +473,117 @@ static int modvlad_handler(request_rec *a_r)
   return DECLINED;
 }
 
+static int modvlad_postconfig(apr_pool_t *a_pconf, 
+                              apr_pool_t *a_plog,
+                              apr_pool_t *a_ptmp,
+                              server_rec *a_s)
+{
+  int retval;
+  apr_status_t status;
+  modvlad_config_rec *conf = NULL;
+  void *const_exp = NULL;
+  apr_file_t *polfile = NULL;
+
+  /* it seems that this function is called twice, once on 2 processes.
+   * since the first one seems to die anyway, we only initialize the
+   * module on the second process whose parent seems to be init. */
+
+  if (getppid() != 1)
+    return DECLINED;
+
+  conf = ap_get_module_config(a_s->module_config, &modvlad_module);
+
+  if (!conf) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_NOTICE,
+                  0,
+                  a_plog,
+                  "mod_vlad: conf is NULL");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  /* first check if we are enabled */
+  if (!conf->enabled)
+    return DECLINED;
+
+  /* initialize the kb */
+  retval = modvlad_init_kb(a_pconf,
+                           a_s,
+                           conf,
+                           &const_exp);
+
+  if (retval) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_plog,
+                  "mod_vlad: error occurred while initializing kb");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  /* open the policy file */
+  status = apr_file_open(&polfile,
+                        conf->policy_file,
+                        APR_READ,
+                        APR_OS_DEFAULT,
+                        a_pconf);
+
+  if (status != APR_SUCCESS) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_plog,
+                  "mod_vlad: error occurred while opening policy file");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  /* now load the kb with the contents of the policy file */
+  retval = modvlad_load_kb(a_pconf,
+                           polfile,
+                           conf->kb,
+                           const_exp);
+
+  if (retval) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_plog,
+                  "mod_vlad: error occurred while parsing the policy file");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  /* cleanup */
+  apr_file_close(polfile);
+
+ /* finally, compute */
+#ifdef MODVLAD_DEBUG
+  retval = vlad_kb_compute_generate(conf->kb, stderr);
+  fflush(stderr);
+  if (retval != VLAD_OK) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_plog,
+                  "mod_vlad: could not compute kb (%d)",
+                  retval);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+#else
+  retval = vlad_kb_compute_evaluate(conf->kb);
+  if (retval != VLAD_OK) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_plog,
+                  "mod_vlad: could not compute kb (%d)",
+                  retval);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+#endif
+
+  return OK;
+}
+
 static void modvlad_register_hooks(apr_pool_t *a_p)
 {
 #ifdef MODVLAD_DEBUG
@@ -464,26 +596,15 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
 
   ap_hook_handler(modvlad_handler, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_access_checker(modvlad_access, NULL, NULL, APR_HOOK_FIRST);
+  ap_hook_post_config(modvlad_postconfig, NULL, NULL, APR_HOOK_FIRST);
 }
 
-static const char *modvlad_set_init(cmd_parms *a_cmd,
-                                    void *a_dummy,
-                                    const char *a_uname,
-                                    const char *a_pname)
+static const char *modvlad_set_userfile(cmd_parms *a_cmd,
+                                        void *a_config,
+                                        const char *a_filename)
 {
-  int retval;
-  modvlad_config_rec *conf;
-  apr_file_t *polfile;
-  apr_status_t status;
-  void *const_exp;
+  modvlad_config_rec *conf = NULL;
 
-#ifdef MODVLAD_DEBUG
-  ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
-                0,
-                a_cmd->pool,
-                "modvlad_set_init");
-#endif
   conf = ap_get_module_config(a_cmd->server->module_config, &modvlad_module);
 
   if (!conf) {
@@ -491,80 +612,55 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                   APLOG_ERR,
                   0,
                   a_cmd->pool,
-                  "mod_vlad: NULL config pointer");
+                  "mod_vlad: conf is NULL");
     return NULL;
   }
 
-  /* initialize the module */
-  retval = modvlad_init(a_cmd->pool,
-                        a_cmd->server,
-                        conf,
-                        &const_exp,
-                        a_uname,
-                        a_pname);
+  conf->user_file = ap_server_root_relative(a_cmd->pool, a_filename);
 
-  if (retval) {
+  return NULL;
+}
+
+static const char *modvlad_set_policyfile(cmd_parms *a_cmd,
+                                          void *a_config,
+                                          const char *a_filename)
+{
+  modvlad_config_rec *conf = NULL;
+
+  conf = ap_get_module_config(a_cmd->server->module_config, &modvlad_module);
+
+  if (!conf) {
     ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
                   a_cmd->pool,
-                  "mod_vlad: error occurred while initializing module");
+                  "mod_vlad: conf is NULL");
     return NULL;
   }
 
+  conf->policy_file = ap_server_root_relative(a_cmd->pool, a_filename);
 
-  /* parse the policy file */
-  status = apr_file_open(&polfile,
-                        conf->policy_file,
-                        APR_READ,
-                        APR_OS_DEFAULT,
-                        a_cmd->pool);
+  return NULL;
+}
 
-  if (status != APR_SUCCESS) {
+static const char *modvlad_set_enable(cmd_parms *a_cmd,
+                                      void *a_config,
+                                      int a_flag)
+{
+  modvlad_config_rec *conf = NULL;
+
+  conf = ap_get_module_config(a_cmd->server->module_config, &modvlad_module);
+
+  if (!conf) {
     ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
                   a_cmd->pool,
-                  "mod_vlad: error occurred while opening policy file");
+                  "mod_vlad: conf is NULL");
     return NULL;
   }
 
-  /* give the lexer the proper yyinput function */
-  policy_set_yyinput(modvlad_apache_yyinput, (void *)polfile);
-  /* give the parser a kb handle */
-  policy_set_kb(conf->kb);
-  /* give the parser a handle to the extra constraints expression */
-  policy_set_ct(const_exp);
-
-  /* now, we parse */
-  policyparse();
-
-  apr_file_close(polfile);
-
-  /* finally, compute */
-
-#ifdef MODVLAD_DEBUG
-  retval = vlad_kb_compute_generate(conf->kb, stderr);
-  fflush(stderr);
-  if (retval != VLAD_OK) {
-    ap_log_perror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_cmd->pool,
-                  "mod_vlad: could not compute kb (%d)",
-                  retval);
-  }
-#else
-  retval = vlad_kb_compute_evaluate(conf->kb);
-  if (retval != VLAD_OK) {
-    ap_log_perror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_cmd->pool,
-                  "mod_vlad: could not compute kb (%d)",
-                  retval);
-  }
-#endif
+  conf->enabled = a_flag;
 
   return NULL;
 }

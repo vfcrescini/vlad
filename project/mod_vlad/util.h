@@ -58,22 +58,21 @@ typedef struct {
   char *user_file;
   char *policy_file;
   void *kb;
+  int enabled;
 } modvlad_config_rec;
 
-/* a version of yyinput that uses apache apr */
-int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max);
+/* initialze kb */
+int modvlad_init_kb(apr_pool_t *a_p,
+                    server_rec *a_s,
+                    modvlad_config_rec *a_conf,
+                    void **a_exp);
 
-/* a version of yyinput that uses libc fread */
-int modvlad_default_yyinput(void *a_stream, char *a_buf, int a_maxsize);
-
-/* initialze conf */
-int modvlad_init(apr_pool_t *a_p,
-                 server_rec *a_s,
-                 modvlad_config_rec *a_conf,
-                 void **a_exp,
-                 const char *a_uname,
-                 const char *a_pname);
-
+/* read the policy file into kb */
+int modvlad_load_kb(apr_pool_t *a_p,
+                    apr_file_t *a_polfile,
+                    void *a_kb,
+                    void *a_exp);
+ 
 /* strips out trailing slashes and/or everything after a ? */
 const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url);
 
