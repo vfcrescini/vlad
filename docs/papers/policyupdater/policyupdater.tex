@@ -1,4 +1,4 @@
-\documentclass[times, 10pt, twocolumn]{article}
+\documentclass[10pt, twocolumn]{article}
 \usepackage{latex8}
 \usepackage{times}
 \usepackage{amsmath}
@@ -1524,11 +1524,11 @@ query holds(alice, read, file);
 
         \paragraph{Removal of Classical Negation.}
 
-          To remove classical negation from facts of language ${\cal L}$, each
-          classically negated fact $\lnot$ $f$ is replaced by a new and unique
-          positive fact $f'$ that represents the negation of fact $f$. To
-          preserve the consistency of the policy base for all facts $f$ in the
-          domain, the following constraint rule must be added:
+          In order to remove classical negation from facts of language
+          ${\cal L}$, each classically negated fact $\lnot$ $f$ is replaced by
+          a new and unique positive fact $f'$ that represents the negation of
+          fact $f$. To preserve the consistency of the policy base for all
+          facts $f$ in the domain, the following constraint rule must be added:
 
           \begin{quote}
             $FALSE$ $\leftarrow$ $f$, $f'$
