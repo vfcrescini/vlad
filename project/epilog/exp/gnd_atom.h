@@ -39,9 +39,6 @@ typedef struct
   } atom;
 } gnd_atom_type;
 
-/* creates a pointer to an gnd_atom of type const */
-int gnd_atom_create_const(gnd_atom_type *atom, unsigned short int truth);
-
 /* creates a pointer to an gnd_atom of type holds */
 int gnd_atom_create_holds(gnd_atom_type *atom, 
                           ident_type *sub, 

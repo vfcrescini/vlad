@@ -35,8 +35,6 @@ comma              \,
 semicolon          ;
 and                &&
 not                !
-true               true
-false              false
 holds              holds
 member             memb
 subset             subst
@@ -71,10 +69,6 @@ everything         .
 <INITIAL>{and} return EPI_SYM_AND;
 
 <INITIAL>{not} return EPI_SYM_NOT;
-
-<INITIAL>{true} return EPI_SYM_TRUE;
-
-<INITIAL>{false} return EPI_SYM_FALSE;
 
 <INITIAL>{holds} return EPI_SYM_HOLDS;
 

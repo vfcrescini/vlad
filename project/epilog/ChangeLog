@@ -1,3 +1,21 @@
+2003-04-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* docs/bnf.txt :
+	* docs/langspecs.txt :
+	* example/read_write :
+	* example/sample :
+	* exp/comp_atom.c :
+	* exp/comp_atom.h :
+	* exp/comp_exp.c :
+	* exp/expression.h :
+	* exp/gnd_atom.c :
+	* exp/gnd_atom.h :
+	* exp/gnd_exp.c :
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Now constants true and false are no longer part of the language.
+
 2003-03-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/gnd_exp.c :

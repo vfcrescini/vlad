@@ -135,7 +135,6 @@ int gnd_exp_get(gnd_exp_type exp, unsigned int index, gnd_atom_type **atom)
 int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
 {
   gnd_atom_type *new_atom = NULL;
-  gnd_atom_type false_atom;
   gnd_atom_type negated_atom;
   unsigned short int tmp_ans;
   int tmp_res;
@@ -143,16 +142,11 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
   if (exp == NULL)
     return EPI_NULLPTR;
 
-  gnd_atom_create_const(&false_atom, EPI_FALSE);
   gnd_atom_copy(&negated_atom, atom);
   EPI_ATOM_NEGATE(negated_atom);
   
   /* if an atom is already in simply return success */
   if (gnd_exp_find(*exp, atom) == EPI_OK)
-    return EPI_OK;
-
-  /* if the gnd_exp contains a FALSE constant, just return success */
-  if (gnd_exp_find(*exp, false_atom) == EPI_OK)
     return EPI_OK;
 
   /* now we check if the negation of the atom is a logical consequence 
@@ -172,21 +166,9 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
     return EPI_OK;
   }
 
-  if ((EPI_ATOM_IS_CONST(atom) && atom.truth == EPI_FALSE)) {
-    /* if the atom is a FALSE constant, we replace the whole expression
-     * with a constant false */
-    gnd_exp_purge(exp);
-
-    if ((new_atom = EPI_GNDATOM_MALLOC) == NULL)
-      return EPI_MALLOCFAILED;
-    if ((tmp_res = gnd_atom_create_const(new_atom, EPI_FALSE)) != EPI_OK)
-      return tmp_res;
-  }
-  else {
-    /* all clear. just add this new atom in */
-    if ((tmp_res = gnd_atom_dup(&new_atom, atom)) != 0)
-      return tmp_res;
-  }
+  /* all clear. just add this new atom in */
+  if ((tmp_res = gnd_atom_dup(&new_atom, atom)) != 0)
+    return tmp_res;
 
   return simplelist_add(exp, (void *) new_atom);
 }
@@ -1072,10 +1054,6 @@ int gnd_exp_eval_atom(gnd_atom_type atom,
 
     if (*ans != EPI_RESULT_UNKNOWN)
       *ans = (*ans == atom.truth) ? EPI_RESULT_TRUE : EPI_RESULT_FALSE;
-  }
-  else if (EPI_ATOM_IS_CONST(atom)) {
-    /* true is implied on any expression that is not false */
-    *ans = (atom.truth == EPI_TRUE) ? EPI_RESULT_TRUE : EPI_RESULT_FALSE;
   }
 
   return EPI_OK;

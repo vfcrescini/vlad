@@ -47,7 +47,6 @@ int comp_exp_get(comp_exp_type exp, unsigned int index, comp_atom_type **atom)
 int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
 {
   comp_atom_type *new_atom = NULL;
-  comp_atom_type false_atom;
   int tmp_res;
   
   if (exp == NULL)
@@ -57,33 +56,8 @@ int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
   if (comp_exp_find(*exp, atom) == EPI_OK)
     return EPI_OK;
 
-  /* if the expression contains a FALSE constant, just return success */
-  false_atom.type = EPI_ATOM_CONST;
-  false_atom.truth = EPI_FALSE;
-
-  if (comp_exp_find(*exp, false_atom) == EPI_OK)
-    return EPI_OK;
-
-  /* if the negation of an atom is aleady in, or if the atom is a FALSE
-   * constant, we replace the the whole expression with a constant false */
-  EPI_ATOM_NEGATE(atom);
-  if ((EPI_ATOM_IS_CONST(atom) && atom.truth == EPI_TRUE) ||
-      comp_exp_find(*exp, atom) == EPI_OK) {
-
-    comp_exp_purge(exp);
-
-    if ((new_atom = EPI_COMPATOM_MALLOC) == NULL)
-      return EPI_MALLOCFAILED;
-
-    if ((tmp_res = comp_atom_create_const(new_atom, EPI_FALSE)) != EPI_OK)
-      return tmp_res;
-  }
-  else {
-    if ((tmp_res = comp_atom_copy(&new_atom, atom)) != EPI_OK)
-      return tmp_res;
-
-    EPI_ATOM_NEGATE(*new_atom);
-  }
+  if ((tmp_res = comp_atom_copy(&new_atom, atom)) != EPI_OK)
+    return tmp_res;
 
   return simplelist_add(exp, (void *) new_atom);
 }
@@ -194,9 +168,6 @@ int comp_exp_replace_atom(comp_atom_type comp,
 
     return EPI_OK;
   }
-
-  if (EPI_ATOM_IS_CONST(comp))
-   return EPI_OK;
 
   return EPI_FAILURE;
 }

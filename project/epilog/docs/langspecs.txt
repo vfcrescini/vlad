@@ -4,7 +4,7 @@ Language Specifications
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started 2002 Jul 08 
-Updated 2002 Aug 13
+Updated 2003 Apr 10
 -------------------------------------------------------------------------------
 
 1. Expressions
@@ -103,15 +103,7 @@ Updated 2002 Aug 13
 
       Parenthesis is not allowed to be used to enclose atoms and expressions.
 
-  1.4. Constant Expressions
-
-    The following symbols may be used:
-
-      true
-
-      false
-
-  1.5. Variables
+  1.4. Variables
 
    Variables are only permitted to occur on transformation proposition
    statements. They must be in the form:
@@ -189,14 +181,10 @@ Updated 2002 Aug 13
     respectively.
 
     The case where the pre-condition is an empty-set (ie. the transformation
-    has no pre-condition) does not have to be a special case:
+    has no pre-condition) can be represented by ommitting the if clause:
 
       trans <trans-identifier>()
-      causes <post-condition-expression> 
-      if true
-
-    The constant expression "true" can be used to indicate that there are no
-    pre-conditions required for this transformation.
+      causes <post-condition-expression>
 
   2.4. Policy Proposition Definition Statement
 

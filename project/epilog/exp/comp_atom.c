@@ -6,18 +6,6 @@
 #include <stdlib.h>
 #include "comp_atom.h"
 
-/* creates a pointer to an atom of type const */
-int comp_atom_create_const(comp_atom_type *atom, unsigned short int truth)
-{
-  if (atom == NULL)
-    return EPI_NULLPTR;
-
-  atom->type = EPI_ATOM_CONST;
-  atom->truth = truth;
-
-  return EPI_OK;
-}
-
 /* creates a pointer to an atom of type holds */
 int comp_atom_create_holds(comp_atom_type *atom,
                            name_type sub,
@@ -117,9 +105,6 @@ void comp_atom_destroy(comp_atom_type *atom)
 /* return 0 if the atom is valid */
 int comp_atom_check(comp_atom_type atom)
 {
-  if (EPI_ATOM_IS_CONST(atom))
-    return EPI_OK;
-
   if (EPI_ATOM_IS_HOLDS(atom)) {
     /* subject field must be subject or variable */
     if (!EPI_NAME_IS_SUBJECT(atom.atom.holds.subject) &&
@@ -181,9 +166,7 @@ int comp_atom_copy(comp_atom_type **atom2, comp_atom_type atom1)
   if ((*atom2 = EPI_COMPATOM_MALLOC) == NULL)
     return EPI_MALLOCFAILED;
 
-  if (EPI_ATOM_IS_CONST(atom1))
-    return comp_atom_create_const(*atom2, atom1.truth);
-  else if (EPI_ATOM_IS_HOLDS(atom1))
+  if (EPI_ATOM_IS_HOLDS(atom1))
     return comp_atom_create_holds(*atom2,
                                   atom1.atom.holds.subject,
                                   atom1.atom.holds.access,

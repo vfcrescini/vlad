@@ -9,7 +9,7 @@ ident obj f;
 
 initially holds(s, read, f);
 
-trans assign_write(X, Y) causes holds(X, write, Y) if true;
+trans assign_write(X, Y) causes holds(X, write, Y);
 trans delete_write(X, Y) causes !holds(X, write, Y) if holds(X, write, Y);
 
 is holds(s, write, f) after assign_write(s, f);

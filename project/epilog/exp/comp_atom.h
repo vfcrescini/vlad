@@ -39,9 +39,6 @@ typedef struct
   } atom;
 } comp_atom_type;
 
-/* creates a pointer to an comp_atom of type const */
-int comp_atom_create_const(comp_atom_type *comp_atom, unsigned short int truth);
-
 /* creates a pointer to an comp_atom of type holds */
 int comp_atom_create_holds(comp_atom_type *comp_atom, 
                            name_type sub, 

@@ -6,18 +6,6 @@
 #include <stdlib.h>
 #include "gnd_atom.h"
 
-/* creates a pointer to an atom of type const */
-int gnd_atom_create_const(gnd_atom_type *atom, unsigned short int truth)
-{
-  if (atom == NULL)
-    return EPI_NULLPTR;
-
-  atom->type = EPI_ATOM_CONST;
-  atom->truth = truth;
-
-  return EPI_OK;
-}
-
 /* creates a pointer to an atom of type holds */
 int gnd_atom_create_holds(gnd_atom_type *atom,
                           ident_type *sub,
@@ -100,9 +88,6 @@ void gnd_atom_destroy(gnd_atom_type *atom)
 /* return 0 if the atom is valid */
 int gnd_atom_check(gnd_atom_type atom)
 {
-  if (EPI_ATOM_IS_CONST(atom))
-    return EPI_OK;
-
   if (EPI_ATOM_IS_HOLDS(atom)) {
     /* subject field must be subject */
     if (!EPI_IDENT_IS_SUBJECT(*(atom.atom.holds.subject))) 
@@ -150,9 +135,7 @@ int gnd_atom_copy(gnd_atom_type *atom2, gnd_atom_type atom1)
   if (atom2 == NULL)
     return EPI_NULLPTR;
 
-  if (EPI_ATOM_IS_CONST(atom1))
-    return gnd_atom_create_const(atom2, atom1.truth);
-  else if (EPI_ATOM_IS_HOLDS(atom1))
+  if (EPI_ATOM_IS_HOLDS(atom1))
     return gnd_atom_create_holds(atom2,
                                  atom1.atom.holds.subject,
                                  atom1.atom.holds.access,

@@ -4,7 +4,7 @@ BNF
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started 2002 Jul 08
-Updated 2002 Aug 23
+Updated 2003 Apr 10
 -------------------------------------------------------------------------------
 
 <start>                 : <program>
@@ -60,15 +60,16 @@ Updated 2002 Aug 23
 
 <initial-stmt>          : <initially> <ground-exp> <semicolon>
                         
-<trans-stmt>            : <trans> <identifier> <trans-var-def>
-                          <causes> <comp-exp> <if> <comp-exp> <semicolon>
-                        
+<trans-stmt>            : <trans> <identifier> <trans-var-def> <causes>
+                          <comp-exp> <if-clause> <semicolon>
+
+<if-clause>             : NIL | <if> <comp-exp>
+                       
 <trans-var-def>         : <open-parent> <close-parent> |
                           <open-parent> <trans-var-list> <close-parent> 
                         
 <trans-var-list>        : <identifier> | <trans-var-list> <comma> <identifier>
-                          
-                        
+
 <policy-stmt>           : <is-clause> <after-clause> <semicolon> |
                           <is-clause> <semicolon>
                         
@@ -93,7 +94,7 @@ Updated 2002 Aug 23
 <ground-boolean-atom>   : <not> <ground-atom-exp> | <ground-atom-exp>
                         
 <ground-atom-exp>       : <ground-holds-atom> | <ground-subst-atom> | 
-                          <ground-memb-atom> | <logical-atom>
+                          <ground-memb-atom>
                         
 <ground-holds-atom>     : <holds> <open-parent> <identfier> <comma>
                           <identifier> <comma> <identifier> <close-parent>
@@ -110,7 +111,7 @@ Updated 2002 Aug 23
 <comp-boolean-atom>     : <not> <comp-atom-exp> | <comp-atom-exp>
 
 <comp-atom-exp>         : <comp-holds-atom> | <comp-subst-atom> |
-                          <comp-memb-atom> | <logical-atom>
+                          <comp-memb-atom>
 
 <comp-holds-atom>       : <holds> <open-parent> <identfier> <comma>
                           <identifier> <comma> <identifier> <close-parent>
@@ -121,16 +122,10 @@ Updated 2002 Aug 23
 <comp-memb-atom>        : <member> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
 
-<logical-atom>          : <true> | <false>
-                        
 <logical-op>            : <and>
                         
 <identifier>            : [a-zA-Z][a-zA-Z0-9_]{0,127}
 
-<true>                  : true
-                        
-<false>                 : false
-                        
 <and>                   : &&
                         
 <not>                   : !

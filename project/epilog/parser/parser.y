@@ -81,10 +81,10 @@ gnd_exp_type initial_exp;
 %token <terminal> EPI_SYM_IDENT
 %token <identifier> EPI_SYM_IDENTIFIER
 
-%type <gexp> is_clause;
 %type <gexp> ground_exp
+%type <gexp> is_clause;
 %type <cexp> comp_exp
-%type <gatm> logical_atom
+%type <cexp> if_clause;
 %type <gatm> ground_atom_exp
 %type <gatm> ground_boolean_atom
 %type <gatm> ground_holds_atom
@@ -301,10 +301,10 @@ initial_stmt :
   ;
 
 trans_stmt : 
-  EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON {
+  EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp if_clause EPI_SYM_SEMICOLON {
     transdef_type tmp_transdef;
 
-    switch (transdef_compose(&tmp_transdef, $2, $3, $7, $5)) {
+    switch (transdef_compose(&tmp_transdef, $2, $3, $6, $5)) {
       case EPI_OK :
         break;
       case EPI_MALLOCFAILED :
@@ -419,6 +419,14 @@ policy_stmt :
     }    
 
     gnd_exp_purge(&$1);
+  }
+  ;
+
+if_clause : {
+    comp_exp_init(&$$);
+  }
+  | EPI_SYM_IF comp_exp {
+    $$ = $2;
   }
   ;
 
@@ -615,9 +623,6 @@ ground_atom_exp :
   | ground_memb_atom {
     $$ = $1;
   }
-  | logical_atom {
-    $$ = $1;
-  }
   ;
 
 ground_holds_atom :
@@ -722,9 +727,6 @@ comp_atom_exp :
   }
   | comp_memb_atom {
     $$ = $1;
-  }
-  | logical_atom {
-    comp_atom_create_const(&$$, $1.truth);
   }
   ;
 
@@ -874,15 +876,6 @@ comp_memb_atom :
   }
   ;
 
-logical_atom : 
-  EPI_SYM_TRUE {
-    gnd_atom_create_const(&$$, EPI_TRUE);
-  }
-  | EPI_SYM_FALSE {
-    gnd_atom_create_const(&$$, EPI_FALSE);
-  }
-  ;
-
 %%
 
 void add_identifier(char ident[], unsigned short type)
@@ -960,9 +953,7 @@ void dump_strlist(stringlist_type list)
 
 void dump_gnd_atom(gnd_atom_type atom)
 {
-  if (EPI_ATOM_IS_CONST(atom))
-    fprintf(yyerr, "    constant %s\n", atom.truth == EPI_TRUE ? "true" : "false");
-  else if (EPI_ATOM_IS_HOLDS(atom))
+  if (EPI_ATOM_IS_HOLDS(atom))
     fprintf(yyerr, "    %sholds(%s, %s, %s)\n",
            atom.truth == EPI_TRUE ? "" : "not ",
            EPI_IDENT_STRING(EPI_ATOM_HOLDS_SUBJECT(atom)),
@@ -982,9 +973,7 @@ void dump_gnd_atom(gnd_atom_type atom)
 
 void dump_comp_atom(comp_atom_type atom)
 {
-  if (EPI_ATOM_IS_CONST(atom))
-    fprintf(yyerr, "    constant %s\n", atom.truth == EPI_TRUE ? "true" : "false");
-  else if (EPI_ATOM_IS_HOLDS(atom))
+  if (EPI_ATOM_IS_HOLDS(atom))
     fprintf(yyerr, "    %sholds(%s, %s, %s)\n",
            atom.truth == EPI_TRUE ? "" : "not ",
            EPI_NAME_STRING(EPI_ATOM_HOLDS_SUBJECT(atom)),

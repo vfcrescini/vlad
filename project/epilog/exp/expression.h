@@ -8,17 +8,15 @@
 
 #include <epilog.h>
 
-/* first 3 bits indicate the type */
-#define EPI_ATOM_CONST       1
-#define EPI_ATOM_HOLDS       2
-#define EPI_ATOM_MEMB        3
-#define EPI_ATOM_SUBST       4
+/* first 2 bits indicate the type */
+#define EPI_ATOM_HOLDS       1
+#define EPI_ATOM_MEMB        2
+#define EPI_ATOM_SUBST       3
 
 /* some convenience macros */
-#define EPI_ATOM_IS_CONST(X)      (((X).type & 7) == EPI_ATOM_CONST)
-#define EPI_ATOM_IS_HOLDS(X)      (((X).type & 7) == EPI_ATOM_HOLDS)
-#define EPI_ATOM_IS_MEMB(X)       (((X).type & 7) == EPI_ATOM_MEMB)
-#define EPI_ATOM_IS_SUBST(X)      (((X).type & 7) == EPI_ATOM_SUBST)
+#define EPI_ATOM_IS_HOLDS(X)      ((X).type == EPI_ATOM_HOLDS)
+#define EPI_ATOM_IS_MEMB(X)       ((X).type == EPI_ATOM_MEMB)
+#define EPI_ATOM_IS_SUBST(X)      ((X).type == EPI_ATOM_SUBST)
 #define EPI_ATOM_NEGATE(X)        ((X).truth = ((X).truth == EPI_TRUE) ? EPI_FALSE : EPI_TRUE)
 #define EPI_ATOM_HOLDS_SUBJECT(X) ((X).atom.holds.subject)
 #define EPI_ATOM_HOLDS_ACCESS(X)  ((X).atom.holds.access)
