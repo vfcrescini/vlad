@@ -75,9 +75,9 @@ void stringlist_purge(stringlist_type *list)
 int stringlist_compare(void *p1, void *p2)
 {
   if (p1 == NULL || p2 == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
-  return strcmp((char *) p1, (char *) p2) ? -1 : 0;
+  return strcmp((char *) p1, (char *) p2) ? EPI_FAILURE : EPI_OK;
 }
 
 /* free memory */

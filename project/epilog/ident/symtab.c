@@ -102,9 +102,9 @@ void symtab_purge(void)
 int symtab_compare(void *p1, void *p2)
 {
   if (p1 == NULL || p2 == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
-  return strcmp(((ident_type *) p1)->name, ((ident_type *) p2)->name) ? -1 : 0;
+  return strcmp(((ident_type *) p1)->name, ((ident_type *) p2)->name) ? EPI_FAILURE : EPI_OK;
 }
 
 /* free memory */

@@ -42,7 +42,7 @@ void ident_destroy(ident_type *ident)
 int ident_compare(ident_type ident1, ident_type ident2)
 {
   if (ident1.type != ident2.type)
-    return -1;
+    return EPI_FAILURE;
 
-  return (strcmp(ident1.name, ident2.name) ? -1 : 0);
+  return (strcmp(ident1.name, ident2.name) ? EPI_FAILURE : EPI_OK);
 }
