@@ -101,6 +101,7 @@
     from the updated policy base.
 
     \subsection{Syntax}
+      \label{subsec-syntax}
 
       Logic programs of language ${\cal L}$ are composed of language
       statements, each terminated by a semicolon ";" character. C-style
@@ -231,7 +232,7 @@
 
         \paragraph{Constraint Definition.}
 
-          Constraints are logical rules that holds regardless of any changes
+          Constraints are logical rules that hold regardless of any changes
           that may occur when the policy base is updated. The constraint rules
           are true in the initial state and remains true after any policy
           update.
@@ -240,8 +241,7 @@
           base, expression $exp1$ holds if expression $exp2$ is true and there
           is no evidence that $exp3$ is true. The $with$ $absence$ clause
           allows constraints to behave like default propositions, where the
-          absence of proof that an expression holds implies that the default
-          expression holds.
+          absence of proof of an expression implies that the expression holds.
 
           It is important to note that the expressions $exp1$, $exp2$ and
           $exp3$ are non-ground expressions, which means identifiers within
@@ -395,6 +395,7 @@ query holds(alice, read, file);
         \end{example}
 
     \subsection{Semantics}
+      \label{subsec-semantics}
 
       \subsubsection{Domain Description of Language ${\cal L}$}
 
@@ -442,7 +443,7 @@ query holds(alice, read, file);
         The $Result$ function takes a policy update reference $u$, where $u$
         $\in$ $\psi$, and the current state $\sigma$ as input arguments and
         returns the resulting state $\sigma'$ after update $u$ has been applied
-        to state $\sigma$.
+        to state $\sigma$:
 
         \begin{quote}
           $\sigma'$ = $Result$($u$, $\sigma$)
@@ -546,14 +547,14 @@ query holds(alice, read, file);
 
         \begin{definition}
           Given a domain description ${\cal D}_{\cal L}$ of language
-          ${\cal L}$, $Tran$(${\cal D}_{\cal L}$) is defined as the
+          ${\cal L}$, $Trans$(${\cal D}_{\cal L}$) is defined as the
           extended logic program ${\cal L}^{*}$ translation of language
           ${\cal L}$. The domain description ${\cal D}_{\cal L}$ is said to be
           {\em consistent} if and only if $Trans$(${\cal D}_{\cal L}$) has
           a consistent answer set.
         \end{definition}
 
-        Before we can fully define the $Trans$(${\cal D}_{\cal L}$), we must
+        Before we can fully define $Trans$(${\cal D}_{\cal L}$), we should
         first define the following functions:
 
         \paragraph{}
@@ -885,6 +886,14 @@ query holds(alice, read, file);
               \item
                 Subject Group Membership Inheritance
 
+                $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$), where
+
+                $s_{s} \in {\cal E}_{ss}$,
+                $s_{g} \in {\cal E}_{sg}$,
+                $a \in {\cal E}_{a}$,
+                $o \in {\cal E}_{o}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{holds}(s_{s}, a, o, \sigma) \leftarrow &
@@ -897,16 +906,16 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$), where
-
-                $s_{s} \in {\cal E}_{ss}$,
-                $s_{g} \in {\cal E}_{sg}$,
-                $a \in {\cal E}_{a}$,
-                $o \in {\cal E}_{o}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
               \item
                 Access Right Group Membership Inheritance
+
+                $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$), where
+
+                $s \in {\cal E}_{s}$,
+                $a_{s} \in {\cal E}_{as}$,
+                $a_{g} \in {\cal E}_{ag}$,
+                $o \in {\cal E}_{o}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -920,16 +929,16 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$), where
-
-                $s \in {\cal E}_{s}$,
-                $a_{s} \in {\cal E}_{as}$,
-                $a_{g} \in {\cal E}_{ag}$,
-                $o \in {\cal E}_{o}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
               \item
                 Object Group Membership Inheritance
+
+                $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$) where
+
+                $s \in {\cal E}_{s}$,
+                $a \in {\cal E}_{a}$,
+                $o_{s} \in {\cal E}_{os}$,
+                $o_{g} \in {\cal E}_{og}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -943,16 +952,15 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$) where
-
-                $s \in {\cal E}_{s}$,
-                $a \in {\cal E}_{a}$,
-                $o_{s} \in {\cal E}_{os}$,
-                $o_{g} \in {\cal E}_{og}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
               \item
                 Subject Group Subset Inheritance
+
+                $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$), where
+
+                $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
+                $a \in {\cal E}_{a}$,
+                $o \in {\cal E}_{o}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -966,15 +974,15 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$), where
-
-                $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
-                $a \in {\cal E}_{a}$,
-                $o \in {\cal E}_{o}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
               \item
                 Access Right Group Subset Inheritance
+
+                $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$), where
+
+                $s \in {\cal E}_{s}$,
+                $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
+                $o \in {\cal E}_{o}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -988,15 +996,15 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$), where
-
-                $s \in {\cal E}_{s}$,
-                $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
-                $o \in {\cal E}_{o}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
               \item
                 Object Group Subset Inheritance
+
+                $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$), where
+
+                $s \in {\cal E}_{s}$,
+                $a \in {\cal E}_{a}$,
+                $o_{g1}, o_{g2} \in {\cal E}_{og}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -1009,13 +1017,6 @@ query holds(alice, read, file);
                     & \hat{subst}(o_{g1}, o_{g2}, \sigma)
                   \end{aligned}
                 \end{math}
-
-                $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$), where
-
-                $s \in {\cal E}_{s}$,
-                $a \in {\cal E}_{a}$,
-                $o_{g1}, o_{g2} \in {\cal E}_{og}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
             \end{enumerate}
 
           \subparagraph{Transitivity rules.}
@@ -1029,6 +1030,11 @@ query holds(alice, read, file);
               \item
                 Subject Group Transitivity
 
+                $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$), where
+
+                $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{subst}(sg_{1}, sg_{3}, \sigma) \leftarrow &
@@ -1037,13 +1043,13 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$), where
-
-                $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
               \item
                 Access Right Group Transitivity
+
+                $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$), where
+
+                $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -1053,13 +1059,13 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$), where
-
-                $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
               \item
                 Object Group Transitivity
+
+                $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$), where
+
+                $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -1068,11 +1074,6 @@ query holds(alice, read, file);
                     & \hat{subst}(og_{2}, og_{3}, \sigma)
                   \end{aligned}
                 \end{math}
-
-                $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$), where
-
-                $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
             \end{enumerate}
 
           \subparagraph{Inertial rules.}
@@ -1365,30 +1366,31 @@ query holds(alice, read, file);
           Given a consistent domain description ${\cal D}_{\cal L}$, ground
           query expression $\phi$ and a finite sequence list $\psi$, we say the
           query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
-          in the sequence list $\phi$ has been applied:
+          in the sequence list $\psi$ has been applied, denoted as
 
           \begin{quote}
-            ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\}
+            ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\},
           \end{quote}
 
           \noindent if and only if for every atom $\alpha$ in $\phi$, $\alpha$
           $\in$ ${\cal A}^{|\psi|}$, [$\lnot$] $\alpha$ is in every answer
-          set of $Trans$(${\cal D}_{\cal L}$)
+          set of $Trans$(${\cal D}_{\cal L}$).
         \end{definition}
 
     \begin{example}
       \label{ex-3}
       Given the language ${\cal L}$ code listing in Example \ref{ex-1} and its
-      semantic translation in Example \ref{ex-2}, the following shows the
-      results of the query evaluations:
+      semantic translation in Example \ref{ex-2}, where $\psi$ =
+      \{$delete\_read$($grp1$, $file$)\}. The following shows the
+      results of each $\phi$:
 
       \begin{quote}
         \begin{math}
           \begin{aligned}[t]
-            &holds(grp1, write, file) ? TRUE. \\
-            &holds(grp1, read, file) ? FALSE. \\
-            &holds(alice, write, file) ? TRUE. \\
-            &holds(alice, read, file) ? FALSE.
+            &\phi_{0} = holds(grp1, write, file) : TRUE \\
+            &\phi_{1} = holds(grp1, read, file) : FALSE \\
+            &\phi_{2} = holds(alice, write, file) : TRUE \\
+            &\phi_{3} = holds(alice, read, file) : FALSE
           \end{aligned}
         \end{math}
       \end{quote}
@@ -1411,7 +1413,8 @@ query holds(alice, read, file);
       collaboration with an authorisation agent program that queries the
       policy base to determine whether to allow users access to resources.
       Through an authorisation agent program, the PolicyUpdater system also
-      allows administrators to dynamically update the policy base.
+      allows administrators to dynamically update the policy base by adding
+      or removing update directives in the policy update table.
 
       \subsubsection{Parsers}
 
@@ -1452,8 +1455,8 @@ query holds(alice, read, file);
 
       The processes presented in this section shows how the language
       ${\cal L}$ policy stored in the data structures is translated into a
-      normal logic program, how it can be updated dynamically and how it can
-      be manipulated to evaluate queries. The flowchart in Figure \ref{fig-2}
+      normal logic program and how it can be dynamically updated and
+      manipulated to evaluate queries. The flowchart in Figure \ref{fig-2}
       gives an overview of the system processes.
 
       \begin{figure}[ht]
@@ -1466,15 +1469,14 @@ query holds(alice, read, file);
 
       \subsubsection{Grounding Constraint Variables}
 
-        While constraints are in the process of being added into the
-        constraints table, each variable identifier that occurs within each
-        constraint is grounded by replacing that constraint with a set of
-        constraints wherein each instance of the variable is replaced by all
-        entity identifiers defined in the symbol table. Note that only those
-        entity identifiers that are valid for each fact in the current
-        constraint are used to replace the variable (e.g. only singular subject entity
-        identifiers are used to replace an element variable occurring in a
-        subject member fact).
+        While constraints are being added into the constraints table, each
+        variable identifier that occurs within each constraint is grounded by
+        replacing that constraint with a set of constraints wherein each
+        instance of the variable is replaced by all entity identifiers defined
+        in the symbol table. Note that only those entity identifiers that are
+        valid for each fact in the current constraint are used to replace the
+        variable (e.g. only singular subject entity identifiers are used to
+        replace an element variable occurring in a subject member fact).
 
         For example, given that the symbol table contains three singular
         subject entity identifiers: $alice$, $bob$ and $charlie$, and the
@@ -1495,12 +1497,12 @@ query holds(alice, read, file);
 
       \subsubsection{Policy Updates}
 
-        In the semantics section, it is shown that policy updates are performed
-        by treating each update as a constraint. This constraint is composed of
-        a premise, which are the preconditions in the current state and a
-        consequent, which is the postcondition of the resulting state after the
-        application of the policy update. The resulting state in this procedure
-        represents the updated policy.
+        In Section \ref{subsec-semantics}, it is shown that policy updates are
+        performed by treating each update as a constraint. This constraint is
+        composed of a premise, which are the preconditions in the current state
+        and a consequent, which is the postcondition of the resulting state
+        after the application of the policy update. The resulting state in this
+        procedure represents the updated policy.
 
         The most crucial step in performing a policy update is the translation
         of the policy updates into normal logic program constraints. This step
@@ -1514,21 +1516,19 @@ query holds(alice, read, file);
       \subsubsection{Translation to Normal Logic Program}
 
         The semantics of language ${\cal L}$ shows that any language
-        ${\cal L}$ program $P^{\cal L}$ can be translated into an equivalent
-        extended logic program $P^{\cal{L^{*}}}$ then translated again into
-        an equivalent normal logic program suitable for manipulation using
-        the {\em Stable Model} semantics. However, the implementation of such
-        translations can be greatly simplified by translating language
-        ${\cal L}$ programs directly into normal logic programs.
+        ${\cal L}$ program can be translated into an equivalent extended logic
+        program then translated again into an equivalent normal logic program.
+        However, the implementation of such translations can be greatly
+        simplified by translating language ${\cal L}$ programs directly into
+        normal logic programs.
 
         \paragraph{Removal of Classical Negation.}
 
-          The removal of classical negation from facts of language ${\cal L}$
-          is a straightforward procedure: each classically negated fact
-          $\lnot$ $f$ is replaced by a new and unique positive fact $f'$ that
-          represents the negation of fact $f$. To preserve the consistency of
-          the policy base for all facts $f$ in the domain, the following
-          constraint rule must be added:
+          To remove classical negation from facts of language ${\cal L}$, each
+          classically negated fact $\lnot$ $f$ is replaced by a new and unique
+          positive fact $f'$ that represents the negation of fact $f$. To
+          preserve the consistency of the policy base for all facts $f$ in the
+          domain, the following constraint rule must be added:
 
           \begin{quote}
             $FALSE$ $\leftarrow$ $f$, $f'$
@@ -1536,9 +1536,7 @@ query holds(alice, read, file);
 
           The removal process is achieved by adding a boolean parameter to
           each fact to indicate whether the fact is classically negated or
-          not.
-
-          For example, given the fact:
+          not. For example, given the fact:
 
           \begin{quote}
             $\lnot$ $holds$($alice$, $exec$, $file$)
@@ -1600,8 +1598,7 @@ query holds(alice, read, file);
             index $i$, where $0$ $\leq$ $i$ $<$ $n$ ($n$ is the total
             number of atoms enumerated).
 
-          \subparagraph{Extend indexing procedure to represent facts.} The
-            indices produced in the above step represent positive facts. Since
+          \subparagraph{Extend indexing procedure to represent facts.} Since
             negative facts are just mirror images of their positive
             counterparts, their indices are calculated by adding $n$ to the
             indices of the corresponding positive facts. Thus, indices $i$
@@ -1622,11 +1619,11 @@ query holds(alice, read, file);
           With the language ${\cal L}$ policy elements stored into the storage
           structure (see Appendix \ref{app-store}), a normal logic program can
           then be generated for evaluation. Using the translation methods
-          described in the semantics section and the method for eliminating
-          classical negation, each initial state expression, constraint rule
-          and policy update becomes a set of simple logical rules. By applying
-          the $encode$ function above for each fact in each of these rules,
-          a normal logic program is generated.
+          described in Section \ref{subsec-semantics} and the method for
+          eliminating classical negation, each initial state expression,
+          constraint rule and policy update becomes a set of simple logical
+          rules. By applying the $encode$ function above for each fact in each
+          of these rules, a normal logic program is generated.
 
       \subsubsection{Query Evaluation}
 
@@ -1643,7 +1640,7 @@ query holds(alice, read, file);
         evaluated to be true. On the other hand, if the negation of a fact
         holds in every answer set, then it is evaluated to be false. A fact
         or its negation that does not hold in every answer set is neither true
-        nor false: inconclusive.
+        nor false.
 
   \section{Conclusion}
     \label{sec-conclusion}
@@ -1654,21 +1651,18 @@ query holds(alice, read, file);
     authorisation language, language ${\cal L}$, for the definition, updating
     and querying of access control policies. As we have shown, language
     ${\cal L}$ is expressive enough to represent constraints and default rules.
-    Because language ${\cal L}$ is a first-order logic language, the underlying
-    semantics allow the language to be translated into an extended logic
-    program, and then into a normal logic program through the application of
-    the rules discussed in this paper. Through these translation rules we have
-    also shown that dynamic and conditional policy updates can be achieved by
-    the application of translated constraint rules.
+
+    The case study in Appendix \ref{app-case} is a demonstration of how the
+    PolicyUpdater system can be adapted to be used in a real-world web server
+    authorisation application.
 
     One possible future extension to this work is the integration of temporal
     logic to language ${\cal L}$ to allow time properties to be expressed in
     access control policies. Such extension will be useful in access control
     systems such as e-commerce applications where authorisations are granted
     or denied based on policies that are time dependent. Another possible
-    extension to the system and language to include a more flexible conflict
-    resolution strategy to replace the system's current
-    {\em negation-has-higher-precedence} resolution rule.
+    extension to the system and language is to consider multi-agent
+    environments.
 
   \appendix
 
@@ -1905,31 +1899,31 @@ query holds(alice, read, file);
       On Formal Languages for Sequences of Authorization Transformations.
       In {\em Proceedings of Safety, Reliability and Security of Computer
       Systems}. Also in {\em Lecture Notes in Computer Science},
-      Vol. 1698, pp. 375-384. Springer-Verlag, 1999
+      Vol. 1698, pp. 375-384. Springer-Verlag, 1999.
 
     \bibitem{BA2}
       Bai, Y., Varadharajan, V.,
       On Transformation of Authorization Policies.
       In {\em Data and Knowledge Engineering},
-      Vol. 45, No. 3, pp. 333-357, 2003
+      Vol. 45, No. 3, pp. 333-357, 2003.
 
     \bibitem{BE1}
       Bertino, E., Buccafurri, F., Ferrari, E., Rullo, P.,
       A Logic-based Approach for Enforcing Access Control.
       In {\em Journal of Computer Security},
-      Vol. 8, No. 2-3, pp. 109-140, IOS Press, 2000
+      Vol. 8, No. 2-3, pp. 109-140, IOS Press, 2000.
 
     \bibitem{BE2}
       Bertino, E., Mileo A., Provetti, A.
       Policy Monitoring with User-Preferences in PDL.
       In {\em Proceedings of IJCAI-03 Workshop for Nonmonotonic Reasoning,
       Action and Change},
-      pp. 37-44, 2003
+      pp. 37-44, 2003.
 
     \bibitem{CHO}
       Chomicki, J., Lobo, J., Naqvi S.,
       A Logic Programming Approach to Conflict Resolution in Policy Management.
-      In {\em Proceedings of KR2000, 7th International conference on Principles
+      In {\em Proceedings of KR2000, 7th International Conference on Principles
       of Knowledge Representation and Reasoning},
       pp. 121-132, Kaufmann, 2000.
 
@@ -1937,14 +1931,14 @@ query holds(alice, read, file);
       Jajodia, S., Samarati, P., Sapino, M. L., Subrahmanian, V. S.,
       Flexible Support for Multiple Access Control Policies.
       In {\em ACM Transactions on Database Systems},
-      Vol. 29, No. 2, pp. 214-260, ACM, 2001
+      Vol. 29, No. 2, pp. 214-260, ACM, 2001.
 
     \bibitem{LOB}
       Lobo J., Bhatia R., Naqvi S.,
       A Policy Description Language.
-      In {\em Proceedings of AAAI 16th National Conferfence on Artificial
+      In {\em Proceedings of AAAI 16th National Conference on Artificial
       Intelligence and 11th Conference on Innovative Applications of Artificial
       Intelligence },
-      pp. 291-298, AAAI Press, 1999
+      pp. 291-298, AAAI Press, 1999.
   \end{thebibliography}
 \end{document}
