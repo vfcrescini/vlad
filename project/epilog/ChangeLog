@@ -1,3 +1,16 @@
+2002-10-15  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/stringlist.c :
+	* exp/comp_exp.c :
+	* exp/gnd_exp.c :
+	* ident/identlist.c :
+	* ident/symtab.c :
+	* trans/translist.c :
+	* trans/transtab.c :
+
+	  - Re-initialised lists after they have been purged.
+
+
 2003-10-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* docs/sample :

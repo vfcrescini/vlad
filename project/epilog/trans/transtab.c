@@ -149,6 +149,7 @@ void transtab_purge(void)
   
   for (i = 0; i < simplelist_length(list); i++)
     simplelist_del_index(&list, 0, transtab_destroy);
+  simplelist_init(&list);
 }
 
 /* compare ONLY THE NAME component of p1 and p2 */

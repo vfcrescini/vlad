@@ -70,7 +70,6 @@ int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
       comp_exp_find(*exp, atom) == 0) {
 
     comp_exp_purge(exp);
-    comp_exp_init(exp);
 
     if ((new_atom = EPI_COMPATOM_MALLOC) == NULL)
       return -1;
@@ -145,6 +144,7 @@ void comp_exp_purge(comp_exp_type *exp)
     for (i = 0; i < simplelist_length(*exp); i++)
       simplelist_del_index(exp, 0, comp_exp_destroy);
   }
+  simplelist_init(exp);
 }
 
 /* replace variables in comp with actual identifiers from identlist */

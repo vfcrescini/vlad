@@ -71,6 +71,7 @@ void identlist_purge(identlist_type *list)
     for (i = 0; i < simplelist_length(*list); i++)
       simplelist_del_index(list, 0, NULL);
   }
+  simplelist_init(list);
 }
 
 /* compare ONLY THE NAME component of p1 and p2 */

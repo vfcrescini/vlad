@@ -77,6 +77,7 @@ void stringlist_purge(stringlist_type *list)
     for (i = 0; i < simplelist_length(*list); i++)
       simplelist_del_index(list, 0, stringlist_destroy);
   }
+  simplelist_init(list);
 }
 
 /* returns 0 if the strings pointed to by p1 and p2 are equivalent */

@@ -52,6 +52,7 @@ void translist_purge(translist_type *list)
     for (i = 0; i < simplelist_length(*list); i++)
       simplelist_del_index(list, 0, translist_destroy);
   }
+  simplelist_init(list);
 }
 
 /* free memory */

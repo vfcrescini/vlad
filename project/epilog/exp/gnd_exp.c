@@ -952,6 +952,7 @@ void gnd_exp_purge_list(gnd_exp_type *exp, int flag)
     for (i = 0; i < simplelist_length(*exp); i++)
       simplelist_del_index(exp, 0, df);
   }
+  simplelist_init(exp);
 }
 
 /* returns 0 if the ATOMS pointed to by p1 and p2 are equivalent */
