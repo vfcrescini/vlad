@@ -464,10 +464,10 @@ trans_stmt :
     $4->print(po);
 
     fprintf(stderr, "transformation:\n");
-    fprintf(stderr, "  name:      %s\n", $1);
-    fprintf(stderr, "  varlist:  %s\n", v);
-    fprintf(stderr, "  precond:  %s\n", pr);
-    fprintf(stderr, "  postcond: %s\n", po);
+    fprintf(stderr, "  name:       %s\n", $1);
+    fprintf(stderr, "  varlist:   %s\n", v);
+    fprintf(stderr, "  precond:   %s\n", pr);
+    fprintf(stderr, "  postcond:  %s\n", po);
 #endif
 
     /* cleanup */
