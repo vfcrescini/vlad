@@ -439,14 +439,13 @@ int kb::list_seqtab(FILE *f)
   return VLAD_OK;
 }
 
-/* generate a human-readable general logic program and dump output to f */
-int kb::generate_nlp(expression *e, FILE *f)
+/* generate the query */
+int kb::query_generate(expression *e, FILE *f)
 {
   int retval;
   unsigned int i;
 
-  /* we only allow this function after kb is closed */
-  if (stage < 3)
+  if (stage != 5)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
@@ -456,6 +455,45 @@ int kb::generate_nlp(expression *e, FILE *f)
   /* verify expression */
   if ((retval = verify_expression(e)) != VLAD_OK)
     return retval;
+
+  /* and now for the queries */
+  fprintf(f, "Queries\n");
+
+  for (i = 0; i < VLAD_LIST_LENGTH(e); i++) {
+    atom *tmp_atom;
+    unsigned int tmp_num;
+
+    if ((retval = e->get(i, &tmp_atom)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(setable), &tmp_num)) != VLAD_OK)
+      return retval;
+
+    if (i == 0)
+      fprintf(f, "  ");
+
+    if (i + 1 == VLAD_LIST_LENGTH(e))
+      fprintf(f, "%d %s\n", tmp_num, VLAD_STR_QUERY);
+    else
+      fprintf(f, "%d %s ", tmp_num, VLAD_STR_AND);
+  }
+
+  return VLAD_OK;
+}
+
+
+/* generate the rules necessary to evaluate queries */
+int kb::compute_generate(FILE *f)
+{
+  int retval;
+  unsigned int i;
+
+  /* we only allow this function after kb is closed */
+  if (stage != 3 && stage != 5)
+    return VLAD_INVALIDOP;
+
+  /* make sure the filestream is not NULL */
+  if (f == NULL)
+    return VLAD_NULLPTR;
 
   /* first we print out all the possible atoms in the kb */
   fprintf(f, "Atoms\n");
@@ -945,39 +983,20 @@ int kb::generate_nlp(expression *e, FILE *f)
       fprintf(f, "\n");
   }
 
-  /* and now for the queries */
-  fprintf(f, "Queries\n");
-
-  for (i = 0; i < VLAD_LIST_LENGTH(e); i++) {
-    atom *tmp_atom;
-    unsigned int tmp_num;
-
-    if ((retval = e->get(i, &tmp_atom)) != VLAD_OK)
-      return retval;
-    if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(setable), &tmp_num)) != VLAD_OK)
-      return retval;
-
-    if (i == 0)
-      fprintf(f, "  ");
-
-    if (i + 1 == VLAD_LIST_LENGTH(e))
-      fprintf(f, "%d %s\n", tmp_num, VLAD_STR_QUERY);
-    else
-      fprintf(f, "%d %s ", tmp_num, VLAD_STR_AND);
-  }
+  stage = 5;
 
   return VLAD_OK;
 }
 
 #ifdef SMODELS
 /* prepares the kb for queries */
-int kb::compute()
+int kb::compute_evaluate()
 {
   int retval;
   unsigned int i;
 
   /* we only allow this after kb is closed */
-  if (stage < 3)
+  if (stage != 3 && stage != 4)
     return VLAD_INVALIDOP;
 
   /* create a new instance of the smodels wrapper and init it */
@@ -1444,7 +1463,7 @@ int kb::compute()
 
 #ifdef SMODELS
 /* use wrapper class to evaluate a query */
-int kb::evaluate_query(expression *e, unsigned char *r)
+int kb::query_evaluate(expression *e, unsigned char *r)
 {
   int retval;
   unsigned int i;

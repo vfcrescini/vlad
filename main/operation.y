@@ -119,16 +119,23 @@ query_stmt :
 
   switch(mode) {
     case VLAD_MODE_GENERATE : {
-      if ((retval = kbase->generate_nlp($2, fout)) != VLAD_OK) {
-        errorcode = retval;
-        operationerror("could not generate nlp");
-        return retval;
+      switch(retval = kbase->query_generate($2, fout)) {
+        case VLAD_OK :
+          break;
+        case VLAD_INVALIDOP :
+          errorcode = retval;
+          operationerror("must use compute before query");
+          return retval;
+        default :
+          errorcode = retval;
+          operationerror("could not evaluate query: unexpected error");
+          return retval;
       }
       break;
     }
 #ifdef SMODELS
     case VLAD_MODE_EVALUATE : {
-      switch(retval = kbase->evaluate_query($2, &res)) {
+      switch(retval = kbase->query_evaluate($2, &res)) {
         case VLAD_OK :
           fprintf(fout, "%s\n", VLAD_RESULT_STRING(res));
           break;
@@ -163,23 +170,40 @@ query_stmt :
   ;
 
 compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
-#ifdef SMODELS
     int retval;
-    if (mode == VLAD_MODE_EVALUATE) {
-      switch(retval = kbase->compute()) {
-        case VLAD_OK :
-          break;
-        case VLAD_NOMODEL :
-          errorcode = retval;
-          operationerror("could not evaluate query: conflict encountered");
-          return VLAD_NOMODEL;
-        default :
-          errorcode = retval;
-          operationerror("could not evaluate query: unexpected error");
-          return retval;
-      }
-    }
+
+    switch(mode) {
+      case VLAD_MODE_GENERATE :
+        switch(retval = kbase->compute_generate(fout)) {
+          case VLAD_OK :
+            break;
+          default :
+            errorcode = retval;
+            operationerror("could not compute: unexpected error");
+            return retval;
+        }
+        break;
+#ifdef SMODELS
+      case VLAD_MODE_EVALUATE :
+        switch(retval = kbase->compute_evaluate()) {
+          case VLAD_OK :
+            break;
+          case VLAD_NOMODEL :
+            errorcode = retval;
+            operationerror("could not compute: conflict encountered");
+            return VLAD_NOMODEL;
+          default :
+            errorcode = retval;
+            operationerror("could not compute: unexpected error");
+            return retval;
+        }
+        break;
 #endif
+      default :
+        errorcode = VLAD_FAILURE;
+        operationerror("invalid mode");
+        return VLAD_FAILURE;
+    }
   }
   ;
 

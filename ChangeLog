@@ -1,3 +1,16 @@
+2003-06-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+	* lib/kb.h :
+	* main/operation.y :
+
+	  - Separated compute() into compute_generate() and
+	    compute_evaluate() also generate_nlp() and evaluate_nlp() to
+	    query_generate() and query_evaluate(). This change is made to
+	    allow multiple queries of the same transformation sequence to
+	    share the same kb state.
+
+
 2003-06-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :
