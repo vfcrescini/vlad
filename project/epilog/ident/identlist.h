@@ -35,6 +35,6 @@ int identlist_get(identlist_type list, unsigned int index, ident_type **ident);
 int identlist_del(identlist_type *list, unsigned int index);
 
 /* delete all entries but not free the identifiers */
-int identlist_purge(identlist_type *list);
+void identlist_purge(identlist_type *list);
 
 #endif

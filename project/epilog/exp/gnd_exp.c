@@ -15,7 +15,7 @@ int gnd_exp_group(ident_type ident,
                   gnd_exp_type exp,
                   int flag);
 int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res);
-int gnd_exp_purge_list(gnd_exp_type *exp, int flag);
+void gnd_exp_purge_list(gnd_exp_type *exp, int flag);
 int gnd_exp_compare(void *p1, void *p2);
 void gnd_exp_destroy(void *p);
 
@@ -105,8 +105,9 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
   EPI_ATOM_NEGATE(atom);
   if ((EPI_ATOM_IS_CONST(atom) && atom.truth == epi_true) ||
       gnd_exp_find(*exp, atom) == 0) {
-    if (gnd_exp_purge(exp) != 0)
-      return -1;
+
+    gnd_exp_purge(exp);
+
     if (gnd_atom_create_const(&new_atom, epi_false) != 0)
       return -1;
   }
@@ -139,9 +140,9 @@ int gnd_exp_copy(gnd_exp_type exp1, gnd_exp_type *exp2)
 }
 
 /* delete all atoms from this gnd_exp */
-int gnd_exp_purge(gnd_exp_type *exp)
+void gnd_exp_purge(gnd_exp_type *exp)
 {
-  return gnd_exp_purge_list(exp, 1);
+  gnd_exp_purge_list(exp, 1);
 }
 
 /* makes a duplicate (with malloc) of the atom pointed by p1 to p2 */
@@ -272,7 +273,9 @@ int gnd_exp_group(ident_type ident,
       return -1;
   }
 
-  return gnd_exp_purge_list(&tmp_exp, 0);
+  gnd_exp_purge_list(&tmp_exp, 0);
+
+  return 0;
 }
 
 /* gives true, false or unknown depending on whether atom or its negation 
@@ -335,24 +338,18 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
             return -1;
           if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == 0) { 
             *res = epi_res_true;
-            if (identlist_purge(&tmp_identlist1) != 0)
-              return -1;
-            if (identlist_purge(&tmp_identlist2) != 0)
-              return -1;
-            if (identlist_purge(&tmp_identlist3) != 0)
-              return -1;
+            identlist_purge(&tmp_identlist1);
+            identlist_purge(&tmp_identlist2);
+            identlist_purge(&tmp_identlist3);
             return 0;
           }
           /* also try the negation while we're here */
           EPI_ATOM_NEGATE(tmp_atom);
           if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == 0) { 
             *res = epi_res_false;
-            if (identlist_purge(&tmp_identlist1) != 0)
-              return -1;
-            if (identlist_purge(&tmp_identlist2) != 0)
-              return -1;
-            if (identlist_purge(&tmp_identlist3) != 0)
-              return -1;
+            identlist_purge(&tmp_identlist1);
+            identlist_purge(&tmp_identlist2);
+            identlist_purge(&tmp_identlist3);
             return 0;
           }
           EPI_ATOM_NEGATE(tmp_atom);
@@ -369,7 +366,8 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
 
     if (identlist_find(tmp_identlist1, atom.atom.memb.group->name) == 0) {
       *res = epi_res_true;
-      return identlist_purge(&tmp_identlist1);
+      identlist_purge(&tmp_identlist1);
+      return 0;
     }
 
     /* check for falseness */
@@ -378,7 +376,8 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
 
     if (identlist_find(tmp_identlist1, atom.atom.memb.group->name) == 0) {
       *res = epi_res_false;
-      return identlist_purge(&tmp_identlist1);
+      identlist_purge(&tmp_identlist1);
+      return 0;
     }
   }
   else if (EPI_ATOM_IS_SUBST(atom)) {
@@ -390,7 +389,8 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
 
     if (identlist_find(tmp_identlist1, atom.atom.subst.group2->name) == 0) {
       *res = epi_res_true;
-      return identlist_purge(&tmp_identlist1);
+      identlist_purge(&tmp_identlist1);
+      return 0;
     }
 
     /* check for falseness */
@@ -399,7 +399,8 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
 
     if (identlist_find(tmp_identlist1, atom.atom.subst.group2->name) == 0) {
       *res = epi_res_false;
-      return identlist_purge(&tmp_identlist1);
+      identlist_purge(&tmp_identlist1);
+      return 0;
     }
   }
   else if (EPI_ATOM_IS_CONST(atom)) {
@@ -415,21 +416,17 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
 
 /* if flag is non-zero, delete all atoms from this gnd_exp. if zero,
  * keeps the atoms but destroys the list */
-int gnd_exp_purge_list(gnd_exp_type *exp, int flag)
+void gnd_exp_purge_list(gnd_exp_type *exp, int flag)
 {
   unsigned int i;
   void (*df)(void *);
 
-  if (exp == NULL)
-    return -1;
-
-  df = (flag == 0) ? NULL : gnd_exp_destroy;
+  if (exp != NULL) {
+    df = (flag == 0) ? NULL : gnd_exp_destroy;
   
-  for (i = 0; i < simplelist_length(*exp); i++)
-    if (simplelist_del_index(exp, 0, df) != 0)
-      return -1;
-
-  return 0;
+    for (i = 0; i < simplelist_length(*exp); i++)
+      simplelist_del_index(exp, 0, df);
+  }
 }
 
 /* returns 0 if the ATOMS pointed to by p1 and p2 are equivalent */

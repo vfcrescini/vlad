@@ -111,8 +111,7 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
     return -1;
 
   /* before doing anything else, do some cleanup */
-  if (gnd_exp_purge(&tmp_precond) != 0)
-    return -1;
+  gnd_exp_purge(&tmp_precond);
 
   /* if the result is false or unknown we just return with a copy
    * of kb in res */
@@ -138,20 +137,18 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
       return -1;
   }
 
-  return gnd_exp_purge(&tmp_postcond);
+  gnd_exp_purge(&tmp_postcond);
+
+  return 0;
 }
 
 /* empty the list */
-int transtab_purge(void)
+void transtab_purge(void)
 {
   unsigned int i;
   
-  for (i = 0; i < simplelist_length(list); i++) {
-    if (simplelist_del_index(&list, 0, transtab_destroy) != 0)
-      return -1;
-  }
-
-  return 0;
+  for (i = 0; i < simplelist_length(list); i++)
+    simplelist_del_index(&list, 0, transtab_destroy);
 }
 
 /* compare ONLY THE NAME component of p1 and p2 */

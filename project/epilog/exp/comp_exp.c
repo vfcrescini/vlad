@@ -65,12 +65,13 @@ int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
 
   /* if the negation of an atom is aleady in, or if the atom is a FALSE
    * constant, we replace the the whole expression with a constant false */
-  
   EPI_ATOM_NEGATE(atom);
   if ((EPI_ATOM_IS_CONST(atom) && atom.truth == epi_true) ||
       comp_exp_find(*exp, atom) == 0) {
-    if (comp_exp_purge(exp) != 0)
-      return -1;
+
+    comp_exp_purge(exp);
+    comp_exp_init(exp);
+
     if (comp_atom_create_const(&new_atom, epi_false) != 0)
       return -1;
   }
@@ -133,18 +134,14 @@ int comp_exp_del(comp_exp_type *exp, comp_atom_type atom)
 }
 
 /* delete all atoms from this expression */
-int comp_exp_purge(comp_exp_type *exp)
+void comp_exp_purge(comp_exp_type *exp)
 {
   unsigned int i;
 
-  if (exp == NULL)
-    return -1;
-
-  for (i = 0; i < simplelist_length(*exp); i++)
-    if (simplelist_del_index(exp, 0, comp_exp_destroy) != 0)
-      return -1;
-
-  return 0;
+  if (exp != NULL) {
+    for (i = 0; i < simplelist_length(*exp); i++)
+      simplelist_del_index(exp, 0, comp_exp_destroy);
+  }
 }
 
 /* replace variables in comp with actual identifiers from identlist */

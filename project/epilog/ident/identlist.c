@@ -63,18 +63,14 @@ int identlist_del(identlist_type *list, unsigned int index)
 }
 
 /* delete all entries but not free the identifiers */
-int identlist_purge(identlist_type *list)
+void identlist_purge(identlist_type *list)
 {
   unsigned int i;
 
-  if (list == NULL)
-    return -1;
-
-  for (i = 0; i < simplelist_length(*list); i++)
-    if (simplelist_del_index(list, 0, NULL) != 0)
-      return -1;
-
-  return 0;
+  if (list != NULL) {
+    for (i = 0; i < simplelist_length(*list); i++)
+      simplelist_del_index(list, 0, NULL);
+  }
 }
 
 /* compare ONLY THE NAME component of p1 and p2 */

@@ -38,6 +38,6 @@ int symtab_get(char *name, ident_type **ident);
 int symtab_del(char *name);
 
 /* delete all entries and free everything */
-int symtab_purge(void);
+void symtab_purge(void);
 
 #endif

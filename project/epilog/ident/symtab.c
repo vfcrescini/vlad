@@ -89,15 +89,12 @@ int symtab_del(char *name)
 }
 
 /* delete all entries and free everything */
-int symtab_purge(void)
+void symtab_purge(void)
 {
   unsigned int i;
 
   for (i = 0; i < simplelist_length(list); i++)
-    if (simplelist_del_index(&list, 0, symtab_destroy) != 0)
-      return -1;
-
-  return 0;
+    simplelist_del_index(&list, 0, symtab_destroy);
 }
 
 /* compare ONLY THE NAME component of p1 and p2 */

@@ -32,6 +32,6 @@ int stringlist_add(stringlist_type *list, char *string);
 int stringlist_del(stringlist_type *list, char *string);
 
 /* delete all strings from this stringlist */
-int stringlist_purge(stringlist_type *list);
+void stringlist_purge(stringlist_type *list);
 
 #endif

@@ -44,18 +44,14 @@ int translist_get(translist_type list,
 }
 
 /* empty the list along with its members */
-int translist_purge(translist_type *list)
+void translist_purge(translist_type *list)
 {
   unsigned int i;
   
-  if (list == NULL)
-    return -1;
-    
-  for (i = 0; i < simplelist_length(*list); i++)
-    if (simplelist_del_index(list, 0, translist_destroy) != 0)
-      return -1;
-
-  return 0;
+  if (list != NULL) {    
+    for (i = 0; i < simplelist_length(*list); i++)
+      simplelist_del_index(list, 0, translist_destroy);
+  }
 }
 
 /* free memory */

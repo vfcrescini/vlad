@@ -26,6 +26,6 @@ int translist_get(translist_type list,
                   transref_type **trans);
 
 /* empty the list along with its members */
-int translist_purge(translist_type *list);
+void translist_purge(translist_type *list);
 
 #endif

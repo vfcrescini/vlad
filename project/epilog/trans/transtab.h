@@ -30,6 +30,6 @@ int transtab_find(char *name);
 int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res);
 
 /* empty the list */
-int transtab_purge(void);
+void transtab_purge(void);
 
 #endif

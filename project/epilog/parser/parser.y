@@ -26,8 +26,8 @@ int yylex(void);
 
 int add_identifier(char ident[], unsigned short type);
 void exit_error(char *message);
-int initialise(void);
-int destroy(void);
+void initialise(void);
+void destroy(void);
 #ifdef DEBUG
 int dump_strlist(stringlist_type list);
 int dump_gnd_atom(gnd_atom_type atom);
@@ -117,8 +117,7 @@ program :
 
 init :
   {
-    if (initialise() != 0) 
-      exit_error("internal error");
+    initialise();
   }
   ;
 
@@ -129,10 +128,7 @@ destroy :
     dump_gnd_exp(initial_exp);
 #endif
 
-    if (destroy() != 0) {
-      yyerror("internal error");
-      return -1;
-    }
+    destroy();
   }
   ;
 
@@ -305,8 +301,7 @@ initial_stmt :
 #endif
     }
 
-    if (gnd_exp_purge(&$2) != 0)
-      exit_error("internal error");
+    gnd_exp_purge(&$2);
   }
   ;
 
@@ -353,8 +348,7 @@ policy_stmt :
         exit_error("internal error3");
       if (transtab_transform(prev, *tmp_trans, &curr) != 0)
         exit_error("internal error4");
-      if (gnd_exp_purge(&prev) != 0)
-        exit_error("internal error");
+      gnd_exp_purge(&prev);
 
       prev = curr;
     }
@@ -373,12 +367,9 @@ policy_stmt :
         fprintf(yyout, "?\n");
     }
 
-    if (gnd_exp_purge(&curr) != 0)
-      exit_error("internal error");
-    if (translist_purge(&$2) != 0)
-      exit_error("internal error");
-    if (gnd_exp_purge(&$1) != 0)
-      exit_error("internal error");
+    gnd_exp_purge(&curr);
+    translist_purge(&$2);
+    gnd_exp_purge(&$1);
   }
   | is_clause EPI_SYM_SEMICOLON {
     res_type result;
@@ -397,8 +388,7 @@ policy_stmt :
         fprintf(yyout, "?\n");
     }    
 
-    if (gnd_exp_purge(&$1) != 0)
-      exit_error("internal error");
+    gnd_exp_purge(&$1);
   }
   ;
 
@@ -854,7 +844,7 @@ int add_identifier(char ident[], unsigned short type)
 }
 
 /* initialise our global lists */
-int initialise(void)
+void initialise(void)
 {
 #ifdef DEBUG
   fprintf(yyerr, "initialising global lists\n");
@@ -863,35 +853,18 @@ int initialise(void)
   symtab_init();
   gnd_exp_init(&initial_exp);
   transtab_init();
-
-  return 0;
 }
 
 /* destroy dynamically allocated mem */
-int destroy(void)
+void destroy(void)
 {
 #ifdef DEBUG
-  fprintf(yyerr, "destroying symtab\n");
+  fprintf(yyerr, "destroying global lists\n");
 #endif
 
-  if (symtab_purge() != 0)
-    return -1;
-
-#ifdef DEBUG
-  fprintf(yyerr, "destroying initial expression\n");
-#endif
-
-  if (gnd_exp_purge(&initial_exp) != 0)
-    return -1;
-
-#ifdef DEBUG
-  fprintf(yyerr, "destroying transtab\n");
-#endif
-
-  if (transtab_purge() != 0)
-    return -1;
-
-  return 0;
+  symtab_purge();
+  gnd_exp_purge(&initial_exp);
+  transtab_purge();
 }
 
 void exit_error(char *message)
