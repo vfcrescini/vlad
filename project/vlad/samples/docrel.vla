@@ -1,85 +1,85 @@
 /*
- * Document Release Example
+ * document release example
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-seq add Request(Sci, Doc, Pat_Off);
+seq add request(sci, doc, pat_off);
 compute;
 
-query holds(Pat_Off, Review, Doc) && !holds(Sci, Write, Doc);
+query holds(pat_off, review, doc) && !holds(sci, write, doc);
 
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
-seq add Get_Approval(Sci, Doc, Pat_Off);
+seq add request(sci, doc, pat_off);
+seq add get_approval(sci, doc, pat_off);
 compute;
 
-query holds(Sci, Pat_Ok, Doc) && !holds(Pat_Off, Review, Doc);
+query holds(sci, pat_ok, doc) && !holds(pat_off, review, doc);
 
 seq del 0;
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
-seq add Get_Rejection(Sci, Doc, Pat_Off);
+seq add request(sci, doc, pat_off);
+seq add get_rejection(sci, doc, pat_off);
 compute;
 
-query holds(Sci, Pat_Reject, Doc) && !holds(Pat_Off, Review, Doc);
+query holds(sci, pat_reject, doc) && !holds(pat_off, review, doc);
 
 seq del 0;
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
-seq add Get_Approval(Sci, Doc, Pat_Off);
-seq add Release_Doc(Sci, Doc);
+seq add request(sci, doc, pat_off);
+seq add get_approval(sci, doc, pat_off);
+seq add release_doc(sci, doc);
 compute;
 
-query holds(Sci, Release, Doc) && holds(Sci, Pat_Ok, Doc);
+query holds(sci, release, doc) && holds(sci, pat_ok, doc);
 
 seq del 0;
 seq del 0;
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
-seq add Get_Rejection(Sci, Doc, Pat_Off);
-seq add Revise_Doc(Sci, Doc);
+seq add request(sci, doc, pat_off);
+seq add get_rejection(sci, doc, pat_off);
+seq add revise_doc(sci, doc);
 compute;
 
-query holds(Sci, Write, Doc);
+query holds(sci, write, doc);
 
 seq del 0;
 seq del 0;
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
+seq add request(sci, doc, pat_off);
 compute;
 
-query holds(Sci, Own, Doc);
+query holds(sci, own, doc);
 
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
-seq add Get_Approval(Sci, Doc, Pat_Off);
+seq add request(sci, doc, pat_off);
+seq add get_approval(sci, doc, pat_off);
 compute;
 
-query holds(Sci, Own, Doc);
+query holds(sci, own, doc);
 
 seq del 0;
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
-seq add Get_Rejection(Sci, Doc, Pat_Off);
+seq add request(sci, doc, pat_off);
+seq add get_rejection(sci, doc, pat_off);
 compute;
 
-query holds(Sci, Own, Doc);
+query holds(sci, own, doc);
 
 seq del 0;
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
-seq add Get_Approval(Sci, Doc, Pat_Off);
-seq add Release_Doc(Sci, Doc);
+seq add request(sci, doc, pat_off);
+seq add get_approval(sci, doc, pat_off);
+seq add release_doc(sci, doc);
 compute;
 
-query holds(Sci, Own, Doc);
+query holds(sci, own, doc);
 
 seq del 0;
 seq del 0;
 seq del 0;
-seq add Request(Sci, Doc, Pat_Off);
-seq add Get_Rejection(Sci, Doc, Pat_Off);
-seq add Revise_Doc(Sci, Doc);
+seq add request(sci, doc, pat_off);
+seq add get_rejection(sci, doc, pat_off);
+seq add revise_doc(sci, doc);
 compute;
 
-query holds(Sci, Own, Doc);
+query holds(sci, own, doc);

@@ -1,36 +1,40 @@
 /*
- * Chinese-Wall Policy Example
+ * chinese-wall policy example
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 /* identifier declarations */
-ident sub S;
-ident acc Access, Accessible;
-ident obj Object1, Object2;
-ident obj-grp Company1, Company2;
+
+ident sub s;
+ident acc access, accessible;
+ident obj object1, object2;
+ident obj-grp company1, company2;
 
 /* initial facts */
+
 initially
-  holds(S, Accessible, Company1) &&
-  holds(S, Accessible, Company2);
+  holds(s, accessible, company1) &&
+  holds(s, accessible, company2);
 
 /* constraints */
-always memb(Object1, Company1);
-always memb(Object2, Company2);
 
-/* transformations */
-Request_Access_Company1(X, Y)
-  causes
-    holds(X, Access, Y) &&
-    !holds(X, Accessible, Company2)
-  if
-    memb(Y, Company1) &&
-    holds(X, Accessible, Company1);
+always memb(object1, company1);
+always memb(object2, company2);
 
-Request_Access_Company2(X, Y)
+/* updates */
+
+request_access_company1(X, Y)
   causes
-    holds(X, Access, Y) &&
-    !holds(X, Accessible, Company1)
+    holds(X, access, Y) &&
+    !holds(X, accessible, company2);
   if
-    memb(Y, Company2) &&
-    holds(X, Accessible, Company2);
+    memb(Y, company1) &&
+    holds(X, accessible, company1);
+
+request_access_company2(X, Y)
+  causes
+    holds(X, access, Y) &&
+    !holds(x, accessible, company1)
+  if
+    memb(Y, company2) &&
+    holds(X, accessible, company2);
