@@ -82,6 +82,9 @@ int expression_purge(expression_type *exp)
 /* returns 0 if the ATOMS pointed to by p1 and p2 are equivalent */
 int expression_compare(void *p1, void *p2)
 {
+  if (p1 == NULL || p2 == NULL)
+    return -1;
+  
   return atom_compare(* (atom_type *) p1, * (atom_type *) p2);
 }
 
