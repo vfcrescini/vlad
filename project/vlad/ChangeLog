@@ -1,5 +1,10 @@
 2003-05-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* parser/program.y :
+	* parser/query.y :
+
+	  - Now error messages are somewhat more descriptive.
+
 	* common/vlad.h :
 	* kb/kb.cpp :
 	* kb/wrapper.cpp :
