@@ -14,11 +14,11 @@
 
 int yylex();
 extern int yyerror(char *error);
-int add_identifier(char *ident, unsigned short type);
+int add_identifier(char ident[], unsigned short type);
 %}
 
 %union {
-  char *identifier;
+  char identifier[128];
   unsigned int terminal;
 }
 
@@ -352,11 +352,7 @@ logical_const :
 
 %%
 
-int add_identifier(char *ident, unsigned short type) {
-  if (ident == NULL) {
-    yyerror("memory overflow");
-    return -1;
-  }
+int add_identifier(char ident[], unsigned short type) {
   if (identlist_find(ident) == 0) {
     yyerror("identifier declared more than once");
     return -1;
@@ -379,11 +375,8 @@ int add_identifier(char *ident, unsigned short type) {
 
   if (identlist_add(ident, EPI_IDENT_SUBJECT) != 0) {
     yyerror("memory overflow");
-    free(ident);
     return -1;
   }
-
-  free(ident);
 
   return 0;
 }

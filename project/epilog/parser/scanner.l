@@ -43,7 +43,7 @@ acc_grp_type       acc-grp
 sub_type           sub
 obj_type           obj
 acc_type           acc
-identifier         [a-zA-Z]([a-zA-Z0-9_])*
+identifier         [a-zA-Z]([a-zA-Z0-9_]){0,127}
 whitespace         ([\t ])+
 newline            \n
 everything         .
@@ -99,10 +99,12 @@ everything         .
 <INITIAL>{acc_type} return EPI_SYM_ACCTYPE;
 
 <INITIAL>{identifier} {
-  if ((yylval.identifier = (char *) malloc(sizeof(char) * strlen(yytext))) == NULL)
-    yylval.identifier = NULL;
-  else
-    strcpy(yylval.identifier, yytext);
+  if (yytext == NULL) {
+    strcpy(yylval.identifier, "");
+    return EPI_SYM_ERROR;
+  }
+
+  strcpy(yylval.identifier, yytext);
 
   return EPI_SYM_IDENTIFIER;
 }

@@ -13,11 +13,11 @@ Updated 2002 Aug 13
 
     Identifiers are case-sensitive, alpha-numeric characters. The first
     character of an identifier must be an alpha character followed by
-    any number of alpha, digit or underscore characters. Identifiers
-    may be used to identify subject, access-right and object entities
-    or groups, transformations or variables.
+    zero to 127 characters of alpha, digit or underscore characters. 
+    Identifiers may be used to identify subject, access-right and object
+    entities or groups, transformations or variables.
 
-      [a-zA-Z][a-zA-Z_]*
+      [a-zA-Z][a-zA-Z0-9_]{0,127}
 
     See Definition section for information on how to delcare identifiers.
 
@@ -131,7 +131,7 @@ Updated 2002 Aug 13
       where:
 
         type is one of the following: sub, acc, obj, sub-grp, acc-grp, obj-grp
-        identifier is [a-zA-Z][a-zA-Z_]* and is not a reserved word.
+        identifier is [a-zA-Z][a-zA-Z0-9_]{0,127} and is not a reserved word.
 
   2.2. Initial State Defintion
 

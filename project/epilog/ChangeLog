@@ -1,3 +1,12 @@
+2002-08-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Identifier token is now limited to 128 characters. Unfortunately
+	    there is no clean way to dereference C macros from flex regular
+	    expressions.
+
 2002-08-15  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Makefile :
