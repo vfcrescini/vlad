@@ -3,8 +3,9 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#include <stdlib.h>
-#include <new.h>
+#include <cstdlib>
+#include <cstddef>
+#include <new>
 
 #include <config.h>
 #include <vlad.h>
@@ -31,7 +32,7 @@ int symtab::add(const char *n, unsigned char t)
   if (t == 0)
     return VLAD_INVALIDINPUT;
  
-  if ((ident = new(nothrow) identifier()) == NULL)
+  if ((ident = VLAD_NEW(identifier())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = ident->init(n, t)) != VLAD_OK)

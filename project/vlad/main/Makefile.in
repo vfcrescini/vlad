@@ -19,7 +19,7 @@ vlad : vlad.o $(TOPSRCDIR)/lib/*
 	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lparser -lkb -lcommon $(LEXLIB)
 ifndef DEBUG
 ifdef STRIP
-	strip --strip-all $(@)
+	strip $(@)
 endif
 endif
 	@for i in $(TARGETS); do      \
