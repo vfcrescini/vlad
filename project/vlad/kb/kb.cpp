@@ -1070,6 +1070,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
     /* subject groups */
     for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
       for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
+        /* ignore if the 2 are the same */
+        if (i_grp1 == i_grp2)
+          continue;
         for (i_grp3 = 0; i_grp3 < sg_len; i_grp3++) {
           unsigned int tmp_num1;
           unsigned int tmp_num2;
@@ -1077,7 +1080,7 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
-          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+          if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
@@ -1100,6 +1103,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
     /* access groups */
     for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
       for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
+        /* ignore if the 2 are the same */
+        if (i_grp1 == i_grp2)
+          continue;
         for (i_grp3 = 0; i_grp3 < ag_len; i_grp3++) {
           unsigned int tmp_num1;
           unsigned int tmp_num2;
@@ -1107,7 +1113,7 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
-          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+          if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
@@ -1130,6 +1136,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
     /* object groups */
     for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
       for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
+        /* ignore if the 2 are the same */
+        if (i_grp1 == i_grp2)
+          continue;
         for (i_grp3 = 0; i_grp3 < og_len; i_grp3++) {
           unsigned int tmp_num1;
           unsigned int tmp_num2;
@@ -1137,7 +1146,7 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
-          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+          if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
@@ -1291,9 +1300,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
     stringlist *tmp_ilist = NULL;
     expression *tmp_pre = NULL;
     expression *tmp_post = NULL;
-    numberlist *tmp_list1;
+    numberlist *tmp_list;
 
-   if ((tmp_list1 = VLAD_NEW(numberlist())) == NULL)
+   if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
      return VLAD_MALLOCFAILED;
 
     if ((retval = s->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
@@ -1308,7 +1317,7 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         return retval;
       if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
         return retval;
-      if ((retval = tmp_list1->add(tmp_num)) != VLAD_OK)
+      if ((retval = tmp_list->add(tmp_num)) != VLAD_OK)
         return retval;
     }
 
@@ -1318,12 +1327,12 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         return retval;
       if ((retval = encode_atom(tmp_atom, i + 1, &tmp_num)) != VLAD_OK)
         return retval;
-      
-      if ((retval = wrap->add_rule(tmp_num, tmp_list1, NULL)) != VLAD_OK)
+      /* for every atom in the postcondition we add a rule */ 
+      if ((retval = wrap->add_rule(tmp_num, tmp_list, NULL)) != VLAD_OK)
         return retval;
     }
 
-    delete tmp_list1;
+    delete tmp_list;
   }
 
   /* this might not succeed as there might not exist a model for this query */
