@@ -22,12 +22,18 @@ identifier::~identifier()
     free(name);
 }
 
+/* compare item with this identifier */
 bool identifier::cmp(list_item *item)
 {
-  identifier *tmp = dynamic_cast<identifier *> (item);
+  identifier *tmp = NULL;
 
-  /* we treat type == 0 and name == NULL as wildcards */
+  /* a NULL will not match anything */
+  if (item == NULL)
+    return false;
 
+  tmp = dynamic_cast<identifier *> (item);
+
+  /* we treat name == NULL as wildcards */
   if (tmp->name != NULL) {
     if (name == NULL)
       return false;
@@ -36,6 +42,7 @@ bool identifier::cmp(list_item *item)
       return false;
   }
 
+  /* likewise, type == 0 are wildcards too */
   if ((tmp->type != 0) && (type != tmp->type))
     return false;
 

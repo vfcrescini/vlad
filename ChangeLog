@@ -1,3 +1,30 @@
+2003-02-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+
+	  - Took out unnecessary constructors.
+
+	  - Modified the verify() function to allow verification of ground
+	    and non-ground atoms.
+
+	  - A NULL ptr passed to cmp() will always cause false to be returned.
+
+	  - Cleaned up cmp() and verify() functions.
+
+	* kb/atomlist.cpp :
+	* kb/atomlist.h :
+
+	  - Added a ground indicator to allow or disallow non-ground atoms to
+	    be added into the list.
+
+	* kb/identifier.cpp :
+	* kb/identifier.h :
+
+	  - Added a macro to unconditionally compare two identifiers.
+
+	  - A NULL ptr passed to cmp() will always cause false to be returned.
+
 2003-02-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/atom.cpp :
@@ -343,5 +370,3 @@
 	* ChangeLog :
 
 	  - Changelog started.
-
-

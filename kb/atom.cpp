@@ -11,12 +11,6 @@
 #include <vlad.h>
 #include <atom.h>
 
-atom::atom()
-{
-  type = VLAD_ATOM_NULL;
-  truth = true;
-}
-
 atom::atom(unsigned char ty, bool tr)
 {
   type = ty;
@@ -37,13 +31,6 @@ bool atom::get_truth()
   return truth;
 }
 
-holds_atom::holds_atom() 
-{
-  sub = NULL;
-  acc = NULL;
-  obj = NULL;
-}
-
 holds_atom::holds_atom(identifier *s, identifier *a, identifier *o, bool t) :
 atom(VLAD_ATOM_HOLDS, t)
 {
@@ -56,20 +43,31 @@ holds_atom::~holds_atom()
 {
 }
 
-bool holds_atom::verify()
+bool holds_atom::verify(bool ground)
 {
-  if (sub == NULL || acc == NULL || obj == NULL)
+  /* only check for nullness if we are dealing with a ground atom */
+  if (ground && (sub == NULL || acc == NULL || obj == NULL))
     return false;
 
-  if (VLAD_IDENT_STRING(*sub) == NULL ||
-      VLAD_IDENT_STRING(*obj) == NULL ||
-      VLAD_IDENT_STRING(*acc) == NULL)
+  /* check ground subject */
+  if (sub != NULL &&
+      VLAD_IDENT_STRING(*sub) == NULL &&
+      !VLAD_IDENT_IS_SUBJECT(*sub))
     return false;
 
-  return 
-    VLAD_IDENT_IS_SUBJECT(*sub) && 
-    VLAD_IDENT_IS_ACCESS(*acc) && 
-    VLAD_IDENT_IS_OBJECT(*obj);
+  /* check ground access */
+  if (acc != NULL &&
+      VLAD_IDENT_STRING(*acc) == NULL &&
+      !VLAD_IDENT_IS_ACCESS(*acc))
+    return false;
+
+   /* check ground object */
+  if (obj != NULL &&
+      VLAD_IDENT_STRING(*obj) == NULL &&
+      !VLAD_IDENT_IS_OBJECT(*obj))
+    return false; 
+
+  return true;
 }
 
 void holds_atom::get(identifier **s, identifier **a, identifier **o)
@@ -86,45 +84,24 @@ bool holds_atom::cmp(list_item *item)
 {
   atom *tmp_atom = NULL; 
   holds_atom *tmp_holds = NULL;
-  identifier *s = NULL;
-  identifier *a = NULL;
-  identifier *o = NULL;
 
-  /* if this atom has any NULL identifier, a segfault will occur */
-
-  /* NULL means match all */
+  /* a NULL will not match anything */
   if (item == NULL)
-    return true;
+    return false;
   
   /* check type and truth value */
   if (!VLAD_ATOM_IS_HOLDS(*(tmp_atom = dynamic_cast<atom *> (item))))
     return false;
 
-  if (get_truth() != tmp_atom->get_truth())
+  if (truth != tmp_atom->get_truth())
     return false;
 
-  /* now get the identifiers and compare them */
   tmp_holds = dynamic_cast<holds_atom *> (tmp_atom);
-  
-  tmp_holds->get(&s, &a, &o);
 
-  /* treat NULL identifiers as wildcards */
-  if (s != NULL && !sub->cmp(s))
-    return false;
-
-  if (a != NULL && !acc->cmp(a))
-    return false;
-
-  if (o != NULL && !obj->cmp(o))
-    return false;
-
-  return true;
-}
-
-member_atom::member_atom()
-{
-  elt = NULL;
-  grp = NULL;
+  return 
+    VLAD_IDENT_EQ(sub, tmp_holds->sub) &&
+    VLAD_IDENT_EQ(acc, tmp_holds->acc) &&
+    VLAD_IDENT_EQ(obj, tmp_holds->obj);
 }
 
 member_atom::member_atom(identifier *e, identifier *g, bool t) :
@@ -138,12 +115,17 @@ member_atom::~member_atom()
 {
 }
 
-bool member_atom::verify()
+bool member_atom::verify(bool ground)
 {
-  if (elt == NULL || grp == NULL)
+  /* check only for nullness if we are dealing with a ground atom */
+  if (ground && (elt == NULL || grp == NULL))
     return false;
 
-  if (VLAD_IDENT_STRING(*elt) == NULL || VLAD_IDENT_STRING(*grp) == NULL)
+  /* check names for nullness */
+  if (elt != NULL && VLAD_IDENT_STRING(*elt) == NULL)
+    return false;
+
+  if (grp != NULL && VLAD_IDENT_STRING(*grp) == NULL)
     return false;
 
   return 
@@ -164,41 +146,23 @@ bool member_atom::cmp(list_item *item)
 {
   atom *tmp_atom = NULL; 
   member_atom *tmp_member = NULL;
-  identifier *e = NULL;
-  identifier *g = NULL;
 
-  /* if this atom has any NULL identifier, a segfault will occur */
-
-  /* NULL means match all */
+  /* a NULL will not match anything */
   if (item == NULL)
-    return true;
+    return false;
   
   /* check type and truth value */
   if (!VLAD_ATOM_IS_MEMBER(*(tmp_atom = dynamic_cast<atom *> (item))))
     return false;
 
-  if (get_truth() != tmp_atom->get_truth())
+  if (truth != tmp_atom->get_truth())
     return false;
 
-  /* now get the identifiers and compare them */
   tmp_member = dynamic_cast<member_atom *> (tmp_atom);
-  
-  tmp_member->get(&e, &g);
 
-  /* treat NULL identifiers as wildcards */
-  if (e != NULL && !elt->cmp(e))
-    return false;
-
-  if (g != NULL && !grp->cmp(g))
-    return false;
-
-  return true;
-}
-
-subset_atom::subset_atom()
-{
-  grp1 = NULL;
-  grp2 = NULL;
+  return
+    VLAD_IDENT_EQ(elt, tmp_member->elt) &&
+    VLAD_IDENT_EQ(grp, tmp_member->grp);
 }
 
 subset_atom::subset_atom(identifier *g1, identifier *g2, bool t) :
@@ -212,12 +176,17 @@ subset_atom::~subset_atom()
 {
 }
 
-bool subset_atom::verify()
+bool subset_atom::verify(bool ground)
 {
-  if (grp1 == NULL || grp2 == NULL)
+  /* check only for nullness if we are dealing with a ground atom */
+  if (ground && (grp1 == NULL || grp2 == NULL))
     return false;
 
-  if (VLAD_IDENT_STRING(*grp1) == NULL || VLAD_IDENT_STRING(*grp2) == NULL)
+  /* check names for nullness */
+  if (grp1 != NULL && VLAD_IDENT_STRING(*grp1) == NULL)
+    return false;
+
+  if (grp2 != NULL && VLAD_IDENT_STRING(*grp2) == NULL)
     return false;
 
   return 
@@ -238,33 +207,21 @@ bool subset_atom::cmp(list_item *item)
 {
   atom *tmp_atom = NULL; 
   subset_atom *tmp_subset = NULL;
-  identifier *g1 = NULL;
-  identifier *g2 = NULL;
 
-  /* if this atom has any NULL identifier, a segfault will occur */
-
-  /* NULL means match all */
+  /* a NULL means not match anything */
   if (item == NULL)
-    return true;
+    return false;
   
   /* check type and truth value */
   if (!VLAD_ATOM_IS_SUBSET(*(tmp_atom = dynamic_cast<atom *> (item))))
     return false;
 
-  if (get_truth() != tmp_atom->get_truth())
+  if (truth != tmp_atom->get_truth())
     return false;
 
-  /* now get the identifiers and compare them */
   tmp_subset = dynamic_cast<subset_atom *> (tmp_atom);
-  
-  tmp_subset->get(&g1, &g2);
 
-  /* treat NULL identifiers as wildcards */
-  if (g1 != NULL && !grp1->cmp(g1))
-    return false;
-
-  if (g2 != NULL && !grp2->cmp(g2))
-    return false;
-
-  return true;
+  return
+    VLAD_IDENT_EQ(grp1, tmp_subset->grp1) &&
+    VLAD_IDENT_EQ(grp2, tmp_subset->grp2);
 }

@@ -11,8 +11,9 @@
 #include <vlad.h>
 #include <atomlist.h>
 
-atomlist::atomlist() : list(true)
+atomlist::atomlist(bool gr) : list(true)
 {
+  ground = gr;
 }
 
 atomlist::~atomlist()
@@ -26,7 +27,7 @@ int atomlist::add(atom *a)
   if (a == NULL)
     return VLAD_NULLPTR;
 
-  if (!a->verify())
+  if (!a->verify(ground))
     return VLAD_INVALIDINPUT;
 
   return list::add(a);
@@ -58,7 +59,7 @@ int atomlist::add_holds(identifier *s, identifier *a, identifier *o, bool t)
   if ((tmp = VLAD_NEW(holds_atom(s, a, o, t))) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if (!tmp->verify()) {
+  if (!tmp->verify(ground)) {
     delete tmp;
     return VLAD_INVALIDINPUT;
   }
@@ -73,7 +74,7 @@ int atomlist::add_member(identifier *e, identifier *g, bool t)
   if ((tmp = VLAD_NEW(member_atom(e, g, t))) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if (!tmp->verify()) {
+  if (!tmp->verify(ground)) {
     delete tmp;
     return VLAD_INVALIDINPUT;
   }
@@ -88,7 +89,7 @@ int atomlist::add_subset(identifier *g1, identifier *g2, bool t)
   if ((tmp = VLAD_NEW(subset_atom(g1, g2, t))) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if (!tmp->verify()) {
+  if (!tmp->verify(ground)) {
     delete tmp;
     return VLAD_INVALIDINPUT;
   }

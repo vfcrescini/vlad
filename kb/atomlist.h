@@ -12,7 +12,8 @@
 class atomlist : public list
 {
   public :
-    atomlist();
+    /* gr = true specifies whether only ground atoms are allowed */
+    atomlist(bool gr);
     ~atomlist();
     /* add atom into list */
     int add(atom *a);
@@ -24,6 +25,8 @@ class atomlist : public list
     int add_holds(identifier *s, identifier *a, identifier *o, bool t);
     int add_member(identifier *e, identifier *g, bool t);
     int add_subset(identifier *g1, identifier *g2, bool t);
+  private :
+    bool ground;
 } ;
 
 #endif

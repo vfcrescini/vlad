@@ -17,7 +17,7 @@
 #define VLAD_IDENT_GROUP              4
 
 /* so the type cannot be more than this value */
-#define VLAD_IDENT_TYPEMAX           7
+#define VLAD_IDENT_TYPEMAX            7
 
 /* some convenience macros */
 #define VLAD_IDENT_IS_SUBJECT(X)      (((X).get_type() & 3) == VLAD_IDENT_SUBJECT)
@@ -30,12 +30,14 @@
 #define VLAD_IDENT_TYPE_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
 #define VLAD_IDENT_TYPE_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
 #define VLAD_IDENT_STRING(X)          ((X).get_name())
+#define VLAD_IDENT_EQ(X,Y)            ((X) == NULL && (Y) == NULL) ? true : (((X) != NULL && (Y) != NULL) ? ((X)->get_type() == (Y)->get_type() ? (!strcmp((X)->get_name(), (Y)->get_name()) ? true : false) : false): false)
 
 class identifier : public list_item
 {
   public :
     identifier();
     ~identifier();
+    /* compare item with this identifier */
     bool cmp(list_item *item);
     int init(const char *n, unsigned char t);
     const char *get_name();
