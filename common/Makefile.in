@@ -10,6 +10,7 @@ CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 TARGETS = libcommon.a
 INCLUDES = vlad.h list.h stringlist.h numberlist.h
+OBJECTS = list.o stringlist.o numberlist.o
 
 all : copy-includes copy-targets
 
@@ -25,8 +26,8 @@ copy-targets : $(TARGETS)
 	ln -sf ../../../common/$$i $(DISTDIR)/lib/vlad; \
 	done
 
-libcommon.a : list.o stringlist.o numberlist.o
-	$(AR) -rcs $(@) list.o stringlist.o numberlist.o
+libcommon.a : $(OBJECTS)
+	$(AR) -rcs $(@) $(OBJECTS)
 
 list.o : list.h list.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c list.cpp
@@ -38,7 +39,7 @@ numberlist.o : numberlist.h numberlist.cpp list.o
 	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
 
 clean :
-	$(RM) *.o
+	$(RM) $(OBJECTS)
 
 distclean : clean
 	$(RM) $(TARGETS) Makefile

@@ -10,6 +10,7 @@ CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 TARGETS = libparser.a
 INCLUDES = parser.h
+OBJECTS = parser.o scanner.o
 
 all : copy-includes copy-targets
 
@@ -25,8 +26,8 @@ copy-targets : $(TARGETS)
 	ln -sf ../../../parser/$$i $(DISTDIR)/lib/vlad; \
 	done
 
-libparser.a : parser.o scanner.o 
-	$(AR) -rcs $(@) parser.o scanner.o
+libparser.a : $(OBJECTS)
+	$(AR) -rcs $(@) $(OBJECTS)
 
 scanner.o : y.tab.h lex.yy.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c lex.yy.cpp
@@ -44,7 +45,7 @@ y.tab.h : parser.y
 	$(YACC) -d parser.y
 
 clean :
-	$(RM) *.o lex.yy.cpp y.tab.cpp y.tab.h
+	$(RM) $(OBJECTS) lex.yy.cpp y.tab.cpp y.tab.h
 
 distclean : clean
 	$(RM) $(TARGETS) Makefile
