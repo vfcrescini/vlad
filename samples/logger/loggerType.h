@@ -10,24 +10,24 @@
 #include <stdarg.h>
 
 #define LOGGERTYPE_LOGNULL  0
-#define LOGGERTYPE_LOGINFO  1
-#define LOGGERTYPE_LOGTRACE 2
-#define LOGGERTYPE_LOGWARN  3
-#define LOGGERTYPE_LOGERROR 4
+#define LOGGERTYPE_LOGERROR 1
+#define LOGGERTYPE_LOGWARN  2
+#define LOGGERTYPE_LOGTRACE 3
+#define LOGGERTYPE_LOGINFO  4
 
 class loggerType
 {
   public:
-    loggerType();
+    loggerType(const char *);
+    loggerType(FILE *);
     ~loggerType();
 
     bool setLevel(int);
-    bool setOutput(char *);
     
+    void logError(char *, ...);
     void logInfo(char *, ...);
     void logTrace(char *, ...);
     void logWarn(char *, ...);
-    void logError(char *, ...);
 
   private:
     int mLogLevel;

@@ -1,4 +1,4 @@
-/*
+/* 
  * loggerType.cpp
  * Vino Crescini
  * 18 June 2001
@@ -15,10 +15,20 @@
 #define LOGGERTYPE_STRINGHEADER  "---------------------------------------"
 #define LOGGERTYPE_STRINGTRAILER "---------------------------------------"
 
-loggerType::loggerType()
+// constructor that takes a filename as an argument
+loggerType::loggerType(const char *aFileName)
 {
-  mLogLevel = 0;
-  mLogFileStream = NULL;
+  mLogLevel = LOGGERTYPE_LOGNULL;
+  
+  if (!(aFileName && (mLogFileStream = fopen(aFileName, "w"))))
+    mLogFileStream = stderr;
+}
+
+// constructor that takes a filestream as an argument
+loggerType::loggerType(FILE *aOutputFile)
+{
+  mLogLevel = LOGGERTYPE_LOGNULL;
+  mLogFileStream = aOutputFile ? aOutputFile : stderr;
 }
 
 loggerType::~loggerType()
@@ -29,21 +39,11 @@ loggerType::~loggerType()
 
 bool loggerType::setLevel(int aLevel)
 {
-  if (aLevel >= LOGGERTYPE_LOGNULL && aLevel <= LOGGERTYPE_LOGERROR) {
+  if (aLevel >= LOGGERTYPE_LOGNULL && aLevel <= LOGGERTYPE_LOGINFO) {
     mLogLevel = aLevel;
     return true;
   }
   return false;
-}
-
-bool loggerType::setOutput(char *aFilename)
-{
-  if (!aFilename)
-    mLogFileStream = stderr;
-  else
-    mLogFileStream = fopen(aFilename, "w");
-
-  return (mLogFileStream != NULL);
 }
 
 void loggerType::logInfo(char *aFormat, ...)
