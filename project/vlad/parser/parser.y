@@ -13,10 +13,12 @@
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
 
+extern int line_no;
 extern FILE *yyout;
 FILE *yyerr;
 
 kb kbase;
+unsigned char mode;
 
 #ifdef DEBUG
 unsigned int cnt_init = 0;
@@ -25,11 +27,9 @@ unsigned int cnt_trans = 0;
 unsigned int cnt_query = 0;
 #endif
 
-extern int yyerror(char *error);
-extern int yywarn(char *warning);
-
 int add_identifier(const char *n, unsigned char t);
-
+int yyerror(char *error);
+int yywarn(char *warning);
 int yylex(void);
 
 %}
@@ -793,4 +793,18 @@ int add_identifier(const char *n, unsigned char t)
   }
 
   return VLAD_OK;
+}
+
+int yyerror(char *error)
+{ 
+  fprintf(yyerr, "line %d: ERROR: %s\n", line_no, error);
+
+  return 0;
+}   
+  
+int yywarn(char *warn)
+{ 
+  fprintf(yyerr, "line %d: WARNING: %s\n", line_no, warn);
+
+  return 0;
 }

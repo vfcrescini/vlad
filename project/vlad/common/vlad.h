@@ -12,6 +12,10 @@
 #define VLAD_RESULT_FALSE    1
 #define VLAD_RESULT_UNKNOWN  2
 
+/* modes */
+#define VLAD_MODE_NLP        0
+#define VLAD_MODE_SMODELS    1
+
 /* error codes */
 
 /* success */
