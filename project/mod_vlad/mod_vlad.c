@@ -33,6 +33,9 @@ static char *modvlad_get_passwd(request_rec *a_r,
 static int modvlad_authenticate(request_rec *a_r);
 static int modvlad_authorize(request_rec *a_r);
 static void modvlad_register_hooks (apr_pool_t *a_p);
+static const char *modvlad_set_enable(cmd_parms *a_cmd,
+                                      void *a_config,
+                                      int a_arg);
 static const char *modvlad_set_user_file(cmd_parms *a_cmd,
                                          void *a_config,
                                          const char *a_fname);
@@ -43,6 +46,12 @@ static const char *modvlad_set_policy_file(cmd_parms *a_cmd,
 
 static const command_rec modvlad_auth_cmds[] =
 {
+  AP_INIT_FLAG("VladEnable",
+                modvlad_set_enable,
+                NULL,
+                OR_AUTHCFG,
+               "on/off to enable/disable mod_vlad"),
+
   AP_INIT_TAKE1("VladUserFile",
                  modvlad_set_user_file,
                  (void *)APR_OFFSETOF(modvlad_config_rec, user_file),
@@ -217,14 +226,18 @@ static int modvlad_authorize(request_rec *a_r)
                 MODVLAD_LOGLEVEL,
                 0,
                 a_r,
-                "modvlad_authorize\n\turi: %s\n\tfilename: %s\n\tpath-info: %s\n\targs: %s\n\thostname: %s\n\tmethod: %s\n\tdocroot: %s",
+                "modvlad_authorize\n\turi: %s\n\tunparsed-uri: %s\n\tfilename: %s\n\tpath-info: %s\n\targs: %s\n\thostname: %s\n\tmethod: %s\n\tdocroot: %s\n\tconf: %x\n\tpolicy-file: %s\n\tkb: %x",
                 a_r->uri,
+                a_r->unparsed_uri,
                 a_r->filename,
                 a_r->path_info,
                 a_r->args,
                 a_r->hostname,
                 a_r->method,
-                ap_document_root(a_r));
+                ap_document_root(a_r),
+                (unsigned int) conf,
+                conf->policy_file,
+                (unsigned int) conf->kb);
 #endif
 
   return OK;
@@ -242,6 +255,42 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
 
   ap_hook_check_user_id(modvlad_authenticate, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_auth_checker(modvlad_authorize, NULL, NULL, APR_HOOK_FIRST);
+}
+
+static const char *modvlad_set_enable(cmd_parms *a_cmd,
+                                      void *a_config,
+                                      int a_arg)
+{
+  modvlad_config_rec *conf;
+
+#ifdef DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_cmd->pool,
+                "modvlad_set_enable: %d",
+                a_arg);
+#endif
+
+  conf = (modvlad_config_rec *) a_config;
+
+  kb_create(&(conf->kb));
+  kb_init(conf->kb);
+
+  /* register the kb to be destroyed with this pool */
+  apr_pool_cleanup_register(a_cmd->pool, conf->kb, kb_destroy, kb_destroy);
+
+#ifdef DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_cmd->pool,
+                "create kb\n\tconf_rec: %x\n\tkb: %x",
+                (unsigned int) conf,
+                (unsigned int) conf->kb);
+#endif
+
+  return NULL;
 }
 
 static const char *modvlad_set_user_file(cmd_parms *a_cmd,
