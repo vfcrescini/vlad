@@ -1,5 +1,10 @@
 2003-05-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/vlad.h :
+	* kb/kb.cpp :
+
+	  - Added an invalid op error code.
+
 	* main/Makefile.in :
 
 	  - We no longer need to link against libfl.

@@ -57,6 +57,8 @@
 #define VLAD_NOMODEL        -10
 /* cannot open file */
 #define VLAD_OPENFAILED     -11
+/* operation not permitted at this time */
+#define VLAD_INVALIDOP      -12
 
 /* malloc/new macros */
 #define VLAD_ADT_MALLOC(X,Y)  ((X *) malloc(sizeof(X) * Y))
