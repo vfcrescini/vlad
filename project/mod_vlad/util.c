@@ -3,16 +3,22 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
+#define CORE_PRIVATE
+
 #include "httpd.h"
 #include "http_config.h"
+#include "http_core.h"
 #include "http_log.h"
 #include "ap_config.h"
 #include "apr_file_io.h"
+#include "apr_strings.h"
 
 #include <vlad/vlad.h>
 #include <vlad/wrapper.h>
 
 #include "util.h"
+
+/*extern module core_module;*/
 
 /* a version of yyinput that uses apache apr */
 int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max)
@@ -43,12 +49,12 @@ int modvlad_default_yyinput(void *a_stream, char *a_buf, int a_maxsize)
 /* register the users into the kb */
 int modvlad_add_subject(void *a_kb, const char *a_fname, apr_pool_t *a_p)
 {
-  ap_configfile_t *cfgfile = NULL;
-  apr_status_t status;
   int retval;
   char line[MAX_STRING_LEN];
   const char *user;
   const char *lineptr;
+  ap_configfile_t *cfgfile = NULL;
+  apr_status_t status;
 
   if (a_fname == NULL)
     return -1;
@@ -143,6 +149,19 @@ int modvlad_add_access(void *a_kb, apr_pool_t *a_p)
 /* add the path's directory structure into the kb */
 int modvlad_add_object(void *a_kb, const char *a_path, apr_pool_t *a_p)
 {
+#if 0
+  apr_dir_t *tmpdir;
+  apr_finfo_t finfo;
+
+  apr_dir_open(&tmpdir, a_path, a_p);
+
+  while (apr_dir_read(&finfo, APR_FINFO_NAME, tmpdir) == APR_SUCCESS) {
+    fprintf(stderr, "XXX %s\n", finfo.name);
+  }
+
+  apr_dir_close(tmpdir);
+#endif
+
 #ifdef DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
@@ -153,4 +172,22 @@ int modvlad_add_object(void *a_kb, const char *a_path, apr_pool_t *a_p)
 #endif
 
   return 0;
+}
+
+/* converts / to docroot */
+const char *modvlad_get_docroot(const char *a_path,
+                                 server_rec *a_s,
+                                 apr_pool_t *a_p)
+{
+  core_server_config *conf;
+
+  conf = (core_server_config *) ap_get_module_config(a_s->module_config,
+                                                     &core_module);
+
+  if (!a_path || !conf)
+    return NULL;
+
+  return strcmp("/", a_path) ? 
+         apr_pstrdup(a_p, a_path) :
+         apr_pstrdup(a_p, conf->ap_document_root);
 }

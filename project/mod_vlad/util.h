@@ -7,6 +7,7 @@
 #define __MODVLAD_UTIL_H
 
 #include <stdlib.h>
+#include "httpd.h"
 #include "apr_pools.h"
 
 #ifdef DEBUG
@@ -50,4 +51,8 @@ int modvlad_add_access(void *a_kb, apr_pool_t *a_p);
 /* add the path's directory structure into the kb */
 int modvlad_add_object(void *a_kb, const char *a_path, apr_pool_t *a_p);
 
+/* converts / to docroot */
+const char *modvlad_get_docroot(const char *a_path,
+                                server_rec *a_s,
+                                apr_pool_t *a_p);
 #endif

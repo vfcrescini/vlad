@@ -6,6 +6,7 @@
 #include "httpd.h"
 #include "http_config.h"
 #include "http_log.h"
+#include "http_main.h"
 #include "http_core.h"
 #include "http_protocol.h"
 #include "http_request.h"
@@ -17,6 +18,7 @@
 #include <vlad/wrapper.h>
 
 #include "util.h"
+
 
 /* some external functions from the parser & lexer */
 extern void policyparse();
@@ -83,9 +85,7 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
     conf->user_file = NULL;
     conf->policy_file = NULL;
     conf->kb = NULL;
-    conf->path = strcmp(a_d, "/") ? 
-                 apr_pstrdup(a_p, a_d) : 
-                 ap_server_root_relative(a_p, a_d);
+    conf->path = apr_pstrdup(a_p, a_d);
   }
 
   return conf;
@@ -281,7 +281,9 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
   /* now for some real initialisation */
   modvlad_add_subject(conf->kb, conf->user_file, a_cmd->pool); 
   modvlad_add_access(conf->kb, a_cmd->pool);
-  modvlad_add_object(conf->kb, conf->path, a_cmd->pool);
+  modvlad_add_object(conf->kb,
+                     modvlad_get_docroot(conf->path, a_cmd->server, a_cmd->pool),
+                     a_cmd->pool);
 
   /* parse the policy file */
   apr_file_open(&polfile,
