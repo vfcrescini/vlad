@@ -4,7 +4,7 @@
 # Vino Crescini
 # 20 June 2001
 
-mpgprog="/usr/bin/mpg123"
+mpgprog="/usr/local/bin/mpg123"
 count=0
 
 if ! [ ${#} = "1" ]
@@ -25,7 +25,7 @@ then
   exit 0
 fi
 
-find . -name "*.mp3" | while read filename
+ls -1 *.mp3 | while read filename
 do
   count=$[$count + 1]
   echo ${filename} -> ${1}/${count}.au
