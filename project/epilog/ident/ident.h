@@ -33,5 +33,6 @@ int ident_compare(ident_type ident1, ident_type ident2);
 #define EPI_IDENT_IS_ACCESS(X)   (((X) & 3) == EPI_IDENT_ACCESS)
 #define EPI_IDENT_IS_OBJECT(X)   (((X) & 3) == EPI_IDENT_OBJECT)
 #define EPI_IDENT_IS_GROUP(X)    ((X) & EPI_IDENT_GROUP)
+#define EPI_IDENT_BASETYPE(X)    ((X) & 3)
 
 #endif

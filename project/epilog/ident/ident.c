@@ -41,7 +41,7 @@ int ident_destroy(ident_type *ident)
   return 0;
 }
 
-/* return 0 if contents of ident1 and ident2 are identical */
+/* returns 0 if the contents of ident1 and ident2 are identical */
 int ident_compare(ident_type ident1, ident_type ident2)
 {
   if (ident1.type != ident2.type)
