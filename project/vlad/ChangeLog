@@ -1,5 +1,9 @@
 2003-03-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* samples/atomtest :
+
+	  - Added negative atoms.
+
 	* kb/kb.h :
 	* kb/kb.cpp :
 
