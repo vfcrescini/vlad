@@ -4,8 +4,14 @@
  */
 
 #include <stdlib.h>
+#include <identlist.h>
 #include "gnd_exp.h"
 
+int gnd_exp_cmp_subst(void *p1, void *p2);
+int gnd_exp_cmp_memb(void *p1, void *p2);
+int gnd_exp_get_superset(ident_type ident, 
+                         identlist_type *list,
+                         gnd_exp_type exp);
 int gnd_exp_compare(void *p1, void *p2);
 int gnd_exp_destroy(void *p);
 
@@ -103,6 +109,122 @@ int gnd_exp_purge(gnd_exp_type *exp)
       return -1;
 
   return 0;
+}
+
+/* returns 0 if the atoms pointed to by p1 and p2 are both subst and that
+ * the group1 field matches */
+int gnd_exp_cmp_subst(void *p1, void *p2)
+{
+  gnd_atom_type *tmp_atom1 = NULL;
+  gnd_atom_type *tmp_atom2 = NULL;
+
+  if (p1 == NULL || p2 == NULL)
+    return -1;
+
+  tmp_atom1 = (gnd_atom_type *) p1;
+  tmp_atom2 = (gnd_atom_type *) p2;
+
+  if (tmp_atom1->type != tmp_atom2->type || !EPI_ATOM_IS_SUBST(*tmp_atom1))
+    return -1;
+
+  if (ident_compare(*(tmp_atom1->atom.subst.group1), *(tmp_atom2->atom.subst.group1)) != 0)
+    return -1;
+
+  return 0;
+}
+
+/* returns 0 if the atoms pointed to by p1 and p2 are both memb and that
+ * the element field matches */
+int gnd_exp_cmp_memb(void *p1, void *p2)
+{
+  gnd_atom_type *tmp_atom1 = NULL;
+  gnd_atom_type *tmp_atom2 = NULL;
+
+  if (p1 == NULL || p2 == NULL)
+    return -1;
+
+  tmp_atom1 = (gnd_atom_type *) p1;
+  tmp_atom2 = (gnd_atom_type *) p2;
+
+  if (tmp_atom1->type != tmp_atom2->type || !EPI_ATOM_IS_MEMB(*tmp_atom1))
+    return -1;
+
+  if (ident_compare(*(tmp_atom1->atom.memb.element), *(tmp_atom2->atom.memb.element)) != 0)
+    return -1;
+
+  return 0;
+}
+
+/* we assume that list has already been initialised. gives out a list of 
+ * identifiers that is a superset of ident. these include the following:
+ *   - groups of which ident is a member (if ident is a non-group)
+ *   - supersets of ident (if ident is a group)
+ *   - all other groups that contain the groups above */
+int gnd_exp_get_superset(ident_type ident,
+                         identlist_type *list,
+                         gnd_exp_type exp)
+{
+  unsigned int i;
+  unsigned int len;
+  gnd_atom_type tmp_atom;
+  gnd_exp_type tmp_exp;
+  ident_type *tmp_ident = NULL;
+
+  if (list == NULL)
+    return -1;
+
+  tmp_atom.truth = epi_true;
+  if (EPI_IDENT_IS_GROUP(ident)) {
+    /* if it is a group, we have to look for subset atoms */
+    tmp_atom.type = EPI_ATOM_SUBST;
+    tmp_atom.atom.subst.group1 = &ident;
+
+    /* now search for atoms where in ident is a subset */
+    if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst) != 0)
+      return -1;
+  }
+  else {
+   /* if it is a non-group, we have to look for memb atoms */
+   tmp_atom.type = EPI_ATOM_MEMB;
+   tmp_atom.atom.memb.element = &ident;
+
+    /* now search for atoms where in ident is a memb */
+    if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb) != 0)
+      return -1;
+  }
+
+  if (simplelist_length(tmp_exp, &len) != 0)
+    return -1;
+
+  /* if we did not find any atoms that matches, return. the all-important
+   * recursion breakpoint */
+  if (len == 0)
+    return 0;
+
+  /* now go through the resulting list and find their supersets */
+  for (i = 0; i < len; i++) {
+    if (simplelist_get_index(tmp_exp, i, (void **) &tmp_atom) != 0)
+      return -1;
+
+    /* get superset */
+    if (EPI_IDENT_IS_GROUP(ident))
+      tmp_ident = tmp_atom.atom.subst.group2;
+    else
+      tmp_ident = tmp_atom.atom.memb.group;
+
+    /* see if we already have this identifier */
+    if (identlist_find(*list, tmp_ident->name) == 0)
+      continue;
+
+    if (identlist_add(list, tmp_ident) != 0)
+      return -1;
+
+    /* now see if we can find supersets for this identifier */
+    if (gnd_exp_get_superset(*tmp_ident, list, exp) != 0)
+      return -1;
+  }
+
+  return gnd_exp_purge(&tmp_exp);
 }
 
 /* returns 0 if the ATOMS pointed to by p1 and p2 are equivalent */

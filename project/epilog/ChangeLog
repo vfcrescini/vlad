@@ -1,5 +1,10 @@
 2002-09-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/gnd_exp.c :
+
+	  - Added a get_superset function to get a list of identifiers that
+	    are supergroups of a given identifier.
+
 	* exp/comp_exp.c :
 	* exp/comp_exp.h :
 
