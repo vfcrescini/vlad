@@ -415,16 +415,24 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
                               server_rec *a_s)
 {
   apr_status_t status;
-  const char *docroot = NULL;
   modvlad_config_rec *conf = NULL;
   apr_proc_t *proc = NULL;
+  const char *docroot = NULL;
+  void *data = NULL;
 
   /* it seems that this function is called twice, once on 2 processes.
    * since the first one seems to die anyway, so we only initialize the
    * module on the second process whose parent seems to be init. */
 
-  if (getppid() != 1)
+  apr_pool_userdata_get(&data, MODVLAD_USERDATA_KEY, a_s->process->pool);
+
+  if (!data) {
+    apr_pool_userdata_set((const void *)1,
+                          MODVLAD_USERDATA_KEY,
+                          apr_pool_cleanup_null,
+                          a_s->process->pool);
     return OK;
+  }
 
   ap_log_perror(APLOG_MARK,
                 APLOG_INFO,

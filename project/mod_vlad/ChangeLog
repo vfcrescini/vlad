@@ -1,5 +1,11 @@
 2003-07-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* mod_vlad.c :
+	* mod_vlad.h :
+
+	  - Use pool userdata to prevent post_config() to be run in the first
+	    call.
+
 	* admin.c :
 	* admin.h :
 	* mod_vlad.c :
