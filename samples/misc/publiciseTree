@@ -1,19 +1,29 @@
 #!/bin/sh
 
+# publiciseTree
+# Vino Crescini
+# 11 June 2001
+
+# recursive chmod, treat files 
+# and dirs differently
+
+DIR_PERMISSION=777
+FILE_PERMISSION=666
+
 if [ $# = 1 ] 
 then
-	if [ -d $1 ]
-	then
-		find $1 | while read i
-		do
-			if [ -d "$i" ]
-			then
-				chmod 777 "$i"
-				echo dir : $i
-			else
-				chmod 666 "$i"
-				echo file : $i
-			fi
-		done
-	fi	
-fi 
+  if [ -d $1 ]
+  then
+    find $1 | while read i
+    do
+      if [ -d "$i" ]
+      then
+        chmod $DIR_PERMISSION "$i"
+        echo dir : $i
+      else
+        chmod $FILE_PERMISSION "$i"
+        echo file : $i
+      fi
+    done
+  fi
+fi
