@@ -541,11 +541,49 @@ always <exp1>
 
       \subsubsection{Additional Constraints}
 
+        In addition to the above translations, there are a few other implicit
+        constraints implied by Language ${\cal L}$ that needs to be explicitly
+        stated in Language ${\cal L}^{*}$.
+
         \noindent \textbf{\emph{Inheritance Rules}}
+
+          All properties held by a group is inherited by all the members of
+          that group. This rule is easy to apply for subject group entities.
+          However, careful attention must be given to access-right groups
+          and object groups. Subjects holding an access-right for an object
+          group means that subject also holds that access right for all objects
+          in the object group. Similarly, a subject holding an access-right
+          group for a particular object implies that the subject holds
+          all access-rights contained in the access-right group for that
+          object.
+
+          \begin{definition}
+            The inheritance constraints are the following:
+
+            \begin{quote}
+              $holds(s_{s}, a, o, \sigma)$ $\leftarrow$ $holds(s_{g}, a, o, \sigma)$ $\land$ $memb(s_{s}, s_{g}, \sigma)$
+
+              $holds(s, a_{s}, o, \sigma)$ $\leftarrow$ $holds(s, a_{g}, o, \sigma)$ $\land$ $memb(a_{s}, a_{g}, \sigma)$
+
+              $holds(s, a, o_{s}, \sigma)$ $\leftarrow$ $holds(s, a, o_{g}, \sigma)$ $\land$ $memb(o_{s}, o_{g}, \sigma)$
+
+            \end{quote}
+          \end{definition}
 
         \noindent \textbf{\emph{Transitivity Rules}}
 
+          \begin{definition}
+            A subset of a set is also a subset of its superset's superset.
+
+            \begin{quote}
+              $subst(s_{1}, s_{3}, \sigma)$ $\leftarrow$ $subst(s_{1}, s_{2}, \sigma)$ $\land$ $subst(s_{2}, s_{3}, \sigma)$
+            \end{quote}
+          \end{definition}
+
         \noindent \textbf{\emph{Inertial Rules}}
+
+          All facts that are not affected by a policy update should be carried
+          over to the next state.
 
     \subsection{Example}
 
