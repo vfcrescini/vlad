@@ -22,7 +22,6 @@ extern int yywarn(char *warning);
 
 int yylex(void);
 
-void add_identifier(const char ident[], unsigned char type);
 %}
 
 %union {
@@ -195,55 +194,235 @@ acc_grp_ident_decl :
 
 sub_ident_list :
   VLAD_SYM_IDENTIFIER {
-    add_identifier($1, VLAD_IDENT_SUBJECT);
+    switch (kbase.add_ident($1, VLAD_IDENT_SUBJECT)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared subject identifier %s\n", $1);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $1);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   | sub_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    add_identifier($3, VLAD_IDENT_SUBJECT);
+    switch (kbase.add_ident($3, VLAD_IDENT_SUBJECT)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared subject identifier %s\n", $3);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $3);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   ;
 
 obj_ident_list :
   VLAD_SYM_IDENTIFIER {
-    add_identifier($1, VLAD_IDENT_OBJECT);
+    switch (kbase.add_ident($1, VLAD_IDENT_OBJECT)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared object identifier %s\n", $1);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $1);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   | obj_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    add_identifier($3, VLAD_IDENT_OBJECT);
+    switch (kbase.add_ident($3, VLAD_IDENT_OBJECT)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared object identifier %s\n", $3);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $3);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   ;
 
 acc_ident_list :
   VLAD_SYM_IDENTIFIER {
-    add_identifier($1, VLAD_IDENT_ACCESS);
+    switch (kbase.add_ident($1, VLAD_IDENT_ACCESS)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared access identifier %s\n", $1);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $1);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   | acc_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    add_identifier($3, VLAD_IDENT_ACCESS);
+    switch (kbase.add_ident($3, VLAD_IDENT_ACCESS)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared access identifier %s\n", $3);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $3);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   ;
 
 sub_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-    add_identifier($1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
+    switch (kbase.add_ident($1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared subject-group identifier %s\n", $1);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $1);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   | sub_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    add_identifier($3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
+  switch (kbase.add_ident($3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared subject-group identifier %s\n", $3);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $3);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   ;
 
 obj_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-    add_identifier($1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
+  switch (kbase.add_ident($1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared object-group identifier %s\n", $1);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $1);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   | obj_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    add_identifier($3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
+  switch (kbase.add_ident($3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared object-group identifier %s\n", $3);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $3);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   ;
 
 acc_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-    add_identifier($1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
+  switch (kbase.add_ident($1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared access-group identifier %s\n", $1);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $1);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   | acc_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    add_identifier($3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
+  switch (kbase.add_ident($3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      fprintf(yyerr, "declared access-group identifier %s\n", $3);
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", $3);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error\n");
+      return VLAD_FAILURE;
+    }
   }
   ;
 
@@ -457,34 +636,3 @@ logical_atom :
   ;
 
 %%
-
-void add_identifier(const char ident[], unsigned char type)
-{
-  switch (kbase.add_ident(ident, type)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      if (VLAD_IDENT_IS_SUBJECT(type) && ! VLAD_IDENT_IS_GROUP(type))
-        fprintf(yyerr, "declared subject identifier %s\n", ident);
-      else if (VLAD_IDENT_IS_OBJECT(type) && ! VLAD_IDENT_IS_GROUP(type))
-        fprintf(yyerr, "declared object identifier %s\n", ident);
-      else if (VLAD_IDENT_IS_ACCESS(type) && ! VLAD_IDENT_IS_GROUP(type))
-        fprintf(yyerr, "declared access identifier %s\n", ident); 
-      if (VLAD_IDENT_IS_SUBJECT(type) && VLAD_IDENT_IS_GROUP(type))
-        fprintf(yyerr, "declared subject-group identifier %s\n", ident);
-      else if (VLAD_IDENT_IS_OBJECT(type) && VLAD_IDENT_IS_GROUP(type))
-        fprintf(yyerr, "declared object-group identifier %s\n", ident);
-      else if (VLAD_IDENT_IS_ACCESS(type) && VLAD_IDENT_IS_GROUP(type))
-        fprintf(yyerr, "declared access-group identifier %s\n", ident); 
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", ident);
-      exit(VLAD_DUPLICATE);
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
-      exit(VLAD_MALLOCFAILED);
-    default :
-      fprintf(yyerr, "internal error\n");
-      exit(VLAD_FAILURE);
-  }
-}

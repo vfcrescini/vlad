@@ -1,5 +1,10 @@
 2003-03-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* parser/parser.y :
+
+	  - Removed the add_identifier() function. Less neater but at
+	    least we make no exit() calls.
+
 	* kb/kb.cpp :
 	* kb/kb.h :
 	* parser/parser.y :
