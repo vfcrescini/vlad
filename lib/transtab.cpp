@@ -130,7 +130,7 @@ int transtab::get(const char *n, stringlist **v, expression **pr, expression **p
   int retval;
   char *tmp_name;
   transdef *tmp_def;
-  transdef **list;
+  transdef **lst;
   unsigned int size;
 
   if (n == NULL || v == NULL || pr == NULL || po == NULL)
@@ -148,14 +148,14 @@ int transtab::get(const char *n, stringlist **v, expression **pr, expression **p
   if ((retval = tmp_def->init(tmp_name, NULL, NULL, NULL)) != VLAD_OK)
     return retval;
 
-  if ((retval = list::get((list_item *) tmp_def, (list_item ***) &list, &size)) != VLAD_OK)
+  if ((retval = list::get((list_item *) tmp_def, (list_item ***) &lst, &size)) != VLAD_OK)
     return retval;
 
   /* only one. name is already copied and will be deleted with tmp */
-  if ((retval = list[0]->get(&tmp_name, v, pr, po)) != VLAD_OK)
+  if ((retval = lst[0]->get(&tmp_name, v, pr, po)) != VLAD_OK)
     return retval;
 
-  free(list);
+  free(lst);
   delete tmp_def;
 
   return VLAD_OK;
