@@ -3,9 +3,6 @@ Vino Crescini
 
 BNF
 
-
-<underscore>           : _
-
 <alpha>                : <small-caps> | <large-caps>
 
 <small-caps>           : a | b | c | d | e | f | g | h | i | j | k | l | m | n |
@@ -34,7 +31,19 @@ BNF
 
 <g-object-ident >      : O | O <alpha-num-uscr-str>
 
+<subject-identifier>   : <s-subject-ident> | <S-subject-ident>
+
+<access-identifier>    : <a-access-ident> | <A-subject-ident>
+
+<object-identifier>    : <o-access-ident> | <O-access-ident>
+
 <var-identifier>       : v | v <alpha-num-uscr-str>
+
+<trans-identifier>     : <alpha-num> <alpha-num-uscr-str>
+
+<true>                 : true
+
+<false>                : false
 
 <and>                  : &&
 
@@ -48,6 +57,14 @@ BNF
 
 <transform>            : trans
 
+<initially>            : initially
+
+<causes>               : causes
+
+<if>                   : if
+
+<underscore>           : _
+
 <open-bracket>         : (
 
 <close-bracket>        : )
@@ -56,11 +73,7 @@ BNF
 
 <semicolon>            : ;
 
-<subject-identifier>   : <s-subject-ident> | <S-subject-ident>
-
-<access-identifier>    : <a-access-ident> | <A-subject-ident>
-
-<object-identifier>    : <o-access-ident> | <O-access-ident>
+<logical-const>        : <true> | <false>
 
 <ground-exp>           : <ground-exp> <logical-op> <ground-boolean-exp> |
                          <ground-boolean-exp>
@@ -71,7 +84,8 @@ BNF
 
 <ground-logical-exp>   : <ground-exp> | <ground-atom>
 
-<ground-atom>          : <ground-holds> | <ground-cont> | ground-elt>
+<ground-atom>          : <ground-holds> | <ground-cont> | ground-elt> | 
+                         <logical-const>
 
 <ground-holds>         : <holds> <open-bracket> <subject-identifier> <comma>
                          <access-identifier> <comma> <object-identifier>
@@ -102,3 +116,13 @@ BNF
                          <comma> <g-object-ident> <close-bracket>
 
 <initial-stmt>         : <initially> <ground-exp>
+
+<trans-stmt>           : <trans> <trans-identifier> <trans-var-def>
+                         <causes> <ground-exp> <if> <ground-exp>
+
+<trans-var-def>        : <open-bracket> <close-bracket> |
+                         <open-bracket> <trans-var-list> <close-bracket> 
+
+<trans-var-list>       : <var-identifier> | <var-identifier> <comma>
+                         <trans-var-list>
+
