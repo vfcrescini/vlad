@@ -201,3 +201,45 @@ int atom::get(identifier **i1, identifier **i2, identifier **i3, bool *tr, unsig
 
   return VLAD_OK;
 }
+
+bool atom::cmp(list_item *item)
+{
+  atom *tmp = dynamic_cast<atom *> (item);
+  identifier *i11 = NULL;
+  identifier *i12 = NULL;
+  identifier *i13 = NULL;
+  identifier *i21 = NULL;
+  identifier *i22 = NULL;
+  identifier *i23 = NULL;
+
+  /* if type == VLAD_ATOM_NULL, match any atom */
+  if (tmp->type == VLAD_ATOM_NULL)
+    return true;
+
+  if (tmp->type != type || tmp->truth != truth)
+    return false;
+
+  /* extract identifiers, there should be no errors here but if it occurs,
+   * assume that we have no match */
+  if (get(&i11, &i12, &i13, NULL, NULL) != VLAD_OK)
+    return false;
+
+  if (tmp->get(&i21, &i22, &i23, NULL, NULL) != VLAD_OK)
+    return false;
+
+  /* note: identifier::cmp() treats identifiers with NULL names and 0 types as 
+   * wildcards */
+
+  switch(type) {
+    case VLAD_ATOM_NULL :
+      /* this should not be allowed */
+      return false;
+    case VLAD_ATOM_HOLDS :
+      return i11->cmp(i21) && i12->cmp(i22) && i13->cmp(i23);
+    case VLAD_ATOM_MEMBER :
+      return i11->cmp(i21) && i12->cmp(i22);
+    case VLAD_ATOM_SUBSET :
+      return i11->cmp(i21) && i12->cmp(i22);
+  }
+  return false;
+}
