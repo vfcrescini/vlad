@@ -22,6 +22,7 @@
 /* some external functions from the parser & lexer */
 extern void policyparse();
 extern void policy_set_kb(void *a_kb);
+extern void policy_set_ct(void *a_exp);
 extern void policy_set_yyinput(int (*a_func)(void *, char *, int),
                                void *a_stream);
 
@@ -268,6 +269,7 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
 {
   modvlad_config_rec *conf;
   apr_file_t *polfile;
+  void *const_exp;
 
 #ifdef DEBUG
   ap_log_perror(APLOG_MARK,
@@ -286,7 +288,12 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
     return NULL;
   }
 
-  modvlad_init(a_cmd->pool, a_cmd->server, conf, a_uname, a_pname);
+  modvlad_init(a_cmd->pool,
+               a_cmd->server,
+               conf,
+               &const_exp,
+               a_uname,
+               a_pname);
 
   /* parse the policy file */
   apr_file_open(&polfile,
@@ -300,6 +307,8 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
 
   /* give the parser a kb handle */
   policy_set_kb(conf->kb);
+  /* give the parser a handle to the extra constraints expression */
+  policy_set_ct(const_exp);
 
   /* now, we parse */
   policyparse();

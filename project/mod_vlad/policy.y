@@ -13,6 +13,7 @@
 
 /* externally available functions */
 void policy_set_kb(void *a_kb);
+void policy_set_ct(void *a_exp);
 
 /* function from lexer */
 int policylex();
@@ -22,6 +23,7 @@ static int policyerror(char *a_msg);
 
 /* some static vars */
 static void *kbase = NULL;
+static void *cexp = NULL;
 static int errcode = VLAD_FAILURE;
 
 #ifdef YYBYACC
@@ -88,6 +90,16 @@ init : {
 body :
   group_section initial_section constraint_section trans_section {
     int retval;
+
+    /* before closing, add the extra constraints */
+    if (cexp != NULL) {
+      if ((retval = vlad_kb_add_consttab(kbase, cexp, NULL, NULL)) != VLAD_OK) {
+        errcode = retval;
+        policyerror("unable to add extra constraints"); 
+        return retval;
+      }
+    }
+
     /* after the body, we must close the kb */
     if ((retval = vlad_kb_close_kb(kbase)) != VLAD_OK) {
       errcode = retval;
@@ -503,6 +515,11 @@ subst_atom :
 void policy_set_kb(void *a_kb)
 {
   kbase = a_kb;
+}
+
+void policy_set_ct(void *a_exp)
+{
+  cexp = a_exp;
 }
 
 /* static functions */

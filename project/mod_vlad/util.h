@@ -43,6 +43,8 @@ typedef struct {
   NULL,                         \
 }
 
+#define MODVLAD_LASTCHAR(X) (X[strlen(X) - 1])
+
 /* a version of yyinput that uses apache apr */
 int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max);
 
@@ -53,6 +55,7 @@ int modvlad_default_yyinput(void *a_stream, char *a_buf, int a_maxsize);
 int modvlad_init(apr_pool_t *a_p,
                  server_rec *a_s,
                  modvlad_config_rec *a_conf,
+                 void **a_exp,
                  const char *a_uname,
                  const char *a_pname);
 

@@ -23,20 +23,18 @@
 static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname);
 /* add built in access rights into the kb */
 static int add_access(apr_pool_t *a_p, void *a_kb);
-/* add the path's directory tree into the kb */
+/* add the path's directory tree into the kb, a_relpath should be NULL or "" */
 static int add_object(apr_pool_t *a_p,
                       void *a_kb,
-                      const char *a_path,
-                      server_rec *a_s);
-/* add objects in kb recursively. a_relpath should be NULL or "" */
-static int add_object_recurse(apr_pool_t *a_p,
-                              void *a_kb,
-                              const char *a_basepath,
-                              const char *a_relpath);
+                      void *a_exp,
+                      const char *a_basepath,
+                      const char *a_relpath);
 /* converts / to docroot */
 static const char *get_docroot(apr_pool_t *a_p,
                                const char *a_path,
                                server_rec *a_s);
+/* returns the parent of the given filepath */
+static const char *get_parent(apr_pool_t *a_p, const char *a_path);
 
 /* a version of yyinput that uses apache apr */
 int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max)
@@ -68,12 +66,11 @@ int modvlad_default_yyinput(void *a_stream, char *a_buf, int a_maxsize)
 int modvlad_init(apr_pool_t *a_p,
                  server_rec *a_s,
                  modvlad_config_rec *a_conf,
+                 void **a_exp, 
                  const char *a_uname,
                  const char *a_pname)
 {
-  int retval;
-
-  if (!a_p || !a_s || !a_conf || !a_uname || !a_pname)
+  if (!a_p || !a_s || !a_exp || !a_conf || !a_uname || !a_pname)
     return -1;
 
   /* setup filenames */
@@ -81,8 +78,16 @@ int modvlad_init(apr_pool_t *a_p,
   a_conf->policy_file = ap_server_root_relative(a_p, a_pname);
 
   /* create and init kb */
-  retval = vlad_kb_create(&(a_conf->kb));
-  retval = vlad_kb_init(a_conf->kb);
+  if (vlad_kb_create(&(a_conf->kb)) != VLAD_OK)
+    return -1;
+    
+  if (vlad_kb_init(a_conf->kb) != VLAD_OK)
+    return -1;
+
+  /* create an expression for those extra constraints */
+  if (vlad_exp_create(a_exp) != VLAD_OK)
+    return -1;
+
 
   /* register the kb to be destroyed with this pool */
 
@@ -95,7 +100,7 @@ int modvlad_init(apr_pool_t *a_p,
     return -1;
   if (add_access(a_p, a_conf->kb))
     return -1;
-  if (add_object(a_p, a_conf->kb, a_conf->path, a_s))
+  if (add_object(a_p, a_conf->kb, *a_exp, get_docroot(a_p, a_conf->path, a_s), NULL))
     return -1;
 
   return 0;
@@ -201,29 +206,12 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
   return 0;
 }
 
-/* add the path's directory tree into the kb */
+/* add the path's directory tree into the kb, a_relpath should be NULL or "" */
 static int add_object(apr_pool_t *a_p,
                       void *a_kb,
-                      const char *a_path,
-                      server_rec *a_s)
-{
-#ifdef DEBUG
-  ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
-                0,
-                a_p,
-                "adding object from %s into kb",
-                a_path);
-#endif
-
-  return add_object_recurse(a_p, a_kb, get_docroot(a_p, a_path, a_s), "");
-}
-
-/* add objects in kb recursively. a_relpath should be NULL or "" */
-static int add_object_recurse(apr_pool_t *a_p,
-                              void *a_kb,
-                              const char *a_basepath,
-                              const char *a_relpath)
+                      void *a_exp,
+                      const char *a_basepath,
+                      const char *a_relpath)
 {
   int retval;
   apr_dir_t *pdir;
@@ -232,11 +220,27 @@ static int add_object_recurse(apr_pool_t *a_p,
   const char *realfullpath = NULL;
 
   /* first chech stuff */
-  if (!a_kb || !a_basepath || !a_p)
+  if (!a_kb || !a_exp || !a_basepath || !a_p)
     return -1;
 
-  realrelpath = apr_pstrdup(a_p, (!a_relpath ? "" : a_relpath));
-  realfullpath = apr_pstrcat(a_p, a_basepath, "/", realrelpath, NULL);
+  /* realrelpath is / or path relative to basepath */
+  realrelpath = apr_pstrdup(a_p,
+                            ((!a_relpath || !strcmp(a_relpath, "")) ? "/" : a_relpath));
+  /* realfullpath is basepath/realrelpath */
+  realfullpath = apr_pstrcat(a_p,
+                             a_basepath,
+                             (MODVLAD_LASTCHAR(realrelpath) == '/' ? "" : "/"), 
+                             realrelpath,
+                             NULL);
+
+#ifdef DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_p,
+                "adding object from %s into kb",
+                realrelpath);
+#endif
 
   /* now open directory */
   if (apr_dir_open(&pdir, realfullpath, a_p) != APR_SUCCESS)
@@ -244,8 +248,23 @@ static int add_object_recurse(apr_pool_t *a_p,
 
   /* add this to the symtab */
   retval = vlad_kb_add_symtab(a_kb,
-                         !strcmp(realrelpath, "") ? "/" : realrelpath,
+                         realrelpath,
                          VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
+
+  /* if this is not the root dir, then make it a subset of its parent dir */
+  if (strcmp(realrelpath, "/")) {
+    const char *parent = get_parent(a_p, realrelpath);
+    void *tmp_atom;
+
+    if (vlad_atom_create(&tmp_atom) != VLAD_OK)
+      return -1;
+
+    if (vlad_atom_init_subset(tmp_atom, realrelpath, parent, 1) != VLAD_OK)
+      return -1;
+
+    if (vlad_exp_add(a_exp, tmp_atom) != VLAD_OK)
+      return -1;
+  }
 
   if (retval != VLAD_OK) {
     ap_log_perror(APLOG_MARK,
@@ -266,9 +285,15 @@ static int add_object_recurse(apr_pool_t *a_p,
       continue;
 
     /* append the current dir with the relative path */
-    tmppath = apr_pstrcat(a_p, realrelpath, "/", dinfo.name, NULL);
+    tmppath = apr_pstrcat(a_p,
+                          realrelpath,
+                          (MODVLAD_LASTCHAR(realrelpath) == '/' ? "" : "/"), 
+                          dinfo.name,
+                          NULL);
 
     if (dinfo.filetype != APR_DIR) {
+      void *tmp_atom;
+
       /* if it is not a directory, add to kb */
       retval = vlad_kb_add_symtab(a_kb, tmppath, VLAD_IDENT_OBJECT);
 
@@ -282,10 +307,18 @@ static int add_object_recurse(apr_pool_t *a_p,
                       retval);
         return -1;
       }
+
+      /* now add an atom into the extra constraint expression */
+      if (vlad_atom_create(&tmp_atom) != VLAD_OK)
+        return -1;
+      if (vlad_atom_init_member(tmp_atom, tmppath, realrelpath, 1) != VLAD_OK)
+        return -1;
+      if (vlad_exp_add(a_exp, tmp_atom) != VLAD_OK)
+        return -1;
     }
     else {
       /* now recurse */
-      if (add_object_recurse(a_p, a_kb, a_basepath, tmppath) != 0)
+      if (add_object(a_p, a_kb, a_exp, a_basepath, tmppath) != 0)
         return -1;
     }
   }
@@ -311,4 +344,33 @@ static const char *get_docroot(apr_pool_t *a_p,
   return strcmp("/", a_path) ?
          apr_pstrdup(a_p, a_path) :
          apr_pstrdup(a_p, conf->ap_document_root);
+}
+
+/* returns the parent of the given filepath */
+static const char *get_parent(apr_pool_t *a_p, const char *a_path)
+{
+  char tmpstring[5120];
+  int slash = 0;
+  int i;
+
+  if (a_path == NULL)
+    return NULL;
+
+  strcpy(tmpstring, a_path);
+
+  for (i = strlen(a_path); i >= 0; i--) {
+    if (slash == 0) {
+      if (tmpstring[i] == '/')
+        slash = 1;
+      tmpstring[i] = '\0';
+    }
+    else {
+      if (tmpstring[i] == '/')
+        tmpstring[i] = '\0';
+      else
+        break;
+    }
+  }
+
+  return apr_pstrdup(a_p, !slash ? a_path : (strcmp(tmpstring, "") ? tmpstring : "/"));
 }
