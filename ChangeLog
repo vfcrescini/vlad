@@ -1,5 +1,16 @@
 2003-04-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Makefile.in :
+	* configure :
+	* configure.ac :
+	* common/Makefile.in :
+	* kb/Makefile.in :
+	* main/Makefile.in :
+	* parser/Makefile.in :
+
+	  - Cleanup of build system. Files are now symlinked in the dist
+	    directory.
+
 	* configure.ac :
 	* configure :
 

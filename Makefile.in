@@ -1,6 +1,8 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 DIRS = common kb parser main
+TOPSRCDIR = @top_srcdir@
+DISTDIR = @DISTDIR@
 
 all :
 	@set -e && for i in $(DIRS); do \
@@ -16,4 +18,4 @@ distclean :
 	@set -e && for i in $(DIRS); do \
 	$(MAKE) -C $$i distclean;       \
 	done
-	$(RM) -r include lib Makefile config.h config.status config.log autom4te.cache
+	$(RM) -r $(DISTDIR) Makefile config.h config.status config.log autom4te.cache

@@ -1,6 +1,10 @@
 # Vino Crescini <jcrescin@cit.uws.edu.au>
 
 TOPSRCDIR = @top_srcdir@
+DISTDIR = @DISTDIR@
+BINDIR = @BINDIR@
+INCLUDEDIR = @INCLUDEDIR@
+LIBDIR = @LIBDIR@
 CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
@@ -14,17 +18,18 @@ STRIP = @STRIP@
 TARGETS = vlad
 
 all : $(TARGETS)
+	@mkdir -p $(BINDIR)
+	@for i in $(TARGETS); do \
+	ln -sf ../../main/$$i $(BINDIR); \
+	done
 
-vlad : vlad.o $(TOPSRCDIR)/lib/*
+vlad : vlad.o $(LIBDIR)/*
 	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lparser -lkb -lcommon $(LEXLIB)
 ifndef DEBUG
-ifdef STRIP
+  ifdef STRIP
 	strip $(@)
+  endif
 endif
-endif
-	@for i in $(TARGETS); do      \
-	ln -sf main/$$i $(TOPSRCDIR); \
-	done
 
 vlad.o : vlad.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
@@ -35,5 +40,5 @@ clean :
 distclean : clean
 	$(RM) $(TARGETS) Makefile
 	@for i in $(TARGETS); do \
-	$(RM) $(TOPSRCDIR)/$$i;  \
+	$(RM) $(BINDIR)/$$i; \
 	done

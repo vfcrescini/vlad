@@ -1,6 +1,10 @@
 # Vino Crescini <jcrescin@cit.uws.edu.au>
 
 TOPSRCDIR = @top_srcdir@
+DISTDIR = @DISTDIR@
+BINDIR = @BINDIR@
+INCLUDEDIR = @INCLUDEDIR@
+LIBDIR = @LIBDIR@
 CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
@@ -10,16 +14,18 @@ CXXFLAGS = @CXXFLAGS@
 TARGETS = libkb.a
 INCLUDES = atom.h expression.h sequence.h symtab.h consttab.h transtab.h kb.h
 
-all : public
+all : copy-includes copy-targets
 
-public : $(TARGETS)
-	@mkdir -p $(TOPSRCDIR)/include
-	@mkdir -p $(TOPSRCDIR)/lib
-	@for i in $(INCLUDES); do              \
-	ln -sf ../kb/$$i $(TOPSRCDIR)/include; \
+copy-includes : $(INCLUDES)
+	@mkdir -p $(INCLUDEDIR)
+	@for i in $(INCLUDES); do \
+	ln -sf ../../../kb/$$i $(INCLUDEDIR); \
 	done
-	@for i in $(TARGETS); do           \
-	ln -sf ../kb/$$i $(TOPSRCDIR)/lib; \
+
+copy-targets : $(TARGETS)
+	@mkdir -p $(LIBDIR)
+	@for i in $(TARGETS); do \
+	ln -sf ../../../kb/$$i $(LIBDIR); \
 	done
 
 libkb.a : atom.o expression.o sequence.o symtab.o consttab.o transtab.o kb.o
@@ -51,9 +57,9 @@ clean :
 
 distclean : clean
 	$(RM) $(TARGETS) Makefile
-	@for i in $(INCLUDES); do       \
-	$(RM) $(TOPSRCDIR)/include/$$i; \
+	@for i in $(INCLUDES); do \
+	$(RM) $(INCLUDEDIR)/$$i; \
 	done
-	@for i in $(TARGETS); do    \
-	$(RM) $(TOPSRCDIR)/lib/$$i; \
+	@for i in $(TARGETS); do \
+	$(RM) $(LIBDIR)/$$i; \
 	done
