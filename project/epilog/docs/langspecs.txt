@@ -5,46 +5,73 @@ Language Specifications
 
 1. Expressions
 
-   1.1. Atoms
+   1.1. Identifiers
 
-     1.1.1. Relational Atoms
+     Identifiers are case-sensitive. Must be prefixed by a single character 
+     that specifies the type of the identifier. The first character must then
+     be followed by 0 or more alphanumeric characters plus an underscore (_).
+
+     1.1.1. Subjects
+
+       The first character of the identifier must be a lower-case "s".
+
+         s[a-zA-Z0-9_]*
+
+     1.1.2. Access-Rights
+
+       The first character of the identifier must be a lower-case "a".
+
+         a[a-zA-Z0-9_]*
+
+     1.1.3. Objects
+
+       The first character of the identifier must be a lower-case "o".
+
+         o[a-zA-Z0-9_]*
+
+     1.1.4. Groups
+
+       Groups are identified by shifting the first character of the identifier
+       to uppercase.
+
+       S[a-zA-Z0-9_]* for subject-groups
+       A[a-zA-Z0-9_]* for access-right-groups
+       O[a-zA-Z0-9_]* for object-groups
+
+   1.2. Atoms
+
+     1.2.1. Relational Atoms
 
        A single logical fact stating a relation between a subject and an object.
        There is no distinction between singular entities and group entities.
 
-         holds(subject, access-right, object)
+         holds(subject, access_right, object)
 
-       where
-
-        subject can be a singular subject or a group of subjects.
-        access-right can be a singular access-right or a group of access-rights.
-        object can be a singular object or a group of objects.
-
-     1.1.2. Containment Atoms
+     1.2.2. Containment Atoms
 
        A single logical fact describing a set containment relationship to
        another set.
 
-         cont(subject-group-1, subject-group-2) 
+         cont(Subject_1, Subject_2) 
 
        is read as
 
-         "subject-group-1 is contained in subject-group-2"
+         "group Subject_1 is contained in group Subject_2"
 
-     1.1.3. Membership Atoms
+     1.2.3. Membership Atoms
 
        A single logical fact describing the membership of a singular 
        subject/access-right/object to a subject/access-right/object group.
 
-         elt(subject-1, subject-group-1)
+         elt(subject_1, Subject_1)
 
        is read as
 
-         "subject-1 is an element of subject-group-1"
+         "subject_1 is an element of group Subject_1"
 
-   1.2. Compound Statements
+   1.3. Compound Statements
 
-     1.2.1. Conjuction
+     1.3.1. Conjuction
 
      Atoms can be grouped together with the logical conjunction AND. Note that
      DISJUNCTIONS are not allowed in this language. The symbol for this
@@ -52,37 +79,40 @@ Language Specifications
 
        <atom> && <atom> && ...
 
-     1.2.2. Negation
+     1.3.2. Negation
 
        Atoms can be negated with the ! symbol (exclamation-point, as it is
        in C).
      
          ! <atom>
 
-     1.2.3. Operator Precedence
+     1.3.3. Operator Precedence
 
        The negation operator has higher precedence than the conjunction
        operator.
 
-         ! holds(a1, b1, c1) && ! holds(a2, b2, c2)
+         ! holds(sub1, acc1, obj1) && ! holds(sub2, acc2, obj2)
 
        is evaluated as
 
-         (! holds(a1, b1, c1)) && (! holds(a2, b2, c2))
+         (! holds(sub1, acc1, obj1)) && (! holds(sub2, acc2, obj2))
 
        Compound statements are always evaluated from left to right. This means
        the left-most operator (conjuction or negation) is evaluated first. This
        can be safely ignored since the language contains only 2 operators with 
        different precedence levels.
 
-         ! holds(a1, b1, c1) && holds(a2, b2, c2) && holds(a3, b3, c3)
+         ! holds(sub1, acc1, obj1) && 
+         holds(sub2, acc2, obj2) && 
+         holds(sub3, acc3, obj3)
 
        is evaluated as
 
-         ((! holds(a1, b1, c1)) && holds(a2, b2, c2)) && holds(a3, b3, c3)
+         ((! holds(sub1, acc1, obj1)) && 
+         holds(sub2, acc2, obj2)) &&
+         holds(sub3, acc3, obj3)
 
-
-  1.3. Constant Expressions
+  1.4. Constant Expressions
 
     The following symbols may be used:
 
@@ -90,9 +120,12 @@ Language Specifications
 
       false
 
-  1.4. Variables
+  1.5. Variables
 
-    No variables are allowed to occur on any atom.
+   Variables are only permitted to occur on transformation proposition
+   statements. They must be in the form:
+
+     v[a-zA-Z0-9]*
 
 2. Definition Statements
 
@@ -127,9 +160,9 @@ Language Specifications
 
     Note that a transformation definition statement may have variables:
 
-      trans delete-write(SUBJECT, OBJECT)
-      causes !holds(SUBJECT, read, OBJECT)
-      if holds(SUBJECT, read, OBJECT)
+      trans delete-write(vSUBJECT, vOBJECT)
+      causes !holds(vSUBJECT, a_write, vOBJECT)
+      if holds(vSUBJECT, a_write, vOBJECT)
 
     this means 
 
@@ -141,14 +174,14 @@ Language Specifications
 
     will cause
 
-      !holds(subject1, write, object1)
+      !holds(subject1, a_write, object1)
 
     and
 
-      !holds(subject2, write, object2)
+      !holds(subject2, a_write, object2)
 
     if subject1 and subject2 had write access rights to object1 and object2,
-    respectivley.
+    respectively.
 
     The case where the pre-condition is an empty-set (ie. the transformation
     has no pre-condition) does not have to be a special case:
@@ -159,7 +192,6 @@ Language Specifications
 
     The constant expression "true" can be used to indicate that there are no
     pre-conditions required for this transformation.
-
 
   2.3. Policy Proposition Definition Statement
 
