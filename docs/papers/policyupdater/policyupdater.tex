@@ -477,8 +477,43 @@
       we now define its formal semantics.
 
       The semantics for language ${\cal L}$ is based on the well-known answer
-      set semantics of extended logic programs proposed by Gelfond and
-      Lifschitz \cite{GEL}.
+      set (stable model) semantics of extended logic programs proposed by
+      Gelfond and Lifschitz \cite{GEL}. The definition below formally defines
+      the answer set of a logic program.
+
+      \begin{vdefinition}
+        \label{def-ans}
+        Given an extended logic program $\Pi$ composed of ground facts and
+        rules that do not have the negation-as-failure operator $not$ and a set
+        ${\cal F}$ of all ground facts in $\Pi$. A set $S$ is then said to be
+        an answer set of $\Pi$ if it is the smallest set that satisfies the
+        following conditions:
+
+        \begin{enumerate}
+          \item
+            For any rule of the form $F_{0}$ $\leftarrow$ $F_{1}$,
+            $\hdots$, $F_{n}$ where $n$ $>$ 1, if $F_{1}$, $\hdots$,
+            $F_{n}$ $\in$ $S$, then
+            $F_{0}$ $\in$ $S$.
+          \item
+            If $S$ contains a pair of complementary facts (i.e. a fact and
+            its negation), then $S$ = ${\cal F}$.
+        \end{enumerate}
+
+        For a ground extended logic program $\Pi$ that is composed of rules
+        that may have the negation-as-failure operator $not$, a set $S$ is the
+        answer set of $\Pi$ if and only if $S$ is the answer set of $\Pi'$,
+        where $\Pi'$ is obtained from $\Pi$ by deleting the following:
+
+        \begin{enumerate}
+          \item
+            Each rule that contains a fact of the form $not$ $F$ in its body
+            where $F$ $\in$ $S$.
+          \item
+            All facts of the form $not$ $F$ in the bodies of the remaining
+            rules.
+        \end{enumerate}
+      \end{vdefinition}
 
       \subsubsection{Domain Description of Language ${\cal L}$}
         \begin{vdefinition}
@@ -497,7 +532,6 @@
         the policy update definitions.
 
       \subsubsection{Language ${\cal L}^{*}$}
-
         In language ${\cal L}$, the policy base is subject to change, which is
         triggered by the application of policy updates. Such changes bring
         forth the concept of policy base states. Conceptually, a state may be
@@ -624,8 +658,8 @@
         Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, we
         translate ${\cal D_{L}}$ into an extended logic program of language
         ${\cal L^{*}}$, as denoted by $Trans$(${\cal D_{L}}$). The semantics of
-        ${\cal D_{L}}$ is provided by the answer sets of program
-        $Trans$(${\cal D_{L}}$). Before we can fully define
+        ${\cal D_{L}}$ are provided by the answer sets of the extended logic
+        program $Trans$(${\cal D_{L}}$). Before we can fully define
         $Trans$(${\cal D}_{\cal L}$), we must first define the following
         functions:
 
@@ -1638,7 +1672,7 @@
             $|$$Trans$(${\cal D_{L}}$)$|$ =
 
             \hspace{1em}
-            $|$${\cal R}_{ini}$$|$ +
+            $|$${\cal R}_{int}$$|$ +
             $|$${\cal R}_{con}$$|$ +
             $|$${\cal R}_{upd}$$|$ +
             $|$${\cal R}_{inh}$$|$ +
@@ -1646,7 +1680,7 @@
             $|$${\cal R}_{ine}$$|$
           \end{vquote}
 
-          where ${\cal R}_{ini}$, ${\cal R}_{con}$, ${\cal R}_{upd}$,
+          where ${\cal R}_{int}$, ${\cal R}_{con}$, ${\cal R}_{upd}$,
           ${\cal R}_{inh}$, ${\cal R}_{tra}$, ${\cal R}_{ine}$ are the sets of
           initial fact rules, constraint rules, policy update rules,
           inheritance rules, transitivity rules and inertial rules,
@@ -1657,7 +1691,7 @@
           rules generated in the translation is:
 
           \begin{vquote}
-            $|$${\cal R}_{ini}$$|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
+            $|$${\cal R}_{int}$$|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
           \end{vquote}
 
           Each language ${\cal L}$ constraint statement in ${\cal S}_{c}$
