@@ -1,5 +1,14 @@
 2003-06-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* docs/bnf_operations.txt :
+	* docs/langspecs.txt :
+	* main/operation.l :
+	* main/operation.y :
+	* samples/cwall_operations :
+
+	  - Added a "compute" statement into the operations language to
+	    separate computation from query evaluation.
+
 	* lib/kb.cpp :
 
 	  - Changed inheritance rules from :

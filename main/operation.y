@@ -61,6 +61,7 @@ int operation_parse();
 %token <terminal> VLAD_SYM_MEMB
 %token <terminal> VLAD_SYM_SUBST
 %token <terminal> VLAD_SYM_QUERY
+%token <terminal> VLAD_SYM_COMPUTE
 %token <terminal> VLAD_SYM_SEQUENCE
 %token <terminal> VLAD_SYM_ADD
 %token <terminal> VLAD_SYM_DELETE
@@ -101,13 +102,15 @@ destroy :
   ;
 
 statement :
-  operation_stmt
+  query_stmt
+  | compute_stmt
   | sequence_stmt
   ;
 
-operation_stmt :
+query_stmt :
   VLAD_SYM_QUERY expression VLAD_SYM_SEMICOLON {
     int retval;
+    unsigned char res;
 #ifdef DEBUG
     char q[VLAD_MAXLEN_STR];
 #endif
@@ -123,23 +126,14 @@ operation_stmt :
     }
 #ifdef SMODELS
     case VLAD_MODE_EVALUATE : {
-      unsigned char res;
-      switch(retval = kbase->compute()) {
-        case VLAD_OK :
-          break;
-        case VLAD_NOMODEL :
-          errorcode = retval;
-          operationerror("could not evaluate query: conflict encountered");
-          return VLAD_NOMODEL;
-        default :
-          errorcode = retval;
-          operationerror("could not evaluate query: unexpected error");
-          return retval;
-      }
       switch(retval = kbase->evaluate_query($2, &res)) {
         case VLAD_OK :
           fprintf(fout, "%s\n", VLAD_RESULT_STRING(res));
           break;
+        case VLAD_INVALIDOP :
+          errorcode = retval;
+          operationerror("must use compute before query");
+          return retval;
         default :
           errorcode = retval;
           operationerror("could not evaluate query: unexpected error");
@@ -163,6 +157,27 @@ operation_stmt :
 
     /* cleanup */
     delete $2;
+  }
+  ;
+
+compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
+    int retval;
+#ifdef SMODELS
+    if (mode == VLAD_MODE_EVALUATE) {
+      switch(retval = kbase->compute()) {
+        case VLAD_OK :
+          break;
+        case VLAD_NOMODEL :
+          errorcode = retval;
+          operationerror("could not evaluate query: conflict encountered");
+          return VLAD_NOMODEL;
+        default :
+          errorcode = retval;
+          operationerror("could not evaluate query: unexpected error");
+          return retval;
+      }
+    }
+#endif
   }
   ;
 

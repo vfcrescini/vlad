@@ -225,9 +225,15 @@ Started 2002 Dec 08
 
     The statement will return one of the following: true, false or ?
 
-  3.2. Transformation Sequence Manipulations
+  3.2. Compute Statement
 
-    3.2.1. Add
+    This statement is used to signal the parser to prepare the knowledge
+    base for queries. It is important that this statement is declared between
+    any number of sequence manipulation statements and query statements.
+
+  3.3. Transformation Sequence Manipulations
+
+    3.3.1. Add
 
       This statement is used to append a transformation reference at the end of
       the transformation sequence list. A transformation reference must, of
@@ -236,7 +242,7 @@ Started 2002 Dec 08
 
         seq add <trans-ident>([arg1][,arg2][,...]);
 
-    3.2.2. List
+    3.3.2. List
 
       This statement will trigger the output of the transformation sequence
       list.
@@ -252,7 +258,7 @@ Started 2002 Dec 08
       Where <indexn> is the ordinal index (starting from 0) of a transformation 
       as it appears in the sequence.
 
-    3.2.3. Delete
+    3.3.3. Delete
 
       To remove a transformation from the transformation sequence:
 
@@ -289,6 +295,7 @@ Started 2002 Dec 08
     - obj
     - acc
     - query
+    - compute
     - seq
     - add
     - del
