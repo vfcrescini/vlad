@@ -1,5 +1,11 @@
 2003-03-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added initial state list.
+
 	* common/list.cpp :
 
 	  - List debug output will only be displayed when the list is

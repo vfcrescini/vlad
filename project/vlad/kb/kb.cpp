@@ -15,6 +15,7 @@
 kb::kb()
 {
   stable = NULL;
+  istate = NULL;
   initialised = false;
   closed = false;
   s_len = 0;
@@ -35,8 +36,10 @@ kb::kb()
 
 kb::~kb()
 {
-  if (stable != NULL);
+  if (stable != NULL)
     delete stable;
+  if (istate != NULL)
+    delete istate;
 }
 
 /* (re)init kb */
@@ -44,6 +47,7 @@ int kb::init()
 {
   int retval;
 
+  /* symbol table */
   if (stable != NULL)
     delete stable;
 
@@ -53,7 +57,15 @@ int kb::init()
   if ((retval = stable->init()) != VLAD_OK)
     return retval;
 
+  /* initial state */
+  if (istate != NULL)
+    delete istate;
+
+  if ((istate = VLAD_NEW(numberlist("init_state"))) == NULL)
+    return VLAD_MALLOCFAILED;
+
   initialised = true;
+  closed = false;
 
   return VLAD_OK;
 }
@@ -105,6 +117,32 @@ int kb::add_ident(const char *n, unsigned char t)
     return VLAD_FAILURE;
 
   return stable->add(n, t);
+}
+
+/* add an atom into the initial state list */
+int kb::add_init_atom(unsigned int a)
+{
+  int retval;
+
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (!closed)
+    return VLAD_FAILURE;
+
+  if (a >= pos_tot + neg_tot)
+    return VLAD_INVALIDINPUT;
+
+  /* ignore duplicates */
+  switch(retval = istate->add(a)) {
+    case VLAD_OK :
+    case VLAD_DUPLICATE :
+      break;
+    default :
+      return retval;
+  }
+
+  return VLAD_OK;
 }
 
 /* gives an atom id based on the identifiers already given */
