@@ -1,3 +1,11 @@
+2003-04-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Replaced kb::eval() function with a generate_nlp() stub.
+
 2003-04-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.cpp :

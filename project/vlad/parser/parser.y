@@ -542,7 +542,7 @@ query_stmt :
     char r[10240];
 #endif
 
-    if ((retval = kbase.eval($2, $3)) != VLAD_OK) {
+    if ((retval = kbase.generate_nlp($2, $3, yyout)) != VLAD_OK) {
       fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
