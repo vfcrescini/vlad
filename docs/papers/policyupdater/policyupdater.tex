@@ -1803,22 +1803,86 @@ query holds(alice, read, file);
             $FALSE$ $\leftarrow$ $f$, $f'$
           \end{quote}
 
+          The removal process is achieved by adding a boolean parameter to
+          each fact to indicate whether the fact is classically negated or
+          not. For example, given the fact:
+
+          \begin{quote}
+            $holds$($alice$, $exec$, $file$)
+          \end{quote}
+
+          this fact is now changed to:
+
+          \begin{quote}
+            $holds$($alice$, $exec$, $file$, $true$)
+          \end{quote}
+
+          with classical negation, the fact becomes:
+
+          \begin{quote}
+            $holds$($alice$, $exec$, $file$, $false$)
+          \end{quote}
+
+          for consistency, the following constraint is added:
+
+          \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+                FALSE \leftarrow & holds(alice, exec, file, true), \\
+                & holds(alice, exec, file, false)
+              \end{aligned}
+            \end{math}
+          \end{quote}
+
+
           As shown in the next section, the removal of classical negation from
           facts of language $\cal{L}$ is achieved in the technique used in the
           representation of facts.
 
         \paragraph{Representing Facts in Propositional Form.}
 
-          Semantically, an atom of language ${\cal L}^{*}$ is defined as a
-          relational binding of 2 to 3 entity identifiers and a state
-          parameter. To translate into a normal logic program, atoms of this
-          first-order logic form must be converted into propositional form,
-          that is, an atom must be represented by a single identity or symbol
-          instead of a relation.
+          The semantics of language ${\cal L}$ shows that any language
+          ${\cal L}$ program $P^{\cal L}$ can be translated into an equivalent
+          extended logic program $P^{\cal{L^{*}}}$ then translated again into
+          an equivalent normal logic program for query evaluation. However, the
+          implementation of such translations can be greatly simplified by
+          translating language ${\cal L}$ programs directly into normal logic
+          programs.
 
-          Given the symbol table $st$, we first enumerate all atoms of state
-          $S_{0}$ derived from the all possible combinations of all entity
-          identifiers defined in the symbol table:
+          The first and most important step in the translation is to represent
+          facts of language ${\cal L}$ into propositional form. Translated
+          facts should represent not only the relationship of 2 to 3 entity
+          identifiers but also the state in which they hold and a boolean flag
+          to indicate whether the fact is classically negated or not. For
+          example, the following translated fact shows that in state $S_{0}$,
+          $alice$ do not hold $exec$ access right to $file$:
+
+          \begin{quote}
+            $holds(alice, exec, file, S_{0}, false)$
+          \end{quote}
+
+          Another issue to be addressed in the translation of facts is the
+          representation of facts with simple propositional symbols instead
+          of first-order logic relations like the fact in the example above.
+          This is achieved by assigning a unique positive integer for each
+          distinct relational fact. The example below shows the mapping of
+          integer indices with relational facts:
+
+          \begin{quote}
+            $0 = holds(alice, read, file, S_{0}, true)$
+
+            $1 = holds(alice, read, file, S_{0}, false)$
+
+            $2 = holds(alice, read, file, S_{1}, true)$
+
+            $3 = holds(alice, read, file, S_{1}, false)$
+          \end{quote}
+
+          Consistent conversion of relational facts to and from this form
+          requires a systematic representation of facts. Given the symbol table
+          $st$, we first enumerate all possible positive facts of state $S_{0}$
+          derived from the all possible combinations of all entity identifiers
+          defined in the $st$:
 
           \begin{tabular}[t]{|l|l|l|l|l|l|}
             \hline
@@ -1936,7 +2000,7 @@ query holds(alice, read, file);
             $l_{og}$ = $st.og.len() - 1$
           \end{quote}
 
-          With all possible atom combinations enumerated sequentially, in the
+          With all possible atom combinations enumerated sequentially in the
           manner shown in the above table, it is possible to uniquely identify
           each atom with an integer index $i$. For example, the first $holds$
           atom, with the first $subject$, first $access$ $right$ and first
@@ -1983,6 +2047,34 @@ query holds(alice, read, file);
           offset  by the number of $holds$ atoms and similarly, the indices of
           $subset$ atoms are offset by the number of $holds$ atoms plus the
           number of $member$ atoms.
+
+          The following shows the total number of possible atom combinations
+          for each atom type based on the entity identifiers in the symbol
+          table $st$. Note that the $member$ and $subset$ types have been
+          subdivided into $subject$, $access$ $right$ and $object$ for clarity.
+
+          \begin{itemize}
+            \item
+              $T$ $=$ $T_{h}$ $+$ $T_{m}$ $+$ $T_{s}$
+            \item
+              $T_{h}$ $=$ $st.s.len()$ $\times$ $st.a.len()$ $\times$ $st.o.len()$
+            \item
+              $T_{m}$ $=$ $T_{m_{s}}$ $+$ $T_{m_{a}}$ $+$ $T_{m_{o}}$
+            \item
+              $T_{s}$ $=$ $T_{s_{s}}$ $+$ $T_{s_{a}}$ $+$ $T_{s_{o}}$
+            \item
+              $T_{m_{s}}$ $=$ $st.ss.len()$ $\times$ $st.sg.len()$
+            \item
+              $T_{m_{a}}$ $=$ $st.as.len()$ $\times$ $st.ag.len()$
+            \item
+              $T_{m_{o}}$ $=$ $st.os.len()$ $\times$ $st.og.len()$
+            \item
+              $T_{s_{s}}$ $=$ $st.sg.len()^{2}$
+            \item
+              $T_{s_{a}}$ $=$ $st.ag.len()^{2}$
+            \item
+              $T_{s_{o}}$ $=$ $st.og.len()^{2}$
+          \end{itemize}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
