@@ -1,4 +1,17 @@
 2003-04-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+	* docs/bnf.txt :
+	* docs/langspecs.txt :
+	* kb/atom.cpp :
+	* kb/atom.h :
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+	* parser/parser.y :
+	* parser/scanner.l :
+	* samples/atomtest :
+
+	  - Languange no longer accepts the constant atoms true and false.
 
 	* docs/bnf.txt :
 	* docs/langspecs.txt :

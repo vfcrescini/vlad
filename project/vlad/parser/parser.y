@@ -52,8 +52,6 @@ int yylex(void);
 %token <terminal> VLAD_SYM_SEMICOLON
 %token <terminal> VLAD_SYM_AND
 %token <terminal> VLAD_SYM_NOT
-%token <terminal> VLAD_SYM_TRUE
-%token <terminal> VLAD_SYM_FALSE
 %token <terminal> VLAD_SYM_HOLDS
 %token <terminal> VLAD_SYM_MEMB
 %token <terminal> VLAD_SYM_SUBST
@@ -79,7 +77,6 @@ int yylex(void);
 %type <atm> holds_atom 
 %type <atm> subst_atom 
 %type <atm> memb_atom 
-%type <atm> logical_atom 
 %type <exp> expression
 %type <exp> with_clause
 %type <exp> if_clause
@@ -706,9 +703,6 @@ atom :
   | memb_atom {
     $$ = $1;
   }
-  | logical_atom {
-    $$ = $1;
-  }
   ;
 
 holds_atom :
@@ -753,30 +747,6 @@ memb_atom :
   }
   ;
 
-logical_atom : 
-  VLAD_SYM_TRUE {
-    int retval;
-
-    if (($$ = VLAD_NEW(atom())) == NULL) {
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    }
-
-    if ((retval = $$->init_const(VLAD_ATOM_TRUE, true)) != VLAD_OK)
-      return retval;
-  }
-  | VLAD_SYM_FALSE {
-    int retval;
-
-    if (($$ = VLAD_NEW(atom())) == NULL) {
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    }
-
-    if ((retval = $$->init_const(VLAD_ATOM_FALSE, true)) != VLAD_OK)
-      return retval;
-  }
-  ;
 %%
 
 int add_identifier(const char *n, unsigned char t)

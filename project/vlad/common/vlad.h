@@ -12,11 +12,6 @@
 #define VLAD_RESULT_FALSE    1
 #define VLAD_RESULT_UNKNOWN  2
 
-/* boolean codes */
-
-#define VLAD_TRUE            0
-#define VLAD_FALSE           1
-
 /* error codes */
 
 /* success */
