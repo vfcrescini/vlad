@@ -1,4 +1,5 @@
 \documentclass{llncs}
+\usepackage{epsfig}
 
 \pagestyle{plain}
 
@@ -278,16 +279,23 @@
     provided by its {\em mod\_auth} and {\em mod\_access} modules
     \cite{AP,LAU}. With this built-in access control system, Apache allows 
     administrator-defined policies to be enforced with every HTTP request
-    made by clients. 
+    made by clients.
 
-    The diagram in figure [something] illustrates how access control is
+    \begin{figure}[ht]
+      \begin{center}
+        \epsfig{file=apache.eps}
+        \caption{Simplified Apache Access Control Mechanism}
+        \label{fig-1}
+      \end{center}
+    \end{figure}
+
+    The diagram in Figure \ref{fig-1} illustrates how access control is
     enforced in a simplified HTTP request. (1) client makes a {\em GET}
-    request for file $f$; (2) the access control modules check if a policy is
-    associated with the resource; (3) the modules evaluates the policy and
-    decides whether to allow or deny the request; (4) if the request is
-    allowed, it is then passed on to other request handlers for processing;
-    and (5) eventually, the transaction is completed by sending the requested
-    file $f$ back to the client.
+    request for a file; (2) the access control modules check if a policy is
+    associated with the resource, then evaluates the policy to decide whether
+    to allow or deny the request; (3) if the request is allowed, it is then
+    passed on to other request handlers for processing; and (4) eventually, the
+    transaction is completed by sending the requested file back to the client.
 
     add: http request methods
 
