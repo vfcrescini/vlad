@@ -55,19 +55,27 @@ int modvlad_init_kb(apr_pool_t *a_p,
 {
   int retval;
 
-  if (!a_p || !a_userfile || !a_docroot || !a_kb || !a_exp)
-    return -1;
+  if (!a_p || !a_userfile || !a_docroot || !a_kb || !a_exp) {
+    ap_log_perror(APLOG_MARK, APLOG_ERR, 0, a_p, "mod_vlad: could not init kb");
+    return MODVLAD_NULLPTR;
+  }
 
   /* create and init kb */
-  if ((retval = vlad_kb_create(a_kb)) != VLAD_OK)
-    return retval;
+  if ((retval = vlad_kb_create(a_kb)) != VLAD_OK) {
+    ap_log_perror(APLOG_MARK, APLOG_ERR, 0, a_p, "mod_vlad: could not create kb: vlad %d", retval);
+    return MODVLAD_FAILURE;
+  }
 
-  if ((retval = vlad_kb_init(*a_kb)) != VLAD_OK)
-    return retval;
+  if ((retval = vlad_kb_init(*a_kb)) != VLAD_OK) {
+    ap_log_perror(APLOG_MARK, APLOG_ERR, 0, a_p, "mod_vlad: could not init kb: vlad %d", retval);
+    return MODVLAD_FAILURE;
+  }
 
   /* create an expression for those extra constraints */
-  if ((retval = vlad_exp_create(a_exp)) != VLAD_OK)
-    return retval;
+  if ((retval = vlad_exp_create(a_exp)) != VLAD_OK) {
+    ap_log_perror(APLOG_MARK, APLOG_ERR, 0, a_p, "mod_vlad: could not create exp: vlad %d", retval);
+    return MODVLAD_FAILURE;
+  }
 
   /* register the kb to be destroyed with this pool */
   apr_pool_cleanup_register(a_p,
@@ -82,7 +90,7 @@ int modvlad_init_kb(apr_pool_t *a_p,
   if ((retval = add_object(a_p, *a_kb, *a_exp, a_docroot, NULL)) != VLAD_OK)
     return retval;
 
-  return 0;
+  return MODVLAD_OK;
 }
 
 /* read the policy file into kb */
@@ -92,7 +100,7 @@ int modvlad_load_kb(apr_pool_t *a_p,
                     void *a_exp)
 {
   if (!a_p || !a_polfile || !a_kb || !a_exp)
-    return -1;
+    return MODVLAD_NULLPTR;
 
   /* give the lexer the proper yyinput function */
   policy_set_yyinput(apache_yyinput, (void *)a_polfile);
@@ -104,7 +112,7 @@ int modvlad_load_kb(apr_pool_t *a_p,
   /* now, we parse */
   policyparse();
 
-  return 0;
+  return MODVLAD_OK;
 }
 
 /* composes an expression to query */
@@ -182,7 +190,7 @@ int modvlad_parse_args(apr_pool_t *a_p,
   int novalue = 0;
 
   if (!a_str || !a_tab)
-   return -1;
+   return MODVLAD_NULLPTR;
 
   memset(buf, 0, MODVLAD_MAXSTR_LEN);
   strcpy(ptr, a_str);
@@ -238,7 +246,7 @@ int modvlad_parse_args(apr_pool_t *a_p,
     apr_table_set(*a_tab, name, value);
   }
 
-  return 0;
+  return MODVLAD_OK;
 }
 
 /* gets the document root without request_rec */
@@ -265,8 +273,8 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
   ap_configfile_t *cfgfile = NULL;
   apr_status_t status;
 
-  if (a_fname == NULL)
-    return -1;
+  if (!a_fname)
+    return MODVLAD_NULLPTR;
 
   status = ap_pcfg_openfile(&cfgfile, a_p, a_fname);
 
@@ -278,7 +286,7 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
                   "mod_vlad: could not open user file: %s",
                   a_fname);
 
-    return -1;
+    return MODVLAD_FAILURE;
   }
 
   memset(line, 0, MODVLAD_MAXSTR_LEN);
@@ -314,13 +322,13 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
                     "mod_vlad: could not add user \"%s\" to kb: error %d",
                     user,
                     retval);
-      return retval;
+      return MODVLAD_FAILURE;
     }
   }
 
   ap_cfg_closefile(cfgfile);
 
-  return 0;
+  return MODVLAD_OK;
 }
 
 /* add built in access rights into the kb */
@@ -350,11 +358,11 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
                     "mod_vlad: could not add access \"%s\" to kb: error %d",
                     access,
                     retval);
-      return retval;
+      return MODVLAD_FAILURE;
     }
   }
 
-  return 0;
+  return MODVLAD_OK;
 }
 
 /* add the path's directory tree into the kb, a_relpath should be NULL or "" */
@@ -372,7 +380,7 @@ static int add_object(apr_pool_t *a_p,
 
   /* first chech stuff */
   if (!a_kb || !a_exp || !a_basepath || !a_p)
-    return -1;
+    return MODVLAD_NULLPTR;
 
   /* realrelpath is / or path relative to basepath */
   realrelpath = apr_pstrdup(a_p,
@@ -387,7 +395,7 @@ static int add_object(apr_pool_t *a_p,
 
   /* we have to ignore the special admin resource */
   if (!strcmp(realrelpath, MODVLAD_ADMIN_DIRNAME))
-    return 0;
+    return MODVLAD_OK;
 
   ap_log_perror(APLOG_MARK,
                 APLOG_INFO,
@@ -398,8 +406,15 @@ static int add_object(apr_pool_t *a_p,
                 realrelpath);
 
   /* now open directory */
-  if (apr_dir_open(&pdir, realfullpath, a_p) != APR_SUCCESS)
-    return -1;
+  if (apr_dir_open(&pdir, realfullpath, a_p) != APR_SUCCESS) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_INFO,
+                  0,
+                  a_p,
+                  "mod_vlad: could not open %s",
+                  realfullpath);
+    return MODVLAD_FAILURE;
+  }
 
   /* add this to the symtab */
   retval = vlad_kb_add_symtab(a_kb,
@@ -414,7 +429,7 @@ static int add_object(apr_pool_t *a_p,
                   "mod_vlad: could not add object \"%s\" to kb: error %d",
                   realrelpath,
                   retval);
-    return retval;
+    return MODVLAD_FAILURE;
   }
 
   /* if this is not the root dir, then make it a subset of its parent dir */
@@ -422,14 +437,32 @@ static int add_object(apr_pool_t *a_p,
     const char *parent = get_parent(a_p, realrelpath);
     void *tmp_atom = NULL;
 
-    if ((retval = vlad_atom_create(&tmp_atom)) != VLAD_OK)
-      return retval;
+    if ((retval = vlad_atom_create(&tmp_atom)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_p,
+                    "mod_vlad: could not create atom: vlad %d", retval);
+      return MODVLAD_FAILURE;
+    }
 
-    if ((retval = vlad_atom_init_subset(tmp_atom, realrelpath, parent, 1)) != VLAD_OK)
-      return retval;
+    if ((retval = vlad_atom_init_subset(tmp_atom, realrelpath, parent, 1)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_p,
+                    "mod_vlad: could not init subset: vlad %d", retval);
+      return MODVLAD_FAILURE;
+    }
 
-    if ((retval = vlad_exp_add(a_exp, tmp_atom)) != VLAD_OK)
-      return retval;
+    if ((retval = vlad_exp_add(a_exp, tmp_atom)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_p,
+                    "mod_vlad: could not add subset atom into exp: vlad %d", retval);
+      return MODVLAD_FAILURE;
+    }
   }
 
   while (apr_dir_read(&dinfo, APR_FINFO_NAME | APR_FINFO_TYPE, pdir) == APR_SUCCESS) {
@@ -462,16 +495,34 @@ static int add_object(apr_pool_t *a_p,
                       "mod_vlad: could not add object \"%s\" to kb: error %d",
                       tmppath,
                       retval);
-        return retval;
+        return MODVLAD_FAILURE;
       }
 
       /* now add an atom into the extra constraint expression */
-      if ((retval = vlad_atom_create(&tmp_atom)) != VLAD_OK)
-        return retval;
-      if ((retval = vlad_atom_init_member(tmp_atom, tmppath, realrelpath, 1)) != VLAD_OK)
-        return retval;
-      if ((retval = vlad_exp_add(a_exp, tmp_atom)) != VLAD_OK)
-        return retval;
+      if ((retval = vlad_atom_create(&tmp_atom)) != VLAD_OK) {
+        ap_log_perror(APLOG_MARK,
+                      APLOG_ERR,
+                      0,
+                      a_p,
+                      "mod_vlad: could not create atom: vlad %d", retval);
+        return MODVLAD_FAILURE;
+      }
+      if ((retval = vlad_atom_init_member(tmp_atom, tmppath, realrelpath, 1)) != VLAD_OK) {
+        ap_log_perror(APLOG_MARK,
+                      APLOG_ERR,
+                      0,
+                      a_p,
+                      "mod_vlad: could not init member atom: vlad %d", retval);
+        return MODVLAD_FAILURE;
+      }
+      if ((retval = vlad_exp_add(a_exp, tmp_atom)) != VLAD_OK) {
+        ap_log_perror(APLOG_MARK,
+                      APLOG_ERR,
+                      0,
+                      a_p,
+                      "mod_vlad: could not add member atom into exp: vlad %d", retval);
+        return MODVLAD_FAILURE;
+      }
     }
     else {
       /* now recurse */
@@ -482,7 +533,7 @@ static int add_object(apr_pool_t *a_p,
 
   apr_dir_close(pdir);
 
-  return 0;
+  return MODVLAD_OK;
 }
 
 /* returns the parent of the given filepath */
