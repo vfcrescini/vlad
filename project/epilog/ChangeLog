@@ -1,3 +1,20 @@
+2002-09-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/expression.c :
+	* exp/expression.h :
+	* ident/identlist.c :
+	* ident/identlist.h :
+	* trans/transdef.c :
+	* trans/transdef.h :
+	* trans/transref.c :
+	* trans/transref.h :
+
+	  - Took out unused cmp functions.
+
+	* parser/parser.y :
+
+	  - Cleanup.
+
 2002-09-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* trans/Makefile :

@@ -105,32 +105,6 @@ int expression_purge(expression_type *exp)
   return 0;
 }
 
-/* return 0 if the lists are equivalent */
-int expression_cmp(expression_type e1, expression_type e2)
-{
-  atom_type *a1;
-  atom_type *a2;
-  unsigned int len1;
-  unsigned int len2;
-  unsigned int i;
-
-  if (simplelist_length(e1, &len1) != 0 ||
-      simplelist_length(e2, &len2) != 0 ||
-      len1 != len2)
-    return -1;
-
-  for (i = 0; i < len1; i++) {
-    if (simplelist_get_index(e1, i, (void **) &a1) != 0 ||
-        simplelist_get_index(e2, i, (void **) &a2) != 0)
-      return -1;
-
-    if (atom_compare(*a1, *a2) != 0)
-      return -1;
-  }
-  
-  return 0;
-}
-
 /* returns 0 if the ATOMS pointed to by p1 and p2 are equivalent */
 int expression_compare(void *p1, void *p2)
 {

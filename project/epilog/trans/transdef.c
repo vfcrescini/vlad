@@ -101,12 +101,3 @@ int transdef_destroy_all(transdef_type *trans)
 
   return 0;
 }
-
-/* returns 0 if the two are equivalent */
-int transdef_compare(transdef_type t1, transdef_type t2)
-{
-  return strcmp(t1.name, t2.name) == 0 && 
-         stringlist_cmp(t1.varlist, t2.varlist) == 0 &&
-         expression_cmp(t1.precond, t2.precond) == 0 &&
-         expression_cmp(t1.postcond, t2.postcond) == 0;
-}

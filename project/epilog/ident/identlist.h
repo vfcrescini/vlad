@@ -35,7 +35,4 @@ int identlist_purge(identlist_type *list);
 /* delete all entries and free members */
 int identlist_purge_all(identlist_type *list);
 
-/* return 0 if the lists are equivalent */
-int identlist_cmp(identlist_type l1, identlist_type l2);
-	       
 #endif

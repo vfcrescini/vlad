@@ -32,7 +32,4 @@ int transref_copy(transref_type **transref2, transref_type transref1);
 /* frees this transref and all its members */
 int transref_destroy(transref_type *transref);
 
-/* returns 0 if the two are equivalent */
-int transref_compare(transref_type t1, transref_type t2);
-
 #endif

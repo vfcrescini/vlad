@@ -74,10 +74,3 @@ int transref_destroy(transref_type *trans)
 
   return 0;
 }
-
-/* returns 0 if the two are equivalent */
-int transref_compare(transref_type t1, transref_type t2)
-{
-  return strcmp(t1.name, t2.name) == 0 && 
-         identlist_cmp(t1.identlist, t2.identlist) == 0;
-}

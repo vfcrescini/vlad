@@ -41,7 +41,4 @@ int transdef_destroy(transdef_type *transdef);
 /* frees this transdef and all its members */
 int transdef_destroy_all(transdef_type *transdef);
 
-/* returns 0 if the two are equivalent */
-int transdef_compare(transdef_type t1, transdef_type t2);
-
 #endif

@@ -41,7 +41,6 @@ FILE *yyerr;
   char identifier[128];
   name_type name;
   atom_type atm;
-  transdef_type transdef;
   transref_type transref;
   transreflist_type transreflist;
   expression_type exp;
@@ -96,7 +95,6 @@ FILE *yyerr;
 %type <atm> comp_memb_atom
 %type <strlist> trans_var_def;
 %type <strlist> trans_var_list;
-%type <transdef> trans_stmt;
 %type <transref> trans_ref_def;
 %type <transreflist> trans_ref_list;
 %type <transreflist> after_clause;
@@ -164,11 +162,6 @@ other_stmt :
   initial_stmt {
   }
   | trans_stmt {
-    if (transdeflist_find(transform_list, $1.name) == 0)
-      exit_error("trans identifier already declared");
-
-    if (transdeflist_add_trans(&transform_list, $1) != 0)
-      exit_error("internal error");
   }
   | policy_stmt {
   }
@@ -316,8 +309,16 @@ initial_stmt :
 
 trans_stmt : 
   EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON {
-    if (transdef_compose(&$$, $2, $3, $5, $7) != 0)
+    transdef_type tmp_transdef;
+
+    if (transdeflist_find(transform_list, $2) == 0)
+      exit_error("trans identifier already declared");
+
+    if (transdef_compose(&tmp_transdef, $2, $3, $5, $7) != 0)
       exit_error("internal_error");
+
+    if (transdeflist_add_trans(&transform_list, tmp_transdef) != 0)
+      exit_error("internal error");
 
 #ifdef DEBUG
     fprintf(yyerr, "transformation declaration\n");

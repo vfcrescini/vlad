@@ -122,32 +122,6 @@ int identlist_purge_all(identlist_type *list)
   return 0;
 }
 
-/* return 0 if the lists are equivalent */
-int identlist_cmp(identlist_type l1, identlist_type l2)
-{
-  ident_type *i1;
-  ident_type *i2;
-  unsigned int len1;
-  unsigned int len2;
-  unsigned int i;
-  
-  if (simplelist_length(l1, &len1) != 0 ||
-      simplelist_length(l2, &len2) != 0 ||
-      len1 != len2)
-    return -1;
-
-  for (i = 0; i < len1; i++) {
-    if (simplelist_get_index(l1, i, (void **) &i1) != 0 ||
-        simplelist_get_index(l2, i, (void **) &i2) != 0)
-      return -1;
-
-    if (ident_compare(*i1, *i2) != 0)
-      return -1;
-  }
-
-  return 0;
-}
-
 /* compare ONLY THE NAME component of p1 and p2 */
 int identlist_compare(void *p1, void *p2)
 {
