@@ -156,9 +156,9 @@
          
               \begin{verbatim}memb(<elt>, <grp>)\end{verbatim}
             \item
-              $Subset$. The subset atom states that the groups identifiers
-              $grp1$ and $grp2$ are of the same types and that group $grp1$
-              is a subset of the group $grp2$.
+              $Subset$. The subset atom states that the group identifiers
+              $grp1$ and $grp2$ are of the same types and that group $grp1$ is
+              a subset of the group $grp2$.
 
               \begin{verbatim}subst(<grp1>, <grp2>)\end{verbatim}
           \end{itemize}
@@ -197,7 +197,7 @@
           syntax illustrates how to define one or more entity identifiers of a
           particular type.
 
-          \begin{verbatim}ident sub|acc|obj[-grp] <name>[, ...]];\end{verbatim}
+          \begin{verbatim}ident sub|acc|obj[-grp] <e_id>[, ...]];\end{verbatim}
 
         \paragraph{Initial Fact Definition.}
 
@@ -237,13 +237,13 @@ always <exp1>
           by using the following syntax:
 
           \begin{verbatim}
-<up_ident>([<var_ident>[, ...]])
+<up_id>([<var_id>[, ...]])
   causes <exp1>
   if <exp2>;
           \end{verbatim}
 
-          $up\_ident$ is the policy update identifier to be used in referencing
-          this policy update. The optional $var\_ident$ list are the variable
+          $up\_id$ is the policy update identifier to be used in referencing
+          this policy update. The optional $var\_id$ list are the variable
           identifiers occurring the expressions $exp1$ and $exp2$ and will
           eventually be replaced by entity identifiers when the update is
           referenced. The postcondition expression $exp1$ is an expression that
@@ -273,10 +273,10 @@ always <exp1>
           Defined policy updates are added into the sequence list through the
           use of the following directive:
 
-          \begin{verbatim}seq add <up_ident>([<e_ident>[, ...]]);\end{verbatim}
+          \begin{verbatim}seq add <up_id>([<e_id>[, ...]]);\end{verbatim}
 
-          \noindent where $up\_ident$ is the identifier of a defined policy
-          update and the $e\_ident$ list is a comma-separated list of entity
+          \noindent where $up\_id$ is the identifier of a defined policy
+          update and the $e\_id$ list is a comma-separated list of entity
           identifiers that will replace the variable identifiers that occur in
           the definition of the policy update. 
 
@@ -289,11 +289,11 @@ always <exp1>
           This directive is answered with an ordinal list of policy updates in
           the form:
 
-          \begin{verbatim}<n> <up_ident>([e_ident[, ...]])\end{verbatim}
+          \begin{verbatim}<n> <up_id>([e_id[, ...]])\end{verbatim}
 
           \noindent where $n$ is the ordinal index of the policy update within
-          the sequence list starting at 0. $up\_ident$ is the policy update
-          identifier and the $e\_ident$ list is the list of entity identifiers
+          the sequence list starting at 0. $up\_id$ is the policy update
+          identifier and the $e\_id$ list is the list of entity identifiers
           used to replace the variable identifier place-holders.
 
         \subparagraph{Removing an Update from the Sequence.}
@@ -333,13 +333,13 @@ always <exp1>
           rule-based document access control system scenario.
 
           In this example, the subject $alice$ initially holds a $read$ access
-          right to the object $file$. The constraint states that if $alice$
-          has $read$ access to $file$, and there it cannot be proven that
-          $alice$ do not have $write$ access to $file$, then $alice$ is granted
-          $write$ access to $file$.
+          right for the object $file$. The constraint states that if $alice$
+          has $read$ access for $file$, and it cannot be proven that $alice$ do
+          not have $write$ access for $file$, then $alice$ is granted $write$
+          access for $file$.
 
           \begin{verbatim}
-/* entity identifier definition */
+/* entity identifier definitions */
 
 ident sub alice;
 ident acc read, write;
