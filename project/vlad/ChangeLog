@@ -1,5 +1,11 @@
 2003-04-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+	* kb/wrapper.cpp :
+	* kb/wrapper.h :
+
+	  - Now atoms are registered in smodels.
+
 	* common/vlad.h :
 
 	  - Added a result macro to convert numeric codes to string.

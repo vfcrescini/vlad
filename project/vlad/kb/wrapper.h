@@ -17,6 +17,8 @@ class wrapper
     wrapper();
     ~wrapper();
     int init();
+    /* register an atom */
+    int add_atom(unsigned int a);
   private :
     Smodels *pr_smod;
     Api *pr_api;

@@ -674,13 +674,37 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
 {
   int retval;
+  unsigned int i;
+  unsigned int tot_trans;
   wrapper *wrap;
 
+  /* we only allow this function after transtab is closed */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  /* verify expression */
+  if ((retval = verify_expression(e)) != VLAD_OK)
+    return retval;
+
+  /* now verify the sequence */
+  if ((retval = verify_sequence(s)) != VLAD_OK)
+    return retval;
+
+  /* number of transformations in this sequence */
+  tot_trans = (s == NULL) ? 0 : s->length();
+
+  /* create and init a wrapper object */
   if ((wrap = VLAD_NEW(wrapper())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = wrap->init()) != VLAD_OK)
     return retval;
+
+  /* first we print out all the possible atoms in the kb */
+  for (i = 0; i < (pos_tot * 2 * (tot_trans + 1)); i++) {
+    if ((retval = wrap->add_atom(i)) != VLAD_OK)
+      return retval;
+  }
 
   *r = VLAD_RESULT_TRUE;
 
