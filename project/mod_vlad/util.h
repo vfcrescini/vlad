@@ -21,14 +21,14 @@ typedef struct {
   char *path;
 } modvlad_config_rec;
 
-#define MODVLAD_ACCESS_OPTIONS "options"
-#define MODVLAD_ACCESS_GET     "get"
-#define MODVLAD_ACCESS_HEAD    "head"
-#define MODVLAD_ACCESS_POST    "post"
-#define MODVLAD_ACCESS_PUT     "put"
-#define MODVLAD_ACCESS_DELETE  "delete"
-#define MODVLAD_ACCESS_TRACE   "trace"
-#define MODVLAD_ACCESS_CONNECT "connect"
+#define MODVLAD_ACCESS_OPTIONS "OPTIONS"
+#define MODVLAD_ACCESS_GET     "GET"
+#define MODVLAD_ACCESS_HEAD    "HEAD"
+#define MODVLAD_ACCESS_POST    "POST"
+#define MODVLAD_ACCESS_PUT     "PUT"
+#define MODVLAD_ACCESS_DELETE  "DELETE"
+#define MODVLAD_ACCESS_TRACE   "TRACE"
+#define MODVLAD_ACCESS_CONNECT "CONNECT"
 
 #define MODVLAD_ACCESS_ARRAY    \
 {                               \
