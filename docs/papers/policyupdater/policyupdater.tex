@@ -2,6 +2,8 @@
 \usepackage{latex8}
 \usepackage{times}
 
+\newtheorem{definition}{Definition}
+
 \begin{document}
   \title{
     PolicyUpdater -- A System for Dynamic Access Control:  \\
@@ -234,7 +236,7 @@ always <exp1>
 
         \begin{verbatim}seq del <n>;\end{verbatim}
 
-      \emph{Computing after a PolcyUpdate}. The policy updates in the sequence
+      \emph{Computing after a Polcy Update}. The policy updates in the sequence
       list does not get applied until the compute directive is issued. The
       directive causes the policy update references in the sequence list to be
       applied one at a time in the same order that they appear in the list. The
@@ -257,9 +259,74 @@ always <exp1>
 
     \subsection{Semantics}
 
-      \subsubsection{Formal Domain Definition}
+      \subsubsection{Entity Semantics}
 
-        \noindent \emph{Sorts}
+        \begin{definition}
+
+          The entity set ${\cal E}$ is the union of six disjoint entity sets:
+          single-subject ${\cal E}_{SS}$, group-subject ${\cal E}_{SG}$,
+          single-access-right ${\cal E}_{AS}$, group-access-right
+          ${\cal E}_{AG}$, single-object ${\cal E}_{OS}$ and group-object
+          ${\cal E}_{OG}$.
+
+          \begin{enumerate}
+            \item
+              ${\cal E} = {\cal E}_{S} \cup {\cal E}_{A} \cup {\cal E}_{O}$
+            \item
+              ${\cal E}_{S} = {\cal E}_{SS} \cup {\cal E}_{SG}$
+            \item
+              ${\cal E}_{A} = {\cal E}_{AS} \cup {\cal E}_{AG}$
+            \item
+              ${\cal E}_{O} = {\cal E}_{OS} \cup {\cal E}_{OG}$
+          \end{enumerate}
+
+        \end{definition}
+
+      \subsubsection{State Semantics}
+
+        Conceptually, a state may be thought of as a set of facts and
+        constraints of the policy base at a particular instant. However, the
+        semantics of Language $\cal{L}$ gives a more formal and less tangible
+        definition of state.
+
+        \begin{definition}
+          A state is a property of facts and rules used to distinguish between 
+          the facts and rules of a specific policy base instance from another
+          policy base instance caused by the application of a policy update.
+        \end{definition}
+
+        The notation $PB$ $\overrightarrow{_{U}}$ $PB'$ shows that the set of
+        rules and constraints of the policy base $PB$ yields the policy base
+        set $PB'$ after the policy update $U$ is applied.
+
+        \begin{definition}
+          
+          Atom
+
+          \begin{enumerate}
+            \item
+              ${\cal A} = {\cal A}_{H} \cup {\cal A}_{M} \cup {\cal A}_{S}$
+            \item
+              ${\cal A}_{H} = \{\forall (s \in {\cal E}_{S}, a \in {\cal E}_{A}, o \in {\cal E}_{O}) \mid holds(s, a, o) \}$
+            \item
+              ${\cal A}_{M} = {\cal A}_{MS} \cup {\cal A}_{MA} \cup {\cal A}_{MO}$
+            \item
+              ${\cal A}_{S} = {\cal S}_{SS} \cup {\cal S}_{SA} \cup {\cal A}_{SO}$
+            \item
+              ${\cal A}_{MS} = \{\forall (e \in {\cal E}_{SS}, g \in {\cal E}_{SG}) \mid memb(e, g)\}$
+            \item
+              ${\cal A}_{MA} = \{\forall (e \in {\cal E}_{AS}, g \in {\cal E}_{AG}) \mid memb(e, g)\}$
+            \item
+              ${\cal A}_{MO} = \{\forall (e \in {\cal E}_{OS}, g \in {\cal E}_{OG}) \mid memb(e, g)\}$
+            \item
+              ${\cal A}_{SS} = \{\forall (g1, g2 \in {\cal E}_{SG}) \mid subst(g1, g2)\}$
+            \item
+              ${\cal A}_{SA} = \{\forall (g1, g2 \in {\cal E}_{AG}) \mid subst(g1, g2)\}$
+            \item
+              ${\cal A}_{SO} = \{\forall (g1, g2 \in {\cal E}_{OG}) \mid subst(g1, g2)\}$
+          \end{enumerate}
+
+        \end{definition} 
 
         \noindent \emph{Initial State}
 
