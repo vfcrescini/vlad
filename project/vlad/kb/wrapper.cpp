@@ -80,6 +80,8 @@ int wrapper::close_rule()
   if (stage != 2)
     return VLAD_FAILURE;
 
+  pr_api->done();
+
   stage = 3;
 
   return VLAD_OK;

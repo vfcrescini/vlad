@@ -745,6 +745,8 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
       return retval;
   }
 
+  wrap->close_atom();
+
   /* inheritance rules */
 
   /* state loop */
@@ -1066,6 +1068,8 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
     delete tmp_list1;
     delete tmp_list2;
   }
+
+  wrap->close_rule();
 
   *r = VLAD_RESULT_TRUE;
 
