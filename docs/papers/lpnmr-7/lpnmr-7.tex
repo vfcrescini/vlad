@@ -34,40 +34,113 @@
   \section{Introduction}
     [text]
 
-  \newpage
   \section{Language L}
+    \subsection{Language Elements}
+
+      \subsubsection{Identifier}
+        \begin{verbatim}
+[a-zA-Z]([a-zA-Z0-9_])*
+        \end{verbatim}
+      \subsubsection{Atom}
+        \begin{verbatim}
+holds(<sub-identifier>, <acc-identifier>, <obj-identifier>)
+memb(<singular-identifier>, <group-identifier>)
+subset(<group-identifier>, <group-identifier>)
+        \end{verbatim}
+      \subsubsection{Expression}
+        \begin{verbatim}
+atom1 [&& ...]
+        \end{verbatim}
 
     \subsection{Initial State Definition}
 
+      \begin{verbatim}
+initially <expression>
+      \end{verbatim}
+
     \subsection{Constraint Definition}
+
+      \begin{verbatim}
+always exp1 [implied by exp2 [with absence exp3]]
+      \end{verbatim}
 
     \subsection{Policy Manipulation}
 
       \subsubsection{Definition}
 
+        \begin{verbatim}
+<update-identifier>(<var1>[,...]) causes exp1 if exp2
+        \end{verbatim}
+
       \subsubsection{Directives}
+
+        \begin{itemize}
+          \item Adding a Transformation into the Sequence
+          \item Remove a Transformation from the Sequence
+          \item Listing the Sequence Table
+        \end{itemize}
 
     \subsection{Query Directive}
 
-  \newpage
+      \begin{verbatim}
+query expression
+      \end{verbatim}
+
   \section{Implementation}
 
-    \subsection{Translation to Logic Program}
+    \subsection{Language L to Extended Logic Program}
 
-      \subsubsection{L to Extended Logic Program}
-
-        \begin{itemize}
-          \item Integration of Set Theory
-          \item State Handling Mechanism
-        \end{itemize}
-
-      \subsubsection{Extended Logic Program to Normal Logic Program}
+      \subsubsection{Integration of Set Theory}
 
         \begin{itemize}
-          \item Removal of Classical Negation
+          \item
+            Inheritance Rules for Members of Groups
+
+            holds(M, P) $\leftarrow$ holds(G, P) $\land$ M $\in$ G
+          \item
+            Inheritance Rules for Subgroups
+
+            holds(S1, P) $\leftarrow$ holds(S2, P) $\land$ S1 $\subseteq$ S2
+          \item
+            Transitivity Rule
+
+            S1 $\subseteq$ S3 $\leftarrow$ S1 $\subseteq$ S2 $\land$ S2 $\subseteq$ S3
         \end{itemize}
 
-  \newpage
+      \subsubsection{State Handling Mechanism}
+
+        \begin{itemize}
+          \item
+            Initial State
+          \item
+            Constraints
+          \item
+            Transformations
+        \end{itemize}
+
+    \subsection{Extended Logic Program to Normal Logic Program}
+
+      \subsubsection{Removal of Classical Negation.}
+        A \emph{truth} attribute can be added to atoms to indicate whether
+        an atom is classically negated or not.
+
+        \vspace{0.65cm}
+
+        \begin{table}
+          \begin{tabular}{ll}
+            \hline \\
+            ELP & NLP \\
+            \hline \\
+            holds(A, S) & holds(A, S, T) \\
+            $\lnot$ holds(A, S) & holds(A, S, F) \\
+            not holds(A, S) & not holds(A, S, T) \\
+            not $\lnot$ holds(A, S) & not holds(A, S, F) \\
+            \hline
+          \end{tabular}
+        \end{table}
+
+        FALSE $\leftarrow$ holds(A, S, T) $\land$ holds(A, S, F)
+
   \section{Application: Dynamic Access Control System in Web Servers}
 
   \begin{thebibliography}{5}
