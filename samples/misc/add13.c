@@ -6,7 +6,7 @@ int main() {
     if (temp != 10)
       printf("%c", temp);
     else
-      printf("%c%c", 10, 13);	
+      printf("%c%c", 13, 10);	
   }
   return 0;
 }
