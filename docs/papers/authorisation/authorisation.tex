@@ -411,10 +411,10 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
 
         The next step is to add a state parameter into the definiton of an
         atom. This procedure will allow us to differentiate between atoms of
-        the same value but on different states. For example, atom \emph{A} in 
-        the initial state \emph{S$_0$} can be represented as holds(A, S$_0$),
-        likewise, the same atom \emph{A} in state \emph{S$_1$} will be
-        represented as holds(A, S$_1$).
+        the same value but on different states. For example, atom A in 
+        the initial state S$_0$ can be represented as holds(A, S$_0$),
+        likewise, the same atom A in state S$_1$ will be represented as
+        holds(A, S$_1$).
 
       \subsubsection{Handling States in Transformations}
 
@@ -425,33 +425,33 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
         Let:
   
         \begin{list}{}{}
-          \item \emph{T} = transformation
-          \item \emph{S}$^{'}$ = state before \emph{T} is applied
-          \item \emph{S}$^{''}$ = state after \emph{T} is applied
+          \item T = transformation
+          \item S$^{'}$ = state before T is applied
+          \item S$^{''}$ = state after T is applied
         \end{list}
   
-        Then we can define the \emph{Res} as the function that applies a 
+        Then we can define the Res as the function that applies a 
         transformation onto a state:
   
         \begin{list}{}{}
-          \item \emph{S}$^{''}$ = \emph{Res}(T, \emph{S}$^{'}$)
+          \item S$^{''}$ = Res(T, S$^{'}$)
         \end{list}
   
         Disregarding the placeholder variables and a conjunction of atoms, 
-        a transformation \emph{T} in its simplest form:
+        a transformation T in its simplest form:
   
         \begin{list}{}{}
-          \item \emph{T} causes \emph{A} if \emph{B}
+          \item T causes A if B
         \end{list}
   
         Therefore, a transformation may be represented in an extended logic
         program as an implication:
  
         \begin{list}{}{}
-          \item holds(A, \emph{Res}(T, S)) $\leftarrow$ holds(B, S)
+          \item holds(A, Res(T, S)) $\leftarrow$ holds(B, S)
         \end{list}
 
-        where \emph{S} is the state before transformation \emph{T} is applied.
+        where S is the state before transformation T is applied.
 
       \subsubsection{Handling States in Constraints}
 
@@ -469,14 +469,14 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
 
         \begin{list}{}{}
           \item 
-            holds(B, S) $\leftarrow$ holds(A, S) $\land$ \emph{not} holds(C, S)
+            holds(B, S) $\leftarrow$ holds(A, S) $\land$ not holds(C, S)
           \item 
             holds(B, S) $\leftarrow$ holds(A, S)
           \item 
             holds(A, S) $\leftarrow$
         \end{list}
 
-        for all states \emph{S} in the domain.
+        for all states S in the domain.
 
       \subsubsection{Example}
 
