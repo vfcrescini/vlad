@@ -326,7 +326,7 @@ int polbase::add_seqtab(updateref *a_uref)
   if ((retval = m_setable->add(a_uref)) != VLAD_OK)
     return retval;
 
-  /* set back to stage 3 to prevent query before compute */
+  /* set back to m_stage 3 to prevent query before compute */
   m_stage = 3;
 
   return VLAD_OK;
@@ -383,7 +383,7 @@ int polbase::del_seqtab(unsigned int a_index)
   if ((retval = m_setable->del(a_index)) != VLAD_OK)
     return retval;
 
-  /* set back to stage 3 to prevent query before compute */
+  /* set back to m_stage 3 to prevent query before compute */
   m_stage = 3;
 
   return retval;
@@ -457,11 +457,11 @@ int polbase::compute_evaluate()
 {
   int retval;
   unsigned int i;
-                                                                               
+
   /* we only allow this after kb is closed */
   if (m_stage != 3 && m_stage != 4)
     return VLAD_INVALIDOP;
-                                                                               
+
   /* create a new instance of the smodels smwrap and init it */
   if (m_smobject != NULL)
     delete m_smobject;
@@ -469,7 +469,7 @@ int polbase::compute_evaluate()
     return VLAD_MALLOCFAILED;
   if ((retval = m_smobject->init()) != VLAD_OK)
     return retval;
-                                                                               
+
   /* first we register all the possible atoms in smodels */
   for (i = 0; i < (m_tot_atom * 2 * (VLAD_LIST_LENGTH(m_setable) + 1)); i++) {
     if ((retval = m_smobject->add_atom(i)) != VLAD_OK)
@@ -478,6 +478,455 @@ int polbase::compute_evaluate()
   m_smobject->close_atom();
 
   /* now *sigh* we register all the built-in rules */
+
+  /* identity rules */
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_grp;
+    /* subject groups */
+    for (i_grp = 0; i_grp < sglen; i_grp++) {
+      unsigned int tmp_num = compute_subst(i,
+                                           true,
+                                           VLAD_IDENT_SUB_SIN,
+                                           i_grp,
+                                           i_grp);
+      if ((retval = m_smobject->add_axiom(true, 1, tmp_num)) != VLAD_OK)
+        return retval;
+    }
+    /* access groups */
+    for (i_grp = 0; i_grp < aglen; i_grp++) {
+      unsigned int tmp_num = compute_subst(i,
+                                           true,
+                                           VLAD_IDENT_ACC_SIN,
+                                           i_grp,
+                                           i_grp);
+      if ((retval = m_smobject->add_axiom(true, 1, tmp_num)) != VLAD_OK)
+        return retval;
+    }
+    /* object groups */
+    for (i_grp = 0; i_grp < oglen; i_grp++) {
+      unsigned int tmp_num = compute_subst(i,
+                                           true,
+                                           VLAD_IDENT_OBJ_SIN,
+                                           i_grp,
+                                           i_grp);
+      if ((retval = m_smobject->add_axiom(true, 1, tmp_num)) != VLAD_OK)
+        return retval;
+    }
+  }
+
+  /* inheritance rules */
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_grp1;
+    unsigned int i_grp2;
+    unsigned int i_sub;
+    unsigned int i_acc;
+    unsigned int i_obj;
+
+    /* subset inheritance */
+
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < sglen; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_acc = 0; i_acc < aslen + aglen; i_acc++) {
+          for (i_obj = 0; i_obj < oslen + oglen; i_obj++) {
+            /* positive */
+            if ((retval = m_smobject->add_rule(2,
+                                               1,
+                                               compute_holds(i, true, i_grp1 + sslen, i_acc, i_obj),
+                                               compute_holds(i, true, i_grp2 + sslen, i_acc, i_obj),
+                                               compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp1, i_grp2),
+                                               compute_holds(i, false, i_grp1 + sslen, i_acc, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = m_smobject->add_rule(2,
+                                               0,
+                                               compute_holds(i, false, i_grp1 + sslen, i_acc, i_obj),
+                                               compute_holds(i, false, i_grp2 + sslen, i_acc, i_obj),
+                                               compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp1, i_grp2))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < aglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < aglen; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_sub = 0; i_sub < sslen + sglen; i_sub++) {
+          for (i_obj = 0; i_obj < oslen + oglen; i_obj++) {
+            /* positive */
+            if ((retval = m_smobject->add_rule(2,
+                                               1,
+                                               compute_holds(i, true, i_sub, i_grp1 + aslen, i_obj),
+                                               compute_holds(i, true, i_sub, i_grp2 + aslen, i_obj),
+                                               compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp1, i_grp2),
+                                               compute_holds(i, false, i_sub, i_grp1 + aslen, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = m_smobject->add_rule(2,
+                                               0,
+                                               compute_holds(i, false, i_sub, i_grp1 + aslen, i_obj),
+                                               compute_holds(i, false, i_sub, i_grp2 + aslen, i_obj),
+                                               compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp1, i_grp2))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < oglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < oglen; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_sub = 0; i_sub < sslen + sglen; i_sub++) {
+          for (i_acc = 0; i_acc < aslen + aglen; i_acc++) {
+            /* positive */
+            if ((retval = m_smobject->add_rule(2,
+                                               1,
+                                               compute_holds(i, true, i_sub, i_acc, i_grp1 + oslen),
+                                               compute_holds(i, true, i_sub, i_acc, i_grp2 + oslen),
+                                               compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2),
+                                               compute_holds(i, false, i_sub, i_acc, i_grp1 + oslen))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = m_smobject->add_rule(2,
+                                               0,
+                                               compute_holds(i, false, i_sub, i_acc, i_grp1 + oslen),
+                                               compute_holds(i, false, i_sub, i_acc, i_grp2 + oslen),
+                                               compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
+    /* member inheritance */
+
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sglen; i_grp1++) {
+      for (i_sub = 0; i_sub < sslen; i_sub++) {
+        for (i_acc = 0; i_acc < aslen + aglen; i_acc++) {
+          for (i_obj = 0; i_obj < oslen + oglen; i_obj++) {
+            /* positive */
+            if ((retval = m_smobject->add_rule(2,
+                                               1,
+                                               compute_holds(i, true, i_sub, i_acc, i_obj),
+                                               compute_holds(i, true, i_grp1 + sslen, i_acc, i_obj),
+                                               compute_memb(i, true, VLAD_IDENT_SUB_SIN, i_sub, i_grp1),
+                                               compute_holds(i, false, i_sub, i_acc, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = m_smobject->add_rule(2,
+                                               0,
+                                               compute_holds(i, false, i_sub, i_acc, i_obj),
+                                               compute_holds(i, false, i_grp1 + sslen, i_acc, i_obj),
+                                               compute_memb(i, true, VLAD_IDENT_SUB_SIN, i_sub, i_grp1))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < aglen; i_grp1++) {
+      for (i_sub = 0; i_sub < sslen + sglen; i_sub++) {
+        for (i_acc = 0; i_acc < aslen; i_acc++) {
+          for (i_obj = 0; i_obj < oslen + oglen; i_obj++) {
+            /* positive */
+            if ((retval = m_smobject->add_rule(2,
+                                               1,
+                                               compute_holds(i, true, i_sub, i_acc, i_obj),
+                                               compute_holds(i, true, i_sub, i_grp1 + aslen, i_obj),
+                                               compute_memb(i, true, VLAD_IDENT_ACC_SIN, i_acc, i_grp1),
+                                               compute_holds(i, false, i_sub, i_acc, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = m_smobject->add_rule(2,
+                                               0,
+                                               compute_holds(i, false, i_sub, i_acc, i_obj),
+                                               compute_holds(i, false, i_sub, i_grp1 + aslen, i_obj),
+                                               compute_memb(i, true, VLAD_IDENT_ACC_SIN, i_acc, i_grp1))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < oglen; i_grp1++) {
+      for (i_sub = 0; i_sub < sslen + sglen; i_sub++) {
+        for (i_acc = 0; i_acc < aslen + aglen; i_acc++) {
+          for (i_obj = 0; i_obj < oslen; i_obj++) {
+            /* positive */
+            if ((retval = m_smobject->add_rule(2,
+                                               1,
+                                               compute_holds(i, true, i_sub, i_acc, i_obj),
+                                               compute_holds(i, true, i_sub, i_acc, i_grp1 + oslen),
+                                               compute_memb(i, true, VLAD_IDENT_OBJ_SIN, i_obj, i_grp1),
+                                               compute_holds(i, false, i_sub, i_acc, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = m_smobject->add_rule(2,
+                                               0,
+                                               compute_holds(i, false, i_sub, i_acc, i_obj),
+                                               compute_holds(i, false, i_sub, i_acc, i_grp1 + oslen),
+                                               compute_memb(i, true, VLAD_IDENT_OBJ_SIN, i_obj, i_grp1))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
+  }
+
+  /* transitivity rules */
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_grp1;
+    unsigned int i_grp2;
+    unsigned int i_grp3;
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < sglen; i_grp2++) {
+        /* ignore if the 2 are the same */
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_grp3 = 0; i_grp3 < sglen; i_grp3++) {
+          unsigned int tmp_num1;
+          unsigned int tmp_num2;
+          unsigned int tmp_num3;
+
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+
+          tmp_num1 = compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp1, i_grp3);
+          tmp_num2 = compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp1, i_grp2);
+          tmp_num3 = compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp2, i_grp3);
+
+          if ((retval = m_smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+            return retval;
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < aglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < aglen; i_grp2++) {
+        /* ignore if the 2 are the same */
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_grp3 = 0; i_grp3 < aglen; i_grp3++) {
+          unsigned int tmp_num1;
+          unsigned int tmp_num2;
+          unsigned int tmp_num3;
+
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+
+          tmp_num1 = compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp1, i_grp3);
+          tmp_num2 = compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp1, i_grp2);
+          tmp_num3 = compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp2, i_grp3);
+
+          if ((retval = m_smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+            return retval;
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < oglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < oglen; i_grp2++) {
+        /* ignore if the 2 are the same */
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_grp3 = 0; i_grp3 < oglen; i_grp3++) {
+          unsigned int tmp_num1;
+          unsigned int tmp_num2;
+          unsigned int tmp_num3;
+
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+
+          tmp_num1 = compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp1, i_grp3);
+          tmp_num2 = compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2);
+          tmp_num3 = compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp2, i_grp3);
+
+          if ((retval = m_smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+            return retval;
+        }
+      }
+    }
+  }
+
+  /* negation rules */
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_fact;
+    for (i_fact = 0; i_fact < m_tot_atom; i_fact++) {
+      unsigned int tmp_num1 = compute_fact(i, true, i_fact);
+      unsigned int tmp_num2 = compute_fact(i, false, i_fact);
+      if ((retval = m_smobject->add_axiom(false, 2, tmp_num1, tmp_num2)) != VLAD_OK)
+        return retval;
+    }
+  }
+
+  /* inertial rules */
+
+  /* state loop */
+  for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_fact;
+    for (i_fact = 0; i_fact < m_tot_atom; i_fact++) {
+      unsigned int tmp_num1;
+      unsigned int tmp_num2;
+      unsigned int tmp_num3;
+
+      tmp_num1 = compute_fact(i + 1, true, i_fact);
+      tmp_num2 = compute_fact(i, true, i_fact);
+      tmp_num3 = compute_fact(i + 1, false, i_fact);
+
+      if ((retval = m_smobject->add_rule(1, 1, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+        return retval;
+
+      tmp_num1 = compute_fact(i + 1, false, i_fact);
+      tmp_num2 = compute_fact(i, false, i_fact);
+      tmp_num3 = compute_fact(i + 1, true, i_fact);
+
+      if ((retval = m_smobject->add_rule(1, 1, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+        return retval;
+    }
+  }
+
+  /* initial state */
+
+  for (i = 0; i < VLAD_LIST_LENGTH(m_itable); i++) {
+    fact *tmp_fact;
+    unsigned int tmp_num;
+
+    if ((retval = m_itable->get(i, &tmp_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_fact(tmp_fact, 0, &tmp_num)) != VLAD_OK)
+      return retval;
+    if ((retval = m_smobject->add_axiom(true, 1, tmp_num)) != VLAD_OK)
+      return retval;
+  }
+
+  /* constraints */
+
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int  i_const;
+    unsigned int i_exp;
+
+    /* constraint loop */
+    for (i_const = 0; i_const < VLAD_LIST_LENGTH(m_ctable); i_const++) {
+      expression *tmp_e;
+      expression *tmp_c;
+      expression *tmp_n;
+      fact *tmp_fact;
+      unsigned int tmp_num;
+      numberlist *tmp_list1;
+      numberlist *tmp_list2;
+
+      if ((tmp_list1 = VLAD_NEW(numberlist())) == NULL)
+        return VLAD_MALLOCFAILED;
+      if ((tmp_list2 = VLAD_NEW(numberlist())) == NULL)
+        return VLAD_MALLOCFAILED;
+
+      if ((retval = m_ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
+        return retval;
+
+      /* constraint condition */
+      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_c); i_exp++) {
+        if ((retval = tmp_c->get(i_exp, &tmp_fact)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
+          return retval;
+        if ((retval = tmp_list1->add(tmp_num)) != VLAD_OK)
+          return retval;
+      }
+
+      /* constraint negative condition */
+      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_n); i_exp++) {
+        if ((retval = tmp_n->get(i_exp, &tmp_fact)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
+          return retval;
+        if ((retval = tmp_list2->add(tmp_num)) != VLAD_OK)
+          return retval;
+      }
+
+      /* constaint expression */
+      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_e); i_exp++) {
+        if ((retval = tmp_e->get(i_exp, &tmp_fact)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
+          return retval;
+	/* for every fact in the exression, we add a separate rule */
+        if ((retval = m_smobject->add_rule(tmp_num, tmp_list1, tmp_list2)) != VLAD_OK)
+          return retval;
+      }
+
+      delete tmp_list1;
+      delete tmp_list2;
+    }
+  }
+
+  /* update sequence rules */
+
+  /* state loop */
+  for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_exp;
+    char *tmp_name;
+    fact *tmp_fact;
+    unsigned int tmp_num;
+    stringlist *tmp_ilist = NULL;
+    expression *tmp_pre = NULL;
+    expression *tmp_post = NULL;
+    numberlist *tmp_list;
+
+   if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+     return VLAD_MALLOCFAILED;
+
+    if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
+      return retval;
+
+    if ((retval = m_utable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
+      return retval;
+
+    /* precondition loop */
+    for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_pre); i_exp++) {
+      if ((retval = tmp_pre->get(i_exp, &tmp_fact)) != VLAD_OK)
+        return retval;
+      if ((retval = encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
+        return retval;
+      if ((retval = tmp_list->add(tmp_num)) != VLAD_OK)
+        return retval;
+    }
+
+    /* postcondition loop */
+    for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_post); i_exp++) {
+      if ((retval = tmp_post->get(i_exp, &tmp_fact)) != VLAD_OK)
+        return retval;
+      if ((retval = encode_fact(tmp_fact, i + 1, &tmp_num)) != VLAD_OK)
+        return retval;
+      /* for every fact in the postcondition we add a rule */
+      if ((retval = m_smobject->add_rule(tmp_num, tmp_list, NULL)) != VLAD_OK)
+        return retval;
+    }
+
+    delete tmp_list;
+  }
+
+  /* this might not succeed as there might not exist a model for this query */
+  if ((retval = m_smobject->close_rule()) != VLAD_OK)
+    return retval;
+
+  m_stage = 4;
 
   return VLAD_OK;
 }
@@ -500,7 +949,7 @@ int polbase::query_evaluate(expression *a_exp, unsigned char *a_res)
   if ((retval = verify_expression(a_exp)) != VLAD_OK)
     return retval;
 
-  /* go through the atoms to test */
+  /* go through the facts to test */
   for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
     fact *tmp_fact;
     unsigned int tmp_num;
@@ -561,7 +1010,7 @@ unsigned int polbase::compute_memb(unsigned int a_state,
                           a_truth,
                           m_tot_atoms[VLAD_ATOM_HOLDS] + (sslen * sglen) + (aslen * aglen) + (a_elt * oglen) + a_grp);
   }
-                                                                               
+
   return 0;
 }
 
@@ -585,9 +1034,8 @@ unsigned int polbase::compute_subst(unsigned a_state,
                           a_truth,
                           m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER] + (sglen * sglen) + (aglen * aglen) + (a_grp1 * oglen) + a_grp2);
   }
-                                                                               
-  return 0;
 
+  return 0;
 }
 
 unsigned int polbase::compute_fact(unsigned int a_state,
@@ -1129,15 +1577,15 @@ unsigned int polbase::negate_fact(unsigned int a_fact)
 {
   unsigned int state;
   bool truth;
-                                                                               
+
   /* first extract the state */
   state = a_fact / (m_tot_atom * 2);
   a_fact = a_fact % (m_tot_atom * 2);
-                                                                               
+
   /* then get truth value */
   truth = ! (a_fact >= m_tot_atom);
   a_fact = a_fact % m_tot_atom;
-                                                                               
+
   return (state * m_tot_atom * 2) + (truth ? m_tot_atom : 0) + a_fact;
 }
 
