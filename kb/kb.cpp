@@ -144,10 +144,10 @@ int kb::get_atom(const char *n1,
           *a = holds_len + (e_index * sg_len) + g_index + 1;
           break;
         case VLAD_IDENT_ACCESS :
-          *a = holds_len + (s_len * sg_len) + (e_index * sg_len) + g_index + 1;
+          *a = holds_len + (s_len * sg_len) + (e_index * ag_len) + g_index + 1;
           break;
         case VLAD_IDENT_OBJECT :
-          *a = holds_len + (s_len * sg_len) + (a_len * ag_len) + (e_index * sg_len) + g_index + 1;
+          *a = holds_len + (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index + 1;
           break;
         default :
           /* this should never happen */
@@ -183,10 +183,10 @@ int kb::get_atom(const char *n1,
           *a = holds_len + memb_len + (g1_index * sg_len) + g2_index + 1;
           break;
         case VLAD_IDENT_ACCESS :
-          *a = holds_len + memb_len + (s_len * sg_len) + (g1_index * ag_len) + g2_index + 1;
+          *a = holds_len + memb_len + (sg_len * sg_len) + (g1_index * ag_len) + g2_index + 1;
           break;
         case VLAD_IDENT_OBJECT :
-          *a = holds_len + memb_len + (s_len * sg_len) + (a_len * ag_len) + (g1_index * og_len) + g2_index + 1;
+          *a = holds_len + memb_len + (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index + 1;
           break;
         default :
           /* this should never happen */
