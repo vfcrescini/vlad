@@ -7,7 +7,7 @@
 #include "gnd_atom.h"
 
 /* creates a pointer to an atom of type const */
-int gnd_atom_create_const(gnd_atom_type *atom, truth_type truth)
+int gnd_atom_create_const(gnd_atom_type *atom, unsigned short int truth)
 {
   if (atom == NULL)
     return -1;
@@ -23,7 +23,7 @@ int gnd_atom_create_holds(gnd_atom_type *atom,
                           ident_type *sub,
                           ident_type *acc,
                           ident_type *obj,
-                          truth_type truth)
+                          unsigned short int truth)
 {
   if (atom == NULL)
     return -1;
@@ -47,7 +47,7 @@ int gnd_atom_create_holds(gnd_atom_type *atom,
 int gnd_atom_create_memb(gnd_atom_type *atom,
                          ident_type *element,
                          ident_type *group,
-                         truth_type truth)
+                         unsigned short int truth)
 {
   if (atom == NULL)
     return -1;
@@ -71,7 +71,7 @@ int gnd_atom_create_memb(gnd_atom_type *atom,
 int gnd_atom_create_subst(gnd_atom_type *atom,
                           ident_type *group1,
                           ident_type *group2,
-                          truth_type truth)
+                          unsigned short int truth)
 {
   if (atom == NULL)
     return -1;

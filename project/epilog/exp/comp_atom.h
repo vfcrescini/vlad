@@ -31,7 +31,7 @@ typedef struct
 typedef struct
 {
   unsigned short int type;
-  truth_type truth;
+  unsigned short int truth;
   union {
     holds_type holds;
     memb_type memb; 
@@ -40,26 +40,26 @@ typedef struct
 } comp_atom_type;
 
 /* creates a pointer to an comp_atom of type const */
-int comp_atom_create_const(comp_atom_type *comp_atom, truth_type truth);
+int comp_atom_create_const(comp_atom_type *comp_atom, unsigned short int truth);
 
 /* creates a pointer to an comp_atom of type holds */
 int comp_atom_create_holds(comp_atom_type *comp_atom, 
                            name_type sub, 
                            name_type acc,
                            name_type obj,
-                           truth_type truth);
+                           unsigned short int truth);
 
 /* creates a pointer to an comp_atom of type memb */
 int comp_atom_create_memb(comp_atom_type *comp_atom,
                           name_type element,
                           name_type group,
-                          truth_type truth);
+                          unsigned short int truth);
 
 /* creates a pointer to an comp_atom of type subst */
 int comp_atom_create_subst(comp_atom_type *comp_atom,
                            name_type group1,
                            name_type group2,
-                           truth_type truth);
+                           unsigned short int truth);
 
 /* return 0 if the comp_atom is valid */
 int comp_atom_check(comp_atom_type comp_atom);

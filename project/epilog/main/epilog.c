@@ -6,10 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <epilog.h>
 #include <getopt.h>
 #include <parser.h>
-
-#define EPI_VERSION "0.9.5"
 
 int main(int argc, char *argv[])
 {

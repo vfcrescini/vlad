@@ -58,7 +58,7 @@ int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
 
   /* if the expression contains a FALSE constant, just return success */
   false_atom.type = EPI_ATOM_CONST;
-  false_atom.truth = epi_false;
+  false_atom.truth = EPI_FALSE;
 
   if (comp_exp_find(*exp, false_atom) == 0)
     return 0;
@@ -66,7 +66,7 @@ int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
   /* if the negation of an atom is aleady in, or if the atom is a FALSE
    * constant, we replace the the whole expression with a constant false */
   EPI_ATOM_NEGATE(atom);
-  if ((EPI_ATOM_IS_CONST(atom) && atom.truth == epi_true) ||
+  if ((EPI_ATOM_IS_CONST(atom) && atom.truth == EPI_TRUE) ||
       comp_exp_find(*exp, atom) == 0) {
 
     comp_exp_purge(exp);
@@ -74,7 +74,7 @@ int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
     if ((new_atom = EPI_COMPATOM_MALLOC) == NULL)
       return -1;
 
-    if (comp_atom_create_const(new_atom, epi_false) != 0)
+    if (comp_atom_create_const(new_atom, EPI_FALSE) != 0)
       return -1;
   }
   else {

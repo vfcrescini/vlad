@@ -7,7 +7,7 @@
 #include "comp_atom.h"
 
 /* creates a pointer to an atom of type const */
-int comp_atom_create_const(comp_atom_type *atom, truth_type truth)
+int comp_atom_create_const(comp_atom_type *atom, unsigned short int truth)
 {
   if (atom == NULL)
     return -1;
@@ -23,7 +23,7 @@ int comp_atom_create_holds(comp_atom_type *atom,
                            name_type sub,
                            name_type acc,
                            name_type obj,
-                           truth_type truth)
+                           unsigned short int truth)
 {
   if (atom == NULL)
     return -1;
@@ -47,7 +47,7 @@ int comp_atom_create_holds(comp_atom_type *atom,
 int comp_atom_create_memb(comp_atom_type *atom,
                           name_type element,
                           name_type group,
-                          truth_type truth)
+                          unsigned short int truth)
 {
   if (atom == NULL)
     return -1;
@@ -72,7 +72,7 @@ int comp_atom_create_memb(comp_atom_type *atom,
 int comp_atom_create_subst(comp_atom_type *atom,
                            name_type group1,
                            name_type group2,
-                           truth_type truth)
+                           unsigned short int truth)
 {
   if (atom == NULL)
     return -1;

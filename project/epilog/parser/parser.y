@@ -8,10 +8,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <ident.h>
-#include <name.h>
-#include <gnd_atom.h>
 #include <gnd_exp.h>
-#include <comp_atom.h>
 #include <comp_exp.h>
 #include <stringlist.h>
 #include <symtab.h>
@@ -335,7 +332,7 @@ trans_stmt :
 policy_stmt : 
   is_clause after_clause EPI_SYM_SEMICOLON {
     transref_type *tmp_trans;
-    res_type result;
+    unsigned short int result;
     gnd_exp_type curr;
     gnd_exp_type prev;
     unsigned int i;
@@ -357,10 +354,10 @@ policy_stmt :
       exit_error("internal error");
 
     switch (result) {
-      case epi_res_true :
+      case EPI_RESULT_TRUE :
         fprintf(yyout, "true\n");
         break;
-      case epi_res_false :
+      case EPI_RESULT_FALSE :
         fprintf(yyout, "false\n");
         break;
       default :
@@ -372,16 +369,16 @@ policy_stmt :
     gnd_exp_purge(&$1);
   }
   | is_clause EPI_SYM_SEMICOLON {
-    res_type result;
+    unsigned short int result;
 
     if (gnd_exp_eval($1, initial_exp, &result) != 0)
       exit_error("internal error");
 
     switch (result) {
-      case epi_res_true :
+      case EPI_RESULT_TRUE :
         fprintf(yyout, "true\n");
         break;
-      case epi_res_false :
+      case EPI_RESULT_FALSE :
         fprintf(yyout, "false\n");
         break;
       default :
@@ -509,7 +506,7 @@ ground_boolean_atom :
   }
   | EPI_SYM_NOT ground_atom_exp {
     $$ = $2;
-    $$.truth = epi_false;
+    $$.truth = EPI_FALSE;
   }
   ;
 
@@ -548,7 +545,7 @@ ground_holds_atom :
     if (!EPI_IDENT_IS_OBJECT(*object))
       exit_error("third parameter of holds must be an object");
 
-    gnd_atom_create_holds(&$$, subject, access, object, epi_true);
+    gnd_atom_create_holds(&$$, subject, access, object, EPI_TRUE);
   }
   ;
 
@@ -567,7 +564,7 @@ ground_subst_atom :
     if (group1->type != group2->type)
       exit_error("parameters of subst are of different types");
 
-    gnd_atom_create_subst(&$$, group1, group2, epi_true);
+    gnd_atom_create_subst(&$$, group1, group2, EPI_TRUE);
   }
   ;
 ground_memb_atom :
@@ -588,7 +585,7 @@ ground_memb_atom :
     if (EPI_IDENT_BASETYPE(*element) != EPI_IDENT_BASETYPE(*group))
       exit_error("parameters of memb are of different types");
 
-    gnd_atom_create_memb(&$$, element, group, epi_true);
+    gnd_atom_create_memb(&$$, element, group, EPI_TRUE);
   }
   ;
 
@@ -617,7 +614,7 @@ comp_boolean_atom :
   }
   | EPI_SYM_NOT comp_atom_exp {
     $$ = $2;
-    $$.truth = epi_false;
+    $$.truth = EPI_FALSE;
   }
   ;
 
@@ -643,7 +640,7 @@ comp_holds_atom :
     ident_type *object = NULL;
 
     $$.type = EPI_ATOM_HOLDS;
-    $$.truth = epi_true;
+    $$.truth = EPI_TRUE;
 
     if (symtab_get($3, &subject) != 0)
       subject = NULL;
@@ -701,7 +698,7 @@ comp_subst_atom :
     ident_type *group2 = NULL;
 
     $$.type = EPI_ATOM_SUBST;
-    $$.truth = epi_true;
+    $$.truth = EPI_TRUE;
 
     if (symtab_get($3, &group1) != 0)
       group1 = NULL;
@@ -748,7 +745,7 @@ comp_memb_atom :
     ident_type *group = NULL;
 
     $$.type = EPI_ATOM_MEMB;
-    $$.truth = epi_true;
+    $$.truth = EPI_TRUE;
 
     if (symtab_get($3, &element) != 0)
       element = NULL;
@@ -791,10 +788,10 @@ comp_memb_atom :
 
 logical_atom : 
   EPI_SYM_TRUE {
-    gnd_atom_create_const(&$$, epi_true);
+    gnd_atom_create_const(&$$, EPI_TRUE);
   }
   | EPI_SYM_FALSE {
-    gnd_atom_create_const(&$$, epi_false);
+    gnd_atom_create_const(&$$, EPI_FALSE);
   }
   ;
 

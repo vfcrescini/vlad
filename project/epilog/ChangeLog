@@ -1,5 +1,26 @@
 2002-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+	* datastruct/stringlist.c :
+
+	  - Now uses the globally-defined error codes.
+
+	* exp/comp_atom.c :
+	* exp/comp_atom.h :
+	* exp/comp_exp.c :
+	* exp/expression.h :
+	* exp/gnd_atom.c :
+	* exp/gnd_atom.h :
+	* exp/gnd_exp.c :
+	* exp/gnd_exp.h :
+	* main/epilog.c :
+	* parser/parser.y :
+	* trans/transtab.c :
+
+	  - Now uses the macro-defined truth symbols and result types. got
+	    rid of res_type and truth_type.
+
 	* Makefile :
 	* common/Makefile :
 	* common/epilog.h :

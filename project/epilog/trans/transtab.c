@@ -84,7 +84,7 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
   gnd_atom_type *tmp_atom;
   gnd_exp_type tmp_precond;
   gnd_exp_type tmp_postcond;
-  res_type tmp_res;
+  unsigned short int tmp_res;
   unsigned int i;
 
   if (res == NULL)
@@ -115,7 +115,7 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
 
   /* if the result is false or unknown we just return with a copy
    * of kb in res */
-  if (tmp_res == epi_res_false || tmp_res == epi_res_unknown)
+  if (tmp_res == EPI_RESULT_FALSE || tmp_res == EPI_RESULT_UNKNOWN)
     return 0;
 
   /* at this point we know that the precondition holds in kb so we 

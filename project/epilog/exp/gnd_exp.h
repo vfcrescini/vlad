@@ -22,7 +22,7 @@ int gnd_exp_find(gnd_exp_type exp, gnd_atom_type atom);
 
 /* gives true, false or unknown depending on the derivability of the expression
  * in to exp */
-int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, res_type *res);
+int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, unsigned short int *res);
 
 /* gives a reference to the index'th atom in the gnd_exp */
 int gnd_exp_get(gnd_exp_type exp, unsigned int index, gnd_atom_type **atom);
