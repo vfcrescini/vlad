@@ -61,6 +61,7 @@ int yylex(void);
 %token <terminal> VLAD_SYM_IDENT
 %token <identifier> VLAD_SYM_IDENTIFIER
 %type <gnd_atom> ground_atom 
+%type <gnd_atom> ground_boolean_atom 
 %type <gnd_atom> ground_holds_atom 
 %type <gnd_atom> ground_subst_atom 
 %type <gnd_atom> ground_memb_atom 
@@ -523,8 +524,16 @@ ground_exp :
 
 ground_boolean_atom :
   ground_atom {
+    $$ = $1;
+#ifdef DEBUG
+#endif
   }
   | VLAD_SYM_NOT ground_atom {
+    int retval;
+    if ((retval = kbase.negate_atom($1, &$$)) != VLAD_OK)
+      return retval;
+#ifdef DEBUG
+#endif
   }
   ;
 
@@ -546,33 +555,24 @@ ground_atom :
 ground_holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
-    if ((retval = kbase.get_atom($3, $5, $7, VLAD_ATOM_HOLDS, &$$)) != VLAD_OK) {
+    if ((retval = kbase.get_atom($3, $5, $7, VLAD_ATOM_HOLDS, true, &$$)) != VLAD_OK) {
       return retval;
     }
-#ifdef DEBUG
-    fprintf(stderr, "%5d = holds(%s, %s, %s)\n", $$, $3, $5, $7);
-#endif
   }
   ;
 
 ground_subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
-    if ((retval = kbase.get_atom($3, $5, NULL, VLAD_ATOM_SUBSET, &$$)) != VLAD_OK)
+    if ((retval = kbase.get_atom($3, $5, NULL, VLAD_ATOM_SUBSET, true, &$$)) != VLAD_OK)
       return retval;
-#ifdef DEBUG
-    fprintf(stderr, "%5d = subst(%s, %s)\n", $$, $3, $5);
-#endif
   }
   ;
 ground_memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
-    if ((retval = kbase.get_atom($3, $5, NULL, VLAD_ATOM_MEMBER, &$$)) != VLAD_OK)
+    if ((retval = kbase.get_atom($3, $5, NULL, VLAD_ATOM_MEMBER, true, &$$)) != VLAD_OK)
       return retval;
-#ifdef DEBUG
-    fprintf(stderr, "%5d = memb(%s, %s)\n", $$, $3, $5);
-#endif
   }
   ;
 
@@ -619,19 +619,13 @@ comp_memb_atom :
 logical_atom : 
   VLAD_SYM_TRUE {
     int retval;
-    if ((retval = kbase.get_atom("true", NULL, NULL, VLAD_ATOM_CONST, &$$)) != VLAD_OK)
+    if ((retval = kbase.get_atom("true", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK)
       return retval;
-#ifdef DEBUG
-    fprintf(stderr, "%5d = true\n", $$);
-#endif
   }
   | VLAD_SYM_FALSE {
     int retval;
-    if ((retval = kbase.get_atom("false", NULL, NULL, VLAD_ATOM_CONST, &$$)) != VLAD_OK)
+    if ((retval = kbase.get_atom("false", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK)
       return retval;
-#ifdef DEBUG
-    fprintf(stderr, "%5d = false\n", $$);
-#endif
   }
   ;
 

@@ -6,6 +6,7 @@
 
 	* kb/kb.h :
 	* kb/kb.cpp :
+	* parser/parser.y :
 
 	  - Added provisions for negative atoms.
 
