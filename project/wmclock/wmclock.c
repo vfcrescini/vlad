@@ -470,11 +470,11 @@ void showYear()
    XCopyArea(dpy, led.pixmap, visible.pixmap, normalGC,
 	     digitXOffset , digitYOffset, LED_NUM_WIDTH, LED_NUM_HEIGHT,
 	     xPos[DIGIT_1_X_POS], yPos[DIGIT_Y_POS]);
-   digitXOffset = LED_NUM_WIDTH * (year % 1000);
+   digitXOffset = LED_NUM_WIDTH * ((year % 1000) / 100);
    XCopyArea(dpy, led.pixmap, visible.pixmap, normalGC,
 	     digitXOffset , digitYOffset, LED_NUM_WIDTH, LED_NUM_HEIGHT,
 	     xPos[DIGIT_2_X_POS], yPos[DIGIT_Y_POS]);
-   digitXOffset = LED_NUM_WIDTH * (year % 100);
+   digitXOffset = LED_NUM_WIDTH * ((year % 100) / 10);
    XCopyArea(dpy, led.pixmap, visible.pixmap, normalGC,
 	     digitXOffset , digitYOffset, LED_NUM_WIDTH, LED_NUM_HEIGHT,
 	     xPos[DIGIT_3_X_POS], yPos[DIGIT_Y_POS]);
@@ -828,7 +828,14 @@ int main(int argc, char **argv)
 #endif /* !ONLY_SHAPED_WINDOW */
    for (i = 0; i < NUM_TIME_POSITIONS; i++)
     {
-       xPos[i] += enable12HourClock ? timePos24[i] : timePos12[i];
+      if (enable12HourClock && (!enableYearDisplay))
+       {
+         xPos[i] += timePos24[i];
+       }
+      else
+       {
+         xPos[i] += timePos12[i];
+       }
     }
    
    /* Open the display */

@@ -1,7 +1,7 @@
 # User-Defined Macros:
 # %%define <name> <expansion>
 %define Name		wmclock
-%define Version		1.0.12.2
+%define Version		1.0.12.2-vino-1
 %define Release		1
 %define Prefix		/usr
 %define ExecPrefix	/usr/X11R6

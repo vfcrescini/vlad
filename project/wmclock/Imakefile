@@ -1,6 +1,6 @@
 NAME		= wmclock
-VERSION		= 1.0.12.2
-DATE		= 2000-Apr-13
+VERSION		= 1.0.12.2-vino-1
+DATE		= 2004-Jan-22
 
 MAKE_CHANGELOG	= cvs2cl
 

@@ -5,6 +5,15 @@
    cvs2cl.pl.  See http://www.red-bean.com/~kfogel/cvs2cl.shtml for more.
   -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
 
+2004-01-22 12:42  vfcrescini  <jcrescin@cit.uws.edu.au>
+
+	* wmclock.c :
+
+	  - Year is now properly displayed with the -year option.
+
+	  - When for some reason the options -year and -12 are both present,
+	    year is properly displayed.
+
 2000-04-13 07:49  jmknoble
 
 	* wmclock.spec.in: Add ChangeLog to %%doc directory.
