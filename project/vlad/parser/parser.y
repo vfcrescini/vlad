@@ -539,7 +539,7 @@ query_stmt :
           fprintf(yyout, "%s\n", VLAD_RESULT_STRING(res));
           break;
         case VLAD_NOMODEL :
-          fprintf(yyout, "conflict encountered: could not evaluate query\n");
+          fprintf(yyerr, "conflict encountered: could not evaluate query\n");
           return VLAD_NOMODEL;
         default :
           fprintf(yyerr, "internal error: %d\n", retval);
