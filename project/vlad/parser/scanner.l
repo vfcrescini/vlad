@@ -32,6 +32,10 @@ holds              holds
 member             memb
 subset             subst
 initially          initially
+implies            implies
+with               with
+absence            absence
+always             always
 transform          trans
 causes             causes
 if                 if
@@ -74,6 +78,14 @@ everything         .
 <INITIAL>{subset} return VLAD_SYM_SUBST;
 
 <INITIAL>{initially} return VLAD_SYM_INITIALLY;
+
+<INITIAL>{implies} return VLAD_SYM_IMPLIES;
+
+<INITIAL>{with} return VLAD_SYM_WITH;
+
+<INITIAL>{absence} return VLAD_SYM_ABSENCE;
+
+<INITIAL>{always} return VLAD_SYM_ALWAYS;
 
 <INITIAL>{transform} return VLAD_SYM_TRANS;
 

@@ -36,6 +36,10 @@ FILE *yyerr;
 %token <terminal> VLAD_SYM_MEMB
 %token <terminal> VLAD_SYM_SUBST
 %token <terminal> VLAD_SYM_INITIALLY
+%token <terminal> VLAD_SYM_IMPLIES
+%token <terminal> VLAD_SYM_WITH
+%token <terminal> VLAD_SYM_ABSENCE
+%token <terminal> VLAD_SYM_ALWAYS
 %token <terminal> VLAD_SYM_TRANS
 %token <terminal> VLAD_SYM_CAUSES
 %token <terminal> VLAD_SYM_IF
@@ -69,40 +73,56 @@ destroy :
   ;
 
 body :
-  first_part 
-  | last_part
-  |
+  ident_section initial_section constraint_section trans_section query_section
   ;
 
-first_part :
-  ident_stmt_list
-  | ident_stmt_list last_part
+ident_section : 
+  | ident_stmt_list
   ;
 
-last_part :
-  other_stmt_list;
+initial_section :
+  | initial_stmt_list
+  ;
+
+constraint_section :
+  | constraint_stmt_list
+  ;
+
+trans_section :
+  | trans_stmt_list
+  ;
+
+query_section :
+  | query_stmt_list
+  ;
 
 ident_stmt_list :
   ident_stmt
   | ident_stmt_list ident_stmt
   ;
 
-other_stmt_list :
-  other_stmt
-  | other_stmt_list other_stmt
+initial_stmt_list :
+  initial_stmt
+  | initial_stmt_list initial_stmt
+  ;
+
+constraint_stmt_list :
+  constraint_stmt
+  | constraint_stmt_list constraint_stmt
+  ;
+
+trans_stmt_list :
+  trans_stmt
+  | trans_stmt_list trans_stmt
+  ;
+
+query_stmt_list :
+  query_stmt
+  | query_stmt_list query_stmt
   ;
 
 ident_stmt :
   VLAD_SYM_IDENT ident_declaration VLAD_SYM_SEMICOLON {
-  }
-  ;
-
-other_stmt :
-  initial_stmt {
-  }
-  | trans_stmt {
-  }
-  | policy_stmt {
   }
   ;
 
@@ -192,12 +212,32 @@ initial_stmt :
   }
   ;
 
+constraint_stmt :
+  implies_stmt
+  | always_stmt
+  ;
+
+implies_stmt :
+  ground_exp VLAD_SYM_IMPLIES ground_exp with_clause VLAD_SYM_SEMICOLON {
+  }
+  ;
+
+with_clause :
+  | VLAD_SYM_WITH VLAD_SYM_ABSENCE ground_exp {
+  }
+  ;
+
+always_stmt :
+  VLAD_SYM_ALWAYS ground_exp VLAD_SYM_SEMICOLON {
+  }
+  ;
+
 trans_stmt : 
   VLAD_SYM_TRANS VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES comp_exp VLAD_SYM_IF comp_exp VLAD_SYM_SEMICOLON {
   }
   ;
 
-policy_stmt : 
+query_stmt : 
   is_clause after_clause VLAD_SYM_SEMICOLON {
   }
   | is_clause VLAD_SYM_SEMICOLON {

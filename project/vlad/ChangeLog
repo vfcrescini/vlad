@@ -10,3 +10,8 @@
 
 	  - Improvements over old design. First/last parts and other stmt
 	    rules no longer needed.
+
+	* parser/parser.y :
+	* parser/scannel.l :
+
+	  - Changes to implement the bnf changes above,
