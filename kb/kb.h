@@ -39,6 +39,8 @@ class kb {
                      stringlist *v,
                      expression *pr,
                      expression *po);
+    /* evaluate query */
+    int eval(expression *e, sequence *s);
   private :
     symtab *stable;
     expression *itable;

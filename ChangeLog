@@ -1,5 +1,11 @@
 2003-04-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added partial eval() function.
+
 	* kb/Makefile.in :
 	* kb/sequence.h :
 	* kb/sequence.cpp :
