@@ -390,6 +390,7 @@ static int modvlad_handler(request_rec *a_r)
     }
     else if (!strcmp(a_r->method, MODVLAD_ACCESS_POST)) {
       ap_set_content_type(a_r, "text/html");
+      ap_setup_client_block(a_r, REQUEST_CHUNKED_DECHUNK);
       modvlad_generate_header(a_r);
       modvlad_handle_form(a_r, conf);
       modvlad_generate_footer(a_r);

@@ -431,3 +431,72 @@ static const char *strip_question(apr_pool_t *a_p, const char *a_str)
 
   return apr_pstrdup(a_p, tmpstring);
 }
+
+/* parse args */
+int modvlad_parse_args(apr_pool_t *a_p,
+                       const char *a_str,
+                       apr_table_t **a_tab)
+{
+  char *buf;
+  char *name;
+  char *value;
+  int found;
+  int novalue;
+
+  if (a_str == NULL || a_tab == NULL)
+   return -1;
+
+  buf = apr_pstrdup(a_p, a_str);
+  *a_tab = apr_table_make(a_p, 0);
+
+  while (*buf != '\0') {
+    name = buf;
+    found = 0;
+    novalue = 0;
+    while (*buf != '\0') {
+      if (*buf == '=') {
+        *buf = '\0';
+        buf++;
+        found = 1;
+        break;
+      }
+      else if (*buf == '\0' || *buf == '&' || *buf == EOF) {
+        *buf = '\0';
+        buf++;
+        found = 1;
+        novalue = 1;
+
+        break;
+      }
+      buf++;
+    }
+    
+    if (!found)
+      break;
+
+    if (!novalue) {
+      value = buf;
+      found = 0;
+
+      while(*buf != '\0') {
+        if (*buf == '&') {
+          *buf = '\0';
+          buf++;
+          found = 1;
+          break;
+        }
+
+        buf++;
+      }
+
+      if (!found)
+        *buf = '\0';
+    }
+    else
+      value = NULL;
+
+    apr_table_set(*a_tab, name, value);
+  }
+
+  return 0;
+}

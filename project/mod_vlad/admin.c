@@ -7,6 +7,7 @@
 
 #include "vlad/wrapper.h"
 
+#include "apr_strings.h"
 #include "http_protocol.h"
 
 void modvlad_generate_header(request_rec *a_r)
@@ -40,8 +41,9 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   vlad_kb_length_seqtab(a_conf->kb, &st_len);
   vlad_kb_length_transtab(a_conf->kb, &tt_len);
 
+  ap_rprintf(a_r, "    <h3>Current Sequence</h3>\n");
   ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"\">\n");
-  ap_rprintf(a_r, "      <h3>Current Sequence</h3>\n");
+  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"delete\">\n");
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"delete\" value=\"\">\n");
   ap_rprintf(a_r, "      <ul>\n");
 
@@ -84,13 +86,15 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
     ap_rprintf(a_r, "      <li>\n");
     ap_rprintf(a_r, "        <form name=\"addform%d\" method=\"POST\" action=\"\">\n", i);
-    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"argnum\" value=\"%d\">\n", arg_len);
+    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"command\" value=\"add\">\n");
+    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"args\" value=\"%d\">\n", arg_len);
+    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"trans\" value=\"%s\">\n", tt_name);
     ap_rprintf(a_r, "          %s\n", tt_name);
     ap_rprintf(a_r, "          <input type=\"button\" name=\"add\" value=\"add\" onclick=\"addform%d.submit();\">\n", i);
     ap_rprintf(a_r, "          <br>\n");
 
     for (j = 0; j < arg_len; j++) {
-      ap_rprintf(a_r, "          <input type=\"text\" name=\"arg%d\" value=\"\" readonly>\n", j);
+      ap_rprintf(a_r, "          arg%d <input type=\"text\" name=\"arg%d\" value=\"\" readonly>\n", j, j);
       ap_rprintf(a_r, "          <input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\">\n", i, j);
     }
 
@@ -103,4 +107,47 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
 void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
 {
+  const char *cmd;
+  char buffer[5120];
+  apr_table_t *tab;
+
+  ap_get_client_block(a_r, buffer, 5120);
+  ap_unescape_url(buffer);
+  modvlad_parse_args(a_r->pool, buffer, &tab);
+
+  cmd = apr_table_get(tab, "command");
+
+  if (!strcmp(cmd, "add")) {
+    int args = atoi(apr_table_get(tab, "args"));
+    unsigned int i;
+    const char *name;
+    void *tref;
+    void *vlist;
+
+    name = apr_table_get(tab, "trans");
+
+    vlad_tref_create(&tref);
+    vlad_strlist_create(&vlist);
+
+    for (i = 0; i < args; i++) {
+      const char *value;
+      value = apr_table_get(tab, apr_psprintf(a_r->pool, "arg%d", i));
+      vlad_strlist_add(vlist, value);
+    }
+
+    vlad_tref_init(tref, name, vlist);
+
+    vlad_kb_add_seqtab(a_conf->kb, tref);
+
+    ap_rprintf(a_r, "added %s\n", name);
+  }
+  else if (!strcmp(cmd, "delete")) {
+    ap_rprintf(a_r, "delete\n");
+  }
+  else
+    ap_rprintf(a_r, "error\n");
+
+  ap_rprintf(a_r, "args: %s\n", buffer);
+
+  modvlad_generate_form(a_r, a_conf);
 }

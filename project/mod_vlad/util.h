@@ -68,4 +68,8 @@ int modvlad_init(apr_pool_t *a_p,
 /* strips out trailing slashes and/or everything after a ? */
 const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url);
 
+/* parse args */
+int modvlad_parse_args(apr_pool_t *a_p,
+                       const char *a_str,
+                       apr_table_t **a_tab);
 #endif
