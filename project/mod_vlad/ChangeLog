@@ -1,5 +1,9 @@
 2003-07-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* mod_vlad.c :
+
+	  - Added child_init hook to initialize child mutex and random seed.
+
 	* util.c :
 
 	  - Now properly generates a pseudo random number for id.

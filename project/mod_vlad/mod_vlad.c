@@ -24,6 +24,7 @@
 
 /* including unistd.h causes compiler warnings so we explicitly declare here */
 #ifndef _UNISTD_H
+extern int getpid();
 extern int getppid();
 #endif
 
@@ -42,6 +43,7 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
                               apr_pool_t *a_plog,
                               apr_pool_t *a_ptmp,
                               server_rec *a_s);
+static void modvlad_childinit(apr_pool_t *a_p, server_rec *a_s);
 static void modvlad_register_hooks (apr_pool_t *a_p);
 static const char *modvlad_set_userfile(cmd_parms *a_cmd,
                                         void *a_config,
@@ -241,16 +243,6 @@ static int modvlad_access(request_rec *a_r)
   if (!conf->enabled)
     return DECLINED;
 
-  /* mutex stuff */
-  if (apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_r->pool) != APR_SUCCESS) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_r,
-                  "mod_vlad: failed to reinit mutex in child");
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
-
   /* parse the incoming header to get the authorization line */
   if ((authline = apr_table_get(a_r->headers_in, "Authorization"))) {
     ap_getword(a_r->pool, &authline, ' ');
@@ -387,16 +379,6 @@ static int modvlad_handler(request_rec *a_r)
   if (!conf->enabled)
     return DECLINED;
 
-  /* mutex stuff */
-  if (apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_r->pool) != APR_SUCCESS) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_r,
-                  "mod_vlad: failed to reinit mutex in child");
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
-
   filepath = apr_pstrdup(a_r->pool, modvlad_strip_url(a_r->pool, a_r->uri));
   apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
 
@@ -441,6 +423,12 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
 
   if (getppid() != 1)
     return DECLINED;
+
+  ap_log_perror(APLOG_MARK,
+                APLOG_INFO,
+                0,
+                a_plog,
+                "mod_vlad: postconfig: pid=%d", getpid());
 
   conf = ap_get_module_config(a_s->module_config, &modvlad_module);
 
@@ -519,6 +507,47 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
   return OK;
 }
 
+static void modvlad_childinit(apr_pool_t *a_p, server_rec *a_s)
+{
+  modvlad_config_rec *conf = NULL;
+
+  ap_log_perror(APLOG_MARK,
+                APLOG_INFO,
+                0,
+                a_p,
+                "mod_vlad: childinit: pid=%d", getpid());
+
+  /* set seed for rand */
+  srand(time(NULL));
+
+  /* we need conf to init the mutex */
+  conf = (modvlad_config_rec *) ap_get_module_config(a_s->module_config,
+                                                     &modvlad_module);
+
+  if (!conf) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_p,
+                  "mod_vlad: conf is null");
+    return;
+  }
+
+  /* first check if we are enabled */
+  if (!conf->enabled)
+    return;
+
+  /* reinit the mutex for this process */
+  if (apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_p) != APR_SUCCESS) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_p,
+                  "mod_vlad: failed to reinit mutex in child");
+    return;
+  }
+}
+
 static void modvlad_register_hooks(apr_pool_t *a_p)
 {
   ap_log_perror(APLOG_MARK,
@@ -530,6 +559,7 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
   ap_hook_handler(modvlad_handler, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_access_checker(modvlad_access, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_post_config(modvlad_postconfig, NULL, NULL, APR_HOOK_FIRST);
+  ap_hook_child_init(modvlad_childinit, NULL, NULL, APR_HOOK_FIRST);
 }
 
 static const char *modvlad_set_userfile(cmd_parms *a_cmd,
