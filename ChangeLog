@@ -1,3 +1,9 @@
+2003-05-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* main/Makefile.in :
+
+	  - We no longer need to link against libfl.
+
 2003-04-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* docs/bnf.txt :
