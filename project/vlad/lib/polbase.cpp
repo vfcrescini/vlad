@@ -420,7 +420,7 @@ int polbase::get_updatetab(unsigned int a_index,
 {
   if (m_stage < 2)
     return VLAD_INVALIDOP;
-                                                                                
+
   return m_utable->get(a_index, a_name, a_vlist, a_precond, a_postcond);
 }
 
@@ -447,7 +447,7 @@ int polbase::check_symtab(const char *a_name, unsigned char a_type)
 {
   if (m_stage < 2)
     return VLAD_INVALIDOP;
-                                                                                
+
   return m_stable->find(a_name, a_type);
 }
 
@@ -784,10 +784,10 @@ int polbase::verify_fact_holds(const char *a_sub,
 {
   int retval;
   unsigned char type;
-                                                                                
+
   if (a_sub == NULL || a_acc == NULL || a_obj == NULL)
     return VLAD_NULLPTR;
-                                                                                
+
   /* check subject */
   switch((retval = m_stable->type(a_sub, &type))) {
     case VLAD_OK :
@@ -806,7 +806,7 @@ int polbase::verify_fact_holds(const char *a_sub,
     default :
       return retval;
   }
-                                                                                
+
   /* check access */
   switch((retval = m_stable->type(a_acc, &type))) {
     case VLAD_OK :
@@ -844,7 +844,7 @@ int polbase::verify_fact_holds(const char *a_sub,
     default :
       return retval;
   }
-                                                                                
+
   return VLAD_OK;
 }
 
@@ -860,10 +860,10 @@ int polbase::verify_fact_member(const char *a_elt,
   unsigned char type_elt;
   unsigned char type_grp;
   bool var = false;
-                                                                                
+
   if (a_elt == NULL || a_grp == NULL)
     return VLAD_NULLPTR;
-                                                                                
+
   /* check element */
   switch((retval = m_stable->type(a_elt, &type_elt))) {
     case VLAD_OK :
@@ -883,7 +883,7 @@ int polbase::verify_fact_member(const char *a_elt,
     default :
       return retval;
   }
-                                                                                
+
   /* check group */
   switch((retval = m_stable->type(a_grp, &type_grp))) {
     case VLAD_OK :
@@ -905,7 +905,7 @@ int polbase::verify_fact_member(const char *a_elt,
     default :
       return retval;
   }
-                                                                                
+
   return VLAD_OK;
 }
 
@@ -921,10 +921,10 @@ int polbase::verify_fact_subset(const char *a_grp1,
   unsigned char type_grp1;
   unsigned char type_grp2;
   bool var = false;
-                                                                                
+
   if (a_grp1 == NULL || a_grp2 == NULL)
     return VLAD_NULLPTR;
-                                                                                
+
   /* check group1 */
   switch((retval = m_stable->type(a_grp1, &type_grp1))) {
     case VLAD_OK :
@@ -944,7 +944,7 @@ int polbase::verify_fact_subset(const char *a_grp1,
     default :
       return retval;
   }
-                                                                                
+
   /* check group2 */
   switch((retval = m_stable->type(a_grp2, &type_grp2))) {
     case VLAD_OK :
@@ -966,24 +966,82 @@ int polbase::verify_fact_subset(const char *a_grp1,
     default :
       return retval;
   }
-                                                                                
+
   return VLAD_OK;
 }
 
 /* make sure fact is valid */
 int polbase::verify_fact(fact *a_fact, stringlist *a_vlist)
 {
-  return VLAD_OK;
+  int retval;
+  char *tmp1;
+  char *tmp2;
+  char *tmp3;
+  unsigned char type;
+  bool truth;
+
+  /* this function is only valid after the symtab is closed */
+  if (m_stage < 2)
+    return VLAD_INVALIDOP;
+
+  if ((retval = a_fact->get(&tmp1, &tmp2, &tmp3, &type, &truth)) != VLAD_OK)
+    return retval;
+
+  switch(type) {
+    case VLAD_ATOM_HOLDS :
+      return verify_fact_holds(tmp1, tmp2, tmp3, a_vlist);
+    case VLAD_ATOM_MEMBER :
+      return verify_fact_member(tmp1, tmp2, a_vlist);
+    case VLAD_ATOM_SUBSET :
+      return verify_fact_subset(tmp1, tmp2, a_vlist);
+  }
+
+  return VLAD_INVALIDINPUT;
 }
 
 /* make sure expression e is valid */
 int polbase::verify_expression(expression *a_exp)
 {
+  int retval;
+  unsigned int i;
+  fact *tmp_fact;
+
+  if (a_exp == NULL)
+    return VLAD_NULLPTR;
+
+  for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
+    if ((retval = a_exp->get(i, &tmp_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = verify_fact(tmp_fact, NULL)) != VLAD_OK)
+      return retval;
+  }
+
   return VLAD_OK;
 }
 
 /* make sure updateref is valid */
 int polbase::verify_updateref(char *a_name, stringlist *a_ilist)
 {
+  int retval;
+  expression *tmp_pr;
+  expression *tmp_po;
+
+  if (a_name == NULL)
+    return VLAD_NULLPTR;
+
+  /* replace the variables in transformation n with the identifiers in il */
+  if ((retval = m_utable->replace(a_name, a_ilist, &tmp_pr, &tmp_po)) != VLAD_OK)
+    return retval;
+
+  /* now verify the pre and post condition expressions */
+  if (tmp_pr != NULL) {
+    if ((retval = verify_expression(tmp_pr)) != VLAD_OK)
+      return retval;
+  }
+
+  if (tmp_po != NULL) {
+    if ((retval = verify_expression(tmp_po)) != VLAD_OK)
+      return retval;
+  }
   return VLAD_OK;
 }

@@ -24,8 +24,13 @@
 
 	* lib/wrapper.cpp :
 	* lib/wrapper.h :
+
+	  - Cleanup. Modified to keep up with all the name changes.
+
 	* lib/polbase.cpp :
 	* lib/polbase.h :
+
+	  - Added verify functions.
 
 	  - Cleanup. Modified to keep up with all the name changes.
 
