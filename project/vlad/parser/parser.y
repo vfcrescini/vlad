@@ -18,6 +18,12 @@ FILE *yyerr;
 
 kb kbase;
 
+#ifdef DEBUG
+unsigned int cnt_init = 0;
+unsigned int cnt_const = 0;
+unsigned int cnt_trans = 0;
+#endif
+
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
 
@@ -354,7 +360,7 @@ initial_stmt :
 
 #ifdef DEBUG
       a->print(s);
-      fprintf(stderr, "initial state: %s\n", s);
+      fprintf(stderr, "initial state[%d]: %s\n", cnt_init++, s);
 #endif
 
     }
@@ -390,7 +396,7 @@ implies_stmt :
     else
       strcpy(n, "none");
 
-    fprintf(stderr, "constraint:\n");
+    fprintf(stderr, "constraint[%d]:\n", cnt_const++);
     fprintf(stderr, "  expression: %s\n", e);
     fprintf(stderr, "  condition:   %s\n", c);
     fprintf(stderr, "  absence:     %s\n", n);
@@ -427,7 +433,7 @@ always_stmt :
 #ifdef DEBUG
     $2->print(e);
 
-    fprintf(stderr, "constraint:\n");
+    fprintf(stderr, "constraint[%d]:\n", cnt_const++);
     fprintf(stderr, "  expression: %s\n", e);
     fprintf(stderr, "  condition:   none\n");
     fprintf(stderr, "  absence:     none\n");
@@ -463,11 +469,11 @@ trans_stmt :
 
     $4->print(po);
 
-    fprintf(stderr, "transformation:\n");
-    fprintf(stderr, "  name:       %s\n", $1);
-    fprintf(stderr, "  varlist:   %s\n", v);
-    fprintf(stderr, "  precond:   %s\n", pr);
-    fprintf(stderr, "  postcond:  %s\n", po);
+    fprintf(stderr, "transformation[%d]:\n", cnt_trans++);
+    fprintf(stderr, "  name:        %s\n", $1);
+    fprintf(stderr, "  varlist:    %s\n", v);
+    fprintf(stderr, "  precond:    %s\n", pr);
+    fprintf(stderr, "  postcond:   %s\n", po);
 #endif
 
     /* cleanup */
