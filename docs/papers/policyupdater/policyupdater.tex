@@ -1991,81 +1991,66 @@ query holds(alice, read, file);
             $l_{o_{g}}$ = $s.og.len()$
           \end{quote}
 
-          With all possible atom combinations enumerated sequentially in the
-          manner shown in the above table, it is possible to uniquely identify
-          each atom with an integer index $i$. For example, the first $holds$
-          atom, with the first $subject$, first $access$ $right$ and first
-          $object$ in the symbol table $st$:
+          The enumerated facts in the table above are the positive facts of
+          state $S_{0}$. Note that the order in which the facts are enumerated
+          may be used as an index for each fact. For example, given the last
+          access right member fact:
 
           \begin{quote}
-            \begin{math}
-              holds(st.s[0], st.a[0], st.o[0])
-            \end{math}
+            $memb(s.as[l_{a_{s}} - 1], s.ag[l_{a_{g}} - 1], S_{0}, true)$
           \end{quote}
 
-          is identified by the index $i_{h_{0}}$ where:
-
-          \begin{quote}
-            \begin{math}
-              i_{h_{0}} = 0
-            \end{math}
-          \end{quote}
-
-          Similarly, the last $subject$ $member$ atom, with the last $single$
-          $subject$ and last $group$ $subject$ in the symbol table $st$:
+          The index $i^{S^{+}_{0}}_{m_{a}}$ can be derived by considering the
+          enumerated order of this fact from the table above, and the fixed
+          order of the symbol table:
 
           \begin{quote}
             \begin{math}
               \begin{aligned}[t]
-              memb(&st.ss[st.ss.len() - 1], \\
-              & st.sg[st.sg.len() - 1])
+                i^{S^{+}_{0}}_{m_{a}} = & (l_{s} \times l_{a} \times l_{o}) + \\
+                & (l_{s_{s}} \times l_{s_{g}}) + \\
+                & (l_{a_{s}} \times l_{a_{g}}) - 1
               \end{aligned}
             \end{math}
           \end{quote}
 
-          is identified by the index $i_{sm_{b}}$, where:
+          Note that in state $S_{0}$, the indices of positive member facts are
+          offset by the total number of positive holds facts
+          ($l_{s} \times l_{a} \times l_{o}$) and the indices of positive
+          access right member facts are offset by the total number of positive
+          holds facts ($l_{s} \times l_{a} \times l_{o}$) plus the total number
+          of positive subject member facts ($l_{s_{s}} \times l_{s_{g}}$).
+
+          This offsetting procedure can be extended to assign indices for both
+          positive and negative facts of states $S_{0}$ and after. The index of
+          a negative fact of state $S_{0}$ is offset by $T^{S^{+}_{0}}$, the
+          total number of positive facts in state $S_{0}$. For example, given
+          the first negative subject subset fact:
+
+          \begin{quote}
+            $subst(s.sg[0], s.sg[0], S_{0}, false)$
+          \end{quote}
+
+          is assigned the index $i^{S^{-}_{0}}_{s_{s}}$, where:
 
           \begin{quote}
             \begin{math}
               \begin{aligned}[t]
-                i_{sm_{b}} =& (st.s.len() \times st.a.len() \times st.o.len()) + \\
-                & st.ss.len() + st.sg.len() - 1.
+                i^{S^{-}_{0}}_{s_{s}} = & T^{S^{+}_{0}} + \\
+                & (l_{s} \times l_{a} \times l_{o}) + \\
+                & (l_{s_{s}} \times l_{s_{g}}) + (l_{a_{s}} \times l_{a_{g}}) + (l_{o_{s}} \times l_{o_{g}})
               \end{aligned}
             \end{math}
           \end{quote}
-
-          As shown in the above examples, the indices of $member$ atoms are
-          offset  by the number of $holds$ atoms and similarly, the indices of
-          $subset$ atoms are offset by the number of $holds$ atoms plus the
-          number of $member$ atoms.
-
-          The following shows the total number of possible atom combinations
-          for each atom type based on the entity identifiers in the symbol
-          table $st$. Note that the $member$ and $subset$ types have been
-          subdivided into $subject$, $access$ $right$ and $object$ for clarity.
-
-          \begin{itemize}
-            \item
-              $T$ $=$ $T_{h}$ $+$ $T_{m}$ $+$ $T_{s}$
-            \item
-              $T_{h}$ $=$ $st.s.len()$ $\times$ $st.a.len()$ $\times$ $st.o.len()$
-            \item
-              $T_{m}$ $=$ $T_{m_{s}}$ $+$ $T_{m_{a}}$ $+$ $T_{m_{o}}$
-            \item
-              $T_{s}$ $=$ $T_{s_{s}}$ $+$ $T_{s_{a}}$ $+$ $T_{s_{o}}$
-            \item
-              $T_{m_{s}}$ $=$ $st.ss.len()$ $\times$ $st.sg.len()$
-            \item
-              $T_{m_{a}}$ $=$ $st.as.len()$ $\times$ $st.ag.len()$
-            \item
-              $T_{m_{o}}$ $=$ $st.os.len()$ $\times$ $st.og.len()$
-            \item
-              $T_{s_{s}}$ $=$ $st.sg.len()^{2}$
-            \item
-              $T_{s_{a}}$ $=$ $st.ag.len()^{2}$
-            \item
-              $T_{s_{o}}$ $=$ $st.og.len()^{2}$
-          \end{itemize}
+          \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+                T^{S^{+}_{0}} = & (l_{s} \times l_{a} \times l_{o}) + \\
+                & (l_{s_{s}} \times l_{s_{g}}) + (l_{a_{s}} \times l_{a_{g}}) + (l_{o_{s}} \times l_{o_{g}}) + \\
+                & (l_{s_{g}})^{2} + (l_{a_{g}})^{2} + (l_{o_{g}})^{2}
+              \end{aligned}
+            \end{math}
+          \end{quote}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
