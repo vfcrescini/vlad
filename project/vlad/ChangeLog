@@ -1,3 +1,10 @@
+2003-04-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.h :
+	* kb/atom.cpp :
+
+	  - Cleanup to ensure reinitialised atoms will not leak memory.
+
 2003-04-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/atom.cpp :
