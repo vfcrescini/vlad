@@ -26,8 +26,8 @@ endif
 
 include $(TOPSRCDIR)/rules.mk
 
-vlad : $(OBJECTS) $(DISTDIR)/lib/vlad/*
-	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIB) -lparser -lkb -lcommon
+vlad : $(OBJECTS) $(DISTDIR)/lib/vlad/libvlad.a
+	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIB) -lvlad
 ifndef DEBUG
   ifdef STRIP
 	strip $(@)

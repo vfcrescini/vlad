@@ -1,3 +1,16 @@
+2003-05-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Makefile.in :
+	* configure :
+	* configure.ac :
+	* main/Makefile.in :
+	* common/* :
+	* kb/* :
+	* parser/* :
+
+	  - Moved all sources to the new lib directory to combine all
+	    objects into one library libvlad.
+
 2003-05-06  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/Makefile.in :

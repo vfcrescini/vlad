@@ -110,9 +110,7 @@ AC_SUBST(DISTDIR,"\$(TOPSRCDIR)/dist")
 
 AC_CONFIG_FILES(  \
   Makefile        \
-  common/Makefile \
-  kb/Makefile     \
-  parser/Makefile \
+  lib/Makefile    \
   main/Makefile   \
 )
 
