@@ -641,6 +641,38 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     }
   }
 
+  /* transformation rules */
+  fprintf(f, "Transformation Rules\n");
+
+  for (i = 0; i < ((s == NULL) ? 0 : s->length()); i++) {
+    transref *tmp_ref;
+    expression *tmp_pre;
+    expression *tmp_post;
+    atom *tmp_atom;
+    unsigned int a;
+
+    s->get(i, &tmp_ref);
+    ttable->get(tmp_ref->get_name(), tmp_ref->get_ilist(), &tmp_pre, &tmp_post);
+    for (j = 0; j < tmp_post->length(); j++) {
+       if ((retval = tmp_post->get(j, &tmp_atom)) != VLAD_OK)
+         return retval;
+       if ((retval = encode_atom(tmp_atom, i + 1, &a)) != VLAD_OK)
+         return retval;
+       fprintf(f, "  %d", a);
+    }
+    fprintf(f, "  <-");
+    for (j = 0; j < tmp_pre->length(); j++) {
+       if ((retval = tmp_pre->get(j, &tmp_atom)) != VLAD_OK)
+         return retval;
+       if ((retval = encode_atom(tmp_atom, i, &a)) != VLAD_OK)
+         return retval;
+       fprintf(f, "  %d", a);
+    }
+    fprintf(f, "\n");
+    delete tmp_pre;
+    delete tmp_post;
+  }
+
   return VLAD_OK;
 }
 

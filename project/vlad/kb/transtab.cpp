@@ -130,23 +130,23 @@ int transtab::get(const char *n, transdef **t)
 }
 
 /* replace variables with identifiers in v, then get pr and pp */
-int transtab::get(unsigned int i, stringlist *ilist, expression **pr, expression **po)
+int transtab::get(const char *n, stringlist *ilist, expression **pr, expression **po)
 {
   int retval;
   transdef *tmp_trans;
   expression *tmp_precond;
   expression *tmp_postcond;
 
-  if (ilist == NULL || pr == NULL || po == NULL)
+  if (n == NULL || ilist == NULL || pr == NULL || po == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = list::get(i, (list_item **) &tmp_trans)) != VLAD_OK)
+  if ((retval = get(n, &tmp_trans)) != VLAD_OK)
     return retval;
 
-  if ((tmp_precond = tmp_trans->get_precond()) != NULL)
+  if ((tmp_precond = tmp_trans->get_precond()) == NULL)
     return VLAD_FAILURE;
 
-  if ((tmp_postcond = tmp_trans->get_postcond()) != NULL)
+  if ((tmp_postcond = tmp_trans->get_postcond()) == NULL)
     return VLAD_FAILURE;
   
   if ((retval = tmp_precond->replace(tmp_trans->get_vlist(), ilist, pr)) != VLAD_OK)
