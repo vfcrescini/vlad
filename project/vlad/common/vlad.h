@@ -53,6 +53,8 @@
 #define VLAD_INVALIDINPUT   -8
 /* method failed because the object was not initialised */
 #define VLAD_UNINITIALISED  -9
+/* no model is generated: possibly because of a contradiction */
+#define VLAD_NOMODEL        -10
 
 /* malloc/new macros */
 #define VLAD_ADT_MALLOC(X,Y)  ((X *) malloc(sizeof(X) * Y))
