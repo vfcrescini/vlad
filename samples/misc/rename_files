@@ -33,7 +33,7 @@ unset prefix
 unset recursive
 unset verbose
 
-while [ $# -ge 1 ]; do
+while [ ${#} -ge 1 ]; do
   if [ "${1}" = "-h" ]; then
     echo "usage:       ${progname} [options]"
     echo "options:"
@@ -63,7 +63,7 @@ while [ $# -ge 1 ]; do
   shift 1
 done
 
-mkdir "$tmpdir"
+mkdir "${tmpdir}"
 
 for tmpfile in *
 do
@@ -101,7 +101,7 @@ do
   [ -n "${verbose}" ] && echo "renaming ${tmpfile} to ${fullname}"
   mv -- "${tmpfile}" "${tmpdir}/${fullname}"
 
-  counter=$[$counter+1]
+  counter=$[${counter}+1]
 done
 
 # now move them back
