@@ -47,13 +47,15 @@ ps : $(foreach f,$(LATEX_SRCS),$(f).ps)
 
 eps : $(foreach f,$(XFIG_SRCS),$(f).eps)
 
-$(foreach f,$(LATEX_SRCS),$(f).ps) : $(patsubst %.ps,%.dvi,$(@))
+# static pattern rules
+
+$(foreach f,$(LATEX_SRCS),$(f).ps) : %.ps : %.dvi
 	$(DVIPS) -o $(@) $(patsubst %.ps,%.dvi,$(@))
 
-$(foreach f,$(XFIG_SRCS),$(f).pdf) : $(patsubst %.pdf,%.eps,$(@))
+$(foreach f,$(XFIG_SRCS),$(f).pdf) : %.pdf : %.eps
 	$(EPSPDF) $(patsubst %.pdf,%.eps,$(@)) --outfile=$(@)
 
-$(foreach f,$(XFIG_SRCS),$(f).eps) : $(patsubst %.eps,%.fig,$(@))
+$(foreach f,$(XFIG_SRCS),$(f).eps) : %.eps : %.fig
 	$(FIG2DEV) -L eps $(patsubst %.eps,%.fig,$(@)) $(@)
 
 policyupdater.dvi : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).eps) $(CLASS) $(STYLE) $(MISC)
