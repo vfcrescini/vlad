@@ -10,12 +10,12 @@
 
 #include <config.h>
 #include <vlad.h>
-#include <symtab.h>
+#include <kb.h>
 
 extern FILE *yyout;
 FILE *yyerr;
 
-symtab symtable;
+kb kbase;
 
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
@@ -73,8 +73,8 @@ init :
   {
     int retval;
 
-    if ((retval = symtable.init()) != VLAD_OK) {
-      fprintf(stderr, "failed to initialise symbol table\n");
+    if ((retval = kbase.init()) != VLAD_OK) {
+      fprintf(stderr, "failed to initialise knowledge base\n");
       exit(retval);
     }
   }
@@ -347,15 +347,30 @@ ground_atom :
 
 ground_holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+#ifdef DEBUG
+    unsigned int x;
+    kbase.get_atom($3, $5, $7, VLAD_ATOM_HOLDS, &x);
+    fprintf(stderr, "%4d = holds(%s, %s, %s)\n", x, $3, $5, $7);
+#endif
   }
   ;
 
 ground_subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+#ifdef DEBUG
+    unsigned int x;
+    kbase.get_atom($3, $5, NULL, VLAD_ATOM_SUBSET, &x);
+    fprintf(stderr, "%4d = subst(%s, %s)\n", x, $3, $5);
+#endif
   }
   ;
 ground_memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+#ifdef DEBUG
+    unsigned int x;
+    kbase.get_atom($3, $5, NULL, VLAD_ATOM_MEMBER, &x);
+    fprintf(stderr, "%4d = memb(%s, %s)\n", x, $3, $5);
+#endif
   }
   ;
 
@@ -410,7 +425,7 @@ logical_atom :
 
 void add_identifier(const char ident[], unsigned char type)
 {
-  switch (symtable.add(ident, type)) {
+  switch (kbase.add_ident(ident, type)) {
     case VLAD_OK :
 #ifdef DEBUG
       if (VLAD_IDENT_TYPE_IS_SUBJECT(type) && ! VLAD_IDENT_TYPE_IS_GROUP(type))
