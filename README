@@ -81,8 +81,8 @@ Updated: 2003 May 15
 
      TRUE   - query is true
      FALSE  - query is false
-     ?      - there is no sufficient evidence to conclude that the query is
-              true or false
+     ?      - there is insufficient evidence to conclude whether query is true
+              or false.
 
    Without the query-filename parameter, vLad will read the queries from stdin.
 
