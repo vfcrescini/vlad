@@ -1943,12 +1943,7 @@
 
           Finally, a single atom in language ${\cal L}$ corresponds to $n$
           inertial rules, where $n$ is the number of states times 2 (for
-          negative facts):
-
-          \begin{vquote}
-            $|$${\cal F}_{ine}$$|$ =
-            $2$ $|{\cal A}|$ $|\psi|$
-          \end{vquote}
+          negative facts): $|$${\cal F}_{ine}$$|$ = $2$ $|{\cal A}|$ $|\psi|$.
         \end{vproof}
 
   \section{Domain Consistency Checking and Evaluation}
@@ -2175,13 +2170,14 @@
         $\hat{\rho}_{k}$ $\leftarrow$ $\hdots$, $\hat{\rho}_{k - 1}$, $\hdots$
       \end{vquote}
 
-      The absence these rules means $Trans$(${\cal D}_{\cal L}$) is an
-      {\em acyclic} program. As no other rules in ${\cal D}_{\cal L}$ can
-      cause $Trans$(${\cal D}_{\cal L}$) to have these rules, we can conclude
-      that under Defintion \ref{def-norm}, a normal domain description
-      ${\cal D}_{\cal L}$ will generate an acyclic extended logic program
-      $Trans$(${\cal D}_{\cal L}$). Also, from \cite{BAR}, we can further
-      conclude that $Trans$(${\cal D}_{\cal L}$) must have an answer set.
+      The absence of these rules means $Trans$(${\cal D}_{\cal L}$) is a
+      program without negative cycles \cite{LIN}. As no other rules in
+      ${\cal D}_{\cal L}$ can cause $Trans$(${\cal D}_{\cal L}$) to have these
+      rules, we conclude that under Defintion \ref{def-norm}, a normal domain
+      description ${\cal D}_{\cal L}$ will generate an extended logic program
+      $Trans$(${\cal D}_{\cal L}$) without negative cycles. Also, from
+      \cite{BAR,LIN}, we further conclude that the translated program
+      $Trans$(${\cal D}_{\cal L}$) must have an answer set.
 
       Condition \ref{def-norm-1} of Definition \ref{def-norm} prevents rules
       of the following form from occurring in $Trans$(${\cal D}_{\cal L}$):
@@ -2192,6 +2188,7 @@
         $\lnot\hat{\rho}^{S_{0}}$ $\leftarrow$
       \end{vquote}
 
+      \noindent
       This shows that a subset of the answer set which contains facts from the
       initial state $S_{0}$ is consistent.
 
@@ -2202,6 +2199,7 @@
         $\hat{\rho}$ $\leftarrow$ $\hdots$, $\lnot\hat{\rho}$, $\hdots$
       \end{vquote}
 
+      \noindent
       This ensures that all constraint rules translated from
       ${\cal D}_{\cal L}$ are consistent.
 
@@ -2220,7 +2218,6 @@
 
       These guarantee that the answer set do not contain complementary facts,
       and therefore guarantee that the answer set is consistent.
-
     \end{vproof}
 
     As only consistent domain descriptions can be evaluated in terms of user
@@ -2989,12 +2986,21 @@
       {\em ACM Transactions on Information and System Security (TISSEC)},
       Vol. 6, No. 1, pp. 128-171, 2003.
 
+    \bibitem{LIN}
+      Lin, F., Zhao, X.,
+      On Odd and Even Cycles in Normal Logic Programs.
+      In {\em Proceedings of AAAI 19th National Conference on Artificial
+      Intelligence and 16th Conference on Innovative Applications of Artificial
+      Intelligence},
+      pp. 80, AAAI Press, 2004.
+
     \bibitem{LOB}
       Lobo, J., Bhatia, R., Naqvi, S.,
       A Policy Description Language.
       In {\em Proceedings of AAAI 16th National Conference on Artificial
       Intelligence and 11th Conference on Innovative Applications of Artificial
-      Intelligence }, pp. 291-298, AAAI Press, 1999.
+      Intelligence},
+      pp. 291-298, AAAI Press, 1999.
 
     \bibitem{HTTP1}
       Network Working Group,
