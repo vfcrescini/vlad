@@ -7,15 +7,19 @@
 #define __VLAD_PARSER_H
 
 #include <cstdio>
-#include <vlad/kb.h>
+#include <vlad/polbase.h>
 
 /* parsers must first be initialised to be used */
-int program_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb);
-int operation_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m);
+int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, polbase *a_pbase);
+int agent_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   polbase *a_pbase,
+                   unsigned char a_m);
 
 /* it is important that these functions are used instead of the externally
  * available yyparse() functions */
-int program_parse();
-int operation_parse();
+int policy_parse();
+int agent_parse();
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * operation.l
+ * policy.l
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -13,12 +13,12 @@
 #include <cstring>
 
 #include <vlad/vlad.h>
-#include <vlad/kb.h>
-#include "operation.tab.h"
+#include <vlad/polbase.h>
+#include "policy.tab.h"
 
-unsigned int operationlineno = 1;
+unsigned int policylineno = 1;
 
-int operationinit(FILE *a_in, FILE *a_out);
+int policyinit(FILE *a_in, FILE *a_out);
 %}
 
 begin_comment      \/\*
@@ -33,14 +33,22 @@ not                !
 holds              holds
 member             memb
 subset             subst
-query              query
-compute            compute
-sequence           seq
-add                add
-delete             del
-list               list
+initially          initially
+implied            implied
+by                 by
+with               with
+absence            absence
+always             always
+causes             causes
+if                 if
+ident              ident
+sub_grp_type       sub-grp
+obj_grp_type       obj-grp
+acc_grp_type       acc-grp
+sub_sin_type       sub
+obj_sin_type       obj
+acc_sin_type       acc
 digit              [0-9]
-number             ({digit})+
 alpha              [a-zA-Z]
 alphanum           {alpha}|{digit}|{underscore}
 identifier         {alpha}({alphanum}){0,127}
@@ -68,36 +76,43 @@ everything         .
 
 <INITIAL>{subset} return VLAD_SYM_SUBST;
 
-<INITIAL>{query} return VLAD_SYM_QUERY;
+<INITIAL>{initially} return VLAD_SYM_INITIALLY;
 
-<INITIAL>{compute} return VLAD_SYM_COMPUTE;
+<INITIAL>{implied} return VLAD_SYM_IMPLIED;
 
-<INITIAL>{sequence} return VLAD_SYM_SEQUENCE;
+<INITIAL>{by} return VLAD_SYM_BY;
 
-<INITIAL>{add} return VLAD_SYM_ADD;
+<INITIAL>{with} return VLAD_SYM_WITH;
 
-<INITIAL>{delete} return VLAD_SYM_DELETE;
+<INITIAL>{absence} return VLAD_SYM_ABSENCE;
 
-<INITIAL>{list} return VLAD_SYM_LIST;
+<INITIAL>{always} return VLAD_SYM_ALWAYS;
 
-<INITIAL>{number} {
-  if (operationtext == NULL) {
-    operationlval.number = 0;
-    return VLAD_SYM_ERROR;
-  }
+<INITIAL>{causes} return VLAD_SYM_CAUSES;
 
-  operationlval.number = atoi(operationtext);
+<INITIAL>{if} return VLAD_SYM_IF;
 
-  return VLAD_SYM_NUMBER;
-}
+<INITIAL>{ident} return VLAD_SYM_IDENT;
+
+<INITIAL>{sub_grp_type} return VLAD_SYM_SUBGRPTYPE;
+
+<INITIAL>{obj_grp_type} return VLAD_SYM_OBJGRPTYPE;
+
+<INITIAL>{acc_grp_type} return VLAD_SYM_ACCGRPTYPE;
+
+<INITIAL>{sub_sin_type} return VLAD_SYM_SUBSINTYPE;
+
+<INITIAL>{obj_sin_type} return VLAD_SYM_OBJSINTYPE;
+
+<INITIAL>{acc_sin_type} return VLAD_SYM_ACCSINTYPE;
 
 <INITIAL>{identifier} {
-  if (operationtext == NULL) {
-    strcpy(operationlval.identifier, "");
+  if (policytext == NULL) {
+    strcpy(policylval.identifier, "");
     return VLAD_SYM_ERROR;
   }
 
-  strcpy(operationlval.identifier, operationtext);
+  strcpy(policylval.identifier, policytext);
 
   return VLAD_SYM_IDENTIFIER;
 }
@@ -121,7 +136,7 @@ everything         .
 {whitespace} ;
 
 {newline} {
-  operationlineno++;
+  policylineno++;
 }
 
 <COMMENT>{everything} ;
@@ -132,13 +147,13 @@ everything         .
 
 %%
 
-int operationinit(FILE *a_in, FILE *a_out)
+int policyinit(FILE *a_in, FILE *a_out)
 {
   if (a_in == NULL || a_out == NULL)
     return VLAD_NULLPTR;
 
-  operationin = a_in;
-  operationout = a_out;
+  policyin = a_in;
+  policyout = a_out;
 
   yyrestart(a_in);
   BEGIN INITIAL;

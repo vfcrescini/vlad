@@ -1,3 +1,19 @@
+2004-01-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* main/Makefile.in :
+	* main/parser.h :
+	* main/vlad.cpp :
+	* main/agent.l :
+	* main/agent.y :
+	* main/policy.l :
+	* main/policy.y :
+	* main/operation.l :
+	* main/operation.y :
+	* main/program.l :
+	* main/program.y :
+
+	  - Renamed program to policy and operation to agent.
+
 2004-01-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/updatetab.cpp :
