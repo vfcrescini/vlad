@@ -201,9 +201,6 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
   if (e == NULL)
     return VLAD_NULLPTR;
 
-    if ((ncond = VLAD_NEW(expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-
   /* 
    * now, we must go through every atom of every exression to ensure
    * their validity. while we are going through them, we might as well
@@ -527,7 +524,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     unsigned int i_atom;
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
       fprintf(f, 
-              "  false <- %d AND %d\n",
+              "  FALSE <- %d AND %d\n",
               (i * pos_tot * 2) + i_atom + pos_tot,
               (i * pos_tot * 2) + i_atom);
     }
@@ -565,7 +562,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     if ((retval = encode_atom(tmp_atom, 0, &tmp_num)) != VLAD_OK)
       return retval;
 
-    fprintf(f, "  %d <-\n", tmp_num);
+    fprintf(f, "  %d <- TRUE\n", tmp_num);
   }
 
   /* constraints */
@@ -609,7 +606,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
       }
 
       /* constraint negative condition */
-      for (i_exp = 0; i_exp < tmp_n->length(); i_exp++) {
+      for (i_exp = 0; i_exp < (tmp_n ? tmp_n->length() : 0); i_exp++) {
         if ((retval = tmp_n->get(i_exp, &tmp_atom)) != VLAD_OK)
           return retval;
         if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
@@ -617,7 +614,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         fprintf(f, " NOT %d", tmp_num);
       }
 
-      fprintf(f, "\n");
+      if (tmp_c == NULL && tmp_n == NULL)
+        fprintf(f, " TRUE\n");
+      else
+        fprintf(f, "\n");
     }
   }
 
@@ -662,7 +662,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
       fprintf(f, " %d", tmp_num);
     }
 
-    fprintf(f, "\n");
+    if (tmp_pre == NULL)
+      fprintf(f, " TRUE\n");
+    else
+      fprintf(f, "\n");
   }
 
 
