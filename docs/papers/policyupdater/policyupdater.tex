@@ -62,9 +62,9 @@
     These functions are achieved by the use of a logic-based language
     ${\cal L}$ to represent the underlying access control policies, constraints
     and update propositions. The system performs authorisation query
-    evaluations and conditional policy updates by first translating the
-    language $\cal{L}$ to a normal logic program in a form suitable for
-    evaluation using the {\em Stable Model} semantics.
+    evaluations and conditional policy updates by translating the language
+    $\cal{L}$ to a normal logic program in a form suitable for evaluation using
+    the {\em Stable Model} semantics.
   \end{abstract}
 
   \footnotetext{
@@ -85,7 +85,7 @@
     policy base.
 
     Recent advances in the field have produced a number of different approaches
-    to logic-based access control systems \cite{HAL,LI}. Bertino, et. al.
+    to logic-based access control systems, e.g. \cite{HAL,LI}. Bertino, et. al.
     \cite{BE1} proposed such a system based on ordered logic with ordered
     domains. Jajodia, et. al. \cite{JAJ} on the other hand, proposed a general
     access control framework that features handling of multiple policies.
@@ -95,15 +95,15 @@
     effective as they are, lack the details necessary to address the issues
     involved in the implementation of such a system.
 
-    The {\em Policy Description Language}, or {\cal PDL}, developed by Lobo,
+    The {\em Policy Description Language}, or PDL, developed by Lobo,
     et. al. \cite{LOB}, is a language for representing event and action
-    oriented generic policies. {\cal PDL} is later extended by Chomicki, et.
-    al. \cite{CHO} to include {\em policy monitors} which, in effect, are
-    policy constraints. Bertino, et. al. \cite{BE2}, again took ${\cal PDL}$ a
-    step further by extending {\em policy monitors} to allow users to express
-    preferred constraints. While these generic languages are expressive enough
-    to be used for access control systems, systems built for such languages
-    will not have the ability to dynamically update the policies.
+    oriented generic policies. PDL is later extended by Chomicki, et. al.
+    \cite{CHO} to include {\em policy monitors} which, in effect, are policy
+    constraints. Bertino, et. al. \cite{BE2}, again took PDL a step further by
+    extending {\em policy monitors} to allow users to express preferred
+    constraints. While these generic languages are expressive enough to be used
+    for access control systems, systems built for such languages will not have
+    the ability to dynamically update the policies.
 
     To overcome these limitations, we propose the PolicyUpdater access control
     system, which, with its own access control language, provides a formal
@@ -112,17 +112,19 @@
     perform a sequence of policy updates, and a means of evaluating queries
     against the policies.
 
-    In Section \ref{sec-langl}, the paper introduces language ${\cal L}$, with
-    its formal syntax, semantics and some examples. The implementation as
-    discussed in Section \ref{sec-implement} gives a brief overview of
-    PolicyUpdater system as a whole, its internal and external components, and
-    most importantly, an outline of the underlying mechanisms responsible for
-    processing of language ${\cal L}$ policies for query evaluation and dynamic
-    updates. In Section \ref{sec-conclusion}, the concluding remarks addresses
-    some possible extensions to this system. The case study presented in
-    Appendix \ref{app-case} shows a typical application of the PolicyUpdater
-    system: an access control system for web servers. Appendix \ref{app-store}
-    shows detailed specifications of the data structures used by the system.
+    The rest of this paper is organised as follows. In Section \ref{sec-langl},
+    the paper introduces language ${\cal L}$, with its formal syntax, semantics
+    and some examples. In section \ref{sec-cons}, the issues of consistency and
+    query evaluation are addressed. The implementation, as discussed in Section
+    \ref{sec-implement}, gives an overview of the PolicyUpdater system as
+    a whole, its internal and external components, and most importantly, an
+    outline of the underlying mechanisms responsible for processing of language
+    ${\cal L}$ policies for query evaluation and dynamic updates. In Section
+    \ref{sec-conclusion}, the concluding remarks addresses some possible 
+    extensions to this system. The case study presented in Appendix
+    \ref{app-case} shows a typical application of the PolicyUpdater system: an
+    access control system for web servers. Appendix \ref{app-store} shows
+    detailed specifications of the data structures used by the system.
 
   \section{Language $\cal{L}$}
     \label{sec-langl}
@@ -301,8 +303,8 @@ initially <ground-exp>;
           condition of the proposition.
 
           It is important to note that the expressions $exp1$, $exp2$ and
-          $exp3$ are non-ground expressions, which means identifiers within
-          them may be variables.
+          $exp3$ may be non-ground expressions, which allows identifiers
+          occurring in these expressions to be variables.
 
           \begin{vverbatim}
 always <exp1>
@@ -330,9 +332,9 @@ always <exp1>
           $exp2$ is a precondition expression that must hold in the current
           state before this update is applied.
 
-          It is important to note that a policy update definition will have no
-          effect on the policy base until it is applied by one of the directives
-          described in the following section.
+          Note that a policy update definition will have no effect on the
+          policy base until it is applied by one of the directives described in
+          the following section.
 
         \subsubsection{Directive Statements}
 
@@ -372,7 +374,7 @@ seq list;
           the form:
 
           \begin{vverbatim}
-<n> <up\_id>([e\_id[, ...]])
+<n> <up\_id>([<e\_id>[, ...]])
           \end{vverbatim}
 
           \noindent where $n$ is the ordinal index of the policy update within
@@ -429,7 +431,9 @@ query <ground-exp>;
           states that if the group $grp1$ has $read$ access for $file$, and no
           other information is present to conclude that $grp1$ do not have
           $write$ access for $file$, then the group $grp1$ is granted $write$
-          access for $file$.
+          access for $file$. For simplicity, we only consider one policy
+          update $delete\_read$ and a few queries that are evaluated after
+          the policy update is performed.
 
           \begin{vverbatim}
 ident sub alice;
@@ -466,6 +470,9 @@ query holds(alice, read, file);
     \subsection{Semantics}
       \label{subsec-semantics}
 
+      After giving a detailed syntactic definition of language ${\cal L}$,
+      we now define its formal semantics.
+
       \subsubsection{Domain Description of Language ${\cal L}$}
 
         \begin{vdefinition}
@@ -497,7 +504,7 @@ query holds(alice, read, file);
           $PB$ $\overrightarrow{_{u}}$ $PB'$
         \end{vquote}
 
-        This definition of a state means that for every policy update applied
+        This concept of a state means that for every policy update applied
         to the policy base, a new instance of the policy base or a new set of
         facts and constraints are generated. To precisely define the underlying
         semantics of domain description ${\cal D}_{\cal L}$ in language
@@ -508,15 +515,15 @@ query holds(alice, read, file);
         Language ${\cal L}^{*}$ contains only one special state constant
         $S_{0}$ to represent the initial state of a given domain description.
         All other states are represented as a resulting state obtained by
-        applying the $Result$ function.
+        applying the $Res$ function.
 
-        The $Result$ function takes a policy update reference $u$, where $u$
+        The $Res$ function takes a policy update reference $u$, where $u$
         $\in$ $\psi$, and the current state $\sigma$ as input arguments and
         returns the resulting state $\sigma'$ after update $u$ has been applied
         to state $\sigma$:
 
         \begin{vquote}
-          $\sigma'$ = $Result$($u$, $\sigma$)
+          $\sigma'$ = $Res$($u$, $\sigma$)
         \end{vquote}
 
         Given an initial state $S_{0}$ and a sequence list $\psi$, each state
@@ -524,25 +531,20 @@ query holds(alice, read, file);
         follows:
 
         \begin{vquote}
-          $\sigma_{0} = S_{0}$
+          $\sigma_{0}$ = $S_{0}$
 
-          $\sigma_{1} = Result(u_{0}, \sigma_{0})$
+          $\sigma_{1}$ = $Res$($u_{0}$, $\sigma_{0}$)
 
-          $\vdots$
+          $\ldots$
 
-          $\sigma_{|\psi|} = Result(u_{|\psi| - 1}, \sigma_{|\psi| - 1})$
+          $\sigma_{|\psi|}$ = $Res$($u_{|\psi| - 1}$, $\sigma_{|\psi| - 1}$)
         \end{vquote}
 
-        Substituting each state with a recursive call to the $Result$ function,
+        Substituting each state with a recursive call to the $Res$ function,
         the final state $S_{|\psi|}$ is defined as follows:
 
         \begin{vquote}
-          \begin{math}
-            \begin{aligned}[t]
-              S_{|\psi|} = & Result(u_{|\psi| - 1}, Result(\ldots, \\
-              & Result(u_{0}, S_{0})))
-            \end{aligned}
-          \end{math}
+          $S_{|\psi|}$ = $Res$($u_{|\psi| - 1}$, $Res$($\ldots$, $Res$($u_{0}$, $S_{0}$)))
         \end{vquote}
 
         \paragraph{Entities.}
@@ -554,16 +556,15 @@ query holds(alice, read, file);
           ${\cal E}_{og}$. Each entity in set ${\cal E}$ corresponds directly
           to the {\em entity identifiers} of language ${\cal L}$.
 
-          \begin{itemize}
-            \item
-              ${\cal E} = {\cal E}_{s} \cup {\cal E}_{a} \cup {\cal E}_{o}$
-            \item
-              ${\cal E}_{s} = {\cal E}_{ss} \cup {\cal E}_{sg}$
-            \item
-              ${\cal E}_{a} = {\cal E}_{as} \cup {\cal E}_{ag}$
-            \item
-              ${\cal E}_{o} = {\cal E}_{os} \cup {\cal E}_{og}$
-          \end{itemize}
+          \begin{vquote}
+            ${\cal E} = {\cal E}_{s} \cup {\cal E}_{a} \cup {\cal E}_{o}$
+
+            ${\cal E}_{s} = {\cal E}_{ss} \cup {\cal E}_{sg}$
+
+            ${\cal E}_{a} = {\cal E}_{as} \cup {\cal E}_{ag}$
+
+            ${\cal E}_{o} = {\cal E}_{os} \cup {\cal E}_{og}$
+          \end{vquote}
 
         \paragraph{Atoms.}
 
@@ -580,33 +581,27 @@ query holds(alice, read, file);
           The atom set ${\cal A}^{\sigma}$ is the set of all atoms in state
           $\sigma$.
 
-          \begin{itemize}
-            \item
-              ${\cal A}^{\sigma} = {\cal A}^{\sigma}_{h} \cup {\cal A}^{\sigma}_{m} \cup {\cal A}^{\sigma}_{s}$
-            \item
-              \begin{math}
-                \begin{aligned}[t]
-                  {\cal A}^{\sigma}_{h} =&\{\forall (s \in {\cal E}_{s}, a \in {\cal E}_{a}, o \in {\cal E}_{o}),\\
-                  &\hat{holds}(s, a, o, \sigma) \}
-                \end{aligned}
-              \end{math}
-            \item
-              ${\cal A}^{\sigma}_{m} = {\cal A}^{\sigma}_{ms} \cup {\cal A}^{\sigma}_{ma} \cup {\cal A}^{\sigma}_{mo}$
-            \item
-              ${\cal A}^{\sigma}_{s} = {\cal A}^{\sigma}_{ss} \cup {\cal A}^{\sigma}_{sa} \cup {\cal A}^{\sigma}_{so}$
-            \item
-              ${\cal A}^{\sigma}_{ms} = \{\forall (e \in {\cal E}_{ss}, g \in {\cal E}_{sg}), \hat{memb}(e, g, \sigma)\}$
-            \item
-              ${\cal A}^{\sigma}_{ma} = \{\forall (e \in {\cal E}_{as}, g \in {\cal E}_{ag}), \hat{memb}(e, g, \sigma)\}$
-            \item
-              ${\cal A}^{\sigma}_{mo} = \{\forall (e \in {\cal E}_{os}, g \in {\cal E}_{og}), \hat{memb}(e, g, \sigma)\}$
-            \item
-              ${\cal A}^{\sigma}_{ss} = \{\forall (g1, g2 \in {\cal E}_{sg}), \hat{subst}(g1, g2, \sigma)\}$
-            \item
-              ${\cal A}^{\sigma}_{sa} = \{\forall (g1, g2 \in {\cal E}_{ag}), \hat{subst}(g1, g2, \sigma)\}$
-            \item
-              ${\cal A}^{\sigma}_{so} = \{\forall (g1, g2 \in {\cal E}_{og}), \hat{subst}(g1, g2, \sigma)\}$
-          \end{itemize}
+          \begin{vquote}
+            ${\cal A}^{\sigma} = {\cal A}^{\sigma}_{h} \cup {\cal A}^{\sigma}_{m} \cup {\cal A}^{\sigma}_{s}$
+
+            ${\cal A}^{\sigma}_{h} = \{\hat{holds}(s, a, o, \sigma) \mid s \in {\cal E}_{s}, a \in {\cal E}_{a}, o \in {\cal E}_{o})\}$
+
+            ${\cal A}^{\sigma}_{m} = {\cal A}^{\sigma}_{ms} \cup {\cal A}^{\sigma}_{ma} \cup {\cal A}^{\sigma}_{mo}$
+
+            ${\cal A}^{\sigma}_{s} = {\cal A}^{\sigma}_{ss} \cup {\cal A}^{\sigma}_{sa} \cup {\cal A}^{\sigma}_{so}$
+
+            ${\cal A}^{\sigma}_{ms} = \{\hat{memb}(e, g, \sigma) \mid e \in {\cal E}_{ss}, g \in {\cal E}_{sg}\}$
+
+            ${\cal A}^{\sigma}_{ma} = \{\hat{memb}(e, g, \sigma) \mid e \in {\cal E}_{as}, g \in {\cal E}_{ag}\}$
+
+            ${\cal A}^{\sigma}_{mo} = \{\hat{memb}(e, g, \sigma) \mid e \in {\cal E}_{os}, g \in {\cal E}_{og}\}$
+
+            ${\cal A}^{\sigma}_{ss} = \{\hat{subst}(g1, g2, \sigma) \mid g1, g2 \in {\cal E}_{sg}\}$
+
+            ${\cal A}^{\sigma}_{sa} = \{\hat{subst}(g1, g2, \sigma) \mid g1, g2 \in {\cal E}_{ag}\}$
+
+            ${\cal A}^{\sigma}_{so} = \{\hat{subst}(g1, g2, \sigma) \mid g1, g2 \in {\cal E}_{og}\}$
+          \end{vquote}
 
         \paragraph{Facts.}
 
@@ -620,70 +615,59 @@ query holds(alice, read, file);
 
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
-        \begin{vdefinition}
-          \label{def-cons}
-          Given a domain description ${\cal D}_{\cal L}$ of language
-          ${\cal L}$, $Trans$(${\cal D}_{\cal L}$) is defined as the
-          extended logic program ${\cal L}^{*}$ translation of language
-          ${\cal L}$. The domain description ${\cal D}_{\cal L}$ is said to be
-          {\em consistent} if and only if $Trans$(${\cal D}_{\cal L}$) has
-          a consistent answer set.
-        \end{vdefinition}
+        Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, we
+        translate ${\cal D_{L}}$ into an extended logic program of language
+        ${\cal L^{*}}$, as denoted by $Trans$(${\cal D_{L}}$). The semantics of
+        ${\cal D_{L}}$ is provided by the answer sets of program
+        $Trans$(${\cal D_{L}}$). Before we can fully define
+        $Trans$(${\cal D}_{\cal L}$), we must first define the following
+        functions:
 
-        Before we can fully define $Trans$(${\cal D}_{\cal L}$), we should
-        first define the following functions:
+        The $CopyAtom$ function takes two arguments: an atom $\hat{\alpha}$
+        of language ${\cal L}^{*}$ at some state $\sigma$ and another state
+        $\sigma'$. The function returns an equivalent atom of the same type
+        and with the same entities, but in the new state specified.
 
-        \paragraph{}
+        \begin{vquote}
+          $CopyAtom$($\hat{\alpha}$, $\sigma'$)
 
-          The $CopyAtom$ function takes two arguments: an atom $\hat{\alpha}$
-          of language ${\cal L}^{*}$ at some state $\sigma$ and another state
-          $\sigma'$. The function returns an equivalent atom of the same type
-          and with the same entities, but in the new state specified.
+          =
+          \begin{math}
+            \begin{cases}
+              \mbox{$\hat{holds}$($s$, $a$, $o$, $\sigma'$), if $\hat{\alpha}$ = $\hat{holds}$($s$, $a$, $o$, $\sigma$)} \\
+              \mbox{$\hat{memb}$($e$, $g$, $\sigma'$), if $\hat{\alpha}$ = $\hat{memb}$($e$, $g$, $\sigma$)} \\
+              \mbox{$\hat{subst}$($g_{1}$, $g_{2}$, $\sigma'$), if $\hat{\alpha}$ = $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)}
+            \end{cases}
+          \end{math}
+        \end{vquote}
 
-          \begin{vquote}
-            $CopyAtom$($\hat{\alpha}$, $\sigma'$)
+        Another function, $TransAtom$, takes an atom $\alpha$ of language
+        ${\cal L}$ and an arbitrary state $\sigma$ and returns the equivalent
+        atom of language ${\cal L}^{*}$.
 
-            =
-            \begin{math}
-              \begin{cases}
-                \mbox{$\hat{holds}$($s$, $a$, $o$, $\sigma'$), if $\hat{\alpha}$ = $\hat{holds}$($s$, $a$, $o$, $\sigma$)} \\
-                \mbox{$\hat{memb}$($e$, $g$, $\sigma'$), if $\hat{\alpha}$ = $\hat{memb}$($e$, $g$, $\sigma$)} \\
-                \mbox{$\hat{subst}$($g_{1}$, $g_{2}$, $\sigma'$), if $\hat{\alpha}$ = $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)}
-              \end{cases}
-            \end{math}
-          \end{vquote}
+        \begin{vquote}
+          $TransAtom$($\alpha$, $\sigma$)
 
-        \paragraph{}
+          =
+          \begin{math}
+            \begin{cases}
+              \mbox{$\hat{holds}$($s$, $a$, $o$, $\sigma$), if $\alpha$ = $holds$($s$, $a$, $o$)} \\
+              \mbox{$\hat{memb}$($e$, $g$, $\sigma$), if $\alpha$ = $memb$($e$, $g$)} \\
+              \mbox{$\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$), if $\alpha$ = $subst$($g_{1}$, $g_{2}$)}
+            \end{cases}
+          \end{math}
+        \end{vquote}
 
-          Another function, $TransAtom$, takes an atom $\alpha$ of language
-          ${\cal L}$ and an arbitrary state $\sigma$ and returns the equivalent
-          atom of language ${\cal L}^{*}$.
+        The other function, $TransFact$, is similar to the $TransAtom$
+        function, but instead of translating an atom, it takes a fact
+        from language ${\cal L}$ and a state then returns the equivalent
+        fact in language ${\cal L}^{*}$.
 
-          \begin{vquote}
-            $TransAtom$($\alpha$, $\sigma$)
-
-            =
-            \begin{math}
-              \begin{cases}
-                \mbox{$\hat{holds}$($s$, $a$, $o$, $\sigma$), if $\alpha$ = $holds$($s$, $a$, $o$)} \\
-                \mbox{$\hat{memb}$($e$, $g$, $\sigma$), if $\alpha$ = $memb$($e$, $g$)} \\
-                \mbox{$\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$), if $\alpha$ = $subst$($g_{1}$, $g_{2}$)}
-              \end{cases}
-            \end{math}
-          \end{vquote}
-
-        \paragraph{}
-
-          The other function, $TransFact$, is similar to the $TransAtom$
-          function, but instead of translating an atom, it takes a fact
-          from language ${\cal L}$ and a state then returns the equivalent
-          fact in language ${\cal L}^{*}$.
-
-        \paragraph{Initial Fact Expression.}
+        \paragraph{Initial Fact Rules.}
 
           Translating initial fact expressions of language ${\cal L}$ to
-          language ${\cal L}^{*}$ is a trivial procedure: translate each fact
-          that make up the initial fact expression of language ${\cal L}$
+          language ${\cal L}^{*}$ rules is a trivial procedure: translate each
+          fact that make up the initial fact expression of language ${\cal L}$
           with its corresponding equivalent initial state atom of language
           ${\cal L}^{*}$.
 
@@ -694,12 +678,12 @@ query holds(alice, read, file);
 \(f\sb{0}\) && \ldots && \(f\sb{n}\)
           \end{vverbatim}
 
-          In language ${\cal L}^{*}$, the statement above is represented as:
+          In language ${\cal L}^{*}$, the statement above is translated to:
 
           \begin{vquote}
             $\hat{f_{0}}$ $\leftarrow$
 
-            $\vdots$
+            $\ldots$
 
             $\hat{f_{n}}$ $\leftarrow$
 
@@ -707,15 +691,12 @@ query holds(alice, read, file);
             $0$ $\leq$ $i$ $\leq$ $n$
           \end{vquote}
 
-          The following code below shows an example of language ${\cal L}$
-          $initially$ statements:
+          The following code shows an example of language ${\cal L}$
+          $initially$ statement:
 
           \begin{vverbatim}
 initially
-  holds(admins, exec, sys_tools);
-initially
-  holds(admins, read, sys_data);
-initially
+  holds(admins, read, sys\_data) &&
   memb(alice, admins) &&
   memb(bob, admins);
           \end{vverbatim}
@@ -723,8 +704,6 @@ initially
         In language ${\cal L}^{*}$, the above statements are translated to:
 
         \begin{vquote}
-          $\hat{holds}$($admins$, $exec$, $system\_tools$, $S_{0}$) $\leftarrow$
-
           $\hat{holds}$($admins$, $read$, $system\_data$, $S_{0}$) $\leftarrow$
 
           $\hat{memb}$($alice$, $admins$, $S_{0}$) $\leftarrow$
@@ -757,7 +736,7 @@ always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
             $b_{0}$, \ldots, $b_{n}$,
             $not$ $c_{0}$, \ldots, $not$ $c_{o}$
 
-            $\vdots$
+            $\ldots$
 
             $a_{m}$ $\leftarrow$
             $b_{0}$, \ldots, $b_{n}$,
@@ -774,19 +753,19 @@ always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
             $\hat{b}^{S_{0}}_{0}$, \ldots, $\hat{b}^{S_{0}}_{n}$,
             $not$ $\hat{c}^{S_{0}}_{0}$, \ldots, $not$ $\hat{c}^{S_{0}}_{o}$
 
-            $\vdots$
+            $\ldots$
 
             $\hat{a}^{S_{|\psi|}}_{0}$ $\leftarrow$
             $\hat{b}^{S_{|\psi|}}_{0}$, \ldots, $\hat{b}^{S_{|\psi|}}_{n}$,
             $not$ $\hat{c}^{S_{|\psi|}}_{0}$, \ldots, $not$ $\hat{c}^{S_{|\psi|}}_{o}$
 
-            $\vdots$
+            $\ldots$
 
             $\hat{a}^{S_{0}}_{m}$ $\leftarrow$
             $\hat{b}^{S_{0}}_{0}$, \ldots, $\hat{b}^{S_{0}}_{n}$,
             $not$ $\hat{c}^{S_{0}}_{0}$, \ldots, $not$ $\hat{c}^{S_{0}}_{o}$
 
-            $\vdots$
+            $\ldots$
 
             $\hat{a}^{S_{|\psi|}}_{m}$ $\leftarrow$
             $\hat{b}^{S_{|\psi|}}_{0}$, \ldots, $\hat{b}^{S_{|\psi|}}_{n}$,
@@ -857,7 +836,7 @@ with absence
             \end{math}
           \end{vquote}
 
-        \paragraph{Policy Updates.}
+        \paragraph{Policy Update Rules.}
 
           With all occurrences of variable place-holders grounded to entity
           identifiers, a policy update $u$, as defined by language ${\cal L}$
@@ -879,13 +858,13 @@ with absence
           \begin{vquote}
             $\hat{a}_{0}$ $\leftarrow$ $\hat{b}_{0}$, \ldots, $\hat{b}_{n}$
 
-            $\vdots$
+            $\ldots$
 
             $\hat{a}_{m}$ $\leftarrow$ $\hat{b}_{0}$, \ldots, $\hat{b}_{n}$
 
             where
 
-            $\hat{a}_{i}$ $=$ $TransFact$($a_{i}$, $Result$($u$, $\sigma$)),
+            $\hat{a}_{i}$ $=$ $TransFact$($a_{i}$, $Res$($u$, $\sigma$)),
             $0$ $\leq$ $i$ $\leq$ $m$,
 
             $\hat{b}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
@@ -941,11 +920,11 @@ grant\_write()
             subsets of that group. This rule is easy to apply for subject group
             entities. However, careful attention must be given to access right
             and object groups. A subject holding an access right for an object
-            group implies that that subject also holds that access right for
-            all objects in the object group. Similarly, a subject holding an
-            access right group for a particular object implies that the subject
-            holds all access rights contained in the access right group for
-            that object.
+            group implies that subject also holds that access right for all
+            objects in the object group. Similarly, a subject holding an access
+            right group for a particular object implies that the subject holds
+            all access rights contained in the access right group for that
+            object.
 
             A conflict is encountered when a particular property is to be
             inherited by an entity from a group of which it is a member or
@@ -969,7 +948,7 @@ grant\_write()
                 $s_{g} \in {\cal E}_{sg}$,
                 $a \in {\cal E}_{a}$,
                 $o \in {\cal E}_{o}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
+                $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -992,7 +971,7 @@ grant\_write()
                 $a_{s} \in {\cal E}_{as}$,
                 $a_{g} \in {\cal E}_{ag}$,
                 $o \in {\cal E}_{o}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
+                $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -1015,7 +994,7 @@ grant\_write()
                 $a \in {\cal E}_{a}$,
                 $o_{s} \in {\cal E}_{os}$,
                 $o_{g} \in {\cal E}_{og}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
+                $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
 
                 \begin{math}
                   \begin{aligned}[t]
@@ -1170,8 +1149,17 @@ grant\_write()
               $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
               $u$ $\in$ $\psi$,
 
-              $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Result$($u$, $\sigma$))
+              $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
             \end{vquote}
+
+        \begin{vdefinition}
+          Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, its
+          ${\cal L^{*}}$ translation $Trans$(${\cal D_{L}}$) is an extended
+          logic program of language ${\cal L}$ consisting of: (1) initial state
+          rules, (2) constraint rules, (3) policy update rules, (4) inheritance
+          rules, (5) transitivity rules, and (6) inertial rules, as described
+          above.
+        \end{vdefinition}
 
         \begin{vexample}
           \label{ex-2}
@@ -1180,7 +1168,7 @@ grant\_write()
 
           \begin{enumerate}
             \item
-              Initial State Facts
+              Initial State Rules
 
               $\hat{memb}(alice, grp3, S_{0}) \leftarrow$
 
@@ -1191,7 +1179,7 @@ grant\_write()
               $\hat{subst}(grp2, grp1, S_{0}) \leftarrow$
 
             \item
-              Constraints
+              Constraint Rules
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1207,7 +1195,7 @@ grant\_write()
               \end{math}
 
             \item
-              Policy Update
+              Policy Update Rules
 
               \begin{math}
                 \lnot \hat{holds}(grp1, read, file, S_{1}) \leftarrow
@@ -1244,7 +1232,7 @@ grant\_write()
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\vdots$
+              \hspace{1cm} $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1285,7 +1273,7 @@ grant\_write()
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\vdots$
+              \hspace{1cm} $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1337,7 +1325,7 @@ grant\_write()
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\vdots$
+              \hspace{1cm} $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1365,7 +1353,7 @@ grant\_write()
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\vdots$
+              \hspace{1cm} $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1393,7 +1381,7 @@ grant\_write()
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\vdots$
+              \hspace{1cm} $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1421,7 +1409,7 @@ grant\_write()
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\vdots$
+              \hspace{1cm} $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1437,20 +1425,30 @@ grant\_write()
               \end{math}
           \end{enumerate}
         \end{vexample}
-      \subsection{Domain Consistency Checking and Evaluation}
 
-        From Definition \ref{def-cons}, it is clear that a domain description
-        of language ${\cal L}$ must be consistent in order generate a
-        consistent answer set for the evaluation of queries. This section
-        considers two issues: the problem of identifying whether a given domain
-        description is consistent, and how query evaluation is performed given
-        a consistent language domain description.
+        From the above example, it is observed that given a domain description
+        ${\cal D_{L}}$, $Trans$(${\cal D_{L}}$) may contain much more rules
+        than the original statements in ${\cal D_{L}}$. However, in our full
+        paper \cite{CRE}, we have shown that with finite domains, the size of
+        $Trans$(${\cal D_{L}}$) is in fact only polynomially larger than the
+        size of ${\cal D_{L}}$. Therefore, from a computational viewpoint,
+        computing the answer sets of $Trans$(${\cal D_{L}}$) is always
+        feasible.
 
-        Before the above issues can be considered, a few notational constructs
-        must first be introduced. Given a domain description ${\cal D_{L}}$
-        composed of the following language ${\cal L}$ statements:
+  \section{Domain Consistency Checking and Evaluation}
+    \label{sec-cons}
 
-        \begin{vverbatim}
+    A domain description of language ${\cal L}$ must be consistent in order
+    generate a consistent answer set for the evaluation of queries. This
+    section considers two issues: the problem of identifying whether a given
+    domain description is consistent, and how query evaluation is performed
+    given a consistent language domain description.
+
+    Before the above issues can be considered, a few notational constructs
+    must first be introduced. Given a domain description ${\cal D_{L}}$
+    composed of the following language ${\cal L}$ statements:
+
+    \begin{vverbatim}
 initially
   \(a\sb{0}\) &&\ldots&& \(a\sb{n}\) && !\(b\sb{0}\) &&\ldots&& !\(b\sb{m}\)
 
@@ -1466,132 +1464,134 @@ update()
     \(i\sb{0}\) &&\ldots && \(i\sb{u}\) && !\(j\sb{0}\) &&\ldots&& !\(j\sb{v}\)
   if
     \(k\sb{0}\) &&\ldots && \(k\sb{w}\) && !\(l\sb{0}\) &&\ldots&& !\(l\sb{x}\)
-        \end{vverbatim}
+    \end{vverbatim}
 
-        We define the following sets of ground facts:
+    We define the following sets of ground facts:
 
-        \begin{itemize}
-          \item
-            ${\cal F}^{+}_{int}$ = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
-          \item
-            ${\cal F}^{-}_{int}$ = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
-          \item
-            ${\cal F}^{+}_{con}$ = \{$c_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $o$\}
-          \item
-            ${\cal F}^{-}_{con}$ = \{$d_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $p$\}
-          \item
-            ${\cal F}^{+}_{upd}$ = \{$i_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $u$\}
-          \item
-            ${\cal F}^{-}_{upd}$ = \{$j_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $v$\}
-        \end{itemize}
+    \begin{vquote}
+      ${\cal F}^{+}_{int}$ = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
 
-        Additionally, we use the complementary set notation
-        $\overline{{\cal F}}$ to denote a set containing the negation of
-        facts in set ${\cal F}$, i.e. $\overline{{\cal F}}$ =
-        \{$\lnot\rho$ $\mid$ $\rho$ $\in$ ${\cal F}$\}.
+      ${\cal F}^{-}_{int}$ = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
 
-        Let $\gamma$ be an initial, constraint or update definition statement of
-        language ${\cal L}$. We then define $Eff$($\gamma$) to be the set
-        \{$a_{0}$,\ldots,$a_{n}$,$b_{0}$,\ldots,$b_{m}$\},
-        \{$c_{0}$,\ldots,$c_{o}$,$d_{0}$,\ldots,$d_{p}$\} or
-        \{$i_{0}$,\ldots,$i_{u}$,$j_{0}$,\ldots,$j_{v}$\}, respectively;
-        $Def$($\gamma$) to be the set $\emptyset$,
-        \{$g_{0}$,\ldots,$g_{s}$,$h_{0}$,\ldots,$h_{t}$\} or
-        $\emptyset$, respectively; and $Pre$($\gamma$) to be the set
-        $\emptyset$, \{$e_{0}$,\ldots,$e_{q}$,$f_{0}$,\ldots,$f_{r}$\} or
-        \{$k_{0}$,\ldots,$k_{w}$,$l_{0}$,\ldots,$l_{x}$\}, respectively.
+      ${\cal F}^{+}_{con}$ = \{$c_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $o$\}
 
-        \begin{vdefinition}
-          \label{dev-mutex}
-          Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
-          two ground facts $\rho$ and $\rho'$ are {\bf mutually exclusive}
-          in ${\cal D_{L}}$ if:
-          \begin{vquote}
-            $\rho$ $\in$ \{${\cal F}^{+}_{int}$ $\cup$
-            $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
-            $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
-            $\overline{{\cal F}^{-}_{upd}}$\}
+      ${\cal F}^{-}_{con}$ = \{$d_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $p$\}
 
-            implies
+      ${\cal F}^{+}_{upd}$ = \{$i_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $u$\}
 
-            $\rho'$ $\not\in$ \{${\cal F}^{+}_{int}$ $\cup$
-            $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
-            $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
-            $\overline{{\cal F}^{-}_{upd}}$\}
-          \end{vquote}
-        \end{vdefinition}
+      ${\cal F}^{-}_{upd}$ = \{$j_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $v$\}
+    \end{vquote}
 
-        Simply stated, a pair of mutually exclusive facts cannot both be true
-        in any given state. The following two definitions refer to language
-        ${\cal L}$ statements.
+    Additionally, we use the complementary set notation
+    $\overline{{\cal F}}$ to denote a set containing the negation of
+    facts in set ${\cal F}$, i.e. $\overline{{\cal F}}$ =
+    \{$\lnot\rho$ $\mid$ $\rho$ $\in$ ${\cal F}$\}.
 
-        \begin{vdefinition}
-          \label{def-comp}
-          Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
-          two statements $\gamma$ and $\gamma'$ are {\bf complementary} in
-          ${\cal D_{L}}$ if one of the following conditions holds:
-          \begin{enumerate}
-            \item
-              $\gamma$ and $\gamma'$ are both constraint statements and
-              $Eff(\gamma)$ = $\overline{Eff(\gamma')}$.
-            \item
-              $\gamma$ is a constraint statement, $\gamma'$ is an update
-              statement and $Eff(\gamma)$ = $\overline{Eff(\gamma')}$.
-          \end{enumerate}
-        \end{vdefinition}
+    Let $\gamma$ be an initial, constraint or update definition statement of
+    language ${\cal L}$. We then define $Eff$($\gamma$) to be the set
+    \{$a_{0}$,\ldots,$a_{n}$,$b_{0}$,\ldots,$b_{m}$\},
+    \{$c_{0}$,\ldots,$c_{o}$,$d_{0}$,\ldots,$d_{p}$\} or
+    \{$i_{0}$,\ldots,$i_{u}$,$j_{0}$,\ldots,$j_{v}$\}, respectively;
+    $Def$($\gamma$) to be the set $\emptyset$,
+    \{$g_{0}$,\ldots,$g_{s}$,$h_{0}$,\ldots,$h_{t}$\} or
+    $\emptyset$, respectively; and $Pre$($\gamma$) to be the set
+    $\emptyset$, \{$e_{0}$,\ldots,$e_{q}$,$f_{0}$,\ldots,$f_{r}$\} or
+    \{$k_{0}$,\ldots,$k_{w}$,$l_{0}$,\ldots,$l_{x}$\}, respectively.
 
-        \begin{vdefinition}
-          \label{def-norm}
-          Given a domain description ${\cal D_{L}}$, ${\cal D_{L}}$ is said to
-          be {\bf normal} if it satisfies all of the following conditions:
-          \begin{enumerate}
-            \item
-              ${\cal F}^{+}_{int}$ $\cap$ ${\cal F}^{-}_{int}$ = $\emptyset$
-            \item
-              For all constraint statements $\gamma$ in ${\cal D_{L}}$,
-              $\overline{Eff(\gamma)}$ $\cap$ $Pre(\gamma)$ = $\emptyset$.
-            \item
-              For any two constraint statements $\gamma$ and $\gamma'$ in
-              ${\cal D_{L}}$, $Def(\gamma)$ $\cap$ $Eff(\gamma')$ =
-              $\emptyset$.
-            \item
-              For any two complementary statements $\gamma$ and $\gamma'$ in
-              ${\cal D_{L}}$, there exists a pair of ground expression $\epsilon$
-              $\in$ $\gamma$ and $\epsilon'$ $\in$ $\gamma'$ such that $\epsilon$ and
-              $\epsilon'$ are mutually exclusive.
-          \end{enumerate}
-        \end{vdefinition}
+    \begin{vdefinition}
+      \label{def-mutex}
+      Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
+      two ground facts $\rho$ and $\rho'$ are {\bf mutually exclusive}
+      in ${\cal D_{L}}$ if:
+      \begin{vquote}
+        $\rho$ $\in$ \{${\cal F}^{+}_{int}$ $\cup$
+        $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
+        $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
+        $\overline{{\cal F}^{-}_{upd}}$\}
 
-        \begin{vtheorem}{Domain Consistency}
-          \label{the-cons}
-          A {\bf normal} domain description of language ${\cal L}$ is also
-          {\bf consistent} \footnotemark.
-        \end{vtheorem}
+        implies
 
-        \footnotetext{
-          The proof of this theorem will be published in the full version
-          of this paper \cite{CRE}.
-        }
+        $\rho'$ $\not\in$ \{${\cal F}^{+}_{int}$ $\cup$
+        $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
+        $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
+        $\overline{{\cal F}^{-}_{upd}}$\}
+      \end{vquote}
+    \end{vdefinition}
 
-        By using this theorem to identify consistent domain descriptions of
-        language ${\cal L}$, it is now possible to define how queries are
-        evaluated from such domain descriptions.
+    Simply stated, a pair of mutually exclusive facts cannot both be true
+    in any given state. The following two definitions refer to language
+    ${\cal L}$ statements.
 
-        \begin{vdefinition}
-          \label{def-eval}
-          Given a consistent domain description ${\cal D}_{\cal L}$, ground
-          query expression $\phi$ and a finite sequence list $\psi$, we say the
-          query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
-          in the sequence list $\psi$ has been applied, denoted as
+    \begin{vdefinition}
+      \label{def-comp}
+      Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
+      two statements $\gamma$ and $\gamma'$ are {\bf complementary} in
+      ${\cal D_{L}}$ if one of the following conditions holds:
+      \begin{enumerate}
+        \item
+          $\gamma$ and $\gamma'$ are both constraint statements and
+          $Eff(\gamma)$ = $\overline{Eff(\gamma')}$.
+        \item
+          $\gamma$ is a constraint statement, $\gamma'$ is an update
+          statement and $Eff(\gamma)$ = $\overline{Eff(\gamma')}$.
+      \end{enumerate}
+    \end{vdefinition}
 
-          \begin{vquote}
-            ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\},
-          \end{vquote}
+    \begin{vdefinition}
+      \label{def-norm}
+      Given a domain description ${\cal D_{L}}$, ${\cal D_{L}}$ is said to
+      be {\bf normal} if it satisfies all of the following conditions:
+      \begin{enumerate}
+        \item
+          ${\cal F}^{+}_{int}$ $\cap$ ${\cal F}^{-}_{int}$ = $\emptyset$
+        \item
+          For all constraint statements $\gamma$ in ${\cal D_{L}}$,
+          $\overline{Eff(\gamma)}$ $\cap$ $Pre(\gamma)$ = $\emptyset$.
+        \item
+          For any two constraint statements $\gamma$ and $\gamma'$ in
+          ${\cal D_{L}}$, $Def(\gamma)$ $\cap$ $Eff(\gamma')$ =
+          $\emptyset$.
+        \item
+          For any two complementary statements $\gamma$ and $\gamma'$ in
+          ${\cal D_{L}}$, there exists a pair of ground expression $\epsilon$
+          $\in$ $\gamma$ and $\epsilon'$ $\in$ $\gamma'$ such that $\epsilon$ and
+          $\epsilon'$ are mutually exclusive.
+      \end{enumerate}
+    \end{vdefinition}
 
-          \noindent if and only if for every atom $\alpha$ in $\phi$, $\alpha$
-          $\in$ ${\cal A}^{|\psi|}$, [$\lnot$] $\alpha$ is in every answer
-          set of $Trans$(${\cal D}_{\cal L}$).
-        \end{vdefinition}
+    With the above definitions, we can now provide a sufficient condition to
+    ensure the consistency of a domain description.
+
+    \begin{vtheorem}{Domain Consistency}
+      \label{the-cons}
+      A {\bf normal} domain description of language ${\cal L}$ is also
+      {\bf consistent} \footnotemark.
+    \end{vtheorem}
+
+    \footnotetext{
+      The proof of this theorem is referred to the full version of this paper
+      \cite{CRE}.
+    }
+
+    Basically, only consistent domain descriptions can be evaluated in terms
+    of user queries. For this reason, Theorem \ref{the-cons} can be used to
+    check whether a domain description is consistent.
+
+    \begin{vdefinition}
+      \label{def-eval}
+      Given a consistent domain description ${\cal D}_{\cal L}$, ground
+      query expression $\phi$ and a finite sequence list $\psi$, we say
+      {\em query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
+      in sequence list $\psi$ have been applied}, denoted as
+
+      \begin{vquote}
+        ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\},
+      \end{vquote}
+
+      \noindent if and only if for every atom [$\lnot$]$\alpha$ in $\phi$,
+      where $\alpha$ $\in$ ${\cal A}^{|\psi|}$, [$\lnot$]$\alpha$ is in
+      every answer set of $Trans$(${\cal D}_{\cal L}$).
+    \end{vdefinition}
 
     \begin{vexample}
       \label{ex-3}
@@ -1614,6 +1614,10 @@ update()
 
   \section{Implementation}
     \label{sec-implement}
+
+    As mentioned earlier, {\em PolicyUpdater} is a fully implemented system.
+    In this section, we briefly describe the implementation details of this
+    system.
 
     \subsection{System Structure}
 
@@ -1758,7 +1762,7 @@ always holds(SSUB, write, file)
             $\lnot$ $holds$($alice$, $exec$, $file$)
           \end{vquote}
 
-          To remove classical negation, this fact is replaced by:
+          To remove classical negation, it is replaced by:
 
           \begin{vquote}
             $holds$($alice$, $exec$, $file$, $false$)
