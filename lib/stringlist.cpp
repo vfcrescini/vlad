@@ -163,7 +163,7 @@ void stringlist::print(char *s)
   char tmps[VLAD_MAXLEN_STR];
   string *tmpa;
 
-  strcpy(s, "");
+  memset(tmps, 0, VLAD_MAXLEN_STR);
 
   for (i = 0; i < list::length(); i++) {
     if (list::get(i, (list_item **) &tmpa) != VLAD_OK)

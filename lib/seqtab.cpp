@@ -82,7 +82,7 @@ void transref::print(char *s)
   char tmps[VLAD_MAXLEN_STR];
 
   if (initialised) {
-    strcpy(tmps, "");
+    memset(tmps, 0, VLAD_MAXLEN_STR);
 
     if (ilist != NULL)
       ilist->print(tmps);
@@ -159,7 +159,7 @@ void seqtab::print(char *s)
     if (list::get(i, (list_item **) &tmpr) != VLAD_OK)
       break;
 
-    strcpy(tmps, "");
+    memset(tmps, 0, VLAD_MAXLEN_STR);
     if (tmpr != NULL)
       tmpr->print(tmps);
     sprintf(s, "%s %s", s, tmps);
