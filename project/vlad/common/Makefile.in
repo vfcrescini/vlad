@@ -2,6 +2,7 @@
 
 TOPSRCDIR = @top_srcdir@
 DISTDIR = @DISTDIR@
+CURDIR = common
 CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
@@ -9,23 +10,12 @@ YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 LN_S = @LN_S@
-TARGETS = libcommon.a
+BINS =
+LIBS = libcommon.a
 INCLUDES = vlad.h list.h stringlist.h numberlist.h
 OBJECTS = list.o stringlist.o numberlist.o
 
-all : copy-includes copy-targets
-
-copy-includes : $(INCLUDES)
-	@mkdir -p $(DISTDIR)/include/vlad
-	@for i in $(INCLUDES); do \
-	(cd $(DISTDIR)/include/vlad && $(LN_S) -f ../../../common/$$i $$i); \
-	done
-
-copy-targets : $(TARGETS)
-	@mkdir -p $(DISTDIR)/lib/vlad
-	@for i in $(TARGETS); do \
-	(cd $(DISTDIR)/lib/vlad && $(LN_S) -f ../../../common/$$i $$i); \
-	done
+include $(TOPSRCDIR)/rules.mk
 
 libcommon.a : $(OBJECTS)
 	$(AR) -rcs $(@) $(OBJECTS)
@@ -38,15 +28,3 @@ stringlist.o : stringlist.h stringlist.cpp list.o
 
 numberlist.o : numberlist.h numberlist.cpp list.o
 	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
-
-clean :
-	$(RM) $(OBJECTS)
-
-distclean : clean
-	$(RM) $(TARGETS) Makefile
-	@for i in $(INCLUDES); do \
-	$(RM) $(DISTDIR)/include/vlad/$$i; \
-	done
-	@for i in $(TARGETS); do \
-	$(RM) $(DISTDIR)/lib/vlad/$$i; \
-	done

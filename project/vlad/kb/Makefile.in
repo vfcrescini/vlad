@@ -2,6 +2,7 @@
 
 TOPSRCDIR = @top_srcdir@
 DISTDIR = @DISTDIR@
+CURDIR = kb
 CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
@@ -10,29 +11,18 @@ CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 LN_S = @LN_S@
 SMODELS = @SMODELS@
-TARGETS = libkb.a
 
 ifdef SMODELS
 SMINCLUDES = wrapper.h
 SMOBJECTS = wrapper.o
 endif
 
+BINS =
+LIBS = libkb.a
 INCLUDES = atom.h expression.h seqtab.h symtab.h consttab.h transtab.h $(SMINCLUDES) kb.h
 OBJECTS = atom.o expression.o seqtab.o symtab.o consttab.o transtab.o $(SMOBJECTS) kb.o
 
-all : copy-includes copy-targets
-
-copy-includes : $(INCLUDES)
-	@mkdir -p $(DISTDIR)/include/vlad
-	@for i in $(INCLUDES); do \
-	(cd $(DISTDIR)/include/vlad && $(LN_S) -f ../../../kb/$$i $$i); \
-	done
-
-copy-targets : $(TARGETS)
-	@mkdir -p $(DISTDIR)/lib/vlad
-	@for i in $(TARGETS); do \
-	(cd $(DISTDIR)/lib/vlad && $(LN_S) -f ../../../kb/$$i $$i); \
-	done
+include $(TOPSRCDIR)/rules.mk
 
 libkb.a : $(OBJECTS)
 	$(AR) -rcs $(@) $(OBJECTS)
@@ -62,15 +52,3 @@ endif
 
 kb.o : expression.o symtab.o consttab.o transtab.o $(SM_OBJECTS) kb.h kb.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c kb.cpp
-
-clean :
-	$(RM) $(OBJECTS)
-
-distclean : clean
-	$(RM) $(TARGETS) Makefile
-	@for i in $(INCLUDES); do \
-	$(RM) $(DISTDIR)/include/vlad/$$i; \
-	done
-	@for i in $(TARGETS); do \
-	$(RM) $(DISTDIR)/lib/vlad/$$i; \
-	done
