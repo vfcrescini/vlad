@@ -60,9 +60,10 @@ int main(int aCount, char *aArray[])
     // compose number
     printf("%lu\n",
            (unsigned long)
-           ((VERSION_BASE << VERSION_BASE_LEN) * base3) +
-           (VERSION_BASE * base2) +
+           (base3 << (VERSION_BASE_LEN * 2)) +
+           (base2 << VERSION_BASE_LEN) +
            base1); 
+
   } 
   else {
     help(aArray[0]);
