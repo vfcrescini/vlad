@@ -265,3 +265,31 @@ Started 2002 Dec 08
 
   C-style comments may appear anywhere in the file. Any characters
   between "/*" and "*/" will be ignored by the parser.
+
+5. Reserved Words
+
+  The following is a list of words that cannot be used as an identifier:
+
+    - holds
+    - memb
+    - subst
+    - initially
+    - implied
+    - by
+    - with
+    - absence
+    - always
+    - causes
+    - if
+    - ident
+    - sub-grp
+    - obj-grp
+    - acc-grp
+    - sub
+    - obj
+    - acc
+    - query
+    - seq
+    - add
+    - del
+    - list
