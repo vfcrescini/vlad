@@ -1,3 +1,10 @@
+2003-03-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+
+	* parser/parser.y :
+
+	  - Added code to store ground expressions.
+
 2003-03-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.cpp :
