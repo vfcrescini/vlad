@@ -25,9 +25,9 @@ import java.applet.*;
 public class vcalc extends Applet {
 
   public void init() {
-    vcalcpanel cpanel = new vcalcpanel();
+    vcalcpanel cPanel = new vcalcpanel();
     setLayout(new BorderLayout());
     add(new Label("vcalc - Vino Crescini"), "North");
-    add(cpanel, "Center");
+    add(cPanel, "Center");
   }
 }

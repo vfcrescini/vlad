@@ -28,51 +28,51 @@ public class vcalcdisplay extends Panel {
   private int decimal = 0;
   private char op = '\0';
   private int state = 0;
-  private TextField tdisplay = new TextField("0");
+  private TextField tDisplay = new TextField("0");
 
   public vcalcdisplay() {
     setLayout(new BorderLayout());
-    add(tdisplay, "North");
+    add(tDisplay, "North");
   }
 
-  public void pressed_ce() {
+  public void pressedCE() {
     fvalue = 0;
-    updatedisplay();
+    updateDisplay();
   }	
 
-  public void pressed_c() {
+  public void pressedC() {
     state = 0;
     op = '\0';
     fvalue = 0;
     buffer1 = 0;
     buffer2 = 0;
-    updatedisplay();
+    updateDisplay();
   }
 
-  public void pressed_num(int n) {
+  public void pressedNum(int n) {
     if (n >= 0 && n <= 9) {
       switch(state) {
         case 0 :
 	  fvalue = (fvalue * 10) + n;
-          updatedisplay();
+          updateDisplay();
           break;
         case 1 :
           fvalue = fvalue + (n / (Math.pow(10, ++decimal)));
-          updatedisplay();
+          updateDisplay();
           break;
         case 2 :
           buffer1 = fvalue;
           fvalue = n;
           state = 3;
-          updatedisplay();
+          updateDisplay();
           break;
         case 3 :
 	  fvalue = (fvalue * 10) + n;
-          updatedisplay();
+          updateDisplay();
           break;
         case 4 :
           fvalue = fvalue + (n / (Math.pow(10, ++decimal)));
-          updatedisplay();
+          updateDisplay();
           break;
         case 5 :
           fvalue = n;
@@ -80,18 +80,18 @@ public class vcalcdisplay extends Panel {
           buffer2 = 0;
           op = '\0';
           state = 0;
-          updatedisplay();
+          updateDisplay();
           break;
         case 6 :
           fvalue = n;
           state = 0;
-          updatedisplay();
+          updateDisplay();
           break;
       }
     } 
   }
 
-  public void pressed_op(char newop) {
+  public void pressedOp(char newop) {
     if (newop == '+' || newop == '-' || newop == '*' || newop == '/') {
       switch(state) {
         case 0 :
@@ -103,11 +103,11 @@ public class vcalcdisplay extends Panel {
         case 3 :
         case 4 :
           buffer2 = fvalue;
-          fvalue = calculate(op, buffer1, buffer2);
+          calculateDisplay();
           buffer1 = fvalue;
           op = newop;
           state = 2;
-          updatedisplay();
+          updateDisplay();
           break;
         case 5 :
         case 6 :
@@ -118,7 +118,7 @@ public class vcalcdisplay extends Panel {
     }
   }
 
-  public void pressed_equals() {
+  public void pressedEquals() {
     switch(state) {
       case 0 :
       case 1 :
@@ -140,30 +140,30 @@ public class vcalcdisplay extends Panel {
             buffer2 = fvalue;
             break;
         }
-        fvalue = calculate(op, buffer1, buffer2);
+        calculateDisplay();
         buffer1 = fvalue;
         state = 5;
-        updatedisplay();
+        updateDisplay();
         break;
       case 3 :
       case 4 :
         buffer2 = fvalue;
-        fvalue = calculate(op, buffer1, buffer2);
+        calculateDisplay();
         buffer1 = fvalue;
         state = 5;
-        updatedisplay();
+        updateDisplay();
         break;
       case 5 :
-        fvalue = calculate(op, buffer1, buffer2);
+        calculateDisplay();
         buffer1 = fvalue;
-        updatedisplay();       
+        updateDisplay();       
         break;
       case 6 :
         break;
     }
   }
 
-  public void pressed_dot() {
+  public void pressedDot() {
     switch(state) {
       case 0 :
         decimal = 0;
@@ -176,7 +176,7 @@ public class vcalcdisplay extends Panel {
         buffer1 = fvalue;
         fvalue = 0;
         state = 4;
-        updatedisplay();
+        updateDisplay();
         break;
       case 3 :
         decimal = 0;
@@ -191,7 +191,7 @@ public class vcalcdisplay extends Panel {
         fvalue = 0;
         op = '\0';
         state = 1;
-        updatedisplay();
+        updateDisplay();
         break;
       case 6 :
         decimal = 0;
@@ -200,22 +200,27 @@ public class vcalcdisplay extends Panel {
     }
   }
 
-  private void updatedisplay() {
-    tdisplay.setText(String.valueOf(fvalue));
+  private void updateDisplay() {
+    tDisplay.setText(String.valueOf(fvalue));
   }
 
-  private double calculate(char op, double n1, double n2) {
+  private void calculateDisplay() {
     switch(op) {
       case '+' :
-        return n1 + n2;
+        fvalue = buffer1 + buffer2;
+        break;
       case '-' :
-        return n1 - n2;
+        fvalue = buffer1 - buffer2;
+        break;
       case '*' :
-        return n1 * n2;
+        fvalue = buffer1 * buffer2;
+        break;
       case '/' :
-        return (n2 == 0) ? 0 : n1 / n2;
+        fvalue = (buffer2 == 0) ? 0 : buffer1 / buffer2;
+        break;
       default :
-        return 0;
+        fvalue = 0;
+        break;
     }
   }
 }
