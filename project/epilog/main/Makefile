@@ -2,7 +2,7 @@
 
 TOPSRCDIR = ..
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
-LFLAGS = -L$(TOPSRCDIR)/lib
+LDFLAGS = -L$(TOPSRCDIR)/lib
 TARGETS = epilog
 
 ifdef DEBUG
@@ -14,7 +14,7 @@ endif
 all : $(TARGETS)
 
 epilog : epilog.o $(TOPSRCDIR)/lib/*
-	$(CC) $(LFLAGS) -o $(@) epilog.o -lparser -lexp -lident -ldatastruct -lfl
+	$(CC) $(LDFLAGS) -o $(@) epilog.o -lparser -lexp -lident -ldatastruct -lfl
 ifndef DEBUG
 	strip $(@)
 endif
