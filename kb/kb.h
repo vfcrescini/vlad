@@ -75,7 +75,6 @@ class kb {
      * type, or listed in v if v is non-null
      */
     int verify_atom_member(const char *e, const char *g, stringlist *v);
-
     /* 
      * verifies that g1 and g2 are in the symtab and that they are of the right 
      * type, or listed in v if v is non-null

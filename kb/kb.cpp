@@ -334,7 +334,7 @@ int kb::add_transtab(const char *n,
       return retval;
   }
 
-  /* if all went  well, add to the trans table */
+  /* if all went well, add to the trans table */
   return ttable->add(name, vlist, precond, postcond);
 }
 
