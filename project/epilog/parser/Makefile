@@ -2,7 +2,7 @@
 # 2002 May 30
 
 TOPSRCDIR = ..
-CFLAGS = -Wall -O2 
+CFLAGS = -Wall -O2 -ansi
 DIRFLAGS = -I${TOPSRCDIR}/include -L${TOPSRCDIR}/lib
 TARGETS = main
 
