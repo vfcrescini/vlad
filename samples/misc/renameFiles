@@ -8,10 +8,11 @@
 # in a directory to numbers
 
 counter=1
+charlen=5
 
 mkdir /tmp/__tmp_$$_
 
-ls -1 | sort | while read tempFile
+for tempFile in *
 do
   # get extension
   extension=${tempFile##*.}
@@ -24,9 +25,16 @@ do
     extension=.${extension}
   fi
 
-  echo "renaming ${tempFile} to ${counter}${extension}"
+  # pad the name with zeroes
+  name=${counter}
+  while [ `echo -n ${name} | wc -c` -lt ${charlen} ]
+  do
+    name=0${name}
+  done
 
-  mv ${tempFile} /tmp/__tmp_$$_/${counter}${extension}
+  echo "renaming ${tempFile} to ${name}${extension}"
+
+  mv ${tempFile} /tmp/__tmp_$$_/${name}${extension}
 
   counter=$[$counter+1]
 done
