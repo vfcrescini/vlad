@@ -323,8 +323,8 @@ int kb::add_transtab(const char *n,
   return ttable->add(name, vlist, precond, postcond);
 }
 
-/* evaluate query */
-int kb::eval(expression *e, sequence *s)
+/* generate a human-readable general logic program and dump output to f */
+int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 {
   int retval;
   unsigned int i;
@@ -332,6 +332,9 @@ int kb::eval(expression *e, sequence *s)
   /* we only allow this function after transtab is closed */
   if (stage != 5)
     return VLAD_FAILURE;
+
+  if (e == NULL || f == NULL)
+    return VLAD_NULLPTR;
 
   /* verify the query expression */
   for (i = 0; i < e->length(); i++) {

@@ -6,6 +6,8 @@
 #ifndef __VLAD_KB_H
 #define __VLAD_KB_H
 
+#include <cstdio>
+
 #include <atom.h>
 #include <expression.h>
 #include <stringlist.h>
@@ -39,8 +41,8 @@ class kb {
                      stringlist *v,
                      expression *pr,
                      expression *po);
-    /* evaluate query */
-    int eval(expression *e, sequence *s);
+    /* generate a human-readable general logic program and dump output to f */
+    int generate_nlp(expression *e, sequence *s, FILE *f);
   private :
     symtab *stable;
     expression *itable;
