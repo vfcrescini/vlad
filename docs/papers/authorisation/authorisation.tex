@@ -1,0 +1,91 @@
+% Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+\documentclass[draft]{article}
+\author{Vino Fernando Crescini\\jcrescin@cit.uws.edu.au\\\\Intelligent Systems Laboratory\\School of Computing and Information Technology\\University of Western Sydney}
+\title{Implementing a High-Level Description Language for a Sequence of Transformations of Authorisation Policies}
+\date{17/03/2003}
+\begin{document}
+  \maketitle
+  \section{Introduction}
+
+    Authorisation policies are a collection of rules and constraints that 
+    limits accesses to different resources within a system. Such policies may 
+    be as simple as assigning read, write or execute permissions on specific 
+    files, but some policies can be as high-level and abstract as to reflect 
+    the organizational hierarchy of the system. For example, high-level 
+    authorisation policies might include the following:
+
+    \begin{itemize}
+      \item Regional Managers have read and write access to the regional database.
+      \item Branch Managers have no read and write access to the regional database.
+      \item Branch Managers have read and write access to their branch database.
+      \item If the branch manager is also a regional manager then he has read but not write access to the regional database.
+    \end{itemize}
+
+    \subsection{Background}
+
+      Typically, in an access control system, authorisation policies are stored
+      into a policy database or policy base. Another entity, the authorisation
+      agent (or enforcer agent) ensures that the policies in the policy base
+      are enforced. 
+
+      At its simplest form, a policy base may be implemented as an access
+      control matrix where the rows represent the subjects, the columns
+      represent the objects or resources and each cell contains the access
+      permissions. However, the access control matrix approach is limited in
+      such a way that it lacks scalability and flexibility. The size of the
+      access control matrix is directly proportional to the size of the objects
+      times the number of subjects. It is not difficult to see that as the
+      system gets larger, any authorisation policy mechanism that uses the
+      access control matrix will get progressively slower and less efficient.
+
+      A much better approach is the logic-based system where instead of
+      storing each individual rules into a database, a generalized set of
+      facts and constraints are stored into the policy base. There have been
+      quite a few developments in this field. In their paper, Woo and Lam [3]
+      describes a logic-based specification for policy bases. Bai and
+      Varadharajan [1] went a few steps further by developing a high-level
+      language for the transformation of the policy base from one state to
+      another. A transformation, in this sense, is the process of adding,
+      removing or modifying a rule in the policy base. Their approach also
+      handles conflict resolution within a transformation. In another paper,
+      Bai and Varadharajan [2] developed another language specification to
+      handle sequences of transformations.
+
+    \subsection{Problem}
+
+    \subsection{Plan}
+
+    \subsection{Organisation of this Paper}
+
+    \pagebreak
+
+  \section{A Formal Language}
+
+    \subsection{Definition}
+
+    \subsection{Syntax}
+
+    \subsection{Semantics}
+
+    \pagebreak
+
+  \section{Translation into a Logic Program}
+
+    \subsection{Description}
+
+    \subsection{Examples}
+
+    \pagebreak
+
+  \section{System Structure}
+
+    \pagebreak
+
+  \section{Conclusion}
+
+    \pagebreak
+
+  \section{References}
+
+\end{document}
