@@ -1017,17 +1017,22 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    \begin{math}
-                      \begin{aligned}[t]
-                        \hat{holds}&(s_{s}, a, o, \sigma) \leftarrow \\
-                        & \hat{holds}(s_{g}, a, o, \sigma), \\
-                        & \hat{memb}(s_{s}, s_{g}, \sigma), \\
-                        & not \lnot \hat{holds}(s_{s}, a, o, \sigma) \\
-                        \lnot \hat{holds}&(s_{s}, a, o, \sigma) \leftarrow \\
-                        & \lnot \hat{holds}(s_{g}, a, o, \sigma), \\
-                        & \hat{memb}(s_{s}, s_{g}, \sigma)
-                      \end{aligned}
-                    \end{math}
+                    $\hat{holds}(s_{s}, a, o, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\hat{holds}(s_{g}, a, o, \sigma)$,
+                    $\hat{memb}(s_{s}, s_{g}, \sigma)$,
+
+                    \hspace{1em}
+                    $not$ $\lnot\hat{holds}(s_{s}, a, o, \sigma)$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    $\lnot\hat{holds}(s_{s}, a, o, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\lnot\hat{holds}(s_{g}, a, o, \sigma)$,
+                    $\hat{memb}(s_{s}, s_{g}, \sigma)$
                   \end{vquote}
 
                   \begin{vquote}
@@ -1048,17 +1053,22 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    \begin{math}
-                      \begin{aligned}[t]
-                        \hat{holds}&(s, a_{s}, o, \sigma) \leftarrow \\
-                        & \hat{holds}(s, a_{g}, o, \sigma), \\
-                        & \hat{memb}(a_{s}, a_{g}, \sigma), \\
-                        & not \lnot \hat{holds}(s, a_{s}, o, \sigma) \\
-                        \lnot \hat{holds}&(s, a_{s}, o, \sigma) \leftarrow \\
-                        & \lnot \hat{holds}(s, a_{g}, o, \sigma), \\
-                        & \hat{memb}(a_{s}, a_{g}, \sigma)
-                      \end{aligned}
-                    \end{math}
+                    $\hat{holds}(s, a_{s}, o, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\hat{holds}(s, a_{g}, o, \sigma)$,
+                    $\hat{memb}(a_{s}, a_{g}, \sigma)$,
+
+                    \hspace{1em}
+                    $not$ $\lnot\hat{holds}(s, a_{s}, o, \sigma)$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    $\lnot\hat{holds}(s, a_{s}, o, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\lnot\hat{holds}(s, a_{g}, o, \sigma)$,
+                    $\hat{memb}(a_{s}, a_{g}, \sigma)$
                   \end{vquote}
 
                   \begin{vquote}
@@ -1079,17 +1089,22 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    \begin{math}
-                      \begin{aligned}[t]
-                        \hat{holds}&(s, a, o_{s}, \sigma) \leftarrow \\
-                        & \hat{holds}(s, a, o_{g}, \sigma), \\
-                        & \hat{memb}(o_{s}, o_{g}, \sigma), \\
-                        & not \lnot \hat{holds}(s, a, o_{s}, \sigma) \\
-                        \lnot \hat{holds}&(s, a, o_{s}, \sigma) \leftarrow \\
-                        & \lnot \hat{holds}(s, a, o_{g}, \sigma), \\
-                        & \hat{memb}(o_{s}, o_{g}, \sigma)
-                      \end{aligned}
-                    \end{math}
+                    $\hat{holds}(s, a, o_{s}, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\hat{holds}(s, a, o_{g}, \sigma)$,
+                    $\hat{memb}(o_{s}, o_{g}, \sigma)$,
+
+                    \hspace{1em}
+                    $not$ $\lnot\hat{holds}(s, a, o_{s}, \sigma)$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    $\lnot\hat{holds}(s, a, o_{s}, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\lnot\hat{holds}(s, a, o_{g}, \sigma)$,
+                    $\hat{memb}(o_{s}, o_{g}, \sigma)$
                   \end{vquote}
 
                   \begin{vquote}
@@ -1110,17 +1125,22 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    \begin{math}
-                      \begin{aligned}[t]
-                        \hat{holds}&(s_{g1}, a, o, \sigma) \leftarrow \\
-                        & \hat{holds}(s_{g2}, a, o, \sigma), \\
-                        & \hat{subst}(s_{g1}, s_{g2}, \sigma), \\
-                        & not \lnot \hat{holds}(s_{g1}, a, o, \sigma) \\
-                        \lnot \hat{holds}&(s_{g1}, a, o, \sigma) \leftarrow \\
-                        & \lnot \hat{holds}(s_{g2}, a, o, \sigma), \\
-                        & \hat{subst}(s_{g1}, s_{g2}, \sigma)
-                      \end{aligned}
-                    \end{math}
+                    $\hat{holds}(s_{g1}, a, o, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\hat{holds}(s_{g2}, a, o, \sigma)$,
+                    $\hat{subst}(s_{g1}, s_{g2}, \sigma)$,
+
+                    \hspace{1em}
+                    $not$ $\lnot\hat{holds}(s_{g1}, a, o, \sigma)$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    $\lnot\hat{holds}(s_{g1}, a, o, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\lnot\hat{holds}(s_{g2}, a, o, \sigma)$,
+                    $\hat{subst}(s_{g1}, s_{g2}, \sigma)$
                   \end{vquote}
 
                   \begin{vquote}
@@ -1140,17 +1160,22 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    \begin{math}
-                      \begin{aligned}[t]
-                        \hat{holds}&(s, a_{g1}, o, \sigma) \leftarrow \\
-                        & \hat{holds}(s, a_{g2}, o, \sigma), \\
-                        & \hat{subst}(a_{g1}, a_{g2}, \sigma), \\
-                        & not \lnot \hat{holds}(s, a_{g1}, o, \sigma) \\
-                        \lnot \hat{holds}&(s, a_{g1}, o, \sigma) \leftarrow \\
-                        & \lnot \hat{holds}(s, a_{g2}, o, \sigma), \\
-                        & \hat{subst}(a_{g1}, a_{g2}, \sigma)
-                      \end{aligned}
-                    \end{math}
+                    $\hat{holds}(s, a_{g1}, o, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\hat{holds}(s, a_{g2}, o, \sigma)$,
+                    $\hat{subst}(a_{g1}, a_{g2}, \sigma)$,
+
+                    \hspace{1em}
+                    $not$ $\lnot \hat{holds}(s, a_{g1}, o, \sigma)$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    $\lnot\hat{holds}(s, a_{g1}, o, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\lnot\hat{holds}(s, a_{g2}, o, \sigma)$,
+                    $\hat{subst}(a_{g1}, a_{g2}, \sigma)$
                   \end{vquote}
 
                   \begin{vquote}
@@ -1170,17 +1195,22 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    \begin{math}
-                      \begin{aligned}[t]
-                        \hat{holds}&(s, a, o_{g1}, \sigma) \leftarrow \\
-                        & \hat{holds}(s, a, o_{g2}, \sigma), \\
-                        & \hat{subst}(o_{g1}, o_{g2}, \sigma), \\
-                        & not \lnot \hat{holds}(s, a, o_{g1}, \sigma) \\
-                        \lnot \hat{holds}&(s, a, o_{g1}, \sigma) \leftarrow \\
-                        & \lnot \hat{holds}(s, a, o_{g2}, \sigma), \\
-                        & \hat{subst}(o_{g1}, o_{g2}, \sigma)
-                      \end{aligned}
-                    \end{math}
+                    $\hat{holds}(s, a, o_{g1}, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\hat{holds}(s, a, o_{g2}, \sigma)$,
+                    $\hat{subst}(o_{g1}, o_{g2}, \sigma)$,
+
+                    \hspace{1em}
+                    $not$ $\lnot\hat{holds}(s, a, o_{g1}, \sigma)$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    $\lnot\hat{holds}(s, a, o_{g1}, \sigma)$ $\leftarrow$
+
+                    \hspace{1em}
+                    $\lnot\hat{holds}(s, a, o_{g2}, \sigma)$,
+                    $\hat{subst}(o_{g1}, o_{g2}, \sigma)$
                   \end{vquote}
 
                   \begin{vquote}
