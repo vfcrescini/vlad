@@ -680,11 +680,11 @@ query holds(alice, read, file);
 
             \begin{itemize}
               \item
-                $a^{\sigma}_{i}$ $=$ $TranslateFact$($a_{i}$, $\sigma$)
+                $\hat{a}^{\sigma}_{i}$ $=$ $TranslateFact$($a_{i}$, $\sigma$)
               \item
-                $b^{\sigma}_{j}$ $=$ $TranslateFact$($b_{j}$, $\sigma$)
+                $\hat{b}^{\sigma}_{j}$ $=$ $TranslateFact$($b_{j}$, $\sigma$)
               \item
-                $c^{\sigma}_{k}$ $=$ $TranslateFact$($c_{k}$, $\sigma$)
+                $\hat{c}^{\sigma}_{k}$ $=$ $TranslateFact$($c_{k}$, $\sigma$)
               \item
                 $0$ $\leq$ $i$ $\leq$ $m$
               \item
@@ -964,23 +964,23 @@ query holds(alice, read, file);
             are expressed as follows:
 
             \begin{quote}
-              $\alpha'$ $\leftarrow$ $\alpha$, $not$ $\lnot$ $\alpha'$
+              $\hat{\alpha}'$ $\leftarrow$ $\hat{\alpha}$, $not$ $\lnot$ $\hat{\alpha}'$
 
-              $\lnot$ $\alpha'$ $\leftarrow$ $\lnot$ $\alpha$, $not$ $\alpha'$
+              $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
 
-              $\forall$($\alpha$,$u$) where:
+              $\forall$($\hat{\alpha}$,$u$) where:
 
               \begin{itemize}
                 \item
-                  $\alpha$ $\in$ ${\cal A}^{\sigma}$
+                  $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$
                 \item
-                  $\alpha'$ $\in$ ${\cal A}^{\sigma'}$
+                  $\hat{\alpha}'$ $\in$ ${\cal A}^{\sigma'}$
                 \item
                   $u$ $\in$ $\psi$
                 \item
                   $\sigma'$ = $Result$($u$, $\sigma$)
                 \item
-                  $Base$($\alpha$) = $Base$($\alpha'$)
+                  $Base$($\hat{\alpha}$) = $Base$($\hat{\alpha}'$)
               \end{itemize}
             \end{quote}
 
