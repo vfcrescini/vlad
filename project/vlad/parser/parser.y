@@ -555,7 +555,7 @@ ground_atom :
 ground_holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
-    if ((retval = kbase.get_atom($3, $5, $7, VLAD_ATOM_HOLDS, true, &$$)) != VLAD_OK) {
+    if ((retval = kbase.encode_atom($3, $5, $7, VLAD_ATOM_HOLDS, true, &$$)) != VLAD_OK) {
       return retval;
     }
   }
@@ -564,14 +564,14 @@ ground_holds_atom :
 ground_subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
-    if ((retval = kbase.get_atom($3, $5, NULL, VLAD_ATOM_SUBSET, true, &$$)) != VLAD_OK)
+    if ((retval = kbase.encode_atom($3, $5, NULL, VLAD_ATOM_SUBSET, true, &$$)) != VLAD_OK)
       return retval;
   }
   ;
 ground_memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
-    if ((retval = kbase.get_atom($3, $5, NULL, VLAD_ATOM_MEMBER, true, &$$)) != VLAD_OK)
+    if ((retval = kbase.encode_atom($3, $5, NULL, VLAD_ATOM_MEMBER, true, &$$)) != VLAD_OK)
       return retval;
   }
   ;
@@ -619,12 +619,12 @@ comp_memb_atom :
 logical_atom : 
   VLAD_SYM_TRUE {
     int retval;
-    if ((retval = kbase.get_atom("true", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK)
+    if ((retval = kbase.encode_atom("true", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK)
       return retval;
   }
   | VLAD_SYM_FALSE {
     int retval;
-    if ((retval = kbase.get_atom("false", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK)
+    if ((retval = kbase.encode_atom("false", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK)
       return retval;
   }
   ;
