@@ -138,7 +138,8 @@ class calcpanel extends Panel implements ActionListener {
 
 class calcdisplay extends Panel {
   private double fvalue = 0;
-  private double buffer = 0;
+  private double buffer1 = 0;
+  private double buffer2 = 0;
   private char op = '\0';
   private int state = 0;
   private TextField tdisplay = new TextField("0");
@@ -157,7 +158,8 @@ class calcdisplay extends Panel {
     state = 0;
     op = '\0';
     fvalue = 0;
-    buffer = 0;
+    buffer1 = 0;
+    buffer2 = 0;
     updatedisplay();
   }
 
@@ -170,7 +172,7 @@ class calcdisplay extends Panel {
           updatedisplay();
           break;
         case 1 :
-          buffer = fvalue;
+          buffer1 = fvalue;
           fvalue = n;
           state = 2;
           updatedisplay();
@@ -182,7 +184,9 @@ class calcdisplay extends Panel {
           break;
         case 3 :
           fvalue = n;
-          buffer = 0;
+          buffer1 = 0;
+          buffer2 = 0;
+          op = '\0';
           state = 0;
           updatedisplay();
           break;
@@ -201,20 +205,9 @@ class calcdisplay extends Panel {
           op = newop;
           break;
         case 2 :
-          switch (op) {
-            case '+' :
-              fvalue = buffer + fvalue;
-              break;
-            case '-' :
-              fvalue = buffer - fvalue;
-              break;
-            case '*' :
-              fvalue = buffer * fvalue;
-              break;
-            case '/' :
-              fvalue = (fvalue == 0) ? 0 : buffer / fvalue;
-              break;
-          }
+          buffer2 = fvalue;
+          fvalue = calculate(op, buffer1, buffer2);
+          buffer1 = fvalue;
           op = newop;
           state = 1;
           updatedisplay();
@@ -232,44 +225,20 @@ class calcdisplay extends Panel {
       case 0 :
         break;
       case 1 :
-        buffer = fvalue;
+        buffer1 = fvalue;
         state = 3;
         break;
       case 2 :
-        switch (op) {
-          case '+' :
-            fvalue = buffer + fvalue;
-            break;
-          case '-' :
-            fvalue = buffer - fvalue;
-            break;
-          case '*' :
-            fvalue = buffer * fvalue;
-            break;
-          case '/' :
-            fvalue = (fvalue == 0) ? 0 : buffer / fvalue;
-            break;
-        } 
+        buffer2 = fvalue;
+        fvalue = calculate(op, buffer1, buffer2);
+        buffer1 = fvalue;
         state = 3;
         updatedisplay();
         break;
       case 3 :
-        System.out.println(" " + Double.toString(fvalue) + " " + op + " " + Double.toString(buffer));
-        switch (op) {
-          case '+' :
-            fvalue = fvalue + buffer;
-            break;
-          case '-' :
-            fvalue = fvalue - buffer;
-            break;
-          case '*' :
-            fvalue = fvalue * buffer;
-            break;
-          case '/' :
-            fvalue = (buffer == 0) ? 0 : fvalue / buffer;
-            break;
-        }
-        state = 3;
+        System.out.println(" " + Double.toString(buffer1) + " " + op + " " + Double.toString(buffer2));
+        fvalue = calculate(op, buffer1, buffer2);
+        buffer1 = fvalue;
         updatedisplay();       
         break;
     }
@@ -277,5 +246,20 @@ class calcdisplay extends Panel {
 
   private void updatedisplay() {
     tdisplay.setText(String.valueOf(fvalue));
+  }
+
+  private double calculate(char op, double n1, double n2) {
+    switch(op) {
+      case '+' :
+        return n1 + n2;
+      case '-' :
+        return n1 - n2;
+      case '*' :
+        return n1 * n2;
+      case '/' :
+        return (n2 == 0) ? 0 : n1 / n2;
+      default :
+        return 0;
+    }
   }
 }
