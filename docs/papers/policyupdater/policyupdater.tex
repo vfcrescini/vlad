@@ -9,15 +9,32 @@
 
 \newtheorem{vdefinition}{Definition}
 \newtheorem{vexmpl}{Example}
+% create an example environment with a 2mm X 2mm box at the end
 \newenvironment{vexample}
   {\begin{vexmpl}\rm}
   {\rule{2mm}{2mm}\end{vexmpl}}
+% create a quote environment without a right-hand margin
 \newenvironment{vquote}
   {\begin{list}{}{\leftmargin 1em}\item[]}
   {\end{list}}
+% create a *smaller* alltt (verbose) environment
 \newenvironment{vverbose}
   {\begin{alltt}}
   {\vspace{-\baselineskip}\end{alltt}}
+% define a section command to be used in the appendices
+\makeatletter
+\newcommand{\vappsection}[1]{
+  % change the numbering to Appendix *level*
+  \renewcommand{\@seccntformat}[1]{
+    \appendixname\hspace{0.5em}\csname the##1\endcsname \hspace{1em}
+  }
+  \section{#1}
+  % change the numbering back
+  \renewcommand{\@seccntformat}[1]{
+    \csname the##1\endcsname\hspace{1em}
+  }
+}
+\makeatother
 
 \begin{document}
   \title{PolicyUpdater -- A System for Dynamic Access Control}
@@ -266,7 +283,7 @@ initially <ground-exp>;
 
           Constraints are logical rules that hold regardless of any changes
           that may occur when the policy base is updated. The constraint rules
-          are true in the initial state and remains true after any policy
+          are true in the initial state and remain true after any policy
           update.
 
           The constraint syntax below shows that for any state of the policy
@@ -1717,13 +1734,7 @@ always holds(SSUB, write, file)
 
   \appendix
 
-  \makeatletter
-  \renewcommand{\@seccntformat}[1]{\appendixname\hspace{0.5em}\csname the#1\endcsname\hspace{1em}}
-  \makeatother
-  \section{Case Study: Web Server Application}
-  \makeatletter
-  \renewcommand{\@seccntformat}[1]{\csname the#1\endcsname\hspace{1em}}
-  \makeatother
+  \vappsection{Case Study: Web Server Application}
     \label{app-case}
 
     \begin{figure}[ht]
@@ -1765,13 +1776,7 @@ always holds(SSUB, write, file)
     Optionally, an Administrator, once properly authenticated can dynamically
     update the policy (7) by altering the update sequence in the policy base.
 
-  \makeatletter
-  \renewcommand{\@seccntformat}[1]{\appendixname\hspace{0.5em}\csname the#1\endcsname\hspace{1em}}
-  \makeatother
-  \section{Storage Structures}
-  \makeatletter
-  \renewcommand{\@seccntformat}[1]{\csname the#1\endcsname\hspace{1em}}
-  \makeatother
+  \vappsection{Storage Structures}
 
     \label{app-store}
 
