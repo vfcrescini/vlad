@@ -1,6 +1,6 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-DIRS = parser
+DIRS = common parser main
 
 all :
 	@set -e && for i in $(DIRS); do \

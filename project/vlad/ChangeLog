@@ -15,3 +15,18 @@
 	* parser/scannel.l :
 
 	  - Changes to implement the bnf changes above,
+
+	* Makefile :
+
+	  - Added common and main dirs.
+
+	* common/Makefile :
+	* common/vlad.h :
+
+	  - Added a common header file (borrowed from epilog).
+
+	* main/Makefile :
+	* main/vlad.c :
+
+	  - Added main file (borrowed from epilog).
+
