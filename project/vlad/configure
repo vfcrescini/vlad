@@ -2584,13 +2584,25 @@ EOF
 echo "$as_me:$LINENO: checking whether $CXX accepts -fPIC" >&5
 echo $ECHO_N "checking whether $CXX accepts -fPIC... $ECHO_C" >&6
 if "${CXX}" -fPIC -o $$ $$.c > /dev/null 2>&1; then
-  VLAD_FPIC="yes"
+  VLAD_FPIC="PIC"
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 else
-  VLAD_FPIC="no"
   echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
+
+  # no? try -fpic
+  echo "$as_me:$LINENO: checking whether $CXX accepts -fpic" >&5
+echo $ECHO_N "checking whether $CXX accepts -fpic... $ECHO_C" >&6
+  if "${CXX}" -fpic -o $$ $$.c > /dev/null 2>&1; then
+    VLAD_FPIC="pic"
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+  else
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    VLAD_FPIC="no"
+  fi
 fi
 
 # check if -shared works
@@ -2607,8 +2619,8 @@ echo "${ECHO_T}no" >&6
 fi
 
 # make sure they both are supported
-if test "x$VLAD_FPIC" = "xyes" && test "x$VLAD_SHARED" = "xyes"; then
-  BUILDSHARED=yes
+if test "x$VLAD_FPIC" != "xno" && test "x$VLAD_SHARED" != "xno"; then
+  BUILDSHARED=$VLAD_FPIC
 
 fi
 

@@ -56,7 +56,7 @@ SMLIBS = -lsmodels
 endif
 
 ifdef BUILDSHARED
-CXXFLAGS += -fPIC
+CXXFLAGS += -f$(BUILDSHARED)
 endif
 
 prefix = @prefix@

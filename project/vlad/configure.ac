@@ -31,11 +31,20 @@ EOF
 # check if -fPIC works
 AC_MSG_CHECKING([whether $CXX accepts -fPIC])
 if "${CXX}" -fPIC -o $$ $$.c > /dev/null 2>&1; then
-  VLAD_FPIC="yes"
+  VLAD_FPIC="PIC"
   AC_MSG_RESULT([yes])
 else
-  VLAD_FPIC="no"
   AC_MSG_RESULT([no])
+
+  # no? try -fpic
+  AC_MSG_CHECKING([whether $CXX accepts -fpic])
+  if "${CXX}" -fpic -o $$ $$.c > /dev/null 2>&1; then
+    VLAD_FPIC="pic"
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no])
+    VLAD_FPIC="no"
+  fi
 fi
 
 # check if -shared works
@@ -49,8 +58,8 @@ else
 fi
 
 # make sure they both are supported
-if test "x$VLAD_FPIC" = "xyes" && test "x$VLAD_SHARED" = "xyes"; then
-  AC_SUBST(BUILDSHARED,[yes])
+if test "x$VLAD_FPIC" != "xno" && test "x$VLAD_SHARED" != "xno"; then
+  AC_SUBST(BUILDSHARED,[$VLAD_FPIC])
 fi
 
 # cleanup
