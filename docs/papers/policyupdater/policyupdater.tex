@@ -1453,7 +1453,7 @@ query holds(alice, read, file);
             $list$.$find$($item$)
             returns true if $item$ is in $list$.
           \item
-            $list$.$idx$($item$)
+            $list$.$index$($item$)
             returns the index of $item$ in $list$.
           \item
             $list$.$get$($index$)
@@ -1690,19 +1690,25 @@ query holds(alice, read, file);
 
     \subsection{Algorithms}
 
+      The algorithms presented in this section shows how the language
+      ${\cal L}$ policy stored in the data structures described in the previous
+      section is translated into a normal logic program, how it can be updated
+      dynamically and how it can be manipulated to evaluate queries.
+
       \subsubsection{Grounding Constraint Variables}
 
         While constraints are in the process of being added into the
         constraints table, each variable identifier that occurs within each
-        constraint is grounded by replacing it with all the entity identifiers
-        in the symbol table that matches the variable type (subject, access
-        rights, objects, or groups). This means each constraint with variables
-        are replaced by $n_0$ $\times$ $n_1$ $\times$ $\hdots$ $\times$ $n_m$
-        constraints, where $m$ is the number of distinct variable occurences
-        and $n_i$ ($0$ $\leq$ $i$ $\leq$ $m$) is the number of entity
-        identifiers of the same type as variable $i$.
-
-        [little more detail here]
+        constraint is grounded by replacing it with a set of constraints where
+        each instance of the variable is replaced by all entity identifiers
+        defined in the symbol table. Note that only those entity identifiers
+        that are valid in the fact are used as replacement (e.g. only singular
+        subject entity identifiers are used to replace an element variable
+        occuring in a subject member fact). This means each constraint with
+        variables are replaced by $n_0$ $\times$ $n_1$ $\times$ $\hdots$
+        $\times$ $n_m$ constraints, where $m$ is the number of distinct
+        variable occurences and $n_i$ ($0$ $\leq$ $i$ $\leq$ $m$) is the
+        number of entity identifiers of the same type as variable $i$.
 
         \begin{example}
           Given the symbol table below:
@@ -1725,7 +1731,7 @@ query holds(alice, read, file);
   always holds(SS0, write, file)
     implied by
       holds(SS0, read, file) &&
-      memb(SS0, write, file)
+      memb(SS0, students)
     with absence
       !holds(SS0, write, file)
           \end{verbatim}
@@ -1790,6 +1796,11 @@ query holds(alice, read, file);
               \hline
             \end{tabular}
           \end{quote}
+
+          Note that the subject group identifier $students$ is not used to
+          replace the variable $SS0$, since $memb$($students$, $students$) is
+          not a valid fact.
+
         \end{example}
 
       \subsubsection{Policy Updates}
@@ -2086,7 +2097,7 @@ ENDFUNCTION
 FUNCTION \(encode_memb\)(\(ie\), \(ig\), \(type\))
   CASE \(type\) OF
     \(subject\) :
-      RETURN (\(ielt\) \(\times\) \(|{\theta}\sb{s\sb{g}}|\)) + \(ig\)
+      RETURN (\(ie\) \(\times\) \(|{\theta}\sb{s\sb{g}}|\)) + \(ig\)
     \(access\) : 
       RETURN \(T\sp{S\sp{+}\sb{0}}\sb{M\sb{s}}\) + (\(ie\) \(\times\) \(|{\theta}\sb{a\sb{g}}|\)) + \(ig\)
     \(object\) :
