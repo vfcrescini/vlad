@@ -117,6 +117,26 @@ int expression::varlist(stringlist **a_list)
   return VLAD_OK;
 }
 
+/*
+ * verify if fact is valid, if vlist is non-null, check if variables
+ * occur within this list. if gnd_flag is true, ensure that the fact
+ * is ground.
+ */
+int expression::verify(symtab *a_stab, stringlist *a_vlist, bool a_gndflag)
+{
+  int retval;
+  unsigned int i;
+  fact *tmp;
+
+  for (i = 0; i < list::length(); i++) {
+    if ((retval = expression::get(i, &tmp)) != VLAD_OK)
+      return retval;
+    if ((retval = tmp->verify(a_stab, a_vlist, a_gndflag)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
 
 #ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */

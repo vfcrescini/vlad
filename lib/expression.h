@@ -8,6 +8,7 @@
 
 #include <vlad/list.h>
 #include <vlad/stringlist.h>
+#include <vlad/symtab.h>
 #include <vlad/fact.h>
 
 /* a list of facts. no checking. */
@@ -29,6 +30,12 @@ class expression : public list
     int replace(stringlist *a_vlist, stringlist *a_ilist, expression **a_exp);
     /* gives a list of vars occuring in the expr. assumes list is init'ed */
     int varlist(stringlist **a_list);
+    /*
+     * verify if fact is valid, if vlist is non-null, check if variables
+     * occur within this list. if gnd_flag is true, ensure that the fact
+     * is ground.
+     */
+    int verify(symtab *a_stab, stringlist *a_vlist, bool a_gndflag);
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *a_str);
