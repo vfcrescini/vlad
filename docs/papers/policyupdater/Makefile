@@ -26,11 +26,17 @@ STYLE=latex8.sty
 all : eps dvi ps pdf
 
 clean :
+ifdef LATEX_SRCS
 	$(RM) $(foreach f,$(LATEX_SRCS),$(f).log $(f).aux $(f).cb)
+endif
 
 distclean : clean
+ifdef LATEX_SRCS
 	$(RM) $(foreach f,$(LATEX_SRCS),$(f).dvi $(f).ps $(f).pdf)
+endif
+ifdef XFIG_SRCS
 	$(RM) $(foreach f,$(XFIG_SRCS),$(f).eps $(f).pdf)
+endif
 
 dvi : $(foreach f,$(LATEX_SRCS),$(f).dvi)
 
