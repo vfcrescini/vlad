@@ -84,13 +84,14 @@ int main(int argc, char *argv[])
   if ((retval = programparse()) != VLAD_OK)
     return retval;
 
-  fclose(programin);
-
   /* then the queries */
   if ((retval = queryparse()) != VLAD_OK)
     return retval;
 
+  /* cleanup */
+  fclose(programin);
   fclose(queryin);
+  delete kbase;
 
   return VLAD_OK;
 }
