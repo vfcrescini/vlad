@@ -25,14 +25,16 @@ class loggerType
 
     bool setLevel(int);
     
-    void logError(char *, ...);
-    void logInfo(char *, ...);
-    void logTrace(char *, ...);
-    void logWarn(char *, ...);
+    void logError(const char *, ...);
+    void logInfo(const char *, ...);
+    void logTrace(const char *, ...);
+    void logWarn(const char *, ...);
 
   private:
     int mLogLevel;
     FILE *mLogFileStream;
+    
+    void printLog(const char *, const char *, ...);
 } ;
 
 #endif

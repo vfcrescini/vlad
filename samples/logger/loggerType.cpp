@@ -53,68 +53,56 @@ bool loggerType::setLevel(int aLevel)
   return false;
 }
 
-void loggerType::logInfo(char *aFormat, ...)
+void loggerType::logInfo(const char *aFormat, ...)
 {
   va_list argPointer;
-  
-  if (aFormat &&
-      mLogLevel >= LOGGERTYPE_LOGINFO &&
-      mLogFileStream) {
-      
+  if (mLogLevel >= LOGGERTYPE_LOGINFO) {
     va_start(argPointer, aFormat);
-    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGHEADER);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGINFO);
-    vfprintf(mLogFileStream, aFormat, argPointer);
-    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGTRAILER);
-    va_end(argPointer);    
+    printLog(LOGGERTYPE_STRINGINFO, aFormat, argPointer); 
+    va_end(argPointer);
   }
 }
 
-void loggerType::logTrace(char *aFormat, ...)
+void loggerType::logTrace(const char *aFormat, ...)
 {
   va_list argPointer;
-  
-  if (aFormat &&
-      mLogLevel >= LOGGERTYPE_LOGTRACE &&
-      mLogFileStream) {
-      
+  if (mLogLevel >= LOGGERTYPE_LOGTRACE) {
     va_start(argPointer, aFormat);
-    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGHEADER);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRACE);
-    vfprintf(mLogFileStream, aFormat, argPointer);
-    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGTRAILER);
-    va_end(argPointer);    
+    printLog(LOGGERTYPE_STRINGTRACE, aFormat, argPointer); 
+    va_end(argPointer);
   }
 }
 
-void loggerType::logWarn(char *aFormat, ...)
+void loggerType::logWarn(const char *aFormat, ...)
 {
   va_list argPointer;
   
-  if (aFormat &&
-      mLogLevel >= LOGGERTYPE_LOGWARN &&
-      mLogFileStream) {
-      
+  if (mLogLevel >= LOGGERTYPE_LOGWARN) {
     va_start(argPointer, aFormat);
-    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGHEADER);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGWARN);
-    vfprintf(mLogFileStream, aFormat, argPointer);
-    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGTRAILER);
-    va_end(argPointer);    
+    printLog(LOGGERTYPE_STRINGWARN, aFormat, argPointer); 
+    va_end(argPointer);
   }
 }
 
-void loggerType::logError(char *aFormat, ...)
+void loggerType::logError(const char *aFormat, ...)
 {
   va_list argPointer;
   
-  if (aFormat &&
-      mLogLevel >= LOGGERTYPE_LOGERROR &&
-      mLogFileStream) {
-      
+  if (mLogLevel >= LOGGERTYPE_LOGERROR) {
+    va_start(argPointer, aFormat);
+    printLog(LOGGERTYPE_STRINGERROR, aFormat, argPointer); 
+    va_end(argPointer);
+  }
+}
+
+void loggerType::printLog(const char *aMessageLog, const char *aFormat, ...)
+{
+  va_list argPointer;
+  
+  if (aFormat && aMessageLog && mLogFileStream) {
     va_start(argPointer, aFormat);
     fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGHEADER);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGERROR);
+    fprintf(mLogFileStream, "%s\n", aMessageLog);
     vfprintf(mLogFileStream, aFormat, argPointer);
     fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGTRAILER);
     va_end(argPointer);    
