@@ -32,7 +32,10 @@ class smwrap
     /* add rule: numberlist */
     int add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbody);
     /* return true, false or unknown */
-    int ask(unsigned int a_atom, char *a_result);
+    int ask(numberlist *a_exp,
+            unsigned int (*a_negate)(unsigned int, unsigned int),
+            unsigned int a_parm,
+            unsigned char *a_res);
   private :
     Smodels *pr_smod;
     Api *pr_api;

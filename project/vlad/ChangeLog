@@ -1,3 +1,19 @@
+2003-07-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+	* lib/kb.h :
+
+	  - Added static negate_atom() function.
+
+	  - Make compute_atom() static.
+
+	* lib/smwrap.cpp :
+	* lib/smwrap.h :
+
+	  - Fix so that the smwrap::ask() will now try to evaluate atoms
+	    consistently in one model at a time. Previously, it was possible
+	    for atoms of one expression to be evaluated in different models.
+
 2003-07-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :
