@@ -5,6 +5,8 @@
 	* kb/atomlist.cpp :
 	* kb/atomlist.h :
 
+	  - Improved cmp functions.
+
 	  - holds_atom, member_atom and subset_atom now inherits from the atom
 	    class. Much cleaner this way.
 
