@@ -27,6 +27,7 @@ typedef struct {
   char *user_file;
   char *policy_file;
   void *kb;
+  char *path;
 } modvlad_config_rec;
 
 static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d);
@@ -66,6 +67,9 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
 {
   modvlad_config_rec *conf;
 
+  if (!a_d)
+    return NULL;
+
 #ifdef DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
@@ -79,6 +83,9 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
     conf->user_file = NULL;
     conf->policy_file = NULL;
     conf->kb = NULL;
+    conf->path = strcmp(a_d, "/") ? 
+                 apr_pstrdup(a_p, a_d) : 
+                 ap_server_root_relative(a_p, a_d);
   }
 
   return conf;
@@ -207,7 +214,7 @@ static int modvlad_authorize(request_rec *a_r)
                 MODVLAD_LOGLEVEL,
                 0,
                 a_r,
-                "modvlad_authorize\n\turi: %s\n\tunparsed-uri: %s\n\tfilename: %s\n\tpath-info: %s\n\targs: %s\n\thostname: %s\n\tmethod: %s\n\tdocroot: %s\n\tconf: %x\n\tpolicy-file: %s\n\tkb: %x",
+                "modvlad_authorize\n\turi: %s\n\tunparsed-uri: %s\n\tfilename: %s\n\tpath-info: %s\n\targs: %s\n\thostname: %s\n\tmethod: %s\n\tdocroot: %s\n\tconf: %x\n\tkb: %x\n\tpolicy-file: %s\n\tpath: %s",
                 a_r->uri,
                 a_r->unparsed_uri,
                 a_r->filename,
@@ -217,8 +224,9 @@ static int modvlad_authorize(request_rec *a_r)
                 a_r->method,
                 ap_document_root(a_r),
                 (unsigned int) conf,
+                (unsigned int) conf->kb,
                 conf->policy_file,
-                (unsigned int) conf->kb);
+                conf->path);
 #endif
 
   return OK;
@@ -273,6 +281,7 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
   /* now for some real initialisation */
   modvlad_add_subject(conf->kb, conf->user_file, a_cmd->pool); 
   modvlad_add_access(conf->kb, a_cmd->pool);
+  modvlad_add_object(conf->kb, conf->path, a_cmd->pool);
 
   /* parse the policy file */
   apr_file_open(&polfile,

@@ -47,4 +47,7 @@ int modvlad_add_subject(void *a_kb, const char *a_fname, apr_pool_t *a_p);
 /* add built in access rights into the kb */
 int modvlad_add_access(void *a_kb, apr_pool_t *a_p);
 
+/* add the path's directory structure into the kb */
+int modvlad_add_object(void *a_kb, const char *a_path, apr_pool_t *a_p);
+
 #endif

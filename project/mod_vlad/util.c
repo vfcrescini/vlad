@@ -139,3 +139,18 @@ int modvlad_add_access(void *a_kb, apr_pool_t *a_p)
 
   return 0;
 }
+
+/* add the path's directory structure into the kb */
+int modvlad_add_object(void *a_kb, const char *a_path, apr_pool_t *a_p)
+{
+#ifdef DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_p,
+                "adding objects from %s into kb",
+                a_path);
+#endif
+
+  return 0;
+}
