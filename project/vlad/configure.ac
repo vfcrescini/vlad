@@ -32,8 +32,8 @@ if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
   VLAD_CFLAGS="-g $VLAD_CFLAGS"
   VLAD_CXXFLAGS="-g $VLAD_CXXFLAGS"
 else
-  VLAD_CFLAGS="-O2 $VLAD_CFLAGS"
-  VLAD_CXXFLAGS="-O2 $VLAD_CXXFLAGS"
+  VLAD_CFLAGS="-O3 $VLAD_CFLAGS"
+  VLAD_CXXFLAGS="-O3 $VLAD_CXXFLAGS"
 fi
 
 # --enable-strip
