@@ -52,13 +52,7 @@ numberlist::numberlist() : list(false)
 
 numberlist::~numberlist()
 {
-  purge(true);
-}
-
-/* compare list with this list */
-bool numberlist::cmp(list_item *item)
-{
-  return list::cmp((list *)item);
+  list::purge(true);
 }
 
 /* add a number in the list */
@@ -94,27 +88,8 @@ int numberlist::get(unsigned int i, unsigned int *n)
   return VLAD_OK;
 }
 
-numberlistlist::numberlistlist()
+/* empty the list */
+void numberlist::purge()
 {
-}
-
-numberlistlist::~numberlistlist()
-{
-  purge(true);
-}
-
-/* add a number list to this list */
-int numberlistlist::add(numberlist *l)
-{
-  if (l == NULL)
-    return VLAD_NULLPTR;
-
-  /* we assume it is pre-malloc'ed */
-  return list::add(l);
-}
-
-/* get the i'th number list in this list */
-int numberlistlist::get(unsigned int i, numberlist **l)
-{
-  return list::get(i, (list_item **) l);
+  list::purge(true);
 }

@@ -1,5 +1,12 @@
 2003-04-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/numberlist.h :
+	* common/numberlist.cpp :
+
+	  - Removed numberlistlist.
+
+	  - Added purge function.
+
 	* common/vlad.h :
 	* main/vlad.cpp :
 	* parser/parser.y :
