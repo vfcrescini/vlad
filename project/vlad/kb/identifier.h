@@ -30,6 +30,7 @@
 #define VLAD_IDENT_TYPE_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
 #define VLAD_IDENT_TYPE_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
 #define VLAD_IDENT_STRING(X)          ((X).get_name())
+#define VLAD_IDENT_TYPE_VALID(X)      ((X) > 0 && (X) <= VLAD_IDENT_TYPEMAX)
 #define VLAD_IDENT_EQ(X,Y)            ((X) == NULL && (Y) == NULL) ? true :              \
                                         ((X) == NULL || (Y) == NULL) ? false :           \
 					  ((X)->get_type() != (Y)->get_type()) ? false : \

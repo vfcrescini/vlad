@@ -71,6 +71,12 @@ program :
 
 init :
   {
+    int retval;
+
+    if ((retval = symtable.init()) != VLAD_OK) {
+      fprintf(stderr, "failed to initialise symbol table\n");
+      exit(retval);
+    }
   }
   ;
 
