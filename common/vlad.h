@@ -15,6 +15,21 @@
 #define VLAD_MODE_NLP        0
 #define VLAD_MODE_SMODELS    1
 
+/* string constants */
+#define VLAD_STR_TRUE        "TRUE"
+#define VLAD_STR_FALSE       "FALSE"
+#define VLAD_STR_UNKNOWN     "?"
+#define VLAD_STR_NOT         "NOT"
+#define VLAD_STR_AND         "AND"
+#define VLAD_STR_ARROW       "<-"
+#define VLAD_STR_HOLDS       "holds"
+#define VLAD_STR_MEMBER      "member"
+#define VLAD_STR_SUBSET      "subset"
+
+/* string lengths */
+#define VLAD_MAXLEN_STR      1024
+#define VLAD_MAXLEN_NUM      32
+
 /* error codes */
 
 /* success */
@@ -38,11 +53,13 @@
 /* method failed because the object was not initialised */
 #define VLAD_UNINITIALISED  -9
 
-/* convenience macro(s) */
+/* malloc/new macros */
 #define VLAD_ADT_MALLOC(X,Y)  ((X *) malloc(sizeof(X) * Y))
 #define VLAD_STRING_MALLOC(X) ((char *) malloc(sizeof(char) * (strlen(X) + 1)))
 #define VLAD_NEW(X)           (new(std::nothrow) X)
 
-#define VLAD_RESULT_STRING(X) (((X) == VLAD_RESULT_TRUE) ? "true" : (X) == VLAD_RESULT_FALSE ? "false" : "unknown")
+/* int/bool to string macros */
+#define VLAD_BOOL_STRING(X)   ((X) ? VLAD_STR_TRUE : VLAD_STR_FALSE)
+#define VLAD_RESULT_STRING(X) (((X) == VLAD_RESULT_TRUE) ? VLAD_STR_TRUE : (X) == VLAD_RESULT_FALSE ? VLAD_STR_FALSE : VLAD_STR_UNKNOWN)
 
 #endif

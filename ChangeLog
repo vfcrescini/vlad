@@ -1,3 +1,30 @@
+2003-04-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.h :
+
+	  - Added a length macro that returns the length of the list ptr, 0
+	    if pointer is NULL.
+
+	* common/vlad.h :
+
+	  - Added string constants to centralise symbols.
+
+	  - Added numeric lengths for string constants.
+
+	  - Added conversion macros to convert int/bool to its boolean string
+	    eqivalent.
+
+	* kb/kb.cpp :
+
+	  - Added inheritance rules code.
+
+	* kb/wrapper.cpp :
+	* kb/wrapper.h :
+
+	  - Cleanup.
+
+	  - Added functions to register rules of different formats.
+
 2003-04-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.cpp :
