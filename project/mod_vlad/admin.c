@@ -12,6 +12,9 @@
 
 void modvlad_generate_header(request_rec *a_r)
 {
+  ap_rprintf(a_r, "%s\n", MODVLAD_XML_HEADER);
+  ap_rprintf(a_r, "%s\n", MODVLAD_DOCTYPE_HEADER);
+  ap_rprintf(a_r, "%s\n", MODVLAD_MISC_HEADER);
   ap_rprintf(a_r, "<html>\n  <body>\n");
   ap_rprintf(a_r, "    <h1>mod_vlad Administration</h1>\n");
   ap_rprintf(a_r, "    <h2>Transformation Sequence Manipulator</h2>\n");
@@ -29,9 +32,8 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   ap_rprintf(a_r, "    <h3>Current Sequence</h3>\n");
   ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"\">\n");
-  ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"\">\n");
-  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"delete\">\n");
-  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"sequence\" value=\"\">\n");
+  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"delete\"/>\n");
+  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"sequence\" value=\"\"/>\n");
   ap_rprintf(a_r, "      <ul>\n");
 
   for (i = 0; i < vlad_kb_length_seqtab(a_conf->kb); i++) {
@@ -41,7 +43,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     vlad_kb_get_seqtab(a_conf->kb, i, &st_name, &st_list);
 
     ap_rprintf(a_r, "         <li>\n");
-    ap_rprintf(a_r, "           <input type=\"button\" value=\"delete\" onclick=\"delform.sequence.value=%d;delform.submit();\">\n", i);
+    ap_rprintf(a_r, "           <input type=\"button\" value=\"delete\" onclick=\"delform.sequence.value=%d;delform.submit();\"/>\n", i);
     ap_rprintf(a_r, "           %s\n", st_name);
     ap_rprintf(a_r, "         </li>\n");
   }  
@@ -51,7 +53,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   ap_rprintf(a_r, "    <h3>Available Identifiers</h3>\n");
   ap_rprintf(a_r, "    <form name=\"idform\">\n");
-  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"ident\" value=\"\">\n");
+  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"ident\" value=\"\"/>\n");
   ap_rprintf(a_r, "      <ul>\n");
 
 
@@ -61,8 +63,9 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     vlad_kb_get_symtab(a_conf->kb, i, &it_name);
 
     ap_rprintf(a_r, "        <li>\n");
-    ap_rprintf(a_r, "          <input type=\"radio\" onclick=\"idform.ident.value='%s';\">\n", it_name);
-    ap_rprintf(a_r, "          %s\n", it_name);
+    ap_rprintf(a_r, "          <input name=\"id\" type=\"radio\" onclick=\"idform.ident.value='%s';\">\n", it_name);
+    ap_rprintf(a_r, "            %s\n", it_name);
+    ap_rprintf(a_r, "          </input>\n");
     ap_rprintf(a_r, "        </li>\n");
   }
 
@@ -82,17 +85,18 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
     ap_rprintf(a_r, "      <li>\n");
     ap_rprintf(a_r, "        <form name=\"addform%d\" method=\"POST\" action=\"\">\n", i);
-    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"command\" value=\"add\">\n");
-    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"args\" value=\"%d\">\n",  vlad_list_length(tt_list));
+    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"command\" value=\"add\"/>\n");
+    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"args\" value=\"%d\"/>\n",  vlad_list_length(tt_list));
     ap_rprintf(a_r, "          <input type=\"hidden\" name=\"trans\" value=\"%s\">\n", tt_name);
-    ap_rprintf(a_r, "          %s\n", tt_name);
-    ap_rprintf(a_r, "          <input type=\"button\" value=\"add\" onclick=\"addform%d.submit();\">\n", i);
-    ap_rprintf(a_r, "          <br>\n");
+    ap_rprintf(a_r, "            %s\n", tt_name);
+    ap_rprintf(a_r, "          </input>\n");
+    ap_rprintf(a_r, "          <input type=\"button\" value=\"add\" onclick=\"addform%d.submit();\"/>\n", i);
+    ap_rprintf(a_r, "          <br/>\n");
 
     for (j = 0; j < vlad_list_length(tt_list); j++) {
       ap_rprintf(a_r, "          arg%d\n", j);
-      ap_rprintf(a_r, "          <input type=\"text\" name=\"arg%d\" value=\"\" readonly>\n", j);
-      ap_rprintf(a_r, "          <input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\">\n", i, j);
+      ap_rprintf(a_r, "          <input type=\"text\" name=\"arg%d\" value=\"\" readonly=\"1\"/>\n", j);
+      ap_rprintf(a_r, "          <input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\"/>\n", i, j);
     }
 
     ap_rprintf(a_r, "        </form>\n");
@@ -117,8 +121,6 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   cmd = apr_table_get(tab, "command");
 
-  ap_rprintf(a_r, "    <pre>%s</pre>\n    <br>\n", buffer);
-
   if (!strcmp(cmd, "add")) {
     unsigned int i;
     int args;
@@ -126,7 +128,7 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
     void *tref = NULL;
     void *vlist = NULL;
 
-    ap_rprintf(a_r, "    <blink>add</blink>\n    <br>\n");
+    ap_rprintf(a_r, "    <blink>add</blink>\n    <br/>\n");
 
     args = atoi(apr_table_get(tab, "args"));
     name = apr_table_get(tab, "trans");
@@ -144,8 +146,8 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
     vlad_kb_add_seqtab(a_conf->kb, tref);
   }
   else if (!strcmp(cmd, "delete")) {
-    ap_rprintf(a_r, "    <blink>delete</blink>\n    <br>\n");
+    ap_rprintf(a_r, "    <blink>delete</blink>\n    <br/>\n");
   }
   else
-    ap_rprintf(a_r, "    <blink>error</blink>\n    <br>\n");
+    ap_rprintf(a_r, "    <blink>error</blink>\n    <br/>\n");
 }

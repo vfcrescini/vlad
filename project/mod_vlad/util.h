@@ -16,6 +16,11 @@
 
 #define MODVLAD_DEFAULTACTION   HTTP_UNAUTHORIZED
 
+#define MODVLAD_XML_HEADER      "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+#define MODVLAD_CONTENT_HEADER  "text/html; charset=\"utf-8\""
+#define MODVLAD_DOCTYPE_HEADER  "<!DOCTYPE HTML PUBLIC \"-//W3C// DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
+#define MODVLAD_MISC_HEADER     "<!-- Vino Fernando Crescini  <jcrescin@cit.uws.edu.au> -->"
+
 #define MODVLAD_ADMIN_USERNAME  "administrator"
 #define MODVLAD_ADMIN_DIRNAME   ".admin"
 

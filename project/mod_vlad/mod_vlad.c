@@ -382,14 +382,14 @@ static int modvlad_handler(request_rec *a_r)
       !strcmp(filepath, MODVLAD_ADMIN_DIRNAME)) {
 
     if (!strcmp(a_r->method, MODVLAD_ACCESS_GET)) {
-      ap_set_content_type(a_r, "text/html");
+      ap_set_content_type(a_r, MODVLAD_CONTENT_HEADER);
       modvlad_generate_header(a_r);
       modvlad_generate_form(a_r, conf);
       modvlad_generate_footer(a_r);
       return OK;
     }
     else if (!strcmp(a_r->method, MODVLAD_ACCESS_POST)) {
-      ap_set_content_type(a_r, "text/html");
+      ap_set_content_type(a_r, MODVLAD_CONTENT_HEADER);
       ap_setup_client_block(a_r, REQUEST_CHUNKED_DECHUNK);
       modvlad_generate_header(a_r);
       modvlad_handle_form(a_r, conf);
