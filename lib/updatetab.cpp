@@ -1,5 +1,5 @@
 /*
- * transtab.cpp
+ * updatetab.cpp
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -9,9 +9,9 @@
 #include <new>
 
 #include <vlad/vlad.h>
-#include <vlad/transtab.h>
+#include <vlad/updatetab.h>
 
-transdef::transdef()
+updatedef::updatedef()
 {
   m_name = NULL;
   m_vlist = NULL;
@@ -20,7 +20,7 @@ transdef::transdef()
   m_init = false;
 }
 
-transdef::~transdef()
+updatedef::~updatedef()
 {
   if (m_name != NULL)
     free(m_name);
@@ -32,14 +32,14 @@ transdef::~transdef()
     delete m_postcond;
 }
 
-bool transdef::cmp(list_item *a_item)
+bool updatedef::cmp(list_item *a_item)
 {
-  transdef *tmp = NULL;
+  updatedef *tmp = NULL;
 
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<transdef *>(a_item)) == NULL)
+  if ((tmp = dynamic_cast<updatedef *>(a_item)) == NULL)
     return false;
 
   /* if both are uninit return true. if only one -- false */
@@ -51,13 +51,13 @@ bool transdef::cmp(list_item *a_item)
 
   /*
    * here we are only concerned about the m_name. if the m_names match,
-   * then we consider the transformations equivalent.
+   * then we consider the update equivalent.
    */
 
   return !strcmp(m_name, tmp->m_name);
 }
 
-int transdef::init(const char *a_name,
+int updatedef::init(const char *a_name,
                    stringlist *a_vlist,
                    expression *a_precond,
                    expression *a_postcond)
@@ -86,7 +86,7 @@ int transdef::init(const char *a_name,
   return VLAD_OK;
 }
 
-int transdef::get(char **a_name,
+int updatedef::get(char **a_name,
                   stringlist **a_vlist,
                   expression **a_precond,
                   expression **a_postcond)
@@ -105,24 +105,24 @@ int transdef::get(char **a_name,
   return VLAD_OK;
 }
 
-transtab::transtab() : list(true)
+updatetab::updatetab() : list(true)
 {
 }
 
-transtab::~transtab()
+updatetab::~updatetab()
 {
   purge(true);
 }
 
-int transtab::add(const char *a_name,
+int updatetab::add(const char *a_name,
                   stringlist *a_vlist,
                   expression *a_precond,
                   expression *a_postcond)
 {
   int retval;
-  transdef *tmp;
+  updatedef *tmp;
 
-  if ((tmp = VLAD_NEW(transdef())) == NULL)
+  if ((tmp = VLAD_NEW(updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK) {
@@ -133,28 +133,28 @@ int transtab::add(const char *a_name,
   return list::add((list_item *) tmp);
 }
 
-/* get trans by m_name */
-int transtab::get(const char *a_name,
+/* get update by m_name */
+int updatetab::get(const char *a_name,
                   stringlist **a_vlist,
                   expression **a_precond,
                   expression **a_postcond)
 {
   int retval;
   char *tmp_name;
-  transdef *tmp_def;
-  transdef **lst;
+  updatedef *tmp_def;
+  updatedef **lst;
   unsigned int size;
 
   if (a_name == NULL || a_vlist == NULL || a_precond == NULL || a_postcond == NULL)
     return VLAD_NULLPTR;
 
-  /* create a dummy transdef to search */
+  /* create a dummy updatedef to search */
   if ((tmp_name = VLAD_STRING_MALLOC(a_name)) == NULL)
     return VLAD_MALLOCFAILED;
 
   strcpy(tmp_name, a_name);
 
-  if ((tmp_def = VLAD_NEW(transdef())) == NULL)
+  if ((tmp_def = VLAD_NEW(updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp_def->init(tmp_name, NULL, NULL, NULL)) != VLAD_OK)
@@ -173,15 +173,15 @@ int transtab::get(const char *a_name,
   return VLAD_OK;
 }
 
-/* get trans by index */
-int transtab::get(unsigned int a_index,
+/* get update by index */
+int updatetab::get(unsigned int a_index,
                   char **a_name,
                   stringlist **a_vlist,
                   expression **a_precond,
                   expression **a_postcond)
 {
   int retval;
-  transdef *tmp_def;
+  updatedef *tmp_def;
 
   if (a_name == NULL || a_vlist == NULL || a_precond == NULL || a_postcond == NULL)
     return VLAD_NULLPTR;
@@ -196,7 +196,7 @@ int transtab::get(unsigned int a_index,
 }
 
 /* replace variables with identifiers in v, then get pr and pp */
-int transtab::replace(const char *a_name,
+int updatetab::replace(const char *a_name,
                       stringlist *a_ilist,
                       expression **a_precond,
                       expression **a_postcond)
