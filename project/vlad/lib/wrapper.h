@@ -47,12 +47,28 @@ VLAD_EXTERN int vlad_kb_add_transtab(void *a_kb,
                                      void *a_v,
                                      void *a_pr,
                                      void *a_po);
+/* gives the length of the transformation table */
+VLAD_EXTERN int vlad_kb_length_transtab(void *a_kb, unsigned int *a_len);
+/* gives the i'th entry in the transformation table */
+VLAD_EXTERN int vlad_kb_get_transtab(void *a_kb,
+                                     unsigned int a_index,
+                                     char **a_n,
+                                     void **a_v,
+                                     void **a_pr,
+                                     void **a_po);
 /* add a transformation reference to the sequence table */
 VLAD_EXTERN int vlad_kb_add_seqtab(void *a_kb, void *a_tr);
 /* delete a transformation reference from the sequence table */
 VLAD_EXTERN int vlad_kb_del_seqtab(void *a_kb, unsigned int a_i);
 /* enumerate the sequences in the sequence table, output to f */
 VLAD_EXTERN int vlad_kb_list_seqtab(void *a_kb, FILE *a_fs);
+/* gives the length of the sequence table */
+VLAD_EXTERN int vlad_kb_length_seqtab(void *a_kb, unsigned int *a_len);
+/* gives the i'th entry in the sequence table */
+VLAD_EXTERN int vlad_kb_get_seqtab(void *a_kb,
+                                   unsigned int a_index,
+                                   char **a_n,
+                                   void **a_il);
 /* generate the rules necessary to evaluate queries */
 VLAD_EXTERN int vlad_kb_compute_generate(void *a_kb, FILE *a_fs);
 /* generate the query */

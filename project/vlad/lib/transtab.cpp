@@ -124,6 +124,7 @@ int transtab::add(const char *n, stringlist *v, expression *pr, expression *po)
   return list::add((list_item *) tmp);
 }
 
+/* get trans by name */
 int transtab::get(const char *n, stringlist **v, expression **pr, expression **po)
 {
   int retval;
@@ -156,6 +157,28 @@ int transtab::get(const char *n, stringlist **v, expression **pr, expression **p
 
   free(lst);
   delete tmp_def;
+
+  return VLAD_OK;
+}
+
+/* get trans by index */
+int transtab::get(unsigned int i,
+                  char **n,
+                  stringlist **v,
+                  expression **pr,
+                  expression **po)
+{
+  int retval;
+  transdef *tmp_def;
+
+  if (n == NULL || v == NULL || pr == NULL || po == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = list::get(i, (list_item **) &tmp_def)) != VLAD_OK)
+    return retval;
+
+  if ((retval = tmp_def->get(n, v, pr, po)) != VLAD_OK)
+    return retval;
 
   return VLAD_OK;
 }
