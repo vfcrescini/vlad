@@ -7,7 +7,7 @@ TARGETS = main
 all : $(TARGETS)
 
 main : parser.c scanner.c
-	$(CC) $(CFLAGS) parser.c scanner.c -ll -ly
+	$(CC) $(CFLAGS) parser.c scanner.c -ll -o $(@)
 
 scanner.c : scanner.l parser.h
 	$(LEX) -o$(@) scanner.l

@@ -6,6 +6,7 @@
 
 %{
 #include <stdio.h>
+#include <stdlib.h>
 %}
 
 %token EPI_SYM_OPEN_PARENT
@@ -152,8 +153,7 @@ extern FILE *yyin;
 
 int main()
 {
-  while (!feof(yyin))
-    yyparse();
+  yyparse();
 
   return 0;
 }
