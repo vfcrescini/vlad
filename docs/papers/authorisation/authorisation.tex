@@ -747,7 +747,7 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
             If everything went well the program should end up with a state,
             or more accurately, a set of atoms and expressions that holds
             true in the final state. The query expression is then check
-            against this final state and an appropriate answer is retured:
+            against this final state and an appropriate answer is returned:
             true, false or unknown.
             
         \end{itemize}
@@ -773,10 +773,10 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
         to store constraints that was not present in the Epilog implementation.
 
         Another major, but subtle difference is the way atoms are stored. In 
-        the Epilog implmentation, atoms are stored in memory as records of
-        identfiers and a truth value. This implementations, however, offers
+        the Epilog implementation, atoms are stored in memory as records of
+        identifiers and a truth value. This implementations, however, offers
         a more robust and efficient method of storing atoms: conceptually,
-        instead of in memory. Each atom is never actaully stored in physical
+        instead of in memory. Each atom is never actually stored in physical
         memory but is really just a number. This number corresponds to the
         unique combination of the indices of the identifiers that it contains.
 
@@ -790,15 +790,15 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
 
     \subsection{Application Program}
 
-      The application that will be developed for this project is a website 
-      access control system. Authorisation control for websites is not 
+      The application that will be developed for this project is a web site 
+      access control system. Authorisation control for web sites is not 
       something new. Most web servers are run on top of a Unix or Unix-like
-      filesystem that provides some basic authorisation scheme by directly
+      file system that provides some basic authorisation scheme by directly
       manipulating file-access permissions. Some web servers such as Apache
       provide a much better authorisation and authentication scheme with
       the htaccess mechanism.
 
-      The web authorisation system will allow the website administrator to
+      The web authorisation system will allow the web site administrator to
       define high-level abstract objects and subjects from the different web
       pages in his/her site and the users that will access the site. For
       example a web administrator might create an object called Accounting
