@@ -481,6 +481,33 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
 
         for all states S in the domain.
 
+      \subsubsection{Inertial Rules}
+
+        Intuitively, one would expect that after a transformation, every fact
+        in the previous state that was not affected by the transformation
+        should in fact be carried over into the next state. The following
+        implications are added to ensure that this property is held:
+
+        \begin{list}{}{}
+          \item
+            holds(A, Res(T, S)) $\leftarrow$ holds(A, S) $\land$ not $\lnot$ 
+            holds(A, Res(T, S))
+          \item 
+            $\lnot$ holds(A, Res(T, S)) $\leftarrow$ $\lnot$ holds(A, S) 
+            $\land$ not holds(A, Res(T, S))
+        \end{list}
+
+        $\forall$(S, T, A $\mid$ S $\in$ $\sigma$, T $\in$ $\theta$, A $\in$ 
+        $\alpha$)
+
+        where: 
+
+        \begin{itemize}
+          \item $\sigma$ = set of all states in the domain
+          \item $\theta$ = set of all transformations in the domain
+          \item $\alpha$ = set of all atoms in the domain
+        \end{itemize}
+
       \subsubsection{Example}
 
         The following lists a small program written in the proposed language:
@@ -514,6 +541,21 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
 
         \begin{list}{}{Transformation}
           \item holds(B, S1) $\leftarrow$ $\lnot$ holds(B, S0)
+        \end{list}
+
+        \begin{list}{}{Inertial Rules}
+          \item
+            holds(A, S1) $\leftarrow$ holds(A, S0) $\land$ not $\lnot$ holds(A, S1)
+          \item
+            $\lnot$ holds(A, S1) $\leftarrow$ $\lnot$ holds(A, S0) $\land$ not holds(A, S1)
+          \item
+            holds(B, S1) $\leftarrow$ holds(B, S0) $\land$ not $\lnot$ holds(B, S1)
+          \item
+            $\lnot$ holds(B, S1) $\leftarrow$ $\lnot$ holds(B, S0) $\land$ not holds(B, S1)
+          \item
+            holds(C, S1) $\leftarrow$ holds(C, S0) $\land$ not $\lnot$ holds(C, S1)
+          \item
+            $\lnot$ holds(C, S1) $\leftarrow$ $\lnot$ holds(C, S0) $\land$ not holds(C, S1)
         \end{list}
 
     \subsection{Removal of Classical Negation}
