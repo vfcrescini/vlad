@@ -98,52 +98,13 @@
 
             \item
               {\em Variable Identifiers} are used as entity identifier
-              place-holers, and as such, are subject to the entity identifier
-              types. Variable identifiers are prefixed with 1 or 2 upper-case
-              characters to distinguish them from entity identifiers, followed
-              by any combination of 0 to 126 alphanumeric and underscore
-              characters. The upper-case characters determines the type of the
-              variable identifier. The following is a list of regular
-              expressions for each variable identifier type:
+              place-holers. To distinguish them from entity and policy update
+              identifiers, varaible identifiers are prefixed with an upper-case
+              character, followed by 0 to 127 alphanumeric and underscore
+              characters. The following regular expression shows the syntax of
+              variable identifiers:
 
-              \begin{itemize}
-                \item
-                  Subject variables (singular and group)
-
-                  \begin{verbatim}S([a-zA-Z0-9_]){0,127}\end{verbatim}
-                \item
-                  Subject variables (singular)
-
-                  \begin{verbatim}SS([a-zA-Z0-9_]){0,126}\end{verbatim}
-                \item
-                  Subject variables (group)
-
-                  \begin{verbatim}SG([a-zA-Z0-9_]){0,126}\end{verbatim}
-                \item
-                  Access Right variables (singular and group)
-
-                  \begin{verbatim}A([a-zA-Z0-9_]){0,127}\end{verbatim}
-                \item
-                  Access Right variables (singular)
-
-                  \begin{verbatim}AS([a-zA-Z0-9_]){0,126}\end{verbatim}
-                \item
-                  Access Right variables (group)
-
-                  \begin{verbatim}AG([a-zA-Z0-9_]){0,126}\end{verbatim}
-                \item
-                  Object variables (singular and group)
-
-                  \begin{verbatim}O([a-zA-Z0-9_]){0,127}\end{verbatim}
-                \item
-                  Object variables (singluar)
-
-                  \begin{verbatim}OS([a-zA-Z0-9_]){0,126}\end{verbatim}
-                \item
-                  Object variables (group)
-
-                  \begin{verbatim}OG([a-zA-Z0-9_]){0,126}\end{verbatim}
-              \end{itemize}
+              \begin{verbatim}[A-Z]([a-zA-Z0-9_]{0,127}\end{verbatim}
           \end{itemize}
 
         \paragraph{Atoms.}
