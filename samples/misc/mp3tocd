@@ -44,7 +44,9 @@ fi
 
 find "${1}" -maxdepth 1 -name "*.mp3" 2> /dev/null | sort | while read filename
 do
+  echo "About to write $filename"
   ${mpgprog} ${mpgflags} -s "${filename}" | ${cdrprog} ${cdrflags} -
+  echo "Finished writing $filename"
 done
 
 # fixate
