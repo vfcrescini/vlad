@@ -8,22 +8,6 @@
 
 #include <vlad/stringlist.h>
 
-/* identifier type values indicated by the first 2 bits */
-#define VLAD_IDENT_SUBJECT       1
-#define VLAD_IDENT_ACCESS        2
-#define VLAD_IDENT_OBJECT        3
-
-/* identifier group bit indicated by the 3th bit */
-#define VLAD_IDENT_GROUP         4
-
-/* some convenience macros */
-#define VLAD_IDENT_BASETYPE(X)   ((X) & 3)
-#define VLAD_IDENT_IS_SUBJECT(X) (((X) & 3) == VLAD_IDENT_SUBJECT)
-#define VLAD_IDENT_IS_ACCESS(X)  (((X) & 3) == VLAD_IDENT_ACCESS)
-#define VLAD_IDENT_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
-#define VLAD_IDENT_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
-#define VLAD_IDENT_IS_VALID(X)   ((X) > 0 && (X) <= 7)
-
 class symtab
 {
   public :
