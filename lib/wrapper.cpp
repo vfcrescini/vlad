@@ -5,6 +5,7 @@
 
 #include <cstdlib>
 #include <cstddef>
+#include <cstring>
 #include <new>
 
 #include <stdio.h>
@@ -605,14 +606,20 @@ VLAD_EXTERN int vlad_tref_destroy(void *a_tref)
 VLAD_EXTERN int vlad_tref_init(void *a_tref, const char *a_n, void *a_slist)
 {
   transref *tmp_tref = NULL;
+  char *tmp_name = NULL;
 
-  if (a_tref == NULL)
+  if (a_tref == NULL || a_n == NULL)
     return VLAD_NULLPTR;
 
   if ((tmp_tref = VLAD_WRAPPER_CAST(a_tref, transref *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_tref->init(a_n, VLAD_WRAPPER_CAST(a_slist, stringlist *));
+  if ((tmp_name = VLAD_STRING_MALLOC(a_n)) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  strcpy(tmp_name, a_n);
+
+  return tmp_tref->init(tmp_name, VLAD_WRAPPER_CAST(a_slist, stringlist *));
 }
 
 /* create a consttab */
