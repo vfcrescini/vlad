@@ -6,7 +6,7 @@
 
 mpgprog="/usr/local/bin/mpg123"
 cdrprog="/usr/bin/cdrecord"
-mpgflags="-q"
+mpgflags="--stereo -q"
 cdrflags="-v speed=4 dev=0,00,00 -audio -nofix -swab -fs=8m -nopreemp"
 cdrfixflags="-v dev=0,00,00 speed=4 -fix -eject"
 
