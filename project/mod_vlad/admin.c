@@ -8,6 +8,7 @@
 #include "vlad/wrapper.h"
 
 #include "http_log.h"
+#include "http_core.h"
 #include "http_protocol.h"
 #include "apr_strings.h"
 
@@ -30,12 +31,15 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 {
   unsigned int i;
   unsigned int j;
+  const char *uri = NULL;
+
+  uri = ap_construct_url(a_r->pool, a_r->uri, a_r);
 
   ap_rprintf(a_r, "    <h3>Current Sequence</h3>\n");
-  ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"\">\n");
+  ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"%s\">\n", uri);
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"delete\"/>\n");
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"index\" value=\"\"/>\n");
-  ap_rprintf(a_r, "      <table cols=\"2\" border=\"1\">\n");
+  ap_rprintf(a_r, "      <table cols=\"3\" border=\"1\">\n");
 
   for (i = 0; i < vlad_kb_length_seqtab(a_conf->kb); i++) {
     char *st_name = NULL;
@@ -44,6 +48,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     vlad_kb_get_seqtab(a_conf->kb, i, &st_name, &st_list);
 
     ap_rprintf(a_r, "         <tr>\n");
+    ap_rprintf(a_r, "           <td align=\"center\">%d</th>\n", i);
     ap_rprintf(a_r, "           <th align=\"center\">%s</th>\n", st_name);
     ap_rprintf(a_r, "           <td align=\"center\"><input type=\"button\" value=\"delete\" onclick=\"delform.index.value=%d;delform.submit();\"/></td>\n", i);
     ap_rprintf(a_r, "         </tr>\n");
@@ -62,7 +67,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
     vlad_kb_get_transtab(a_conf->kb, i, &tt_name, &tt_list, &tt_prexp, &tt_poexp);
 
-    ap_rprintf(a_r, "    <form name=\"addform%d\" method=\"POST\" action=\"\">\n", i);
+    ap_rprintf(a_r, "    <form name=\"addform%d\" method=\"POST\" action=\"%s\">\n", i, uri);
     ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"add\"/>\n");
     ap_rprintf(a_r, "      <input type=\"hidden\" name=\"args\" value=\"%d\"/>\n",  vlad_list_length(tt_list));
     ap_rprintf(a_r, "      <input type=\"hidden\" name=\"trans\" value=\"%s\"/>\n", tt_name);
