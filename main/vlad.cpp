@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
   char *arglist = "vh";
   char *helpstring = "-v|-h|program-filename [operation-filename]";
 #endif
-  int option;
+  int curr_opt;
   FILE *programin = NULL;
   FILE *operationin = NULL;
   kb *kbase = NULL;
@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
 
   opterr = 0;
 
-  while ((option = getopt(argc, argv, arglist)) != -1) {
-    switch(option) {
+  while ((curr_opt = getopt(argc, argv, arglist)) != -1) {
+    switch(curr_opt) {
       case 'v' :
         fprintf(stdout, "vLad %s\n", VERSION);
         return VLAD_OK;
