@@ -1,5 +1,14 @@
 2003-03-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/Makefile.in :
+
+	  - Fixed dependencies.
+
+	* kb/transtab.h :
+	* kb/transtab.cpp :
+
+	  - Added a table for storing transformation declarations.
+
 	* kb/consttab.h :
 	* kb/consttab.cpp :
 
