@@ -65,6 +65,7 @@ void add_identifier(const char ident[], unsigned char type);
 %type <gnd_atom> ground_holds_atom 
 %type <gnd_atom> ground_subst_atom 
 %type <gnd_atom> ground_memb_atom 
+%type <gnd_atom> logical_atom 
 
 %start program
 
@@ -350,6 +351,7 @@ ground_atom :
     $$ = $1;
   }
   | logical_atom {
+    $$ = $1;
   }
   ;
 
@@ -421,8 +423,16 @@ comp_memb_atom :
 
 logical_atom : 
   VLAD_SYM_TRUE {
+    kbase.get_atom("true", NULL, NULL, VLAD_ATOM_CONST, &$$);
+#ifdef DEBUG
+    fprintf(stderr, "%5d = true\n", $$);
+#endif
   }
   | VLAD_SYM_FALSE {
+    kbase.get_atom("false", NULL, NULL, VLAD_ATOM_CONST, &$$);
+#ifdef DEBUG
+    fprintf(stderr, "%5d = false\n", $$);
+#endif
   }
   ;
 

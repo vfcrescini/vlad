@@ -1,5 +1,11 @@
 2003-03-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added provisions for constant atoms (true and false);
+
 	* kb/kb.h :
 	* kb/kb.cpp :
 
