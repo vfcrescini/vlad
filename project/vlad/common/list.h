@@ -8,7 +8,8 @@
 
 /* abstract class to be used as the items in the list */
 
-/* convenience macro to compare item pointers */
+/* convenience macros */
+#define VLAD_LIST_LENGTH(X)    (((X) == NULL) ? 0 : (X)->length())
 #define VLAD_LIST_ITEMCMP(X,Y) (((X) == NULL) ? ((Y) == NULL) : (((Y) == NULL) ? false : ((X)->cmp(Y))))
 
 class list_item

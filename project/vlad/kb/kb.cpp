@@ -11,7 +11,7 @@
 #include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
-
+#include <vlad/numberlist.h>
 #ifdef SMODELS
   #include <vlad/wrapper.h>
 #endif
@@ -694,7 +694,7 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
     return retval;
 
   /* number of transformations in this sequence */
-  tot_trans = (s == NULL) ? 0 : s->length();
+  tot_trans = VLAD_LIST_LENGTH(s);
 
   /* create and init a wrapper object */
   if ((wrap = VLAD_NEW(wrapper())) == NULL)
@@ -703,10 +703,99 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
   if ((retval = wrap->init()) != VLAD_OK)
     return retval;
 
-  /* first we print out all the possible atoms in the kb */
+  /* first we register all the possible atoms in the kb */
   for (i = 0; i < (pos_tot * 2 * (tot_trans + 1)); i++) {
     if ((retval = wrap->add_atom(i)) != VLAD_OK)
       return retval;
+  }
+
+  /* inheritance rules */
+
+  /* state loop */
+  for (i = 0; i <= tot_trans; i++) {
+    unsigned int i_truth;
+    unsigned int i_group;
+    unsigned int i_sub;
+    unsigned int i_acc;
+    unsigned int i_obj;
+    /* truth loop */
+    for (i_truth = 0; i_truth < 2; i_truth++) {
+      /* subject groups */
+      for (i_group = 0; i_group < sg_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              unsigned int tmp_num;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
+
+              tmp_num = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              tmp_list->add((i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj);
+              tmp_list->add((i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_group);
+
+              if ((retval = wrap->add_rule_single_head(tmp_num, tmp_list, NULL)) != VLAD_OK) {
+                delete tmp_list;
+                return retval;
+              }
+
+              delete tmp_list;
+            }
+          }
+        }
+      }
+      /* access groups */
+      for (i_group = 0; i_group < ag_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              unsigned int tmp_num;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
+
+              tmp_num = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              tmp_list->add((i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj);
+              tmp_list->add((i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group);
+
+              if ((retval = wrap->add_rule_single_head(tmp_num, tmp_list, NULL)) != VLAD_OK) {
+                delete tmp_list;
+                return retval;
+              }
+
+              delete tmp_list;
+            }
+          }
+        }
+      }
+      /* object groups */
+      for (i_group = 0; i_group < og_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len; i_obj++) {
+              unsigned int tmp_num;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
+
+              tmp_num = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              tmp_list->add((i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len);
+              tmp_list->add((i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group);
+
+              if ((retval = wrap->add_rule_single_head(tmp_num, tmp_list, NULL)) != VLAD_OK) {
+                delete tmp_list;
+                return retval;
+              }
+
+              delete tmp_list;
+            }
+          }
+        }
+      }
+    }
   }
 
   *r = VLAD_RESULT_TRUE;
