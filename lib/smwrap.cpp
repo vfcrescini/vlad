@@ -15,50 +15,50 @@
 
 smwrap::smwrap()
 {
-  pr_smod = NULL;
-  pr_api = NULL;
-  pr_stage = 0;
+  m_smod = NULL;
+  m_api = NULL;
+  m_stage = 0;
 }
 
 smwrap::~smwrap()
 {
-  if (pr_smod != NULL)
-    delete pr_smod;
-  if (pr_api != NULL)
-    delete pr_api;
+  if (m_smod != NULL)
+    delete m_smod;
+  if (m_api != NULL)
+    delete m_api;
 }
 
 int smwrap::init()
 {
   Atom *tmp_atom;
 
-  if (pr_stage > 0) {
-    if (pr_smod != NULL)
-      delete pr_smod;
-    if (pr_api != NULL)
-      delete pr_api;
+  if (m_stage > 0) {
+    if (m_smod != NULL)
+      delete m_smod;
+    if (m_api != NULL)
+      delete m_api;
   }
 
-  if ((pr_smod = VLAD_NEW(Smodels())) == NULL)
+  if ((m_smod = VLAD_NEW(Smodels())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((pr_api = VLAD_NEW(Api(&(pr_smod->program)))) == NULL)
+  if ((m_api = VLAD_NEW(Api(&(m_smod->program)))) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* so we don't forget */
-  pr_api->remember();
+  m_api->remember();
 
   /* we have to add the two constant atoms */
-  if ((tmp_atom = pr_api->new_atom()) == NULL)
+  if ((tmp_atom = m_api->new_atom()) == NULL)
     return VLAD_MALLOCFAILED;
 
-  pr_api->set_name(tmp_atom, VLAD_STR_TRUE);
+  m_api->set_name(tmp_atom, VLAD_STR_TRUE);
 
-  if ((tmp_atom = pr_api->new_atom()) == NULL)
+  if ((tmp_atom = m_api->new_atom()) == NULL)
     return VLAD_MALLOCFAILED;
 
-  pr_api->set_name(tmp_atom, VLAD_STR_FALSE);
+  m_api->set_name(tmp_atom, VLAD_STR_FALSE);
 
-  pr_stage = 1;
+  m_stage = 1;
 
   return VLAD_OK;
 }
@@ -66,16 +66,16 @@ int smwrap::init()
 /* after this no more calls to add_atom() are allowed */
 int smwrap::close_atom()
 {
-  if (pr_stage != 1)
+  if (m_stage != 1)
     return VLAD_INVALIDOP;
 
   /* now we add the rule that the atom "true" is always true */
 
-  pr_api->begin_rule(BASICRULE);
-  pr_api->add_head(pr_api->get_atom(VLAD_STR_TRUE));
-  pr_api->end_rule();
+  m_api->begin_rule(BASICRULE);
+  m_api->add_head(m_api->get_atom(VLAD_STR_TRUE));
+  m_api->end_rule();
 
-  pr_stage = 2;
+  m_stage = 2;
 
   return VLAD_OK;
 }
@@ -83,29 +83,29 @@ int smwrap::close_atom()
 /* after this no more calls to add_rule_*() are allowed */
 int smwrap::close_rule()
 {
-  if (pr_stage != 2)
+  if (m_stage != 2)
     return VLAD_INVALIDOP;
 
-  pr_api->done();
+  m_api->done();
 
 #ifdef VLAD_DEBUG
-  pr_smod->program.print();
+  m_smod->program.print();
 #endif
 
-  pr_smod->init();
+  m_smod->init();
 
   /* assert true and not false */
-  pr_api->set_compute(pr_api->get_atom(VLAD_STR_TRUE), true);
-  pr_api->set_compute(pr_api->get_atom(VLAD_STR_FALSE), false);
+  m_api->set_compute(m_api->get_atom(VLAD_STR_TRUE), true);
+  m_api->set_compute(m_api->get_atom(VLAD_STR_FALSE), false);
 
-  if (!pr_smod->model())
+  if (!m_smod->model())
     return VLAD_NOMODEL;
 
 #ifdef VLAD_DEBUG
-    pr_smod->printAnswer();
+    m_smod->printAnswer();
 #endif
 
-  pr_stage = 3;
+  m_stage = 3;
 
   return VLAD_OK;
 }
@@ -116,15 +116,15 @@ int smwrap::add_atom(unsigned int a_atom)
   Atom *tmp_atom;
   char tmp_name[VLAD_MAXLEN_NUM];
 
-  if (pr_stage != 1)
+  if (m_stage != 1)
     return VLAD_INVALIDOP;
 
-  if ((tmp_atom = pr_api->new_atom()) == NULL)
+  if ((tmp_atom = m_api->new_atom()) == NULL)
     return VLAD_MALLOCFAILED;
 
   memset(tmp_name, 0, VLAD_MAXLEN_NUM);
   sprintf(tmp_name, "%d", a_atom);
-  pr_api->set_name(tmp_atom, tmp_name);
+  m_api->set_name(tmp_atom, tmp_name);
 
   return VLAD_OK;
 }
@@ -136,7 +136,7 @@ int smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
   char tmp_name[VLAD_MAXLEN_NUM];
   va_list tmp_ap;
 
-  if (pr_stage != 2)
+  if (m_stage != 2)
     return VLAD_INVALIDOP;
 
   /* of course if the list is empty, we do nothing */
@@ -151,55 +151,58 @@ int smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
       memset(tmp_name, 0, VLAD_MAXLEN_NUM);
       sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
 
-      pr_api->begin_rule(BASICRULE);
-      pr_api->add_head(pr_api->get_atom(tmp_name));
-      pr_api->add_body(pr_api->get_atom(VLAD_STR_TRUE), true);
-      pr_api->end_rule();
+      m_api->begin_rule(BASICRULE);
+      m_api->add_head(m_api->get_atom(tmp_name));
+      m_api->add_body(m_api->get_atom(VLAD_STR_TRUE), true);
+      m_api->end_rule();
     }
 
     va_end(tmp_ap);
   }
   else {
     /* false, meaning each atom in the list cannot all be true */
-    pr_api->begin_rule(BASICRULE);
-    pr_api->add_head(pr_api->get_atom(VLAD_STR_FALSE));
+    m_api->begin_rule(BASICRULE);
+    m_api->add_head(m_api->get_atom(VLAD_STR_FALSE));
 
     va_start(tmp_ap, a_count);
 
     for (i = 0; i < a_count; i++) {
       memset(tmp_name, 0, VLAD_MAXLEN_NUM);
       sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
-      pr_api->add_body(pr_api->get_atom(tmp_name), true);
+      m_api->add_body(m_api->get_atom(tmp_name), true);
     }
 
     va_end(tmp_ap);
 
-    pr_api->end_rule();
+    m_api->end_rule();
   }
 
   return VLAD_OK;
 }
 
 /* add rule: variable argument list */
-int smwrap::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int a_head, ...)
+int smwrap::add_rule(unsigned int a_pcount,
+                     unsigned int a_ncount,
+                     unsigned int a_head,
+                     ...)
 {
   unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
   va_list tmp_ap;
 
-  if (pr_stage != 2)
+  if (m_stage != 2)
     return VLAD_INVALIDOP;
 
   /* the special case when there is no body: head becomes an axiom */
   if (a_pcount == 0 && a_ncount == 0)
     return add_axiom(true, 1, a_head);
 
-  pr_api->begin_rule(BASICRULE);
+  m_api->begin_rule(BASICRULE);
 
   /* add head */
   memset(tmp_name, 0, VLAD_MAXLEN_NUM);
   sprintf(tmp_name, "%d", a_head);
-  pr_api->add_head(pr_api->get_atom(tmp_name));
+  m_api->add_head(m_api->get_atom(tmp_name));
 
   va_start(tmp_ap, a_head);
 
@@ -207,44 +210,46 @@ int smwrap::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int 
   for (i = 0; i < a_pcount; i++) {
     memset(tmp_name, 0, VLAD_MAXLEN_NUM);
     sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
-    pr_api->add_body(pr_api->get_atom(tmp_name), true);
+    m_api->add_body(m_api->get_atom(tmp_name), true);
   }
 
   /* then the negative body */
   for (i = 0; i < a_ncount; i++) {
     memset(tmp_name, 0, VLAD_MAXLEN_NUM);
     sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
-    pr_api->add_body(pr_api->get_atom(tmp_name), false);
+    m_api->add_body(m_api->get_atom(tmp_name), false);
   }
 
   va_end(tmp_ap);
 
-  pr_api->end_rule();
+  m_api->end_rule();
 
   return VLAD_OK;
 }
 
 /* add rule: numberlist */
-int smwrap::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbody)
+int smwrap::add_rule(unsigned int a_head,
+                     numberlist *a_pbody,
+                     numberlist *a_nbody)
 {
   int retval;
   unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
   unsigned int tmp_num;
 
-  if (pr_stage != 2)
+  if (m_stage != 2)
     return VLAD_INVALIDOP;
 
   /* the special case when there is no body: head becomes an axiom */
   if (VLAD_LIST_LENGTH(a_pbody) == 0 && VLAD_LIST_LENGTH(a_nbody) == 0)
     return add_axiom(true, 1, a_head);
 
-  pr_api->begin_rule(BASICRULE);
+  m_api->begin_rule(BASICRULE);
 
   /* add head */
   memset(tmp_name, 0, VLAD_MAXLEN_NUM);
   sprintf(tmp_name, "%d", a_head);
-  pr_api->add_head(pr_api->get_atom(tmp_name));
+  m_api->add_head(m_api->get_atom(tmp_name));
 
   /* now for the positive body */
   for (i = 0; i < VLAD_LIST_LENGTH(a_pbody); i++) {
@@ -253,7 +258,7 @@ int smwrap::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbo
 
     memset(tmp_name, 0, VLAD_MAXLEN_NUM);
     sprintf(tmp_name, "%d", tmp_num);
-    pr_api->add_body(pr_api->get_atom(tmp_name), true);
+    m_api->add_body(m_api->get_atom(tmp_name), true);
   }
 
   /* then the negative body */
@@ -263,10 +268,10 @@ int smwrap::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbo
 
     memset(tmp_name, 0, VLAD_MAXLEN_NUM);
     sprintf(tmp_name, "%d", tmp_num);
-    pr_api->add_body(pr_api->get_atom(tmp_name), false);
+    m_api->add_body(m_api->get_atom(tmp_name), false);
   }
 
-  pr_api->end_rule();
+  m_api->end_rule();
 
   return VLAD_OK;
 }
@@ -276,7 +281,7 @@ int smwrap::ask(unsigned int a_atom, bool *a_res)
 {
   char tmp_name[VLAD_MAXLEN_NUM];
 
-  if (pr_stage != 3)
+  if (m_stage != 3)
     return VLAD_INVALIDOP;
 
   if (a_res == NULL)
@@ -286,18 +291,18 @@ int smwrap::ask(unsigned int a_atom, bool *a_res)
   sprintf(tmp_name, "%d", a_atom);
 
   /* clear previous model computations */
-  pr_smod->revert();
+  m_smod->revert();
 
   /* now, we try to find models for which the atom being tested does NOT hold.
    * if no models are found we can safely conclude that the atom is present
    * in all models. any models we find are those where the atom does not
    * hold */
 
-  pr_api->set_compute(pr_api->get_atom(tmp_name), false);
-  *a_res = !pr_smod->model();
+  m_api->set_compute(m_api->get_atom(tmp_name), false);
+  *a_res = !m_smod->model();
 
   /* reset compute */
-  pr_api->reset_compute(pr_api->get_atom(tmp_name), false);
+  m_api->reset_compute(m_api->get_atom(tmp_name), false);
 
   return VLAD_OK;
 }

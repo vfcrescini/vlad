@@ -1,5 +1,9 @@
 2003-12-31  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/smwrap.cpp:
+	* lib/smwrap.h:
+	* lib/transtab.cpp:
+	* lib/transtab.h:
 	* lib/seqtab.cpp:
 	* lib/seqtab.h:
 	* lib/consttab.cpp:
