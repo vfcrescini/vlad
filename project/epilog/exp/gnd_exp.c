@@ -127,6 +127,9 @@ int gnd_exp_cmp_subst(void *p1, void *p2)
   if (tmp_atom1->type != tmp_atom2->type || !EPI_ATOM_IS_SUBST(*tmp_atom1))
     return -1;
 
+  if (tmp_atom1->truth != tmp_atom2->truth)
+    return -1;
+
   if (ident_compare(*(tmp_atom1->atom.subst.group1), *(tmp_atom2->atom.subst.group1)) != 0)
     return -1;
 
@@ -147,6 +150,9 @@ int gnd_exp_cmp_memb(void *p1, void *p2)
   tmp_atom2 = (gnd_atom_type *) p2;
 
   if (tmp_atom1->type != tmp_atom2->type || !EPI_ATOM_IS_MEMB(*tmp_atom1))
+    return -1;
+
+  if (tmp_atom1->truth != tmp_atom2->truth)
     return -1;
 
   if (ident_compare(*(tmp_atom1->atom.memb.element), *(tmp_atom2->atom.memb.element)) != 0)
