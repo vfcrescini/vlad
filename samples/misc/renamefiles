@@ -1,0 +1,21 @@
+#!/bin/sh
+
+counter=$[1]
+
+mkdir ./__tmp_$$_
+
+for tempFile in *
+do
+	# get extension
+
+	extension=${tempFile##*.}
+
+	echo "renaming $tempFile to $counter.$extension"
+
+	mv "$tempFile" ./__tmp_$$_/$counter.$extension
+
+	counter=$[$counter+1]
+done
+
+mv ./__tmp_$$_/* .
+rmdir ./__tmp_$$_

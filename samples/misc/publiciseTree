@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ $# = 1 ] 
+then
+	if [ -d $1 ]
+	then
+		find $1 | while read i
+		do
+			if [ -d "$i" ]
+			then
+				chmod 777 "$i"
+				echo dir : $i
+			else
+				chmod 666 "$i"
+				echo file : $i
+			fi
+		done
+	fi	
+fi 
