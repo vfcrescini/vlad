@@ -1,3 +1,11 @@
+2003-02-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/Makefile.in :
+	* kb/atom.h :
+	* kb/atom.cpp :
+
+	  - Added atom class.
+
 
 2003-02-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
