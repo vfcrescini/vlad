@@ -252,25 +252,6 @@ int kb::encode_atom(const char *n1,
   return VLAD_OK;
 }
 
-/* returns the negation of the given atom */
-int kb::negate_atom(unsigned int in, unsigned int *out)
-{
-  if (!initialised)
-    return VLAD_UNINITIALISED;
-
-  /* of course it has to be closed first */
-  if (!closed)
-    return VLAD_FAILURE; 
-
-  /* check if it is within range */
-  if (in < 0 || in > (pos_tot + neg_tot))
-    return VLAD_INVALIDINPUT;
-
-  *out = ((in < pos_tot) ? 0 : pos_tot) + in;
-
-  return VLAD_OK;
-}
-
 /* returns the atom details given the id */
 int kb::decode_atom(char **n1,
                     char **n2,
@@ -280,6 +261,7 @@ int kb::decode_atom(char **n1,
                     unsigned int a)
 {
   unsigned int tmp;
+  int retval;
 
   if (!initialised)
     return VLAD_UNINITIALISED;
@@ -309,15 +291,15 @@ int kb::decode_atom(char **n1,
     if (n1 == NULL)
       return VLAD_NULLPTR;
 
-    if (*tr) {
-      if ((*n1 = VLAD_STRING_MALLOC(VLAD_STRING_TRUE)) == NULL)
-        return VLAD_MALLOCFAILED;
-      return (strcpy(*n1, VLAD_STRING_TRUE) != NULL);
-    }
-    else {
+    if (tmp == 0) {
       if ((*n1 = VLAD_STRING_MALLOC(VLAD_STRING_FALSE)) == NULL)
         return VLAD_MALLOCFAILED;
-      return (strcpy(*n1, VLAD_STRING_FALSE) != NULL);
+      return (strcpy(*n1, VLAD_STRING_FALSE) ? VLAD_OK : VLAD_FAILURE);
+    }
+    else {
+      if ((*n1 = VLAD_STRING_MALLOC(VLAD_STRING_TRUE)) == NULL)
+        return VLAD_MALLOCFAILED;
+      return (strcpy(*n1, VLAD_STRING_TRUE) ? VLAD_OK : VLAD_FAILURE);
     }
   }
   else if (tmp < m_index) {
@@ -335,10 +317,12 @@ int kb::decode_atom(char **n1,
     a = rem / (o_len + og_len);
     o = rem % (o_len + og_len);
 
-    return
-      stable->get(s - ((s < s_len) ? 0 : s_len), VLAD_IDENT_SUBJECT | ((s < s_len) ? 0 : VLAD_IDENT_GROUP), n1) &&
-      stable->get(a - ((a < a_len) ? 0 : a_len), VLAD_IDENT_ACCESS | ((a < a_len) ? 0 : VLAD_IDENT_GROUP), n2) &&
-      stable->get(o - ((o < o_len) ? 0 : o_len), VLAD_IDENT_OBJECT | ((o < o_len) ? 0 : VLAD_IDENT_GROUP), n3);
+    if ((retval = stable->get(s - ((s < s_len) ? 0 : s_len), VLAD_IDENT_SUBJECT | ((s < s_len) ? 0 : VLAD_IDENT_GROUP), n1)) != VLAD_OK)
+      return retval;
+    if ((retval = stable->get(a - ((a < a_len) ? 0 : a_len), VLAD_IDENT_ACCESS | ((a < a_len) ? 0 : VLAD_IDENT_GROUP), n2)) != VLAD_OK)
+      return retval;
+    if ((retval = stable->get(o - ((o < o_len) ? 0 : o_len), VLAD_IDENT_OBJECT | ((o < o_len) ? 0 : VLAD_IDENT_GROUP), n3)) != VLAD_OK)
+      return retval;
   }
   else if (tmp < s_index) {
     /* member atom */
@@ -348,23 +332,26 @@ int kb::decode_atom(char **n1,
 
     if (tmp < s_len * sg_len) {
       /* subject member atom */
-      return 
-        stable->get(tmp / sg_len, VLAD_IDENT_SUBJECT, n1) &&
-        stable->get(tmp % sg_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n2);
+      if ((retval = stable->get(tmp / sg_len, VLAD_IDENT_SUBJECT, n1)) != VLAD_OK)
+        return retval;
+      if ((retval = stable->get(tmp % sg_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n2)) != VLAD_OK)
+        return retval;
     }
     else if (tmp < (s_len * sg_len) + (a_len * ag_len)) {
       /* access member atom */
       tmp = tmp - (s_len * sg_len);
-      return 
-        stable->get(tmp / ag_len, VLAD_IDENT_ACCESS, n1) &&
-        stable->get(tmp % ag_len, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, n2);
+      if ((retval = stable->get(tmp / ag_len, VLAD_IDENT_ACCESS, n1)) != VLAD_OK)
+        return retval;
+      if ((retval = stable->get(tmp % ag_len, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, n2)) != VLAD_OK)
+        return retval;
     }
     else {
       /* object member atom */
       tmp = tmp - ((s_len * sg_len) + (a_len * ag_len));
-      return
-        stable->get(tmp / og_len, VLAD_IDENT_OBJECT, n1) &&
-        stable->get(tmp % og_len, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, n2);
+      if ((retval = stable->get(tmp / og_len, VLAD_IDENT_OBJECT, n1)) != VLAD_OK)
+        return retval;
+      if ((retval = stable->get(tmp % og_len, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, n2)) != VLAD_OK)
+        return retval;
     } 
   }
   else {
@@ -375,25 +362,47 @@ int kb::decode_atom(char **n1,
 
     if (tmp < sg_len * sg_len) {
       /* subject subset atom */
-       return
-        stable->get(tmp / sg_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n1) &&
-        stable->get(tmp % sg_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n2);
+      if ((retval = stable->get(tmp / sg_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n1)) != VLAD_OK)
+        return retval;
+      if ((retval = stable->get(tmp % sg_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n2)) != VLAD_OK)
+        return retval;
     }
     else if (tmp < (sg_len * sg_len) + (ag_len * ag_len)) {
       /* access subset atom */
       tmp = tmp - (sg_len * sg_len);
-       return
-        stable->get(tmp / ag_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n1) &&
-        stable->get(tmp % ag_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n2);
+      if ((retval = stable->get(tmp / ag_len, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, n1)) != VLAD_OK)
+        return retval;
+      if ((retval = stable->get(tmp % ag_len, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, n2)) != VLAD_OK)
+        return retval;
     }
     else {
       /* object subset atom */
       tmp = tmp - ((sg_len * sg_len) + (ag_len * ag_len));
-       return
-        stable->get(tmp / og_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n1) &&
-        stable->get(tmp % og_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, n2);
+      if ((retval = stable->get(tmp / og_len, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, n1)) != VLAD_OK)
+        return retval;
+      if ((retval = stable->get(tmp % og_len, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, n2)) != VLAD_OK)
+        return retval;
     }
   }
 
-  return VLAD_FAILURE;
+  return VLAD_OK;
+}
+
+/* returns the negation of the given atom */
+int kb::negate_atom(unsigned int in, unsigned int *out)
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  /* of course it has to be closed first */
+  if (!closed)
+    return VLAD_FAILURE; 
+
+  /* check if it is within range */
+  if (in < 0 || in > (pos_tot + neg_tot))
+    return VLAD_INVALIDINPUT;
+
+  *out = ((in < pos_tot) ? in + pos_tot : in - pos_tot);
+
+  return VLAD_OK;
 }
