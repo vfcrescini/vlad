@@ -5,6 +5,7 @@
 # 20 June 2001
 
 mpgprog="/usr/local/bin/mpg123"
+charlen=5
 count=0
 
 if ! [ ${#} = "1" ]
@@ -28,6 +29,14 @@ fi
 for filename in *.mp3
 do
   count=$[$count + 1]
-  echo "${filename} -> ${1}/${count}.au"
-  ${mpgprog} -sq "${filename}" > ${1}/${count}.au
+
+  # pad name with zeroes
+  name=${count}
+  while [ `echo -n ${name} | wc -c` -lt ${charlen} ]
+  do
+    name=0${name}
+  done
+  
+  echo "${filename} -> ${1}/${name}.au"
+  ${mpgprog} -sq "${filename}" > ${1}/${name}.au
 done
