@@ -7,8 +7,14 @@
 \usepackage{rotating}
 \usepackage{multirow}
 
+\newtheorem{vtheorm}{Theorem}
 \newtheorem{vdefinition}{Definition}
 \newtheorem{vexmpl}{Example}
+
+% create a theorem environment
+\newenvironment{vtheorem}[1]
+  {\begin{vtheorm}{\bf (#1)\hspace{0.5em}}}
+  {\end{vtheorm}}
 % create an example environment with a 2mm X 2mm box at the end
 \newenvironment{vexample}
   {\begin{vexmpl}\rm}
@@ -463,6 +469,7 @@ query holds(alice, read, file);
       \subsubsection{Domain Description of Language ${\cal L}$}
 
         \begin{vdefinition}
+          \label{def-domain}
           The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
           defined as a finite set of ground initial state facts, constraint
           rules and policy update definitions.
@@ -614,6 +621,7 @@ query holds(alice, read, file);
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
         \begin{vdefinition}
+          \label{def-cons}
           Given a domain description ${\cal D}_{\cal L}$ of language
           ${\cal L}$, $Trans$(${\cal D}_{\cal L}$) is defined as the
           extended logic program ${\cal L}^{*}$ translation of language
@@ -1431,8 +1439,16 @@ grant\_write()
         \end{vexample}
       \subsection{Domain Consistency Checking and Evaluation}
 
-        Given a domain description ${\cal D_{L}}$ composed of the following
-        language ${\cal L}$ statements:
+        From Definition \ref{def-cons}, it is clear that a domain description
+        of language ${\cal L}$ must be consistent in order generate a
+        consistent answer set for the evaluation of queries. This section
+        considers two issues: the problem of identifing whether a given domain
+        description is consistent, and how query evaluation is performed given
+        a conistent language domain description.
+
+        Before the above issues can be considered, a few notational constructs
+        must first be introduced. Given a domain description ${\cal D_{L}}$
+        composed of the following language ${\cal L}$ statements:
 
         \begin{vverbatim}
 initially
@@ -1471,12 +1487,12 @@ update()
 
         Additionally, we use the complementary set notation
         $\overline{{\cal F}}$ to denote a set containing the negation of
-        facts of set ${\cal F}$, i.e. $\overline{{\cal F}}$ =
+        facts in set ${\cal F}$, i.e. $\overline{{\cal F}}$ =
         \{$\lnot\rho$ $\mid$ $\rho$ $\in$ ${\cal F}$\}.
 
         Let $\gamma$ be an initial, constraint or update definition statement of
         language ${\cal L}$. We then define $Eff$($\gamma$) to be the set
-        \{$a_{0}$,\ldots,$a_{n}$,$b_{0}$,\ldots,$b_{m}$\}, 
+        \{$a_{0}$,\ldots,$a_{n}$,$b_{0}$,\ldots,$b_{m}$\},
         \{$c_{0}$,\ldots,$c_{o}$,$d_{0}$,\ldots,$d_{p}$\} or
         \{$i_{0}$,\ldots,$i_{u}$,$j_{0}$,\ldots,$j_{v}$\}, respectively;
         $Def$($\gamma$) to be the set $\emptyset$,
@@ -1486,8 +1502,9 @@ update()
         \{$k_{0}$,\ldots,$k_{w}$,$l_{0}$,\ldots,$l_{x}$\}, respectively.
 
         \begin{vdefinition}
+          \label{dev-mutex}
           Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
-          two ground facts $\rho$ and $\rho'$ are {\bf mutually exclusive} 
+          two ground facts $\rho$ and $\rho'$ are {\bf mutually exclusive}
           in ${\cal D_{L}}$ if:
           \begin{vquote}
             $\rho$ $\in$ \{${\cal F}^{+}_{int}$ $\cup$
@@ -1504,7 +1521,12 @@ update()
           \end{vquote}
         \end{vdefinition}
 
+        Simply stated, a pair of mutually exclusive facts cannot both be true
+        in any given state. The following two definitions refer to language
+        ${\cal L}$ statements.
+
         \begin{vdefinition}
+          \label{def-comp}
           Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
           two statements $\gamma$ and $\gamma'$ are {\bf complementary} in
           ${\cal D_{L}}$ if one of the following conditions holds:
@@ -1519,6 +1541,7 @@ update()
         \end{vdefinition}
 
         \begin{vdefinition}
+          \label{def-norm}
           Given a domain description ${\cal D_{L}}$, ${\cal D_{L}}$ is said to
           be {\bf normal} if it satisfies all of the following conditions:
           \begin{enumerate}
@@ -1539,7 +1562,23 @@ update()
           \end{enumerate}
         \end{vdefinition}
 
+        \begin{vtheorem}{Domain Consistency}
+          \label{the-cons}
+          A {\bf normal} domain description of language ${\cal L}$ is also
+          {\bf consistent} \footnotemark.
+        \end{vtheorem}
+
+        \footnotetext{
+          The proof of this theorem will be published in the full version
+          of this paper \cite{CRE}.
+        }
+
+        By using this theorem to identify consistent domain descriptions of
+        language ${\cal L}$, it is now possible to define how queries are
+        evaluated from such domain descriptions.
+
         \begin{vdefinition}
+          \label{def-eval}
           Given a consistent domain description ${\cal D}_{\cal L}$, ground
           query expression $\phi$ and a finite sequence list $\psi$, we say the
           query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
@@ -1841,6 +1880,7 @@ always holds(SSUB, write, file)
     extension to the system and language is to consider multi-agent
     environments.
 
+  \newpage
   \appendix
 
   \vappsection{Case Study: Web Server Application}
@@ -1948,7 +1988,7 @@ always holds(SSUB, write, file)
       constraint definitions and policy update definitions) are already in
       language ${\cal L}$ form.
 
-    \paragraph{\bf Evaluation of HTTP Requests.}
+    \subsection{Evaluation of HTTP Requests}
 
       A HTTP request may be represented as a simplified tuple:
 
@@ -2210,6 +2250,11 @@ query holds(usr, req\_meth, req\_res);
       In {\em Proceedings of KR2000, 7th International Conference on Principles
       of Knowledge Representation and Reasoning},
       pp. 121-132, Kaufmann, 2000.
+
+    \bibitem{CRE}
+      Crescini, V.F., Zhang Y.,
+      {\em PolicyUpdater - A System for Dynamic Access Control}.
+      (manuscript) 2004.
 
     \bibitem{HTTP1}
       Network Working Group,
