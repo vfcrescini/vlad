@@ -439,7 +439,8 @@ query holds(alice, read, file);
         \end{quote}
 
         Given an initial state $S_{0}$ and a sequence list $\psi$, each state
-        may be represented as:
+        $\sigma_{i}$ ($0$ $\leq$ $i$ $\leq$ $|\psi|$) may be represented as
+        follows:
 
         \begin{quote}
           $\sigma_{0}$ = $S_{0}$
@@ -516,7 +517,7 @@ query holds(alice, read, file);
               ${\cal A}^{\sigma}_{so} = \{\forall (g1, g2 \in {\cal E}_{og}), \hat{subst}(g1, g2, \sigma)\}$
           \end{enumerate}
 
-        \paragraph{Facts.}
+        \paragraph{Facts, Expressions and Propositions.}
        
           A fact is a logical statement that makes a claim that an atom either
           holds or does not hold at a particular state. The following is the
@@ -526,8 +527,8 @@ query holds(alice, read, file);
             $f^{\sigma}$ = $[\lnot]$$\alpha$, $\alpha$ $\in$ ${\cal A}^{\sigma}$
           \end{quote}
 
-        \paragraph{Expressions and Propositions.}
-          Expressions or conjunctions of facts are represented as follows:
+          Expressions are conjunctions of facts represented in language
+          ${\cal L}_{*}$ as follows:
 
           \begin{quote}
             $f_{0}$, ..., $f_{n}$
@@ -560,11 +561,10 @@ query holds(alice, read, file);
 
         \paragraph{}
 
-          Another function, $CopyAtom$, takes two arguments: an atom
-          $\hat{\alpha}$ of language ${\cal L}^{*}$ at some state $\sigma$ and
-          another state $\sigma'$. The function returns an equivalent atom of
-          the same type and with the same entities, but in the new state
-          specified.
+          The $CopyAtom$ function takes two arguments: an atom $\hat{\alpha}$
+          of language ${\cal L}^{*}$ at some state $\sigma$ and another state
+          $\sigma'$. The function returns an equivalent atom of the same type
+          and with the same entities, but in the new state specified.
 
           \begin{quote}
             $CopyAtom$($\hat{\alpha}$, $\sigma'$)
@@ -581,7 +581,7 @@ query holds(alice, read, file);
 
         \paragraph{}
 
-          The $TransAtom$ function takes an atom $\alpha$ of language
+          Another function, $TransAtom$, takes an atom $\alpha$ of language
           ${\cal L}$ and an arbitrary state $\sigma$ and returns the equivalent
           atom of language ${\cal L}^{*}$.
  
@@ -608,7 +608,7 @@ query holds(alice, read, file);
         \paragraph{Initial Fact Expression.}
 
           Translating initial fact expressions of language ${\cal L}$ to
-          language ${\cal L}^{*}$ is a trivial procedure: translate each atom
+          language ${\cal L}^{*}$ is a trivial procedure: translate each fact
           that make up the initial fact expression of language ${\cal L}$
           with its corresponding equivalent initial state atom of language
           ${\cal L}^{*}$. 
@@ -632,6 +632,31 @@ query holds(alice, read, file);
             where $\hat{f_{i}}$ $=$ $TransFact$($f_{i}$, $S_{0}$),
             $0$ $\leq$ $i$ $\leq$ $n$
           \end{quote}
+
+          For example, given the following language ${\cal L}$ $initially$
+          statements:
+
+          \begin{verbatim}
+  initially
+    holds(admins, exec, system_tools);
+  initially
+    holds(admins, read, system_data);
+  initially
+    memb(alice, admins) &&
+    memb(bob, admins);
+          \end{verbatim}
+
+        In language ${\cal L}^{*}$, the above statements are translated to:
+
+        \begin{quote}
+          $\hat{holds}$($admins$, $exec$, $system\_tools$, $S_{0}$) $\leftarrow$
+
+          $\hat{holds}$($admins$, $read$, $system\_data$, $S_{0}$) $\leftarrow$
+
+          $\hat{memb}$($alice$, $admins$, $S_{0}$) $\leftarrow$
+
+          $\hat{memb}$($bob$, $admins$, $S_{0}$) $\leftarrow$
+        \end{quote}
 
         \paragraph{Constraint Rules.}
 
@@ -707,6 +732,90 @@ query holds(alice, read, file);
             $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
           \end{quote}
 
+          The example below shows how the following language ${\cal L}$ code
+          fragment is translated to language ${\cal L}^{*}$:
+
+          \begin{verbatim}
+  always
+    holds(alice, read, secret_data) &&
+    holds(alice, write, secret_data)
+  implied by
+    memb(alice, admin)
+  with absence
+    !holds(alice, read, secret_data);
+          \end{verbatim}
+
+          Given that there are 3 policy update references in the sequence list
+          $\psi$ (i.e. $|\psi|$ $=$ $3$), the language ${\cal L}^{*}$
+          equivalent is as follows:
+
+          \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, read, secret\_data, S_{0}) \leftarrow \\
+                 & \hat{memb}(alice, admin, S_{0}), \\
+                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{0})
+              \end{aligned}
+            \end{math}
+
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, write, secret\_data, S_{0}) \leftarrow \\
+                 & \hat{memb}(alice, admin, S_{0}), \\
+                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{0})
+              \end{aligned}
+            \end{math}
+
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, read, secret\_data, S_{1}) \leftarrow \\
+                 & \hat{memb}(alice, admin, S_{1}), \\
+                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{1})
+              \end{aligned}
+            \end{math}
+
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, write, secret\_data, S_{1}) \leftarrow \\
+                 & \hat{memb}(alice, admin, S_{1}), \\
+                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{1})
+              \end{aligned}
+            \end{math}
+
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, read, secret\_data, S_{2}) \leftarrow \\
+                 & \hat{memb}(alice, admin, S_{2}), \\
+                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{2})
+              \end{aligned}
+            \end{math}
+
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, write, secret\_data, S_{2}) \leftarrow \\
+                 & \hat{memb}(alice, admin, S_{2}), \\
+                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{2})
+              \end{aligned}
+            \end{math}
+
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, read, secret\_data, S_{3}) \leftarrow \\
+                 & \hat{memb}(alice, admin, S_{3}), \\
+                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{3})
+              \end{aligned}
+            \end{math}
+
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, write, secret\_data, S_{3}) \leftarrow \\
+                 & \hat{memb}(alice, admin, S_{3}), \\
+                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{3})
+              \end{aligned}
+            \end{math}
+
+          \end{quote}
+
         \paragraph{Policy Updates.}
 
           With all occurences of variable placeholders grounded to entity
@@ -742,13 +851,49 @@ query holds(alice, read, file);
             $0$ $\leq$ $j$ $\leq$ $n$
           \end{quote}
 
+          For example, given the following 2 language ${\cal L}$ policy update
+          definitions:
+
+          \begin{verbatim}
+  grant_read()
+    causes
+      holds(alice, read, file)
+    if
+      memb(alice, readers);
+
+  grant_write()
+    causes
+      holds(alice, write, file)
+    if
+      memb(alice, writers);
+          \end{verbatim}
+
+          Given sequence list $\psi$ $=$ \{$grant\_read$, $grant\_write$\},
+          the above statements are written in language ${\cal L}^{*}$ as:
+
+          \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
+                & \hat{memb}(alice, readers, S_{0})
+              \end{aligned}
+            \end{math}
+
+            \begin{math}
+              \begin{aligned}[t]
+                \hat{holds}&(alice, write, file, S_{2}) \leftarrow \\
+                & \hat{memb}(alice, writers, S_{1})
+              \end{aligned}
+            \end{math}
+          \end{quote}
+
         \paragraph{Additional Constraints.}
 
           In addition to the above translations, there are a few other implicit
           constraint rules implied by language ${\cal L}$ that needs to be
           explicitly defined in language ${\cal L}^{*}$.
 
-          \subparagraph{Inheritance Rules.}
+          \subparagraph{Inheritance rules.}
 
             All properties held by a group is inherited by all the members and
             subsets of that group. This rule is easy to apply for subject group
@@ -910,7 +1055,7 @@ query holds(alice, read, file);
                 $S_{0} \leq \sigma \leq S_{|\psi|}$
             \end{enumerate}
 
-          \subparagraph{Transitivity Rules.}
+          \subparagraph{Transitivity rules.}
 
             Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of $G'$
             and $G'$ is a subset of $G''$, then $G$ must also be a subset of
@@ -967,7 +1112,7 @@ query holds(alice, read, file);
                 $S_{0} \leq \sigma \leq S_{|\psi|}$
             \end{enumerate}
 
-          \subparagraph{Inertial Rules.}
+          \subparagraph{Inertial rules.}
 
             Intuitively, all facts in the current state that are not affected
             by a policy update should be carried over to the next state after
@@ -1303,7 +1448,7 @@ query holds(alice, read, file);
           strings, with each string matching an entity identifier in the
           symbol table.
 
-          \subparagraph{Holds Atom.}
+          \subparagraph{Holds atom.}
             \begin{quote}
               \begin{tabular}[t]{|l|l|l|}
                 \hline
@@ -1318,7 +1463,7 @@ query holds(alice, read, file);
               \end{tabular}
             \end{quote}
 
-          \subparagraph{Member Atom.}
+          \subparagraph{Member atom.}
             \begin{quote}
               \begin{tabular}[t]{|l|l|l|}
                 \hline
@@ -1331,7 +1476,7 @@ query holds(alice, read, file);
               \end{tabular}
             \end{quote}
 
-          \subparagraph{Subset Atom.}
+          \subparagraph{Subset atom.}
             \begin{quote}
               \begin{tabular}[t]{|l|l|l|}
                 \hline
