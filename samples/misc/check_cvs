@@ -22,22 +22,17 @@
 # Updated: 2003 Dec 01 
 
 unset VERBOSE
-unset HELP
 
 while [ ${#} -ge 1 ]; do
   if [ ${1} = "-v" ]; then
     VERBOSE="1"
   fi
   if [ ${1} = "-h" ]; then
-    HELP="1"
+    echo "$0 [-h|-v]"
+    exit 0
   fi
   shift 1
 done
-
-if [ "${HELP}" = "1" ]; then
-  echo "$0 [-h|-v]"
-  exit 0
-fi
 
 # modified
 cvs diff --brief 2>&1 | grep "Index:" | cut -d ' ' -f 2 | ( [ -n "${VERBOSE}" ] && while read i; do echo "M ${i}"; done || cat )
