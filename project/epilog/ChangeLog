@@ -1,3 +1,13 @@
+2003-10-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/gnd_atom.h :
+	
+	  - Added some convenience macros.
+	  
+	* exp/gnd_exp.c :
+
+	  - Used convenience macros.
+
 2002-10-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/gnd_exp.c :
