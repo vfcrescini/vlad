@@ -15,7 +15,7 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <iostream.h>
+#include <iostream>
 #include <float.h>
 #include <limits.h>
 #include <string.h>

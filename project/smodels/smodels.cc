@@ -15,8 +15,7 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <iostream.h>
-#include <iomanip.h>
+#include <iostream>
 #include <unistd.h>
 #include <limits.h>
 #include <float.h>
@@ -24,6 +23,8 @@
 #include "print.h"
 #include "atomrule.h"
 #include "smodels.h"
+
+using namespace std;
 
 Smodels::Smodels ()
   : dcl (this)

@@ -15,13 +15,15 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <iostream.h>
+#include <iostream>
 #include <limits.h>
 #ifdef USEDOUBLE
 #include <math.h>
 #endif
 #include "atomrule.h"
 #include "program.h"
+
+using namespace std;
 
 static Auxiliary pos_aux(true);
 

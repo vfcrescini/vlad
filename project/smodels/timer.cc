@@ -15,8 +15,7 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <strstream.h>
-#include <iomanip.h>
+#include <stdio.h>
 #include <limits.h>
 #include "timer.h"
 
@@ -57,7 +56,6 @@ char *
 Timer::print ()
 {
   static char s[20];
-  ostrstream str (s, sizeof (s));
-  str << sec << '.' << setw(3) << setfill('0') << msec << ends;
-  return str.str ();
+  sprintf (s, "%ld.%0ld", sec, msec);
+  return s;
 }

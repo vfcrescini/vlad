@@ -15,14 +15,16 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <iostream.h>
-#include <iomanip.h>
+#include <iostream>
+#include <iomanip>
 #include <stdlib.h>
 #if defined _BSD_SOURCE || defined _SVID_SOURCE
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
 #include "stable.h"
+
+using namespace std;
 
 Stable::Stable ()
   : api (&smodels.program),
@@ -107,11 +109,14 @@ Stable::randomize ()
 void
 Stable::print_internal ()
 {
+  char false_program[] = "1 1 0 0\n0\n0\nB+\n0\nB-\n1\n0\n1\n";
   if (wellfounded || !lookahead)
     {
       smodels.setup ();
       if (!smodels.conflict ())
 	smodels.program.print_internal (smodels.max_models);
+      else
+	cout << false_program;
     }
   else
     {
@@ -121,6 +126,8 @@ Stable::print_internal ()
 	  smodels.improve ();
 	  smodels.program.print_internal (smodels.max_models);
 	}
+      else
+	cout << false_program;
     }
 }
 

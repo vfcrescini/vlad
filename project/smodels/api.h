@@ -22,7 +22,7 @@
 class Program;
 class Atom;
 class Tree;
-class Init;
+struct Init;
 
 class Api
 {

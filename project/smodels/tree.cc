@@ -15,9 +15,12 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <iostream.h>
+#include <iostream>
+#include <string.h>
 #include "atomrule.h"
 #include "tree.h"
+
+using namespace std;
 
 Tree::Node::Node (Atom *k, Node *l, Node *r)
 {

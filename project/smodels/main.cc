@@ -15,9 +15,12 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
+#include <string.h>
 #include "stable.h"
+
+using namespace std;
 
 void usage ()
 {
@@ -112,9 +115,11 @@ int main (int argc, char *argv[])
       usage ();
       return 1;
     }
-  cout << "smodels version 2.27. Reading...";
+  if (!print_internal)
+    cout << "smodels version 2.28. Reading...";
   int bad = stable.read(cin);
-  cout << "done" << endl;
+  if (!print_internal)
+    cout << "done" << endl;
   if (bad)
     {
       cerr << "Error in input" << endl;

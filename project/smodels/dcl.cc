@@ -15,10 +15,12 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <iostream.h>
+#include <iostream>
 #include "atomrule.h"
 #include "stack.h"
 #include "smodels.h"
+
+using namespace std;
 
 Dcl::Dcl (Smodels *s)
   : smodels (s), program (&s->program)

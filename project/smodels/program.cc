@@ -15,9 +15,11 @@
 // MA 02111-1307, USA.
 //
 // Patrik.Simons@hut.fi
-#include <iostream.h>
+#include <iostream>
 #include "program.h"
 #include "atomrule.h"
+
+using namespace std;
 
 Program::Program ()
 {
@@ -106,12 +108,12 @@ Program::print_internal (long models)
   cout << 0 << endl;
   cout << "B+" << endl;
   for (n = atoms.head (); n; n = n->next)
-    if (n->atom->negScore && n->atom->computeTrue)
+    if (n->atom->negScore && (n->atom->computeTrue || n->atom->Bpos))
       cout << n->atom->posScore << endl;
   cout << 0 << endl;
   cout << "B-" << endl;
   for (n = atoms.head (); n; n = n->next)
-    if (n->atom->negScore && n->atom->computeFalse)
+    if (n->atom->negScore && (n->atom->computeFalse || n->atom->Bneg))
       cout << n->atom->posScore << endl;
   cout << 0 << endl;
   cout << models << endl;

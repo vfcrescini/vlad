@@ -18,6 +18,8 @@
 #ifndef READ_H
 #define READ_H
 
+using namespace std;
+
 class Api;
 class Atom;
 class Program;
