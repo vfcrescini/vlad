@@ -90,7 +90,7 @@ static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
                 APLOG_INFO,
                 0,
                 a_p,
-                "modvlad: create config");
+                "mod_vlad: create config");
 
   if ((conf = (modvlad_config_rec *) apr_palloc(a_p, sizeof(*conf)))) {
     conf->user_file = NULL;
@@ -203,13 +203,10 @@ static int modvlad_access(request_rec *a_r)
   void *exp;
 
   ap_log_rerror(APLOG_MARK,
-                APLOG_NOTICE,
+                APLOG_INFO,
                 0,
                 a_r,
-                "mod_vlad: checking for request subject=%s access=%s object=%s",
-                a_r->user,
-                a_r->method,
-                a_r->uri);
+                "mod_vlad: check access");
 
   if (!a_r) {
     ap_log_rerror(APLOG_MARK,
@@ -361,7 +358,7 @@ static int modvlad_handler(request_rec *a_r)
   const char *rootpath = NULL;
 
   ap_log_perror(APLOG_MARK,
-                APLOG_NOTICE,
+                APLOG_INFO,
                 0,
                 a_r->pool,
                 "mod_vlad: handling request subject=%s access=%s object=%s",
@@ -374,7 +371,7 @@ static int modvlad_handler(request_rec *a_r)
 
   if (!conf) {
     ap_log_rerror(APLOG_MARK,
-                  APLOG_NOTICE,
+                  APLOG_ERR,
                   0,
                   a_r,
                   "mod_vlad: conf is NULL");
@@ -435,7 +432,7 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
 
   if (!conf) {
     ap_log_perror(APLOG_MARK,
-                  APLOG_NOTICE,
+                  APLOG_ERR,
                   0,
                   a_plog,
                   "mod_vlad: conf is NULL");
@@ -530,7 +527,7 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
                 APLOG_INFO,
                 0,
                 a_p,
-                "modvlad: register hooks");
+                "mod_vlad: register hooks");
 
   ap_hook_handler(modvlad_handler, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_access_checker(modvlad_access, NULL, NULL, APR_HOOK_FIRST);

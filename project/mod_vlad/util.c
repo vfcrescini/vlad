@@ -279,7 +279,7 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
 
     /* now that we have the user, we can then add it to the kb */
     ap_log_perror(APLOG_MARK,
-                  APLOG_NOTICE,
+                  APLOG_INFO,
                   0,
                   a_p,
                   "mod_vlad: adding subject %s into kb",
@@ -319,7 +319,7 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
   while((access = *(array_ptr++)) != NULL) {
 
     ap_log_perror(APLOG_MARK,
-                  APLOG_NOTICE,
+                  APLOG_INFO,
                   0,
                   a_p,
                   "mod_vlad: adding access-right %s into kb",
@@ -374,7 +374,7 @@ static int add_object(apr_pool_t *a_p,
     return 0;
 
   ap_log_perror(APLOG_MARK,
-                APLOG_NOTICE,
+                APLOG_INFO,
                 0,
                 a_p,
                 "mod_vlad: adding object from %s as %s into kb",
