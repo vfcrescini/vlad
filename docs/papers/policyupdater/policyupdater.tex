@@ -330,70 +330,47 @@ always <exp1>
 
         \begin{example}
           The following language ${\cal L}$ program code listing shows a simple
-          rule-based document access control system scenario. The main function
-          of this program is to ensure that the subject $alice$ is denied
-          $read$ access to any object in one group if she already holds $read$
-          to the other group.
+          rule-based document access control system scenario.
 
-          In this example, the two objects $db1$ and $db2$ are members of the
-          groups $comp1$ and $comp2$, respectively. The policy updates
-          $req\_read\_comp1$ and $req\_read\_comp2$ both grant $read$ access
-          to the given subject for the given object and automatically revokes
-          the subject's right to read objects from the other group. The policy
-          updates can only be applied if their respective preconditions have
-          been met, i.e. that the given subject has $readable$ access for the
-          given object and that the given object is a member of the group
-          concerned.
+          In this example, the subject $alice$ initially holds a $read$ access
+          right to the object $file$. The constraint states that if $alice$
+          has $read$ access to $file$, and there it cannot be proven that
+          $alice$ do not have $write$ access to $file$, then $alice$ is granted
+          $write$ access to $file$.
 
           \begin{verbatim}
 /* entity identifier definition */
 
 ident sub alice;
-ident acc read, readable;
-ident obj db1, db2;
-ident obj-grp comp1, comp2;
+ident acc read, write;
+ident obj file;
 
 /* initial fact definitions */
 
-initially
-  holds(alice, readable, comp1) &&
-  holds(alice, readable, comp2);
+initially holds(alice, read, file);
 
 /* constraint definitions */
 
-always memb(db1, comp1);
-always memb(db2, comp2);
+always holds(alice, write, file) 
+  implied by
+    holds(alice, read, file)
+  with absence
+    !holds(alice, write, file);
 
 /* policy update definitions */
 
-req_read_comp1(SS0, OS0)
-  causes
-    holds(SS0, read, OS0) &&
-    !holds(SS0, readable, comp2)
-  if
-    memb(OS0, comp1) &&
-    holds(SS0, readable, comp1);
+delete_read(SS0, OS0)
+  causes !holds(SS0, read,  OS0);
 
-req_read_comp2(SS0, OS0)
-  causes
-    holds(SS0, read, OS0) &&
-    !holds(SS0, readable, comp1)
-  if
-    memb(OS0, comp2) &&
-    holds(SS0, readable, comp2);
+/* sequence manipluation directives */
 
-/* sequence manipluation */
-
-seq add req_read_comp1(alice, db1);
-seq add req_read_comp2(alice, db2);
+seq add delete_read(alice, file);
 compute;
 
-/* query */
+/* query directives */
 
-query holds(alice, read, db1);
-query holds(alice, read, db2);
-query holds(alice, read, comp1);
-query holds(alice, read, comp2);
+query holds(alice, write, file);
+query holds(alice, read, file);
           \end{verbatim}
         \end{example}
 
