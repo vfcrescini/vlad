@@ -39,5 +39,7 @@
 #define EPI_DUPLICATE      -6
 /* add functions: negation of an atom is already implied */
 #define EPI_NEGIMPLIED     -7
+/* there is something wrong with the input parameters */
+#define EPI_INVALIDINPUT   -8
 
 #endif
