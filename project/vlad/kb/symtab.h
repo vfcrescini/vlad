@@ -15,6 +15,7 @@
 
 /* identifier group bit indicated by the 3th bit */
 #define VLAD_IDENT_GROUP         4
+
 /* some convenience macros */
 #define VLAD_IDENT_BASETYPE(X)   ((X) & 3)
 #define VLAD_IDENT_IS_SUBJECT(X) (((X) & 3) == VLAD_IDENT_SUBJECT)
