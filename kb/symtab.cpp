@@ -13,7 +13,8 @@
 
 identlist::identlist(unsigned char t) : list(true)
 {
-  type = t; 
+  /* if the type is invalid, fall back on subject */
+  type = VLAD_IDENT_TYPE_VALID(t) ? t : VLAD_IDENT_SUBJECT;
 }
 
 identlist::~identlist()
@@ -157,8 +158,14 @@ int symtab::add(const char *n, unsigned char t)
   if (!initialised)
     return VLAD_UNINITIALISED;
 
-  if ((retval = find(n)) != VLAD_NOTFOUND)
-    return retval;
+  switch(retval = find(n)) {
+    case VLAD_OK :
+      return VLAD_DUPLICATE;
+    case VLAD_NOTFOUND :
+      break;
+    default :
+      return retval;
+  }
 
   switch(t) { 
     case VLAD_IDENT_SUBJECT :

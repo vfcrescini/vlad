@@ -1,5 +1,9 @@
 2003-03-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/symtab.cpp :
+
+	  - Fixed bug that allows identifiers of the same name to be entered.
+
 	* common/list.cpp :
 	* common/list.h :
 	* kb/symtab.cpp :
