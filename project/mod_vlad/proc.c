@@ -238,6 +238,18 @@ static int processreq(apr_pool_t *a_p,
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "IGR");
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, name);
   }
+  else if (!strcmp(cmd, "IC")) {
+    /* check identifier */
+    if (vlad_kb_check_symtab(a_kb,
+                             ((char **)a_req->elts)[2],
+                             (unsigned char) atoi(((char **)a_req->elts)[3])) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
+
+    *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ICR");
+  }
+
   else if (!strcmp(cmd, "ST")) {
     /* total number in sequence */
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "STR");
@@ -501,6 +513,41 @@ int modvlad_client_ident_get(apr_pool_t *a_p,
     return MODVLAD_FAILURE;
 
   *a_name = apr_pstrdup(a_p, ((char **)arr_in->elts)[2]);
+
+  return MODVLAD_OK;
+}
+
+int modvlad_client_ident_check(apr_pool_t *a_p,
+                               apr_file_t *a_fdin,
+                               apr_file_t *a_fdout,
+                               apr_proc_mutex_t *a_mx,
+                               const char *a_name,
+                               unsigned char a_type)
+{
+  apr_array_header_t *arr_out = NULL;
+  apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
+
+  if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_name)
+    return MODVLAD_NULLPTR;
+
+  arr_out = apr_array_make(a_p, 1, sizeof(char *));
+  arr_in = apr_array_make(a_p, 1, sizeof(char *));
+
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
+  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "IC");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%s", a_name);
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", a_type);
+
+  sendfd(a_fdin, a_mx, arr_out);
+  receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
+
+  /* if not found, ERR is set to this element */
+  if (strcmp(((char **)arr_in->elts)[1], "ICR"))
+    return MODVLAD_FAILURE;
 
   return MODVLAD_OK;
 }

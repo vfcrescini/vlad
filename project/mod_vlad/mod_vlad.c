@@ -289,13 +289,20 @@ static int modvlad_access(request_rec *a_r)
   if (!strcmp(a_r->user, MODVLAD_ADMIN_USERNAME))
     return OK;
 
-#if 0
   /* before going further, make sure the object is in the kb */
-  if (vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT) != VLAD_OK &&
-      vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != VLAD_OK) {
+  if (modvlad_client_ident_check(a_r->pool,
+                                 conf->pipe_cli[0],
+                                 conf->pipe_cli[1],
+                                 conf->mutex,
+                                 realuri,
+                                 VLAD_IDENT_OBJECT) != MODVLAD_OK &&
+      modvlad_client_ident_check(a_r->pool,
+                                 conf->pipe_cli[0],
+                                 conf->pipe_cli[1],
+                                 conf->mutex,
+                                 realuri,
+                                 VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != MODVLAD_OK)
     return HTTP_NOT_FOUND;
-  }
-#endif
 
   if (modvlad_client_query(a_r->pool,
                            conf->pipe_cli[0],
