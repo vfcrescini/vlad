@@ -31,6 +31,10 @@ class kb {
     /* after this is called, no further calls to add_inittab(), add_consttab()
      * or add_transtab() is allowed */
     int close_kb();
+    /* gives the length of the symtab */
+    int length_symtab(unsigned int *l);
+    /* gets the i'th identifier from symtab */
+    int get_symtab(unsigned int i, char **s);
     /* checks whether n of type t is in symtab */
     int check_symtab(const char *n, unsigned char t);
     /* register an identifier in the kb */

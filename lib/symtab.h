@@ -16,12 +16,16 @@ class symtab
     int init();
     /* add symbol in symbol table */
     int add(const char *s, unsigned char t);
+    /* get the i'th identifier */
+    int get(unsigned int i, char **s);
     /* get the index and type of the identifier based on the name */
     int get(const char *s, unsigned int *i, unsigned char *t);
     /* get the ith identifier of type t */
     int get(unsigned int i, unsigned char t, char **s);
     /* get an array of identifiers that matches the given type */
     int get(unsigned char t, char ***a, unsigned int *s);
+    /* return the total number of indentifers */
+    unsigned int length();
     /* return the number of identifiers that are of type t */
     unsigned int length(unsigned char t);
     /* return 0 if symbol is in the table */
