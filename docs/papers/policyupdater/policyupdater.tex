@@ -17,8 +17,8 @@
 \newenvironment{vquote}
   {\begin{list}{}{\leftmargin 1em}\item[]}
   {\end{list}}
-% create a *smaller* alltt (verbose) environment
-\newenvironment{vverbose}
+% create a *smaller* alltt (verbatim) environment
+\newenvironment{vverbatim}
   {\begin{alltt}}
   {\vspace{-\baselineskip}\end{alltt}}
 % define a section command to be used in the appendices
@@ -63,7 +63,7 @@
 
   \footnotetext{
     \tt http://www.cit.uws.edu.au/\~{}jcrescin/
-    projects/PolicyUpdater/index.html
+    \tt projects/PolicyUpdater/index.html
   }
 
   \section{Introduction}
@@ -163,9 +163,9 @@
               underscore characters. The following regular expression shows the
               syntax of entity identifiers:
 
-              \begin{vverbose}
+              \begin{vverbatim}
 [a-z]([a-zA-Z0-9\_]){0,127}
-              \end{vverbose}
+              \end{vverbatim}
 
             \item
               {\em Policy Update Identifiers} are used for the sole purpose of
@@ -176,9 +176,9 @@
               identifiers share the same syntax with entity identifiers:
 
 
-              \begin{vverbose}
+              \begin{vverbatim}
 [a-z]([a-zA-Z0-9\_]){0,127}
-              \end{vverbose}
+              \end{vverbatim}
 
             \item
               {\em Variable Identifiers} are used as entity identifier
@@ -188,9 +188,9 @@
               characters. The following regular expression shows the syntax of
               variable identifiers:
 
-              \begin{vverbose}
+              \begin{vverbatim}
 [A-Z]([a-zA-Z0-9\_]){0,127}
-              \end{vverbose}
+              \end{vverbatim}
           \end{itemize}
 
         \paragraph{Atoms.}
@@ -204,26 +204,26 @@
               identifier $sub$ holds the access right identifier $acc$
               for the object identifier $obj$.
 
-              \begin{vverbose}
+              \begin{vverbatim}
 holds(<sub>, <acc>, <obj>)
-              \end{vverbose}
+              \end{vverbatim}
             \item
               {\em Membership.} This type of atom states that the singular
               identifier $elt$ is a member or element of the group identifier
               $grp$. It is important to note that identifiers $elt$ and $grp$
               must be of the same base type (e.g. subject and subject group).
 
-              \begin{vverbose}
+              \begin{vverbatim}
 memb(<elt>, <grp>)
-              \end{vverbose}
+              \end{vverbatim}
             \item
               {\em Subset.} The subset atom states that the group identifiers
               $grp1$ and $grp2$ are of the same types and that group $grp1$ is
               a subset of the group $grp2$.
 
-              \begin{vverbose}
+              \begin{vverbatim}
 subst(<grp1>, <grp2>)
-              \end{vverbose}
+              \end{vverbatim}
           \end{itemize}
 
           Atoms that contain no variables, i.e. composed entirely of entity
@@ -235,10 +235,10 @@ subst(<grp1>, <grp2>)
           use of the negation operator ($!$). The following shows the formal
           syntax of a fact:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 [!]<holds\_atom>|<memb\_atom>|
    <subst\_atom>
-          \end{vverbose}
+          \end{vverbatim}
 
           Note that facts may be made up of atoms that contain variable
           identifiers. Facts with no variable occurrences are called
@@ -248,9 +248,9 @@ subst(<grp1>, <grp2>)
           An expression is either a fact, or a logical conjunction of facts,
           separated by the double-ampersand characters $\&\&$.
 
-          \begin{vverbose}
+          \begin{vverbatim}
 <fact1> [&& <fact2> [&& ...]]
-          \end{vverbose}
+          \end{vverbatim}
 
           Expressions that are made up of only ground facts are called
           {\em ground expressions}.
@@ -265,10 +265,10 @@ subst(<grp1>, <grp2>)
           syntax illustrates how to define one or more entity identifiers of a
           particular type.
 
-          \begin{vverbose}
+          \begin{vverbatim}
 ident sub|acc|obj[-grp]
   <entity\_id>[, ...];
-          \end{vverbose}
+          \end{vverbatim}
 
         \paragraph{Initial Fact Definition.}
 
@@ -276,9 +276,9 @@ ident sub|acc|obj[-grp]
           policy updates are performed, are defined by using the following
           definition syntax:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 initially <ground-exp>;
-          \end{vverbose}
+          \end{vverbatim}
 
         \paragraph{Constraint Definition.}
 
@@ -298,22 +298,22 @@ initially <ground-exp>;
           $exp3$ are non-ground expressions, which means identifiers within
           them may be variables.
 
-          \begin{vverbose}
+          \begin{vverbatim}
 always <exp1>
   [implied by <exp2>
   [with absence <exp3>]];
-          \end{vverbose}
+          \end{vverbatim}
 
         \paragraph{Policy Update Definition.}
 
           Before a policy update can be applied, it must first be defined by
           using the following syntax:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 <up\_id>([<var\_id>[, ...]])
   causes <exp1>
   if <exp2>;
-          \end{vverbose}
+          \end{vverbatim}
 
           $up\_id$ is the policy update identifier to be used in referencing
           this policy update. The optional $var\_id$ list are the variable
@@ -345,9 +345,9 @@ always <exp1>
           Defined policy updates are added into the sequence list through the
           use of the following directive:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 seq add <up\_id>([<e\_id>[, ...]]);
-          \end{vverbose}
+          \end{vverbatim}
 
           \noindent where $up\_id$ is the identifier of a defined policy
           update and the $e\_id$ list is a comma-separated list of entity
@@ -358,16 +358,16 @@ seq add <up\_id>([<e\_id>[, ...]]);
           The following directive may be used to list the current contents of
           the policy update sequence list.
 
-          \begin{vverbose}
+          \begin{vverbatim}
 seq list;
-          \end{vverbose}
+          \end{vverbatim}
 
           This directive is answered with an ordinal list of policy updates in
           the form:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 <n> <up\_id>([e\_id[, ...]])
-          \end{vverbose}
+          \end{vverbatim}
 
           \noindent where $n$ is the ordinal index of the policy update within
           the sequence list starting at 0. $up\_id$ is the policy update
@@ -381,9 +381,9 @@ seq list;
           from the sequence list may change the ordinal index of other update
           references.
 
-          \begin{vverbose}
+          \begin{vverbatim}
 seq del <n>;
-          \end{vverbose}
+          \end{vverbatim}
 
         \subparagraph{Computing an update sequence.}
 
@@ -394,9 +394,9 @@ seq del <n>;
           causes the system to generate the policy base models against which
           query requests can be evaluated.
 
-          \begin{vverbose}
+          \begin{vverbatim}
 compute;
-          \end{vverbose}
+          \end{vverbatim}
 
         \paragraph{Query Directive.}
 
@@ -407,9 +407,9 @@ compute;
           or an $unknown$, depending on whether the queried expression holds,
           its negation holds, or neither, respectively. Syntax is as follows:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 query <ground-exp>;
-          \end{vverbose}
+          \end{vverbatim}
 
         \begin{vexample}
           \label{ex-1}
@@ -425,7 +425,7 @@ query <ground-exp>;
           $write$ access for $file$, then the group $grp1$ is granted $write$
           access for $file$.
 
-          \begin{vverbose}
+          \begin{vverbatim}
 ident sub alice;
 ident sub-grp grp1, grp2, grp3;
 ident acc read, write;
@@ -454,7 +454,7 @@ query holds(grp1, write, file);
 query holds(grp1, read, file);
 query holds(alice, write, file);
 query holds(alice, read, file);
-          \end{vverbose}
+          \end{vverbatim}
         \end{vexample}
 
     \subsection{Semantics}
@@ -682,9 +682,9 @@ query holds(alice, read, file);
           Given an initial fact expression of language ${\cal L}$ that is
           composed of $n$ facts:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 \(f\sb{0}\) && \ldots && \(f\sb{n}\)
-          \end{vverbose}
+          \end{vverbatim}
 
           In language ${\cal L}^{*}$, the statement above is represented as:
 
@@ -702,7 +702,7 @@ query holds(alice, read, file);
           The following code below shows an example of language ${\cal L}$
           $initially$ statements:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 initially
   holds(admins, exec, sys_tools);
 initially
@@ -710,7 +710,7 @@ initially
 initially
   memb(alice, admins) &&
   memb(bob, admins);
-          \end{vverbose}
+          \end{vverbatim}
 
         In language ${\cal L}^{*}$, the above statements are translated to:
 
@@ -732,11 +732,11 @@ initially
           language ${\cal L}$, with $m$, $n$, $o$ $\geq$ $0$ may be represented
           as:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
   implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
   with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
-          \end{vverbose}
+          \end{vverbatim}
 
           Each fact in the $always$ clause of language ${\cal L}$ corresponds
           to a new rule, where it is the consequent. Each of these new rules
@@ -801,7 +801,7 @@ always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
           The example below shows how the following language ${\cal L}$ code
           fragment is translated to language ${\cal L}^{*}$:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 always
   holds(alice, read, secret_data) &&
   holds(alice, write, secret_data)
@@ -809,7 +809,7 @@ implied by
   memb(alice, admin)
 with absence
   !holds(alice, read, secret_data);
-          \end{vverbose}
+          \end{vverbatim}
 
           Given a policy update reference in the sequence list $\psi$ (i.e.
           $|\psi|$ $=$ $1$), the language ${\cal L}^{*}$ equivalent is as
@@ -887,7 +887,7 @@ with absence
           For example, given the following 2 language ${\cal L}$ policy update
           definitions:
 
-          \begin{vverbose}
+          \begin{vverbatim}
 grant\_read()
   causes
     holds(alice, read, file)
@@ -899,7 +899,7 @@ grant\_write()
     holds(alice, write, file)
   if
     memb(alice, writers);
-          \end{vverbose}
+          \end{vverbatim}
 
           Given the update sequence list $\psi$ $=$
           \{$grant\_read$, $grant\_write$\}, the above statements are written
@@ -1434,7 +1434,7 @@ grant\_write()
         Given a domain description ${\cal D_{L}}$ composed of the following
         language ${\cal L}$ statements:
 
-        \begin{vverbose}
+        \begin{vverbatim}
 initially
   \(a\sb{0}\) &&\ldots&& \(a\sb{n}\) && !\(b\sb{0}\) &&\ldots&& !\(b\sb{m}\)
 
@@ -1450,7 +1450,7 @@ update()
     \(i\sb{0}\) &&\ldots && \(i\sb{u}\) && !\(j\sb{0}\) &&\ldots&& !\(j\sb{v}\)
   if
     \(k\sb{0}\) &&\ldots && \(k\sb{w}\) && !\(l\sb{0}\) &&\ldots&& !\(l\sb{x}\)
-        \end{vverbose}
+        \end{vverbatim}
 
         We define the following sets of ground facts:
 
@@ -1659,14 +1659,14 @@ update()
         subject entity identifiers: $alice$, $bob$ and $charlie$, and the
         following constraint:
 
-        \begin{vverbose}
+        \begin{vverbatim}
 always holds(SSUB, write, file)
   implied by
     holds(SSUB, read, file) &&
     memb(SSUB, students)
   with absence
     !holds(SSUB, write, file)
-        \end{vverbose}
+        \end{vverbatim}
 
         Grounding the constraint above yields three new constraints, each
         replacing occurrences of the variable $SSUB$ with $alice$, $bob$ and
@@ -1855,35 +1855,148 @@ always holds(SSUB, write, file)
     \end{figure}
 
     The expressiveness of language $\cal{L}$ and the effectiveness of the
-    PolicyUpdater system can best be demonstrated by a web server
+    PolicyUpdater system can be best demonstrated by a web server
     authorisation application. In this application, PolicyUpdater serves as
     an authorisation module for the {\em Apache}\footnotemark web server.
 
     \footnotetext{Apache Web Server (\tt http://www.apache.org)}
 
-    Although the PolicyUpdater module do not provide the full functionality
-    of Apache's built-in authorisation module {\em mod\_auth}, it does
-    provide a flexible logic-based authorisation mechanism.
+    The Apache web server provides a generic access control system as provided
+    by its {\em mod\_auth} and {\em mod\_access} modules \cite{AP,LAU}. With
+    this built-in access control system, Apache provides the standard HTTP
+    {\em Basic} and {\em Digest} authentication schemes \cite{HTTP2}, as well
+    as an authorisation system to enforce access control policies. Although the
+    PolicyUpdater module do not provide the full functionality of Apache's
+    built-in authorisation module {\em mod\_auth}, it does provide a flexible
+    logic-based authorisation mechanism.
 
-    The PolicyUpdater web server module works by intercepting all authenticated
-    HTTP requests made to the web server. Users and groups directly correspond
-    to the language $\cal{L}$ subjects, HTTP request methods (i.e. GET, POST,
-    etc.) are the access-rights, and files, directories and other resources
-    in the document root are the objects. These entities plus any initial
-    facts, constraints and update propositions in the policy base make up the
-    domain of language $\cal{L}$.
+    As shown in Figure \ref{fig-3}, Apache's Access Control module, together
+    with its policy base, is replaced by the PolicyUpdater module and its own
+    policy base. The sole purpose of the PolicyUpdater module is to act as an
+    interface between the web server and the core PolicyUpdater system. The
+    system works as follows: as the server is started, the PolicyUpdater
+    module initialises the core PolicyUpdater system by sending the policy
+    base. When a client makes an arbitrary HTTP request for a resource from
+    the server (1), the client (user) is authenticated against the password
+    table by the built-in authentication module; once the client is properly
+    authenticated (2) the request is transferred to the PolicyUpdater module,
+    which in turn generates a language ${\cal L}$ query (3) from the request
+    details, then sends the query to the core PolicyUpdater system for
+    evaluation; if the query is successful and access control is granted,
+    the original request is sent to the other request handlers of the web
+    server (4) where the request is eventually honoured; then finally (5),
+    the resource (or acknowledgment for HTTP requests other than GET) is sent
+    back to the client. Optionally, client can be an administrator who,
+    after being authenticated, is presented with a special administrator
+    interface by the module to allow the policy base to be updated.
 
-    Figure \ref{fig-3} shows how the PolicyUpdater module works within a
-    typical HTTP request. (1) User $s$ makes a HTTP request $a$ for file
-    $o$ and is authenticated by Apache through the Basic HTTP Authentication
-    Scheme. (2) Once properly authenticated, Apache passes the request tuple
-    $\{s, a, o\}$ to the PolicyUpdater module. (3) PolicyUpdater then queries
-    the policy base to verify the fact $holds(s, a, o)$ and returns a reply
-    (4) back to Apache. If the request is allowed, as determined by the
-    module through the policy base, Apache accepts and honours the request
-    $a$ to the file $o$ (5) and sends the results back to user $s$ (6).
-    Optionally, an Administrator, once properly authenticated can dynamically
-    update the policy (7) by altering the update sequence in the policy base.
+    \subsection{Policy Description in Language ${\cal L'}$}
+
+      The policy description in the policy base is written in language
+      ${\cal L'}$, which is syntactically and semantically similar to
+      language ${\cal L}$ except for the lack of entity identifier
+      definitions. Entity identifiers need not be explicitly defined in
+      the policy definition:
+
+      \begin{itemize}
+        \item
+          {\bf Subjects} of the access control policies are the users. Since
+          all users must first be authenticated, the password table used
+          in authentication may also be used to extract the list of subjects.
+        \item
+          {\bf Access Rights} of the policies are built in: they are the
+          HTTP request methods as defined by the HTTP 1.1 standard
+          \cite{HTTP1} (i.e. OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE
+          and CONNECT).
+        \item
+          {\bf Objects} are the resources available in the server themselves.
+          Assuming that the document root is a hierarchy of directories and
+          files, each of these are mapped as a unique object of language
+          ${\cal L'}$.
+      \end{itemize}
+
+      Like language ${\cal L}$, language ${\cal L'}$ allows the definition of
+      initial state facts, constraint rules and policy update definitions.
+
+    \subsection{Mapping the Policies to Language ${\cal L}$}
+
+      As mentioned above, one task of the PolicyUpdater module is to generate
+      a language ${\cal L}$ policy from the given language ${\cal L'}$ to be
+      evaluated by the core PolicyUpdater system. This process is outlined
+      below:
+
+      \begin{itemize}
+        \item
+          {\bf Generating entity identifier definitions}. Subjects are
+          extracted from the authentication (password) table; access rights
+          are hard-coded built-ins; and the list of objects are generated by
+          traversing the document root for files and directories.
+        \item
+          {\bf Generating additional constraints}. The module also generates
+          additional constraints to preserve the relationship between groups
+          and elements. This is useful to model the assertion that unless
+          explicitly stated, users holding particular access rights to a
+          directory automatically hold those access rights to every file in
+          that directory (recursively, if with subdirectories). The
+          PolicyUpdater module achieves this assertion by generating
+          non-conditional constraint rules that state that each file
+          (object) is a member of the directory (object group) in which it
+          is contained.
+      \end{itemize}
+
+      All other language ${\cal L'}$ statements (initial state definitions,
+      constraint definitions and policy update definitions) are already in
+      language ${\cal L}$ form.
+
+    \paragraph{\bf Evaluation of HTTP Requests.}
+
+      A HTTP request may be represented as a simplified tuple:
+
+      \begin{quote}
+        $<$$usr$, $req\_meth$, $req\_res$$>$
+      \end{quote}
+
+      $usr$ is the authenticated username that made the request (subject);
+      $req\_meth$ is any of the standard HTTP request methods (access
+      right); and $req\_res$ is the resource associated with the request
+      (object). Intuitively, such a tuple may be expressed as a language
+      ${\cal L}$ atom:
+
+      \begin{vverbatim}
+holds(usr, req\_meth, req\_res)
+      \end{vverbatim}
+
+      With each request expressed as language ${\cal L}$ atoms, a language
+      ${\cal L}$ query statement can be composed to check if the request is
+      to be honoured:
+
+      \begin{vverbatim}
+query holds(usr, req\_meth, req\_res);
+      \end{vverbatim}
+
+      Once the query statement is composed, it is then sent by the
+      PolicyUpdater module to the core PolicyUpdater system for evaluation
+      against the policy base.
+
+    \subsection{Policy Updates by Administrators}
+
+      After being properly authenticated, an administrator can perform policy
+      updates through the use of a special interface generated by the
+      PolicyUpdater module. This interface lists all the predefined policy
+      updates that are allowed, as defined in the policy description in
+      language ${\cal L'}$, as well as all the policy updates that have been
+      previously applied and are in effect. As with the core PolicyUpdater
+      system, administrators are allowed only the following operations:
+
+      \begin{itemize}
+        \item
+          Apply a policy update or a sequence of policy updates to the policy
+          base. Note that like language ${\cal L}$, in language ${\cal L'}$
+          policy updates are predefined within the policy base themselves.
+        \item
+          Revert to a previous state of the policy base by removing a
+          previously applied policy update from the policy base.
+      \end{itemize}
 
   \vappsection{Storage Structures}
 
@@ -2059,6 +2172,12 @@ always holds(SSUB, write, file)
       \end{vquote}
 
   \begin{thebibliography}{5}
+    \bibitem{AP}
+      Apache Software Foundation,
+      Authentication, Authorization and Access Control.
+      In {\em Apache HTTP Server 2.1 Documentation},
+      {\tt http://httpd.apache.org / docs-2.1 /}, 2004.
+
     \bibitem{BA1}
       Bai, Y., Varadharajan, V.,
       On Formal Languages for Sequences of Authorization Transformations.
@@ -2092,11 +2211,28 @@ always holds(SSUB, write, file)
       of Knowledge Representation and Reasoning},
       pp. 121-132, Kaufmann, 2000.
 
+    \bibitem{HTTP1}
+      Network Working Group,
+      {\em Hypertext Transfer Protocol -- HTTP/1.1. (RFC 2616)}.
+      The Internet Society,
+      {\tt ftp://ftp.isi.edu / in-notes / rfc2616.txt}, 1999.
+
+    \bibitem{HTTP2}
+      Network Working Group,
+      {\em HTTP Authentication (RFC 2617)}.
+      The Internet Society,
+      {\tt ftp://ftp.isi.edu / in-notes / rfc2617.txt}, 1999.
+
     \bibitem{JAJ}
       Jajodia, S., Samarati, P., Sapino, M. L., Subrahmanian, V. S.,
       Flexible Support for Multiple Access Control Policies.
       In {\em ACM Transactions on Database Systems},
       Vol. 29, No. 2, pp. 214-260, ACM, 2001.
+
+    \bibitem{LAU}
+      Laurie, B., Laurie, P.,
+      {\em Apache: The Definitive Guide} (3rd Edition).
+      O'Reilly \& Associates Inc., 2003.
 
     \bibitem{LOB}
       Lobo J., Bhatia R., Naqvi S.,
