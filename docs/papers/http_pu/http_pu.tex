@@ -277,11 +277,15 @@
 
     [some notes on web servers in general, introduce apache]
 
-    The Apache web server provides a rudimentary access control scheme as
+    The Apache web server provides a rudimentary access control system as
     provided by its {\em mod\_auth} and {\em mod\_access} modules
-    \cite{AP,LAU}. With this built-in access control system, Apache allows 
-    administrator-defined policies to be enforced with every HTTP request
-    made by clients.
+    \cite{AP,LAU}. With this built-in access control system, Apache provides
+    the standard HTTP {\em Basic} and {\em Digest} authentication schemes
+    \cite{HTTP2}, as well as an authorization system to enforce
+    administrator-defined policies. Such policies may be defined as per-request
+    rules with HTTP request methods ({\em Get}, {\em Post}, etc.) \cite{HTTP1}
+    as access rights; users and hosts as subjects and the resources in the
+    server's document root as objects.
 
     \begin{figure}[ht]
       \begin{center}
@@ -292,14 +296,14 @@
     \end{figure}
 
     The diagram in Figure \ref{fig-1} illustrates how access control is
-    enforced in a simplified HTTP request. (1) client makes a {\em GET}
-    request for a file; (2) the access control modules evaluate the request
-    against the policy to decide whether to allow or deny the request; (3) if
-    the request is allowed, it is then passed on to other request handlers for
-    processing and eventually, the transaction is completed by sending the
-    requested file back to the client.
-
-    [add: http request methods]
+    enforced in a simplified HTTP GET request. (1) client makes a request for a
+    file; (2) if required by the policy, the client (user) is authenticated
+    against the client table; once authenticated, the client request is sent
+    to the access control module (3) where the policy is checked to decide
+    whether to accept or deny the request; if the request is accepted, it is
+    then passed on to other request handlers for processing and eventually,
+    (4) the transaction is completed by sending the requested file back to
+    the client.
 
     [add: details of apache policy description]
 
@@ -308,16 +312,81 @@
       \begin{figure}[ht]
         \begin{center}
           \epsfig{file=polupdate_apache.eps}
-          \caption{Apache Access Contro Mechanism with PolicyUpdater}
+          \caption{Apache Access Control Mechanism with PolicyUpdater}
           \label{fig-2}
         \end{center}
       \end{figure}
 
-      \paragraph{\bf Policy Description}
+      As shown in Figure \ref{fig-2}, Apache's Access Control module, together
+      with its policy base, is replaced by the PolicyUpdater module and its own
+      policy base. The sole purpose of the PolicyUpdater module is to act as an
+      interface between the web server and the core PolicyUpdater system. The
+      system works as follows: as the server is started, the PolicyUpdater
+      module initialises the core PolicyUpdater system by sending the policy
+      base. When a client makes an arbitrary HTTP request for a resource from
+      the server (1), the client (user) is authenticated against the client
+      table by the built-in authentication module; once the client is properly
+      authenticated (2) the request is transferred to the PolicyUpdater module,
+      which in turn generates a language ${\cal L}$ query (3) from the request
+      details, then sends the query to the core PolicyUpdater system for
+      evaluation; if the query is successful and access control is granted,
+      the original request is sent to the other request handlers of the web
+      server (4) where the request is eventually honoured; then finally (5),
+      the resource (or acknowledgment for HTTP requests other than GET) is sent
+      back to the client. [add admininstrator later]
 
-      \paragraph{\bf Translation to Lanugage ${\cal L}$}
+      \paragraph{\bf Policy Description in Language ${\cal L'}$.}
 
-      \paragraph{\bf Evaluation of HTTP Requests}
+        The policy description in the policy base is written in language
+        ${\cal L'}$, which is syntactically and semantically similar to
+        language ${\cal L}$ except for the lack of entity identifier
+        definitions. As users are mapped as the only subjects in the system,
+        and since the only valid users in the system are those that appear in
+        the authentication table, then the subject entity identifiers can be
+        derived from that table. Access rights are hard-coded: they are the
+        HTTP request methods. Finally, the objects are the resources
+        themselves: assuming that the document root is a hierarchy of
+        directories and files, each of these are mapped as a unique object of
+        language ${\cal L'}$.
+
+      \paragraph{\bf Mapping the Policies to Lanugage ${\cal L}$.}
+
+        As mentioned above, one task of the PolicyUpdater module is to generate
+        a language ${\cal L}$ policy to be evaluated by the core PolicyUpdater
+        system. In addition to generating the entity identifier definitions
+        from the client table and the document root, the module also generates
+        additional constraints to preserve the relationship between groups
+        and elements. This is useful to model the assertion that unless
+        explicitly stated, users holding particular access rights to a
+        directory automatically hold those access rights to every file in
+        that directory (recursively, if with subdirectories). The PolicyUpdater
+        module achieves this assertion by generating a non-conditional
+        constraint that states that each file (object) is a member of the
+        directory (object group) in which it is contained.
+
+        All other language ${\cal L'}$ statements (initial state definitions,
+        constraint definitions and policy update definitions) are already in
+        language ${\cal L}$ form.
+
+      \paragraph{\bf Evaluation of HTTP Requests.}
+
+        For our purposes, a HTTP request may be described as a tuple:
+
+        \begin{quote}
+          <user, request-method, requested-resource>.
+        \end{quote}
+
+Intuitively, such a tuple may be
+        
+
+      \paragraph{\bf Policy Updates by Administrators.}
+
+        When an administrator, after being properly authenticated, makes a
+        {\em Get} request for predefined and non-existent resource (such as
+        http://<host>/.administrator), a special policy update 
+        
+
+
 
   \section{Conclusion}
 
