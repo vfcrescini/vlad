@@ -46,6 +46,8 @@ class symtab
     unsigned int length(unsigned char t);
     /* return true if symbol is in the table */
     int find(const char *s);
+    /* give the type of the given identifier */
+    int type(const char *s, unsigned char *t);
   private :
     char *t_const;
     char *f_const;

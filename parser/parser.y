@@ -297,6 +297,37 @@ acc_grp_ident_list :
 
 initial_stmt : 
   VLAD_SYM_INITIALLY ground_exp VLAD_SYM_SEMICOLON {
+    int retval;
+    unsigned int i;
+    atom *a;
+#ifdef DEBUG
+    char s[128];
+#endif
+
+    /*
+     * we must, unfortunetly, go through the expression and add them one
+     * at a time to ensure uniqueness and integrity.
+     */
+
+    for (i = 0; i < $2->length(); i++) {
+      if ((retval = $2->get(i, &a)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+      if ((retval = kbase.add_inittab(a)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+#ifdef DEBUG
+      a->print(s);
+      fprintf(stderr, "initial state: %s\n", s);
+#endif
+
+    }
+
+    /* when everything's been registered into the kb, delete the expression */
     delete $2;
   }
   ;

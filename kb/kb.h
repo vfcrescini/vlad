@@ -23,13 +23,15 @@ class kb {
     /* register an identifier in the kb */
     int add_symtab(const char *n, unsigned char t);
     /* add an atom into the initial state table */
-    int add_inittab(atom a);
-  private :
+    int add_inittab(atom *a);
+    private :
     symtab *stable;
     expression *itable;
     bool initialised;
     bool stage1;
     bool stage2;
+    /* make sure atom a is valid */
+    int kb::verify_atom(atom *a);
 } ;
 
 #endif
