@@ -1000,7 +1000,6 @@ int gnd_exp_eval_subst_atom(ident_type group1,
          * we see a false */
          *ans = EPI_RESULT_UNKNOWN;
         break;
-      default :
     }
   }
 
