@@ -2,6 +2,7 @@ EPILOG Build/Use Instructions
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 Started: 2002 Aug 29
+Updated: 2002 Oct 04
 
 1. From the toplevel source directory, run make :
 
@@ -11,10 +12,11 @@ Started: 2002 Aug 29
 
      $ make DEBUG=1
 
-2. The executable binary will be in main/epilog. At the moment,
-   the program will read all input from stdin, dump all debug
-   info (also errors/warnings) in stderr and all output to stdout.
+2. The executable binary will be in the top src directory. Without
+   a filename argument, the program will read input from stdin.
+   Debug output as well as errors and warning will be dumped to
+   stderr. Program output will be directed to stdout.
 
    To use the sample program in docs :
 
-     $ ./main/epilog < docs/sample
+     $ ./epilog docs/sample
