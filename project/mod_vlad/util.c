@@ -41,7 +41,7 @@ int modvlad_default_yyinput(void *a_stream, char *a_buf, int a_maxsize)
 }
 
 /* register the users into the kb */
-int modvlad_add_users(void *a_kb, const char *a_fname, apr_pool_t *a_p)
+int modvlad_add_subject(void *a_kb, const char *a_fname, apr_pool_t *a_p)
 {
   ap_configfile_t *cfgfile = NULL;
   apr_status_t status;
@@ -81,7 +81,7 @@ int modvlad_add_users(void *a_kb, const char *a_fname, apr_pool_t *a_p)
                   MODVLAD_LOGLEVEL,
                   0,
                   a_p,
-                  "adding user %s into kb",
+                  "adding subject %s into kb",
                   user);
 #endif
 
@@ -90,15 +90,52 @@ int modvlad_add_users(void *a_kb, const char *a_fname, apr_pool_t *a_p)
     if (retval != VLAD_OK) {
       ap_log_perror(APLOG_MARK,
                     APLOG_ERR,
-                    status,
+                    0,
                     a_p,
-                    "vlad error: kb_add_symtab returned %d",
+                    "vlad error: kb_add_symtab(%s) returned %d",
+                    user,
                     retval);
       return -1;
     }
   }
 
   ap_cfg_closefile(cfgfile);
+
+  return 0;
+}
+
+/* add built in access rights into the kb */
+int modvlad_add_access(void *a_kb, apr_pool_t *a_p)
+{
+  const char *acc_array[] = MODVLAD_ACCESS_ARRAY;
+  const char **array_ptr = acc_array;
+  const char *access;
+  int retval;
+
+  while((access = *(array_ptr++)) != NULL) {
+
+#ifdef DEBUG
+    ap_log_perror(APLOG_MARK,
+                  MODVLAD_LOGLEVEL,
+                  0,
+                  a_p,
+                  "adding access-right %s into kb",
+                  access);
+#endif
+
+    retval = kb_add_symtab(a_kb, access, VLAD_IDENT_ACCESS);
+
+    if (retval != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_p,
+                    "vlad error: kb_add_symtab(%s) returned %d",
+                    access,
+                    retval);
+      return -1;
+    }
+  } 
 
   return 0;
 }

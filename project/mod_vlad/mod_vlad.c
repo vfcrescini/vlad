@@ -271,7 +271,8 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                             apr_pool_cleanup_null);
 
   /* now for some real initialisation */
-  modvlad_add_users(conf->kb, conf->user_file, a_cmd->pool); 
+  modvlad_add_subject(conf->kb, conf->user_file, a_cmd->pool); 
+  modvlad_add_access(conf->kb, a_cmd->pool);
 
   /* parse the policy file */
   apr_file_open(&polfile,
