@@ -268,45 +268,105 @@ int smwrap::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbo
 }
 
 /* return true, false or unknown */
-int smwrap::ask(unsigned int a_atom, char *a_result)
+int smwrap::ask(numberlist *a_exp,
+                unsigned int (*a_negate)(unsigned int, unsigned int),
+                unsigned int a_parm,
+                unsigned char *a_res)
 {
+  unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
 
   if (pr_stage != 3)
     return VLAD_INVALIDOP;
 
-  if (a_result == NULL)
+  if (a_exp == NULL || a_negate == NULL || a_res == NULL)
     return VLAD_NULLPTR;
 
-  memset(tmp_name, 0, VLAD_MAXLEN_NUM);
-  sprintf(tmp_name, "%d", a_atom);
+  *a_res = VLAD_RESULT_UNKNOWN;
 
-  if ((pr_api->get_atom(tmp_name)->Bpos)) {
-    /* positive in the first model so we check all other models */
-    while (pr_smod->model()) {
-      if ((pr_api->get_atom(tmp_name)->Bpos))
+  /* go through all the models */
+  do {
+    char tmp_res = VLAD_RESULT_TRUE;
+
+    /* go through all the atoms given */
+    for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
+      int retval;
+      Atom *tmp_atom = NULL;
+      unsigned int tmp_num;
+
+      if ((retval = a_exp->get(i, &tmp_num)) != VLAD_OK) {
+        *a_res = VLAD_RESULT_UNKNOWN;
+        return retval;
+      }
+
+      memset(tmp_name, 0, VLAD_MAXLEN_NUM);
+      sprintf(tmp_name, "%d", tmp_num);
+      tmp_atom = pr_api->get_atom(tmp_name);
+
+      /*
+       * an expression is :
+       *
+       *   true    iff all atoms are true
+       *   false   iff at least one atom is false
+       *   unknown iff at least one atom is unknown and all other atoms
+       *           are true
+       */
+
+      if (tmp_atom->Bpos) {
+        /* atom holds in this model */
         continue;
+      }
+      else if (tmp_atom->Bneg) {
+        char tmp_name_neg[VLAD_MAXLEN_NUM];
+
+        /* atom doesn't hold in this model, so we try the negation */
+        memset(tmp_name_neg, 0, VLAD_MAXLEN_NUM);
+        sprintf(tmp_name_neg, "%d", a_negate(a_parm, tmp_num));
+
+        if ((pr_api->get_atom(tmp_name_neg))->Bpos) {
+          tmp_res = VLAD_RESULT_FALSE;
+          break;
+        }
+        else {
+          tmp_res = VLAD_RESULT_UNKNOWN;
+          continue;
+        }
+      }
       else {
-        *a_result = VLAD_RESULT_UNKNOWN;
-        break;
+        /* atom is undefined in this model */
+        tmp_res = VLAD_RESULT_UNKNOWN;
+        continue;
       }
     }
-    *a_result = VLAD_RESULT_TRUE;
-  }
-  else if ((pr_api->get_atom(tmp_name)->Bneg)) {
-    /* negative in the first model so we check all other models */
-    while (pr_smod->model()) {
-      if ((pr_api->get_atom(tmp_name)->Bneg))
-        continue;
-      else {
-        *a_result = VLAD_RESULT_UNKNOWN;
-        break;
-      }
+
+    /*
+     * the order in which we choose the "right" model is as follows
+     * (top having the highest priority) :
+     *
+     * false
+     * true
+     * unknown
+     *
+     * if, upon reaching the end of evaluation of the expression in one
+     * model, the result is :
+     *
+     *   true    -> see if it is false in other models
+     *   false   -> return this result
+     *   unknown -> see if it is true or false in other models
+     */
+
+    if (tmp_res == VLAD_RESULT_FALSE) {
+      *a_res = VLAD_RESULT_FALSE;
+      break;
     }
-    *a_result = VLAD_RESULT_FALSE;
-  }
-  else
-    *a_result = VLAD_RESULT_UNKNOWN;
+    else if (tmp_res == VLAD_RESULT_TRUE) {
+      *a_res = VLAD_RESULT_TRUE;
+      continue;
+    }
+    else
+      continue;
+
+  } while (pr_smod->model());
 
   /* of course we have to reset for the next call */
   pr_smod->revert();

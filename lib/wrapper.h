@@ -36,7 +36,7 @@ VLAD_EXTERN int vlad_kb_get_symtab(void *a_kb,
 VLAD_EXTERN int vlad_kb_get_array_symtab(void *a_kb,
                                          unsigned char a_type,
                                          char ***a_array,
-                                         unsigned int *a_size); 
+                                         unsigned int *a_size);
 /* check if the identifier of the given type is in the symtab */
 VLAD_EXTERN int vlad_kb_check_symtab(void *a_kb,
                                      const char *a_n,
