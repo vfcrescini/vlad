@@ -323,6 +323,39 @@ int kb::add_transtab(const char *n,
   return ttable->add(name, vlist, precond, postcond);
 }
 
+/* evaluate query */
+int kb::eval(expression *e, sequence *s)
+{
+  int retval;
+  unsigned int i;
+
+  /* we only allow this function after transtab is closed */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  /* verify the query expression */
+  for (i = 0; i < e->length(); i++) {
+    atom *tmp1;
+    if ((retval = e->get(i, &tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
+      return retval;
+  }
+
+  /* now verify transref */
+  if (s != NULL) {
+    for (i = 0; i < s->length(); i++) {
+      transref *tmp1;
+      if ((retval = s->get(i, &tmp1)) != VLAD_OK)
+        return retval;
+      if ((retval = verify_transref(tmp1)) != VLAD_OK)
+        return retval;
+    }
+  }
+
+  return VLAD_OK;
+}
+
 /* make sure atom a is valid */
 int kb::verify_atom(atom *a, stringlist *v)
 {

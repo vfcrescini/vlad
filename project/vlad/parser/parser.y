@@ -542,6 +542,11 @@ query_stmt :
     char r[10240];
 #endif
 
+    if ((retval = kbase.eval($2, $3)) != VLAD_OK) {
+      fprintf(yyerr, "internal error: %d\n", retval);
+      return retval;
+    }
+
 #ifdef DEBUG
     $2->print(q);
     if ($3 != NULL)
