@@ -1,3 +1,11 @@
+2003-08-22  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+
+	  - Fixed kb::verify_transref() so that it will check whether the
+	    "de-variable-ized" expressions are valid. This is a fix to prevent
+	    invalid sequence additions.
+
 2003-07-25  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :
