@@ -2,6 +2,7 @@
 
 TOPSRCDIR = @top_srcdir@
 DISTDIR = @DISTDIR@
+CURDIR = main
 CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
@@ -14,18 +15,16 @@ LN_S = @LN_S@
 DEBUG = @DEBUG@
 SMODELS = @SMODELS@
 STRIP = @STRIP@
-TARGETS = vlad
+BINS = vlad
+LIBS =
+INCLUDES =
 OBJECTS = vlad.o
 
 ifdef SMODELS
 SMLIB = -lsmodels
 endif
 
-all : $(TARGETS)
-	@mkdir -p $(DISTDIR)/bin
-	@for i in $(TARGETS); do \
-	(cd $(DISTDIR)/bin && $(LN_S) -f ../../main/$$i $$i); \
-	done
+include $(TOPSRCDIR)/rules.mk
 
 vlad : $(OBJECTS) $(DISTDIR)/lib/vlad/*
 	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIB) -lparser -lkb -lcommon
@@ -37,12 +36,3 @@ endif
 
 vlad.o : vlad.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
-
-clean :
-	$(RM) $(OBJECTS)
-
-distclean : clean
-	$(RM) $(TARGETS) Makefile
-	@for i in $(TARGETS); do \
-	$(RM) $(DISTDIR)/bin/$$i; \
-	done

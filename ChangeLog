@@ -7,6 +7,12 @@
 
 	  - Now package will build on systems without ln -s or even ln.
 
+	  - Now includes rules.mk.
+
+	* rules.mk :
+
+	  - Added a global rules file to centralise makefile rules.
+
 2003-05-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/sequence.cpp :
