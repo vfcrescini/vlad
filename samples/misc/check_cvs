@@ -28,7 +28,7 @@ unset verbose
 
 while [ ${#} -ge 1 ]; do
   if [ "${1}" = "-h" ]; then
-    echo "usage: ${progname} [options]"
+    echo "usage:      ${progname} [options]"
     echo "options:"
     echo "  -h        print this usage and exit"
     echo "  -v        verbose output"
