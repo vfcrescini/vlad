@@ -1,3 +1,17 @@
+2004-01-06  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* samples/chwall.vla :
+	* samples/chwall.vlp :
+	* samples/docrel.vla :
+	* samples/docrel.vlp :
+	* samples/chwall.ops :
+	* samples/chwall.prg :
+	* samples/docrel.ops :
+	* samples/docrel.prg :
+
+	  - Changed file extensions to vlp and vla (VLad Policy and VLad
+	     Agent files).
+
 2004-01-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :
