@@ -23,14 +23,14 @@
 # keep this many backlogs (>=0)
 backlog=3
 
-# the space-delimited list of paths to backup (full-path)
-source_dir="/var/lib/cvs"
+# the space-delimited list of paths to backup (full-paths)
+source_dirs="/var/lib/cvs"
 
 # the directory in which backup archives are stored (full-path)
 backup_dir="/usr/local/tmp/backup/x"
 
 # command line for tar and gzip to read and write to and from stdout and stdin
-tar_cmd="tar -c"
+tar_cmd="tar -c -p -s --same-owner --numeric-owner"
 gzip_cmd="gzip -9"
 
 # first and foremost, ensure that backup_dir is writable and readable
@@ -39,7 +39,7 @@ if  [ ! -d ${backup_dir} ] || [ ! -r ${backup_dir} ] || [ ! -w ${backup_dir} ]; 
 fi
 
 # now do it
-for i in ${source_dir}; do
+for i in ${source_dirs}; do
   # ignore those that do not have sufficient priviledges
   if [ -d ${i} ] && [ -r ${i} ] && [ -x ${i} ]; then
     cd ${i}
@@ -64,7 +64,6 @@ for i in ${source_dir}; do
             "${backup_dir}/${prefix}-$((${count}+1)).tar.gz"
         fi
       fi
-
       # decrement
       count=$((${count}-1))
     done
