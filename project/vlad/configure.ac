@@ -27,8 +27,8 @@ AC_PROG_LN_S
 AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & compile with -g (default is disabled)]))
 
 if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
-  AC_DEFINE(DEBUG,1)
-  AC_SUBST(DEBUG,1)
+  AC_DEFINE(DEBUG,[yes])
+  AC_SUBST(DEBUG,[yes])
   VLAD_CFLAGS="-g $VLAD_CFLAGS"
   VLAD_CXXFLAGS="-g $VLAD_CXXFLAGS"
 else
@@ -40,15 +40,15 @@ fi
 AC_ARG_ENABLE(strip,AC_HELP_STRING([--enable-strip],[run strip program (default is disabled)]))
 
 if test "x$enable_strip" != "x" && test "x$enable_strip" != "xno"; then
-  AC_SUBST(STRIP,1)
+  AC_CHECK_PROG(STRIP,strip,[yes])
 fi
 
 # --with-smodels
 AC_ARG_WITH(smodels, AC_HELP_STRING([--with-smodels],[enable smodels support: yes or path to smodels source tree (default is no)]))
 
 if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
-  AC_DEFINE(SMODELS,1)
-  AC_SUBST(SMODELS,1)
+  AC_DEFINE(SMODELS,[yes])
+  AC_SUBST(SMODELS,[yes])
   if test "x$with_smodels" = "xyes"; then
     AC_MSG_CHECKING([if smodels is installed and usable])
     OLD_LDFLAGS="$LDFLAGS"
