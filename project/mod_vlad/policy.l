@@ -106,8 +106,6 @@ everything         .
 
 <INITIAL>{identifier} {
   if (policytext == NULL) {
-    fprintf(stderr, "found (%s)\n", policytext);
-    fflush(stderr);
     strcpy(policylval.ident, "");
     return MODVLAD_SYM_ERROR;
   }
