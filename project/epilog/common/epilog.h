@@ -25,19 +25,19 @@
 
 /* success */
 #define EPI_OK              0
-/* unexpected null pointer */
-#define EPI_NULLPTR        -1
-/* call to malloc failed */
-#define EPI_MALLOCFAILED   -2
-/* index given is out of bounds */
-#define EPI_OUTOFBOUNDS    -3
-/* find functions: search failed */
-#define EPI_NOTFOUND       -4
-/* add functions: element already exists in an all-unique list */
-#define EPI_DUPLICATE      -5
-/* add functions: negation of an atom is already implied */
-#define EPI_NEGIMPLIED     -6
 /* general failure error code */
-#define EPI_FAILURE       -10
+#define EPI_FAILURE        -1
+/* unexpected null pointer */
+#define EPI_NULLPTR        -2
+/* call to malloc failed */
+#define EPI_MALLOCFAILED   -3
+/* index given is out of bounds */
+#define EPI_OUTOFBOUNDS    -4
+/* find functions: search failed */
+#define EPI_NOTFOUND       -5
+/* add functions: element already exists in an all-unique list */
+#define EPI_DUPLICATE      -6
+/* add functions: negation of an atom is already implied */
+#define EPI_NEGIMPLIED     -7
 
 #endif
