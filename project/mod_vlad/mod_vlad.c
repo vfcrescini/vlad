@@ -21,6 +21,7 @@
 
 /* some external functions from the parser & lexer */
 extern void policyparse();
+extern void policy_set_kb(void *a_kb);
 extern void policy_set_yyinput(int (*a_func)(void *, char *, int),
                                void *a_stream);
 
@@ -239,7 +240,7 @@ static int modvlad_authorize(request_rec *a_r)
 #endif
 
 #ifdef DEBUG
-  kb_compute_generate(conf->kb, stderr);
+  vlad_kb_compute_generate(conf->kb, stderr);
   fflush(stderr);
 #endif
 
@@ -297,12 +298,13 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
   /* give the lexer the proper yyinput function */
   policy_set_yyinput(modvlad_apache_yyinput, (void *)polfile);
 
+  /* give the parser a kb handle */
+  policy_set_kb(conf->kb);
+
+  /* now, we parse */
   policyparse();
 
   apr_file_close(polfile);
-
-  kb_close_symtab(conf->kb);
-  kb_close_kb(conf->kb);
 
   return NULL;
 }

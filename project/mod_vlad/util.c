@@ -81,14 +81,14 @@ int modvlad_init(apr_pool_t *a_p,
   a_conf->policy_file = ap_server_root_relative(a_p, a_pname);
 
   /* create and init kb */
-  retval = kb_create(&(a_conf->kb));
-  retval = kb_init(a_conf->kb);
+  retval = vlad_kb_create(&(a_conf->kb));
+  retval = vlad_kb_init(a_conf->kb);
 
   /* register the kb to be destroyed with this pool */
 
   apr_pool_cleanup_register(a_p,
                             a_conf->kb,
-			    kb_destroy,
+			    vlad_kb_destroy,
                             apr_pool_cleanup_null);
 
   if (add_subject(a_p, a_conf->kb, a_conf->user_file))
@@ -146,7 +146,7 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
                   user);
 #endif
 
-    retval = kb_add_symtab(a_kb, user, VLAD_IDENT_SUBJECT);
+    retval = vlad_kb_add_symtab(a_kb, user, VLAD_IDENT_SUBJECT);
 
     if (retval != VLAD_OK) {
       ap_log_perror(APLOG_MARK,
@@ -184,7 +184,7 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
                   access);
 #endif
 
-    retval = kb_add_symtab(a_kb, access, VLAD_IDENT_ACCESS);
+    retval = vlad_kb_add_symtab(a_kb, access, VLAD_IDENT_ACCESS);
 
     if (retval != VLAD_OK) {
       ap_log_perror(APLOG_MARK,
@@ -243,7 +243,7 @@ static int add_object_recurse(apr_pool_t *a_p,
     return -1;
 
   /* add this to the symtab */
-  retval = kb_add_symtab(a_kb,
+  retval = vlad_kb_add_symtab(a_kb,
                          !strcmp(realrelpath, "") ? "/" : realrelpath,
                          VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
 
@@ -270,7 +270,7 @@ static int add_object_recurse(apr_pool_t *a_p,
 
     if (dinfo.filetype != APR_DIR) {
       /* if it is not a directory, add to kb */
-      retval = kb_add_symtab(a_kb, tmppath, VLAD_IDENT_OBJECT);
+      retval = vlad_kb_add_symtab(a_kb, tmppath, VLAD_IDENT_OBJECT);
 
       if (retval != VLAD_OK) {
         ap_log_perror(APLOG_MARK,
