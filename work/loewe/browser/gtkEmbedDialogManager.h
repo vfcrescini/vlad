@@ -25,19 +25,27 @@
 
 #include "gtkEmbedPromptDialog.h"
 #include "gtkEmbedSSLDialog.h"
+#include "nsIWebBrowser.h"
 #include "nsIDOMWindow.h"
+#include "gtkEmbedBrowser.h"
 
 class gtkEmbedDialogManager
 {
   public :
+
     gtkEmbedDialogManager();
     ~gtkEmbedDialogManager();
 
-    bool Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
+    bool Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool),
+              bool (*aAlertCB)(nsIDOMWindow *, const char *),
               bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-              bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *));
+              bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
+              bool (*aPasswdCB)(nsIDOMWindow *, const char *, const char *, bool *),
+              bool (*aUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *),
+              bool (*aSelectCB)(nsIDOMWindow *, const char **, int *, bool *));
 
   private :
+
     gtkEmbedPromptDialog *gPromptDialog;
     gtkEmbedSSLDialog    *gSSLDialog;
 } ;

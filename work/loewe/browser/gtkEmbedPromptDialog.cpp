@@ -36,6 +36,9 @@ NS_IMPL_ISUPPORTS1(gtkEmbedPromptDialog, nsIPromptService)
 static bool (*gAlertCB)(nsIDOMWindow *, const char *) = NULL;
 static bool (*gPromptCB)(nsIDOMWindow *, const char *, const char *, bool *) = NULL;
 static bool (*gConfirmCB)(nsIDOMWindow *, const char *, bool *) = NULL;
+static bool (*gPasswdCB)(nsIDOMWindow *, const char *, const char *, bool *) = NULL;
+static bool (*gUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *) = NULL;
+static bool (*gSelectCB)(nsIDOMWindow *, const char **, int *, bool *) = NULL;
 
 gtkEmbedPromptDialog::gtkEmbedPromptDialog()
 {
@@ -57,14 +60,21 @@ gtkEmbedPromptDialog::~gtkEmbedPromptDialog()
 
 bool gtkEmbedPromptDialog::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
                                 bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-                                bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *))
+                                bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
+                                bool (*aPasswdCB)(nsIDOMWindow *, const char *, const char *, bool *),
+                                bool (*aUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *),
+                                bool (*aSelectCB)(nsIDOMWindow *, const char **, int *, bool *))
+
 {
   // store our static references so that every
   // instance can have access to it
   gAlertCB      = aAlertCB;
   gPromptCB     = aPromptCB;
   gConfirmCB    = aConfirmCB;
-
+  gPasswdCB     = aPasswdCB;
+  gUserPasswdCB = aUserPasswdCB;
+  gSelectCB     = aSelectCB;
+  
   return true;
 }
 
@@ -77,9 +87,6 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Alert(nsIDOMWindow *aParent,
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::Alert()\n");
 #endif
-
-  if (gAlertCB)
-    (*gAlertCB)(aParent, NS_ConvertUCS2toUTF8(aText).get());
 
   return NS_OK;
 }
@@ -95,9 +102,6 @@ NS_IMETHODIMP gtkEmbedPromptDialog::AlertCheck(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::AlertCheck()\n");
 #endif
 
-  if (gAlertCB)
-    (*gAlertCB)(aParent, NS_ConvertUCS2toUTF8(aText).get());
-
   *aChkBoxValue = false;
 
   return NS_OK;
@@ -106,16 +110,13 @@ NS_IMETHODIMP gtkEmbedPromptDialog::AlertCheck(nsIDOMWindow *aParent,
 NS_IMETHODIMP gtkEmbedPromptDialog::Confirm(nsIDOMWindow *aParent,
                                              const PRUnichar *aTitle,
                                              const PRUnichar *aText,
-                                             PRBool *aRetval)
+                                             PRBool *aResult)
 {
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::Confirm()\n");
 #endif
 
-  if (gConfirmCB) 
-    (*gConfirmCB)(aParent, NS_ConvertUCS2toUTF8(aText).get(), (bool *) aRetval);
-  else
-    *aRetval = false;
+  *aResult = true;
 
   return NS_OK;
 }
@@ -125,16 +126,14 @@ NS_IMETHODIMP gtkEmbedPromptDialog::ConfirmCheck(nsIDOMWindow *aParent,
                                                   const PRUnichar *aText,
                                                   const PRUnichar *aChkBoxMesg,
                                                   PRBool *aChkBoxValue,
-                                                  PRBool *aRetval)
+                                                  PRBool *aResult)
 {
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::ConfirmCheck()\n");
 #endif
 
-  if (gConfirmCB)
-    (*gConfirmCB)(aParent, NS_ConvertUCS2toUTF8(aText).get(), (bool *) aRetval);
-  else
-    *aRetval = false;
+  *aChkBoxValue = false;
+  *aResult      = true;
 
   return NS_OK;
 }
@@ -145,27 +144,15 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Prompt(nsIDOMWindow *aParent,
                                             PRUnichar **aValue,
                                             const PRUnichar *aChkBoxMesg,
                                             PRBool *aChkBoxValue,
-                                            PRBool *aRetval)
+                                            PRBool *aResult)
 {
-  char *tempReply = NULL;
-  nsString tempString;
 
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::Prompt()\n");
 #endif
 
-  if (gPromptCB) {
-    (*gPromptCB)(aParent, 
-                 NS_ConvertUCS2toUTF8(aText).get(), 
-                 tempReply, 
-                 (bool *) aRetval);
-    tempString.AssignWithConversion(tempReply);
-    *aValue = (PRUnichar *) tempString.GetUnicode();
-  }
-  else {
-    *aValue  = NULL;
-    *aRetval = false;
-  }
+  *aValue  = NULL;
+  *aResult = false;
 
   return NS_OK;
 }
@@ -178,17 +165,16 @@ NS_IMETHODIMP gtkEmbedPromptDialog::PromptUsernameAndPassword(
                                                    PRUnichar **aPassword,
                                                    const PRUnichar *aChkBoxMesg,
                                                    PRBool *aChkBoxValue,
-                                                   PRBool *aRetval)
+                                                   PRBool *aResult)
 {
 
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::PromptUsernameAndPassword()\n");
 #endif
 
-  // return false for now
   *aUsername = NULL;
   *aPassword = NULL;
-  *aRetval   = false;
+  *aResult   = false;
 
   return NS_OK;
 }
@@ -199,16 +185,15 @@ NS_IMETHODIMP gtkEmbedPromptDialog::PromptPassword(nsIDOMWindow *aParent,
                                                     PRUnichar **aPassword,
                                                     const PRUnichar *aChkBoxMesg,
                                                     PRBool *aChkBoxValue,
-                                                    PRBool *aRetval)
+                                                    PRBool *aResult)
 {
 
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::PromptPassword()\n");
 #endif
 
-  // return false for now
   *aPassword = NULL;
-  *aRetval   = false;
+  *aResult   = false;
 
   return NS_OK;
 }
@@ -219,15 +204,15 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Select(nsIDOMWindow *aParent,
                                             PRUint32 aCount,
                                             const PRUnichar **aSelectList,
                                             PRInt32 *aOutSelection,
-                                            PRBool *aRetval)
+                                            PRBool *aResult)
 {
 
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::Select()\n");
 #endif
 
-  // return true for now
-  *aRetval = true;
+  *aOutSelection = 0;
+  *aResult       = true;
 
   return NS_OK;
 }
@@ -241,7 +226,7 @@ NS_IMETHODIMP gtkEmbedPromptDialog::ConfirmEx(nsIDOMWindow *aParent,
                                                const PRUnichar *aButton2Title,
                                                const PRUnichar *aChkBoxMesg,
                                                PRBool *aChkBoxValue,
-                                               PRInt32 *aRetval)
+                                               PRInt32 *aResult)
 
 {
 
@@ -249,7 +234,8 @@ NS_IMETHODIMP gtkEmbedPromptDialog::ConfirmEx(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::ConfirmEx\n");
 #endif
 
-  *aRetval = true;
+  *aChkBoxValue = false;
+  *aResult      = true;
 
   return NS_OK;
 }

@@ -24,11 +24,11 @@
 #define __GTKEMBEDBROWSER_H
 
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 #include "nsCOMPtr.h"
 #include "nsIInterfaceRequestor.h"
 #include "nsICacheService.h"
 #include "nsNetCID.h"
-#include "nsIDOMWindow.h"
 #include "nsIWebBrowser.h"
 #include "nsIWebBrowserFind.h"
 #include "gtkmozembed.h"
@@ -38,7 +38,6 @@ typedef struct _gtkEmbedBrowser {
   int           browserID;
   bool          usedFlag;
   bool          loadingFlag;
-  bool          blockedFlag;
   nsIWebBrowser *webBrowser;
   GtkWidget     *topLevelWindow;
   GtkWidget     *topLevelVBox;

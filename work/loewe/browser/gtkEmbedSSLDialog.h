@@ -45,9 +45,7 @@ class gtkEmbedSSLDialog : public nsINSSDialogs,
     gtkEmbedSSLDialog();
     virtual ~gtkEmbedSSLDialog();
 
-    bool Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
-              bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-              bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *));
+    bool Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool));
 
     NS_DECL_ISUPPORTS
     NS_DECL_NSINSSDIALOGS

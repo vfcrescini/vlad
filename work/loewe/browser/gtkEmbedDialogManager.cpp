@@ -46,9 +46,13 @@ gtkEmbedDialogManager::~gtkEmbedDialogManager()
     delete gSSLDialog;
 }
 
-bool gtkEmbedDialogManager::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
+bool gtkEmbedDialogManager::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool),
+                                 bool (*aAlertCB)(nsIDOMWindow *, const char *),
                                  bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-                                 bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *))
+                                 bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
+                                 bool (*aPasswdCB)(nsIDOMWindow *, const char *, const char *, bool *),
+                                 bool (*aUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *),
+                                 bool (*aSelectCB)(nsIDOMWindow *, const char **, int *, bool *))
 {
   nsCOMPtr<nsIFactory> promptDialog;
   nsCOMPtr<nsIFactory> sslDialog;
@@ -77,7 +81,6 @@ bool gtkEmbedDialogManager::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
 
   // create an instance of each so we can give a static reference
   // to our callback functions
-
   promptDialogInstance = new gtkEmbedPromptDialog();
   sslDialogInstance    = new gtkEmbedSSLDialog();  
 
@@ -86,11 +89,12 @@ bool gtkEmbedDialogManager::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
 
   promptDialogInstance->Init(aAlertCB,
                              aPromptCB,
-                             aConfirmCB);
+                             aConfirmCB,
+                             aPasswdCB,
+                             aUserPasswdCB,
+                             aSelectCB);
 
-  sslDialogInstance->Init(aAlertCB,
-                          aPromptCB, 
-                          aConfirmCB);
+  sslDialogInstance->Init(aSSLActiveCB);
 
   // now keep a reference to these objects to retain
   // the static values

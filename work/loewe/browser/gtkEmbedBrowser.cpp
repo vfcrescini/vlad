@@ -27,8 +27,6 @@
 
 #include <string.h>
 #include <unistd.h>
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
 
 #include "gtkEmbedIDManager.h"
 #include "gtkEmbedBrowser.h"
@@ -159,20 +157,21 @@ static void setLocationBarURLSend(int, const char *);
 static void setTitleSend(int, const char *);
 static void windowOpenedSend(int);
 static void findReplySend(const char *, bool);
+static void sslActiveSend(int, int);
 
 /*
+static void yesNoDialogSend(int, int, int);
 static void showCertificateSend(char *);
 static void memUsageReplySend(char *);
-static void sslActiveSend(int, int);
-static void yesNoDialogSend(int, int, int);
 */
 
-// callback functions for dialogs
-static bool alertCB(nsIDOMWindow *, const char *);
-static bool promptCB(nsIDOMWindow *, const char *, const char *, bool *);
-static bool confirmCB(nsIDOMWindow *, const char *, bool *);
+// dialog callback functions
+
+bool sslActivateCB(nsIDOMWindow *, bool);
+
 
 // utility functions
+static int getWindowID(nsIDOMWindow *aWindow);
 static void readMessage();
 static bool isIDValid(int);
 static int getNextUsedWindow();
@@ -266,7 +265,7 @@ int main(int argc, char **argv)
   if (!gDialogManager)
     return -1;
 
-  gDialogManager->Init(&alertCB, &promptCB, &confirmCB);
+  gDialogManager->Init(&sslActivateCB, NULL, NULL, NULL, NULL, NULL, NULL);
 
   // open the default window
   gCurrentIndex = 0;
@@ -943,14 +942,26 @@ static void findReplySend(const char *aString, bool aFound)
   sendMessage(tempString);
 }
 
+static void sslActiveSend(int aID, int aFlag)
+{
+  char tempString[BROWSER_LISTENER_MAXLEN];
+
+  sprintf(tempString,
+          "sslActive%c%d%c%d%c",
+          BROWSER_LISTENER_DELIMITER,
+          aID,
+          BROWSER_LISTENER_DELIMITER,
+          (aFlag ? 1 : 0),
+          BROWSER_LISTENER_TERMINATOR);
+
+  sendMessage(tempString);
+}
+
 /*
 static void showCertificateSend(char *aFilename)
 {
 }
 static void memUsageReplySend(char *aUsage)
-{
-}
-static void sslActiveSend(int aID, int aFlag)
 {
 }
 static void yesNoDialogSend(int aID, int aRequestID, int aMessageID)
@@ -1302,31 +1313,42 @@ static void memUsageRequest()
 }
 */
 
-// callback functions from the dialogs
-bool alertCB(nsIDOMWindow *aParent, const char *aMessage)
-{
-  printf("alert from app: %s\n", aMessage);
-  return true;
-}
+// dialog callback functions
 
-bool promptCB(nsIDOMWindow *aParent, const char *aMessage, const char *aValue, bool *aOK)
+bool sslActivateCB(nsIDOMWindow *aWindow, bool aFlag)
 {
-  printf("prompt from app\n");
-  *aOK = true;
+  int tempID;
 
-  return true;
-}
-
-bool confirmCB(nsIDOMWindow *aParent, const char *aMessage, bool *aOK)
-{
-  printf("confirm from app\n");
-  *aOK = true;
+  if (aWindow && isIDValid((tempID = getWindowID(aWindow))))
+    sslActiveSend(tempID, aFlag);
+  else
+    errorMessageSend(-1, BROWSER_ERROR_GENERAL);
 
   return true;
 }
 
 
 // utility functions
+
+// returns the id of the window, 0 if not found
+static int getWindowID(nsIDOMWindow *aWindow)
+{
+  int i;
+  nsIDOMWindow *tempWindow = NULL;
+
+  if (!aWindow || !gBrowserArray)
+    return 0;
+
+  for (i = 0; i < gMaxWin; i++) {
+    if (gBrowserArray[i] && gBrowserArray[i]->webBrowser)
+      gBrowserArray[i]->webBrowser->GetContentDOMWindow(&tempWindow);
+
+    if (tempWindow == aWindow)
+      return i + 1;
+  }
+
+  return 0;
+}
 
 // returns the index of the next used window
 static int getNextUsedWindow()
@@ -1402,7 +1424,6 @@ static gtkEmbedBrowser *createNewBrowser(guint32 aChromeMask, guint32 aID)
   newBrowser->browserID      = aID;
   newBrowser->usedFlag       = true;
   newBrowser->loadingFlag    = false;
-  newBrowser->blockedFlag    = false;
   newBrowser->topLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   newBrowser->topLevelVBox   = gtk_vbox_new(true, 0);
 

@@ -38,7 +38,10 @@ class gtkEmbedPromptDialog : public nsIPromptService
 
     bool Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
               bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-              bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *));
+              bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
+	      bool (*aPasswdCB)(nsIDOMWindow *, const char * , const char *, bool *),
+              bool (*aUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *),
+              bool (*aSelectCB)(nsIDOMWindow *, const char **, int *, bool *));
     
     NS_DECL_ISUPPORTS
     NS_DECL_NSIPROMPTSERVICE

@@ -23,6 +23,7 @@
 #include "gtkEmbedSSLDialog.h"
 #include "nsCOMPtr.h"
 #include "nsXPComFactory.h"
+#include "nsIInterfaceRequestor.h"
 
 #define DEBUG
 
@@ -39,9 +40,7 @@ NS_IMPL_ISUPPORTS8(gtkEmbedSSLDialog, nsINSSDialogs,
                                       nsITokenDialogs,
                                       nsIDOMCryptoDialogs);
 
-static bool (*gAlertCB)(nsIDOMWindow *, const char *) = NULL;
-static bool (*gPromptCB)(nsIDOMWindow *, const char *, const char *, bool *) = NULL;
-static bool (*gConfirmCB)(nsIDOMWindow *, const char *, bool *) = NULL;
+static bool (*gSSLActiveCB)(nsIDOMWindow *, bool) = NULL;
 
 gtkEmbedSSLDialog::gtkEmbedSSLDialog()
 {
@@ -59,15 +58,11 @@ gtkEmbedSSLDialog::~gtkEmbedSSLDialog()
 #endif
 }
 
-bool gtkEmbedSSLDialog::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
-                             bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-                             bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *))
+bool gtkEmbedSSLDialog::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool ))
 {
   // store our static references so that every
   // instance can have access to it
-  gAlertCB      = aAlertCB;
-  gPromptCB     = aPromptCB;
-  gConfirmCB    = aConfirmCB;
+  gSSLActiveCB  = aSSLActiveCB;
 
   return true;
 }
@@ -82,6 +77,8 @@ NS_IMETHODIMP gtkEmbedSSLDialog::SetPassword(nsIInterfaceRequestor *aCTX,
   fprintf(stderr, "gtkEmbedSSLDialog::~gtkEmbedSSLDialog()\n");
 #endif
 
+  *aCancelled = true;
+
   return NS_OK;
 }
 
@@ -94,6 +91,8 @@ NS_IMETHODIMP gtkEmbedSSLDialog::GetPassword(nsIInterfaceRequestor *aCTX,
   fprintf(stderr, "gtkEmbedSSLDialog::GetPassword()\n");
 #endif
 
+  *aCancelled = true;
+
   return NS_OK;
 }
 
@@ -104,6 +103,13 @@ NS_IMETHODIMP gtkEmbedSSLDialog::AlertEnteringSecure(nsIInterfaceRequestor *aCTX
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::AlertEnteringSecure()\n");
 #endif
+
+  nsCOMPtr<nsIDOMWindow> tempWindow = do_GetInterface(aCTX);
+
+  if (!gSSLActiveCB)
+    return NS_OK;
+
+  (*gSSLActiveCB)(tempWindow, true);
 
   return NS_OK;
 }
@@ -122,6 +128,13 @@ NS_IMETHODIMP gtkEmbedSSLDialog::AlertLeavingSecure(nsIInterfaceRequestor *aCTX)
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::AlertLeavingSecure()\n");
 #endif
+
+  nsCOMPtr<nsIDOMWindow> tempWindow = do_GetInterface(aCTX);
+
+  if (!gSSLActiveCB)
+    return NS_OK;
+
+  (*gSSLActiveCB)(tempWindow, false);
 
   return NS_OK;
 }
@@ -142,8 +155,8 @@ NS_IMETHODIMP gtkEmbedSSLDialog::ConfirmPostToInsecure(nsIInterfaceRequestor *aC
   fprintf(stderr, "gtkEmbedSSLDialog::ConfirmPostToInsecure()\n");
 #endif
 
-  // just return true for now
   *aResult = true;
+
   return NS_OK;
 }
 
@@ -154,7 +167,6 @@ NS_IMETHODIMP gtkEmbedSSLDialog::ConfirmPostToInsecureFromSecure(nsIInterfaceReq
   fprintf(stderr, "gtkEmbedSSLDialog::ConfirmPostToInsecureFromSecure\n");
 #endif
 
-  // just return true for now
   *aResult = true;
 
   return NS_OK;
@@ -165,44 +177,42 @@ NS_IMETHODIMP gtkEmbedSSLDialog::ConfirmPostToInsecureFromSecure(nsIInterfaceReq
 NS_IMETHODIMP gtkEmbedSSLDialog::UnknownIssuer(nsITransportSecurityInfo *aSocketInfo,
                                                nsIX509Cert *aCert,
                                                PRInt16 *aOutAddType,
-                                               PRBool *aRetval)
+                                               PRBool *aResult)
 {
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::UnknownIssuer()\n");
 #endif
 
-  // just add trust for this session
+  *aResult     = true;
   *aOutAddType = ADD_TRUSTED_FOR_SESSION;
 
-  // just return true for now
-  *aRetval = true;
   return NS_OK;
 }
 
 NS_IMETHODIMP gtkEmbedSSLDialog::MismatchDomain(nsITransportSecurityInfo *aSocketInfo,
                                                 const PRUnichar *aTargetURL, 
                                                 nsIX509Cert *aCert,
-                                                PRBool *aRetval)
+                                                PRBool *aResult)
 {
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::MismatchedDomain()\n");
 #endif
 
-  // just return true for now
-  *aRetval = true;
+  *aResult = true;
+
   return NS_OK;
 }
 
 NS_IMETHODIMP gtkEmbedSSLDialog::CertExpired(nsITransportSecurityInfo *aSocketInfo,
                                              nsIX509Cert *aCert,
-                                             PRBool *aRetval)
+                                             PRBool *aResult)
 {
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::CertExpired()\n");
 #endif
 
-  // just return true for now
-  *aRetval = true;
+  *aResult = true;
+
   return NS_OK;
 }
 
@@ -217,6 +227,8 @@ NS_IMETHODIMP gtkEmbedSSLDialog::DownloadCACert(nsIInterfaceRequestor *aCTX,
   fprintf(stderr, "gtkEmbedSSLDialog::DownloadCACert()\n");
 #endif
 
+  *aCancelled = true;
+
   return NS_OK;
 }
 
@@ -228,6 +240,8 @@ NS_IMETHODIMP gtkEmbedSSLDialog::SetPKCS12FilePassword(nsIInterfaceRequestor *aC
   fprintf(stderr, "gtkEmbedSSLDialog::SetPKCS12FilePassword\n");
 #endif
 
+  *aCancelled = true;
+
   return NS_OK;
 }
 
@@ -238,6 +252,8 @@ NS_IMETHODIMP gtkEmbedSSLDialog::GetPKCS12FilePassword(nsIInterfaceRequestor *aC
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::GetPKCS12FilePassword()\n");
 #endif
+
+  *aCancelled = true;
 
   return NS_OK;
 }
@@ -266,6 +282,8 @@ NS_IMETHODIMP gtkEmbedSSLDialog::ChooseCertificate(nsIInterfaceRequestor *CTX,
   fprintf(stderr, "gtkEmbedSSLDialog::ChooseCertificate()\n");
 #endif
 
+  *aCancelled = true;
+
   return NS_OK;
 }
 
@@ -281,20 +299,21 @@ NS_IMETHODIMP gtkEmbedSSLDialog::ChooseToken(nsIInterfaceRequestor *aCTX,
   fprintf(stderr, "gtkEmbedSSLDialog::ChooseToken()\n");
 #endif
 
+  *aCancelled = true;
+
   return NS_OK;
 }
 
 // nsIDOMCryptoDialogs
 
 NS_IMETHODIMP gtkEmbedSSLDialog::ConfirmKeyEscrow(nsIX509Cert *aEscrowAuth, 
-                                                  PRBool *aRetval)
+                                                  PRBool *aResult)
 {
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::ConfirmKeyEscrow()\n");
 #endif
 
-  // just return true for now
-  *aRetval = true;
+  *aResult = true;
 
   return NS_OK;
 }
