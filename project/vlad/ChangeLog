@@ -15,7 +15,6 @@
 	* kb/atom.cpp :
 	* kb/identifier.cpp :
 	* kb/symtab.cpp :
-	* main/Makefile.in :
 	* main/vlad.cpp :
 	* parser/parser.y :
 	* parser/scanner.l :
@@ -24,6 +23,11 @@
 	    causing "deprecated" warnings.
 
 	  - Changed to use new macro.
+
+	* main/Makefile.in :
+
+	  - Took out strip --strip-all. Apparently, not all versions of strip 
+	    support it.
 
 2003-02-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
