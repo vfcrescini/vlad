@@ -19,6 +19,11 @@
 
 /* functions to send a request (and get reply) to/from the kb process */
 
+int modvlad_check(apr_pool_t *a_p,
+                  apr_file_t *a_fdin,
+                  apr_file_t *a_fdout,
+                  apr_proc_mutex_t *a_mx);
+
 int modvlad_client_query(apr_pool_t *a_p,
                          apr_file_t *a_fdin,
                          apr_file_t *a_fdout,

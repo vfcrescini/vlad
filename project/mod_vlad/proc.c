@@ -147,7 +147,7 @@ static int processreq(apr_pool_t *a_p,
   const char *id = NULL;
   const char *cmd = NULL;
 
-  if (!a_p || !a_kb || !a_req || !a_rep)
+  if (!a_p || !a_req || !a_rep)
     return MODVLAD_NULLPTR;
 
   if (a_req->nelts < 2)
@@ -159,7 +159,17 @@ static int processreq(apr_pool_t *a_p,
   /* send out id */
   *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, id);
 
-  if (!strcmp(cmd, "Q")) {
+  /* if the kb is null don't bother doing anything else */
+  if (!a_kb) {
+    *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+    return MODVLAD_FAILURE;
+  }
+
+  if (!strcmp(cmd, "C")) {
+    /* check */
+    *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "CR");
+  }
+  else if (!strcmp(cmd, "Q")) {
     /* query */
     void *exp = NULL;
     unsigned char res;
@@ -332,6 +342,36 @@ static int processreq(apr_pool_t *a_p,
 }
 
 /* functions to send a request (and get reply) to/from the kb process */
+
+int modvlad_check(apr_pool_t *a_p,
+                  apr_file_t *a_fdin,
+                  apr_file_t *a_fdout,
+                  apr_proc_mutex_t *a_mx)
+{
+  apr_array_header_t *arr_out = NULL;
+  apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
+
+  if (!a_p || !a_fdin || !a_fdout || !a_mx)
+    return MODVLAD_NULLPTR;
+
+  arr_out = apr_array_make(a_p, 1, sizeof(char *));
+  arr_in = apr_array_make(a_p, 1, sizeof(char *));
+
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
+  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "C");
+
+  sendfd(a_fdin, a_mx, arr_out);
+  receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
+
+  if (strcmp(((char **)arr_in->elts)[1], "CR"))
+    return MODVLAD_FAILURE;
+
+  return MODVLAD_OK;
+}
 
 int modvlad_client_query(apr_pool_t *a_p,
                          apr_file_t *a_fdin,
@@ -701,19 +741,30 @@ int modvlad_server_init(apr_pool_t *a_p,
   if (!a_p || !a_kb || !a_docroot || !a_ufile || !a_pfile)
     return MODVLAD_NULLPTR;
 
-  if (modvlad_init_kb(a_p, a_ufile, a_docroot, a_kb, &exp))
+  if (modvlad_init_kb(a_p, a_ufile, a_docroot, a_kb, &exp)) {
+    *a_kb = NULL;
     return MODVLAD_FAILURE;
+  }
 
-  if (apr_file_open(&polfile, a_pfile, APR_READ, APR_OS_DEFAULT, a_p) != APR_SUCCESS)
+  if (apr_file_open(&polfile, a_pfile, APR_READ, APR_OS_DEFAULT, a_p) != APR_SUCCESS) {
+    *a_kb = NULL;
     return MODVLAD_FAILURE;
+  }
 
-  if (modvlad_load_kb(a_p, polfile, *a_kb, exp))
-
-  if (apr_file_close(polfile) != APR_SUCCESS)
+  if (modvlad_load_kb(a_p, polfile, *a_kb, exp) != MODVLAD_OK) {
+    *a_kb = NULL;
     return MODVLAD_FAILURE;
+  }
 
-  if (vlad_kb_compute_evaluate(*a_kb))
+  if (apr_file_close(polfile) != APR_SUCCESS) {
+    *a_kb = NULL;
     return MODVLAD_FAILURE;
+  }
+
+  if (vlad_kb_compute_evaluate(*a_kb)) {
+    *a_kb = NULL;
+    return MODVLAD_FAILURE;
+  }
 
   return MODVLAD_OK;
 }
@@ -729,7 +780,7 @@ void modvlad_server_listen(apr_pool_t *a_p,
   apr_pollfd_t newfd;
   int count;
 
-  if (!a_p || !a_kb || !a_fdin || !a_fdout)
+  if (!a_p || !a_fdin || !a_fdout)
     return;
 
   /* setup pollset */

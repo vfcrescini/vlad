@@ -239,6 +239,10 @@ static int modvlad_access(request_rec *a_r)
     return HTTP_INTERNAL_SERVER_ERROR;
   }
 
+  /* check if the server process is ok */
+  if (modvlad_check(a_r->pool, conf->pipe_cli[0], conf->pipe_cli[1], conf->mutex) != MODVLAD_OK)
+    return HTTP_INTERNAL_SERVER_ERROR;
+
   /* first check if we are enabled */
   if (!conf->enabled)
     return DECLINED;
@@ -379,6 +383,10 @@ static int modvlad_handler(request_rec *a_r)
   if (!conf->enabled)
     return DECLINED;
 
+  /* check if the server process is ok */
+  if (modvlad_check(a_r->pool, conf->pipe_cli[0], conf->pipe_cli[1], conf->mutex) != MODVLAD_OK)
+    return HTTP_INTERNAL_SERVER_ERROR;
+
   filepath = apr_pstrdup(a_r->pool, modvlad_strip_url(a_r->pool, a_r->uri));
   apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
 
@@ -418,11 +426,11 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
   apr_proc_t *proc = NULL;
 
   /* it seems that this function is called twice, once on 2 processes.
-   * since the first one seems to die anyway, we only initialize the
+   * since the first one seems to die anyway, so we only initialize the
    * module on the second process whose parent seems to be init. */
 
   if (getppid() != 1)
-    return DECLINED;
+    return OK;
 
   ap_log_perror(APLOG_MARK,
                 APLOG_INFO,
@@ -438,12 +446,12 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
                   0,
                   a_plog,
                   "mod_vlad: conf is NULL");
-    return HTTP_INTERNAL_SERVER_ERROR;
+    return !OK;
   }
 
   /* first check if we are enabled */
   if (!conf->enabled)
-    return DECLINED;
+    return OK;
 
   /* create pipes */
   apr_file_pipe_create(&(conf->pipe_svr[1]), &(conf->pipe_cli[0]), a_pconf);
@@ -460,7 +468,7 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
                   0,
                   a_plog,
                   "mod_vlad: failed to init mutex in parent");
-    return HTTP_INTERNAL_SERVER_ERROR;
+    return !OK;
   }
 
   /* get document root */
@@ -482,27 +490,23 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
                             docroot,
                             conf->user_file,
                             conf->policy_file) != MODVLAD_OK) {
+
       ap_log_perror(APLOG_MARK,
                     APLOG_ERR,
                     0,
                     a_plog,
                     "mod_vlad: failed to init parent");
-      return HTTP_INTERNAL_SERVER_ERROR;
     }
 
     /* this should never return */
     modvlad_server_listen(childpool, kbase, conf->pipe_svr[0], conf->pipe_svr[1]);
-
-    apr_pool_destroy(childpool);
   }
   else if (status == APR_INPARENT) {
-    /* register the child to die with this process */
+    /* register the child to die with this pool */
     apr_pool_note_subprocess(a_pconf, proc, APR_KILL_AFTER_TIMEOUT);
-    return OK;
   }
-  else {
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
+  else 
+    return !OK;
 
   return OK;
 }
