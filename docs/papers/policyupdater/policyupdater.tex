@@ -547,9 +547,9 @@ always <exp1>
 
         \noindent \textbf{\emph{Inheritance Rules}}
 
-          All properties held by a group is inherited by all the members of
-          that group. This rule is easy to apply for subject group entities.
-          However, careful attention must be given to access-right groups
+          All properties held by a group is inherited by all the members and
+          subsets of that group. This rule is easy to apply for subject group
+          entities. However, careful attention must be given to access-right
           and object groups. Subjects holding an access-right for an object
           group means that subject also holds that access right for all objects
           in the object group. Similarly, a subject holding an access-right
@@ -558,32 +558,181 @@ always <exp1>
           object.
 
           \begin{definition}
-            The inheritance constraints are the following:
+            The following are the inheritance constrant rules to allow the
+            properties held by a group to propagate to its members and
+            subsets.
 
-            \begin{quote}
-              $holds(s_{s}, a, o, \sigma)$ $\leftarrow$ $holds(s_{g}, a, o, \sigma)$ $\land$ $memb(s_{s}, s_{g}, \sigma)$
+            \begin{enumerate}
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    holds(s_{s}, a, o, \sigma) \leftarrow &
+                    holds(s_{g}, a, o, \sigma) \land \\
+                    & memb(s_{s}, s_{g}, \sigma)
+                  \end{aligned}
+                \end{math}
 
-              $holds(s, a_{s}, o, \sigma)$ $\leftarrow$ $holds(s, a_{g}, o, \sigma)$ $\land$ $memb(a_{s}, a_{g}, \sigma)$
+                $\forall (s_{s}, s_{g}, a, o, \sigma)$ where:
 
-              $holds(s, a, o_{s}, \sigma)$ $\leftarrow$ $holds(s, a, o_{g}, \sigma)$ $\land$ $memb(o_{s}, o_{g}, \sigma)$
+                $s_{s} \in {\cal A}^{\sigma}_{SS}$,
+                $s_{g} \in {\cal A}^{\sigma}_{SG}$,
+                $a \in {\cal A}^{\sigma}_{A}$,
+                $o \in {\cal A}^{\sigma}_{O}$,
+                $0 \leq \sigma \leq \Sigma$
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    holds(s, a_{s}, o, \sigma) \leftarrow &
+                    holds(s, a_{g}, o, \sigma) \land \\
+                    & memb(a_{s}, a_{g}, \sigma)
+                  \end{aligned}
+                \end{math}
 
-            \end{quote}
+                $\forall (s, a_{s}, a_{g}, o, \sigma)$ where:
+
+                $s \in {\cal A}^{\sigma}_{S}$,
+                $a_{s} \in {\cal A}^{\sigma}_{AS}$,
+                $a_{g} \in {\cal A}^{\sigma}_{AG}$,
+                $o \in {\cal A}^{\sigma}_{O}$,
+                $0 \leq \sigma \leq \Sigma$
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    holds(s, a, o_{s}, \sigma) \leftarrow &
+                    holds(s, a, o_{g}, \sigma) \land \\
+                    & memb(o_{s}, o_{g}, \sigma)
+                  \end{aligned}
+                \end{math}
+
+                $\forall (s, a, o_{s}, o_{g}, \sigma)$ where:
+
+                $s \in {\cal A}^{\sigma}_{S}$,
+                $a \in {\cal A}^{\sigma}_{A}$,
+                $o_{s} \in {\cal A}^{\sigma}_{OS}$,
+                $o_{g} \in {\cal A}^{\sigma}_{OG}$,
+                $0 \leq \sigma \leq \Sigma$
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    holds(s_{g1}, a, o, \sigma) \leftarrow &
+                    holds(s_{g2}, a, o, \sigma) \land \\
+                    & subst(s_{g1}, s_{g2}, \sigma)
+                  \end{aligned}
+                \end{math}
+
+                $\forall (s_{g1}, s_{g2}, a, o, \sigma)$ where:
+
+                $s_{g1}, s_{g2} \in {\cal A}^{\sigma}_{SG}$,
+                $a \in {\cal A}^{\sigma}_{A}$,
+                $o \in {\cal A}^{\sigma}_{O}$,
+                $0 \leq \sigma \leq \Sigma$
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    holds(s, a_{g1}, o, \sigma) \leftarrow &
+                    holds(s, a_{g2}, o, \sigma) \land \\
+                    & subst(a_{g1}, a_{g2}, \sigma)
+                  \end{aligned}
+                \end{math}
+
+                $\forall (s, a_{g1}, a_{g2}, o, \sigma)$ where:
+
+                $s \in {\cal A}^{\sigma}_{S}$,
+                $a_{g1}, a_{g2} \in {\cal A}^{\sigma}_{AG}$,
+                $o \in {\cal A}^{\sigma}_{O}$,
+                $0 \leq \sigma \leq \Sigma$
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    holds(s, a, o_{g1}, \sigma) \leftarrow &
+                    holds(s, a, o_{g2}, \sigma) \land \\
+                    & subst(o_{g1}, o_{g2}, \sigma)
+                  \end{aligned}
+                \end{math}
+
+                $\forall (s, a, o_{g1}, o_{g2}, \sigma)$ where:
+
+                $s \in {\cal A}^{\sigma}_{S}$,
+                $a \in {\cal A}^{\sigma}_{A}$,
+                $o_{g1}, o_{g2} \in {\cal A}^{\sigma}_{OG}$,
+                $0 \leq \sigma \leq \Sigma$
+            \end{enumerate}
           \end{definition}
 
         \noindent \textbf{\emph{Transitivity Rules}}
 
+          Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of $G'$
+          and $G'$ is a subset of $G''$, then $G$ must also be a subset of
+          $G''$.
+
           \begin{definition}
             A subset of a set is also a subset of its superset's superset.
 
-            \begin{quote}
-              $subst(s_{1}, s_{3}, \sigma)$ $\leftarrow$ $subst(s_{1}, s_{2}, \sigma)$ $\land$ $subst(s_{2}, s_{3}, \sigma)$
-            \end{quote}
+            \begin{enumerate}
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    subst(sg_{1}, sg_{3}, \sigma) \leftarrow &
+                    subst(sg_{1}, sg_{2}, \sigma) \land \\
+                    & subst(sg_{2}, sg_{3}, \sigma)
+                  \end{aligned}
+                \end{math}
+
+                $\forall (sg_{1}, sg_{2}, sg_{3}, \sigma)$ where:
+
+                $sg_{1}, sg_{2}, sg_{3} \in {\cal A}^{\sigma}_{SG}$,
+                $0 \leq \sigma \leq \Sigma$
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    subst(ag_{1}, ag_{3}, \sigma) \leftarrow &
+                    subst(ag_{1}, ag_{2}, \sigma) \land \\
+                    & subst(ag_{2}, ag_{3}, \sigma)
+                  \end{aligned}
+                \end{math}
+
+                $\forall (ag_{1}, ag_{2}, ag_{3}, \sigma)$ where:
+
+                $ag_{1}, ag_{2}, ag_{3} \in {\cal A}^{\sigma}_{AG}$,
+                $0 \leq \sigma \leq \Sigma$
+              \item
+                \begin{math}
+                  \begin{aligned}[t]
+                    subst(og_{1}, og_{3}, \sigma) \leftarrow &
+                    subst(og_{1}, og_{2}, \sigma) \land \\
+                    & subst(og_{2}, og_{3}, \sigma)
+                  \end{aligned}
+                \end{math}
+
+                $\forall (og_{1}, og_{2}, og_{3}, \sigma)$ where:
+
+                $og_{1}, og_{2}, og_{3} \in {\cal A}^{\sigma}_{OG}$,
+                $0 \leq \sigma \leq \Sigma$
+
+            \end{enumerate}
           \end{definition}
 
         \noindent \textbf{\emph{Inertial Rules}}
 
-          All facts that are not affected by a policy update should be carried
-          over to the next state.
+          Intuitively, all facts in the current state that are not affected by
+          a policy update should be carried over to the next state after the
+          update. In Language ${\cal L}^{*}$, this rule must be explicitly
+          stated as a constraint.
+
+          \begin{definition}
+            A fact $F$ that holds in state $\sigma$ should also hold in state
+            $\sigma'$, given $\sigma'$ = $Res$($U$, $\sigma$), if fact $F$ is
+            not affected by the application of update $U$.
+
+            \begin{enumerate}
+              \item
+                \begin{math} 
+                  \begin{aligned}
+                    x 
+                  \end{aligned}
+                \end{math}
+            \end{enumerate}
+          \end{definition}
 
     \subsection{Example}
 
