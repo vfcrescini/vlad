@@ -174,12 +174,12 @@ int list::del(list_item *data, bool f)
   curr = head;
 
   while (curr != NULL) {
-
     /* if the unique flag is set, stop after the first match */
     if (unique && found)
       break;
 	
     if (curr->data->cmp(data)) {
+      list_node *ptmp;
 
       found = true;
 
@@ -194,15 +194,20 @@ int list::del(list_item *data, bool f)
         prev->next = curr->next;
       }
 
-      if (f)
-        delete (curr->data);
+      ptmp = curr;
+      curr = curr->next;
 
-      free(curr);
+      if (f)
+        delete (ptmp->data);
+
+      free(ptmp);
 
       len--;
     }
-    prev = curr;
-    curr = curr->next;
+    else {
+      prev = curr;
+      curr = curr->next;
+    }
   }
 
   return (found ? VLAD_OK : VLAD_NOTFOUND);
