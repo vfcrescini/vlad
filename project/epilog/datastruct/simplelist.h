@@ -23,7 +23,7 @@ typedef struct simplelist_type
 } simplelist_type;
 
 /* initialise list */
-void simplelist_init(simplelist_type *list);
+int simplelist_init(simplelist_type *list);
 
 /* return length */
 unsigned int simplelist_length(simplelist_type list);
@@ -75,5 +75,13 @@ int simplelist_copy(simplelist_type l1,
 
 /* destroys the list. uses the fr function to free the nodes */
 void simplelist_purge(simplelist_type *list, void (*fr)(void *));
+
+/* error codes */
+#define SIMPLELIST_OK                 0
+#define SIMPLELIST_ERROR_NULLPTR     -1
+#define SIMPLELIST_ERROR_MALLOC      -2
+#define SIMPLELIST_ERROR_OUTOFBOUNDS -3
+#define SIMPLELIST_ERROR_NOTFOUND    -4
+#define SIMPLELIST_ERROR_UNKNOWN     -5
 
 #endif

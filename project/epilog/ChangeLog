@@ -1,5 +1,12 @@
 2002-10-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+
+	  - Added errorcodes for return values.
+
+	  - Some cleanups.
+
 	* exp/comp_exp.c :
 	* exp/comp_exp.h :
 	* exp/gnd_exp.c :
