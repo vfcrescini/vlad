@@ -19,18 +19,18 @@ list_item::~list_item()
 
 list::list()
 {
-  unique = true;
-  len = 0;
-  head = NULL;
-  tail = NULL;
+  m_uniq = true;
+  m_length = 0;
+  m_head = NULL;
+  m_tail = NULL;
 }
 
-list::list(bool u)
+list::list(bool a_uniq)
 {
-  unique = u;
-  len = 0;
-  head = NULL;
-  tail = NULL;
+  m_uniq = a_uniq;
+  m_length = 0;
+  m_head = NULL;
+  m_tail = NULL;
 }
 
 list::~list()
@@ -38,21 +38,21 @@ list::~list()
   purge(true);
 }
 
-bool list::cmp(list *l)
+bool list::cmp(list *a_list)
 {
   unsigned int i;
   list_item *item1;
   list_item *item2;
 
-  if (l == NULL || l->length() != len)
+  if (a_list == NULL || a_list->length() != m_length)
     return false;
 
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < m_length; i++) {
     /*
      * the following 2 statements will only fail if we give them
      * out of bounds values or null ptrs none of which should occur
      */
-    l->get(i, &item1);
+    a_list->get(i, &item1);
     get(i, &item2);
 
     /*
@@ -68,21 +68,21 @@ bool list::cmp(list *l)
 
 unsigned int list::length()
 {
-  return len;
+  return m_length;
 }
 
 /* add pointer to list, assumes memory has been allocated to it */
-int list::add(list_item *data)
+int list::add(list_item *a_data)
 {
   list_node *new_node;
   int retval;
 
-  if (data == NULL)
+  if (a_data == NULL)
     return VLAD_NULLPTR;
 
-  /* if the unique flag is set, ensure that data is not already in */
-  if (unique) {
-    if ((retval = find(data)) == VLAD_OK)
+  /* if the m_uniq flag is set, ensure that data is not already in */
+  if (m_uniq) {
+    if ((retval = find(a_data)) == VLAD_OK)
       return VLAD_DUPLICATE;
     else if (retval != VLAD_NOTFOUND)
       return retval;
@@ -91,99 +91,99 @@ int list::add(list_item *data)
   if ((new_node = VLAD_ADT_MALLOC(list_node, 1)) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if (tail == NULL)
-    head = new_node;
+  if (m_tail == NULL)
+    m_head = new_node;
   else
-    tail->next = new_node;
+    m_tail->next = new_node;
 
-  new_node->data = data;
+  new_node->data = a_data;
   new_node->next = NULL;
-  tail = new_node;
-  len++;
+  m_tail = new_node;
+  m_length++;
 
   return VLAD_OK;
 }
 
 /* deletes index'th data, f = true to free mem or false to not free it */
-int list::del(unsigned int index, bool f)
+int list::del(unsigned int a_index, bool a_free)
 {
   list_node *prev;
   list_node *curr;
   unsigned int i;
 
-  if (len <= 0 || index >= len)
+  if (m_length <= 0 || a_index >= m_length)
     return VLAD_OUTOFBOUNDS;
 
   prev = NULL;
-  curr = head;
+  curr = m_head;
 
-  for (i = 0; i < index; i++) {
+  for (i = 0; i < a_index; i++) {
     prev = curr;
     curr = curr->next;
   }
 
   if (prev == NULL) {
-    if (curr == tail)
-      tail = NULL;
-    head = head->next;
+    if (curr == m_tail)
+      m_tail = NULL;
+    m_head = m_head->next;
   }
   else {
-    if (curr == tail)
-      tail = prev;
+    if (curr == m_tail)
+      m_tail = prev;
     prev->next = curr->next;
   }
 
-  if (f)
+  if (a_free)
     delete (curr->data);
 
   free(curr);
 
-  len--;
+  m_length--;
 
   return VLAD_OK;
 }
 
 /* deletes all the nodes that matches data, f = true to free mem */
-int list::del(list_item *data, bool f)
+int list::del(list_item *a_data, bool a_free)
 {
 
   list_node *prev;
   list_node *curr;
   bool found = false;
 
-  if (data == NULL)
+  if (a_data == NULL)
     return VLAD_NULLPTR;
 
   prev = NULL;
-  curr = head;
+  curr = m_head;
 
   while (curr != NULL) {
 
-    /* if the unique flag is set, stop after the first match */
-    if (unique && found)
+    /* if the m_uniq flag is set, stop after the first match */
+    if (m_uniq && found)
       break;
 	
-    if (curr->data->cmp(data)) {
+    if (curr->data->cmp(a_data)) {
 
       found = true;
 
       if (prev == NULL) {
-        if (curr == tail)
-          tail = NULL;
-        head = head->next;
+        if (curr == m_tail)
+          m_tail = NULL;
+        m_head = m_head->next;
       }
       else {
-        if (curr == tail)
-          tail = prev;
+        if (curr == m_tail)
+          m_tail = prev;
         prev->next = curr->next;
       }
 
-      if (f)
+      if (a_free)
         delete (curr->data);
 
       free(curr);
 
-      len--;
+      m_length--;
     }
     prev = curr;
     curr = curr->next;
@@ -193,102 +193,101 @@ int list::del(list_item *data, bool f)
 }
 
 /* gives an array of indices of the data given */
-int list::get(list_item *item, unsigned int **array, unsigned int *s)
+int list::get(list_item *a_item, unsigned int **a_array, unsigned int *a_size)
 {
   list_node *curr;
   unsigned int count;
 
-  if (s == NULL || array == NULL || item == NULL)
+  if (a_size == NULL || a_array == NULL || a_item == NULL)
     return VLAD_NULLPTR;
 
-  curr = head;
-  *s = 0;
-  *array = NULL;
+  curr = m_head;
   count = 0;
+  *a_array = NULL;
+  *a_size = 0;
 
   while (curr != NULL) {
-    /* if the unique flag is set we stop when we see the first match */
-    if (unique && *s >= 1)
+    /* if the m_uniq flag is set we stop when we see the first match */
+    if (m_uniq && *a_size >= 1)
       break;
 
-    if (curr->data->cmp(item)) {
+    if (curr->data->cmp(a_item)) {
 
-      if ((*array = (unsigned int *) realloc(*array, sizeof(unsigned int) * (*s + 1))) == NULL)
+      if ((*a_array = (unsigned int *) realloc(*a_array, sizeof(unsigned int) * (*a_size + 1))) == NULL)
         return VLAD_MALLOCFAILED;
 
-      (*array)[*s] = count;
-      (*s)++;
+      (*a_array)[*a_size] = count;
+      (*a_size)++;
     }
     curr = curr->next;
     count++;
   }
-  return (*s > 0) ? VLAD_OK : VLAD_NOTFOUND;
+  return (*a_size > 0) ? VLAD_OK : VLAD_NOTFOUND;
 }
 
 /* gives a reference to the index'th data */
-int list::get(unsigned int index, list_item **data)
+int list::get(unsigned int a_index, list_item **a_data)
 {
   unsigned int i;
   list_node *curr;
 
-  if (data == NULL)
+  if (a_data == NULL)
     return VLAD_NULLPTR;
 
-  if (len <= 0 || index >= len)
+  if (m_length <= 0 || a_index >= m_length)
    return VLAD_OUTOFBOUNDS;
 
-  curr = head;
+  curr = m_head;
 
-  for (i = 0; i < index; i++)
+  for (i = 0; i < a_index; i++)
     curr = curr->next;
 
-  *data = curr->data;
+  *a_data = curr->data;
 
   return VLAD_OK;
 }
 
 /* gives a reference to all the nodes that matches item. array + size */
-int list::get(list_item *item, list_item ***data, unsigned int *s)
+int list::get(list_item *a_item, list_item ***a_data, unsigned int *a_size)
 {
   list_node *curr;
 
-  if (s == NULL || data == NULL || item == NULL)
+  if (a_size == NULL || a_data == NULL || a_item == NULL)
     return VLAD_NULLPTR;
 
-  curr = head;
-  *s = 0;
-  *data = NULL;
+  curr = m_head;
+  *a_size = 0;
+  *a_data = NULL;
 
   while (curr != NULL) {
-    /* if the unique flag is set we stop when we see the first match */
-    if (unique && *s >= 1)
+    /* if the m_uniq flag is set we stop when we see the first match */
+    if (m_uniq && *a_size >= 1)
       break;
 
-    if (curr->data->cmp(item)) {
-
-      if ((*data = (list_item **) realloc(*data, sizeof(**data) * (*s + 1))) == NULL)
+    if (curr->data->cmp(a_item)) {
+      if ((*a_data = (list_item **) realloc(*a_data, sizeof(**a_data) * (*a_size + 1))) == NULL)
         return VLAD_MALLOCFAILED;
 
-      (*data)[*s] = curr->data;
-      (*s)++;
+      (*a_data)[*a_size] = curr->data;
+      (*a_size)++;
     }
     curr = curr->next;
   }
-  return (*s > 0) ? VLAD_OK : VLAD_NOTFOUND;
+  return (*a_size > 0) ? VLAD_OK : VLAD_NOTFOUND;
 }
 
 /* returns 0 if data is in the list */
-int list::find(list_item *data)
+int list::find(list_item *a_data)
 {
   list_node *curr;
 
-  if (data == NULL)
+  if (a_data == NULL)
     return VLAD_NULLPTR;
 
-  curr = head;
+  curr = m_head;
 
   while (curr != NULL) {
-    if (curr->data->cmp(data))
+    if (curr->data->cmp(a_data))
       return VLAD_OK;
 
     curr = curr->next;
@@ -297,27 +296,27 @@ int list::find(list_item *data)
   return VLAD_NOTFOUND;
 }	
 
-/* destroys the list f = true to free mem */
-void list::purge(bool f)
+/* destroys the list free = true to free mem */
+void list::purge(bool a_free)
 {
   list_node *curr;
   list_node *prev;
 
-  if (len > 0) {
-    curr = head;
+  if (m_length > 0) {
+    curr = m_head;
 
     while (curr != NULL) {
       prev = curr;
       curr = curr->next;
 
-      if (f && (prev->data != NULL))
+      if (a_free && (prev->data != NULL))
         delete (prev->data);
 
       free(prev);
     }
 
-    head = NULL;
-    tail = NULL;
-    len = 0;
+    m_head = NULL;
+    m_tail = NULL;
+    m_length = 0;
   }
 }
