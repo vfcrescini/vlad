@@ -423,7 +423,7 @@ int fact::truth(bool *a_truth)
 /* assuming s has enough memory allocation */
 void fact::print(char *a_str)
 {
-  if (a_init) {
+  if (a_str) {
     switch(m_type) {
       case VLAD_ATOM_HOLDS :
         sprintf(a_str,
