@@ -47,7 +47,7 @@
 
         \noindent \textbf{\emph{Identifiers}}
 
-          The most fundamental unit of Language $\cal{L}$ is an identifier. An
+          The most fundamental unit of language $\cal{L}$ is an identifier. An
           identifier is used to represent the different components of the
           language. 
     
@@ -197,7 +197,7 @@ always <exp1>
         sequence list is the same order in which they were added.
 
         The following four directives are the policy sequence manipulation
-        features of Language $\cal{L}$.
+        features of language $\cal{L}$.
 
         \emph{Adding an Update into the Sequence}. Defined policy updates are
         added into the sequence list through the syntax below.
@@ -261,7 +261,7 @@ always <exp1>
       \subsubsection{Domain Definition of Language ${\cal L}$}
 
         \begin{definition}
-          The domain of Language ${\cal L}$ is as follows:
+          The domain of language ${\cal L}$ is as follows:
 
           \begin{quote}
             \begin{math}
@@ -288,7 +288,7 @@ always <exp1>
           \end{itemize}
         \end{definition}
 
-        In addition to the domain ${\cal D}_{\cal L}$, Language ${\cal L}$
+        In addition to the domain ${\cal D}_{\cal L}$, language ${\cal L}$
         includes one additional ordered set: the sequence list $\psi$.
 
         \begin{definition}
@@ -316,10 +316,10 @@ always <exp1>
 
       \subsubsection{Language ${\cal L}^{*}$}
 
-        The elements of Language ${\cal L}$ must first be expressed as a Normal
+        The elements of language ${\cal L}$ must first be expressed as a Normal
         Logic Program before logical operations such as querying and updating
-        can be performed. The Language ${\cal L}^{*}$ is a direct translation
-        of Language ${\cal L}$, and as such, it contains the same elements and
+        can be performed. The language ${\cal L}^{*}$ is a direct translation
+        of language ${\cal L}$, and as such, it contains the same elements and
         has an equivalent expressive power.
 
       \subsubsection{Entity Definition of Language ${\cal L}^{*}$}
@@ -390,8 +390,8 @@ always <exp1>
 
       \subsubsection{Atoms, Facts and Expressions}
 
-        The principal difference between Language ${\cal L}$ and Language
-        ${\cal L}^{*}$ lies in the definition of atoms. Atoms in Language
+        The principal difference between language ${\cal L}$ and language
+        ${\cal L}^{*}$ lies in the definition of atoms. Atoms in language
         ${\cal L}^{*}$ includes an additional state parameter $\sigma$, thereby
         limiting the scope of the atom to a particular state in the policy
         base.
@@ -449,8 +449,8 @@ always <exp1>
 
         \noindent \textbf{\emph{Initial State Expression}}
 
-          To translate the initial state expressions of Language ${\cal L}$ to
-          Language ${\cal L}^{*}$, the state parameter $\sigma$ of every atom
+          To translate the initial state expressions of language ${\cal L}$ to
+          language ${\cal L}^{*}$, the state parameter $\sigma$ of every atom
           in the expression is replaced by the initial state $S_{0}$.
 
           \begin{definition}
@@ -476,7 +476,7 @@ always <exp1>
             where $m$, $n$, $o$ $\geq$ $0$
           \end{quote}
 
-          To translate a constraint from Language ${\cal L}$ to Language
+          To translate a constraint from language ${\cal L}$ to language
           ${\cal L}^{*}$, an instance of the constraint rule must be defined
           for each state $S_{0}$ to $S_{\Sigma}$.
 
@@ -514,7 +514,7 @@ always <exp1>
             where $m$, $n$ $\geq$ $0$
           \end{quote}
 
-          In Language ${\cal L}^{*}$, a distinction must be made between the
+          In language ${\cal L}^{*}$, a distinction must be made between the
           atoms before $U$ is applied and the atoms after $U$ has been applied.
           Furthermore, such distinction is also needed in the above rule to
           state that all facts $a_{i}$ ($0$ $\leq$ $i$ $\leq$ $m$) holds in
@@ -544,8 +544,8 @@ always <exp1>
       \subsubsection{Additional Constraints}
 
         In addition to the above translations, there are a few other implicit
-        constraints implied by Language ${\cal L}$ that needs to be explicitly
-        stated in Language ${\cal L}^{*}$.
+        constraints implied by language ${\cal L}$ that needs to be explicitly
+        stated in language ${\cal L}^{*}$.
 
         \noindent \textbf{\emph{Inheritance Rules}}
 
@@ -718,7 +718,7 @@ always <exp1>
 
           Intuitively, all facts in the current state that are not affected by
           a policy update should be carried over to the next state after the
-          update. In Language ${\cal L}^{*}$, this rule must be explicitly
+          update. In language ${\cal L}^{*}$, this rule must be explicitly
           stated as a constraint.
 
           \begin{definition}
