@@ -157,9 +157,12 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
 
   /* if the negation of the atom is already in, but is not implied by
    * any of the other atoms, we replace it. */
-  if ((new_atom = gnd_exp_get_ref(negated_atom, *exp)) != NULL)
+  if ((new_atom = gnd_exp_get_ref(negated_atom, *exp)) != NULL) {
     EPI_ATOM_NEGATE(*new_atom); 
-  else if ((EPI_ATOM_IS_CONST(atom) && atom.truth == epi_false)) {
+    return 0;
+  }
+
+  if ((EPI_ATOM_IS_CONST(atom) && atom.truth == epi_false)) {
     /* if the atom is a FALSE constant, we replace the whole expression
      * with a constant false */
     gnd_exp_purge(exp);

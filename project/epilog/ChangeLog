@@ -2,6 +2,9 @@
 
 	* exp/gnd_exp.c :
 
+	  - Fixed bug that adds an atom even though its negation is
+	    already there.
+
 	  - add function now allows an atom to be replaced by its negation
 	    IF AND ONLY IF it is not implied by any other atom.
 
