@@ -21,14 +21,15 @@
  */
 
 #include "gtkEmbedSSLDialog.h"
+#include "gtkEmbedConst.h"
 #include "nsCOMPtr.h"
 #include "nsXPComFactory.h"
 #include "nsIInterfaceRequestor.h"
-
-#define DEBUG
+#include "nsIPrompt.h"
+#include "nsString.h"
 
 #ifdef DEBUG
-  #include <stdio.h>
+#include <stdio.h>
 #endif
 
 NS_IMPL_ISUPPORTS8(gtkEmbedSSLDialog, nsINSSDialogs, 
@@ -39,8 +40,6 @@ NS_IMPL_ISUPPORTS8(gtkEmbedSSLDialog, nsINSSDialogs,
                                       nsIClientAuthDialogs,
                                       nsITokenDialogs,
                                       nsIDOMCryptoDialogs);
-
-static bool (*gSSLActiveCB)(nsIDOMWindow *, bool) = NULL;
 
 gtkEmbedSSLDialog::gtkEmbedSSLDialog()
 {
@@ -58,12 +57,8 @@ gtkEmbedSSLDialog::~gtkEmbedSSLDialog()
 #endif
 }
 
-bool gtkEmbedSSLDialog::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool ))
+bool gtkEmbedSSLDialog::Init()
 {
-  // store our static references so that every
-  // instance can have access to it
-  gSSLActiveCB  = aSSLActiveCB;
-
   return true;
 }
 
@@ -104,12 +99,14 @@ NS_IMETHODIMP gtkEmbedSSLDialog::AlertEnteringSecure(nsIInterfaceRequestor *aCTX
   fprintf(stderr, "gtkEmbedSSLDialog::AlertEnteringSecure()\n");
 #endif
 
-  nsCOMPtr<nsIDOMWindow> tempWindow = do_GetInterface(aCTX);
+  // since we do not have a reference to the originating window here,
+  // just send it through alert
 
-  if (!gSSLActiveCB)
-    return NS_OK;
+  nsCOMPtr<nsIPrompt> tempPrompt = do_GetInterface(aCTX);
 
-  (*gSSLActiveCB)(tempWindow, true);
+  if (tempPrompt.get())
+    tempPrompt->Alert(NS_LITERAL_STRING(DIALOG_INTERNAL_MESSAGE).get(),
+                      NS_LITERAL_STRING(DIALOG_SSL_ENTER_SECURE).get());
 
   return NS_OK;
 }
@@ -120,6 +117,12 @@ NS_IMETHODIMP gtkEmbedSSLDialog::AlertEnteringWeak(nsIInterfaceRequestor *aCTX)
   fprintf(stderr, "gtkEmbedSSLDialog::AlertEnteringWeak()\n");
 #endif
 
+  nsCOMPtr<nsIPrompt> tempPrompt = do_GetInterface(aCTX);
+
+  if (tempPrompt.get())
+    tempPrompt->Alert(NS_LITERAL_STRING(DIALOG_INTERNAL_MESSAGE).get(),
+                      NS_LITERAL_STRING(DIALOG_SSL_ENTER_WEAK).get());
+
   return NS_OK;
 }
 
@@ -129,12 +132,11 @@ NS_IMETHODIMP gtkEmbedSSLDialog::AlertLeavingSecure(nsIInterfaceRequestor *aCTX)
   fprintf(stderr, "gtkEmbedSSLDialog::AlertLeavingSecure()\n");
 #endif
 
-  nsCOMPtr<nsIDOMWindow> tempWindow = do_GetInterface(aCTX);
+  nsCOMPtr<nsIPrompt> tempPrompt = do_GetInterface(aCTX);
 
-  if (!gSSLActiveCB)
-    return NS_OK;
-
-  (*gSSLActiveCB)(tempWindow, false);
+  if (tempPrompt.get())
+    tempPrompt->Alert(NS_LITERAL_STRING(DIALOG_INTERNAL_MESSAGE).get(),
+                      NS_LITERAL_STRING(DIALOG_SSL_LEAVE_SECURE).get());
 
   return NS_OK;
 }

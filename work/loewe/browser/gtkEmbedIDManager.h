@@ -25,10 +25,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-
-#define IDMANAGER_MAX_DIGIT 3
-#define IDMANAGER_MAX_ID    64
-#define IDMANAGER_DELIMITER ','
+#include "gtkEmbedConst.h"
 
 class gtkEmbedIDManager
 {

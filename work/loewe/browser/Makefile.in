@@ -32,8 +32,10 @@ CPPSRCS		= \
 		gtkEmbedIDManager.cpp \
 		gtkEmbedSocketListener.cpp \
 		gtkEmbedPref.cpp \
+		gtkEmbedPrintManager.cpp \
 		gtkEmbedSSLDialog.cpp \
 		gtkEmbedPromptDialog.cpp \
+		gtkEmbedHelperAppDialog.cpp \
 		gtkEmbedDialogManager.cpp \
 		$(NULL) 
 
@@ -50,6 +52,7 @@ LIBS		= \
 
 include $(topsrcdir)/config/rules.mk
 
-CXXFLAGS        += $(MOZ_GTK_CFLAGS)
+CXXFLAGS	+= $(MOZ_GTK_CFLAGS)
 DEFINES		+= -D_BSD_SOURCE
 DEFINES		+= -D_GNU_SOURCE
+DEFINES		+= -D__STRICT_ANSI__

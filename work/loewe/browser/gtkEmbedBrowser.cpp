@@ -33,32 +33,8 @@
 #include "gtkEmbedSocketListener.h"
 #include "gtkEmbedPref.h"
 #include "gtkEmbedDialogManager.h"
-
-#define BROWSER_LISTENER_MAXPARAMS  16
-#define BROWSER_LISTENER_MAXLEN     1024
-#define BROWSER_LISTENER_DELIMITER  '\004'
-#define BROWSER_LISTENER_TERMINATOR '\000'
-
-#define BROWSER_WINDOW_MAX          64
-#define BROWSER_WINDOW_DEFAULT      2
-#define BROWSER_WINDOW_WIDTH        500
-#define BROWSER_WINDOW_HEIGHT       500
-
-#define BROWSER_WM_CLASSNAME        "L3WM_ID"
-#define BROWSER_WM_PREFIX           "Browser-View"
-
-#define BROWSER_FONT_DEFAULTSIZE    16
-#define BROWSER_FONT_MINSIZE        8
-#define BROWSER_FONT_MAXSIZE        72
-
-#define BROWSER_FIND_CASESENSITIVE  1
-#define BROWSER_FIND_WRAPAROUND     2
-#define BROWSER_FIND_BACKWARDS      4
-#define BROWSER_FIND_MAX            4
-
-#define BROWSER_PROF_NAME           "gtkEmbedBrowser"
-
-#define BROWSER_STARTUP_DEFAULTURL  "about:blank"
+#include "gtkEmbedPrintManager.h"
+#include "gtkEmbedConst.h"
 
 // browser id list
 static gtkEmbedIDManager *gIDManager = NULL;
@@ -85,8 +61,8 @@ static gtkEmbedPref *gPrefManager = NULL;
 // dialog manager
 static gtkEmbedDialogManager *gDialogManager = NULL;
 
-// shutdown flag
-static bool gShutdown = false;
+// print manager
+static gtkEmbedPrintManager *gPrintManager = NULL;
 
 // message pipes to the socket listener
 static int gIncomingFD = -1;
@@ -112,6 +88,7 @@ static void destroyBrowserCB(GtkMozEmbed *, gtkEmbedBrowser *);
 static gint openURICB(GtkMozEmbed *, const char *, gtkEmbedBrowser *);
 static void changeSizeCB(GtkMozEmbed *, gint, gint, gtkEmbedBrowser *);
 static void destroyCB(GtkWidget *, gtkEmbedBrowser *);
+static gboolean deleteCB(GtkWidget *, GdkEventAny *, gtkEmbedBrowser *);
 
 // incoming message functions
 static void stopRequest(gtkEmbedBrowser *);
@@ -131,10 +108,10 @@ static void fontSizeRequest(char *);
 static void enableCookiesRequest(int);
 static void findRequest(char *, int);
 static void purgeCacheRequest();
+static void printRequest(int, bool);
+static void enablePluginsRequest(int);
 
 /*
-static void enablePluginRequest(int);
-static void printRequest(int, char *);
 static void requestCertificateRequest(int);
 static void cleanupRequest();
 static void memUsageRequest();
@@ -166,32 +143,43 @@ static void memUsageReplySend(char *);
 */
 
 // dialog callback functions
-
-bool sslActivateCB(nsIDOMWindow *, bool);
-
+static bool sslActivateCB(nsIDOMWindow *, bool);
+static bool alertCB(nsIDOMWindow *, const char *);
 
 // utility functions
 static int getWindowID(nsIDOMWindow *aWindow);
 static void readMessage();
 static bool isIDValid(int);
+static int getNumberOfUsedWindows();
 static int getNextUsedWindow();
-static void destroyBrowsers();
 static void destroyAll();
 static void sendMessage(const char *);
-static gtkEmbedBrowser *createNewBrowser(guint32, guint32);
-static void initialiseBrowserArray();
+static bool getGeometryFromPrefs(gtkEmbedGeometry *);
+static bool getPluginStateFromPrefs();
+static void initialiseBrowserArray(bool);
 static void setVisible(gtkEmbedBrowser *, bool);
-static void setSize(gtkEmbedBrowser *, int, int);
-static void setPosition(gtkEmbedBrowser *, int, int);
+static void setGeometry(gtkEmbedBrowser *, gtkEmbedGeometry);
+static void setGeometry(gtkEmbedBrowser *, int, int, int, int);
+static bool setPluginFlag(gtkEmbedBrowser *, bool);
+static gtkEmbedBrowser *createNewBrowser(guint32, 
+                                         guint32, 
+                                         bool, 
+                                         bool,
+                                         gtkEmbedGeometry);
 static int parseMessage(char *,
                         char [BROWSER_LISTENER_MAXPARAMS][BROWSER_LISTENER_MAXLEN]);
 
 // main
 int main(int argc, char **argv)
 {
-  char *homePath    = NULL;
-  char *profilePath = NULL;
-  char *socketPath  = NULL;
+  GtkWidget *dummy     = NULL;
+  char *homePath       = NULL;
+  char *profilePath    = NULL;
+  char *socketPath     = NULL;
+  bool revertStateFlag = false;
+  int tempOption;
+
+  gMaxWin = BROWSER_WINDOW_DEFAULT;
 
   gtk_set_locale();
   gtk_init(&argc, &argv);
@@ -203,25 +191,39 @@ int main(int argc, char **argv)
     socketPath = g_strdup(optarg);
   else {
     fprintf(stderr, 
-            "usage %s -u <socket path> [-n <window num>] [url]\n", 
+            "usage %s -u <socket path> [-s] [-n <window num>] [url]\n", 
             argv[0]);
     return -1;
   }
 
-  // check if n was given, if not just use the default
-  if (getopt(argc, argv, "n:") == 'n' && optarg) {
-    // check if the given value for n is within the valid range
-    if (atoi(optarg) > 0 && atoi(optarg) < BROWSER_WINDOW_MAX)
-      gMaxWin = atoi(optarg);
-    else {
-      fprintf(stderr, 
-              "<window num> must be an integer between 0 and %d\n",
-              BROWSER_WINDOW_MAX);
-      return -1;
+  // get all the options
+  while ((tempOption = getopt(argc, argv, "n:s")) != -1) {
+    switch(tempOption) {
+      case 's' :
+        // revert to previous state
+        revertStateFlag = true;
+        break;
+      case 'n' :
+        // number of windows
+        if (optarg) {
+          if (atoi(optarg) > 0 && atoi(optarg) < BROWSER_WINDOW_MAX) {
+            gMaxWin = atoi(optarg);
+            break;
+          }
+          else {
+            fprintf(stderr, 
+                    "<window num> must be an integer between 0 and %d\n",
+                    BROWSER_WINDOW_MAX);
+            return -1;
+          }
+        }
+      default :
+        fprintf(stderr, 
+                "usage %s -u <socket path> [-s] [-n <window num>] [url]\n", 
+                argv[0]);
+        return -1;
     }
   }
-  else
-    gMaxWin = BROWSER_WINDOW_DEFAULT;
 
   // profile stuff
   homePath = g_getenv("HOME");
@@ -231,21 +233,43 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  profilePath = g_strdup_printf("%s/.%s", homePath, BROWSER_PROF_NAME);
+  profilePath = g_strdup_printf("%s/.%s", homePath, BROWSER_PROF_PATH);
   gtk_moz_embed_set_profile_path(profilePath, BROWSER_PROF_NAME);
 
+  // create a dummy one to initialise everything
+  dummy = gtk_moz_embed_new();
+ 
+  // pref stuff
+  gPrefManager = new gtkEmbedPref();
+
+  if (!gPrefManager || !gPrefManager->Init())
+    return -1;
+  
   // id manager stuff
   gIDManager = new gtkEmbedIDManager(gMaxWin);
 
   if (!gIDManager)
     return -1;
 
+  // print manager stuff
+  gPrintManager = new gtkEmbedPrintManager();
+
+  if (!gPrintManager || !gPrintManager->Init())
+    return -1;
+
+  // dialog stuff
+  gDialogManager = new gtkEmbedDialogManager();
+
+  if (!gDialogManager || !gDialogManager->Init(&sslActivateCB, &alertCB, NULL, NULL, NULL, NULL, NULL))
+    return -1;
+  
   // message buffer stuff
   gMessagePtr = gMessageBuffer;
   memset(gMessageBuffer, 0, BROWSER_LISTENER_MAXLEN);
 
   // socket stuff
   gSocketListener = new gtkEmbedSocketListener();
+
   if (!gSocketListener)
     return -1;
  
@@ -257,33 +281,21 @@ int main(int argc, char **argv)
   gdk_input_add(gIncomingFD, GDK_INPUT_READ, incomingMessageCB, nsnull);
 
   // browser stuff
-  initialiseBrowserArray();
-
-  // dialog stuff
-  gDialogManager = new gtkEmbedDialogManager();
-
-  if (!gDialogManager)
-    return -1;
-
-  gDialogManager->Init(&sslActivateCB, NULL, NULL, NULL, NULL, NULL, NULL);
+  initialiseBrowserArray(revertStateFlag);
 
   // open the default window
   gCurrentIndex = 0;
   setVisible(gBrowserArray[0], true);
-  windowOpenedSend(1);
 
   // load startup url, if any
   if (argv[optind])
     openURLRequest(argv[optind], 1, NULL);  
+  else if (revertStateFlag && gPrefManager && gPrefManager->GetCharPref("browser.history.last_page_visited"))
+    openURLRequest(gPrefManager->GetCharPref("browser.history.last_page_visited"), 1, NULL);
   else
     openURLRequest(BROWSER_STARTUP_DEFAULTURL, 1, NULL);
 
-  // pref stuff
-  gPrefManager = new gtkEmbedPref();
-
-  if (!gPrefManager || !gPrefManager->Init())
-    return -1;
-
+  // main event loop
   gtk_main();
 
   destroyAll();
@@ -295,6 +307,8 @@ int main(int argc, char **argv)
     g_free(profilePath);
   if (socketPath)
     g_free(socketPath);
+  if (dummy)
+    g_free(dummy);
 
   return 0;
 }
@@ -336,13 +350,17 @@ static void readMessage()
   paramCount = parseMessage(gMessageBuffer, tempArray);
 
   if (paramCount <= 0) {
-    errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
+    errorMessageSend(-1, BROWSER_ERROR_INVALID_MESSAGE);
     return;
   }
 
   if (!strcmp(tempArray[0], "toggleView")) {
-    if (paramCount == 2 && isIDValid(atoi(tempArray[1])))
-      toggleViewRequest(atoi(tempArray[1]));
+    if (paramCount == 2) {
+      if (!isIDValid(atoi(tempArray[1])))
+        errorMessageSend(-1, BROWSER_ERROR_VIEW_NOT_AVAILABLE);
+      else
+        toggleViewRequest(atoi(tempArray[1]));
+    }
     else if (paramCount == 1)
       toggleViewRequest(0);
     else
@@ -355,12 +373,18 @@ static void readMessage()
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
   }
   else if (!strcmp(tempArray[0], "openURL")) { 
-    if (paramCount == 4 && (isIDValid(atoi(tempArray[2])) ||
-                            atoi(tempArray[2]) == 0))
-      openURLRequest(tempArray[1], atoi(tempArray[2]), tempArray[3]);
-    else if (paramCount == 3 && (isIDValid(atoi(tempArray[2])) ||
-                                 atoi(tempArray[2]) == 0))
-      openURLRequest(tempArray[1], atoi(tempArray[2]), "");
+    if (paramCount == 4) {
+      if (!isIDValid(atoi(tempArray[2])) && atoi(tempArray[2]) != 0)
+        errorMessageSend(-1, BROWSER_ERROR_VIEW_NOT_AVAILABLE);
+      else
+        openURLRequest(tempArray[1], atoi(tempArray[2]), tempArray[3]);
+    }
+    else if (paramCount == 3) {
+      if (!isIDValid(atoi(tempArray[2])) && atoi(tempArray[2]) != 0)
+        errorMessageSend(-1, BROWSER_ERROR_VIEW_NOT_AVAILABLE);
+      else
+        openURLRequest(tempArray[1], atoi(tempArray[2]), "");
+    }
     else if (paramCount == 2)
       openURLRequest(tempArray[1], 0, "");
     else
@@ -377,8 +401,12 @@ static void readMessage()
   else if (!strcmp(tempArray[0], "getURL")) {
     if (paramCount == 1)
       getURLRequest(gCurrentIndex + 1);
-    else if (paramCount == 2 && isIDValid(atoi(tempArray[1])))
-      getURLRequest(atoi(tempArray[1]));
+    else if (paramCount == 2) {
+      if (!isIDValid(atoi(tempArray[1])))
+        errorMessageSend(-1, BROWSER_ERROR_VIEW_NOT_AVAILABLE);
+      else
+        getURLRequest(atoi(tempArray[1]));
+    }
     else
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
   }
@@ -402,20 +430,26 @@ static void readMessage()
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
   }
   else if (!strcmp(tempArray[0], "enableJScript")) {
-    if (paramCount == 2 && (atoi(tempArray[1]) == -1 || atoi(tempArray[1]) == 0))
-      enableJScriptRequest(atoi(tempArray[1]) == -1);
+    if (paramCount == 2 && (atoi(tempArray[1]) == 1 || atoi(tempArray[1]) == 0))
+      enableJScriptRequest(atoi(tempArray[1]) == 1);
+    else
+      errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
+  }
+  else if (!strcmp(tempArray[0], "enablePlugins")) {
+    if (paramCount == 2 && (atoi(tempArray[1]) == 1 || atoi(tempArray[1]) == 0))
+      enablePluginsRequest(atoi(tempArray[1]) == 1);
     else
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
   }
   else if (!strcmp(tempArray[0], "enableJava")) {
-    if (paramCount == 2 && (atoi(tempArray[1]) == -1 || atoi(tempArray[1]) == 0))
-      enableJavaRequest(atoi(tempArray[1]) == -1);
+    if (paramCount == 2 && (atoi(tempArray[1]) == 1 || atoi(tempArray[1]) == 0))
+      enableJavaRequest(atoi(tempArray[1]) == 1);
     else
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
   }
   else if (!strcmp(tempArray[0], "enableCookies")) {
-    if (paramCount == 2 && (atoi(tempArray[1]) == -1 || atoi(tempArray[1]) == 0))
-      enableCookiesRequest(atoi(tempArray[1]) == -1);
+    if (paramCount == 2 && (atoi(tempArray[1]) == 1 || atoi(tempArray[1]) == 0))
+      enableCookiesRequest(atoi(tempArray[1]) == 1);
     else
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
   }
@@ -434,11 +468,30 @@ static void readMessage()
   else if (!strcmp(tempArray[0], "purgeCache")) {
     purgeCacheRequest();
   }
+  else if (!strcmp(tempArray[0], "print")) {
+    if (paramCount == 3) {
+      if (!isIDValid(atoi(tempArray[1])))
+        errorMessageSend(-1, BROWSER_ERROR_VIEW_NOT_AVAILABLE);
+      else if (atoi(tempArray[2]) != 1 && atoi(tempArray[2]) != 2)
+        errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
+      else
+        printRequest(atoi(tempArray[1]), atoi(tempArray[2]) == 1);
+    }
+    else
+      errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
+  }
   else
     errorMessageSend(-1, BROWSER_ERROR_INVALID_MESSAGE);
 }
 
 // callback functions from the embedded widget
+
+gboolean deleteCB(GtkWidget *aWidget, GdkEventAny *aEvent, gtkEmbedBrowser *aBrowser)
+{
+  gtk_widget_destroy(aWidget);
+  return true;
+}
+
 void changeLocationCB(GtkMozEmbed *aEmbed, gtkEmbedBrowser *aBrowser)
 {
   if (!aEmbed || !aBrowser) {
@@ -495,6 +548,15 @@ void loadEndCB(GtkMozEmbed *aEmbed, gtkEmbedBrowser *aBrowser)
 
   // set load flag
   aBrowser->loadingFlag = false;
+
+  // save this url into the prefs as the last page visited
+  if (!gPrefManager) {
+    errorMessageSend(-1, BROWSER_ERROR_GENERAL);
+    return;
+  }
+
+  gPrefManager->SetCharPref("browser.history.last_page_visited",
+                            gtk_moz_embed_get_location(aEmbed));
 }
 
 void changeNetStateCB(GtkMozEmbed *aEmbed, 
@@ -547,7 +609,7 @@ void changeProgressCB(GtkMozEmbed *aEmbed,
                       gtkEmbedBrowser *aBrowser)
 {
   int tempPercentage;
-  char tempStatus[BROWSER_LISTENER_MAXLEN];
+  char *tempStatus = NULL;
 
   if (!aEmbed || !aBrowser) {
     errorMessageSend(-1, BROWSER_ERROR_GENERAL);
@@ -556,13 +618,14 @@ void changeProgressCB(GtkMozEmbed *aEmbed,
 
   if (aMax < 1) {
     tempPercentage = 0;
-    sprintf(tempStatus, "%d bytes loaded", aCurr);
+    tempStatus = g_strdup_printf("%d bytes loaded", aCurr);
   }
   else {
     tempPercentage = (aCurr > aMax) ? 100 : (aCurr * 100) / aMax;
-    sprintf(tempStatus, 
-            "%d%% complete, %d bytes of %d loaded", 
-            tempPercentage, aCurr, aMax);
+    tempStatus = g_strdup_printf("%d%% complete, %d bytes of %d loaded", 
+                                 tempPercentage,
+                                 aCurr, 
+                                 aMax);
   }
 
   loadProgressSend(aBrowser->browserID, tempPercentage);
@@ -620,12 +683,10 @@ void newWindowCB(GtkMozEmbed *aEmbed,
   // give a reference to the embeded widget back
   *aRetval = GTK_MOZ_EMBED(gBrowserArray[tempIndex]->mozEmbed);
 
-  // if that particular window doesn't exist yet, 
-  // send a window opened message
-  if (!gBrowserArray[tempIndex]->usedFlag) {
-    gBrowserArray[tempIndex]->usedFlag = true;
-    windowOpenedSend(tempIndex + 1);
-  }
+  // send a windowOpened message regarless of whether the window
+  // was already open or not
+  gBrowserArray[tempIndex]->usedFlag = true;
+  windowOpenedSend(tempIndex + 1);
 }
 
 void visibilityCB(GtkMozEmbed *aEmbed, 
@@ -671,290 +732,301 @@ void changeSizeCB(GtkMozEmbed *aEmbed,
 void destroyCB(GtkWidget *aWidget, gtkEmbedBrowser *aBrowser)
 {
   int tempID;
-  int tempIndex;
+  gtkEmbedGeometry tempGeometry;
 
   if (!aWidget || !aBrowser) {
     errorMessageSend(-1, BROWSER_ERROR_GENERAL);
     return;
   }
 
-  // check to see if shutdown is in progress to prevent
-  // destroying stuff twice
-  if (gShutdown)
-    return;
+  // get the id of this browser
+  tempID = aBrowser->browserID;
+
+  // free up the memory used by this browser
+  g_free(gBrowserArray[tempID - 1]);
+
+  // get the default or preferred geometry
+  getGeometryFromPrefs(&tempGeometry);
+
+  // create a new unused browser
+  gBrowserArray[tempID - 1] = createNewBrowser(GTK_MOZ_EMBED_FLAG_DEFAULTCHROME, 
+                                               tempID,
+                                               false,
+                                               getPluginStateFromPrefs(),
+                                               tempGeometry);
 
   // if this was the only opened window, we can shutdown
-  if (getNextUsedWindow() + 1 == aBrowser->browserID) {
-    gShutdown = true;
-    destroyBrowsers();
+  if (getNumberOfUsedWindows() <= 0) {
     gtk_main_quit();
     return;
   }
-
-  // if it's not the only window, silently recreate it
-  tempID    = aBrowser->browserID;
-  tempIndex = tempID - 1;
-
-  if (tempIndex < 0)
-    return;
-
-  // destroy the old one and create a new one
-  gtk_widget_destroy(gBrowserArray[tempIndex]->topLevelWindow);
-  g_free(gBrowserArray[tempIndex]);
-  gBrowserArray[tempIndex] = createNewBrowser(GTK_MOZ_EMBED_FLAG_DEFAULTCHROME, 
-                                              tempID);
 }
 
 // outgoing messages
 
 static void errorMessageSend(int aID, int aErrorCode)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
   
-  sprintf(tempString, 
-          "error%c%d%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          aErrorCode,
-          BROWSER_LISTENER_TERMINATOR);
-
+  tempString = g_strdup_printf("error%c%d%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               aErrorCode,
+                               BROWSER_LISTENER_TERMINATOR);
   sendMessage(tempString); 
+  g_free(tempString);
 }
 
 static void windowOpenedSend(int aID)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString,
-          "windowOpened%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("windowOpened%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void enableForwardSend(int aID, bool aFlag)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString, 
-          "enableForward%c%d%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          (aFlag) ? 1 : 2,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("enableForward%c%d%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aFlag) ? 1 : 2,
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void enableBackSend(int aID, bool aFlag)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString, 
-          "enableBack%c%d%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          (aFlag) ? 1 : 2,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("enableBack%c%d%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aFlag) ? 1 : 2,
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void enableReloadSend(int aID, bool aFlag)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString, 
-          "enableReload%c%d%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          (aFlag) ? 1 : 2,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("enableReload%c%d%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aFlag) ? 1 : 2,
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void enableStopSend(int aID, bool aFlag)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString, 
-          "enableStop%c%d%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          (aFlag) ? 1 : 2,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("enableStop%c%d%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aFlag) ? 1 : 2,
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void setLocationBarURLSend(int aID, const char *aURL)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString,
-          "setLocationBarURL%c%d%c%s%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          aURL,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("setLocationBarURL%c%d%c%s%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aURL ? aURL : ""),
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void getURLSend(int aID, const char *aURL)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString,
-          "getURLReply%c%d%c%s%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          aURL,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("getURLReply%c%d%c%s%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aURL ? aURL : ""),
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void toggleViewSend(int aID)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString,
-          "toggleViewReply%c%d%c", 
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_TERMINATOR);
-          sendMessage(tempString);
+  tempString = g_strdup_printf("toggleViewReply%c%d%c", 
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_TERMINATOR);
+  sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void pongSend()
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString, "pong%c", BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("pong%c", BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void loadStartSend(int aWindow, const char *aURL)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString, 
-          "loadingStarted%c%d%c%s%c",
-          BROWSER_LISTENER_DELIMITER,
-          aWindow,
-          BROWSER_LISTENER_DELIMITER,
-          aURL,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("loadingStarted%c%d%c%s%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aWindow,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aURL ? aURL : ""),
+                               BROWSER_LISTENER_TERMINATOR);
   
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void loadEndSend(int aID, const char *aURL)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString, 
-          "loadingFinished%c%d%c%s%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          aURL,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("loadingFinished%c%d%c%s%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aURL ? aURL : ""),
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void loadProgressSend(int aID, int aPercent)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
   
-  sprintf(tempString,
-          "loadingProgress%c%d%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          aPercent,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("loadingProgress%c%d%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               aPercent,
+                               BROWSER_LISTENER_TERMINATOR);
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void statusSend(int aID, int aMessageNum, const char *aStatus)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
   if (aStatus == NULL)
     return;
 
-  sprintf(tempString, 
-          "statusMessage%c%d%c%d%c%s%c", 
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          aMessageNum,
-          BROWSER_LISTENER_DELIMITER,
-          aStatus,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("statusMessage%c%d%c%d%c%s%c", 
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               aMessageNum,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aStatus ? aStatus : ""),
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void setTitleSend(int aID, const char *aTitle)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString,
-          "setTitle%c%d%c%s%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          aTitle,
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("setTitle%c%d%c%s%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aTitle ? aTitle : ""),
+                               BROWSER_LISTENER_TERMINATOR);
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void findReplySend(const char *aString, bool aFound)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
   if (!aString)
     return;
   
-  sprintf(tempString,
-          "findReply%c%s%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aString,
-          BROWSER_LISTENER_DELIMITER,
-          (aFound ? 1 : 0),
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("findReply%c%s%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               (aString ? aString : ""),
+                               BROWSER_LISTENER_DELIMITER,
+                               (aFound ? 1 : 0),
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
 }
 
 static void sslActiveSend(int aID, int aFlag)
 {
-  char tempString[BROWSER_LISTENER_MAXLEN];
+  char *tempString;
 
-  sprintf(tempString,
-          "sslActive%c%d%c%d%c",
-          BROWSER_LISTENER_DELIMITER,
-          aID,
-          BROWSER_LISTENER_DELIMITER,
-          (aFlag ? 1 : 0),
-          BROWSER_LISTENER_TERMINATOR);
+  tempString = g_strdup_printf("sslActive%c%d%c%d%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aFlag ? 1 : 2),
+                               BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
+  g_free(tempString);
+}
+
+static void alertSend(int aID, const char *aText)
+{
+  char *tempString;
+
+  tempString = g_strdup_printf("alert%c%d%c%s%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               (aText ? aText : ""),
+                               BROWSER_LISTENER_TERMINATOR);
+
+  sendMessage(tempString);
+  g_free(tempString);
 }
 
 /*
@@ -978,8 +1050,18 @@ static void setGeometryRequest(int aX, int aY, int aWidth, int aHeight)
     return;
   }
 
-  setPosition(gBrowserArray[gCurrentIndex], aX, aY);
-  setSize(gBrowserArray[gCurrentIndex], aWidth, aHeight);
+  setGeometry(gBrowserArray[gCurrentIndex], aX, aY, aWidth, aHeight);
+
+  // save this geometry in prefs
+  if (!gPrefManager) {
+    errorMessageSend(-1, BROWSER_ERROR_GENERAL);
+    return;
+  }
+
+  gPrefManager->SetIntPref("browser.geometry.x",      aX);
+  gPrefManager->SetIntPref("browser.geometry.y",      aY);
+  gPrefManager->SetIntPref("browser.geometry.width",  aWidth);
+  gPrefManager->SetIntPref("browser.geometry.height", aHeight);
 }
 
 static void getURLRequest(int aID)
@@ -1096,10 +1178,6 @@ static void pingRequest()
 
 static void shutdownRequest()
 {
-  // set the shutdown flag
-  gShutdown = true;
-
-  destroyBrowsers();
   gtk_main_quit();
   return;
 }
@@ -1295,13 +1373,42 @@ static void purgeCacheRequest()
   tempService->EvictEntries(nsICache::STORE_ANYWHERE);
 }
 
+static void printRequest(int aID, bool aFlag)
+{
+  if (!gPrintManager) {
+    errorMessageSend(-1, BROWSER_ERROR_GENERAL);
+    return;
+  }
+ 
+  if (!gBrowserArray || !gBrowserArray[aID - 1]) {
+    errorMessageSend(-1, BROWSER_ERROR_GENERAL);
+    return;
+  }
+
+  if (!gPrintManager->Print(gBrowserArray[aID - 1]->webBrowser, aFlag)) {
+    errorMessageSend(-1, BROWSER_ERROR_CANT_PRINT);
+    return;
+  }
+}
+
+static void enablePluginsRequest(int aFlag)
+{
+  int i;
+
+  if (!gBrowserArray || !gPrefManager) {
+    errorMessageSend(-1, BROWSER_ERROR_GENERAL);
+    return;
+  }
+
+  // save the new flag in prefs
+  gPrefManager->SetBoolPref("plugins.enabled", (aFlag == 0) ? false : true);
+
+  // go through all the windows and set the flag
+  for (i = 0; i < gMaxWin; i++) 
+    setPluginFlag(gBrowserArray[i], (aFlag == 0) ? false : true);
+}
+
 /*
-static void enablePluginRequest(int aFlag)
-{
-}
-static void printRequest(int aID, char *aFlag)
-{
-}
 static void requestCertificateRequest(int aID)
 {
 }
@@ -1317,9 +1424,9 @@ static void memUsageRequest()
 
 bool sslActivateCB(nsIDOMWindow *aWindow, bool aFlag)
 {
-  int tempID;
+  int tempID = getWindowID(aWindow);
 
-  if (aWindow && isIDValid((tempID = getWindowID(aWindow))))
+  if (isIDValid(tempID))
     sslActiveSend(tempID, aFlag);
   else
     errorMessageSend(-1, BROWSER_ERROR_GENERAL);
@@ -1327,8 +1434,46 @@ bool sslActivateCB(nsIDOMWindow *aWindow, bool aFlag)
   return true;
 }
 
+static bool alertCB(nsIDOMWindow *aWindow, const char *aText)
+{
+  int tempID = getWindowID(aWindow);
+
+  if (isIDValid(tempID))
+    alertSend(tempID, aText);
+  else
+    errorMessageSend(-1, BROWSER_ERROR_GENERAL);
+
+  return true;
+}
 
 // utility functions
+
+// sets the plugin state into the browser
+static bool setPluginFlag(gtkEmbedBrowser *aBrowser, bool aFlag)
+{
+  nsCOMPtr<nsIWebBrowserSetup> browserSetup = NULL;
+
+  if (!aBrowser || !aBrowser->webBrowser)
+    return false;
+
+  browserSetup = do_QueryInterface(aBrowser->webBrowser);
+
+  if (!browserSetup)
+    return false;
+
+  browserSetup->SetProperty(nsIWebBrowserSetup::SETUP_ALLOW_PLUGINS, aFlag);
+
+  return true;
+}
+
+// returns the plugin state from prefs (enabled/disabled)
+static bool getPluginStateFromPrefs()
+{
+  if (!gPrefManager)
+    return false;
+
+  return gPrefManager->GetBoolPref("plugins.enabled");
+}
 
 // returns the id of the window, 0 if not found
 static int getWindowID(nsIDOMWindow *aWindow)
@@ -1350,20 +1495,40 @@ static int getWindowID(nsIDOMWindow *aWindow)
   return 0;
 }
 
+// returns the number of used window
+static int getNumberOfUsedWindows()
+{
+  int i;
+  int count = 0;
+
+  if (!gBrowserArray)
+    return 0;
+
+  for (i = 0; i < gMaxWin; i++)
+    if (gBrowserArray[i] && gBrowserArray[i]->usedFlag)
+      count++;
+
+  return count;
+}
+
+
 // returns the index of the next used window
 static int getNextUsedWindow()
 {
   int i;
 
+  if (!gBrowserArray)
+    return gCurrentIndex;
+
   // go through the windows after the current one
   for (i = gCurrentIndex + 1; i < gMaxWin; i++) {
-    if (gBrowserArray[i]->usedFlag)
+    if (gBrowserArray && gBrowserArray[i]->usedFlag)
       return i;
   }
 
   // went past, now go through windows from 0 to the current one
   for (i = 0; i <= gCurrentIndex; i++) {
-    if (gBrowserArray[i]->usedFlag)
+    if (gBrowserArray && gBrowserArray[i]->usedFlag)
       return i;
   }
 
@@ -1379,27 +1544,19 @@ static bool isIDValid(int aID)
   return (aID > 0 && aID <= gMaxWin);
 }
 
-static void destroyBrowsers()
+static void destroyAll()
 {
   int i;
 
-  // destroy all our windows
+  // free the browser array
   if (gBrowserArray) {
     for (i = 0; i < gMaxWin; i++) {
       if (gBrowserArray[i] && gBrowserArray[i]->topLevelWindow)
-        gtk_widget_destroy(gBrowserArray[i]->topLevelWindow);
-
-      if (gBrowserArray[i])
         g_free(gBrowserArray[i]);
     }
-
     free(gBrowserArray);
-    gBrowserArray = NULL;
   }
-}
 
-static void destroyAll()
-{
   // destroy the global refs  
   if (gSocketListener)
     delete gSocketListener;
@@ -1414,15 +1571,20 @@ static void destroyAll()
     delete gDialogManager;
 }
 
-static gtkEmbedBrowser *createNewBrowser(guint32 aChromeMask, guint32 aID)
+static gtkEmbedBrowser *createNewBrowser(guint32 aChromeMask, 
+                                         guint32 aID, 
+                                         bool aUsedFlag,
+                                         bool aPluginState,
+                                         gtkEmbedGeometry aGeometry)
 {
-  gtkEmbedBrowser *newBrowser      = NULL;
-  char            *tempClassString = NULL;
+  gtkEmbedBrowser *newBrowser               = NULL;
+  nsCOMPtr<nsIWebBrowserSetup> browserSetup = NULL;
+  char *tempClassString                     = NULL;
 
   newBrowser = g_new0(gtkEmbedBrowser, 1);
 
   newBrowser->browserID      = aID;
-  newBrowser->usedFlag       = true;
+  newBrowser->usedFlag       = aUsedFlag;
   newBrowser->loadingFlag    = false;
   newBrowser->topLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   newBrowser->topLevelVBox   = gtk_vbox_new(true, 0);
@@ -1489,16 +1651,14 @@ static gtkEmbedBrowser *createNewBrowser(guint32 aChromeMask, guint32 aID)
                      GTK_SIGNAL_FUNC(changeSizeCB), newBrowser);
   gtk_signal_connect(GTK_OBJECT(newBrowser->mozEmbed), "destroy",
                      GTK_SIGNAL_FUNC(destroyCB), newBrowser);
+  gtk_signal_connect(GTK_OBJECT(newBrowser->topLevelWindow), "delete_event",
+                     GTK_SIGNAL_FUNC(deleteCB), newBrowser);
 
   if (aChromeMask == GTK_MOZ_EMBED_FLAG_DEFAULTCHROME)
     aChromeMask = GTK_MOZ_EMBED_FLAG_ALLCHROME;
 
   gtk_moz_embed_set_chrome_mask(GTK_MOZ_EMBED(newBrowser->mozEmbed),
                                 aChromeMask);
-
-  setSize(newBrowser, 
-          BROWSER_WINDOW_WIDTH, 
-          BROWSER_WINDOW_HEIGHT);
 
   // show the widgets except the toplevel window
   gtk_widget_show(newBrowser->mozEmbed);
@@ -1514,37 +1674,108 @@ static gtkEmbedBrowser *createNewBrowser(guint32 aChromeMask, guint32 aID)
   gtk_moz_embed_get_nsIWebBrowser(GTK_MOZ_EMBED(newBrowser->mozEmbed),
                                   &(newBrowser->webBrowser));
 
+  // set the plugin state
+  setPluginFlag(newBrowser, aPluginState);
+
+  // set size and position
+  setGeometry(newBrowser, aGeometry);
+
   return newBrowser;  
 }
 
-void initialiseBrowserArray()
+bool getGeometryFromPrefs(gtkEmbedGeometry *aGeometry)
+{
+  if (!aGeometry)
+    return false;
+
+  // initialise with default values
+  aGeometry->x      = BROWSER_WINDOW_X;
+  aGeometry->y      = BROWSER_WINDOW_Y;
+  aGeometry->width  = BROWSER_WINDOW_WIDTH;
+  aGeometry->height = BROWSER_WINDOW_HEIGHT;
+
+  if (!gPrefManager)
+    return false;
+
+  // retrieve values from prefs
+  aGeometry->x      = gPrefManager->GetIntPref("browser.geometry.x");
+  aGeometry->y      = gPrefManager->GetIntPref("browser.geometry.y");
+  aGeometry->width  = gPrefManager->GetIntPref("browser.geometry.width");
+  aGeometry->height = gPrefManager->GetIntPref("browser.geometry.height");
+ 
+  // now check if the prefs have reasonable values
+  if (aGeometry->x < 0)
+    aGeometry->x = BROWSER_WINDOW_X;
+  if (aGeometry->y < 0)
+    aGeometry->y = BROWSER_WINDOW_Y;
+  if (aGeometry->width <= 0)
+    aGeometry->width = BROWSER_WINDOW_WIDTH;
+  if (aGeometry->height <= 0)
+    aGeometry->height = BROWSER_WINDOW_HEIGHT; 
+
+  return true;
+}
+
+void initialiseBrowserArray(bool aRevertStateFlag)
 {
   int i;
+  gtkEmbedGeometry tempGeometry;
 
-  // allocate memory
+  // if the revert state flag is true, retrieve geometry
+  // from prefs, otherwise just set to default
+  if (aRevertStateFlag)
+    getGeometryFromPrefs(&tempGeometry);
+  else {
+    tempGeometry.x      = BROWSER_WINDOW_X;
+    tempGeometry.y      = BROWSER_WINDOW_Y;
+    tempGeometry.width  = BROWSER_WINDOW_WIDTH;
+    tempGeometry.height = BROWSER_WINDOW_HEIGHT;
+  }
+
+  // allocate memory to the list
   gBrowserArray = (gtkEmbedBrowser **) malloc(sizeof(gtkEmbedBrowser *) * gMaxWin);
+
   // create browser
-  for (i = 0; i < gMaxWin; i++)
-    gBrowserArray[i] = createNewBrowser(GTK_MOZ_EMBED_FLAG_DEFAULTCHROME, i + 1);
+  for (i = 0; i < gMaxWin; i++) {
+    gBrowserArray[i] = createNewBrowser(GTK_MOZ_EMBED_FLAG_DEFAULTCHROME, 
+                                        i + 1, 
+                                        true,
+                                        getPluginStateFromPrefs(),
+                                        tempGeometry);
+
+    // send a window opened message for every window
+    windowOpenedSend(i + 1);
+  }
 }
 
-void setSize(gtkEmbedBrowser *aBrowser, int aWidth, int aHeight)
+void setGeometry(gtkEmbedBrowser *aBrowser, gtkEmbedGeometry aGeometry)
 {
-  if (!aBrowser || aWidth <= 0 || aHeight <= 0)
+  if (!aBrowser || 
+      aGeometry.x < 0 || 
+      aGeometry.y < 0 || 
+      aGeometry.width <= 0 ||
+      aGeometry.height <= 0)
     return;
 
-  // have to set all of our widgets
-  gtk_widget_set_usize(aBrowser->mozEmbed, aWidth, aHeight);
-  gtk_widget_set_usize(aBrowser->topLevelVBox, aWidth, aHeight);
-  gtk_widget_set_usize(aBrowser->topLevelWindow, aWidth, aHeight);
+  // set size
+  gtk_widget_set_usize(aBrowser->mozEmbed, aGeometry.width, aGeometry.height);
+  gtk_widget_set_usize(aBrowser->topLevelVBox, aGeometry.width, aGeometry.height);
+  gtk_widget_set_usize(aBrowser->topLevelWindow, aGeometry.width, aGeometry.height);
+ 
+  // set position
+  gtk_widget_set_uposition(aBrowser->topLevelWindow, aGeometry.x, aGeometry.y);
 }
 
-void setPosition(gtkEmbedBrowser *aBrowser, int aX, int aY)
+void setGeometry(gtkEmbedBrowser *aBrowser, int aX, int aY, int aWidth, int aHeight)
 {
-  if (!aBrowser || aX < 0 || aY < 0)
-    return;
+  gtkEmbedGeometry tempGeometry;
 
-  gtk_widget_set_uposition(aBrowser->topLevelWindow, aX, aY);
+  tempGeometry.x      = aX;
+  tempGeometry.y      = aY;
+  tempGeometry.width  = aWidth;
+  tempGeometry.height = aHeight;
+
+  setGeometry(aBrowser, tempGeometry);
 }
 
 void setVisible(gtkEmbedBrowser *aBrowser, bool aVisible)

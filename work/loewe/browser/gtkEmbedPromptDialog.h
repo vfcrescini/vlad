@@ -36,7 +36,8 @@ class gtkEmbedPromptDialog : public nsIPromptService
     gtkEmbedPromptDialog();
     virtual ~gtkEmbedPromptDialog();
 
-    bool Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
+    bool Init(bool (*aSSLSecureCB)(nsIDOMWindow *, bool),
+              bool (*aAlertCB)(nsIDOMWindow *, const char *),
               bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
               bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
 	      bool (*aPasswdCB)(nsIDOMWindow *, const char * , const char *, bool *),

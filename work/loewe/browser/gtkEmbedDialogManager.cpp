@@ -25,11 +25,13 @@
 #include "nsIComponentManager.h"
 #include "gtkEmbedDialogManager.h"
 
-#define DIALOGMANAGER_PROMPTDIALOG_CONTRACTID "@mozilla.org/embedcomp/prompt-service;1"
-#define DIALOGMANAGER_SSLDIALOG_CONTRACTID    "@mozilla.org/nsNSSDialogs;1"
+#define DIALOGMANAGER_PROMPTDIALOG_CONTRACTID    "@mozilla.org/embedcomp/prompt-service;1"
+#define DIALOGMANAGER_SSLDIALOG_CONTRACTID       "@mozilla.org/nsNSSDialogs;1"
+#define DIALOGMANAGER_HELPERAPPDIALOG_CONTRACTID "@mozilla.org/helperapplauncherdialog;1"
 
 static NS_DEFINE_CID(kPromptDialogCID, NS_PROMPTSERVICE_CID);
 static NS_DEFINE_CID(kSSLDialogCID, NS_NSSDIALOGS_CID);
+static NS_DEFINE_CID(kHelperAppDialogCID, NS_HELPERAPPLAUNCHERDIALOG_CID);
 
 gtkEmbedDialogManager::gtkEmbedDialogManager()
 {
@@ -54,10 +56,12 @@ bool gtkEmbedDialogManager::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool),
                                  bool (*aUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *),
                                  bool (*aSelectCB)(nsIDOMWindow *, const char **, int *, bool *))
 {
-  nsCOMPtr<nsIFactory> promptDialog;
-  nsCOMPtr<nsIFactory> sslDialog;
-  gtkEmbedPromptDialog *promptDialogInstance;
-  gtkEmbedSSLDialog    *sslDialogInstance;
+  nsCOMPtr<nsIFactory>    promptDialog;
+  nsCOMPtr<nsIFactory>    sslDialog;
+  nsCOMPtr<nsIFactory>    helperAppDialog;
+  gtkEmbedPromptDialog    *promptDialogInstance;
+  gtkEmbedSSLDialog       *sslDialogInstance;
+  gtkEmbedHelperAppDialog *helperAppDialogInstance;
 
   // register our own implementation of nsIPromptService
   if (NS_FAILED(newPromptDialogFactory(getter_AddRefs(promptDialog))))
@@ -69,7 +73,7 @@ bool gtkEmbedDialogManager::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool),
                                       promptDialog,
                                       true);
 
-  // register our own implementation of nsINSSDialogs.h
+  // register our own implementation of nsINSSDialogs
   if (NS_FAILED(newSSLDialogFactory(getter_AddRefs(sslDialog))))
     return false; 
 
@@ -79,27 +83,40 @@ bool gtkEmbedDialogManager::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool),
                                       sslDialog,
                                       true);
 
-  // create an instance of each so we can give a static reference
-  // to our callback functions
-  promptDialogInstance = new gtkEmbedPromptDialog();
-  sslDialogInstance    = new gtkEmbedSSLDialog();  
+  // register our own implementation of nsIHelperAppLauncherDialog
+  if (NS_FAILED(newHelperAppDialogFactory(getter_AddRefs(helperAppDialog))))
+    return false; 
 
-  if (!promptDialogInstance || !sslDialogInstance)
+  nsComponentManager::RegisterFactory(kHelperAppDialogCID,
+                                      "Helper App Dialog",
+                                      DIALOGMANAGER_HELPERAPPDIALOG_CONTRACTID,
+                                      helperAppDialog,
+                                      true);
+  
+  // create an instance of each
+  promptDialogInstance    = new gtkEmbedPromptDialog();
+  sslDialogInstance       = new gtkEmbedSSLDialog();  
+  helperAppDialogInstance = new gtkEmbedHelperAppDialog();
+
+  if (!promptDialogInstance || !sslDialogInstance || !helperAppDialogInstance)
     return false;
 
-  promptDialogInstance->Init(aAlertCB,
+  // call their respective init functions
+  promptDialogInstance->Init(aSSLActiveCB,
+                             aAlertCB,
                              aPromptCB,
                              aConfirmCB,
                              aPasswdCB,
                              aUserPasswdCB,
                              aSelectCB);
-
-  sslDialogInstance->Init(aSSLActiveCB);
+  sslDialogInstance->Init();
+  helperAppDialogInstance->Init();
 
   // now keep a reference to these objects to retain
   // the static values
-  gPromptDialog = promptDialogInstance;
-  gSSLDialog    = sslDialogInstance;
+  gPromptDialog    = promptDialogInstance;
+  gSSLDialog       = sslDialogInstance;
+  gHelperAppDialog = helperAppDialogInstance;
 
   return true;
 }

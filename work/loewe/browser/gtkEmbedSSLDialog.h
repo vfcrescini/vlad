@@ -26,7 +26,6 @@
 #include "nsIFactory.h"
 #include "nsINSSDialogs.h"
 #include "nsIBadCertListener.h"
-#include "nsIDOMWindow.h"
 
 extern nsresult newSSLDialogFactory(nsIFactory **aResult);
 
@@ -45,7 +44,7 @@ class gtkEmbedSSLDialog : public nsINSSDialogs,
     gtkEmbedSSLDialog();
     virtual ~gtkEmbedSSLDialog();
 
-    bool Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool));
+    bool Init();
 
     NS_DECL_ISUPPORTS
     NS_DECL_NSINSSDIALOGS

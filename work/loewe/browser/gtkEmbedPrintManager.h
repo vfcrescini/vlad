@@ -20,36 +20,29 @@
  *   Vino Crescini <vino.crescini@tuxia.com>
  */
 
-#ifndef __GTKEMBEDBROWSER_H
-#define __GTKEMBEDBROWSER_H
+#ifndef __GTKEMBEDPRINTMANAGER_H
+#define __GTKEMBEDPRINTMANAGER_H
 
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
-#include "nsCOMPtr.h"
-#include "nsIInterfaceRequestor.h"
-#include "nsICacheService.h"
-#include "nsNetCID.h"
 #include "nsIWebBrowser.h"
-#include "nsIWebBrowserFind.h"
-#include "nsIWebBrowserSetup.h"
-#include "gtkmozembed.h"
-#include "gtkmozembed_internal.h"
+#include "nsIWebBrowserPrint.h"
+#include "nsIPrintOptions.h"
+#include "nsIDOMWindow.h"
+#include "nsCOMPtr.h"
 
-typedef struct _gtkEmbedBrowser {
-  int           browserID;
-  bool          usedFlag;
-  bool          loadingFlag;
-  nsIWebBrowser *webBrowser;
-  GtkWidget     *topLevelWindow;
-  GtkWidget     *topLevelVBox;
-  GtkWidget     *mozEmbed;
-} gtkEmbedBrowser;
+class gtkEmbedPrintManager
+{
+  public :
+	  
+    gtkEmbedPrintManager();
+    ~gtkEmbedPrintManager();
 
-typedef struct _gtkEmbedGeometry {
-  int x;
-  int y;
-  int width;
-  int height;
-} gtkEmbedGeometry;
+    bool Init();
+    bool Print(nsIWebBrowser *, bool);
+    
+  private :
+
+    nsCOMPtr<nsIPrintOptions> gPrintService;
+    
+} ;
 
 #endif

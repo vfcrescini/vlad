@@ -21,18 +21,18 @@
  */
 
 #include "gtkEmbedPromptDialog.h"
+#include "gtkEmbedConst.h"
 #include "nsCOMPtr.h"
 #include "nsXPComFactory.h"
 #include "nsString.h"
 
-#define DEBUG
-
 #ifdef DEBUG
-  #include <stdio.h>
+#include <stdio.h>
 #endif
 
 NS_IMPL_ISUPPORTS1(gtkEmbedPromptDialog, nsIPromptService)
 
+static bool (*gSSLSecureCB)(nsIDOMWindow *, bool) = NULL;
 static bool (*gAlertCB)(nsIDOMWindow *, const char *) = NULL;
 static bool (*gPromptCB)(nsIDOMWindow *, const char *, const char *, bool *) = NULL;
 static bool (*gConfirmCB)(nsIDOMWindow *, const char *, bool *) = NULL;
@@ -51,14 +51,13 @@ gtkEmbedPromptDialog::gtkEmbedPromptDialog()
 
 gtkEmbedPromptDialog::~gtkEmbedPromptDialog()
 {
-
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::~gtkEmbedPromptDialog()\n");
 #endif
-
 }
 
-bool gtkEmbedPromptDialog::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
+bool gtkEmbedPromptDialog::Init(bool (*aSSLSecureCB)(nsIDOMWindow *, bool),
+                                bool (*aAlertCB)(nsIDOMWindow *, const char *),
                                 bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
                                 bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
                                 bool (*aPasswdCB)(nsIDOMWindow *, const char *, const char *, bool *),
@@ -68,6 +67,7 @@ bool gtkEmbedPromptDialog::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
 {
   // store our static references so that every
   // instance can have access to it
+  gSSLSecureCB  = aSSLSecureCB;
   gAlertCB      = aAlertCB;
   gPromptCB     = aPromptCB;
   gConfirmCB    = aConfirmCB;
@@ -78,15 +78,34 @@ bool gtkEmbedPromptDialog::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
   return true;
 }
 
-
 NS_IMETHODIMP gtkEmbedPromptDialog::Alert(nsIDOMWindow *aParent,
                                            const PRUnichar *aTitle,
                                            const PRUnichar *aText)
 {
-
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::Alert()\n");
 #endif
+
+  // check if it's an internal message
+  if (!strcmp(NS_ConvertUCS2toUTF8(aTitle).get(), DIALOG_INTERNAL_MESSAGE)) {
+    if (!strcmp(NS_ConvertUCS2toUTF8(aText).get(), DIALOG_SSL_ENTER_SECURE)) {
+      if (gSSLSecureCB)
+        (*gSSLSecureCB)(aParent, true);
+    }
+    else if (!strcmp(NS_ConvertUCS2toUTF8(aText).get(), DIALOG_SSL_ENTER_WEAK)) {
+      if (gSSLSecureCB)
+        (*gSSLSecureCB)(aParent, true);
+    }
+    else if (!strcmp(NS_ConvertUCS2toUTF8(aText).get(), DIALOG_SSL_LEAVE_SECURE)) {
+      if (gSSLSecureCB)
+        (*gSSLSecureCB)(aParent, false);
+    }
+  }
+  else {
+    // regular message
+    if (gAlertCB)
+      (*gAlertCB)(aParent, NS_ConvertUCS2toUTF8(aText).get());
+  }	
 
   return NS_OK;
 }
@@ -97,7 +116,6 @@ NS_IMETHODIMP gtkEmbedPromptDialog::AlertCheck(nsIDOMWindow *aParent,
                                                 const PRUnichar *aChkBoxMesg,
                                                 PRBool *aChkBoxValue)
 {
-
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::AlertCheck()\n");
 #endif
@@ -167,7 +185,6 @@ NS_IMETHODIMP gtkEmbedPromptDialog::PromptUsernameAndPassword(
                                                    PRBool *aChkBoxValue,
                                                    PRBool *aResult)
 {
-
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::PromptUsernameAndPassword()\n");
 #endif
@@ -187,7 +204,6 @@ NS_IMETHODIMP gtkEmbedPromptDialog::PromptPassword(nsIDOMWindow *aParent,
                                                     PRBool *aChkBoxValue,
                                                     PRBool *aResult)
 {
-
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::PromptPassword()\n");
 #endif
@@ -206,7 +222,6 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Select(nsIDOMWindow *aParent,
                                             PRInt32 *aOutSelection,
                                             PRBool *aResult)
 {
-
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::Select()\n");
 #endif
@@ -229,7 +244,6 @@ NS_IMETHODIMP gtkEmbedPromptDialog::ConfirmEx(nsIDOMWindow *aParent,
                                                PRInt32 *aResult)
 
 {
-
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::ConfirmEx\n");
 #endif

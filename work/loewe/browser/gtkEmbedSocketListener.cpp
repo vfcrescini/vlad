@@ -28,9 +28,7 @@
 #include "nscore.h"
 #include "prthread.h"
 #include "gtkEmbedSocketListener.h"
-
-#define SOCK_LISTENER_MAX(x,y) ((x)>(y)?(x):(y))
-#define SOCK_LISTENER_MAXLEN   1024
+#include "gtkEmbedConst.h"
 
 static PRThread *gLoopThread;
 static int gServerFD;

@@ -95,7 +95,7 @@ bool gtkEmbedPref::GetBoolPref(char *aString)
 
 char *gtkEmbedPref::GetCharPref(char *aString)
 {
-  static char *tempString = "";
+  char *tempString = "";
 
   if (aString && gPrefService)
     gPrefService->GetCharPref(aString, &tempString);

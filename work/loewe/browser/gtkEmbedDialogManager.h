@@ -25,6 +25,7 @@
 
 #include "gtkEmbedPromptDialog.h"
 #include "gtkEmbedSSLDialog.h"
+#include "gtkEmbedHelperAppDialog.h"
 #include "nsIWebBrowser.h"
 #include "nsIDOMWindow.h"
 #include "gtkEmbedBrowser.h"
@@ -46,7 +47,9 @@ class gtkEmbedDialogManager
 
   private :
 
-    gtkEmbedPromptDialog *gPromptDialog;
-    gtkEmbedSSLDialog    *gSSLDialog;
+    gtkEmbedPromptDialog    *gPromptDialog;
+    gtkEmbedSSLDialog       *gSSLDialog;
+    gtkEmbedHelperAppDialog *gHelperAppDialog;
 } ;
+
 #endif
