@@ -1,3 +1,9 @@
+2005-02-21  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/list.cpp :
+
+	  - Fixed bug in list::del().
+
 2004-12-17  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* main/vlad.cpp :
