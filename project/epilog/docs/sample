@@ -12,6 +12,8 @@ ident obj-grp O1;
 
 initially holds(s1,a1,o1);
 initially memb(s1,S1) && !subst(S1,S2);
+initially true && true;
+initially true;
 
 trans something1(var1, var2) causes holds(var1, a1, var2) if memb(var1, S1) && subst(S1, S2);
 trans something2(var3) causes holds(s1, a1, var3) && holds(s2, a1, var3) if true;
