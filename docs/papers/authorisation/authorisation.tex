@@ -500,7 +500,7 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
     \subsection{Conversion to Extended Logic Program: Flattening the States}
 
       Extended logic programs are \emph{flat} or stateless. The proposed
-      language, however, is composed of logic facts that have a states as
+      language, however, is composed of logic facts that have states as
       a result of the transformation property. Formally, a state represents
       a transition of facts as a result of the application of a transformation.
       As a consequence, the number of states is equal to the number of
@@ -616,7 +616,7 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
 
     \subsection{Conversion to General Logic Program: Removal of Classical Negation}
 
-      Translation to from extended logic program to general logic program 
+      Translation from extended logic program to general logic program 
       requires one more additional step: to remove all instances of classical 
       negation. The easiest way to achieve this is to add yet another parameter
       into each of the atoms to indicate its truth value in the classical
@@ -641,13 +641,12 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
       where T and F are the parameters that indicate whether an atom is
       classically negated or not, respectively.
 
-      In addition to the extra parameter, two new implications must be added
+      In addition to the extra parameter, a new implication must be added
       to indicate that the atoms that differ only by their third parameter
       are complementary:
 
       \begin{list}{}{}
         \item false $\leftarrow$ holds(A, S, T) $\land$ holds(A, S, F)
-        \item false $\leftarrow$ not holds(A, S, T) $\land$ not holds(A, S, F)
       \end{list}
 
       $\forall$ (A, S $\mid$ A $\in$ $\alpha$, S $\in$ $\sigma$)
