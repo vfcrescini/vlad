@@ -12,7 +12,7 @@
 
 #include <config.h>
 #include <vlad/vlad.h>
-#include <vlad/parser.h>
+#include "parser.h"
 
 int main(int argc, char *argv[])
 {
