@@ -1,3 +1,11 @@
+2003-01-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.cpp :
+	* common/list.h :
+	* common/vlad.h :
+
+	  - Name cleanup.
+
 2003-01-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/Makefile.in :
