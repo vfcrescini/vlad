@@ -5,7 +5,7 @@ Build/Use Instructions
 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2003 Jul 16
+Updated: 2004 Jan 06
 -------------------------------------------------------------------------------
 
 REQUIREMENTS :
@@ -82,14 +82,14 @@ USAGE :
 
   The executable binary will be in dist/bin/vlad. Usage is as follows:
 
-    ./dist/bin/vlad -h|-v|[-e] program-filename [query-filename]
+    ./dist/bin/vlad -h|-v|[-e] policy-filename [agent-filename]
 
   where:
 
-    program-filename is the name of the file that contains the program.
-    query-filename is the name of the file that contains a list of queries.
+    policy-filename is the name of the file that contains the policy.
+    agent-filename  is the name of the file that contains agent directives.
 
-  For each query statement in the query file, vLad will print to stdout a
+  For each query directive in the agent file, vLad will print to stdout a
   normal logic program that models the input program, the translations and
   the queries. If the -e option is given, vLad will print one of three
   possible query results:
@@ -99,8 +99,8 @@ USAGE :
     ?      - there is insufficient evidence to conclude whether query is true
              or false.
 
-  Without the query-filename parameter, vLad will read the queries from stdin.
+  Without the agent-filename parameter, vLad will read the queries from stdin.
 
-  To use the example program in the samples directory :
+  To use the test files in the samples directory :
 
-    $ ./dist/bin/vlad sample/cwall_prog sample/cwall_query
+    $ ./dist/bin/vlad sample/cwall.vlp sample/cwall.vla
