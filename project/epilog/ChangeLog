@@ -2,6 +2,7 @@
 
 	* datastruct/simplelist.c :
 	* datastruct/stringlist.c :
+	* ident/ident.c :
 
 	  - Used global malloc macro.
 

@@ -13,10 +13,10 @@ int ident_create(ident_type **ident, char *name, unsigned short type)
   if (ident == NULL || name == NULL)
     return EPI_NULLPTR;
 
-  if ((*ident = (ident_type *) malloc(sizeof(ident_type))) == NULL)
+  if ((*ident = EPI_ADT_MALLOC(ident_type)) == NULL)
     return EPI_MALLOCFAILED;
 
-  if (((*ident)->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) {
+  if (((*ident)->name = EPI_STRING_MALLOC(name)) == NULL) {
     free(*ident);
     return EPI_MALLOCFAILED;
   }
