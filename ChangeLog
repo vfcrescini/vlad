@@ -1,11 +1,15 @@
 2004-01-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/vlad.h :
 	* lib/consttab.cpp :
 	* lib/consttab.h :
 	* lib/expression.cpp :
 	* lib/expression.h :
 	* lib/fact.cpp :
 	* lib/fact.h :
+
+	  - Added a varlist() function to return a list of unique variable
+	    occurences.
 
 	  - Added a replace() function to be used for variable grounding.
 

@@ -444,6 +444,60 @@ int fact::truth(bool *a_truth)
   return VLAD_OK;
 }
 
+/* gives a list of vars occuring in the fact. assumes list is init'ed */
+int fact::varlist(stringlist **a_list)
+{
+  int retval;
+
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_list == NULL || *a_list == NULL)
+    return VLAD_NULLPTR;
+
+  switch(m_type) {
+    case VLAD_ATOM_HOLDS :
+      if (VLAD_IDENT_IS_VAR(m_holds.subject))
+        if ((retval = (*a_list)->add(m_holds.subject)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+      if (VLAD_IDENT_IS_VAR(m_holds.access))
+        if ((retval = (*a_list)->add(m_holds.access)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+      if (VLAD_IDENT_IS_VAR(m_holds.object))
+        if ((retval = (*a_list)->add(m_holds.object)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+
+      return VLAD_OK; 
+    case VLAD_ATOM_MEMBER :
+      if (VLAD_IDENT_IS_VAR(m_member.element))
+        if ((retval = (*a_list)->add(m_member.element)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+      if (VLAD_IDENT_IS_VAR(m_member.group))
+        if ((retval = (*a_list)->add(m_member.group)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+
+      return VLAD_OK;
+    case VLAD_ATOM_SUBSET :
+      if (VLAD_IDENT_IS_VAR(m_subset.group1))
+        if ((retval = (*a_list)->add(m_subset.group1)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+      if (VLAD_IDENT_IS_VAR(m_subset.group2))
+        if ((retval = (*a_list)->add(m_subset.group2)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+
+      return VLAD_OK;
+  }
+
+  return VLAD_FAILURE;
+}
+
 #ifdef VLAD_DEBUG
 /* assuming s has enough memory allocation */
 void fact::print(char *a_str)

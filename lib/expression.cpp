@@ -100,6 +100,24 @@ int expression::replace(stringlist *a_vlist, stringlist *a_ilist, expression **a
   return VLAD_OK;
 }
 
+/* gives a list of vars occuring in the expr. assumes list is init'ed */
+int expression::varlist(stringlist **a_list)
+{
+  int retval;
+  unsigned int i;
+  fact *tmp;
+
+  for (i = 0; i < list::length(); i++) {
+    if ((retval = get(i, &tmp)) != VLAD_OK)
+      return retval;
+    if ((retval = tmp->varlist(a_list)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+
 #ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
 void expression::print(char *a_str)

@@ -6,6 +6,15 @@
 #ifndef __VLAD_VLAD_H
 #define __VLAD_VLAD_H
 
+#ifdef __cplusplus
+#include <cstdlib>
+#include <cstring>
+#include <new>
+#else
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 #include <vlad/config.h>
 
 /* query result codes */
@@ -104,6 +113,9 @@
 #define VLAD_ATOM_IS_HOLDS(X)    ((X) == VLAD_ATOM_HOLDS)
 #define VLAD_ATOM_IS_MEMBER(X)   ((X) == VLAD_ATOM_MEMBER)
 #define VLAD_ATOM_IS_SUBSET(X)   ((X) == VLAD_ATOM_SUBSET)
+
+/* anything that starts with S | A | O is a variable */
+#define VLAD_IDENT_IS_VAR(X)     ((X) ? ((strlen(X) > 1) ? (((X)[0] == 'S' || (X)[0] == 'A' || (X)[0] == '0') ? true : false) : false) : false)
 
 /* malloc/new macros */
 #define VLAD_ADT_MALLOC(X,Y)     ((X *) malloc(sizeof(X) * Y))
