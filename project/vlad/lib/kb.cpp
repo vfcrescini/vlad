@@ -480,7 +480,6 @@ int kb::query_generate(expression *e, FILE *f)
   return VLAD_OK;
 }
 
-
 /* generate the rules necessary to evaluate queries */
 int kb::compute_generate(FILE *f)
 {
