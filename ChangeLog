@@ -1,3 +1,12 @@
+2003-04-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/querytab.h :
+	* kb/querytab.cpp :
+	* kb/Makefile.in :
+
+	  - Added a class structure to hold queries with transformation
+	    sequences.
+
 2003-03-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* docs/bnf.txt :
