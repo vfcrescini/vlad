@@ -51,7 +51,6 @@ int programparse();
 %union {
   unsigned int terminal;
   char identifier[VLAD_MAXLEN_IDENT];
-  unsigned int number;
   atom *atm;
   expression *exp;
   stringlist *vlist;
@@ -84,7 +83,6 @@ int programparse();
 %token <terminal> VLAD_SYM_OBJGRPTYPE
 %token <terminal> VLAD_SYM_ACCGRPTYPE
 %token <terminal> VLAD_SYM_IDENT
-%token <number> VLAD_SYM_NUMBER
 %token <identifier> VLAD_SYM_IDENTIFIER
 %type <atm> atom
 %type <atm> boolean_atom
