@@ -22,6 +22,13 @@ list::list()
   head = NULL;
 }
 
+list::list(bool u)
+{
+  unique = u;
+  len = 0;
+  head = NULL;
+}
+
 list::~list()
 {
   purge(true);
@@ -36,10 +43,19 @@ unsigned int list::length()
 int list::add(list_item *data)
 {
   list_node *new_node;
+  int retval;
 
   if (data == NULL)
     return VLAD_NULLPTR;
 
+  /* if the unique flag is set, ensure that data is not already in */
+  if (unique) {
+    if ((retval = find(data)) == VLAD_OK)
+      return VLAD_NOTUNIQUE;
+    else if (retval != VLAD_NOTFOUND)
+      return retval;
+  }
+  
   if ((new_node = VLAD_ADT_MALLOC(list_node)) == NULL)
     return VLAD_MALLOCFAILED;
 
@@ -99,6 +115,11 @@ int list::del_d(list_item *data, bool f)
   curr = head;
 
   while (curr != NULL) {
+
+    /* if the unique flag is set, stop after the first match */
+    if (unique && found)
+      break;
+	
     if (curr->data->cmp(data)) {
 
       found = true;
@@ -157,6 +178,10 @@ int list::get_d(list_item *item, list_item ***data, unsigned int *s)
   *data = NULL;
   
   while (curr != NULL) {
+    /* if the unique flag is set we stop when we see the first match */
+    if (unique && *s >= 1)
+      break;
+
     if (curr->data->cmp(item)) {
 
       if ((*data = (list_item **) realloc(*data, sizeof(**data) * (*s + 1))) == NULL)

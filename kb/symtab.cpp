@@ -10,7 +10,7 @@
 
 symtab::symtab()
 {
-  list::list();
+  list::list(false);
 }
 
 symtab::~symtab()

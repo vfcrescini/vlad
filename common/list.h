@@ -30,10 +30,12 @@ class list
 {
   public :
     list();
+    list(bool u);
     virtual ~list();
     unsigned int length();
   private :
     unsigned int len;
+    bool unique;
     list_node *head;
   protected :
     /* add pointer to list, assumes memory has been allocated to it */

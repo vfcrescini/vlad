@@ -43,6 +43,8 @@
 #define VLAD_INVALIDINPUT   -8
 /* method failed because the object was not initialised */
 #define VLAD_UNINITIALISED  -9
+/* a duplicate entry was added to a unique-item list */
+#define VLAD_NOTUNIQUE      -10
 
 /* convenience macro(s) */
 #define VLAD_ADT_MALLOC(X)    ((X *) malloc(sizeof(X)))
