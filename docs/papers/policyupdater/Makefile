@@ -26,33 +26,31 @@ STYLE=latex8.sty
 all : eps dvi ps pdf
 
 clean :
-	$(RM) $(foreach file,$(LATEX_SRCS),$(file).log $(file).aux $(file).cb)
+	$(RM) $(foreach f,$(LATEX_SRCS),$(f).log $(f).aux $(f).cb)
 
 distclean : clean
-	$(RM) $(foreach file,$(LATEX_SRCS),$(file).dvi $(file).ps $(file).pdf)
-	$(RM) $(foreach file,$(XFIG_SRCS),$(file).eps $(file).pdf)
+	$(RM) $(foreach f,$(LATEX_SRCS),$(f).dvi $(f).ps $(f).pdf)
+	$(RM) $(foreach f,$(XFIG_SRCS),$(f).eps $(f).pdf)
 
-dvi : $(patsubst %,%.dvi,$(LATEX_SRCS))
+dvi : $(foreach f,$(LATEX_SRCS),$(f).dvi)
 
-pdf : $(patsubst %,%.pdf,$(LATEX_SRCS))
+pdf : $(foreach f,$(LATEX_SRCS),$(f).pdf)
 
-ps : $(patsubst %,%.ps,$(LATEX_SRCS))
+ps : $(foreach f,$(LATEX_SRCS),$(f).ps)
 
-eps : $(patsubst %,%.eps,$(XFIG_SRCS))
+eps : $(foreach f,$(XFIG_SRCS),$(f).eps)
 
-$(patsubst %,%.ps,$(LATEX_SRCS)) : $(patsubst %,%.dvi,$(LATEX_SRCS))
-	$(DVIPS) -o $(@) $(<)
+$(foreach f,$(LATEX_SRCS),$(f).ps) : $(patsubst %.ps,%.dvi,$(@))
+	$(DVIPS) -o $(@) $(patsubst %.ps,%.dvi,$(@))
 
-$(patsubst %,%.pdf,$(XFIG_SRCS)) : $(patsubst %,%.eps,$(XFIG_SRCS))
-	$(EPSPDF) $(<) --outfile=$(@)
+$(foreach f,$(XFIG_SRCS),$(f).pdf) : $(patsubst %.pdf,%.eps,$(@))
+	$(EPSPDF) $(patsubst %.pdf,%.eps,$(@)) --outfile=$(@)
 
-$(patsubst %,%.eps,$(XFIG_SRCS)) : $(patsubst %,%.fig,$(XFIG_SRCS))
-	$(FIG2DEV) -L eps $(<) $(@) || $(FIG2DEV) -L ps $(<) $(@)
+$(foreach f,$(XFIG_SRCS),$(f).eps) : $(patsubst %.eps,%.fig,$(@))
+	$(FIG2DEV) -L eps $(patsubst %.eps,%.fig,$(@)) $(@)
 
-policyupdater.dvi : policyupdater.tex $(patsubst %,%.eps,$(XFIG_SRCS)) $(CLASS) $(STYLE)
+policyupdater.dvi : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).eps) $(CLASS) $(STYLE)
 	$(LATEX) policyupdater.tex
-	$(LATEX) policyupdater.tex
 
-policyupdater.pdf : policyupdater.tex $(patsubst %,%.pdf,$(XFIG_SRCS)) $(CLASS) $(STYLE)
-	$(PDFLATEX) policyupdater.tex
+policyupdater.pdf : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).pdf) $(CLASS) $(STYLE)
 	$(PDFLATEX) policyupdater.tex
