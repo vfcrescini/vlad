@@ -29,8 +29,9 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   ap_rprintf(a_r, "    <h3>Current Sequence</h3>\n");
   ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"\">\n");
+  ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"\">\n");
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"delete\">\n");
-  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"delete\" value=\"\">\n");
+  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"sequence\" value=\"\">\n");
   ap_rprintf(a_r, "      <ul>\n");
 
   for (i = 0; i < vlad_kb_length_seqtab(a_conf->kb); i++) {
@@ -40,7 +41,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     vlad_kb_get_seqtab(a_conf->kb, i, &st_name, &st_list);
 
     ap_rprintf(a_r, "         <li>\n");
-    ap_rprintf(a_r, "           <input type=\"button\" value=\"delete\" onclick=\"delform.delete.value='%d';delform.submit();\">\n", i);
+    ap_rprintf(a_r, "           <input type=\"button\" value=\"delete\" onclick=\"delform.sequence.value=%d;delform.submit();\">\n", i);
     ap_rprintf(a_r, "           %s\n", st_name);
     ap_rprintf(a_r, "         </li>\n");
   }  
@@ -85,7 +86,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     ap_rprintf(a_r, "          <input type=\"hidden\" name=\"args\" value=\"%d\">\n",  vlad_list_length(tt_list));
     ap_rprintf(a_r, "          <input type=\"hidden\" name=\"trans\" value=\"%s\">\n", tt_name);
     ap_rprintf(a_r, "          %s\n", tt_name);
-    ap_rprintf(a_r, "          <input type=\"button\" name=\"add\" value=\"add\" onclick=\"addform%d.submit();\">\n", i);
+    ap_rprintf(a_r, "          <input type=\"button\" value=\"add\" onclick=\"addform%d.submit();\">\n", i);
     ap_rprintf(a_r, "          <br>\n");
 
     for (j = 0; j < vlad_list_length(tt_list); j++) {
