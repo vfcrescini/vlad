@@ -150,6 +150,9 @@ logical_const : EPI_SYM_TRUE | EPI_SYM_FALSE
 %%
 
 extern FILE *yyin;
+int yyparse();
+int yyerror(char *);
+int yylex();
 
 int main()
 {

@@ -6,17 +6,23 @@ TARGETS = main
 
 all : $(TARGETS)
 
-main : parser.c scanner.c
-	$(CC) $(CFLAGS) parser.c scanner.c -ll -o $(@)
+main : parser.tab.o scanner.o
+	$(CC) $(CFLAGS) parser.tab.o scanner.o -ll -o $(@)
 
-scanner.c : scanner.l parser.h
+scanner.o : scanner.c parser.tab.h
+	$(CC) $(CFLAGS) -c scanner.c -o $(@)
+
+parser.tab.o : parser.tab.c parser.tab.h
+	$(CC) $(CFLAGS) -c parser.tab.c -o $(@)
+
+scanner.c : scanner.l
 	$(LEX) -o$(@) scanner.l
 
-parser.c : parser.y
-	$(YACC) -o$(@) parser.y
+parser.tab.c : parser.y
+	$(YACC) -b parser parser.y
 
-parser.h : parser.y
-	$(YACC) -d -oparser.c parser.y
+parser.tab.h : parser.y
+	$(YACC) -b parser -d parser.y
 
 clean :
-	$(RM) $(TARGETS) scanner.c scanner.o parser.c parser.o parser.h
+	$(RM) $(TARGETS) *.o scanner.c parser.tab.c parser.tab.h
