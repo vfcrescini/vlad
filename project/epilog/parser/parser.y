@@ -6,6 +6,7 @@
 %{
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <stringlist.h>
 #include <ident.h>
 #include <identlist.h>
@@ -14,9 +15,6 @@
 #include <compatom.h>
 #include <compexp.h>
 
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
