@@ -30,7 +30,10 @@
 #define VLAD_IDENT_TYPE_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
 #define VLAD_IDENT_TYPE_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
 #define VLAD_IDENT_STRING(X)          ((X).get_name())
-#define VLAD_IDENT_EQ(X,Y)            ((X) == NULL && (Y) == NULL) ? true : (((X) != NULL && (Y) != NULL) ? ((X)->get_type() == (Y)->get_type() ? (!strcmp((X)->get_name(), (Y)->get_name()) ? true : false) : false): false)
+#define VLAD_IDENT_EQ(X,Y)            ((X) == NULL && (Y) == NULL) ? true :              \
+                                        ((X) == NULL || (Y) == NULL) ? false :           \
+					  ((X)->get_type() != (Y)->get_type()) ? false : \
+					    (!strcmp((X)->get_name(), (Y)->get_name()))
 
 class identifier : public list_item
 {
