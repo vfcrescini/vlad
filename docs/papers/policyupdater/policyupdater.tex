@@ -1,6 +1,7 @@
 \documentclass[10pt, twocolumn]{article}
 \usepackage{latex8}
 \usepackage{times}
+\usepackage{amsmath}
 
 \newtheorem{definition}{Definition}
 
@@ -134,16 +135,12 @@
 
         \begin{verbatim}ident sub|acc|obj[-grp] <name>[, ...]];\end{verbatim}
 
-        where $name$ is restricted to the formal identifier syntax.
-
       \subsubsection{Initial State Definition}
 
         The initial facts in the policy base can be defined by the following
         syntax:
 
         \begin{verbatim}initially <expression>;\end{verbatim}
-
-        where $expression$ is restricted to the formal expression syntax.
 
       \subsubsection{Constraint Definition}
 
@@ -285,56 +282,74 @@ always <exp1>
       \subsubsection{State Semantics}
 
         Conceptually, a state may be thought of as a set of facts and
-        constraints of the policy base at a particular instant. However, the
-        semantics of Language ${\cal L}$ gives a more formal and less tangible
-        definition of state.
+        constraints of the policy base at a particular instant. The state
+        transition notation below shows that the new state $PB'$ is generated
+        from the current state $PB$ after the policy update $U$ is applied.
+
+        \begin{quote}
+          $PB$ $\overrightarrow{_{U}}$ $PB'$
+        \end{quote}
+
+        Using this definition of a state means that for every policy update
+        applied to the policy base, a new instance of the policy base or a new 
+        set of facts and constraints are generated. To avoid having to deal
+        with multiple instances of the policy base, the semantics of language
+        ${\cal L}$ uses a simpler and less tangible definition of a state:
 
         \begin{definition}
-          A state is a property of facts and rules used to distinguish between 
-          the facts and rules of a specific policy base instance from another
-          policy base instance caused by the application of a policy update.
+          State is a property of atoms in the policy base used to differentiate
+          atoms that hold before the application of a particular policy update,
+          from the atoms that hold after the application.
         \end{definition}
 
-        The notation $PB$ $\overrightarrow{_{U}}$ $PB'$ shows that the set of
-        rules and constraints of the policy base $PB$ yields the policy base
-        set $PB'$ after the policy update $U$ is applied.
+      \subsubsection{Atom Definition}
 
         \begin{definition}
-          The ordered sequence set ${\cal S}$ contains all the policy updates
-          to be applied. The number of states in the domain is $|{\cal S}|$ + 
-          1.
-        \end{definition}
-
-        \begin{definition}
-          
-          The atom set $\cal{A}$ is the set of all atoms in the domain. Each
-          atom represents a logical relationship of a particular state of the
-          policy base.
+          An atom represents a logical relationship of two to three entities
+          is a particular policy base state. The atom set $\cal{A}^{\sigma}$ is
+          the set of all possible atoms in state $\sigma$.
 
           \begin{enumerate}
             \item
-              ${\cal A} = {\cal A}_{H} \cup {\cal A}_{M} \cup {\cal A}_{S}$
+              ${\cal A}^{\sigma} = {\cal A}^{\sigma}_{H} \cup {\cal A}^{\sigma}_{M} \cup {\cal A}^{\sigma}_{S}$
             \item
-              ${\cal A}_{H} = \{\forall (s \in {\cal E}_{S}, a \in {\cal E}_{A}, o \in {\cal E}_{O}, holds(s, a, o) \}$
+              ${\cal A}^{\sigma}_{H} = \{\forall (s \in {\cal E}_{S}, a \in {\cal E}_{A}, o \in {\cal E}_{O}, holds(s, a, o, \sigma) \}$
             \item
-              ${\cal A}_{M} = {\cal A}_{MS} \cup {\cal A}_{MA} \cup {\cal A}_{MO}$
+              ${\cal A}^{\sigma}_{M} = {\cal A}^{\sigma}_{MS} \cup {\cal A}^{\sigma}_{MA} \cup {\cal A}^{\sigma}_{MO}$
             \item
-              ${\cal A}_{S} = {\cal S}_{SS} \cup {\cal S}_{SA} \cup {\cal A}_{SO}$
+              ${\cal A}^{\sigma}_{S} = {\cal A}^{\sigma}_{SS} \cup {\cal A}^{\sigma}_{SA} \cup {\cal A}^{\sigma}_{SO}$
             \item
-              ${\cal A}_{MS} = \{\forall (e \in {\cal E}_{SS}, g \in {\cal E}_{SG}), memb(e, g)\}$
+              ${\cal A}^{\sigma}_{MS} = \{\forall (e \in {\cal E}_{SS}, g \in {\cal E}_{SG}), memb(e, g, \sigma)\}$
             \item
-              ${\cal A}_{MA} = \{\forall (e \in {\cal E}_{AS}, g \in {\cal E}_{AG}), memb(e, g)\}$
+              ${\cal A}^{\sigma}_{MA} = \{\forall (e \in {\cal E}_{AS}, g \in {\cal E}_{AG}), memb(e, g, \sigma)\}$
             \item
-              ${\cal A}_{MO} = \{\forall (e \in {\cal E}_{OS}, g \in {\cal E}_{OG}), memb(e, g)\}$
+              ${\cal A}^{\sigma}_{MO} = \{\forall (e \in {\cal E}_{OS}, g \in {\cal E}_{OG}), memb(e, g, \sigma)\}$
             \item
-              ${\cal A}_{SS} = \{\forall (g1, g2 \in {\cal E}_{SG}), subst(g1, g2)\}$
+              ${\cal A}^{\sigma}_{SS} = \{\forall (g1, g2 \in {\cal E}_{SG}), subst(g1, g2, \sigma)\}$
             \item
-              ${\cal A}_{SA} = \{\forall (g1, g2 \in {\cal E}_{AG}), subst(g1, g2)\}$
+              ${\cal A}^{\sigma}_{SA} = \{\forall (g1, g2 \in {\cal E}_{AG}), subst(g1, g2, \sigma)\}$
             \item
-              ${\cal A}_{SO} = \{\forall (g1, g2 \in {\cal E}_{OG}), subst(g1, g2)\}$
+              ${\cal A}^{\sigma}_{SO} = \{\forall (g1, g2 \in {\cal E}_{OG}), subst(g1, g2, \sigma)\}$
           \end{enumerate}
 
         \end{definition} 
+
+      \subsubsection{Domain Definition of Language ${\cal L}$}
+
+        \begin{definition}
+          The domain of Language ${\cal L}$ is as follows:
+
+          \begin{math}
+            {\cal D}_{\cal L} = 
+            \begin{cases}
+              \mbox{set of Initial State Facts $\alpha$} \\
+              \mbox{set of Constraint Rules $\beta$} \\
+              \mbox{set of Policy Update Definitions $\gamma$}
+            \end{cases}
+          \end{math}
+        \end{definition}
+
+      \subsubsection{Translating Language ${\cal L}$ into the Normal Logic Program ${\cal L^{*}}$}
 
         \noindent \emph{Initial State}
 
