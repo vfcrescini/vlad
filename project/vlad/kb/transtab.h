@@ -16,9 +16,11 @@ class transdef : public list_item
     transdef(const char *n, stringlist *v, expression *pr, expression *po);
     ~transdef();
     bool cmp(list_item *item);
+    char *get_name();
+    stringlist *get_vlist();
   private :
     char *name;
-    stringlist *vtable;
+    stringlist *vlist;
     expression *precond;
     expression *postcond;
 } ;
@@ -29,6 +31,7 @@ class transtab : public list
     transtab(const char *n);
     ~transtab();
     int add(const char *n, stringlist *v, expression *pr, expression *po);
+    int get(const char *n, transdef **t);
 } ; 
 
 #endif

@@ -1,6 +1,27 @@
 2003-04-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Added a verify_transref() function.
+
+	  - Added add_querytab() function.
+
+	* kb/querytab.h :
+	* kb/querytab.cpp :
+
+	  - Added get_*() functions.
+
+	  - Added debug code.
+
+	* kb/transtab.h :
+	* kb/transtab.cpp :
+
+	  - Added get() functions.
+
 	* parser/parser.y :
+
+	  - Now adding queries in kb.
 
 	  - Now storing transref/transreflist.
 

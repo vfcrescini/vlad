@@ -22,6 +22,7 @@ kb kbase;
 unsigned int cnt_init = 0;
 unsigned int cnt_const = 0;
 unsigned int cnt_trans = 0;
+unsigned int cnt_query = 0;
 #endif
 
 extern int yyerror(char *error);
@@ -535,8 +536,30 @@ trans_var_list :
 
 query_stmt : 
   VLAD_SYM_IS expression after_clause VLAD_SYM_SEMICOLON {
-    /* cleanup */
+    int retval;
+#ifdef DEBUG
+    char q[1024];
+    char r[10240];
+#endif
 
+    if ((retval = kbase.add_querytab($2, $3)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+
+#ifdef DEBUG
+    $2->print(q);
+    if ($3 != NULL)
+      $3->print(r);
+    else
+      strcpy(r, "none");
+
+    fprintf(stderr, "query[%d]:\n", cnt_query++);
+    fprintf(stderr, "  expression: %s\n", q);
+    fprintf(stderr, "  trans seq:  %s\n", r);
+#endif
+
+    /* cleanup */
     delete $2;
     if ($3 != NULL)
       delete $3;

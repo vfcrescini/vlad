@@ -18,6 +18,7 @@ kb::kb()
   itable = NULL;
   ctable = NULL;
   ttable = NULL;
+  qtable = NULL;
   stage = 0;
 }
 
@@ -34,6 +35,9 @@ kb::~kb()
 
   if (ttable != NULL)
     delete ttable;
+
+  if (qtable != NULL)
+    delete qtable;
 }
 
 /* (re)init kb */
@@ -70,6 +74,14 @@ int kb::init()
     delete ttable;
 
   if ((ttable = VLAD_NEW(transtab("tranformation declaration table"))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* query table */
+
+  if (qtable != NULL)
+    delete qtable;
+
+  if ((qtable = VLAD_NEW(querytab("query table"))) == NULL)
     return VLAD_MALLOCFAILED;
 
   stage = 1;
@@ -319,11 +331,65 @@ int kb::add_transtab(const char *n,
       return retval;
   }
 
-  /* if all goes well, add to the trans table */
-  if ((retval = ttable->add(name, vlist, precond, postcond)) != VLAD_OK)
-    return retval;
+  /* if all went  well, add to the trans table */
+  return ttable->add(name, vlist, precond, postcond);
+}
 
-  return VLAD_OK;
+/* add a query in the query table */
+int kb::add_querytab(expression *e, transreflist *r)
+{
+  int retval;
+  unsigned int i;
+  expression *exp;
+  transreflist *rlist;
+
+  /* we only allow this function after transtab is closed */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  if (e == NULL)
+    return VLAD_NULLPTR;
+
+  /* verify and copy query expression */
+  if ((exp = VLAD_NEW(expression(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < e->length(); i++) {
+    atom *tmp1;
+    atom *tmp2;
+    if ((retval = e->get(i, &tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
+      return retval;
+    if ((tmp2 = VLAD_NEW(atom())) == NULL)
+      return VLAD_MALLOCFAILED;
+    if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = exp->add(tmp2)) != VLAD_OK)
+      return retval;
+  }
+
+  /* now verify and copy transref */
+  if ((rlist = VLAD_NEW(transreflist(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  if (r != NULL) {
+    for (i = 0; i < r->length(); i++) {
+      transref *tmp1;
+      transref *tmp2;
+      if ((retval = r->get(i, &tmp1)) != VLAD_OK)
+        return retval;
+      if ((retval = verify_transref(tmp1)) != VLAD_OK)
+        return retval;
+      if ((tmp2 = VLAD_NEW(transref(tmp1->get_name(), tmp1->get_ilist()))) == NULL)
+        return VLAD_MALLOCFAILED;
+      if ((retval = rlist->add(tmp2)) != VLAD_OK)
+        return retval;
+    }
+  }
+
+  /* if all went well, add to querytab */
+  return qtable->add(exp, rlist);
 }
 
 /* make sure atom a is valid */
@@ -551,5 +617,44 @@ int kb::verify_atom_subset(const char *g1, const char *g2, stringlist *v)
       return retval;
   }
   
+  return VLAD_OK;
+}
+
+/* make sure transref is valid */
+int kb::verify_transref(transref *r)
+{
+  int retval;
+  unsigned int i;
+  transdef *tdef;
+
+  if (stage < 5)
+    return VLAD_FAILURE;
+
+  if (r == NULL)
+    return VLAD_NULLPTR;
+
+  /* retrieve respective trans in transtab */
+  if ((retval = ttable->get(r->get_name(), &tdef)) != VLAD_OK)
+    return retval;
+  
+  /* check that the name transformation is valid */
+  if (strcmp(r->get_name(), tdef->get_name()))
+    return VLAD_INVALIDINPUT;
+
+  /* check that the number of ident listed is the same as the transformation */
+  if (tdef->get_vlist()->length() != r->get_ilist()->length())
+    return VLAD_INVALIDINPUT;
+
+  /* check that every ident is valid in symtab */
+  for (i = 0; i < r->get_ilist()->length(); i++) {
+    char *s;
+
+    if ((retval = r->get_ilist()->get(i, &s)) != VLAD_OK)
+      return retval;
+
+    if ((retval = stable->find(s)) != VLAD_OK)
+      return retval;
+  }
+
   return VLAD_OK;
 }
