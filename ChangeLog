@@ -1,5 +1,12 @@
 2003-06-20  vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/kb.h :
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+
+	  - Changes to prevent smodels-dependent features from compiling and
+	    being used by external apps if not compiled with smodels support.
+
 	* Makefile.in :
 	* configure :
 	* configure.ac :

@@ -8,6 +8,7 @@
 
 #include <cstdio>
 
+#include <vlad/vlad.h>
 #include <vlad/atom.h>
 #include <vlad/expression.h>
 #include <vlad/stringlist.h>
