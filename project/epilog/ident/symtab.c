@@ -59,10 +59,10 @@ int symtab_get(char *name, ident_type **ident)
     return -1;
 
   tmp_ident.name = name;
-
-  if (simplelist_get_data(list, (void *) &tmp_ident, &tmp_list, symtab_compare) != 0)
+  
+  if (simplelist_get_data(list, &tmp_list, (void *) &tmp_ident, symtab_compare) != 0)
     return -1;
-
+  
   /* we know that there are no duplicates in this list so either the resulting
    * list is empty or the identifier we're looking for is the first and only
    * entry. */
@@ -110,7 +110,7 @@ int symtab_compare(void *p1, void *p2)
   if (p1 == NULL || p2 == NULL)
     return -1;
 
-  return strcmp(((ident_type *) p1)->name, ((ident_type *) p2)->name);
+  return strcmp(((ident_type *) p1)->name, ((ident_type *) p2)->name) ? -1 : 0;
 }
 
 /* free memory */

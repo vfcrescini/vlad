@@ -81,7 +81,7 @@ int identlist_compare(void *p1, void *p2)
   if (p1 == NULL || p2 == NULL)
     return -1;
 
-  return strcmp(((ident_type *) p1)->name, ((ident_type *) p2)->name);
+  return strcmp(((ident_type *) p1)->name, ((ident_type *) p2)->name) ? -1 : 0;
 }
 
 /* free memory */
