@@ -336,52 +336,60 @@ always <exp1>
           \begin{verbatim}query <ground-exp>;\end{verbatim}
 
         \begin{example}
+          \label{ex-1}
           The following language ${\cal L}$ program code listing shows a simple
           rule-based document access control system scenario.
 
           In this example, the subject $alice$ is initially a member of the
-          subject group $sudents$, which is holds a $read$ access right for the
-          object $file$. The constraint states that if the $grp$ group
-          has $read$ access for $file$, and no other information is present to
-          conclude that $grp$ do not have $write$ access for $file$, then
-          the $grp$ group is granted $write$ access for $file$.
+          subject group $grp3$, which is a subset of group $grp2$, which in
+          turn is a subset of group $grp1$. The group $grp1$ also initially
+          holds a $read$ access right for the object $file$. The constraint
+          states that if the group $grp1$ has $read$ access for $file$, and no
+          other information is present to conclude that $grp1$ do not have
+          $write$ access for $file$, then the group $grp1$ is granted $write$
+          access for $file$.
 
           \begin{verbatim}
 /* entity identifier definitions */
 
 ident sub alice;
-ident sub-grp grp;
+ident sub-grp grp1, grp2, grp3;
 ident acc read, write;
 ident obj file;
 
 /* initial fact definitions */
 
 initially
-  memb(alice, grp) &&
-  holds(grp, read, file);
+  memb(alice, grp2) &&
+  holds(grp1, read, file) &&
+  subst(grp3, grp2) &&
+  subst(grp2, grp1);
 
 /* constraint definitions */
 
-always holds(grp, write, file)
+always holds(grp1, write, file)
   implied by
-    holds(grp, read, file)
+    holds(grp1, read, file)
   with absence
-    !holds(grp, write, file);
+    !holds(grp1, write, file);
 
 /* policy update definitions */
 
 delete_read(SG0, OS0)
-  causes !holds(SG0, read,  OS0);
+  causes !holds(SG0, read, OS0);
 
-/* sequence manipluation directives */
+/* sequence manipulation directive */
 
-seq add delete_read(grp, file);
+seq add delete_read(grp1, file);
+
+/* compute directive */
+
 compute;
 
 /* query directives */
 
-query holds(grp, write, file);
-query holds(grp, read, file);
+query holds(grp1, write, file);
+query holds(grp1, read, file);
 query holds(alice, write, file);
 query holds(alice, read, file);
           \end{verbatim}
@@ -1123,40 +1131,43 @@ query holds(alice, read, file);
             \end{quote}
 
         \begin{example}
+          \label{ex-2}
           The following shows the language ${\cal L}$ program listing in
-          Example1,  translated into language ${\cal L}^{*}$.
-
+          Example \ref{ex-1},  translated into language ${\cal L}^{*}$.
 
           \begin{enumerate}
             \item
               Initial State Facts
 
-              \begin{math}
-                \hat{memb}(alice, grp, S_{0}) \leftarrow \\
-                \hat{holds}(grp, read, file,S_{0}) \leftarrow
-              \end{math}
+              $\hat{memb}(alice, grp3, S_{0}) \leftarrow$
+
+              $\hat{holds}(grp1, read, file,S_{0}) \leftarrow$
+
+              $\hat{subst}(grp3, grp2) \leftarrow$
+
+              $\hat{subst}(grp2, grp1) \leftarrow$
 
             \item
               Constraints
 
               \begin{math}
-                  \begin{aligned}[t]
-                    % constraints (S0)
-                    \hat{holds}&(grp, write, file, S_{0}) \leftarrow \\
-                    & \hat{holds}(grp, read, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp, write, file, S_{0}) \\
-                    % constraints (S1)
-                    \hat{holds}&(grp, write, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(grp, read, file, S_{1}), \\
-                    & not \lnot \hat{holds}(grp, write, file, S_{1})
-                  \end{aligned}
+                \begin{aligned}[t]
+                  % constraints (S0)
+                  \hat{holds}&(grp1, write, file, S_{0}) \leftarrow \\
+                  & \hat{holds}(grp1, read, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp1, write, file, S_{0}) \\
+                  % constraints (S1)
+                  \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
+                  & \hat{holds}(grp1, read, file, S_{1}), \\
+                  & not \lnot \hat{holds}(grp1, write, file, S_{1})
+                \end{aligned}
               \end{math}
 
             \item
               Policy Update
 
               \begin{math}
-                \lnot \hat{holds}(grp, read, file, S_{1}) \leftarrow
+                \lnot \hat{holds}(grp1, read, file, S_{1}) \leftarrow
               \end{math}
 
             \item
@@ -1166,13 +1177,13 @@ query holds(alice, read, file);
                 \begin{aligned}[t]
                   % inheritance rules (positive, read, S0)
                   \hat{holds}&(alice, read, file, S_{0}) \leftarrow \\
-                  & \hat{holds}(grp, read, file, S_{0}), \\
-                  & \hat{memb}(alice, grp, S_{0}), \\
+                  & \hat{holds}(grp1, read, file, S_{0}), \\
+                  & \hat{memb}(alice, grp1, S_{0}), \\
                   & not \lnot \hat{holds}(alice, read, file, S_{0}) \\
                   % inheritance rules (negative, read, S0)
                   \lnot \hat{holds}&(alice, read, file, S_{0}) \leftarrow \\
-                  & \lnot \hat{holds}(grp, read, file, S_{0}), \\
-                  & \hat{memb}(alice, grp, S_{0})
+                  & \lnot \hat{holds}(grp1, read, file, S_{0}), \\
+                  & \hat{memb}(alice, grp1, S_{0})
                 \end{aligned}
               \end{math}
 
@@ -1180,47 +1191,66 @@ query holds(alice, read, file);
                 \begin{aligned}[t]
                   % inheritance rules (positive, write, S0)
                   \hat{holds}&(alice, write, file, S_{0}) \leftarrow \\
-                  & \hat{holds}(grp, write, file, S_{0}), \\
-                  & \hat{memb}(alice, grp, S_{0}), \\
+                  & \hat{holds}(grp1, write, file, S_{0}), \\
+                  & \hat{memb}(alice, grp1, S_{0}), \\
                   & not \lnot \hat{holds}(alice, write, file, S_{0}) \\
                   % inheritance rules (negative, write, S0)
                   \lnot \hat{holds}&(alice, write, file, S_{0}) \leftarrow \\
-                  & \lnot \hat{holds}(grp, write, file, S_{0}), \\
-                  & \hat{memb}(alice, grp, S_{0})
+                  & \lnot \hat{holds}(grp1, write, file, S_{0}), \\
+                  & \hat{memb}(alice, grp1, S_{0})
                 \end{aligned}
               \end{math}
+
+              \hspace{1cm} $\vdots$
 
               \begin{math}
                 \begin{aligned}[t]
                   % inheritance rules (positive, read, S1)
                   \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp, read, file, S_{1}), \\
-                  & \hat{memb}(alice, grp, S_{1}), \\
+                  & \hat{holds}(grp3, read, file, S_{1}), \\
+                  & \hat{memb}(alice, grp3, S_{1}), \\
                   & not \lnot \hat{holds}(alice, read, file, S_{1}) \\
                   % inheritance rules (negative, read, S1)
                   \lnot \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp, read, file, S_{1}), \\
-                  & \hat{memb}(alice, grp, S_{1})
-                 \end{aligned}
+                  & \lnot \hat{holds}(grp3, read, file, S_{1}), \\
+                  & \hat{memb}(alice, grp3, S_{1})
+                \end{aligned}
               \end{math}
 
               \begin{math}
                 \begin{aligned}[t]
                   % inheritance rules (positive, write, S1)
                   \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp, write, file, S_{1}), \\
-                  & \hat{memb}(alice, grp, S_{1}), \\
+                  & \hat{holds}(grp3, write, file, S_{1}), \\
+                  & \hat{memb}(alice, grp3, S_{1}), \\
                   & not \lnot \hat{holds}(alice, write, file, S_{1}) \\
                   % inheritance rules (negative, write, S1)
                   \lnot \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp, write, file, S_{1}), \\
-                  & \hat{memb}(alice, grp, S_{1})
+                  & \lnot \hat{holds}(grp3, write, file, S_{1}), \\
+                  & \hat{memb}(alice, grp3, S_{1})
                 \end{aligned}
               \end{math}
 
             \item
               Transitivity Rules
-              % no transitivity rules
+
+              \begin{math}
+                \begin{aligned}[t]
+                  \hat{subst}&(grp1, grp1, S_{0}) \leftarrow \\
+                  & \hat{subst}(grp1, grp1, S_{0}), \\
+                  & \hat{subst}(grp1, grp1, S_{0})
+                \end{aligned}
+              \end{math}
+
+              \hspace{1cm} $\vdots$
+
+              \begin{math}
+                \begin{aligned}[t]
+                  \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
+                  & \hat{subst}(grp3, grp3, S_{1}), \\
+                  & \hat{subst}(grp3, grp3, S_{1})
+                \end{aligned}
+              \end{math}
 
             \item
               Inertial Rules
@@ -1253,40 +1283,113 @@ query holds(alice, read, file);
 
               \begin{math}
                 \begin{aligned}[t]
-                  % inertial rule holds(grp, read, file)
-                  \hat{holds}&(grp, read, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp, read, file, S_{1}) \\
-                  % inertial rule !holds(grp, read, file)
-                  \lnot \hat{holds}&(grp, read, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp, read, file, S_{1})
+                  % inertial rule holds(grp1, read, file)
+                  \hat{holds}&(grp1, read, file, S_{1}) \leftarrow \\
+                  & \hat{holds}(grp1, read, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp1, read, file, S_{1}) \\
+                  % inertial rule !holds(grp1, read, file)
+                  \lnot \hat{holds}&(grp1, read, file, S_{1}) \leftarrow \\
+                  & \lnot \hat{holds}(grp1, read, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp1, read, file, S_{1})
+                \end{aligned}
+              \end{math}
+
+              \hspace{1cm} $\vdots$
+
+              \begin{math}
+                \begin{aligned}[t]
+                  % inertial rule holds(grp3, read, file)
+                  \hat{holds}&(grp3, read, file, S_{1}) \leftarrow \\
+                  & \hat{holds}(grp3, read, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp3, read, file, S_{1}) \\
+                  % inertial rule !holds(grp3, read, file)
+                  \lnot \hat{holds}&(grp3, read, file, S_{1}) \leftarrow \\
+                  & \lnot \hat{holds}(grp3, read, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp3, read, file, S_{1})
                 \end{aligned}
               \end{math}
 
               \begin{math}
                 \begin{aligned}[t]
-                  % inertial rule holds(grp, write, file)
-                  \hat{holds}&(grp, write, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp, write, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp, write, file, S_{1}) \\
-                  % inertial rule !holds(grp, write, file)
-                  \lnot \hat{holds}&(grp, write, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp, write, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp, write, file, S_{1})
+                  % inertial rule holds(grp1, write, file)
+                  \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
+                  & \hat{holds}(grp1, write, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp1, write, file, S_{1}) \\
+                  % inertial rule !holds(grp1, write, file)
+                  \lnot \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
+                  & \lnot \hat{holds}(grp1, write, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp1, write, file, S_{1})
+                \end{aligned}
+              \end{math}
+
+              \hspace{1cm} $\vdots$
+
+              \begin{math}
+                \begin{aligned}[t]
+                  % inertial rule holds(grp3, write, file)
+                  \hat{holds}&(grp3, write, file, S_{1}) \leftarrow \\
+                  & \hat{holds}(grp3, write, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp3, write, file, S_{1}) \\
+                  % inertial rule !holds(grp3, write, file)
+                  \lnot \hat{holds}&(grp3, write, file, S_{1}) \leftarrow \\
+                  & \lnot \hat{holds}(grp3, write, file, S_{0}), \\
+                  & not \lnot \hat{holds}(grp3, write, file, S_{1})
                 \end{aligned}
               \end{math}
 
               \begin{math}
                 \begin{aligned}[t]
-                  % inertial rule memb(alice, grp)
-                  \hat{memb}&(alice, grp, S_{1}) \leftarrow \\
-                  & \hat{memb}(alice, grp, S_{0}), \\
-                  & not \lnot \hat{memb}(alice, grp, S_{1}) \\
-                  % inertial rule !memb(alice, grp)
-                  \lnot \hat{memb}&(alice, grp, S_{1}) \leftarrow \\
-                  & \lnot \hat{memb}(alice, grp, S_{0}), \\
-                  & not \hat{memb}(alice, grp, S_{1})
+                  % inertial rule memb(alice, grp1)
+                  \hat{memb}&(alice, grp1, S_{1}) \leftarrow \\
+                  & \hat{memb}(alice, grp1, S_{0}), \\
+                  & not \lnot \hat{memb}(alice, grp1, S_{1}) \\
+                  % inertial rule !memb(alice, grp1)
+                  \lnot \hat{memb}&(alice, grp1, S_{1}) \leftarrow \\
+                  & \lnot \hat{memb}(alice, grp1, S_{0}), \\
+                  & not \hat{memb}(alice, grp1, S_{1})
+                \end{aligned}
+              \end{math}
+
+              \hspace{1cm} $\vdots$
+
+              \begin{math}
+                \begin{aligned}[t]
+                  % inertial rule memb(alice, grp3)
+                  \hat{memb}&(alice, grp3, S_{1}) \leftarrow \\
+                  & \hat{memb}(alice, grp3, S_{0}), \\
+                  & not \lnot \hat{memb}(alice, grp3, S_{1}) \\
+                  % inertial rule !memb(alice, grp3)
+                  \lnot \hat{memb}&(alice, grp3, S_{1}) \leftarrow \\
+                  & \lnot \hat{memb}(alice, grp3, S_{0}), \\
+                  & not \hat{memb}(alice, grp3, S_{1})
+                \end{aligned}
+              \end{math}
+
+              \begin{math}
+                \begin{aligned}[t]
+                  % inertial rule subst(grp1, grp1)
+                  \hat{subst}&(grp1, grp1, S_{1}) \leftarrow \\
+                  & \hat{subst}(grp1, grp1, S_{0}), \\
+                  & not \lnot \hat{subst}(grp1, grp1, S_{1}) \\
+                  % inertial rule !subst(grp1, grp1)
+                  \lnot \hat{subst}&(grp1, grp1, S_{1}) \leftarrow \\
+                  & \lnot \hat{memb}(grp1, grp1, S_{0}), \\
+                  & not \hat{memb}(grp1, grp1, S_{1})
+                \end{aligned}
+              \end{math}
+
+              \hspace{1cm} $\vdots$
+
+              \begin{math}
+                \begin{aligned}[t]
+                  % inertial rule subst(grp3, grp3)
+                  \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
+                  & \hat{subst}(grp3, grp3, S_{0}), \\
+                  & not \lnot \hat{subst}(grp3, grp3, S_{1}) \\
+                  % inertial rule !subst(grp3, grp3)
+                  \lnot \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
+                  & \lnot \hat{memb}(grp3, grp3, S_{0}), \\
+                  & not \hat{memb}(grp3, grp3, S_{1}) \\
                 \end{aligned}
               \end{math}
           \end{enumerate}
@@ -1584,13 +1687,35 @@ query holds(alice, read, file);
 
       \subsubsection{Translation to Normal Logic Program}
 
+        \paragraph{Removal of Classical Negation.}
+
+          The removal of classical negation from facts of language ${\cal L}$
+          is a straightforward procedure: each classically negated fact
+          $\lnot$ $f$ is replaced by a new and unique positive fact $f'$ that
+          represents the negation of fact $f$. To preserve the consistency of
+          the policy base for all facts $f$ in the domain, the following
+          constraint rule must be added:
+
+          \begin{quote}
+            $FALSE$ $\leftarrow$ $f$, $f'$
+          \end{quote}
+
+          As shown in the next section, the removal of classical negation from
+          facts of language $\cal{L}$ is achieved in the technique used in the
+          representation of facts.
+
         \paragraph{Representing Facts in Propositional Form.}
 
-          The first step in the translation of language ${\cal L}$ to a normal
-          logic program is to represent each fact in propositional form.
+          Semantically, an atom of language ${\cal L}^{*}$ is defined as a
+          relational binding of 2 to 3 entity identifiers and a state
+          parameter. To translate into a normal logic program, atoms of this
+          first-order logic form must be converted into propositional form,
+          that is, an atom must be represented by a single identity or symbol
+          instead of a relation.
 
-          Given the symbol table $S$, we first enumerate all atoms derived
-          from the entity identifiers defined in the symbol table:
+          Given the symbol table $st$, we first enumerate all atoms of state
+          $S_{0}$ derived from the all possible combinations of all entity
+          identifiers defined in the symbol table:
 
           \begin{tabular}[t]{|l|l|l|l|l|l|}
             \hline
@@ -1599,113 +1724,113 @@ query holds(alice, read, file);
             \textbf{Entity 1} &
             \textbf{Entity 2} &
             \textbf{Entity 3} &
-            \multicolumn{2}{|l|}{\textbf{Type}} \\
+            \multicolumn{2}{|l|}{\textbf{}} \\
             \hline
             % holds line 1
-            $0$ &
-            $S.s[0]$ &
-            $S.a[0]$ &
-            $S.o[0]$ &
+            $I_{h_{0}}$ &
+            $st.s[0]$ &
+            $st.a[0]$ &
+            $st.o[0]$ &
             \multicolumn{2}{|c|}{\multirow{3}{*}{\begin{sideways}Holds\end{sideways}}} \\
             % holds line 2
             \vdots & \vdots & \vdots & \vdots & \multicolumn{2}{|c|}{} \\
             % holds line 3
-            $0$ &
-            $S.s[l_{s}]$ &
-            $S.a[l_{a}]$ &
-            $S.o[l_{o}]$ &
+            $I_{h_{a}}$ &
+            $st.s[l_{s}-1]$ &
+            $st.a[l_{a}-1]$ &
+            $st.o[l_{o}-1]$ &
             \multicolumn{2}{|c|}{} \\
             \hline
             % sub memb line 1
-            $0$ &
-            $S.ss[0]$ &
-            $S.sg[0]$ &
+            $I_{sm_{0}}$ &
+            $st.ss[0]$ &
+            $st.sg[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}sub\end{sideways}} &
             \multirow{9}{*}{\begin{sideways}Member\end{sideways}} \\
             % sub memb line 2
             \vdots & \vdots & \vdots & & & \\
             % sub memb line 3
-            $0$ & $S.ss[l_{ss}]$ & $S.sg[l_{sg}]$ & & & \\
+            $I_{sm_{b}}$ & $st.ss[l_{ss}-1]$ & $st.sg[l_{sg}-1]$ & & & \\
             \cline{1-5}
             % acc memb line 1
-            $0$ &
-            $S.as[0]$ &
-            $S.ag[0]$ &
+            $I_{am_{0}}$ &
+            $st.as[0]$ &
+            $st.ag[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}acc\end{sideways}} & \\
             % acc memb line 2
             \vdots & \vdots & \vdots & & & \\
             % acc memb line 3
-            $0$ & $S.as[l_{as}]$ & $S.ag[l_{ag}]$ & & & \\
+            $I_{am_{c}}$ & $st.as[l_{as}]$ & $st.ag[l_{ag}]$ & & & \\
             \cline{1-5}
             % obj memb line 1
-            $0$ &
-            $S.os[0]$ &
-            $S.og[0]$ &
+            $I_{om_{0}}$ &
+            $st.os[0]$ &
+            $st.og[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}obj\end{sideways}} & \\
             % obj memb line 2
             \vdots & \vdots & \vdots & & & \\
             % obj memb line 3
-            $0$ & $S.os[l_{os}]$ & $S.og[l_{og}]$ & & & \\
+            $I_{om_{d}}$ & $st.os[l_{os}]$ & $st.og[l_{og}]$ & & & \\
             \hline
-            % sub subS line 1
-            $0$ &
-            $S.sg[0]$ &
-            $S.sg[0]$ &
+            % sub subs line 1
+            $I_{ss_{0}}$ &
+            $st.sg[0]$ &
+            $st.sg[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}sub\end{sideways}} &
             \multirow{9}{*}{\begin{sideways}Subset\end{sideways}} \\
-            % sub subS line 2
+            % sub subs line 2
             \vdots & \vdots & \vdots & & & \\
-            % sub subS line 3
-            $0$ & $S.sg[l_{sg}]$ & $S.sg[l_{sg}]$ & & & \\
+            % sub subs line 3
+            $I_{ss_{e}}$ & $st.sg[l_{sg}]$ & $st.sg[l_{sg}]$ & & & \\
             \cline{1-5}
-            % acc subS line 1
-            $0$ &
-            $S.ag[0]$ &
-            $S.ag[0]$ &
+            % acc subs line 1
+            $I_{as_{0}}$ &
+            $st.ag[0]$ &
+            $st.ag[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}acc\end{sideways}} & \\
-            % acc subS line 2
+            % acc subs line 2
             \vdots & \vdots & \vdots & & & \\
-            % acc subS line 3
-            $0$ & $S.ag[l_{ag}]$ & $S.ag[l_{ag}]$ & & & \\
+            % acc subs line 3
+            $I_{as_{f}}$ & $st.ag[l_{ag}]$ & $st.ag[l_{ag}]$ & & & \\
             \cline{1-5}
-            % obj subS line 1
-            $0$ &
-            $S.og[0]$ &
-            $S.og[0]$ &
+            % obj subs line 1
+            $I_{os_{0}}$ &
+            $st.og[0]$ &
+            $st.og[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}obj\end{sideways}} & \\
-            % obj subS line 2
+            % obj subs line 2
             \vdots & \vdots & \vdots & & & \\
-            % obj subS line 3
-            $0$ & $S.og[l_{og}]$ & $S.og[l_{og}]$ & & & \\
+            % obj subs line 3
+            $I_{os_{g}}$ & $st.og[l_{og}]$ & $st.og[l_{og}]$ & & & \\
             \hline
           \end{tabular}
 
           \begin{quote}
             where
 
-            $l_{s}$ = $S.s.len() - 1$
+            $l_{s}$ = $st.s.len() - 1$
 
-            $l_{a}$ = $S.a.len() - 1$
+            $l_{a}$ = $st.a.len() - 1$
 
-            $l_{o}$ = $S.o.len() - 1$
+            $l_{o}$ = $st.o.len() - 1$
 
-            $l_{ss}$ = $S.ss.len() - 1$
+            $l_{ss}$ = $st.ss.len() - 1$
 
-            $l_{as}$ = $S.as.len() - 1$
+            $l_{as}$ = $st.as.len() - 1$
 
-            $l_{os}$ = $S.os.len() - 1$
+            $l_{os}$ = $st.os.len() - 1$
 
-            $l_{sg}$ = $S.sg.len() - 1$
+            $l_{sg}$ = $st.sg.len() - 1$
 
-            $l_{ag}$ = $S.ag.len() - 1$
+            $l_{ag}$ = $st.ag.len() - 1$
 
-            $l_{og}$ = $S.og.len() - 1$
+            $l_{og}$ = $st.og.len() - 1$
           \end{quote}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
