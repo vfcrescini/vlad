@@ -3,6 +3,9 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
+#ifndef __VLAD_NUMBERLIST_H
+#define __VLAD_NUMBERLIST_H
+
 #include <list.h>
 
 class number : public list_item
@@ -33,3 +36,5 @@ class numberlist : public list
     /* return true if number is in the list */
     int find(unsigned int n);
 } ;
+
+#endif
