@@ -40,7 +40,7 @@
   \section{Language $\cal{L}$}
 
     Language $\cal{L}$ is a first-order logic language that represents a policy
-    base for an authorization system. Two key features of the language are: (1)
+    base for an authorisation system. Two key features of the language are: (1)
     providing a means to conditionally and dynamically update the existing
     policy base and (2) having a mechanism by which queries may be evaluated
     from the updated policy base.
@@ -408,7 +408,7 @@ query holds(alice, read, file);
           $\sigma_{0} = S_{0}$
 
           $\sigma_{1} = Result(u_{0}, \sigma_{0})$
-         
+
           $\vdots$
 
           $\sigma_{|\psi|} = Result(u_{|\psi| - 1}, \sigma_{|\psi| - 1})$
@@ -1458,7 +1458,7 @@ query holds(alice, read, file);
         entity identifiers that are valid for each fact in the current
         constraint are used to replace the variable (e.g. only singular subject entity
         identifiers are used to replace an element variable occuring in a
-        subject member fact). 
+        subject member fact).
 
         For example, given that the symbol table contains three singular
         subject entity identifiers: $alice$, $bob$ and $charlie$, and the
@@ -1481,7 +1481,7 @@ query holds(alice, read, file);
 
         In the semantics section, it is shown that policy updates are performed
         by treating each update as a constraint. This constraint is composed of
-        a premise, which are the preconditions in the current state and a 
+        a premise, which are the preconditions in the current state and a
         consequent, which is the postcondition of the resulting state after the
         application of the policy update. The resulting state in this procedure
         represents the updated policy.
@@ -1520,7 +1520,7 @@ query holds(alice, read, file);
 
           The removal process is achieved by adding a boolean parameter to
           each fact to indicate whether the fact is classically negated or
-          not. 
+          not.
 
           For example, given the fact:
 
@@ -1608,7 +1608,7 @@ query holds(alice, read, file);
           described in the semantics section and the method for eliminating
           classical negation, each initial state expression, constraint rule
           and polcy update becomes a set of simple logical rules. By applying
-          the $encode$ function above for each fact in each of these rules, 
+          the $encode$ function above for each fact in each of these rules,
           a normal logic program is generated.
 
       \subsubsection{Query Evaluation}
@@ -1651,7 +1651,7 @@ query holds(alice, read, file);
       Each of the tables and lists used in the system inherits from a generic
       ordered and indexed list implementation. Each node in this list holds a
       generic data type that can be used to store strings, an arbitrary data
-      type or another list type. 
+      type or another list type.
 
       \subsubsection{Symbol Table.}
 
@@ -1682,12 +1682,12 @@ query holds(alice, read, file);
         Each entity identifier are sorted in the above lists accoring to
         their type, and ordered accoring to the order in which they are
         declared in the program. Each list is indexed by consecutive
-        positive integers starting from zero. 
+        positive integers starting from zero.
 
       \subsubsection{Policy Base.}
 
         When a language ${\cal L}$ program is parsed, each of the facts,
-        rules and policy updates must first be stored into the policy base. 
+        rules and policy updates must first be stored into the policy base.
         The policy base is composed of 4 tables to store the following:
         initial state facts, constraint rules, policy update definitions and
         the policy update sequence.
@@ -1815,5 +1815,44 @@ query holds(alice, read, file);
 
 
     \subsection{A Case Study: Web Server Application}
+
+      \begin{figure}[ht]
+        \begin{center}
+          \epsfig{file=app.eps}
+          \caption{PolicyUpdater module for Apache}
+          \label{fig-3}
+        \end{center}
+      \end{figure}
+
+      The expressiveness of language $\cal{L}$ and the effectiveness of the
+      PolicyUpdater system can best be demonstrated by a web server
+      authorisation application. In this application, PolicyUpdater serves as
+      an authorisation module for the \emph{Apache}\footnotemark web server.
+      \footnotetext{Apache Web Server (\tt http://www.apache.org).}
+
+      Although the PolicyUpdater module do not provide the full functionality
+      of Apache's built-in authorisation module \emph{mod\_auth}, it does
+      provide a flexible logic-based authorisation mechanism.
+
+      The PolicyUpdater module works by intercepting all authenticated HTTP
+      requests made to the web server. Users and groups directly correspond to
+      the language $\cal{L}$ subjects, HTTP request methods (i.e. GET, POST,
+      etc.) are the access-rights, and files, directories and other resources
+      in the document root are the objects. These entities plus any initial
+      facts, constraints and update propositions in the policy base make up the
+      domain of language $\cal{L}$.
+
+      Figure \ref{fig-3} shows how the PolicyUpdater module works within a
+      typical HTTP request. (1) User $s$ makes a HTTP request $a$ for file
+      $o$ and is authenticated by Apache through the Basic HTTP Authentication
+      Scheme. (2) Once properly authenticated, Apache passes the request tuple
+      $\{s, a, o\}$ to the PolicyUpdater module. (3) PolicyUpdater then queries
+      the policy base to verify the fact $holds(s, a, o)$ and returns a reply
+      (4) back to Apache. If the request is allowed, as determined by the
+      module through the policy base, Apache accepts and honours the request
+      $a$ to the file $o$ (5) and sends the results back to user $s$ (6).
+      Optionally, an Administrator, once properly authenticated can dynamically
+      update the policy (7) by altering the update sequence in the policy base.
+
 
 \end{document}
