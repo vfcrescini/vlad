@@ -1366,294 +1366,401 @@
               Constraint Rules
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % constraints (S0)
-                    \hat{holds}&(grp1, write, file, S_{0}) \leftarrow \\
-                    & \hat{holds}(grp1, read, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp3, write, file, S_{0}) \\
-                    % constraints (S1)
-                    \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(grp1, read, file, S_{1}), \\
-                    & not \lnot \hat{holds}(grp3, write, file, S_{1})
-                  \end{aligned}
-                \end{math}
+                % constraints (S0)
+                $\hat{holds}(grp1, write, file, S_{0})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp1, read, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp3, write, file, S_{0})$
+              \end{vquote}
+
+              \begin{vquote}
+                % constraints (S1)
+                $\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp1, read, file, S_{1})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
               \end{vquote}
 
             \item
               Policy Update Rules
 
               \begin{vquote}
-                \begin{math}
-                  \lnot \hat{holds}(grp1, read, file, S_{1}) \leftarrow
-                \end{math}
+                $\lnot\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
               \end{vquote}
 
             \item
               Inheritance Rules
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inheritance rules (positive, read, S0)
-                    \hat{holds}&(alice, read, file, S_{0}) \leftarrow \\
-                    & \hat{holds}(grp1, read, file, S_{0}), \\
-                    & \hat{memb}(alice, grp1, S_{0}), \\
-                    & not \lnot \hat{holds}(alice, read, file, S_{0}) \\
-                    % inheritance rules (negative, read, S0)
-                    \lnot \hat{holds}&(alice, read, file, S_{0}) \leftarrow \\
-                    & \lnot \hat{holds}(grp1, read, file, S_{0}), \\
-                    & \hat{memb}(alice, grp1, S_{0})
-                  \end{aligned}
-                \end{math}
+                % inheritance rules (positive, read, S0)
+                $\hat{holds}(alice, read, file, S_{0})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp1, read, file, S_{0})$,
+
+                \hspace{1em}
+                $\hat{memb}(alice, grp1, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(alice, read, file, S_{0})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inheritance rules (positive, write, S0)
-                    \hat{holds}&(alice, write, file, S_{0}) \leftarrow \\
-                    & \hat{holds}(grp1, write, file, S_{0}), \\
-                    & \hat{memb}(alice, grp1, S_{0}), \\
-                    & not \lnot \hat{holds}(alice, write, file, S_{0}) \\
-                    % inheritance rules (negative, write, S0)
-                    \lnot \hat{holds}&(alice, write, file, S_{0}) \leftarrow \\
-                    & \lnot \hat{holds}(grp1, write, file, S_{0}), \\
-                    & \hat{memb}(alice, grp1, S_{0})
-                  \end{aligned}
-                \end{math}
-               \end{vquote}
+                % inheritance rules (negative, read, S0)
+                $\lnot\hat{holds}(alice, read, file, S_{0})$ $\leftarrow$
 
-              \begin{vquote}
-                \hspace{5em}$\vdots$
+                \hspace{1em}
+                $\lnot\hat{holds}(grp1, read, file, S_{0})$,
+
+                \hspace{1em}
+                $\hat{memb}(alice, grp1, S_{0})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inheritance rules (positive, read, S1)
-                    \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(grp3, read, file, S_{1}), \\
-                    & \hat{memb}(alice, grp3, S_{1}), \\
-                    & not \lnot \hat{holds}(alice, read, file, S_{1}) \\
-                    % inheritance rules (negative, read, S1)
-                    \lnot \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                    & \lnot \hat{holds}(grp3, read, file, S_{1}), \\
-                    & \hat{memb}(alice, grp3, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inheritance rules (positive, write, S0)
+                $\hat{holds}(alice, write, file, S_{0})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp1, write, file, S_{0})$,
+ 
+                \hspace{1em}
+               $\hat{memb}(alice, grp1, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(alice, write, file, S_{0})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inheritance rules (positive, write, S1)
-                    \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(grp3, write, file, S_{1}), \\
-                    & \hat{memb}(alice, grp3, S_{1}), \\
-                    & not \lnot \hat{holds}(alice, write, file, S_{1}) \\
-                    % inheritance rules (negative, write, S1)
-                    \lnot \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                    & \lnot \hat{holds}(grp3, write, file, S_{1}), \\
-                    & \hat{memb}(alice, grp3, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inheritance rules (negative, write, S0)
+                $\lnot \hat{holds}(alice, write, file, S_{0})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot \hat{holds}(grp1, write, file, S_{0})$,
+ 
+                \hspace{1em}
+               $\hat{memb}(alice, grp1, S_{0})$
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{2em}$\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                % inheritance rules (positive, read, S1)
+                $\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp3, read, file, S_{1})$,
+
+                \hspace{1em}
+                $\hat{memb}(alice, grp3, S_{1})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(alice, read, file, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inheritance rules (negative, read, S1)
+                $\lnot\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{holds}(grp3, read, file, S_{1})$,
+
+                \hspace{1em}
+                $\hat{memb}(alice, grp3, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inheritance rules (positive, write, S1)
+                $\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp3, write, file, S_{1})$,
+
+                \hspace{1em}
+                $\hat{memb}(alice, grp3, S_{1})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inheritance rules (negative, write, S1)
+                $\lnot\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot \hat{holds}(grp3, write, file, S_{1})$,
+
+                \hspace{1em}
+                $\hat{memb}(alice, grp3, S_{1})$
               \end{vquote}
 
             \item
               Transitivity Rules
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{subst}&(grp1, grp1, S_{0}) \leftarrow \\
-                    & \hat{subst}(grp1, grp1, S_{0}), \\
-                    & \hat{subst}(grp1, grp1, S_{0})
-                  \end{aligned}
-                \end{math}
+                $\hat{subst}(grp1, grp1, S_{0})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}(grp1, grp1, S_{0})$,
+                $\hat{subst}(grp1, grp1, S_{0})$
               \end{vquote}
 
               \begin{vquote}
-                \hspace{5em}$\vdots$
+                \hspace{2em}$\vdots$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
-                    & \hat{subst}(grp3, grp3, S_{1}), \\
-                    & \hat{subst}(grp3, grp3, S_{1})
-                  \end{aligned}
-                \end{math}
+                $\hat{subst}(grp3, grp3, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}(grp3, grp3, S_{1})$,
+                $\hat{subst}(grp3, grp3, S_{1})$
               \end{vquote}
 
             \item
               Inertial Rules
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule holds(alice, read, file)
-                    \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(alice, read, file, S_{0}), \\
-                    & not \lnot \hat{holds}(alice, read, file, S_{1}) \\
-                    % inertial rule !holds(alice, read, file)
-                    \lnot \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                    & \lnot \hat{holds}(alice, read, file, S_{0}), \\
-                    & not \lnot \hat{holds}(alice, read, file, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inertial rule holds(alice, read, file)
+                $\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(alice, read, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(alice, read, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule holds(alice, write, file)
-                    \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(alice, write, file, S_{0}), \\
-                    & not \lnot \hat{holds}(alice, write, file, S_{1}) \\
-                    % inertial rule !holds(alice, write, file)
-                    \lnot \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                    & \lnot \hat{holds}(alice, write, file, S_{0}), \\
-                    & not \lnot \hat{holds}(alice, write, file, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inertial rule !holds(alice, read, file)
+                $\lnot\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{holds}(alice, read, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(alice, read, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule holds(grp1, read, file)
-                    \hat{holds}&(grp1, read, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(grp1, read, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp1, read, file, S_{1}) \\
-                    % inertial rule !holds(grp1, read, file)
-                    \lnot \hat{holds}&(grp1, read, file, S_{1}) \leftarrow \\
-                    & \lnot \hat{holds}(grp1, read, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp1, read, file, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inertial rule holds(alice, write, file)
+                $\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(alice, write, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \hspace{5em}$\vdots$
+                % inertial rule !holds(alice, write, file)
+                $\lnot\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{holds}(alice, write, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule holds(grp3, read, file)
-                    \hat{holds}&(grp3, read, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(grp3, read, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp3, read, file, S_{1}) \\
-                    % inertial rule !holds(grp3, read, file)
-                    \lnot \hat{holds}&(grp3, read, file, S_{1}) \leftarrow \\
-                    & \lnot \hat{holds}(grp3, read, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp3, read, file, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inertial rule holds(grp1, read, file)
+                $\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp1, read, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp1, read, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule holds(grp1, write, file)
-                    \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(grp1, write, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp1, write, file, S_{1}) \\
-                    % inertial rule !holds(grp1, write, file)
-                    \lnot \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
-                    & \lnot \hat{holds}(grp1, write, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp1, write, file, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inertial rule !holds(grp1, read, file)
+                $\lnot\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{holds}(grp1, read, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp1, read, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \hspace{5em}$\vdots$
+                \hspace{2em}$\vdots$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule holds(grp3, write, file)
-                    \hat{holds}&(grp3, write, file, S_{1}) \leftarrow \\
-                    & \hat{holds}(grp3, write, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp3, write, file, S_{1}) \\
-                    % inertial rule !holds(grp3, write, file)
-                    \lnot \hat{holds}&(grp3, write, file, S_{1}) \leftarrow \\
-                    & \lnot \hat{holds}(grp3, write, file, S_{0}), \\
-                    & not \lnot \hat{holds}(grp3, write, file, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inertial rule holds(grp3, read, file)
+                $\hat{holds}(grp3, read, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp3, read, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp3, read, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule memb(alice, grp1)
-                    \hat{memb}&(alice, grp1, S_{1}) \leftarrow \\
-                    & \hat{memb}(alice, grp1, S_{0}), \\
-                    & not \lnot \hat{memb}(alice, grp1, S_{1}) \\
-                    % inertial rule !memb(alice, grp1)
-                    \lnot \hat{memb}&(alice, grp1, S_{1}) \leftarrow \\
-                    & \lnot \hat{memb}(alice, grp1, S_{0}), \\
-                    & not \hat{memb}(alice, grp1, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inertial rule !holds(grp3, read, file)
+                $\lnot\hat{holds}(grp3, read, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{holds}(grp3, read, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp3, read, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \hspace{5em}$\vdots$
+                % inertial rule holds(grp1, write, file)
+                $\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp1, write, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp1, write, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule memb(alice, grp3)
-                    \hat{memb}&(alice, grp3, S_{1}) \leftarrow \\
-                    & \hat{memb}(alice, grp3, S_{0}), \\
-                    & not \lnot \hat{memb}(alice, grp3, S_{1}) \\
-                    % inertial rule !memb(alice, grp3)
-                    \lnot \hat{memb}&(alice, grp3, S_{1}) \leftarrow \\
-                    & \lnot \hat{memb}(alice, grp3, S_{0}), \\
-                    & not \hat{memb}(alice, grp3, S_{1})
-                  \end{aligned}
-                \end{math}
+                % inertial rule !holds(grp1, write, file)
+                $\lnot\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{holds}(grp1, write, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp1, write, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule subst(grp1, grp1)
-                    \hat{subst}&(grp1, grp1, S_{1}) \leftarrow \\
-                    & \hat{subst}(grp1, grp1, S_{0}), \\
-                    & not \lnot \hat{subst}(grp1, grp1, S_{1}) \\
-                    % inertial rule !subst(grp1, grp1)
-                    \lnot \hat{subst}&(grp1, grp1, S_{1}) \leftarrow \\
-                    & \lnot \hat{memb}(grp1, grp1, S_{0}), \\
-                    & not \hat{memb}(grp1, grp1, S_{1})
-                  \end{aligned}
-                \end{math}
+                \hspace{2em}$\vdots$
               \end{vquote}
 
               \begin{vquote}
-                \hspace{5em}$\vdots$
+                % inertial rule holds(grp3, write, file)
+                $\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}(grp3, write, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
               \end{vquote}
 
               \begin{vquote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    % inertial rule subst(grp3, grp3)
-                    \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
-                    & \hat{subst}(grp3, grp3, S_{0}), \\
-                    & not \lnot \hat{subst}(grp3, grp3, S_{1}) \\
-                    % inertial rule !subst(grp3, grp3)
-                    \lnot \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
-                    & \lnot \hat{memb}(grp3, grp3, S_{0}), \\
-                    & not \hat{memb}(grp3, grp3, S_{1}) \\
-                  \end{aligned}
-                \end{math}
+                % inertial rule !holds(grp3, write, file)
+                $\lnot\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{holds}(grp3, write, file, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inertial rule memb(alice, grp1)
+                $\hat{memb}(alice, grp1, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{memb}(alice, grp1, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{memb}(alice, grp1, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inertial rule !memb(alice, grp1)
+                $\lnot \hat{memb}(alice, grp1, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{memb}(alice, grp1, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\hat{memb}(alice, grp1, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{2em}$\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                % inertial rule memb(alice, grp3)
+                $\hat{memb}(alice, grp3, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{memb}(alice, grp3, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{memb}(alice, grp3, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inertial rule !memb(alice, grp3)
+                $\lnot\hat{memb}(alice, grp3, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{memb}(alice, grp3, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\hat{memb}(alice, grp3, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inertial rule subst(grp1, grp1)
+                $\hat{subst}(grp1, grp1, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}(grp1, grp1, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{subst}(grp1, grp1, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inertial rule !subst(grp1, grp1)
+                $\lnot\hat{subst}(grp1, grp1, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{memb}(grp1, grp1, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\hat{memb}(grp1, grp1, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{2em}$\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                % inertial rule subst(grp3, grp3)
+                $\hat{subst}(grp3, grp3, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}(grp3, grp3, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\lnot\hat{subst}(grp3, grp3, S_{1})$
+              \end{vquote}
+
+              \begin{vquote}
+                % inertial rule !subst(grp3, grp3)
+                $\lnot\hat{subst}(grp3, grp3, S_{1})$ $\leftarrow$
+
+                \hspace{1em}
+                $\lnot\hat{memb}(grp3, grp3, S_{0})$,
+
+                \hspace{1em}
+                $not$ $\hat{memb}(grp3, grp3, S_{1})$
               \end{vquote}
           \end{enumerate}
         \end{vexample}
