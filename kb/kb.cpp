@@ -348,16 +348,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 {
   int retval;
   unsigned int i;
-  unsigned int j;
-  numberlist *tmp_l1;
-  numberlist *tmp_l2;
-  numberlist *tmp_l3;
-  numberlistlist *tmp_ll1;
-  numberlistlist *tmp_ll2;
-  numberlistlist *tmp_ll3;
-  unsigned int tmp_n1;
-  unsigned int tmp_n2;
-  unsigned int tmp_n3;
+  unsigned int tot_trans;
   
   /* we only allow this function after transtab is closed */
   if (stage != 5)
@@ -375,33 +366,36 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   if ((retval = verify_sequence(s)) != VLAD_OK)
     return retval;
 
+  /* number of transformations in this sequence */
+  tot_trans = (s == NULL) ? 0 : s->length();
+
   /* first we print out all the possible atoms in the kb */
   fprintf(f, "Atoms\n");
 
-  for (i = 0; i < (pos_tot * 2 * ((s == NULL) ? 1 : s->length() + 1)); i++) {
+  for (i = 0; i < (pos_tot * 2 * (tot_trans + 1)); i++) {
     atom *tmp_atom;
     unsigned char tmp_ty;
     unsigned int tmp_s;
     bool tmp_tr;
-    char *tmp1;
-    char *tmp2;
-    char *tmp3;
+    char *tmp_param1;
+    char *tmp_param2;
+    char *tmp_param3;
 
     if ((retval = decode_atom(&tmp_atom, &tmp_s, i)) != VLAD_OK)
       return retval;
 
-    if ((retval = tmp_atom->get(&tmp1, &tmp2, &tmp3, &tmp_ty, &tmp_tr)) != VLAD_OK)
+    if ((retval = tmp_atom->get(&tmp_param1, &tmp_param2, &tmp_param3, &tmp_ty, &tmp_tr)) != VLAD_OK)
       return retval;
 
     switch(tmp_ty) {
       case VLAD_ATOM_HOLDS :
-        fprintf(f, "  %d = holds(S%d, %c, holds, %s, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2, tmp3);
+        fprintf(f, "  %d = holds(S%d, %c, holds, %s, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp_param1, tmp_param2, tmp_param3);
         break;
       case VLAD_ATOM_MEMBER :
-          fprintf(f, "  %d = holds(S%d, %c, member, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2);
+          fprintf(f, "  %d = holds(S%d, %c, member, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp_param1, tmp_param2);
         break;
       case VLAD_ATOM_SUBSET :
-          fprintf(f, "  %d = holds(S%d, %c, subset, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2);
+          fprintf(f, "  %d = holds(S%d, %c, subset, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp_param1, tmp_param2);
         break;
     }
 
@@ -411,175 +405,264 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   /* inheritance rules */
   fprintf(f, "Inheritance Rules\n");
 
-  if ((retval = generate_inheritance((s == NULL) ? 0 :s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
-    return retval;
-
-  for (i = 0; i < tmp_l1->length(); i++) {
-    if ((retval = tmp_l1->get(i, &tmp_n1)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_l2->get(i, &tmp_n2)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_l3->get(i, &tmp_n3)) != VLAD_OK)
-      return retval;
-
-    fprintf(f, "  %d <- %d AND %d\n", tmp_n1, tmp_n2, tmp_n3);
+  /* state loop */
+  for (i = 0; i <= tot_trans; i++) {
+    unsigned int i_truth;
+    unsigned int i_group;
+    unsigned int i_sub;
+    unsigned int i_acc;
+    unsigned int i_obj;
+    /* truth loop */
+    for (i_truth = 0; i_truth < 2; i_truth++) {
+      /* subject groups */
+      for (i_group = 0; i_group < sg_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              fprintf(f, 
+                      "  %d <- %d AND %d\n",
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      (i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_group);
+            }
+          }
+        }
+      }
+      /* access groups */
+      for (i_group = 0; i_group < ag_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              fprintf(f, 
+                      "  %d <- %d AND %d\n",
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj,
+                      (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group);
+            }
+          }
+        }
+      }
+      /* object groups */
+      for (i_group = 0; i_group < og_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len; i_obj++) {
+              fprintf(f, 
+                      "  %d <- %d AND %d\n",
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len,
+                      (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group);
+            }
+          }
+        }
+      }
+    }
   }
-
-  delete tmp_l1;
-  delete tmp_l2;
-  delete tmp_l3;
 
   /* transitivity */
   fprintf(f, "Transitivity Rules\n");
 
-  if ((retval = generate_transitivity((s == NULL) ? 0 : s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
-    return retval;
+  /* state loop */
+  for (i = 0; i <= tot_trans; i++) {
+    unsigned int i_grp1;
+    unsigned int i_grp2;
+    unsigned int i_grp3;
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < sg_len; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
 
-  for (i = 0; i < tmp_l1->length(); i++) {
-    if ((retval = tmp_l1->get(i, &tmp_n1)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_l2->get(i, &tmp_n2)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_l3->get(i, &tmp_n3)) != VLAD_OK)
-      return retval;
-
-    fprintf(f, "  %d <- %d AND %d\n", tmp_n1, tmp_n2, tmp_n3);
+          fprintf(f,
+                  "  %d <- %d AND %d\n",
+                  (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp3,
+                  (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2,
+                  (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp2 * sg_len) + i_grp3);
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < ag_len; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+          fprintf(f,
+                  "  %d <- %d AND %d\n",
+                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp3,
+                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp2,
+                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp2 * sg_len) + i_grp3);
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < og_len; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+          fprintf(f,
+                  "  %d <- %d AND %d\n",
+                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp3,
+                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp2,
+                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp2 * sg_len) + i_grp3);
+        }
+      }
+    }
   }
-
-  delete tmp_l1;
-  delete tmp_l2;
-  delete tmp_l3;
 
   /* complementary rules */
   fprintf(f, "Complementary Rules\n");
 
-  if ((retval = generate_complementary((s == NULL) ? 0 : s->length(), &tmp_l1, &tmp_l2)) != VLAD_OK)
-    return retval;
-
-  for (i = 0; i < tmp_l1->length(); i++) {
-    if ((retval = tmp_l1->get(i, &tmp_n1)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_l2->get(i, &tmp_n2)) != VLAD_OK)
-      return retval;
-
-    fprintf(f, "  false <- %d AND %d\n", tmp_n1, tmp_n2);
+  /* state loop */
+  for (i = 0; i <= tot_trans; i++) {
+    unsigned int i_atom;
+    for (i_atom = 0; i_atom < pos_tot; i_atom++) {
+      fprintf(f, 
+              "  false <- %d AND %d\n",
+              (i * pos_tot * 2) + i_atom + pos_tot,
+              (i * pos_tot * 2) + i_atom);
+    }
   }
-
-  delete tmp_l1;
-  delete tmp_l2;
 
   /* inertial rules */
   fprintf(f, "Inertial Rules\n");
 
-  if ((retval = generate_inertial((s == NULL) ? 0 : s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
-    return retval;
-
-  for (i = 0; i < tmp_l1->length(); i++) {
-    if ((retval = tmp_l1->get(i, &tmp_n1)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_l2->get(i, &tmp_n2)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_l3->get(i, &tmp_n3)) != VLAD_OK)
-      return retval;
-
-    fprintf(f, "  %d <- %d AND NOT %d\n", tmp_n1, tmp_n2, tmp_n3);
+  /* state loop */
+  for (i = 0; i < tot_trans; i++) {
+    unsigned int i_atom;
+    for (i_atom = 0; i_atom < pos_tot; i_atom++) {
+      fprintf(f,
+              "  %d <- %d AND NOT %d\n",
+              ((i + 1) * pos_tot * 2) + i_atom + pos_tot,
+              (i * pos_tot * 2) + i_atom + pos_tot,
+              ((i + 1) * pos_tot * 2) + i_atom);
+      fprintf(f,
+              "  %d <- %d AND NOT %d\n",
+              ((i + 1) * pos_tot * 2) + i_atom,
+              (i * pos_tot * 2) + i_atom,
+              ((i + 1) * pos_tot * 2) + i_atom + pos_tot);
+    }
   }
-
-  delete tmp_l1;
-  delete tmp_l2;
-  delete tmp_l3;
 
   /* initial state */
   fprintf(f, "Initial State\n");
 
-  if ((retval = generate_initialstate(&tmp_l1)) != VLAD_OK)
-    return retval;
+  for (i = 0; i < (itable ? itable->length() : 0); i++) {
+    atom *tmp_atom;
+    unsigned int tmp_num;
 
-  for (i = 0; i < tmp_l1->length(); i++) {
-    if ((retval = tmp_l1->get(i, &tmp_n1)) != VLAD_OK)
+    if ((retval = itable->get(i, &tmp_atom)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_atom(tmp_atom, 0, &tmp_num)) != VLAD_OK)
       return retval;
 
-    fprintf(f, "  %d <-\n", tmp_n1);
+    fprintf(f, "  %d <-\n", tmp_num);
   }
-
-  delete tmp_l1;
 
   /* constraints */
   fprintf(f, "Constraints\n");
 
-  if ((retval = generate_constraints((s == NULL) ? 0 : s->length(), &tmp_ll1, &tmp_ll2, &tmp_ll3)) != VLAD_OK)
-    return retval;
+  for (i = 0; i <= tot_trans; i++) {
+    unsigned int  i_const;
+    unsigned int i_exp;
 
-  for (i = 0; i < tmp_ll1->length(); i++) {
-    if ((retval = tmp_ll1->get(i, &tmp_l1)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_ll2->get(i, &tmp_l2)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_ll3->get(i, &tmp_l3)) != VLAD_OK)
-      return retval;
+    /* constraint loop */
+    for (i_const = 0; i_const < (ctable ? ctable->length() : 0); i_const++) {
+      expression *tmp_e;
+      expression *tmp_c;
+      expression *tmp_n;
+      atom *tmp_atom;
+      unsigned int tmp_num;
 
-    for (j = 0; j < tmp_l1->length(); j++) {
-      if ((retval = tmp_l1->get(j, &tmp_n1)) != VLAD_OK)
+      if ((retval = ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
         return retval;
-      fprintf(f, "  %d", tmp_n1);
+
+      fprintf(f, " ");
+
+      /* constaint expression */
+      for (i_exp = 0; i_exp < tmp_e->length(); i_exp++) {
+        if ((retval = tmp_e->get(i_exp, &tmp_atom)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
+          return retval;
+        fprintf(f, " %d", tmp_num);
+      }
+
+      fprintf(f, " <-");
+
+      /* constraint condition */
+      for (i_exp = 0; i_exp < (tmp_c ? tmp_c->length() : 0); i_exp++) {
+        if ((retval = tmp_c->get(i_exp, &tmp_atom)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
+          return retval;
+        fprintf(f, " %d", tmp_num);
+      }
+
+      /* constraint negative condition */
+      for (i_exp = 0; i_exp < tmp_n->length(); i_exp++) {
+        if ((retval = tmp_n->get(i_exp, &tmp_atom)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
+          return retval;
+        fprintf(f, " NOT %d", tmp_num);
+      }
+
+      fprintf(f, "\n");
     }
-
-    fprintf(f, "  <-");
-
-    for (j = 0; j < tmp_l2->length(); j++) {
-      if ((retval = tmp_l2->get(j, &tmp_n1)) != VLAD_OK)
-        return retval;
-      fprintf(f, "  %d", tmp_n1);
-    }
-
-    for (j = 0; j < tmp_l3->length(); j++) {
-      if ((retval = tmp_l3->get(j, &tmp_n1)) != VLAD_OK)
-        return retval;
-      fprintf(f, "  NOT %d", tmp_n1);
-    }
-
-    fprintf(f, "\n");
   }
-
-  delete tmp_ll1;
-  delete tmp_ll2;
-  delete tmp_ll3;
 
   /* transformation rules */
   fprintf(f, "Transformation Rules\n");
 
-  if ((retval = generate_transformation(s, &tmp_ll1, &tmp_ll2)) != VLAD_OK)
-    return retval;
+  fprintf(f, " ");
 
-  for (i = 0; i < tmp_ll1->length(); i++) {
-    if ((retval = tmp_ll1->get(i, &tmp_l1)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp_ll2->get(i, &tmp_l2)) != VLAD_OK)
+  /* state loop */
+  for (i = 0; i < tot_trans; i++) {
+    unsigned int i_exp;
+    char *tmp_name;
+    atom *tmp_atom;
+    unsigned int tmp_num;
+    stringlist *tmp_ilist = NULL;
+    expression *tmp_pre = NULL;
+    expression *tmp_post = NULL;
+
+    if ((retval = s->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
       return retval;
 
-    for (j = 0; j < tmp_l2->length(); j++) {
-      if ((retval = tmp_l2->get(j, &tmp_n1)) != VLAD_OK)
+    if ((retval = ttable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
+      return retval;
+
+    /* postcondition loop */
+    for (i_exp = 0; i_exp < (tmp_post ? tmp_post->length() : 0); i_exp++) {
+      if ((retval = tmp_post->get(i_exp, &tmp_atom)) != VLAD_OK)
         return retval;
-      fprintf(f, "  %d", tmp_n1);
+      if ((retval = encode_atom(tmp_atom, i + 1, &tmp_num)) != VLAD_OK)
+        return retval;
+      fprintf(f, " %d", tmp_num);
     }
 
-    fprintf(f, "  <-");
+    fprintf(f, " <-");
 
-    for (j = 0; j < tmp_l1->length(); j++) {
-      if ((retval = tmp_l1->get(j, &tmp_n1)) != VLAD_OK)
+    /* precondition loop */
+    for (i_exp = 0; i_exp < (tmp_pre ? tmp_pre->length() : 0); i_exp++) {
+      if ((retval = tmp_pre->get(i_exp, &tmp_atom)) != VLAD_OK)
         return retval;
-      fprintf(f, "  %d", tmp_n1);
+      if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
+        return retval;
+      fprintf(f, " %d", tmp_num);
     }
-
-    fprintf(f, "\n");
   }
 
-  delete tmp_ll1;
-  delete tmp_ll2;
+  fprintf(f, "\n");
 
   return VLAD_OK;
 }
-
 /* make sure atom a is valid */
 int kb::verify_atom(atom *a, stringlist *v)
 {
@@ -1169,480 +1252,6 @@ int kb::decode_atom(atom **a, unsigned int *s, unsigned int n)
   if ((retval = (*a)->init(tmp1, tmp2, tmp3, ty, tr)) != VLAD_OK) {
     delete (*a);
     return retval;
-  }
-
-  return VLAD_OK;
-}
-
-/* gives a list of encoded atom id's that represent inheritance rules */
-int kb::generate_inheritance(unsigned int state_tot,
-                             numberlist **l1,
-                             numberlist **l2,
-                             numberlist **l3)
-{
-  int retval;
-  unsigned int i_state;
-  unsigned int i_truth;
-  unsigned int i_sub;
-  unsigned int i_acc;
-  unsigned int i_obj;
-  unsigned int i_group;
-
-  /* make sure we are in stage 5 */
-  if (stage != 5)
-    return VLAD_FAILURE;
-
-  if (l1 == NULL || l2 == NULL || l3 == NULL)
-    return VLAD_NULLPTR;
-
-  /* create number lists */
-  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l2 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l3 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* state loop */
-  for (i_state = 0; i_state <= state_tot; i_state++) {
-    /* truth loop */
-    for (i_truth = 0; i_truth < 2; i_truth++) {
-      /* subject groups */
-      for (i_group = 0; i_group < sg_len; i_group++) {
-        for (i_sub = 0; i_sub < s_len; i_sub++) {
-          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_group;
-              if ((retval = (*l1)->add(param1)) != VLAD_OK)
-                return retval;
-              if ((retval = (*l2)->add(param2)) != VLAD_OK)
-                return retval;
-              if ((retval = (*l3)->add(param3)) != VLAD_OK)
-                return retval;
-            }
-          }
-        }
-      }
-      /* access groups */
-      for (i_group = 0; i_group < ag_len; i_group++) {
-        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-          for (i_acc = 0; i_acc < a_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj;
-              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group;
-              if ((retval = (*l1)->add(param1)) != VLAD_OK)
-                return retval;
-              if ((retval = (*l2)->add(param2)) != VLAD_OK)
-                return retval;
-              if ((retval = (*l3)->add(param3)) != VLAD_OK)
-                return retval;
-            }
-          }
-        }
-      }
-      /* object groups */
-      for (i_group = 0; i_group < og_len; i_group++) {
-        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len; i_obj++) {
-              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len;
-              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group;
-              if ((retval = (*l1)->add(param1)) != VLAD_OK)
-                return retval;
-              if ((retval = (*l2)->add(param2)) != VLAD_OK)
-                return retval;
-              if ((retval = (*l3)->add(param3)) != VLAD_OK)
-                return retval;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return VLAD_OK;
-}
-
-/* gives a list of encoded atom id's that represent transitivity rules */
-int kb::generate_transitivity(unsigned int state_tot,
-                              numberlist **l1,
-                              numberlist **l2,
-                              numberlist **l3)
-{
-  int retval;
-  unsigned int i_state;
-  unsigned int i_grp1;
-  unsigned int i_grp2;
-  unsigned int i_grp3;
-
-  /* make sure we are in stage 5 */
-  if (stage != 5)
-    return VLAD_FAILURE;
-
-  if (l1 == NULL || l2 == NULL || l3 == NULL)
-    return VLAD_NULLPTR;
-
-  /* create number lists */
-  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l2 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l3 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* state loop */
-  for (i_state = 0; i_state <= state_tot; i_state++) {
-    /* subject groups */
-    for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
-      for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
-        for (i_grp3 = 0; i_grp3 < sg_len; i_grp3++) {
-          /* ignore if any 2 are the same */
-          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
-            continue;
-          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp3;
-          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2;
-          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp2 * sg_len) + i_grp3;
-          if ((retval = (*l1)->add(param1)) != VLAD_OK)
-            return retval;
-          if ((retval = (*l2)->add(param2)) != VLAD_OK)
-            return retval;
-          if ((retval = (*l3)->add(param3)) != VLAD_OK)
-            return retval;
-        }
-      }
-    }
-    /* access groups */
-    for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
-      for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
-        for (i_grp3 = 0; i_grp3 < ag_len; i_grp3++) {
-          /* ignore if any 2 are the same */
-          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
-            continue;
-          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp3;
-          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp2;
-          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp2 * sg_len) + i_grp3;
-          if ((retval = (*l1)->add(param1)) != VLAD_OK)
-            return retval;
-          if ((retval = (*l2)->add(param2)) != VLAD_OK)
-            return retval;
-          if ((retval = (*l3)->add(param3)) != VLAD_OK)
-            return retval;
-        }
-      }
-    }
-    /* object groups */
-    for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
-      for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
-        for (i_grp3 = 0; i_grp3 < og_len; i_grp3++) {
-          /* ignore if any 2 are the same */
-          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
-            continue;
-          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp3;
-          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp2;
-          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp2 * sg_len) + i_grp3;
-          if ((retval = (*l1)->add(param1)) != VLAD_OK)
-            return retval;
-          if ((retval = (*l2)->add(param2)) != VLAD_OK)
-            return retval;
-          if ((retval = (*l3)->add(param3)) != VLAD_OK)
-            return retval;
-        }
-      }
-    }
-  }
-
-  return VLAD_OK;
-}
-
-/* gives a list of encoded atom id's that represent complementary rules */
-int kb::generate_complementary(unsigned int state_tot,
-                               numberlist **l1,
-                               numberlist **l2)
-{
-  int retval;
-  unsigned int i_state;
-  unsigned int i_atom;
-
-  /* make sure we are in stage 5 */
-  if (stage != 5)
-    return VLAD_FAILURE;
-
-  if (l1 == NULL || l2 == NULL)
-    return VLAD_NULLPTR;
-
-  /* create number lists */
-  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l2 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* state loop */
-  for (i_state = 0; i_state <= state_tot; i_state++) {
-    for (i_atom = 0; i_atom < pos_tot; i_atom++) {
-      if ((retval = (*l1)->add((i_state * pos_tot * 2) + i_atom + pos_tot)) != VLAD_OK)
-        return retval;
-      if ((retval = (*l2)->add((i_state * pos_tot * 2) + i_atom)) != VLAD_OK)
-        return retval;
-    }
-  }
-
-  return VLAD_OK;
-}
-
-/* gives a list of encoded atom id's that represent intertial rules */
-int kb::generate_inertial(unsigned int state_tot,
-                          numberlist **l1,
-                          numberlist **l2,
-                          numberlist **l3)
-{
-  int retval;
-  unsigned int i_state;
-  unsigned int i_atom;
-
-  /* make sure we are in stage 5 */
-  if (stage != 5)
-    return VLAD_FAILURE;
-
-  if (l1 == NULL || l2 == NULL || l3 == NULL)
-    return VLAD_NULLPTR;
-
-  /* create number lists */
-  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l2 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l3 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* state loop */
-  for (i_state = 0; i_state < state_tot; i_state++) {
-    for (i_atom = 0; i_atom < pos_tot; i_atom++) {
-      if ((retval = (*l1)->add(((i_state + 1) * pos_tot * 2) + i_atom + pos_tot)) != VLAD_OK)
-        return retval;
-      if ((retval = (*l2)->add((i_state * pos_tot * 2) + i_atom + pos_tot)) != VLAD_OK)
-        return retval;
-      if ((retval = (*l3)->add(((i_state + 1) * pos_tot * 2) + i_atom)) != VLAD_OK)
-        return retval;
-      if ((retval = (*l1)->add(((i_state + 1) * pos_tot * 2) + i_atom)) != VLAD_OK)
-        return retval;
-      if ((retval = (*l2)->add((i_state * pos_tot * 2) + i_atom)) != VLAD_OK)
-        return retval;
-      if ((retval = (*l3)->add(((i_state + 1) * pos_tot * 2) + i_atom + pos_tot)) != VLAD_OK)
-        return retval;
-    }
-  }
-
-  return VLAD_OK;
-}
-
-
-/* gives a list of encoded atom id's that represent initial state atoms */
-int kb::generate_initialstate(numberlist **l1)
-{
-  int retval;
-  unsigned int i;
-  atom *tmp_atom;
-  unsigned int tmp_num;
-
-  /* make sure we are in stage 5 */
-  if (stage != 5)
-    return VLAD_FAILURE;
-
-  if (l1 == NULL)
-    return VLAD_NULLPTR;
-
-  /* create number lists */
-  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  for (i = 0; i < itable->length(); i++) {
-    if ((retval = itable->get(i, &tmp_atom)) != VLAD_OK)
-      return retval;
-    if ((retval = encode_atom(tmp_atom, 0, &tmp_num)) != VLAD_OK)
-      return retval;
-    if ((retval = (*l1)->add(tmp_num)) != VLAD_OK)
-      return retval;
-  }
-
-  return VLAD_OK;
-}
-/* gives a list of encoded atom id's that represent constraint rules */
-int kb::generate_constraints(unsigned int state_tot,
-                             numberlistlist **l1,
-                             numberlistlist **l2,
-                             numberlistlist **l3)
-{
-  int retval;
-  unsigned int i_state;
-  unsigned int i_const;
-  unsigned int i_exp;
-  atom *tmp_atom;
-  unsigned int tmp_num;
-
-  /* make sure we are in stage 5 */
-  if (stage != 5)
-    return VLAD_FAILURE;
-
-  if (l1 == NULL || l2 == NULL || l3 == NULL)
-    return VLAD_NULLPTR;
-
-  /* create number list lists */
-  if ((*l1 = VLAD_NEW(numberlistlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l2 = VLAD_NEW(numberlistlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l3 = VLAD_NEW(numberlistlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* state loop */
-  for (i_state = 0; i_state <= state_tot; i_state++) {
-    /* constraint loop */
-    for (i_const = 0; i_const < ctable->length(); i_const++) {
-      expression *tmp_e;
-      expression *tmp_c;
-      expression *tmp_n;
-      numberlist *sl1;
-      numberlist *sl2;
-      numberlist *sl3;
-
-      if ((retval = ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
-        return retval;
-
-      /* create number lists (sublists) */
-      if ((sl1 = VLAD_NEW(numberlist())) == NULL)
-        return VLAD_MALLOCFAILED;
-      if ((sl2 = VLAD_NEW(numberlist())) == NULL)
-        return VLAD_MALLOCFAILED;
-      if ((sl3 = VLAD_NEW(numberlist())) == NULL)
-        return VLAD_MALLOCFAILED;
-
-      /* constaint expression */
-      for (i_exp = 0; i_exp < tmp_e->length(); i_exp++) {
-        if ((retval = tmp_e->get(i_exp, &tmp_atom)) != VLAD_OK)
-          return retval;
-        if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
-          return retval;
-        if ((retval = sl1->add(tmp_num)) != VLAD_OK)
-          return retval;
-      }
-
-      /* constraint condition */
-      if (tmp_c != NULL) {
-        for (i_exp = 0; i_exp < tmp_c->length(); i_exp++) {
-          if ((retval = tmp_c->get(i_exp, &tmp_atom)) != VLAD_OK)
-            return retval;
-          if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
-            return retval;
-          if ((retval = sl2->add(tmp_num)) != VLAD_OK)
-            return retval;
-        }
-      }
-
-      /* constraint negative condition */
-      if (tmp_n != NULL) {
-        for (i_exp = 0; i_exp < tmp_n->length(); i_exp++) {
-          if ((retval = tmp_n->get(i_exp, &tmp_atom)) != VLAD_OK)
-            return retval;
-          if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
-            return retval;
-          if ((retval = sl3->add(tmp_num)) != VLAD_OK)
-            return retval;
-        }
-      }
-
-      /* now add each sublist in the main lists */
-      if ((retval = (*l1)->add(sl1)) != VLAD_OK)
-        return retval;
-      if ((retval = (*l2)->add(sl2)) != VLAD_OK)
-        return retval;
-      if ((retval = (*l3)->add(sl3)) != VLAD_OK)
-        return retval;
-    }
-  }
-
-  return VLAD_OK;
-}
-
-/* gives a list of encoded atom id's that represent transformation rules */
-int kb::generate_transformation(sequence *seq,
-                                numberlistlist **l1,
-                                numberlistlist **l2)
-{
-  int retval;
-  unsigned int i_state;
-  unsigned int i_exp;
-
-  /* make sure we are in stage 5 */
-  if (stage != 5)
-    return VLAD_FAILURE;
-
-  if (l1 == NULL || l2 == NULL)
-    return VLAD_NULLPTR;
-
-  /* create number list lists */
-  if ((*l1 = VLAD_NEW(numberlistlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((*l2 = VLAD_NEW(numberlistlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* check if the sequence list is null */
-  if (seq == NULL)
-    return VLAD_OK;
-
-  /* state loop */
-  for (i_state = 0; i_state < seq->length(); i_state++) {
-    char *tmp_name;
-    atom *tmp_atom;
-    unsigned int tmp_num;
-    stringlist *tmp_ilist = NULL;
-    expression *tmp_pre = NULL;
-    expression *tmp_post = NULL;
-    numberlist *sl1;
-    numberlist *sl2;
-
-    if ((retval = seq->get(i_state, &tmp_name, &tmp_ilist)) != VLAD_OK)
-      return retval;
-
-    if ((retval = ttable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
-      return retval;
-
-    /* create number lists (sublists) */
-    if ((sl1 = VLAD_NEW(numberlist())) == NULL)
-      return VLAD_MALLOCFAILED;
-    if ((sl2 = VLAD_NEW(numberlist())) == NULL)
-      return VLAD_MALLOCFAILED;
-
-    /* precondition loop */
-    if (tmp_pre != NULL) {
-      for (i_exp = 0; i_exp < tmp_pre->length(); i_exp++) {
-        if ((retval = tmp_pre->get(i_exp, &tmp_atom)) != VLAD_OK)
-          return retval;
-        if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
-          return retval;
-        if ((retval = sl1->add(tmp_num)) != VLAD_OK)
-          return retval;
-      }
-    }
-
-    /* postcondition loop */
-    for (i_exp = 0; i_exp < tmp_post->length(); i_exp++) {
-      if ((retval = tmp_post->get(i_exp, &tmp_atom)) != VLAD_OK)
-        return retval;
-      if ((retval = encode_atom(tmp_atom, i_state + 1, &tmp_num)) != VLAD_OK)
-        return retval;
-      if ((retval = sl2->add(tmp_num)) != VLAD_OK)
-        return retval;
-    }
-
-    /* now add each sublist in the main lists */
-    if ((retval = (*l1)->add(sl1)) != VLAD_OK)
-      return retval;
-    if ((retval = (*l2)->add(sl2)) != VLAD_OK)
-      return retval;
   }
 
   return VLAD_OK;
