@@ -272,12 +272,36 @@ int wrapper::ask(unsigned int a_atom, char *a_result)
 
   sprintf(tmp_name, "%d", a_atom);
 
-  if ((pr_api->get_atom(tmp_name)->Bpos))
+  if ((pr_api->get_atom(tmp_name)->Bpos)) {
+    /* positive in the first model so we check all other models */
+    while (pr_smod->model()) {
+      if ((pr_api->get_atom(tmp_name)->Bpos))
+        continue;
+      else {
+        *a_result = VLAD_RESULT_UNKNOWN;
+        break;
+      }
+    }
     *a_result = VLAD_RESULT_TRUE;
-  else if ((pr_api->get_atom(tmp_name)->Bneg))
+  }
+  else if ((pr_api->get_atom(tmp_name)->Bneg)) {
+    /* negative in the first model so we check all other models */
+    while (pr_smod->model()) {
+      if ((pr_api->get_atom(tmp_name)->Bneg))
+        continue;
+      else {
+        *a_result = VLAD_RESULT_UNKNOWN;
+        break;
+      }
+    }
     *a_result = VLAD_RESULT_FALSE;
+  }
   else
     *a_result = VLAD_RESULT_UNKNOWN;
+
+  /* of course we have to reset for the next call */
+  pr_smod->revert();
+  pr_smod->model();
 
   return VLAD_OK;
 }

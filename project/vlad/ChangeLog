@@ -1,3 +1,9 @@
+2003-06-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/wrapper.cpp :
+
+	  - ask() now checks all possible models.
+
 2003-06-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* main/vlad.cpp :
