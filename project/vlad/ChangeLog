@@ -6,6 +6,7 @@
 	  - Constants are stored as strings now. this is for the sake of
 	    simplicity of the api -- init() and get().
 
+	* kb/kb.h :
 	* kb/kb.cpp :
 	* parser/parser.y :
 	* kb/consttab.h :

@@ -382,6 +382,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   fprintf(f, "Atoms\n");
 
   for (i = 0; i < pos_tot * 2 * ((s == NULL) ? 1 : s->length() + 1); i++) {
+    atom *tmp_atom;
     unsigned char tmp_ty;
     unsigned int tmp_s;
     bool tmp_tr;
@@ -389,7 +390,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     char *tmp2;
     char *tmp3;
 
-    decode_atom(&tmp1, &tmp2, &tmp3, &tmp_ty, &tmp_s, &tmp_tr, i);
+    if ((retval = decode_atom(&tmp_atom, &tmp_s, i)) != VLAD_OK)
+      return retval;
+
+    if ((retval = tmp_atom->get(&tmp1, &tmp2, &tmp3, &tmp_ty, &tmp_tr)) != VLAD_OK)
+      return retval;
 
     switch(tmp_ty) {
       case VLAD_ATOM_CONST :
@@ -405,6 +410,8 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           fprintf(f, "  %d = holds(S%d, %c, subset, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2);
         break;
     }
+
+    delete tmp_atom;
   }
 
   /* inheritance rules */
@@ -1131,57 +1138,6 @@ int kb::decode_subset(char **g1, char **g2, unsigned int n)
 }
 
 /* gives an atom id based on the identifiers already given */
-int kb::encode_atom(const char *n1,
-                    const char *n2,
-                    const char *n3,
-                    unsigned char ty,
-                    unsigned int s,
-                    bool tr,
-                    unsigned int *n) 
-{
-  int retval;
-  unsigned int tmp;
-
-  if (stage < 5)
-    return VLAD_FAILURE;
-
-  if (n == NULL)
-    return VLAD_NULLPTR;
-
-  /* get the unsigned, unstated id of the atom */
-  switch(ty) {
-    case VLAD_ATOM_CONST :
-      if ((retval = encode_const(n1, &tmp)) != VLAD_OK)
-        return retval;
-      break;
-    case VLAD_ATOM_HOLDS :
-      if ((retval = encode_holds(n1, n2, n3, &tmp)) != VLAD_OK)
-        return retval;
-      tmp = tmp + c_len;
-      break;
-    case VLAD_ATOM_MEMBER :
-      if ((retval = encode_member(n1, n2, &tmp)) != VLAD_OK)
-        return retval;
-      tmp = tmp + c_len + h_tot;
-      break;
-    case VLAD_ATOM_SUBSET :
-      if ((retval = encode_subset(n1, n2, &tmp)) != VLAD_OK)
-        return retval;
-      tmp = tmp + c_len + h_tot + m_tot;
-      break;
-    default :
-      return VLAD_INVALIDINPUT;
-  }
-
-  /* consider the truth value */
-  tmp = tmp + (tr ? pos_tot : 0);
-   
-  /* now the state */
-  *n = tmp + (s * (pos_tot * 2));
-
-  return VLAD_OK;
-}
-
 int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
 {
   int retval;
@@ -1235,19 +1191,20 @@ int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
   return VLAD_OK;
 }
 
-/* returns the atom details given the id */
-int kb::decode_atom(char **n1,
-                    char **n2,
-                    char **n3,
-                    unsigned char *ty,
-                    unsigned int *s,
-                    bool *tr,
-                    unsigned int n)
+/* returns the atom given the id */
+int kb::decode_atom(atom **a, unsigned int *s, unsigned int n)
 {
+  int retval;
+  char *tmp1;
+  char *tmp2;
+  char *tmp3;
+  unsigned char ty;
+  bool tr;
+
   if (stage < 5)
     return VLAD_FAILURE;
 
-  if (ty == NULL || s == NULL || tr == NULL)
+  if (a == NULL || s == NULL)
     return VLAD_NULLPTR;
 
   /* first extract the state */
@@ -1255,42 +1212,42 @@ int kb::decode_atom(char **n1,
   n = n % (pos_tot * 2);
 
   /* then get truth value */
-  *tr = (n >= pos_tot);
+  tr = (n >= pos_tot);
   n = n % pos_tot;
 
-  /* now get the type */
+  /* now get the type and the atom details */
   if (n < c_len) {
-    if (n1 == NULL)
-      return VLAD_NULLPTR;
+    ty = VLAD_ATOM_CONST;
 
-    *ty = VLAD_ATOM_CONST;
-
-    return decode_const(n1, n);
+    if ((retval = decode_const(&tmp1, n)) != VLAD_OK)
+      return retval;
   }
   else if (n < c_len + h_tot) {
-    if (n1 == NULL || n2 == NULL || n3 == NULL)
-      return VLAD_NULLPTR;
+    ty = VLAD_ATOM_HOLDS;
 
-    *ty = VLAD_ATOM_HOLDS;
-
-    return decode_holds(n1, n2, n3, n - c_len);
-
+    if ((retval = decode_holds(&tmp1, &tmp2, &tmp3, n - c_len)) != VLAD_OK)
+      return retval;
   }
   else if (n < c_len + h_tot + m_tot) {
-    if (n1 == NULL || n2 == NULL)
-      return VLAD_NULLPTR;
+    ty = VLAD_ATOM_MEMBER;
 
-    *ty = VLAD_ATOM_MEMBER;
-
-    return decode_member(n1, n2, n - (c_len + h_tot));
+    if ((retval = decode_member(&tmp1, &tmp2, n - (c_len + h_tot))) != VLAD_OK)
+      return retval;
   }
   else {
-    if (n1 == NULL || n2 == NULL)
-      return VLAD_NULLPTR;
+    ty = VLAD_ATOM_SUBSET;
 
-    *ty = VLAD_ATOM_SUBSET;
+    if ((retval = decode_subset(&tmp1, &tmp2, n - (c_len + h_tot + m_tot))) != VLAD_OK)
+      return retval;
+  }
 
-    return decode_subset(n1, n2, n - (c_len + h_tot + m_tot));
+  /* now create a new atom */
+  if ((*a = VLAD_NEW(atom())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  if ((retval = (*a)->init(tmp1, tmp2, tmp3, ty, tr)) != VLAD_OK) {
+    delete (*a);
+    return retval;
   }
 
   return VLAD_OK;
