@@ -26,6 +26,9 @@ int atomlist::add(atom *a)
   if (a == NULL)
     return VLAD_NULLPTR;
 
+  if (!a->verify())
+    return VLAD_INVALIDINPUT;
+
   return list::add(a);
 }
 
@@ -38,54 +41,41 @@ int atomlist::del(atom *a)
   return list::del_d(a, true);
 }
 
-/* get reference of atom that matches in */
-int atomlist::get(atom *in, atom **out)
+/* get reference of atom that matches in (may have wildcards) */
+int atomlist::get(atom *in, atom ***out, unsigned int *s)
 {
-  int retval;
-  unsigned int size;
-  atom **array;
-
-  if (in == NULL || out == NULL)
+  if (in == NULL || out == NULL || s == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = list::get_d(in, (list_item ***) &array, &size)) != VLAD_OK)
-    return retval;
-
-  *out = array[0];
-
-  free(array);
-
-  return VLAD_OK;
+  return list::get_d(in, (list_item ***) out, s);
 }
 
 /* few more interfaces for adding atoms */
 int atomlist::add_holds(identifier *s, identifier *a, identifier *o, bool t)
 {
-  int retval;
-  atom *tmp = NULL;
+  holds_atom *tmp = NULL;
 
-  if ((tmp = VLAD_NEW(atom())) == NULL)
+  if ((tmp = VLAD_NEW(holds_atom(s, a, o, t))) == NULL)
     return VLAD_MALLOCFAILED;
-   
-  if ((retval = tmp->init_holds(s, a, o, t)) != VLAD_OK) {
-    delete tmp;
-    return retval;
-  }
 
+  if (!tmp->verify()) {
+    delete tmp;
+    return VLAD_INVALIDINPUT;
+  }
+   
   return add(tmp);
 }
 
 int atomlist::add_member(identifier *e, identifier *g, bool t)
 {
-  int retval;
-  atom *tmp = NULL;
+  member_atom *tmp = NULL;
 
-  if ((tmp = VLAD_NEW(atom())) == NULL)
+  if ((tmp = VLAD_NEW(member_atom(e, g, t))) == NULL)
     return VLAD_MALLOCFAILED;
-   
-  if ((retval = tmp->init_member(e, g, t)) != VLAD_OK) {
+
+  if (!tmp->verify()) {
     delete tmp;
-    return retval;
+    return VLAD_INVALIDINPUT;
   }
 
   return add(tmp);
@@ -93,16 +83,15 @@ int atomlist::add_member(identifier *e, identifier *g, bool t)
 
 int atomlist::add_subset(identifier *g1, identifier *g2, bool t)
 {
-  int retval;
-  atom *tmp = NULL;
+  subset_atom *tmp = NULL;
 
-  if ((tmp = VLAD_NEW(atom())) == NULL)
+  if ((tmp = VLAD_NEW(subset_atom(g1, g2, t))) == NULL)
     return VLAD_MALLOCFAILED;
-   
-  if ((retval = tmp->init_subset(g1, g2, t)) != VLAD_OK) {
-    delete tmp;
-    return retval;
-  }
 
+  if (!tmp->verify()) {
+    delete tmp;
+    return VLAD_INVALIDINPUT;
+  }
+   
   return add(tmp);
 }

@@ -2,6 +2,14 @@
 
 	* kb/atom.cpp :
 	* kb/atom.h :
+	* kb/atomlist.cpp :
+	* kb/atomlist.h :
+
+	  - holds_atom, member_atom and subset_atom now inherits from the atom
+	    class. Much cleaner this way.
+
+	* kb/atom.cpp :
+	* kb/atom.h :
 
 	  - Added verify function to ensure integrity.
 
@@ -333,4 +341,5 @@
 	* ChangeLog :
 
 	  - Changelog started.
+
 
