@@ -376,62 +376,53 @@ query holds(alice, read, file);
 
     \subsection{Semantics}
 
+      [some text to explain translation]
+
       \subsubsection{Domain Description of Language ${\cal L}$}
 
-        \begin{definition}
-          The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
-          defined as follows:
+        The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
+        defined as follows:
 
-          \begin{quote}
-            \begin{math}
-              {\cal D}_{\cal L} = 
-              \begin{cases}
-                \mbox{finite set of ground initial state facts} \\
-                \mbox{finite set of ground constraint rules} \\
-                \mbox{finite set of policy update definitions}
-              \end{cases}
-            \end{math}
-          \end{quote}
-
-        \end{definition}
+        \begin{quote}
+          \begin{math}
+            {\cal D}_{\cal L} = 
+            \begin{cases}
+              \mbox{finite set of ground initial state facts} \\
+              \mbox{finite set of ground constraint rules} \\
+              \mbox{finite set of policy update definitions}
+            \end{cases}
+          \end{math}
+        \end{quote}
 
         In addition to the domain ${\cal D}_{\cal L}$, language ${\cal L}$
         also includes one additional ordered set: the sequence list $\psi$.
 
-        \begin{definition}
-          The sequence list $\psi$ is an ordered set that contains a sequence 
-          of references to policy update definitions from set $\gamma$. Each
-          policy update reference consists of the policy update identifier and
-          a set of zero or more entities from set ${\cal E}$ to replace the
-          variable place-holders in the policy update definitions.
-        \end{definition}
+        The sequence list $\psi$ is an ordered set that contains a sequence of
+        references to policy update definitions. Each policy update reference
+        consists of the policy update identifier and a series of zero or more
+        identifier entities to replace the variable place-holders in the policy
+        update definitions.
 
-        Given the domain ${\cal D}_{\cal L}$, a query expression may be
-        evaluated against the state of the policy base derived after a sequence
-        of policy updates from the sequence list $\psi$ are applied.
+        The total number of states $\Sigma$ is the number of policy updates in
+        the sequence list $\psi$ plus the initial state.
 
-        \begin{definition}
-          A query expression $\omega$ is said to hold in the policy base
-          $PB_{{\cal D}_{\cal L}}$ with the sequence list $\psi$ if and only
-          if:
-
-          \begin{quote}
-            $PB_{{\cal D}_{\cal L}}$ $\models$ $\omega$ after $\psi$
-          \end{quote}
-          
-        \end{definition}
+        \begin{quote}
+          $\Sigma$ = $|\psi|$ + $1$
+        \end{quote}
 
       \subsubsection{Language ${\cal L}^{*}$}
 
-        The elements of language ${\cal L}$ must first be expressed as a Normal
-        Logic Program before logical operations such as querying and updating
-        can be performed. The language ${\cal L}^{*}$ is a direct translation
-        of language ${\cal L}$, and as such, it contains the same elements and
-        has an equivalent expressive power.
+        [Language ${\cal L}^{*}$ is an extended logic program...]
 
-      \subsubsection{Entity Definition of Language ${\cal L}^{*}$}
+        The $result$ function takes a policy update reference $u$ and the
+        current state $\sigma$ as input arguments and returns the resulting
+        state $\sigma'$ after $u$ has been applied to $\sigma$.
 
-        \begin{definition}
+        \begin{quote}
+          $\sigma'$ = $result$($u$, $\sigma$)
+        \end{quote}
+
+        \paragraph{Entities.}
 
           The entity set ${\cal E}$ is the union of six disjoint entity sets:
           single subject ${\cal E}_{ss}$, group subject ${\cal E}_{sg}$,
@@ -450,63 +441,11 @@ query holds(alice, read, file);
               ${\cal E}_{o} = {\cal E}_{os} \cup {\cal E}_{og}$
           \end{enumerate}
 
-        \end{definition}
+        \paragraph{Atoms.}
 
-      \subsubsection{State Semantics}
-
-        Conceptually, a state may be thought of as a set of facts and
-        constraints of the policy base at a particular instant. The state
-        transition notation below shows that the new state $PB'$ is generated
-        from the current state $PB$ after the policy update $U$ is applied.
-
-        \begin{quote}
-          $PB$ $\overrightarrow{_{U}}$ $PB'$
-        \end{quote}
-
-        Using this definition of a state means that for every policy update
-        applied to the policy base, a new instance of the policy base or a new 
-        set of facts and constraints are generated. To avoid having to deal
-        with multiple instances of the policy base, the semantics of language
-        ${\cal L}^{*}$ uses a simpler and less tangible definition of a state:
-
-        \begin{definition}
-          State is a property of atoms in the policy base used to differentiate
-          atoms that hold before the application of a particular policy update,
-          from the atoms that hold after the application. Consequently, this
-          implies that states are defined only after the sequence list $\psi$
-          has been defined.
-        \end{definition}
-
-        \begin{definition}
-          The total number of states $\Sigma$ is the number of policy updates
-          in the sequence list $\psi$ plus the initial state.
-          \begin{quote}
-            $\Sigma$ = $|\psi|$ + $1$
-          \end{quote}
-        \end{definition}
-
-        \begin{definition}
-          The result function $Res$ takes a policy update reference $U$ and
-          the current state $\sigma$ as input and returns the resulting state
-          $\sigma'$ after $U$ has been applied to $\sigma$.
-
-          \begin{quote}
-            $\sigma'$ = $Res$($U$, $\sigma$)
-          \end{quote}
-        \end{definition}
-
-      \subsubsection{Atoms, Facts and Expressions}
-
-        The principal difference between language ${\cal L}$ and language
-        ${\cal L}^{*}$ lies in the definition of atoms. Atoms in language
-        ${\cal L}^{*}$ includes an additional state parameter $\sigma$, thereby
-        limiting the scope of the atom to a particular state in the policy
-        base.
-
-        \begin{definition}
-          An atom represents a logical relationship of two to three entities
-          is a particular policy base state. The atom set $\cal{A}^{\sigma}$ is
-          the set of all possible atoms in state $\sigma$.
+          An atom represents a logical relationship of two to three enitites
+          in a particular policy base state. The atom set ${\cal A}^{\sigma}$
+          is the set of all atoms in state $\sigma$.
 
           \begin{enumerate}
             \item
@@ -531,9 +470,8 @@ query holds(alice, read, file);
               ${\cal A}^{\sigma}_{so} = \{\forall (g1, g2 \in {\cal E}_{og}), subst(g1, g2, \sigma)\}$
           \end{enumerate}
 
-        \end{definition} 
-
-        \begin{definition}
+        \paragraph{Facts.}
+       
           A fact is a logical statement that makes a claim that an atom either
           holds or does not hold in a particular state $\sigma$. The following
           is the formal definition of a fact:
@@ -541,16 +479,38 @@ query holds(alice, read, file);
           \begin{quote}
             $f^{\sigma}$ = $[\lnot]$$a$, $a$ $\in$ ${\cal A}^{\sigma}$
           \end{quote}
-        \end{definition}
 
-        \begin{definition}
-          An expression is a fact or a conjunction of facts of a particular
-          state $\sigma$.
+        \paragraph{Expressions.}
+
+          An expression is a fact in a particular state or a conjunction of
+          facts for all states.
 
           \begin{quote}
-            $e^{\sigma}$ = $f^{\sigma}_{0}$ $\land$ ... $\land$ $f^{\sigma}_{n}$, $n$ $\geq$ $0$
+            $e$ = $f_{0}$ $\land$ ... $\land$ $f_{n}$
+
+            where $f_{i}$ = $[\lnot]$$a$,
+
+            $\forall$$i$ ($0$ $\leq$ $i$ $\leq$ $n$),
+            $\exists$$a,\sigma$ ($a$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$)
           \end{quote}
-        \end{definition}
+
+        \paragraph{Propositions.}
+
+          In language ${\cal L}^{*}$, propositions state logical facts and
+          rules. A proposition is composed of a fact (the head) and an
+          expression that makes up the body. The proposition below states that
+          fact $f$ holds if all the facts in expression $e$ also holds.
+
+          \begin{quote}
+            $f$ $\leftarrow$ $e$
+          \end{quote}
+
+          A proposition without a body expression states that the head, fact
+          $f$ holds, unconditionally.
+
+          \begin{quote}
+            $f$ $\leftarrow$
+          \end{quote}
 
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
