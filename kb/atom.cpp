@@ -14,10 +14,7 @@
 
 atom::atom()
 {
-  /* all atoms are initialised as the constant true */
-  type = 0;
-  truth = true;
-  constant = true;
+  initialised = false;	
 }
 
 atom::~atom()
@@ -29,21 +26,28 @@ bool atom::cmp(list_item *item)
 {
   atom *tmp = NULL;
 
-  /* a NULL will not match anything */
   if (item == NULL)
     return false;
 
   if ((tmp = dynamic_cast<atom *> (item)) == NULL)
     return false;
 
+  /* if both are uninitialised, return true. if only one, return false */
+  if (!initialised)
+    return !tmp->initialised;
+
+  if (!tmp->initialised)
+    return false;
+
+  /* make sure the types are equal */
   if (type != tmp->type)
     return false;
 
   switch(type) {
     case VLAD_ATOM_CONST :
       return 
-        (truth == tmp->truth && constant == tmp->constant) ||
-        (truth != tmp->truth && constant != tmp->constant);
+        (truth == tmp->truth && !strcmp(constant, tmp->constant)) ||
+        (truth != tmp->truth && strcmp(constant, tmp->constant));
     case VLAD_ATOM_HOLDS :
       return 
         (truth == tmp->truth) &&
@@ -65,18 +69,37 @@ bool atom::cmp(list_item *item)
   return false;
 }
 
-unsigned char atom::get_type()
+int atom::get(char **n1, char **n2, char **n3, unsigned char *ty, bool *tr)
 {
-  return type;
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (ty == NULL || tr == NULL)
+    return VLAD_NULLPTR;
+
+  *ty = type;
+  *tr = truth;
+
+  switch(type) {
+    case VLAD_ATOM_CONST :
+      return get_const(n1);
+    case VLAD_ATOM_HOLDS :
+      return get_holds(n1, n2, n3);
+    case VLAD_ATOM_MEMBER :
+      return get_member(n1, n2);
+    case VLAD_ATOM_SUBSET :
+      return get_subset(n1, n2);
+  }
+
+  /* type will never be anything but the 4 above so this will never happen */
+  return VLAD_FAILURE;
 }
 
-bool atom::get_truth()
+int atom::get_const(char **c)
 {
-  return truth;
-}
+  if (!initialised)
+    return VLAD_UNINITIALISED;
 
-int atom::get_const(bool *c)
-{
   if (c == NULL)
     return VLAD_NULLPTR;
 
@@ -90,6 +113,9 @@ int atom::get_const(bool *c)
 
 int atom::get_holds(char **s, char **a, char **o)
 {
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
   if (s == NULL || a == NULL || o == NULL)
     return VLAD_NULLPTR;
 
@@ -105,6 +131,9 @@ int atom::get_holds(char **s, char **a, char **o)
 
 int atom::get_member(char **e, char **g)
 {
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
   if (e == NULL || g == NULL)
     return VLAD_NULLPTR;
 
@@ -119,6 +148,9 @@ int atom::get_member(char **e, char **g)
 
 int atom::get_subset(char **g1, char **g2)
 {
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
   if (g1 == NULL || g2 == NULL)
     return VLAD_NULLPTR;
 
@@ -131,29 +163,45 @@ int atom::get_subset(char **g1, char **g2)
   return VLAD_OK;
 }
 
-int atom::init_atom(atom *a)
+int atom::init(char *n1, char *n2, char *n3, unsigned char ty, bool tr)
 {
-  switch(a->type) {
+  switch(ty) {
     case VLAD_ATOM_CONST :
-      return init_const(a->constant, a->truth);
+      return init_const(n1, tr);
     case VLAD_ATOM_HOLDS :
-      return init_holds(a->holds.subject, a->holds.access, a->holds.object, a->truth);
+      return init_holds(n1, n2, n3, tr);
     case VLAD_ATOM_MEMBER :
-      return init_member(a->member.element, a->member.group, a->truth);
+      return init_member(n1, n2, tr);
     case VLAD_ATOM_SUBSET :
-      return init_subset(a->subset.group1, a->subset.group2, a->truth);
+      return init_subset(n1, n2, tr);
   }
-
   return VLAD_INVALIDINPUT;
 }
 
-int atom::init_const(bool c, bool t)
+int atom::init_const(char *c, bool t)
 {
+  if (c == NULL)
+    return VLAD_NULLPTR;
+
   reset();
 
   type = VLAD_ATOM_CONST;
   truth = t;
-  constant = c;
+
+  if (!strcmp(c, VLAD_ATOM_TRUE)) {
+    if ((constant = VLAD_STRING_MALLOC(VLAD_ATOM_TRUE)) == NULL)
+      return VLAD_MALLOCFAILED;
+    strcpy(constant, VLAD_ATOM_TRUE);
+  }
+  else if (!strcmp(c, VLAD_ATOM_FALSE)) {
+    if ((constant = VLAD_STRING_MALLOC(VLAD_ATOM_FALSE)) == NULL)
+      return VLAD_MALLOCFAILED;
+    strcpy(constant, VLAD_ATOM_FALSE);
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  initialised = true;
 
   return VLAD_OK;
 }
@@ -180,6 +228,8 @@ int atom::init_holds(const char *s, const char *a, const char *o, bool t)
   strcpy(holds.access, a);
   strcpy(holds.object, o);
 
+  initialised = true;
+
   return VLAD_OK;
 }
 
@@ -201,6 +251,8 @@ int atom::init_member(const char *e, const char *g, bool t)
   /* strcpy never fails */
   strcpy(member.element, e);
   strcpy(member.group, g);
+
+  initialised = true;
 
   return VLAD_OK;
 }
@@ -224,7 +276,35 @@ int atom::init_subset(const char *g1, const char *g2, bool t)
   strcpy(subset.group1, g1);
   strcpy(subset.group2, g2);
 
+  initialised = true;
+
   return VLAD_OK;
+}
+
+/* create a new instance of this atom */
+int atom::copy(atom **a)
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (a == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a = VLAD_NEW(atom())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  switch(type) {
+    case VLAD_ATOM_CONST :
+      return (*a)->init_const(constant, truth);
+    case VLAD_ATOM_HOLDS :
+      return (*a)->init_holds(holds.subject, holds.access, holds.object, truth);
+    case VLAD_ATOM_MEMBER :
+      return (*a)->init_member(member.element, member.group, truth);
+    case VLAD_ATOM_SUBSET :
+      return (*a)->init_subset(subset.group1, subset.group2, truth);
+  }
+
+  return VLAD_INVALIDINPUT;
 }
 
 /* replaces vars in vlist with idents in ilist. new atom a */
@@ -232,6 +312,9 @@ int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
 {
   int retval;
   unsigned int index;
+
+  if (!initialised)
+    return VLAD_UNINITIALISED;
 
   if (vlist == NULL || ilist == NULL || a == NULL)
     return VLAD_NULLPTR;
@@ -243,7 +326,6 @@ int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
   if ((*a = VLAD_NEW(atom())) == NULL)
     return VLAD_MALLOCFAILED;
 
-
   /* 
    * at this level we don't really care if the identifiers are valid or not.
    * we simply replace strings from the first list with strings from the
@@ -253,7 +335,7 @@ int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
   switch(type) {
     case VLAD_ATOM_CONST :
       /* nothing to replace in constants */
-      return (*a)->init_atom(this);
+      return (*a)->init_const(constant, truth);
     case VLAD_ATOM_HOLDS : {
       char *tmp_s;
       char *tmp_a;
@@ -339,59 +421,67 @@ void atom::negate()
 /* assuming s has enough memory allocation */
 void atom::print(char *s)
 {
-  switch(type) {
-    case VLAD_ATOM_CONST :
-      sprintf(s, "%s%s", truth ? "" : "!", constant ? "true" : "false");
-      break;
-    case VLAD_ATOM_HOLDS :
-      sprintf(s,
-              "%sholds(%s,%s,%s)",
-              truth ? "" : "!",
-              holds.subject,
-              holds.access,
-              holds.object);
-      break;
-    case VLAD_ATOM_MEMBER :
-      sprintf(s,
-              "%smemb(%s,%s)",
-              truth ? "" : "!",
-              member.element,
-              member.group);
-      break;
-    case VLAD_ATOM_SUBSET :
-      sprintf(s,
-              "%ssubst(%s,%s)",
-              truth ? "" : "!",
-              subset.group1,
-              subset.group2);
-      break;
+  if (initialised) {
+    switch(type) {
+      case VLAD_ATOM_CONST :
+        sprintf(s, "%s%s", truth ? "" : "!", constant);
+        break;
+      case VLAD_ATOM_HOLDS :
+        sprintf(s,
+                "%sholds(%s,%s,%s)",
+                truth ? "" : "!",
+                holds.subject,
+                holds.access,
+                holds.object);
+        break;
+      case VLAD_ATOM_MEMBER :
+        sprintf(s,
+                "%smemb(%s,%s)",
+                truth ? "" : "!",
+                member.element,
+                member.group);
+        break;
+      case VLAD_ATOM_SUBSET :
+        sprintf(s,
+                "%ssubst(%s,%s)",
+                truth ? "" : "!",
+                subset.group1,
+                subset.group2);
+        break;
+    }
   }
 }
 #endif
 
 int atom::reset()
 {
-  switch(type) {
-    case VLAD_ATOM_HOLDS :
-      if (holds.subject != NULL)
-        free(holds.subject); 
-      if (holds.access != NULL)
-        free(holds.access); 
-      if (holds.object != NULL)
-        free(holds.object); 
-      break;
-    case VLAD_ATOM_MEMBER :
-      if (member.element != NULL)
-        free(member.element);
-      if (member.group != NULL)
-        free(member.group);
-      break;
-    case VLAD_ATOM_SUBSET :
-      if (subset.group1 != NULL)
-        free(subset.group1);
-      if (subset.group2 != NULL)
-        free(subset.group2);
-      break;
+  if (initialised) {
+    switch(type) {
+      case VLAD_ATOM_CONST :
+        if (constant != NULL)
+          free(constant);
+        break;
+      case VLAD_ATOM_HOLDS :
+        if (holds.subject != NULL)
+          free(holds.subject); 
+        if (holds.access != NULL)
+          free(holds.access); 
+        if (holds.object != NULL)
+          free(holds.object); 
+        break;
+      case VLAD_ATOM_MEMBER :
+        if (member.element != NULL)
+          free(member.element);
+        if (member.group != NULL)
+          free(member.group);
+        break;
+      case VLAD_ATOM_SUBSET :
+        if (subset.group1 != NULL)
+          free(subset.group1);
+        if (subset.group2 != NULL)
+          free(subset.group2);
+        break;
+    }
   }
 
   return VLAD_OK;

@@ -15,6 +15,10 @@
 #define VLAD_ATOM_MEMBER 2
 #define VLAD_ATOM_SUBSET 3
 
+/* strings */
+#define VLAD_ATOM_TRUE   "true"
+#define VLAD_ATOM_FALSE  "false"
+
 /* convenience macros */
 #define VLAD_ATOM_TYPE_VALID(X) (((X) >= 0) && ((X) < 4))
 #define VLAD_ATOM_IS_CONST(X)   ((X) == VLAD_ATOM_CONST)
@@ -49,17 +53,20 @@ class atom : public list_item
     atom();
     ~atom();
     bool cmp(list_item *item);
-    unsigned char get_type();
-    bool get_truth();
-    int get_const(bool *c);
+    /* get values from atom */
+    int get(char **n1, char **n2, char **n3, unsigned char *ty, bool *tr);
+    int get_const(char **c);
     int get_holds(char **s, char **a, char **o);
     int get_member(char **e, char **g);
     int get_subset(char **g1, char **g2);
-    int init_atom(atom *a);
-    int init_const(bool c, bool t);
+    /*initialise atoms */
+    int init(char *n1, char *n2, char *n3, unsigned char ty, bool tr);
+    int init_const(char *c, bool t);
     int init_holds(const char *s, const char *a, const char *o, bool t);
     int init_member(const char *e, const char *g, bool t);
     int init_subset(const char *g1, const char *g2, bool t);
+    /* create a new instance of this atom */
+    int copy(atom **a);
     /* replaces vars in vlist with idents in ilist. new atom a */
     int replace(stringlist *vlist, stringlist *ilist, atom **a);
     void negate();
@@ -75,8 +82,9 @@ class atom : public list_item
       holds_atom holds;
       member_atom member;
       subset_atom subset;
-      bool constant;
+      char *constant;
     } ;
+    bool initialised;
 } ;
 
 #endif

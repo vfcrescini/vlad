@@ -31,9 +31,12 @@ int expression::add(atom *a)
 }
 
 /* return true if atom is in the expression */
-int expression::find(atom a)
+int expression::find(atom *a)
 {
-  return list::find(&a);
+  if (a == NULL)
+    return VLAD_NULLPTR;
+
+  return list::find(a);
 }
 /* give a reference to the i'th atom */
 int expression::get(unsigned int i, atom **a)
