@@ -8,7 +8,7 @@
 
 /* version */
 
-#define VLAD_VERSION         "0.0.2"
+#define VLAD_VERSION         "0.0.3"
 
 /* query result codes */
 
