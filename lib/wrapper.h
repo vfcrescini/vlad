@@ -102,6 +102,13 @@ VLAD_EXTERN int vlad_tref_destroy(void *a_tref);
 /* initialise a trans ref */
 VLAD_EXTERN int vlad_tref_init(void *a_tref, const char *a_n, void *a_slist);
 
+/* create a consttab */
+VLAD_EXTERN int vlad_consttab_create(void **a_ct);
+/* destroy a consttab */
+VLAD_EXTERN int vlad_consttab_destroy(void *a_ct);
+/* add expressions into a consttab */
+VLAD_EXTERN int vlad_consttab_add(void *a_ct, void *a_e, void *a_c, void *a_n);
+
 /* get the length of the list */
 VLAD_EXTERN int vlad_list_length(void *a_list);
 
