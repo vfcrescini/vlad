@@ -2,6 +2,7 @@
 
 \documentclass[a4paper,draft]{article}
 \usepackage[light]{draftcopy}
+\usepackage{moreverb}
 \author{Vino Fernando Crescini\\jcrescin@cit.uws.edu.au\\\\Intelligent Systems Laboratory\\School of Computing and Information Technology\\University of Western Sydney}
 \title{Implementing a High-Level Description Language for a Sequence of Transformations of Authorisation Policies}
 \date{17/03/2003}
@@ -683,6 +684,73 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
 
     \subsection{Parser1: Epilog}
 
+      This program was specifically designed to be a quick and limited 
+      parser/logic engine for the language. Because it is also meant to
+      be small and simple, the program supports only a subset of the
+      proposed language: without support for default propositions. However,
+      since the program's language can still express transformations and query
+      interpretations, may still be used as an authorisation engine for simple
+      applications.
+
+      \subsubsection{Data Structures}
+
+        Identifiers are stored into a symbol table as a list of strings, each
+        of which are allocated memory only once. This provides a very
+        efficient way to manipulate the identifiers since only its pointer
+        reference are passed around (safely).
+
+        Atoms are implemented as a union of a holds record, a member record,
+        a subset record and a constant record (true and false). Expressions
+        are simply lists of atoms, since all expressions are really
+        conjunctions of atoms. The actual knowledge base is composed of:
+
+        \begin{itemize}
+          \item
+            Symbol table to hold the identifiers.
+          \item
+            Initial state, which is just an expression.
+          \item
+            Table of transformations, with each entry having a list of
+            variable place holders, a precondition expression and a
+            postcondition expression.
+          \item
+            Table of queries
+        \end{itemize}
+
+      \subsubsection{Operation}
+
+        The following is a brief outline of the programs execution cycle:
+
+        \begin{itemize}
+          \item
+            Input authorisation program is parsed.
+          \item
+            While the parser is processing the input program, all the
+            necessary information are stored in sequence into the knowledge
+            base: declared identifiers, initial state, transformation
+            definitions and query propositions.
+          \item
+            Just after a query has parsed and processed, the parser then
+            looks up the transformation table to get a reference to all
+            transformations relevant to query that was just parsed.
+          \item
+            When the transformation entries are retrieved, they are then
+            \emph{grounded} to replace any instances of variables with
+            the corresponding identifier that was given in the query.
+          \item
+            After this, the transformations are then applied sequentially
+            into a copy of the knowledge base, beginning with the initial
+            state. Before a transformation's postcondition expression is added
+            into the current state, the precondition expression is first
+            checked against the current state.
+          \item
+            If everything went well the program should end up with a state,
+            or more accurately, a set of atoms and expressions that holds
+            true in the final state. The query expression is then check
+            against this final state and an appropriate answer is retured:
+            true, false or unknown.
+            
+        \end{itemize}
 
     \subsection{Parser2: Vlad}
 
