@@ -1,8 +1,6 @@
 EPILOG TODO
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-- Add error codes in libs instead of just 0 and -1.
-
 - Clean up ground expressions.
 
 - Check malloc/free.
