@@ -68,7 +68,7 @@ PERL = @PERL@
 VERSION = @VERSION@
 YACC = @YACC@
 
-SUBDIRS = src tests m4
+SUBDIRS = m4 src tests 
 
 EXTRA_DIST = setup.bat README.Windows
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4

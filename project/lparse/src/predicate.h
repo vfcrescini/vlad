@@ -129,6 +129,9 @@ public:
   static void CalculateSCCDomain(StronglyConnectedComponent *scc);
   static void SetDomainFalse(StronglyConnectedComponent *scc);
 
+  static void PrintDomainPredicates();
+  static void PrintDomainRules();
+  
   Index **indices;
   InstanceSet *atoms;
   InstanceSet *emitted;

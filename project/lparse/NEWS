@@ -1,5 +1,16 @@
 LPARSE VERSION HISTORY
 
+1.0.13 (19.6.03)
+      Empty programs are now again handled gracefully. The option
+      `--dlp' produced few irrelevant rules. Warnings for using
+      general constraint literals together with `--dlp' weren't
+      printed. 
+
+1.0.12 (26.3.03)
+      Fixed a typo in error.cc. Added few missing declarations. Also,
+      empty rules now produce unsatisfiable programs.
+
+
 1.0.11 (30.9.02)
       Changed the behavior of `-d all' switch. Now, the domain facts
       that are derived using rules of the form:

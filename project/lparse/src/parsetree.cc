@@ -578,12 +578,9 @@ int ParseNode::ProcessRule(int, int)
   Function *fun = NULL;
   int tail_length = 0;
   
-  if (!left)
-    if (!right) // empty rule
-      return 0;
-    else if (!false_lit) {
-      false_lit = Predicate::DefineFalseLiteral();
-    }
+  if (!left && !false_lit) {
+    false_lit = Predicate::DefineFalseLiteral();
+  }
   
   
   // If the rule is a special rule delay its processing
@@ -924,11 +921,10 @@ void warn_about_disjunctive_problems(long lineno)
   sprintf(indent_string, "%ld  ", lineno);
   for (p = indent_string; *p; p++)
     *p = ' ';
-  error(USR_ERR, "%ld: when using command line options `--dlp' "
-	"or `-r' only extended ", lineno);
-  fprintf(stderr, "%srules of the form:\n", indent_string);
-  fprintf(stderr, "\t%sa1 | a2 | ... | an :- body.   or \n", indent_string);
-  fprintf(stderr, "\t%s1 { a(X) : d(X) } :- body.\n", indent_string);
+  error(USR_ERR, "%ld: when using the command line option `--dlp' only", lineno);
+  fprintf(stderr, "%sextended rules of the form:\n", indent_string);
+  fprintf(stderr, "\t%sa1 | a2 | ... | an :- body. \n", indent_string);
+  //  fprintf(stderr, "\t%s1 { a(X) : d(X) } :- body.\n", indent_string);
   fprintf(stderr, "%sare allowed.\n", indent_string);  
 }
 
@@ -983,13 +979,18 @@ int ParseNode::ProcessSpecialRule()
       if (sys_data.dlp_semantics) {
 	rl->atmost = new Term(T_CONSTANT, ERROR_NUMBER, rl->line_start);
 	rl->atleast = new Term(T_CONSTANT, 0, rl->line_start);
-	
       } else {
 	rl->atmost = new Term(T_CONSTANT, 1, rl->line_start);
 	rl->atleast = new Term(T_CONSTANT, 1, rl->line_start);
       }
     } else {
       // check the bounds
+      if (sys_data.dlp_semantics) {
+	warn_about_disjunctive_problems(lineno);
+	return 0;
+      }
+      
+      
       if (!(head_type == ORDERED_DISJUNCTION)) {
 	if (left->left->left)
 	  rl->atleast = Term::CreateBound(left->left->left);
@@ -997,7 +998,7 @@ int ParseNode::ProcessSpecialRule()
 	  rl->atmost = Term::CreateBound(left->left->right);
 	
 	if (rl->atleast && rl->atleast->type == T_CONSTANT)
-	constant_atleast = 1;
+	  constant_atleast = 1;
 	
 	if (rl->atmost && rl->atmost->type == T_CONSTANT)
 	  constant_atmost = 1;
@@ -1006,11 +1007,6 @@ int ParseNode::ProcessSpecialRule()
 	  rl->weight_head = 1;
 	}
       }
-    }
-    /* FIXME: disjunctive problems */
-    if (sys_data.allow_only_disjunctive_rules && rl->weight_head) {
-      warn_about_disjunctive_problems(lineno);
-      return 0;
     }
     
     if (constant_atmost && constant_atleast &&

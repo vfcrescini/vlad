@@ -1477,3 +1477,52 @@ void Predicate::SetDomainFalse(StronglyConnectedComponent *scc)
   }
 }
   
+void Predicate::PrintDomainPredicates()
+{
+  long i, j;
+  Instance *it;
+
+  for (i = 0; i < predicate_table->Size(); i++) {
+    if (predicates[i]->Status() == DM_DOMAIN) {
+      printf("%ld %s: ", i, predicates[i]->Name());
+      if (predicates[i]->atoms) {
+	predicates[i]->it->Clear();
+
+	while ((it = predicates[i]->it->Iterate())) {
+	  printf("(%ld", it[0]);
+	  for (j = 1; j < predicates[i]->Arity(); j++) {
+	    printf(",%ld", it[j]);
+	  }
+	  printf(") ");
+	}
+	printf("\n");
+      } else {
+	if (predicates[i]->follows) {
+	  printf("T\n");
+	} else {
+	  printf("F\n");
+	}
+      }
+    }
+  }
+}
+
+
+void Predicate::PrintDomainRules()
+{
+  long i;
+  Rule *r;
+  
+  for (i = 0; i < predicate_table->Size(); i++) {
+    if (predicates[i]->Status() == DM_DOMAIN) {
+
+      while ((r = predicates[i]->rules.Iterate())) {
+	printf("%ld: ", i);
+	r->PrintRule();
+	
+      }
+    }
+  }
+}
+
+      

@@ -117,10 +117,11 @@ int main(int argc, char *argv[])
   }
   
   if (!logic_program) {
-    exit(E_ERROR);
+    // Empty program
+  } else {
+    logic_program->ProcessTree();
   }
-  logic_program->ProcessTree();
-
+  
   initialize_dynamic();
 
   if (sys_data.output_version >= 2) {
@@ -243,6 +244,10 @@ int main(int argc, char *argv[])
   }
 #endif
 
+  //  /* REMOVE ME */
+  // Predicate::PrintDomainPredicates();
+  //  Predicate::PrintDomainRules();
+  
   delete_vars();
   return E_OK;
 }

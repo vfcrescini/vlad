@@ -1,5 +1,5 @@
 
-SUBDIRS = src tests m4
+SUBDIRS = m4 src tests 
 
 EXTRA_DIST = setup.bat README.Windows
 

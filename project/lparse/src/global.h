@@ -28,4 +28,6 @@
 #include "extern.h"
 #endif
 
+using namespace std;
+
 #endif

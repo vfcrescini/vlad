@@ -355,7 +355,7 @@ void RuntimeError::Print()
   fprintf(stderr, "\n");
 }
 
-void runtime_error(InternalFunction, ErrorType t, long a1,
+void runtime_error(InternalFunction fun, ErrorType t, long a1,
 		   long a2)  
 {
   RuntimeError rt(t, a1, a2);

@@ -7,6 +7,7 @@
 #include <string.h>
 #include "list.h"
 #include "literal.h"
+#include <stdlib.h>
 
 PriorityData priority_data;
 

@@ -252,10 +252,9 @@ void Rule::SimplifySpecialRule()
   // predicates for each variable
   RemoveLocalVars();
   
-  if(type == CHOICERULE) {
+  if((type == CHOICERULE) && !sys_data.dlp_semantics) {
     ExpandChoiceRule();
   }
-
 }
 
 void Rule::ExpandChoiceRule()

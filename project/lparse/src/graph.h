@@ -116,6 +116,7 @@ private:
   GraphNodeArray *nodes;
 
   StronglyConnectedComponent *scc;
+  void PrintSCCs(StronglyConnectedComponent *sc);
   
   long *visited;
   long *toposort;

@@ -454,3 +454,26 @@ void Graph::PropagateExternalDefinitions(long nd)
   
 }
 
+void Graph::PrintSCCs(StronglyConnectedComponent *sc)
+{
+  long i, j, l, chld;
+
+  for (i = 0; i < StronglyConnectedComponent::num_components; i++) {
+    printf("%ld: ", i);
+    sc[i].nodes.ClearIterator();
+    while ((l = sc[i].nodes.Iterate())) {
+      
+      l--;
+      printf("%s ", predicates[l]->Name());
+    }
+    printf("\n");
+  }
+  for (i = 0; i < size; i++) {
+    for (j = 0; j < (*nodes)[i]->size; j++) {
+      chld = *((*(*nodes)[i]->children)[j]); 
+
+      printf("%ld %ld\n", i, chld);
+    }
+  }
+}
+
