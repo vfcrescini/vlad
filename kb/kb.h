@@ -100,7 +100,8 @@ class kb {
                     unsigned char ty,
                     unsigned int s,
                     bool tr,
-                    unsigned int *a);
+                    unsigned int *n);
+    int encode_atom(atom *a, unsigned int s, unsigned int *n);
     /* returns the atom details given the id */
     int decode_atom(char **n1,
                     char **n2,
@@ -108,7 +109,8 @@ class kb {
                     unsigned char *ty,
                     unsigned int *s,
                     bool *tr,
-                    unsigned int a);
+                    unsigned int n);
 } ;
+
 
 #endif
