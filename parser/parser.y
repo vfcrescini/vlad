@@ -32,6 +32,7 @@ int yylex(void);
   unsigned int terminal;
   atom *atm;
   expression *exp;
+  stringlist *varlist;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -72,6 +73,15 @@ int yylex(void);
 %type <atm> logical_atom 
 %type <exp> ground_exp
 %type <exp> with_clause
+%type <atm> comp_atom 
+%type <atm> comp_boolean_atom 
+%type <atm> comp_holds_atom 
+%type <atm> comp_subst_atom 
+%type <atm> comp_memb_atom
+%type <exp> comp_exp
+%type <exp> if_clause
+%type <varlist> trans_var_list
+%type <varlist> trans_var_def
 
 %start program
 
@@ -154,8 +164,22 @@ constraint_section : {
   }
   ;
 
-trans_section :
-  | trans_stmt_list
+trans_section : {
+     int retval;
+    /* after the transformation section, we must close the trans table */
+    if ((retval = kbase.close_transtab()) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    } 
+  }
+  | trans_stmt_list {
+    int retval;
+    /* after the transformation section, we must close the trans table */
+    if ((retval = kbase.close_transtab()) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+  }
   ;
 
 query_section :
@@ -420,25 +444,83 @@ always_stmt :
 
 trans_stmt : 
   VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES comp_exp if_clause VLAD_SYM_SEMICOLON {
+    int retval;
+#ifdef DEBUG
+    char v[1024];
+    char pr[1024];
+    char po[1024];
+#endif
+
+    if ((retval = kbase.add_transtab($1, $2, $5, $4)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+
+#ifdef DEBUG
+    if ($2 != NULL)
+      $2->print(v);
+    else
+      strcpy(v, "none");
+
+    if ($5 != NULL)
+      $5->print(pr);
+    else
+      strcpy(pr, "none");
+
+    $4->print(po);
+
+    fprintf(stderr, "transformation:\n");
+    fprintf(stderr, "  name:      %s\n", $1);
+    fprintf(stderr, "  varlist:  %s\n", v);
+    fprintf(stderr, "  precond:  %s\n", pr);
+    fprintf(stderr, "  postcond: %s\n", po);
+#endif
+
+    /* cleanup */
+    delete $2;
+    delete $4;
+    delete $5;
   }
   ;
 
-if_clause :
+if_clause : {
+    $$ = NULL;
+  }
   | VLAD_SYM_IF comp_exp {
+    $$ = $2;
   }
   ;
 
 trans_var_def : 
   VLAD_SYM_OPEN_PARENT VLAD_SYM_CLOSE_PARENT {
+    $$ = NULL;
   }
   | VLAD_SYM_OPEN_PARENT trans_var_list VLAD_SYM_CLOSE_PARENT {
+    $$ = $2;
   }
   ;
 
 trans_var_list : 
   VLAD_SYM_IDENTIFIER {
+    int retval;
+
+    if (($$ = VLAD_NEW(stringlist(NULL))) == NULL) {
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((retval = $$->add($1)) != VLAD_OK) {
+      fprintf(stderr, "interal error: %d\n", retval);
+      return retval;
+    }
   }
   | trans_var_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+    int retval;
+
+    if ((retval = $$->add($3)) != VLAD_OK) {
+      fprintf(stderr, "interal error: %d\n", retval);
+      return retval;
+    }
   }
   ;
 
@@ -575,41 +657,93 @@ ground_memb_atom :
 
 comp_exp :
   comp_boolean_atom {
+    int retval;
+
+    if (($$ = VLAD_NEW(expression(NULL))) == NULL) {
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((retval = $$->add($1)) != VLAD_OK)
+      return retval;
   }
   | comp_exp logical_op comp_boolean_atom {
+    int retval;
+    switch ((retval = $$->add($3))) {
+      case VLAD_OK :
+      case VLAD_DUPLICATE :
+        /* we simply ignore duplicates */
+        break;
+      default :
+        return retval;
+    }
   }
   ;
 
 comp_boolean_atom :
   comp_atom {
+    $$ = $1;
   }
   | VLAD_SYM_NOT comp_atom {
+    $$ = $2;
+    $$->negate();
   }
   ;
 
 comp_atom :
   comp_holds_atom {
+    $$ = $1;
   }
   | comp_subst_atom {
+    $$ = $1;
   }
   | comp_memb_atom {
+    $$ = $1;
   }
   | logical_atom {
+    $$ = $1;
   }
   ;
 
 comp_holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+    int retval;
+
+    if (($$ = VLAD_NEW(atom())) == NULL) {
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((retval = $$->init_holds($3, $5, $7, true)) != VLAD_OK)
+      return retval;
   }
   ;
 
 comp_subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+    int retval;
+
+    if (($$ = VLAD_NEW(atom())) == NULL) {
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((retval = $$->init_subset($3, $5, true)) != VLAD_OK)
+      return retval;
   }
   ;
 
 comp_memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+    int retval;
+
+    if (($$ = VLAD_NEW(atom())) == NULL) {
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((retval = $$->init_member($3, $5, true)) != VLAD_OK)
+      return retval;
   }
   ;
 

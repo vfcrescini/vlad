@@ -1,5 +1,16 @@
 2003-03-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+
+	  - Now add_transtab() allows precond and varlist to be null.
+
+	  - in verify_atom_member() and verify_atom_subset(), if one ident
+	    is a variable, the type checking is skipped.
+
+	* parser/parser.y :
+
+	  - Added kb::add_transtab().
+
 	* common/stringlist.h :
 	* common/stringlist.cpp :
 
