@@ -1,5 +1,8 @@
 all : ps pdf
 
+clean :
+	$(RM) resume_vino.ps resume_vino.pdf
+
 ps : resume_vino.ps
 
 pdf : resume_vino.pdf
