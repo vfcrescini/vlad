@@ -1,5 +1,10 @@
 2003-06-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* configure.ac :
+	* lib/Makefile.in :
+
+	  - Added a check for -fpic in case -fPIC fails.
+
 	* lib/kb.cpp :
 	* lib/kb.h :
 	* main/operation.y :
