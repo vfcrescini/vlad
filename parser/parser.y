@@ -534,8 +534,15 @@ ground_exp :
   }
   | ground_exp logical_op ground_boolean_atom {
     int retval;
-    if ((retval = $$->add($3)) != VLAD_OK)
-      return retval; 
+    switch ((retval = $$->add($3))) {
+      case VLAD_OK :
+        break;
+      case VLAD_DUPLICATE :
+        /* we simply ignore duplicates */
+        break;
+      default :
+        return retval;
+    }
   }
   ;
 
