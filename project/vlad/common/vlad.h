@@ -55,6 +55,8 @@
 #define VLAD_UNINITIALISED  -9
 /* no model is generated: possibly because of a contradiction */
 #define VLAD_NOMODEL        -10
+/* cannot open file */
+#define VLAD_OPENFAILED     -11
 
 /* malloc/new macros */
 #define VLAD_ADT_MALLOC(X,Y)  ((X *) malloc(sizeof(X) * Y))

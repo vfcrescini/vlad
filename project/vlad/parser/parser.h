@@ -6,15 +6,21 @@
 #ifndef __VLAD_PARSER_H
 #define __VLAD_PARSER_H
 
-/* vars that can be re-assigned */
-extern FILE *yyin;
-extern FILE *yyout;
-extern FILE *yyerr;
+#include <cstdio>
+#include <vlad/kb.h>
 
-/* available function */
-extern int yyparse(void);
+/* variables to be redefined */
+extern FILE *programin;
+extern FILE *programout;
+extern FILE *queryin;
+extern FILE *queryout;
 
-/* mode flag */
-extern unsigned char mode;
+/* variables to be defined */ 
+kb *kbase;
+unsigned char mode;
+
+/* available functions */
+int programparse();
+int queryparse();
 
 #endif

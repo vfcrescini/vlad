@@ -1,11 +1,12 @@
 /*
- * vlad.c
+ * vlad.cpp
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <new>
 
 #include <getopt.h>
 
@@ -15,50 +16,81 @@
 
 int main(int argc, char *argv[])
 {
-  int option;
+  int retval;
 #ifdef SMODELS
   char *arglist = "vhe";
-  char *helpstring = "[-v|-h|[-e] filename]";
+  char *helpstring = "-v|-h|[-e] program-filename [query-filename]";
 #else
   char *arglist = "vh";
-  char *helpstring = "[-v|-h|filename]";
+  char *helpstring = "-v|-h|program-filename [query-filename]";
 #endif
+  int option;
 
-  mode = VLAD_MODE_GENERATE;
   opterr = 0;
+  mode = VLAD_MODE_GENERATE;
 
   while ((option = getopt(argc, argv, arglist)) != -1) {
     switch(option) {
       case 'v' :
         fprintf(stdout, "vLad %s\n", VERSION);
-        return 0;
+        return VLAD_OK;
       case 'h' :
-        fprintf(stdout, "Usage: %s %s\n", argv[0], helpstring);
-        return 0;
+        fprintf(stdout, "usage: %s %s\n", argv[0], helpstring);
+        return VLAD_OK;;
 #ifdef SMODELS
       case 'e' :
 	mode = VLAD_MODE_EVALUATE;
 	break;
 #endif
       default :
-        fprintf(stderr, "Usage: %s %s\n", argv[0], helpstring);
-        return -1;
+        fprintf(stderr, "usage: %s %s\n", argv[0], helpstring);
+        return VLAD_FAILURE;
     }
   }
 
-  if (argv[optind] == NULL || !strcmp(argv[optind], "-"))
-    yyin = stdin;
-  else {
-    if ((yyin = fopen(argv[optind], "r")) == NULL) {
-      fprintf(stderr, "Cannot open %s for reading\n", argv[optind]);
-      return -1;
-    }
+  /* get program file details */
+  if (argv[optind] == NULL || !strcmp(argv[optind], "-")) {
+    fprintf(stderr, "usage: %s %s\n", argv[0], helpstring);
+    return VLAD_FAILURE;
   }
 
-  yyout = stdout;
-  yyerr = stderr;
+  if ((programin = fopen(argv[optind], "r")) == NULL) {
+    fprintf(stderr, "Unable to open for reading: %s\n", argv[optind]);
+    return VLAD_OPENFAILED;
+  }
 
-  yyparse();
+  /* now get query file details */
+  if (optind + 1 >= argc || argv[optind + 1] == NULL || !strcmp(argv[optind + 1], "-"))
+    queryin = stdin;
+  else if ((queryin = fopen(argv[optind + 1], "r")) == NULL) {
+    fprintf(stderr, "unable to open for reading: %s\n", argv[optind + 1]);
+    return VLAD_OPENFAILED;
+  }
 
-  return 0;
+  /* create an instance of the kb and initialise it */
+  if ((kbase = VLAD_NEW(kb)) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  if ((retval = kbase->init()) != VLAD_OK) {
+    fprintf(stderr, "cannot initialise kbase: %d\n", retval);
+    return retval;
+  }
+
+  /* set both out streams to stdout */
+  programout = stdout;
+  queryout = stdout;
+
+  /* first parse the program */
+  if ((retval = programparse()) != VLAD_OK)
+    return retval;
+
+  fclose(programin);
+
+  /* then the queries */
+  if ((retval = queryparse()) != VLAD_OK)
+    return retval;
+
+  fclose(queryin);
+
+  return VLAD_OK;
 }
