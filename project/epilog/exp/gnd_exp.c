@@ -15,6 +15,7 @@ int gnd_exp_group(ident_type ident,
                   gnd_exp_type exp,
                   int flag);
 int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res);
+int gnd_exp_purge_list(gnd_exp_type *exp, int flag);
 int gnd_exp_compare(void *p1, void *p2);
 int gnd_exp_destroy(void *p);
 
@@ -42,7 +43,7 @@ int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, res_type *res)
 {
   unsigned int i;
   unsigned int len;
-  gnd_atom_type tmp_atom;
+  gnd_atom_type *tmp_atom;
   res_type tmp_res;
 
   if (res == NULL)
@@ -57,7 +58,7 @@ int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, res_type *res)
     if (simplelist_get_index(in, i, (void **) &tmp_atom) != 0)
       return -1;
 
-    if (gnd_exp_eval_atom(tmp_atom, exp, &tmp_res) != 0)
+    if (gnd_exp_eval_atom(*tmp_atom, exp, &tmp_res) != 0)
       return -1;
 
     /* if we see a false, the whole thing becomes false so there is no need
@@ -87,7 +88,7 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
 {
   gnd_atom_type *new_atom = NULL;
   gnd_atom_type false_atom;
-  
+
   if (exp == NULL)
     return -1;
   
@@ -144,20 +145,7 @@ int gnd_exp_copy(gnd_exp_type exp1, gnd_exp_type *exp2)
 /* delete all atoms from this gnd_exp */
 int gnd_exp_purge(gnd_exp_type *exp)
 {
-  unsigned int len;
-  unsigned int i;
-
-  if (exp == NULL)
-    return -1;
-
-  if (simplelist_length(*exp, &len) != 0)
-    return -1;
-  
-  for (i = 0; i < len; i++)
-    if (simplelist_del_index(exp, 0, gnd_exp_destroy) != 0)
-      return -1;
-
-  return 0;
+  return gnd_exp_purge_list(exp, 1);
 }
 
 /* makes a duplicate (with malloc) of the atom pointed by p1 to p2 */
@@ -235,6 +223,7 @@ int gnd_exp_group(ident_type ident,
   gnd_atom_type tmp_atom;
   gnd_exp_type tmp_exp;
   ident_type *tmp_ident = NULL;
+  gnd_atom_type *ptr_atom = NULL;
 
   if (list == NULL)
     return -1;
@@ -248,8 +237,7 @@ int gnd_exp_group(ident_type ident,
     tmp_atom.atom.subst.group1 = &ident;
 
     /* now search for atoms where in ident is a subset */
-    if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst) != 0)
-      return -1;
+    simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst); 
   }
   else {
    /* if it is a non-group, we have to look for memb atoms */
@@ -257,8 +245,7 @@ int gnd_exp_group(ident_type ident,
    tmp_atom.atom.memb.element = &ident;
 
     /* now search for atoms where in ident is a memb */
-    if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb) != 0)
-      return -1;
+    simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb);
   }
 
   if (simplelist_length(tmp_exp, &len) != 0)
@@ -271,14 +258,14 @@ int gnd_exp_group(ident_type ident,
 
   /* now go through the resulting list and find their supersets */
   for (i = 0; i < len; i++) {
-    if (simplelist_get_index(tmp_exp, i, (void **) &tmp_atom) != 0)
+    if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
       return -1;
 
     /* get superset */
     if (EPI_IDENT_IS_GROUP(ident))
-      tmp_ident = tmp_atom.atom.subst.group2;
+      tmp_ident = ptr_atom->atom.subst.group2;
     else
-      tmp_ident = tmp_atom.atom.memb.group;
+      tmp_ident = ptr_atom->atom.memb.group;
 
     /* see if we already have this identifier */
     if (identlist_find(*list, tmp_ident->name) == 0)
@@ -292,7 +279,7 @@ int gnd_exp_group(ident_type ident,
       return -1;
   }
 
-  return gnd_exp_purge(&tmp_exp);
+  return gnd_exp_purge_list(&tmp_exp, 0);
 }
 
 /* gives true, false or unknown depending on whether atom or its negation 
@@ -313,6 +300,8 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
   if (res == NULL)
     return -1;
 
+  *res = epi_res_unknown;
+
   if (simplelist_find_data(exp, (void *) &atom, gnd_exp_compare) == 0) {
     *res = epi_res_true;
     return 0;
@@ -328,7 +317,9 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
   EPI_ATOM_NEGATE(atom); 
 
   if (EPI_ATOM_IS_HOLDS(atom)) {
-    if (identlist_init(&tmp_identlist1) != 0)
+    if (identlist_init(&tmp_identlist1) != 0 ||
+        identlist_init(&tmp_identlist2) != 0 ||
+        identlist_init(&tmp_identlist3) != 0)
       return -1;
 
     /* get supergroups of all three identifiers */
@@ -355,10 +346,10 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
       if (identlist_get(tmp_identlist1, i, &(tmp_atom.atom.holds.subject)) != 0)
         return -1;
       for (j = 0; j < len_acc; j++) {
-        if (identlist_get(tmp_identlist2, i, &(tmp_atom.atom.holds.access)) != 0)
+        if (identlist_get(tmp_identlist2, j, &(tmp_atom.atom.holds.access)) != 0)
           return -1;
         for (k = 0; k < len_obj; k++) {
-          if (identlist_get(tmp_identlist3, i, &(tmp_atom.atom.holds.object)) != 0)
+          if (identlist_get(tmp_identlist3, k, &(tmp_atom.atom.holds.object)) != 0)
             return -1;
           if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == 0) { 
             *res = epi_res_true;
@@ -438,8 +429,29 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
      * so we have to return a true result here. */
     *res = epi_res_true;
   }
-  else 
-    *res = epi_res_unknown;
+
+  return 0;
+}
+
+/* if flag is non-zero, delete all atoms from this gnd_exp. if zero,
+ * keeps the atoms but destroys the list */
+int gnd_exp_purge_list(gnd_exp_type *exp, int flag)
+{
+  unsigned int len;
+  unsigned int i;
+  int (*df)(void *);
+
+  if (exp == NULL)
+    return -1;
+
+  if (simplelist_length(*exp, &len) != 0)
+    return -1;
+
+  df = (flag == 0) ? NULL : gnd_exp_destroy;
+  
+  for (i = 0; i < len; i++)
+    if (simplelist_del_index(exp, 0, df) != 0)
+      return -1;
 
   return 0;
 }
@@ -449,7 +461,7 @@ int gnd_exp_compare(void *p1, void *p2)
 {
   if (p1 == NULL || p2 == NULL)
     return -1;
-  
+
   return gnd_atom_compare(* (gnd_atom_type *) p1, * (gnd_atom_type *) p2);
 }
 

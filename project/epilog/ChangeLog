@@ -1,10 +1,42 @@
 2002-10-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* parser/parser.y :
+
+	  - Fixed grammar bug in access and object group identifier
+	    declarations.
+
+	  - Fixed reversed parameters in the transformation
+	    definition handler.
+
+	  - Added code to evaluate truth value of an expression after
+	    transformations.
+
+	* exp/gnd_exp.c :
+
+	  - Added a purge function that will not delete the elements
+	    of the list, but the list itself. Used to free the list
+	    returned by simplelist_get_data.
+
+	  - Fixed pointer problem in gnd_exp_group function.
+
+	  - Fixed uninitialised list problems in eval_atom.
+
+	* datastruct/stringlist.c :
+	* exp/name.c :
+	* ident/ident.c :
+	* trans/transdef.c :
+	* trans/transref.c :
+
+	  - Changed all string mallocs to strlen + 1
+
 	* datastruct/simplelist.c :
 
 	  - Copy function : reversed the order in which items are entered in 
 	    the new list. Add will prepend in the beginning but to preserve
 	    the original order, we must append in the end.
+
+	  - Fixed get_index and index functions so that they will properly
+	    retrieve/give in the right order.
 
 2002-09-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 

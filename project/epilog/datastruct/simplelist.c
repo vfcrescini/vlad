@@ -44,14 +44,15 @@ int simplelist_index(simplelist_type list,
     return -1;
 
   curr = list.list;
-  *index = 0;
+  *index = list.length;
 
   while (curr != NULL) {
+    *index = *index - 1;
+
     if (cmp(curr->data, data) == 0)
       return 0;
 
     curr = curr->next;
-    *index = *index + 1;
   }
 
   return -1;
@@ -192,7 +193,7 @@ int simplelist_get_data(simplelist_type list,
 
   if (simplelist_init(res) != 0)
     return -1;
-
+  
   curr = list.list;
 
   while (curr != NULL) {

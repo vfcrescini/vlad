@@ -15,7 +15,7 @@ int name_create_var(char *string, name_type *name)
   if (string == NULL || name == NULL)
     return -1;
 
-  if ((tmp_string = (char *) malloc(sizeof(char) * strlen(string))) == NULL)
+  if ((tmp_string = (char *) malloc(sizeof(char) * (strlen(string) + 1))) == NULL)
     return -1;
 
   name->type = EPI_NAME_VAR;

@@ -115,6 +115,7 @@ int comp_exp_replace(comp_exp_type comp,
   for (i = 0; i < len_exp; i++) {
     if (comp_exp_get(comp, i, &tmp_comp_atom) != 0)
       return -1;
+
     if (comp_exp_replace_atom(*tmp_comp_atom,
                               &tmp_gnd_atom,
                               varlist,

@@ -15,7 +15,7 @@ int ident_create(ident_type **ident, char *name, unsigned short type)
   if ((*ident = (ident_type *) malloc(sizeof(ident_type))) == NULL)
     return -1;
 
-  if (((*ident)->name = (char *) malloc(sizeof(char) * strlen(name))) == NULL) {
+  if (((*ident)->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) {
     free(*ident);
     return -1;
   }

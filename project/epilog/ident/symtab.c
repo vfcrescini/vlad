@@ -62,13 +62,13 @@ int symtab_get(char *name, ident_type **ident)
   
   if (simplelist_get_data(list, &tmp_list, (void *) &tmp_ident, symtab_compare) != 0)
     return -1;
-  
+
   /* we know that there are no duplicates in this list so either the resulting
    * list is empty or the identifier we're looking for is the first and only
    * entry. */
   if (simplelist_get_index(tmp_list, 0, (void **) ident) != 0)
     return -1;
-	
+
   return simplelist_del_index(&tmp_list, 0, NULL);
 }
 

@@ -36,8 +36,10 @@ int dump_comp_atom(comp_atom_type atom);
 int dump_comp_exp(comp_exp_type exp);
 #endif
 
-gnd_exp_type initial_exp;
+extern FILE *yyout;
 FILE *yyerr;
+
+gnd_exp_type initial_exp;
 %}
 
 %union {
@@ -238,7 +240,7 @@ acc_ident_list :
     if (add_identifier($1, EPI_IDENT_ACCESS) != 0)
       exit_error("internal error");
   }
-  | acc_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA {
+  | acc_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
     if (add_identifier($3, EPI_IDENT_ACCESS) != 0)
       exit_error("internal error");
   }
@@ -260,7 +262,7 @@ obj_grp_ident_list :
     if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
       exit_error("internal error");
   }
-  | obj_grp_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA {
+  | obj_grp_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
     if (add_identifier($3, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
       exit_error("internal error");
   }
@@ -319,7 +321,7 @@ trans_stmt :
     if (transtab_find($2) == 0)
       exit_error("trans identifier already declared");
 
-    if (transdef_compose(&tmp_transdef, $2, $3, $5, $7) != 0)
+    if (transdef_compose(&tmp_transdef, $2, $3, $7, $5) != 0)
       exit_error("internal_error");
 
     if (transtab_add(tmp_transdef) != 0)
@@ -341,13 +343,69 @@ trans_stmt :
 
 policy_stmt : 
   is_clause after_clause EPI_SYM_SEMICOLON {
+    transref_type *tmp_trans;
+    res_type result;
+    gnd_exp_type curr;
+    gnd_exp_type prev;
+    unsigned int len;
+    unsigned int i;
+
+    if (gnd_exp_copy(initial_exp, &prev))
+      exit_error("internal error1");
+
+    if (translist_length($2, &len) != 0)
+      exit_error("internal error2");
+
+    for (i = 0; i < len; i++) {
+      if (translist_get($2, i, &tmp_trans) != 0)
+        exit_error("internal error3");
+      if (transtab_transform(prev, *tmp_trans, &curr) != 0)
+        exit_error("internal error4");
+      if (gnd_exp_purge(&prev) != 0)
+        exit_error("internal error");
+
+      prev = curr;
+    }
+
+    if (gnd_exp_eval($1, curr, &result) != 0)
+      exit_error("internal error");
+
+    switch (result) {
+      case epi_res_true :
+        fprintf(yyout, "true\n");
+        break;
+      case epi_res_false :
+        fprintf(yyout, "false\n");
+        break;
+      default :
+        fprintf(yyout, "?\n");
+    }
+
+    if (gnd_exp_purge(&curr) != 0)
+      exit_error("internal error");
     if (translist_purge(&$2) != 0)
       exit_error("internal error");
     if (gnd_exp_purge(&$1) != 0)
       exit_error("internal error");
   }
   | is_clause EPI_SYM_SEMICOLON {
-     if (gnd_exp_purge(&$1) != 0)
+    res_type result;
+
+    if (gnd_exp_eval($1, initial_exp, &result) != 0)
+      exit_error("internal error");
+
+    switch (result) {
+      case epi_res_true :
+        fprintf(yyout, "true\n");
+        break;
+      case epi_res_false :
+        fprintf(yyout, "false\n");
+        break;
+      default :
+        fprintf(yyout, "?\n");
+    }    
+
+    if (gnd_exp_purge(&$1) != 0)
       exit_error("internal error");
   }
   ;
@@ -540,7 +598,6 @@ ground_subst_atom :
     $$.atom.subst.group2 = group2;
   }
   ;
-
 ground_memb_atom :
   EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT {
     ident_type *element = NULL;
@@ -889,6 +946,7 @@ int dump_gnd_atom(gnd_atom_type atom)
            atom.truth == 0 ? "" : "not ",
            EPI_IDENT_STRING(atom.atom.subst.group1),
            EPI_IDENT_STRING(atom.atom.subst.group2));
+
   return 0;
 }
 
@@ -912,6 +970,7 @@ int dump_comp_atom(comp_atom_type atom)
            atom.truth == 0 ? "" : "not ",
            EPI_NAME_STRING(atom.atom.subst.group1),
            EPI_NAME_STRING(atom.atom.subst.group2));
+
   return 0;
 }
 

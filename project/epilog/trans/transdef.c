@@ -21,7 +21,7 @@ int transdef_create(transdef_type **trans,
   if ((*trans = (transdef_type *) malloc(sizeof(transdef_type))) == NULL)
     return -1;
 
-  if (((*trans)->name = (char *) malloc(sizeof(char) * strlen(name))) == NULL) {
+  if (((*trans)->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) {
     free(*trans);
     return -1;
   }
@@ -43,7 +43,7 @@ int transdef_compose(transdef_type *trans,
   if (trans == NULL || name == NULL)
     return -1;
 
-  if ((trans->name = (char *) malloc(sizeof(char) * strlen(name))) == NULL) 
+  if ((trans->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) 
     return -1;
 
   strcpy(trans->name, name);

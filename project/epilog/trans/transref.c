@@ -19,7 +19,7 @@ int transref_create(transref_type **trans,
   if ((*trans = (transref_type *) malloc(sizeof(transref_type))) == NULL)
     return -1;
 
-  if (((*trans)->name = (char *) malloc(sizeof(char) * strlen(name))) == NULL) {
+  if (((*trans)->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) {
     free(*trans);
     return -1;
   }
@@ -37,7 +37,7 @@ int transref_compose(transref_type *trans,
   if (trans == NULL || name == NULL)
     return -1;
 
-  if ((trans->name = (char *) malloc(sizeof(char) * strlen(name))) == NULL) 
+  if ((trans->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) 
     return -1;
 
   strcpy(trans->name, name);

@@ -48,7 +48,7 @@ int stringlist_add(stringlist_type *list, char *string)
   if (list == NULL || string == NULL)
     return -1;
 
-  if ((new_string = (char *) malloc(sizeof(char) * strlen(string))) == NULL)
+  if ((new_string = (char *) malloc(sizeof(char) * (strlen(string) + 1))) == NULL)
     return -1;
 
   strcpy(new_string, string);

@@ -120,8 +120,8 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
   if (tmp_res == epi_res_false || tmp_res == epi_res_unknown)
     return 0;
 
-  /* at this point we the precondition holds in kb so we add the
-   * postcondition in res */
+  /* at this point we know that the precondition holds in kb so we 
+   * add the postcondition in res */
   
   /* replace the postcondition of the transformation with the list of
    * identifiers provided when the tranformation was referenced */
