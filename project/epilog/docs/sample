@@ -28,7 +28,8 @@ initially memb(file1, accounting_files) &&
           memb(file2, accounting_files) &&
           memb(file3, engineering_files);
 
-initially subst(biologists, scientists);
+initially subst(biologists, scientists) &&
+          !subst(astrologers, scientists);
 
 /* transformation declarations */
 
@@ -71,3 +72,5 @@ is memb(bob, scientists)
 
 is memb(bob, scientists)
   after become_astrologer(bob), become_biologist(bob);
+
+is subst(astrologers, scientists);
