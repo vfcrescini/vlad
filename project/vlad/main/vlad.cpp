@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
   yyout = stdout;
   yyerr = stderr;
 
-#if 0
+#if 1
   yyparse();
 #else
   symtab *x;
