@@ -2,21 +2,13 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-%option noyymore
-%option noreject
-%option noyywrap
+
+%option nounput
 %option always-interactive
 
 %{
 #include "y.tab.h"
 #include "symtab.h"
-
-#ifdef YY_FLEX_LEX_COMPAT
-#undef YY_USES_REJECT
-#undef YY_NEED_STRLEN
-#endif
-
-#define YY_NO_UNPUT
 
 extern int yylval;
 %}

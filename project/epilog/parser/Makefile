@@ -1,7 +1,7 @@
 # Vino Crescini <jcrescin@cit.uws.edu.au>
 
 TOPSRCDIR = ..
-CFLAGS = -O2 -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
+CFLAGS = -O2 -Wall -ansi -I $(TOPSRCDIR)/include -L $(TOPSRCDIR)/lib
 TARGETS = libparser.a
 INCLUDES =
 
@@ -21,19 +21,19 @@ libparser.a : parser.o scanner.o
 	$(AR) -rcs $(@) parser.o scanner.o
 
 scanner.o : y.tab.h lex.yy.c
-	$(CC) $(CFLAGS) -o$(@) -c lex.yy.c
+	$(CC) $(CFLAGS) -o $(@) -c lex.yy.c
 
 parser.o : y.tab.h y.tab.c
-	$(CC) $(CFLAGS) -o$(@) -c y.tab.c
+	$(CC) $(CFLAGS) -o $(@) -c y.tab.c
 
 lex.yy.c : scanner.l
-	$(LEX) scanner.l
+	flex scanner.l
 
 y.tab.c : parser.y
-	$(YACC) parser.y
+	bison -y parser.y
 
 y.tab.h : parser.y
-	$(YACC) -d parser.y
+	bison -yd parser.y
 
 clean :
 	$(RM) $(TARGETS) *.o lex.yy.c y.tab.c y.tab.h
