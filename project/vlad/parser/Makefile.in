@@ -6,18 +6,22 @@ CXX = @CXX@
 LEX = @LEX@
 YACC = @YACC@
 DEBUG = @enable_debug@
-CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
-CXXFLAGS = $(CFLAGS)
+CFLAGS = -ansi                  \
+         -Wall                  \
+         -Wstrict-prototypes    \
+         -I$(TOPSRCDIR)/include \
+         -L$(TOPSRCDIR)/lib     \
+         $(NULL)
 TARGETS = libparser.a
 INCLUDES = parser.h
 
 ifeq "$(DEBUG)" "yes"
 CFLAGS += -g -DDEBUG
-CXXFLAGS += $(CFLAGS)
 else
 CFLAGS += -O2
-CXXFLAGS += $(CFLAGS)
 endif
+
+CXXFLAGS = $(CFLAGS)
 
 all : public
 
