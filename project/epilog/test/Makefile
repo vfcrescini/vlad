@@ -20,4 +20,4 @@ datastruct_test.o : datastruct_test.c
 	$(CC) $(CFLAGS) -o $(@) -c datastruct_test.c
 
 clean :
-	$(RM) $(TARGETS)
+	$(RM) $(TARGETS) *.o
