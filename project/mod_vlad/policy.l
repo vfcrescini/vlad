@@ -55,7 +55,7 @@ digit              [0-9]
 number             ({digit})+
 alpha              [a-zA-Z]
 alphanum           {alpha}|{digit}|{underscore}|{slash}
-identifier         {alpha}({alphanum}){0,127}
+identifier         ({alphanum}){1,128}
 whitespace         ([\t ])+
 newline            \n
 everything         .
@@ -69,8 +69,6 @@ everything         .
 <INITIAL>{comma} return MODVLAD_SYM_COMMA;
 
 <INITIAL>{semicolon} return MODVLAD_SYM_SEMICOLON;
-
-<INITIAL>{slash} return MODVLAD_SYM_SLASH;
 
 <INITIAL>{and} return MODVLAD_SYM_AND;
 
@@ -108,6 +106,8 @@ everything         .
 
 <INITIAL>{identifier} {
   if (policytext == NULL) {
+    fprintf(stderr, "found (%s)\n", policytext);
+    fflush(stderr);
     strcpy(policylval.ident, "");
     return MODVLAD_SYM_ERROR;
   }

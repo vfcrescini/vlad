@@ -41,7 +41,6 @@ int policyparse();
 %token <tok> MODVLAD_SYM_CLOSE_PARENT
 %token <tok> MODVLAD_SYM_COMMA
 %token <tok> MODVLAD_SYM_SEMICOLON
-%token <tok> MODVLAD_SYM_SLASH
 %token <tok> MODVLAD_SYM_AND
 %token <tok> MODVLAD_SYM_NOT
 %token <tok> MODVLAD_SYM_HOLDS
