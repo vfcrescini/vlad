@@ -8,10 +8,6 @@
 #include "vlad.h"
 #include "list.h"
 
-#ifdef DEBUG
-  #include <stdio.h>
-#endif
-
 list_item::list_item()
 {
 }
