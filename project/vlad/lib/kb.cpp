@@ -526,7 +526,8 @@ int kb::query_generate(expression *e, FILE *f)
   int retval;
   unsigned int i;
 
-  if (stage != 5)
+  /* only allowed after kb has closed */
+  if (stage < 3)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
@@ -568,7 +569,7 @@ int kb::compute_generate(FILE *f)
   unsigned int i;
 
   /* we only allow this function after kb is closed */
-  if (stage != 3 && stage != 5)
+  if (stage < 3)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
@@ -1062,8 +1063,6 @@ int kb::compute_generate(FILE *f)
     else
       fprintf(f, "\n");
   }
-
-  stage = 5;
 
   return VLAD_OK;
 }

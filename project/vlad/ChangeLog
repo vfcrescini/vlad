@@ -1,6 +1,11 @@
 2003-07-25  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :
+
+	  - now query_generate() and compute_generate() will work anytime
+	    after kb is closed.
+
+	* lib/kb.cpp :
 	* lib/kb.h :
 	* lib/smwrap.cpp :
 	* lib/smwrap.h :
