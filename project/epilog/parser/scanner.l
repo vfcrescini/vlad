@@ -7,6 +7,7 @@
 %option noyymore
 %option noreject
 %option noyywrap
+%option always-interactive
 
 %{
 #include "y.tab.h"
