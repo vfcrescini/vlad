@@ -1610,11 +1610,9 @@ int kb::verify_atom(atom *a, stringlist *v)
       return verify_atom_member(tmp1, tmp2, v);
     case VLAD_ATOM_SUBSET :
       return verify_atom_subset(tmp1, tmp2, v);
-    default :
-      return VLAD_INVALIDINPUT;
   }
 
-  return VLAD_OK;
+  return VLAD_INVALIDINPUT;
 }
 
 /* make sure expression e is valid */
