@@ -46,10 +46,10 @@ int stringlist_add(stringlist_type *list, char *string)
   char *new_string = NULL;
 
   if (list == NULL || string == NULL)
-    return EPI_DATASTRUCT_NULLPTR;
+    return EPI_NULLPTR;
 
   if ((new_string = (char *) malloc(sizeof(char) * (strlen(string) + 1))) == NULL)
-    return EPI_DATASTRUCT_MALLOCFAILED;
+    return EPI_MALLOCFAILED;
 
   strcpy(new_string, string);
 

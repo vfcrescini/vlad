@@ -3,6 +3,8 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
+#include <epilog.h>
+
 #ifndef __EPI_SIMPLELIST_H
 #define __EPI_SIMPLELIST_H
 
@@ -75,13 +77,5 @@ int simplelist_copy(simplelist_type l1,
 
 /* destroys the list. uses the fr function to free the nodes */
 void simplelist_purge(simplelist_type *list, void (*fr)(void *));
-
-/* error codes */
-#define EPI_DATASTRUCT_OK            0
-#define EPI_DATASTRUCT_NULLPTR      -1
-#define EPI_DATASTRUCT_MALLOCFAILED -2
-#define EPI_DATASTRUCT_OUTOFBOUNDS  -3
-#define EPI_DATASTRUCT_NOTFOUND     -4
-#define EPI_DATASTRUCT_UNKNOWN      -5
 
 #endif
