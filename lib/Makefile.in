@@ -137,5 +137,5 @@ endif
 kb.o : expression.h symtab.h consttab.h transtab.h $(SMINCLUDES) kb.h kb.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c kb.cpp
 
-polbase.o : symtab.o polbase.h polbase.cpp
+polbase.o : symtab.h polbase.h polbase.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp
