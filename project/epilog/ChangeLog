@@ -1,3 +1,12 @@
+2002-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+	* datastruct/stringlist.c :
+	* datastruct/stringlist.h :
+
+	  - Unified error codes / return values for both lists.
+
 2002-10-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* datastruct/stringlist.c :

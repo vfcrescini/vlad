@@ -3,8 +3,8 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#ifndef __EPI_SYM_SIMPLELIST_H
-#define __EPI_SYM_SIMPLELIST_H
+#ifndef __EPI_SIMPLELIST_H
+#define __EPI_SIMPLELIST_H
 
 /* simple list works like a queue, except the api allows the data
  * to be accessed given its ordinal index (the order in which it was
@@ -77,11 +77,11 @@ int simplelist_copy(simplelist_type l1,
 void simplelist_purge(simplelist_type *list, void (*fr)(void *));
 
 /* error codes */
-#define SIMPLELIST_OK                 0
-#define SIMPLELIST_ERROR_NULLPTR     -1
-#define SIMPLELIST_ERROR_MALLOC      -2
-#define SIMPLELIST_ERROR_OUTOFBOUNDS -3
-#define SIMPLELIST_ERROR_NOTFOUND    -4
-#define SIMPLELIST_ERROR_UNKNOWN     -5
+#define EPI_DATASTRUCT_OK            0
+#define EPI_DATASTRUCT_NULLPTR      -1
+#define EPI_DATASTRUCT_MALLOCFAILED -2
+#define EPI_DATASTRUCT_OUTOFBOUNDS  -3
+#define EPI_DATASTRUCT_NOTFOUND     -4
+#define EPI_DATASTRUCT_UNKNOWN      -5
 
 #endif

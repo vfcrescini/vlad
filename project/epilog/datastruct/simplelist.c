@@ -10,12 +10,12 @@
 int simplelist_init(simplelist_type *list)
 {
   if (list == NULL)
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
   
   list->list = NULL;
   list->length = 0;
 
-  return SIMPLELIST_OK;
+  return EPI_DATASTRUCT_OK;
 }
 
 /* return length */
@@ -35,7 +35,7 @@ int simplelist_index(simplelist_type list,
   if (data == NULL ||
       index == NULL ||
       cmp == NULL)
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
 
   curr = list.list;
   *index = list.length;
@@ -44,12 +44,12 @@ int simplelist_index(simplelist_type list,
     *index = *index - 1;
 
     if (cmp(curr->data, data) == 0)
-      return SIMPLELIST_OK;
+      return EPI_DATASTRUCT_OK;
 
     curr = curr->next;
   }
 
-  return SIMPLELIST_ERROR_NOTFOUND;
+  return EPI_DATASTRUCT_NOTFOUND;
 }
 
 /* add pointer to list, assumes memory has been allocated to it */
@@ -58,17 +58,17 @@ int simplelist_add(simplelist_type *list, void *data)
   simplelist_node *new_node;
 
   if (list == NULL || data == NULL)
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
 
   if ((new_node = (simplelist_node *) malloc(sizeof(simplelist_node))) == NULL)
-    return SIMPLELIST_ERROR_MALLOC;
+    return EPI_DATASTRUCT_MALLOCFAILED;
 
   new_node->data = data;
   new_node->next = list->list;
   list->list = new_node;
   (list->length)++;
 
-  return SIMPLELIST_OK;
+  return EPI_DATASTRUCT_OK;
 }
 
 /* deletes index'th data, give fr function to free the pointer 
@@ -82,10 +82,10 @@ int simplelist_del_index(simplelist_type *list,
   unsigned int i;
 
   if (list == NULL)
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
 
   if (list->length <= 0 || index >= list->length)
-    return SIMPLELIST_ERROR_OUTOFBOUNDS;
+    return EPI_DATASTRUCT_OUTOFBOUNDS;
 
   prev = NULL;
   curr = list->list;
@@ -106,7 +106,7 @@ int simplelist_del_index(simplelist_type *list,
 
   (list->length)--;
 
-  return SIMPLELIST_OK;
+  return EPI_DATASTRUCT_OK;
 }
 
 /* deletes all the nodes that matches data, uses cmp to compare, 
@@ -123,7 +123,7 @@ int simplelist_del_data(simplelist_type *list,
   if (list == NULL ||
       data == NULL ||
       cmp == NULL)
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
 
   prev = NULL;
   curr = list->list;
@@ -149,7 +149,7 @@ int simplelist_del_data(simplelist_type *list,
     curr = curr->next;
   }
 
-  return (found ? SIMPLELIST_OK : SIMPLELIST_ERROR_NOTFOUND);
+  return (found ? EPI_DATASTRUCT_OK : EPI_DATASTRUCT_NOTFOUND);
 }
 
 /* gives a reference to the index'th data */
@@ -161,10 +161,10 @@ int simplelist_get_index(simplelist_type list,
   simplelist_node *curr;
 
   if (ref == NULL)
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
 
   if (list.length <= 0 || index >= list.length)
-   return SIMPLELIST_ERROR_OUTOFBOUNDS;
+   return EPI_DATASTRUCT_OUTOFBOUNDS;
 
   curr = list.list;
 
@@ -173,7 +173,7 @@ int simplelist_get_index(simplelist_type list,
 
   *ref = curr->data;
 
-  return SIMPLELIST_OK;
+  return EPI_DATASTRUCT_OK;
 }
 
 /* returns a list of nodes that matches the given data. uses cmp to compare.
@@ -191,7 +191,7 @@ int simplelist_get_data(simplelist_type list,
   if (data == NULL ||
       res == NULL ||
       cmp == NULL) 
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
 
   res->list = NULL;
   res->length = 0;
@@ -202,7 +202,7 @@ int simplelist_get_data(simplelist_type list,
       found = 1;
 
       if ((new = (simplelist_node *) malloc(sizeof(simplelist_node))) == NULL)
-        return SIMPLELIST_ERROR_MALLOC;
+        return EPI_DATASTRUCT_MALLOCFAILED;
     
       new->data = curr->data;
       new->next = res->list;
@@ -213,7 +213,7 @@ int simplelist_get_data(simplelist_type list,
     curr = curr->next;
   }
 
-  return (found ? SIMPLELIST_OK : SIMPLELIST_ERROR_NOTFOUND);
+  return (found ? EPI_DATASTRUCT_OK : EPI_DATASTRUCT_NOTFOUND);
 }
 
 /* returns 0 if data is in the list, uses cmp to compare pointers */
@@ -225,18 +225,18 @@ int simplelist_find_data(simplelist_type list,
 
   if (data == NULL ||
       cmp == NULL) 
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
 
   curr = list.list;
 
   while (curr != NULL) {
     if (cmp(curr->data, data) == 0) 
-      return SIMPLELIST_OK;
+      return EPI_DATASTRUCT_OK;
 
     curr = curr->next;
   }
 
-  return SIMPLELIST_ERROR_NOTFOUND;
+  return EPI_DATASTRUCT_NOTFOUND;
 }
 
 /* makes an exact copy of l1 to l2, uses cpy to make a new copy */
@@ -251,7 +251,7 @@ int simplelist_copy(simplelist_type l1,
   void *data;
 
   if (l2 == NULL || cpy == NULL)
-    return SIMPLELIST_ERROR_NULLPTR;
+    return EPI_DATASTRUCT_NULLPTR;
 
   curr = l1.list;
   l2->list = NULL;
@@ -260,12 +260,12 @@ int simplelist_copy(simplelist_type l1,
 
   while (curr != NULL) {
     if (cpy(curr->data, &data) != 0)
-      return SIMPLELIST_ERROR_UNKNOWN;
+      return EPI_DATASTRUCT_UNKNOWN;
     
     /* we have to attach the new node at the end of the list to
      * preserve the original order */
     if ((new = (simplelist_node *) malloc(sizeof(simplelist_node))) == NULL)
-      return SIMPLELIST_ERROR_MALLOC;
+      return EPI_DATASTRUCT_MALLOCFAILED;
 
     if (last == NULL)
       l2->list = new;
@@ -279,7 +279,7 @@ int simplelist_copy(simplelist_type l1,
     curr = curr->next;
   }
 
-  return SIMPLELIST_OK;
+  return EPI_DATASTRUCT_OK;
 }
 
 /* destroys the list. uses the fr function to free the nodes */

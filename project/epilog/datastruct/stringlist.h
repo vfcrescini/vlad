@@ -34,11 +34,4 @@ int stringlist_del(stringlist_type *list, char *string);
 /* delete all strings from this stringlist */
 void stringlist_purge(stringlist_type *list);
 
-#define STRINGLIST_OK                0
-#define STRINGLIST_ERROR_NULLPTR     SIMPLELIST_ERROR_NULLPTR
-#define STRINGLIST_ERROR_MALLOC      SIMPLELIST_ERROR_MALLOC
-#define STRINGLIST_ERROR_OUTOFBOUNDS SIMPLELIST_ERROR_OUTOFBOUNDS
-#define STRINGLIST_ERROR_NOTFOUND    SIMPLELIST_ERROR_NOTFOUND
-#define STRINGLIST_ERROR_UNKNOWN     SIMPLELIST_ERROR_UNKNOWN
-
 #endif
