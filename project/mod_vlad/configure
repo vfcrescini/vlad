@@ -272,7 +272,7 @@ PACKAGE_VERSION='0.0.1'
 PACKAGE_STRING='mod_vlad 0.0.1'
 PACKAGE_BUGREPORT='jcrescin@cit.uws.edu.au'
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT LEX LEXLIB LEX_OUTPUT_ROOT YACC PICFLAG STRIP VERSION LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT LEX LEXLIB LEX_OUTPUT_ROOT YACC PICFLAG DEBUG STRIP VERSION LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -801,6 +801,8 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-debug          enable debugging output & compile with -g (default
+                          is disabled)
   --enable-strip          run strip program (default is disabled)
 
 Optional Packages:
@@ -1248,7 +1250,7 @@ CFLAGS="$CFLAGS"
 LDFLAGS="$LDFLAGS"
 
 # set flags
-MODVLAD_CFLAGS="-O3 -Wall -Wshadow -Wcast-align -Wredundant-decls -Wnested-externs"
+MODVLAD_CFLAGS="-Wall -Wshadow -Wcast-align -Wredundant-decls -Wnested-externs"
 MODVLAD_LDFLAGS=""
 
 # some tests
@@ -2462,6 +2464,21 @@ fi
 # cleanup
 rm -f $$ $$.c
 
+# --enable-debug
+# Check whether --enable-debug or --disable-debug was given.
+if test "${enable_debug+set}" = set; then
+  enableval="$enable_debug"
+
+fi;
+
+if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
+  DEBUG=yes
+
+  MODVLAD_CFLAGS="-g -DDEBUG $MODVLAD_CFLAGS"
+else
+  MODVLAD_CFLAGS="-O3 $MODVLAD_CFLAGS"
+fi
+
 # --enable-strip
 # Check whether --enable-strip or --disable-strip was given.
 if test "${enable_strip+set}" = set; then
@@ -3426,6 +3443,7 @@ s,@LEXLIB@,$LEXLIB,;t t
 s,@LEX_OUTPUT_ROOT@,$LEX_OUTPUT_ROOT,;t t
 s,@YACC@,$YACC,;t t
 s,@PICFLAG@,$PICFLAG,;t t
+s,@DEBUG@,$DEBUG,;t t
 s,@STRIP@,$STRIP,;t t
 s,@VERSION@,$VERSION,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t

@@ -6,7 +6,7 @@ LEX = @LEX@
 YACC = @YACC@
 CFLAGS = @CFLAGS@
 LDFLAGS = @LDFLAGS@
-LN_S = @LN_S@
+DEBUG = @DEBUG@
 STRIP = @STRIP@
 PICFLAG = @PICFLAG@
 VERSION = @VERSION@
@@ -18,8 +18,10 @@ all : $(LIBS)
 
 mod_vlad.so : $(OBJECTS)
 	$(CC) $(LDFLAGS) $(CFLAGS) -shared -Wl,-soname,$(@).`echo $(VERSION) | cut -d. -f1` -o $(@) $(^) -lvlad
-ifdef STRIP
+ifndef DEBUG
+  ifdef STRIP
 	strip $(@)
+  endif
 endif
 
 mod_vlad.o : mod_vlad.c

@@ -10,7 +10,7 @@ CFLAGS="$CFLAGS"
 LDFLAGS="$LDFLAGS"
 
 # set flags
-MODVLAD_CFLAGS="-O3 -Wall -Wshadow -Wcast-align -Wredundant-decls -Wnested-externs"
+MODVLAD_CFLAGS="-Wall -Wshadow -Wcast-align -Wredundant-decls -Wnested-externs"
 MODVLAD_LDFLAGS=""
 
 # some tests
@@ -61,6 +61,16 @@ fi
 
 # cleanup
 rm -f $$ $$.c
+
+# --enable-debug
+AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & compile with -g (default is disabled)]))
+
+if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
+  AC_SUBST(DEBUG,[yes])
+  MODVLAD_CFLAGS="-g -DDEBUG $MODVLAD_CFLAGS"
+else
+  MODVLAD_CFLAGS="-O3 $MODVLAD_CFLAGS"
+fi
 
 # --enable-strip
 AC_ARG_ENABLE(strip,AC_HELP_STRING([--enable-strip],[run strip program (default is disabled)]))
