@@ -110,8 +110,15 @@ Language LT
       subst(<subject_group>, <subject_group>, <interval>) |
       subst(<access_right_group>, <access_right_group>, <interval>) |
       subst(object_group>, <object_group>, <interval>)
+
+    Atoms that do not contain entity variables are called ground atoms, while
+    atoms that do contain entity variables are called non-ground atoms. Note
+    that ground atoms may contain temporal interval variables.
   
   1.3. Facts
+
+    Facts composed entirely of ground atoms are called ground facts, while
+    facts that have non-ground atoms are called non-ground facts.
 
     1.3.1 Positive Facts
 
@@ -123,11 +130,18 @@ Language LT
 
   1.4. Expressions
 
-    <fact1> [&& <fact2> [ && ...]]
+    Ground expressions are expressions that are composed entirely of ground
+    facts, while non-ground expressions contain at least one non-ground fact.
+
+    <fact1> [, <fact2> [, ...]]
+
+    (Difference from original language: the original conjunction symbol was
+    the double ampersand characters "&&". In this language, the comma "," is
+    used for simplicity).
 
 2. Definitions
 
-  2.1. Entity Literal Declarations
+  2.1. Entity Literal Definitions
 
     entity sub|acc|obj[-grp] <entity1> [, <entity2>, [, ...]]
 
@@ -135,7 +149,23 @@ Language LT
     "ident" to "entity" -- changed for clarity as intervals and variables are
     identifiers too)
 
-  2.2. Temporal Interval Relation Declaration
+  2.2. Temporal Interval Relation Definition
+
+    This definition statements allow temporal intervals (literals and
+    variables) to be "bound" to each other with any of the 7 interval relations
+    below:
+
+      - Equals
+      - Before
+      - Meets
+      - Overlaps
+      - During
+      - Starts
+      - Finishes
+
+    A temporal interval relation defined by this statement asserts that the
+    relation between the two intervals holds globally for the lifetime of
+    the program.
 
     interval 
       equals(<int1>, <int2>) |
@@ -144,30 +174,42 @@ Language LT
       overlaps(<int1>, <int2>) |
       during(<int1>, <int2>) |
       starts(<int1>, <int2>) |
-      ends(<int1>, <int2>);
+      finishes(<int1>, <int2>);
 
     - "intx" can be either an interval literal or an interval variable.
 
-  2.3. Initial Expression Declaration
+  2.3. Initial Expression Definition
 
-    initially <ground expression>;
+    Initial expressions hold only until a policy update overrides them.
 
-  2.4. Constraint Declaration
+    initially <ground-expression>;
 
-    always <exp1> implied by <exp2> with absence <exp3>;
+  2.4. Constraint Definition
 
-  2.5. Policy Update Declaration
+    Constraints hold even after policy updates are applied.
 
-    <update_id>([<var_id>[, ...]]) causes <vexp1> if <vexp2>;
+    always <expression1>
+      implied by <expression2>
+      with absence <expression3>;
 
-    where <vexp1> and <vexp2> are expressions containing atoms that may
-    contain variables.
+    The scope of the entity variables that may occur in the expressions in a
+    constraint definition statement is limited to that definition statement
+    only.
+
+  2.5. Policy Update Definition
+
+    <update_id>([<var_id>[, ...]])
+      causes <expression1>
+      if <expression2>;
+
+    where <expression1> and <expression2> are composed of atoms that may
+    contain entity variables listed in variable list (<var_id>, ...).
 
 3. Directives
 
   3.1. Query Directive
 
-    query <expression>;
+    query <expression> [where <interval-relation>[, ...]];
 
   3.2. Compute Directive
 
@@ -191,7 +233,7 @@ Language LT
 
 4. Translation
 
-  4,1, Initial Expression Rules
+  4.1. Initial Expression Rules
 
   4.2. Constraint Rules
 
@@ -206,3 +248,5 @@ Language LT
   4.5. Transitivity Rules
 
   4.6. Inertial Rules
+
+5. Evaluation
