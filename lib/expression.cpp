@@ -46,6 +46,34 @@ int expression::get(unsigned int a_index, fact **a_fact)
   return list::get(a_index, (list_item **) a_fact);
 }
 
+/* replace occurences of var with ident, creates a new expression */
+int expression::replace(const char *a_var,
+                        const char *a_ident,
+                        expression **a_exp)
+{
+  int retval;
+  unsigned int i;
+  fact *old_fact;
+  fact *new_fact;
+
+  if (a_exp == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a_exp = VLAD_NEW(expression())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < list::length(); i++) {
+    if ((retval = get(i, &old_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = old_fact->replace(a_var, a_ident, &new_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
 /* replace vars in vlist to ident in ilist. create a new expression */
 int expression::replace(stringlist *a_vlist, stringlist *a_ilist, expression **a_exp)
 {

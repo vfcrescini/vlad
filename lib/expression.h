@@ -22,6 +22,8 @@ class expression : public list
     int find(fact *a_fact);
     /* give i'th fact */
     int get(unsigned int a_index, fact **a_fact);
+    /* replace occurences of var with ident, creates a new expression */
+    int replace(const char *a_var, const char *a_ident, expression **a_exp);
     /* replace vars in vlist to entity in ilist. create a new expression */
     int replace(stringlist *a_vlist, stringlist *a_ilist, expression **a_exp);
 #ifdef VLAD_DEBUG

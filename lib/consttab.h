@@ -19,6 +19,8 @@ class constraint : public list_item
     bool cmp(list_item *a_item);
     int init(expression *a_exp, expression *a_cond, expression *a_ncond);
     int get(expression **a_exp, expression **a_cond, expression **a_ncond);
+    /* replaces occurences of var with ident. creates a new constraint */
+    int replace(const char *a_var, const char *a_ident, constraint **a_constr);
   private :
     bool m_init;
     expression *m_exp;

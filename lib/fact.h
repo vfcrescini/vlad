@@ -63,6 +63,8 @@ class fact : public list_item
                     bool a_truth);
     /* create a new instance of this fact */
     int copy(fact **a_fact);
+    /* replaces instances of var with ident, gives a new fact */
+    int replace(const char *a_var, const char *a_ident, fact **a_fact);
     /* replaces vars in vlist with entities in ilist. gives a new fact */
     int replace(stringlist *a_vlist, stringlist *a_ilist, fact **a_fact);
     /* reverses the truth value */
