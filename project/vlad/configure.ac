@@ -57,8 +57,7 @@ if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
                  #include <api.h>],
                 [Smodels s;
                  Api a(&s.program);],
-                AC_MSG_RESULT([yes])
-                AC_SUBST(SMODELS_PATH,[yes]),
+                AC_MSG_RESULT([yes]),
                 AC_MSG_RESULT([no])
                 AC_MSG_ERROR([*** smodels test program failed to compile ***]))
     LDFLAGS="$OLD_LDFLAGS"
@@ -84,13 +83,17 @@ if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
       CXXFLAGS="$OLD_CXXFLAGS"
       LDFLAGS="$OLD_LDFLAGS"
 
-      # adjust relative paths
+      # adjust relative paths and add them to the flags
       case "$with_smodels" in
         /*)
-          AC_SUBST(SMODELS_PATH,[$with_smodels])
+          VLAD_CFLAGS="$VLAD_CFLAGS -I$with_smodels"
+          VLAD_CXXFLAGS="$VLAD_CXXFLAGS -I$with_smodels"
+          VLAD_LDFLAGS="$VLAD_LDFLAGS -L$with_smodels/.libs"
           ;;
         *)
-          AC_SUBST(SMODELS_PATH,[`pwd`/$with_smodels])
+          VLAD_CFLAGS="$VLAD_CFLAGS -I\$(TOPSRCDIR)/$with_smodels"
+          VLAD_CXXFLAGS="$VLAD_CXXFLAGS -I\$(TOPSRCDIR)/$with_smodels"
+          VLAD_LDFLAGS="$VLAD_LDFLAGS -L\$(TOPSRCDIR)/$with_smodels/.libs"
           ;;
       esac
     fi
