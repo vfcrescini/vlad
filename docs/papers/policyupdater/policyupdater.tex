@@ -1199,7 +1199,7 @@ query holds(alice, read, file);
     program first before any query evaluation or policy update can be
     performed.
 
-    An extended logic program $P^{*}$ in language ${cal L}^{*}$ is translated
+    An extended logic program $P^{*}$ in language ${\cal L}^{*}$ is translated
     into a normal logic program by performing 2 additional steps:
 
     \begin{itemize}
@@ -1258,17 +1258,17 @@ query holds(alice, read, file);
             \hline
             \textbf{Field} & \textbf{Type} & \textbf{Description} \\
             \hline
-            sub\_single & string list & single subject \\
+            $ss$ & string list & single subject \\
             \hline
-            sub\_group & string list & group subject \\
+            $sg$ & string list & group subject \\
             \hline
-            acc\_single & string list & single access \\
+            $as$ & string list & single access \\
             \hline
-            acc\_group & string list & group access right \\
+            $ag$ & string list & group access right \\
             \hline
-            obj\_single & string list & single object \\
+            $os$ & string list & single object \\
             \hline
-            obj\_group & string list & group object \\
+            $og$ & string list & group object \\
             \hline
           \end{tabular}
         \end{quote}
@@ -1281,11 +1281,11 @@ query holds(alice, read, file);
             \hline
             \textbf{Field} & \textbf{Type} & \textbf{Description} \\
             \hline
-            sub & string list & sub\_single + sub\_group \\
+            $s$ & string list & $ss$ $+$ $sg$ \\
             \hline
-            acc & string list & acc\_single + acc\_group \\
+            $a$ & string list & $as$ $+$ $ag$ \\
             \hline
-            obj & string list & obj\_single + obj\_group \\
+            $o$ & string list & $os$ $+$ $og$ \\
             \hline
           \end{tabular}
         \end{quote}
@@ -1316,11 +1316,11 @@ query holds(alice, read, file);
                 \hline
                 \textbf{Field} & \textbf{Type} & \textbf{Description} \\
                 \hline
-                sub & string & subject entity identifier \\
+                $sub$ & string & subject entity identifier \\
                 \hline
-                acc & string & access right entity identifier \\
+                $acc$ & string & access right entity identifier \\
                 \hline
-                obj & string & object entity identifier \\
+                $obj$ & string & object entity identifier \\
                 \hline
               \end{tabular}
             \end{quote}
@@ -1331,9 +1331,9 @@ query holds(alice, read, file);
                 \hline
                 \textbf{Field} & \textbf{Type} & \textbf{Description} \\
                 \hline
-                element & string & single entity identifier \\
+                $element$ & string & single entity identifier \\
                 \hline
-                group & string & group entity identifier \\
+                $group$ & string & group entity identifier \\
                 \hline
               \end{tabular}
             \end{quote}
@@ -1344,9 +1344,9 @@ query holds(alice, read, file);
                 \hline
                 \textbf{Field} & \textbf{Type} & \textbf{Description} \\
                 \hline
-                group1 & string & subgroup entity identifier \\
+                $group1$ & string & subgroup entity identifier \\
                 \hline
-                group2 & string & supergroup entity identifier \\
+                $group2$ & string & supergroup entity identifier \\
                 \hline
               \end{tabular}
             \end{quote}
@@ -1364,11 +1364,11 @@ query holds(alice, read, file);
               \hline
               \textbf{Field} & \textbf{Type} & \textbf{Description} \\
               \hline
-              atom & atom type & polymorphic structure \\
+              $atom$ & atom type & polymorphic structure \\
               \hline
-              type & \{h$|$m$|$s\} & holds, member or subset \\ 
+              $type$ & \{h$|$m$|$s\} & holds, member or subset \\ 
               \hline
-              truth & boolean & negation indicator \\
+              $truth$ & boolean & negation indicator \\
               \hline
             \end{tabular}
           \end{quote}
@@ -1391,11 +1391,11 @@ query holds(alice, read, file);
               \hline
               \textbf{Field} & \textbf{Type} & \textbf{Description} \\
               \hline
-              exp & expression type & consequent \\
+              $exp$ & expression type & consequent \\
               \hline
-              pcond & expression type & positive premise \\ 
+              $pcond$ & expression type & positive premise \\ 
               \hline
-              ncond & expression type & negative premise \\
+              $ncond$ & expression type & negative premise \\
               \hline
             \end{tabular}
           \end{quote}
@@ -1409,13 +1409,13 @@ query holds(alice, read, file);
               \hline
               \textbf{Field} & \textbf{Type} & \textbf{Description} \\
               \hline
-              name & string & update identifier \\
+              $name$ & string & update identifier \\
               \hline
-              vlist & ordered string list & variables \\
+              $vlist$ & ordered string list & variables \\
               \hline
-              pre & expression type & precondition \\
+              $pre$ & expression type & precondition \\
               \hline
-              post & expression type & postcondition \\
+              $post$ & expression type & postcondition \\
               \hline
             \end{tabular}
           \end{quote}
@@ -1430,14 +1430,162 @@ query holds(alice, read, file);
               \hline
               \textbf{Field} & \textbf{Type} & \textbf{Description} \\
               \hline
-              name & string & update identifier \\ 
+              $name$ & string & update identifier \\ 
               \hline
-              ilist & ordered string list & identifiers \\
+              $ilist$ & ordered string list & identifiers \\
               \hline
             \end{tabular}
           \end{quote}
 
     \subsection{Translation to Normal Logic Program}
+
+      \subsubsection{Grounding of Variables}
+
+      \subsubsection{Representing Facts in Propositional Form}
+
+        Given the symbol table $st$, we first enumerate all facts defined
+        in the policy base:
+
+        % holds
+        \begin{quote}
+          \begin{tabular}[t]{|l|l|l|}
+            \hline
+            $st.s[0]$ & $st.a[0]$ & $st.o[0]$ \\
+            \hline
+            ... & ... & ... \\
+            \hline
+            $st.s[0]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
+            \hline
+             ... & ... & ... \\
+            \hline
+            $st.s[0]$ & $st.acc[len(st.acc)]$ & $st.obj[0]$ \\
+            \hline
+            ... & ... & ... \\
+            \hline
+            $st.s[0]$ & $st.acc[len(st.a)]$ & $st.o[len(st.o)]$ \\
+            ... & ... & ... \\
+            \hline
+            $st.s[len(st.sub)]$ & $st.a[0]$ & $st.o[0]$ \\
+            \hline
+            ... & ... & ... \\
+            \hline
+            $st.s[len(st.sub)]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
+            \hline
+            ... & ... & ... \\
+            \hline
+            $st.s[len(st.sub)]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
+            \hline
+            ... & ... & ... \\
+            \hline
+            $st.s[len(st.sub)]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
+            \hline
+          \end{tabular}
+        \end{quote}
+
+        % member
+        \begin{quote}
+          \begin{tabular}[t]{|l|l|}
+            \hline
+            % subject
+            $st.ss[0]$ & $st.sg[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.ss[0]$ & $st.sg[len(st.sg)]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.ss[len(st.ss)]$ & $st.sg[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.ss[len(st.ss)]$ & $st.sg[len(st.sg)]$ \\
+            \hline
+            % access right
+            $st.as[0]$ & $st.ag[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.as[0]$ & $st.ag[len(st.ag)]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.as[len(st.as)]$ & $st.ag[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.as[len(st.as)]$ & $st.ag[len(st.ag)]$ \\
+            \hline
+            % object
+            $st.os[0]$ & $st.og[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.os[0]$ & $st.og[len(st.og)]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.os[len(st.os)]$ & $st.og[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.os[len(st.os)]$ & $st.og[len(st.og)]$ \\
+            \hline
+          \end{tabular}
+        \end{quote}
+
+        % subset
+        \begin{quote}
+          \begin{tabular}[t]{|l|l|}
+            \hline
+            % subject
+            $st.sg[0]$ & $st.sg[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.sg[0]$ & $st.sg[len(st.sg)]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.sg[len(st.sg)]$ & $st.sg[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.sg[len(st.sg)]$ & $st.sg[len(st.sg)]$ \\
+            \hline
+            % access right
+            $st.ag[0]$ & $st.ag[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.ag[0]$ & $st.ag[len(st.ag)]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.ag[len(st.ag)]$ & $st.ag[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.ag[len(st.ag)]$ & $st.ag[len(st.ag)]$ \\
+            \hline
+            $st.og[0]$ & $st.og[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.og[0]$ & $st.og[len(st.og)]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.og[len(st.og)]$ & $st.og[0]$ \\
+            \hline
+            ... & ... \\
+            \hline
+            $st.og[len(st.og)]$ & $st.og[len(st.og)]$ \\
+            \hline
+          \end{tabular}
+        \end{quote}
+
+
 
   \section{Case Study: Web Server Application}
 
