@@ -31,9 +31,9 @@ int atom_create_holds(atom_type **atom,
   if (atom == NULL || sub == NULL || acc == NULL || obj == NULL)
     return -1;
 
-  if (EPI_IDENT_IS_SUBJECT(sub->type) != 0 ||
-      EPI_IDENT_IS_ACCESS(acc->type) != 0 ||
-      EPI_IDENT_IS_OBJECT(obj->type) != 0)
+  if (!EPI_IDENT_IS_SUBJECT(sub->type) ||
+      !EPI_IDENT_IS_ACCESS(acc->type) ||
+      !EPI_IDENT_IS_OBJECT(obj->type))
     return -1;
 
   if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)

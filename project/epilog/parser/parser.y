@@ -13,8 +13,12 @@
 #include <stdio.h>
 #endif
 
+extern expression_type initial_exp;
+
 int yylex();
 extern int yyerror(char *error);
+extern int yywarn(char *warning);
+
 int add_identifier(char ident[], unsigned short type);
 %}
 
@@ -227,6 +231,56 @@ acc_grp_ident_list :
 initial_stmt : 
   EPI_SYM_INITIALLY expression EPI_SYM_SEMICOLON
   {
+    unsigned int i;
+    unsigned int len;
+    atom_type *tmp_atom = NULL;
+
+    /* now we have to go thrugh these expressions and see if they're aleady
+     * in the initial state expression */
+
+    if (expression_length($2, &len) != 0) {
+      yyerror("internal error");
+      return -1;
+    }
+    for (i = 0; i < len; i++) {
+      if (expression_get($2, i, &tmp_atom) != 0) {
+        yyerror("internal error");
+        return -1;
+      }
+      else if (expression_find(initial_exp, *tmp_atom) == 0) {
+        yywarn("atom already declared");
+        continue;
+      }
+      else if (expression_add(&initial_exp, *tmp_atom) != 0) {
+        yyerror("internal error");
+        return -1;
+      }
+
+#ifdef DEBUG
+      if (EPI_ATOM_IS_CONST(tmp_atom->type))
+        printf("adding constant %s into the initial state\n", tmp_atom->truth == 0 ? "true" : "false");
+      else if (EPI_ATOM_IS_HOLDS(tmp_atom->type))
+        printf("adding %sholds(%s, %s, %s) into the initial state\n", 
+               tmp_atom->truth == 0 ? "" : "not ",
+               tmp_atom->atom.holds.subject->name,
+               tmp_atom->atom.holds.access->name,
+               tmp_atom->atom.holds.object->name);
+      else if (EPI_ATOM_IS_MEMB(tmp_atom->type))
+        printf("adding %smemb(%s, %s) into the initial state\n", 
+               tmp_atom->truth == 0 ? "" : "not ",
+               tmp_atom->atom.memb.element->name,
+               tmp_atom->atom.memb.group->name);  
+      else if (EPI_ATOM_IS_SUBST(tmp_atom->type))
+        printf("adding %ssubst(%s, %s) into the initial state\n", 
+               tmp_atom->truth == 0 ? "" : "not ",
+               tmp_atom->atom.subst.group1->name,
+               tmp_atom->atom.subst.group2->name);  
+#endif
+
+    }
+
+    if (expression_purge(&$2))
+      return -1;
   }
   ;
 
@@ -304,12 +358,44 @@ logical_op :
 expression : 
   boolean_atom 
   { 
-    expression_init(&$$);
-    expression_add(&$$, $1);
+    if (expression_init(&$$) != 0) {
+      yyerror("internal error");
+      return -1;
+    }
+    else if (expression_add(&$$, $1) != 0) {
+      yyerror("internal error");
+      return -1;
+    }
   }
   | boolean_atom logical_op expression
   { 
-    expression_add(&$$, $1);
+    unsigned int i;
+    unsigned int len;
+    atom_type *tmp_atom;
+
+    if (expression_length($3, &len) != 0) {
+      yyerror("internal error");
+      return -1;
+    }
+ 
+    for (i = 0; i < len; i++) {
+      if (expression_get($3, i, &tmp_atom) != 0) {
+        yyerror("internal error");
+        return -1;
+      }
+      else if (expression_add(&$$, *tmp_atom) != 0) {
+        yyerror("internal error");
+        return -1;
+      }
+    }
+    if (expression_add(&$$, $1) != 0) {
+        yyerror("internal error");
+        return -1;
+    }
+    else if (expression_purge(&$3) != 0) {
+        yyerror("internal error");
+        return -1;
+    }
   }
   ;
 
@@ -481,7 +567,7 @@ int add_identifier(char ident[], unsigned short type) {
 #endif
 
   if (identlist_add(ident, type) != 0) {
-    yyerror("memory overflow");
+    yyerror("internal error");
     return -1;
   }
 

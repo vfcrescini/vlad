@@ -15,10 +15,23 @@ int expression_init(expression_type *exp)
   return simplelist_init(exp);
 }
 
+/* gives the number of atoms in the expression */
+int expression_length(expression_type exp, unsigned int *len)
+{
+  return simplelist_length(exp, len);
+}
+
+
 /* return 0 if the atom is in the expression */
 int expression_find(expression_type exp, atom_type atom)
 {
   return simplelist_find_data(exp, (void *) &atom, expression_compare);
+}
+
+/* gives a reference to the index'th atom in the expression */
+int expression_get(expression_type exp, unsigned int index, atom_type **atom)
+{
+  return simplelist_get_index(exp, index, (void **) atom);
 }
 
 /* add an atom into the expression */

@@ -10,8 +10,6 @@
 
 int main()
 {
-  expression_type initial_exp;
-
   yyin = stdin;
   yyout = stdout;
 
@@ -27,7 +25,14 @@ int main()
 
 int yyerror(char *error)
 {
-  fprintf(stderr, "line %d: %s\n", line_no, error);
+  fprintf(stderr, "line %d: ERROR: %s\n", line_no, error);
+
+  return 0;
+}
+
+int yywarn(char *warn)
+{
+  fprintf(stderr, "line %d: WARNING: %s\n", line_no, warn);
 
   return 0;
 }
