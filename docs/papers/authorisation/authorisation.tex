@@ -392,13 +392,105 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
 
   \section{Translation into a Logic Program}
 
-    \subsection{Description}
+    \subsection{Flattening the States}
 
-    \subsection{Examples}
+      Extended logic programs are \emph{flat} or stateless. The proposed
+      language, however, is composed of logic facts that have a states as
+      a result of the transformation property. Translating the proposed 
+      language into an extended logic program requires a stateless set of 
+      axioms and propositions.
+
+      \subsubsection{Adding a State Parameter to the Atoms}
+
+        The first step in the translation is to reduce every atom, which is
+        composed of two to three parameters into a single proposition. This
+        procedure, although does not seem necessary is to allow us to have
+        a simplified representation of propositions. For example, the atoms
+        holds(s1, a1, o1) and memb(e1, g1) can be reduced to propositions
+        A and B, respectively.
+
+        The next step is to add a state parameter into the definiton of an
+        atom. This procedure will allow us to differentiate between atoms of
+        the same value but on different states. For example, atom \emph{A} in 
+        the initial state \emph{S$_0$} can be represented as holds(A, S$_0$),
+        likewise, the same atom \emph{A} in state \emph{S$_1$} will be
+        represented as holds(A, S$_1$).
+
+      \subsubsection{Handling States in Transformations}
+
+        To express transformation from one state to another in an extended
+        logic program, each atom that is involved in a transformation must
+        be flattened.
+
+        Let:
+  
+        \begin{list}{}{}
+          \item \emph{T} = transformation
+          \item \emph{S}$^{'}$ = state before \emph{T} is applied
+          \item \emph{S}$^{''}$ = state after \emph{T} is applied
+        \end{list}
+  
+        Then we can define the \emph{Res} as the function that applies a 
+        transformation onto a state:
+  
+        \begin{list}{}{}
+          \item \emph{S}$^{''}$ = \emph{Res}(T, \emph{S}$^{'}$)
+        \end{list}
+  
+        Disregarding the placeholder variables and a conjunction of atoms, 
+        a transformation \emph{T} in its simplest form:
+  
+        \begin{list}{}{}
+          \item \emph{T} causes \emph{A} if \emph{B}
+        \end{list}
+  
+        Therefore, a transformation may be represented in an extended logic
+        program as an implication:
+ 
+        \begin{list}{}{}
+          \item holds(A, \emph{Res}(T, S)) $\leftarrow$ holds(B, S)
+        \end{list}
+
+        where \emph{S} is the state before transformation \emph{T} is applied.
+
+      \subsubsection{Handling States in Constraints}
+
+        Converting constraints into an extended logic program is somewhat
+        simpler than converting transformations. Since constraints must hold
+        for all states in the domain, the following constraints:
+
+      \begin{list}{}{}
+        \item A implies B with absence C
+        \item A provokes B
+        \item always A
+      \end{list}
+
+        can be expressed by the following implications:
+
+        \begin{list}{}{}
+          \item 
+            holds(B, S) $\leftarrow$ holds(A, S) $\land$ \emph{not} holds(C, S)
+          \item 
+            holds(B, S) $\leftarrow$ holds(A, S)
+          \item 
+            holds(A, S) $\leftarrow$
+        \end{list}
+
+        for all states \emph{S} in the domain.
+
+      \subsubsection{Example}
+
+    \subsection{Removal of Classical Negation}
 
     \pagebreak
 
   \section{System Structure}
+
+    \subsection{Parser1: Epilog}
+
+    \subsection{Parser2: Vlad}
+
+    \subsection{Application Program}
 
     \pagebreak
 
