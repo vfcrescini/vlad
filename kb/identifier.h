@@ -22,6 +22,9 @@ class identifier : public list_item
     ~identifier();
     bool cmp(list_item *item);
     int init(const char *n, ident_type t, bool g);
+    const char *get_name();
+    ident_type get_type();
+    bool get_group();
   private :
     char *name;
     ident_type type;

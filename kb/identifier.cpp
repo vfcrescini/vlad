@@ -49,3 +49,19 @@ int identifier::init(const char *n, ident_type t, bool g)
 
   return ((strcpy(name, n) == NULL) ? VLAD_FAILURE : VLAD_OK);
 }
+
+const char *identifier::get_name()
+{
+  return name;
+}
+
+ident_type identifier::get_type()
+{
+  return type;
+}
+
+bool identifier::get_group()
+{
+  return group;
+}
+	
