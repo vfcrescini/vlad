@@ -1998,20 +1998,39 @@ query holds(alice, read, file);
             \end{math}
           \end{quote}
 
-          Note that in state $S_{0}$, the indices of positive member facts are
-          offset by the total number of positive holds facts
+          Note that in the above table, the indices of positive member facts
+          are offset by the total number of positive holds facts
           ($|{\theta}_{s}| \times |{\theta}_{a}| \times |{\theta}_{o}|$) and
           the indices of positive access right member facts are offset by the
           total number of positive holds facts ($|{\theta}_{s}| \times
           |{\theta}_{a}| \times |{\theta}_{o}|$) plus the total number of
           positive subject member facts ($|{\theta}_{s_s}| \times
-          |{\theta}_{s_g}|$).
+          |{\theta}_{s_g}|$). For simplicity, we define the following totals
+          of positive facts in state $S_{0}$:
 
-          This offsetting procedure can be extended to assign indices for both
-          positive and negative facts of states $S_{0}$ and after. The index of
-          a negative fact of state $S_{0}$ is offset by $T^{+}_{S_{0}}$, the
-          total number of positive facts in state $S_{0}$. For example, given
-          the first negative subject subset fact:
+           \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+                T^{S^{+}_{0}} &= T^{S^{+}_{0}}_{H} + T^{S^{+}_{0}}_{M} + T^{S^{+}_{0}}_{S} \\
+                T^{S^{+}_{0}}_{H} &= |{\theta}_{s_s}| \times |{\theta}_{a_s}| \times |{\theta}_{o_s}| \\
+                T^{S^{+}_{0}}_{M} &= T^{S^{+}_{0}}_{M_s} + T^{S^{+}_{0}}_{M_a} + T^{S^{+}_{0}}_{M_o} \\
+                T^{S^{+}_{0}}_{S} &= T^{S^{+}_{0}}_{S_s} + T^{S^{+}_{0}}_{S_a} + T^{S^{+}_{0}}_{S_o} \\
+                T^{S^{+}_{0}}_{M_s} &= |{\theta}_{s_s}| \times |{\theta}_{s_g}| \\
+                T^{S^{+}_{0}}_{M_a} &= |{\theta}_{a_s}| \times |{\theta}_{a_g}| \\
+                T^{S^{+}_{0}}_{M_o} &= |{\theta}_{o_s}| \times |{\theta}_{o_g}| \\
+                T^{S^{+}_{0}}_{S_s} &= (|{\theta}_{s_g}|)^{2} \\
+                T^{S^{+}_{0}}_{S_a} &= (|{\theta}_{a_g}|)^{2} \\
+                T^{S^{+}_{0}}_{S_o} &= (|{\theta}_{o_g}|)^{2}
+              \end{aligned}
+            \end{math}
+          \end{quote}
+   
+          With the totals above defined, the offsetting procedure can be
+          extended to find the indices of both positive and negative facts of
+          state $S_{0}$. The index of a negative fact of state $S_{0}$ is
+          offset by $T^{S^{+}_{0}}$, the total number of positive facts in
+          state $S_{0}$. For example, given the first negative subject subset
+          fact:
 
           \begin{quote}
             $subst({\theta}_{s_g}[0], {\theta}_{s_g}[0], S_{0}, false)$
@@ -2021,24 +2040,7 @@ query holds(alice, read, file);
 
           \begin{quote}
             \begin{math}
-              \begin{aligned}[t]
-                i = & T^{+}_{S_{0}} + \\
-                & (|{\theta}_{s}| \times |{\theta}_{a}| \times |{\theta}_{o}|) + \\
-                & (|{\theta}_{s_s}| \times |{\theta}_{s_g}|) + \\
-                & (|{\theta}_{a_s}| \times |{\theta}_{a_g}|) + \\
-                & (|{\theta}_{o_s}| \times |{\theta}_{o_g}|)
-              \end{aligned}
-            \end{math}
-          \end{quote}
-          \begin{quote}
-            \begin{math}
-              \begin{aligned}[t]
-                T^{+}_{S_{0}} = & (|{\theta}_{s}| \times |{\theta}_{a}| \times |{\theta}_{o})| + \\
-                & (|{\theta}_{s_s}| \times |{\theta}_{s_g}|) + \\
-                & (|{\theta}_{a_s}| \times |{\theta}_{a_g}|) + \\
-                & (|{\theta}_{o_s}| \times |{\theta}_{o_g}|) + \\
-                & (|{\theta}_{s_g}|)^{2} + (|{\theta}_{a_g}|)^{2} + (|{\theta}_{o_g}|)^{2}
-              \end{aligned}
+              i = T^{S^{+}_{0}} + T^{S^{+}_{0}}_{H} + T^{S^{+}_{0}}_{M} 
             \end{math}
           \end{quote}
 
@@ -2051,9 +2053,9 @@ query holds(alice, read, file);
           \begin{alltt}
 FUNCTION \(encode\)(\(fact\), \(state\))
   IF \(fact.truth\) == \(TRUE\) THEN
-    \(off\) = \(tot_off\) + (\(state\) \(\times\) \(tot_off\) \(\times\) \(2\))
+    \(ofst\) = \(T\sp{S\sp{+}\sb{0}}\) + (\(state\) \(\times\) \(T\sp{S\sp{+}\sb{0}}\) \(\times\) \(2\))
   ELSE
-    \(off\) = (\(state\) \(\times\) \(tot_off\) \(\times\) \(2\))
+    \(ofst\) = \(state\) \(\times\) \(T\sp{S\sp{+}\sb{0}}\) \(\times\) \(2\)
   ENDIF
 
   CASE \(fact.type\) OF
@@ -2065,69 +2067,46 @@ FUNCTION \(encode\)(\(fact\), \(state\))
     \(member\) :
       \(e\) = \(stab.index\)(\(fact.memb.elt\))
       \(g\) = \(stab.index\)(\(fact.memb.grp\))
-      \(id\) = \(holds_off\) +
+      \(id\) = \(T\sp{S\sp{+}\sb{0}}\sb{H}\) +
           \(encode_memb\)(\(e\), \(g\), \(stab.type\)(\(e\)))
     \(subset\) :
       \(g1\) = \(stab.index\)(\(fact.subst.grp1\))
       \(g2\) = \(stab.index\)(\(fact.subst.grp2\))
-      \(id\) = \(holds_off\) + \(memb_off\) +
+      \(id\) = \(T\sp{S\sp{+}\sb{0}}\sb{H}\) + \(T\sp{S\sp{+}\sb{0}}\sb{M}\) +
           \(encode_subst\)(\(g1\), \(g2\), \(stab.type\)(\(g1\)))
   ENDCASE
-  RETURN \(off\) + \(id\)
+  RETURN \(ofst\) + \(id\)
 ENDFUNCTION
 
 FUNCTION \(encode_holds\)(\(is\), \(ia\), \(io\))
-  RETURN (\(is\) \(\times\) \(stab.a.len()\) \(\times\) \(stab.o.len()\)) +
-         (\(ia\) \(\times\) \(stab.o.len()\)) + \(io\)
+  RETURN (\(is\) \(\times\) \(|{\theta}\sb{a\sb{s}}|\) \(\times\) \(|{\theta}\sb{o\sb{s}}|\)) +
+         (\(ia\) \(\times\) \(|{\theta}\sb{o\sb{s}}|\)) + \(io\)
 ENDFUNCTION
 
 FUNCTION \(encode_memb\)(\(ie\), \(ig\), \(type\))
   CASE \(type\) OF
     \(subject\) :
-      RETURN (\(ielt\) \(\times\) \(sglen\)) + \(ig\)
+      RETURN (\(ielt\) \(\times\) \(|{\theta}\sb{s\sb{g}}|\)) + \(ig\)
     \(access\) : 
-      RETURN (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
-             (\(ie\) \(\times\) \(stag.ag.len()\)) + \(ig\)
+      RETURN \(T\sp{S\sp{+}\sb{0}}\sb{M\sb{s}}\) + (\(ie\) \(\times\) \(|{\theta}\sb{a\sb{g}}|\)) + \(ig\)
     \(object\) :
-      RETURN (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
-             (\(stag.as.len()\) \(\times\) \(stab.ag.len()\)) +
-             (\(ie\) \(\times\) \(stab.og.len()\)) + \(ig\)
+      RETURN
+        \(T\sp{S\sp{+}\sb{0}}\sb{M\sb{s}}\) + \(T\sp{S\sp{+}}\sb{M\sb{a}}\) + (\(ie\) \(\times\) \(|{\theta}\sb{o\sb{g}}|\)) + \(ig\)
   ENDCASE
 ENDFUNCTION
 
 FUNCTION \(encode_subst\)(\(ig1\), \(ig2\), \(type\))
   CASE \(type\) OF
     \(subject\) :
-      RETURN (\(ielt\) \(\times\) \(sglen\)) + \(ig\)
+      RETURN (\(ig1\) \(\times\) \(|{\theta}\sb{s\sb{g}}|\)) + \(ig2\)
     \(access\) :
-      RETURN \(stab.sg.len()\)\(\sp{2}\) +
-             (\(ie\) \(\times\) \(stag.ag.len()\)) + \(ig\)
+      RETURN \(T\sp{S\sp{+}\sb{0}}\sb{S\sb{s}}\) + (\(ig1\) \(\times\) \(|{\theta}\sb{a\sb{g}}|\)) + \(ig2\)
     \(object\) :
-      RETURN \(stab.sg.len()\)\(\sp{2}\) +
-             \(stag.ag.len()\)\(\sp{2}\) +
-             (\(ie\) \(\times\) \(stab.og.len()\)) + \(ig\)
+      RETURN
+        \(T\sp{S\sp{+}\sb{0}}\sb{S\sb{s}}\) + \(T\sp{S\sp{+}\sb{0}}\sb{S\sb{a}}\) + (\(ig1\) \(\times\) \(|{\theta}\sb{o\sb{g}}|\)) + \(ig2\)
   ENDCASE
 ENDFUNCTION
           \end{alltt}
-
-          where:
-
-          \begin{math}
-            \begin{aligned}[t]
-              ho&lds\_off = \\
-              &stab.s.len() \times stab.a.len() \times stab.o.len() \\
-              me&mb\_off = \\
-              &stab.ss.len() \times stab.sg.len() + \\
-              &stab.as.len() \times stab.ag.len() + \\
-              &stab.os.len() \times stab.og.len() \\
-              su&bset\_off = \\
-              &stab.sg.len()\sp{2} + \\
-              &stab.ag.len()\sp{2} + \\
-              &stab.og.len()\sp{2} \\
-              to&t\_off = \\
-              &holds\_off + memb\_off + subst\_off
-            \end{aligned}
-          \end{math}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
