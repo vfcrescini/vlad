@@ -108,6 +108,17 @@ everything         .
 
 <INITIAL>{acc_type} return VLAD_SYM_ACCTYPE;
 
+<INITIAL>{number} {
+  if (programtext == NULL) {
+    programlval.number = 0;
+    return VLAD_SYM_ERROR;
+  }
+
+  programlval.number = atoi(programtext);
+
+  return VLAD_SYM_NUMBER;
+}
+
 <INITIAL>{identifier} {
   if (programtext == NULL) {
     strcpy(programlval.identifier, "");
