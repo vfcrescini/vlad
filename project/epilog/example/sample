@@ -53,6 +53,10 @@ trans become_biologist(sub_var)
   causes memb(sub_var, biologists)
   if true;
 
+trans dumbify_alice()
+  causes memb(alice, astrologers)
+  if true;
+
 /* queries */
 
 is holds(alice, read, file1)
@@ -71,9 +75,12 @@ is memb(bob, scientists)
   after become_astrologer(bob);
 
 is memb(bob, scientists)
-  after become_astrologer(bob), become_biologist();
+  after become_astrologer(bob), become_biologist(bob);
 
 is subst(astrologers, scientists);
 is subst(biologists, scientists);
 is !subst(astrologers, scientists);
 is !subst(biologists, scientists);
+
+is memb(alice, biologists) after dumbify_alice();
+is memb(alice, astrologers) after dumbify_alice();
