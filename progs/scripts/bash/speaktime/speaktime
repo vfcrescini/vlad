@@ -76,13 +76,13 @@ fi
 # do the minutes
 if [ ${curr_min} -ge 10 ] && [ ${curr_min} -le 19 ]; then
   playlist="${playlist} ${snd_dir}/${curr_min}.mp3"
-elif [ ${curr_min} -gt 0 ]; then
-  if [ ${curr_min} -ge 1 ] && [ ${curr_min} -le 9 ]; then
+elif [ ${curr_min} -ge 1 ]; then
+  if [ ${curr_min} -le 9 ]; then
     playlist="${playlist} ${snd_dir}/oh.mp3"
   else
     playlist="${playlist} ${snd_dir}/${curr_min%[0-9]}0.mp3"
   fi
-  if [ $[curr_min % 10] -ne 0 ]; then
+  if [ $[${curr_min} % 10] -ne 0 ]; then
     playlist="${playlist} ${snd_dir}/0${curr_min#[0-9]}.mp3"
   fi
 fi
