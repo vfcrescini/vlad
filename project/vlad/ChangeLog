@@ -1,4 +1,11 @@
+2003-01-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* sample/chinese_wall :
+
+	  - Added sample program.
+
 2003-01-25  Vino Crescini  <jcrescin@cit.uws.ued.au>
+
 	* common/vlad.h :
 
 	  - Added a new error code for unique-item lists.
