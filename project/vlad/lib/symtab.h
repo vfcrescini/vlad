@@ -15,8 +15,6 @@ class symtab
     ~symtab();
     /* initialise */
     int init();
-    /* after this call no further calls to add are allowed */
-    int close();
     /* add symbol in symbol table */
     int add(const char *a_s, unsigned char a_t);
     /* get the index and type of the identifier based on the name */
@@ -34,8 +32,9 @@ class symtab
     /* give the type of the given identifier */
     int type(const char *a_s, unsigned char *a_t);
   private :
-    stringlist *m_lists[6];
-    unsigned char m_stage;
+    /* m_list: 0 = ss, 1 = as, 2 = os, 3 = sg, 4 = ag, 5 = og */
+    stringlist *m_lists[VLAD_IDENT_LAST + 1];
+    bool m_init;
 } ;
 
 #endif

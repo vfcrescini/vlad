@@ -15,17 +15,17 @@ symtab::symtab()
 {
   int i;
 
-  for (i = 0; i < 6; i++)
+  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++)
     m_lists[i] = NULL;
 
-  m_stage = 0;
+  m_init = false;
 }
 
 symtab::~symtab()
 {
   int i;
 
-  for (i = 0; i < 6; i++) {
+  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
     if (m_lists[i] != NULL)
       delete m_lists[i];
   }
@@ -36,7 +36,7 @@ int symtab::init()
 {
   int i;
 
-  for (i = 0; i < 6; i++) {
+  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
     /* first delete things if we need to */
     if (m_lists[i] != NULL)
       delete m_lists[i];
@@ -45,17 +45,7 @@ int symtab::init()
       return VLAD_MALLOCFAILED;
   }
 
-  m_stage = 1;
-
-  return VLAD_OK;
-}
-
-/* after this call no further calls to add are allowed */
-int symtab::close()
-{
-  if (m_stage == 0)
-    return VLAD_UNINITIALISED;
-  m_stage = 2;
+  m_init = true;
 
   return VLAD_OK;
 }
@@ -65,13 +55,10 @@ int symtab::add(const char *a_s, unsigned char a_t)
 {
   int retval;
 
-  if (m_stage == 0)
+  if (!m_init)
     return VLAD_UNINITIALISED;
-  if (m_stage > 1)
-    return VLAD_INVALIDOP;
 
-  /* ensure that the type is valid */
-  if (a_t >= 6)
+  if (a_t > VLAD_IDENT_LAST)
     return VLAD_INVALIDINPUT;
 
   /* ensure that the identifier is not already used */
@@ -94,16 +81,14 @@ int symtab::get(const char *a_s, unsigned int *a_i, unsigned char *a_t)
   int retval;
   int i;
 
-  if (m_stage == 0)
+  if (!m_init)
     return VLAD_UNINITIALISED;
-  if (m_stage == 1)
-    return VLAD_INVALIDOP;
 
   if (a_s == NULL || a_i == NULL || a_t == NULL)
     return VLAD_NULLPTR;
 
   /* try to get s from all the lists sequentially */
-  for (i = 0; i < 6; i++) {
+  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
     if ((retval = m_lists[i]->get(a_s, a_i)) != VLAD_NOTFOUND) {
       if (retval == VLAD_OK)
         *a_t = i;
@@ -117,13 +102,10 @@ int symtab::get(const char *a_s, unsigned int *a_i, unsigned char *a_t)
 /* get the ith identifier of type t */
 int symtab::get(unsigned int a_i, unsigned char a_t, char **a_s)
 {
-  if (m_stage == 0)
+  if (!m_init)
     return VLAD_UNINITIALISED;
-  if (m_stage == 1)
-    return VLAD_INVALIDOP;
 
-  /* ensure type is valid */
-  if (a_t >= 6)
+  if (a_t > VLAD_IDENT_LAST)
     return VLAD_INVALIDINPUT;
 
   /* now get */
@@ -136,19 +118,16 @@ int symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
   int retval;
   unsigned int i;
 
-  if (m_stage == 0)
+  if (!m_init)
     return VLAD_UNINITIALISED;
-  if (m_stage == 1)
-    return VLAD_INVALIDOP;
 
   if (a_a == NULL || a_s == NULL)
     return VLAD_NULLPTR;
 
-  /* make sure type is valid */
-  if (a_t >= 6)
+  if (a_t > VLAD_IDENT_LAST)
     return VLAD_INVALIDINPUT;
 
-  *a_s = length(a_t);
+  *a_s = symtab::length(a_t);
 
   if ((*a_a = VLAD_ADT_MALLOC(char *, *a_s)) == NULL)
     return VLAD_MALLOCFAILED;
@@ -168,10 +147,10 @@ int symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
 /* return the number of identifiers that are of type t */
 unsigned int symtab::length(unsigned char a_t)
 {
-  if (m_stage == 0)
+  if (!m_init)
     return 0;
 
-  if (a_t >= 6)
+  if (a_t > VLAD_IDENT_LAST)
     return 0;
 
   return VLAD_LIST_LENGTH(m_lists[a_t]);
@@ -183,13 +162,13 @@ int symtab::find(const char *a_s)
   int retval;
   unsigned int i;
 
-  if (m_stage == 0)
+  if (!m_init)
     return VLAD_UNINITIALISED;
 
   if (a_s == NULL)
     return VLAD_NULLPTR;
 
-  for (i = 0; i < 6; i++) {
+  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
     if ((retval = m_lists[i]->find(a_s)) != VLAD_NOTFOUND)
       return retval;
   }
@@ -200,13 +179,13 @@ int symtab::find(const char *a_s)
 /* return 0 if symbol of type t is in the table */
 int symtab::find(const char *a_s, unsigned char a_t)
 {
-  if (m_stage == 0)
+  if (!m_init)
     return VLAD_UNINITIALISED;
 
   if (a_s == NULL)
     return VLAD_NULLPTR;
 
-  if (a_t >= 6)
+  if (a_t > VLAD_IDENT_LAST)
     return VLAD_INVALIDINPUT;
 
   return m_lists[a_t]->find(a_s);
@@ -218,13 +197,13 @@ int symtab::type(const char *a_s, unsigned char *a_t)
   int retval;
   unsigned int i;
 
-  if (m_stage == 0)
+  if (!m_init)
     return VLAD_UNINITIALISED;
 
   if (a_s == NULL || a_t == NULL)
     return VLAD_NULLPTR;
 
-  for (i = 0; i < 6; i++) {
+  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
     if ((retval = m_lists[i]->find(a_s)) != VLAD_NOTFOUND) {
       if (retval == VLAD_OK)
         *a_t = i;
