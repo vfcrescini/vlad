@@ -1,0 +1,82 @@
+/*
+ * wrapper.h
+ * Vino Crescini  <jcrescin@cit.uws.edu.au>
+ */
+
+#ifndef __VLAD_WRAPPER_H
+#define __VLAD_WRAPPER_H
+
+#ifdef __cplusplus
+#include <cstdio>
+#define VLAD_EXTERN extern "C"
+#else
+#include <stdio.h>
+#define VLAD_EXTERN extern
+#endif
+
+/* create a kb */
+VLAD_EXTERN int kb_create(void **a_kb);
+/* destroy a kb */
+VLAD_EXTERN int kb_destroy(void *a_kb);
+/* (re)init a kb */
+VLAD_EXTERN int kb_init(void *a_kb);
+/* close symbol table */
+VLAD_EXTERN int kb_close_symtab(void *a_kb);
+/* close kb table */
+VLAD_EXTERN int kb_close_kb(void *a_kb);
+/* register an identifier in the kb */
+VLAD_EXTERN int kb_add_symtab(void *a_kb, const char *a_n, unsigned char a_t);
+/* add an atom into the initial state table */
+VLAD_EXTERN int kb_add_inittab(void *a_kb, void *a_atm);
+/* add an expression into the constraints table */
+VLAD_EXTERN int kb_add_consttab(void *a_kb, void *a_e, void *a_c, void *a_n);
+/* add a transformation declaration in the trans table */
+VLAD_EXTERN int kb_add_transtab(void *a_kb, const char *a_n, void *a_v, void *a_pr, void *a_po);
+/* add a transformation reference to the sequence table */
+VLAD_EXTERN int kb_add_seqtab(void *a_kb, void *a_tr);
+/* delete a transformation reference from the sequence table */
+VLAD_EXTERN int kb_del_seqtab(void *a_kb, unsigned int a_i);
+/* enumerate the sequences in the sequence table, output to f */
+VLAD_EXTERN int kb_list_seqtab(void *a_kb, FILE *a_fs);
+/* generate the rules necessary to evaluate queries */
+VLAD_EXTERN int kb_compute_generate(void *a_kb, FILE *a_fs);
+/* generate the query */
+VLAD_EXTERN int kb_query_generate(void *a_kb, void *a_exp, FILE *a_fs);
+#ifdef SMODELS
+/* prepares the kb for queries */
+VLAD_EXTERN int kb_compute_evaluate(void *a_kb);
+/* use smwrap class to evaluate a query */
+VLAD_EXTERN int kb_query_evaluate(void *a_kb, void *a_exp, unsigned char *a_res);
+#endif
+
+/* create a stringlist */
+VLAD_EXTERN int strlist_create(void **a_slist);
+/* destroy a stringlist */
+VLAD_EXTERN int strlist_destroy(void *a_slist);
+/* add a string into stringlist */
+VLAD_EXTERN int strlist_add(void *a_slist, const char *a_s);
+
+/* create an atom */
+VLAD_EXTERN int atom_create(void **a_atm);
+/* destroy an atom */
+VLAD_EXTERN int atom_destroy(void *a_atm);
+/* initialise atoms */
+VLAD_EXTERN int atom_init_holds(void *a_atm, const char *a_s, const char *a_a, const char *a_o, int a_t);
+VLAD_EXTERN int atom_init_member(void *a_atm, const char *a_e, const char *a_g, int a_t);
+VLAD_EXTERN int atom_init_subset(void *a_atm, const char *a_g1, const char *a_g2, int a_t);
+
+/* create an expression */
+VLAD_EXTERN int exp_create(void **a_exp);
+/* destroy an expression */
+VLAD_EXTERN int exp_destroy(void *a_exp);
+/* add an atom into expression */
+VLAD_EXTERN int exp_add(void *a_exp, void *a_atm);
+
+/* create a trans ref */
+VLAD_EXTERN int tref_create(void **a_tref);
+/* destroy a tran sref */
+VLAD_EXTERN int tref_destroy(void *a_tref);
+/* initialise a trans ref */
+VLAD_EXTERN int tref_init(void *a_tref, const char *a_n, void *a_slist);
+
+#endif

@@ -1,3 +1,11 @@
+2003-06-10  vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/Makefile.in :
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+
+	  - Added C interface for kb.
+
 2003-06-09  vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* config.h.in :
