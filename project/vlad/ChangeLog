@@ -11,6 +11,11 @@
 
 	  - Cleanup.
 
+	* lib/expression.cpp :
+	* lib/expression.h :
+
+	  - Expression is now a list of facts, not atoms.
+
 	* lib/Makefile.in :
 	* lib/fact.cpp :
 	* lib/fact.h :
