@@ -245,13 +245,10 @@ static int modvlad_authorize(request_rec *a_r)
                 a_r->method,
                 realuri);
 
-  /* check for .admin requests */
-  if ((!strcmp(a_r->method, MODVLAD_ACCESS_GET) || !strcmp(a_r->method, MODVLAD_ACCESS_POST)) &&
-      !strcmp(a_r->user, MODVLAD_ADMIN_USERNAME) &&
-      !strcmp(filepath, MODVLAD_ADMIN_DIRNAME)) {
-
+  /* if we are admin, unconditionally allow access to all resources for all 
+     methods*/
+  if (!strcmp(a_r->user, MODVLAD_ADMIN_USERNAME))
     return OK;
-  }
 
   /* before going further, make sure the object is in the kb */
   if (vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT) != VLAD_OK &&
