@@ -69,16 +69,10 @@ int name_compare(name_type one, name_type two)
 }
 
 /* destroy name. only var name strings are freed */
-int name_destroy(name_type name)
+void name_destroy(name_type name)
 {
-  if (EPI_NAME_IS_IDENT(name))
-    return 0;
-
   if (EPI_NAME_IS_VAR(name)) {
     if (name.name.var != NULL)
       free(name.name.var);
-    return 0;
   }
-
-  return -1;
 }

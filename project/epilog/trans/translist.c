@@ -7,7 +7,7 @@
 #include <string.h>
 #include "translist.h"
 
-int translist_destroy(void *p);
+void translist_destroy(void *p);
 
 /* initialise list */
 void translist_init(translist_type *list)
@@ -59,7 +59,7 @@ int translist_purge(translist_type *list)
 }
 
 /* free memory */
-int translist_destroy(void *p)
+void translist_destroy(void *p)
 {
-  return transref_destroy((transref_type *) p);
+  transref_destroy((transref_type *) p);
 }

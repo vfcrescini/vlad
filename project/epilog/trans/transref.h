@@ -30,6 +30,6 @@ int transref_compose(transref_type *transref,
 int transref_copy(transref_type **transref2, transref_type transref1);
 
 /* frees this transref and all its members */
-int transref_destroy(transref_type *transref);
+void transref_destroy(transref_type *transref);
 
 #endif

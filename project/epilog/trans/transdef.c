@@ -68,21 +68,16 @@ int transdef_copy(transdef_type **trans2, transdef_type trans1)
 }
 
 /* frees this trans and all its members */
-int transdef_destroy(transdef_type *trans)
+void transdef_destroy(transdef_type *trans)
 {
-  if (trans == NULL)
-    return -1;
+  if (trans != NULL) {
+    if (trans->name != NULL)
+     free(trans->name);
 
-  if (trans->name != NULL)
-   free(trans->name);
+    stringlist_purge(&(trans->varlist));
+    comp_exp_purge(&(trans->precond));
+    comp_exp_purge(&(trans->postcond));
 
-  if (stringlist_purge(&(trans->varlist)) != 0 ||
-      comp_exp_purge(&(trans->precond)) != 0 ||
-      comp_exp_purge(&(trans->postcond)) != 0)
-    return -1;
-
-  free(trans);
-  trans = NULL;
-
-  return 0;
+    free(trans);
+  }
 }

@@ -8,7 +8,7 @@
 #include "identlist.h"
 
 int identlist_compare(void *p1, void *p2);
-int identlist_destroy(void *p);
+void identlist_destroy(void *p);
 
 /* initialise list */
 void identlist_init(identlist_type *list)
@@ -87,7 +87,7 @@ int identlist_compare(void *p1, void *p2)
 }
 
 /* free memory */
-int identlist_destroy(void *p)
+void identlist_destroy(void *p)
 {
-  return ident_destroy((ident_type *) p);
+  ident_destroy((ident_type *) p);
 }

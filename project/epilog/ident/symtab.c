@@ -9,7 +9,7 @@
 #include "symtab.h"
 
 int symtab_compare(void *p1, void *p2);
-int symtab_destroy(void *p);
+void symtab_destroy(void *p);
 
 static simplelist_type list;
 
@@ -110,7 +110,7 @@ int symtab_compare(void *p1, void *p2)
 }
 
 /* free memory */
-int symtab_destroy(void *p)
+void symtab_destroy(void *p)
 {
-  return ident_destroy((ident_type *) p);
+  ident_destroy((ident_type *) p);
 }

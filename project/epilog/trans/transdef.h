@@ -36,6 +36,6 @@ int transdef_compose(transdef_type *transdef,
 int transdef_copy(transdef_type **transdef2, transdef_type transdef1);
 
 /* frees this transdef and all its members */
-int transdef_destroy(transdef_type *transdef);
+void transdef_destroy(transdef_type *transdef);
 
 #endif

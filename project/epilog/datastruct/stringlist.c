@@ -8,7 +8,7 @@
 #include "stringlist.h"
 
 int stringlist_compare(void *p1, void *p2);
-int stringlist_destroy(void *p);
+void stringlist_destroy(void *p);
 
 /* initialise list */
 void stringlist_init(stringlist_type *list)
@@ -93,12 +93,8 @@ int stringlist_compare(void *p1, void *p2)
 }
 
 /* free memory */
-int stringlist_destroy(void *p)
+void stringlist_destroy(void *p)
 {
-  if (p == NULL)
-    return -1;
-
-  free(p);
-
-  return 0;
+  if (p != NULL)
+    free(p);
 }

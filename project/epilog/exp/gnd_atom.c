@@ -103,15 +103,10 @@ int gnd_atom_create_subst(gnd_atom_type **atom,
 }
 
 /* destroys atom structure */
-int gnd_atom_destroy(gnd_atom_type *atom)
+void gnd_atom_destroy(gnd_atom_type *atom)
 {
-  if (atom == NULL)
-    return -1;
-
-  free(atom);
-  atom = NULL;
-
-  return 0;
+  if (atom != NULL)
+    free(atom);
 }
 
 /* return 0 if the atom is valid */

@@ -17,7 +17,7 @@ int gnd_exp_group(ident_type ident,
 int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res);
 int gnd_exp_purge_list(gnd_exp_type *exp, int flag);
 int gnd_exp_compare(void *p1, void *p2);
-int gnd_exp_destroy(void *p);
+void gnd_exp_destroy(void *p);
 
 /* initialise list */
 void gnd_exp_init(gnd_exp_type *exp)
@@ -418,7 +418,7 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
 int gnd_exp_purge_list(gnd_exp_type *exp, int flag)
 {
   unsigned int i;
-  int (*df)(void *);
+  void (*df)(void *);
 
   if (exp == NULL)
     return -1;
@@ -442,7 +442,7 @@ int gnd_exp_compare(void *p1, void *p2)
 }
 
 /* free memory */
-int gnd_exp_destroy(void *p)
+void gnd_exp_destroy(void *p)
 {
-  return gnd_atom_destroy((gnd_atom_type *) p);
+  gnd_atom_destroy((gnd_atom_type *) p);
 }

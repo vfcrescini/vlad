@@ -58,19 +58,14 @@ int transref_copy(transref_type **trans2, transref_type trans1)
 }
 
 /* frees this trans and all its members */
-int transref_destroy(transref_type *trans)
+void transref_destroy(transref_type *trans)
 {
-  if (trans == NULL)
-    return -1;
+  if (trans != NULL) {
+    if (trans->name != NULL)
+     free(trans->name);
 
-  if (trans->name != NULL)
-   free(trans->name);
+    identlist_purge(&(trans->identlist));
 
-  if (identlist_purge(&(trans->identlist)) != 0)
-    return -1;
-
-  free(trans);
-  trans = NULL;
-
-  return 0;
+    free(trans);
+  }
 }

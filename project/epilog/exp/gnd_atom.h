@@ -68,7 +68,7 @@ int gnd_atom_check(gnd_atom_type atom);
 int gnd_atom_copy(gnd_atom_type **atom2, gnd_atom_type atom1);
 
 /* destroys gnd_atom structure */
-int gnd_atom_destroy(gnd_atom_type *atom);
+void gnd_atom_destroy(gnd_atom_type *atom);
 
 /* returns 0 if the contents of gnd_atom1 and gnd_atom2 are identical */
 int gnd_atom_compare(gnd_atom_type atom1, gnd_atom_type atom2);

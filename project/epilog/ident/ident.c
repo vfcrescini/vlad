@@ -27,18 +27,14 @@ int ident_create(ident_type **ident, char *name, unsigned short type)
 }
 
 /* free ident struct, including allocated space for name */
-int ident_destroy(ident_type *ident)
+void ident_destroy(ident_type *ident)
 {
-  if (ident == NULL)
-    return -1;
+  if (ident != NULL) {
+    if (ident->name != NULL)
+      free(ident->name);
 
-  if (ident->name != NULL)
-    free(ident->name);
-
-  free(ident);
-  ident = NULL;
-
-  return 0;
+    free(ident);
+  }
 }
 
 /* returns 0 if the contents of ident1 and ident2 are identical */

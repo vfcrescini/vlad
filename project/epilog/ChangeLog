@@ -3,6 +3,31 @@
 	* datastruct/simplelist.c :
 	* datastruct/simplelist.h :
 	* datastruct/stringlist.c :
+	* exp/comp_atom.c :
+	* exp/comp_atom.h :
+	* exp/comp_exp.c :
+	* exp/gnd_atom.c :
+	* exp/gnd_atom.h :
+	* exp/gnd_exp.c :
+	* exp/name.c :
+	* exp/name.h :
+	* ident/ident.c :
+	* ident/ident.h :
+	* ident/identlist.c :
+	* ident/symtab.c :
+	* trans/transdef.c :
+	* trans/transdef.h :
+	* trans/translist.c :
+	* trans/transref.c :
+	* trans/transref.h :
+	* trans/transtab.c :
+
+	  - Changed destroy function to return void. If free()
+	    fails, it will segfault anyway.
+
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+	* datastruct/stringlist.c :
 	* datastruct/stringlist.h :
 	* exp/comp_atom.c :
 	* exp/comp_exp.c :

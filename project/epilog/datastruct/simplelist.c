@@ -73,7 +73,7 @@ int simplelist_add(simplelist_type *list, void *data)
  * or NULL to not free it */
 int simplelist_del_index(simplelist_type *list, 
                          unsigned int index, 
-                         int (*fr)(void *))
+                         void (*fr)(void *))
 {
   simplelist_node *prev;
   simplelist_node *curr;
@@ -109,7 +109,7 @@ int simplelist_del_index(simplelist_type *list,
 int simplelist_del_data(simplelist_type *list, 
                         void *data,
                         int (*cmp)(void *, void *),
-                        int (*fr)(void *))
+                        void (*fr)(void *))
 {
   simplelist_node *prev;
   simplelist_node *curr;

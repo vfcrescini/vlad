@@ -68,7 +68,7 @@ int comp_atom_check(comp_atom_type comp_atom);
 int comp_atom_copy(comp_atom_type **comp_atom2, comp_atom_type comp_atom1);
 
 /* destroys comp_atom structure */
-int comp_atom_destroy(comp_atom_type *comp_atom);
+void comp_atom_destroy(comp_atom_type *comp_atom);
 
 /* returns 0 if the contents of comp_atom1 and comp_atom2 are identical */
 int comp_atom_compare(comp_atom_type comp_atom1, comp_atom_type comp_atom2);

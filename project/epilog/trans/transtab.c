@@ -10,7 +10,7 @@
 #include "transtab.h"
 
 int transtab_compare(void *p1, void *p2);
-int transtab_destroy(void *p);
+void transtab_destroy(void *p);
 
 static simplelist_type list;
 
@@ -164,7 +164,7 @@ int transtab_compare(void *p1, void *p2)
 }
 
 /* free memory */
-int transtab_destroy(void *p)
+void transtab_destroy(void *p)
 {
-  return transdef_destroy((transdef_type *) p);
+  transdef_destroy((transdef_type *) p);
 }

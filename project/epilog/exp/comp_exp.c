@@ -17,7 +17,7 @@ int comp_exp_get_ident(name_type name,
                        stringlist_type varlist,
                        identlist_type identlist);
 int comp_exp_compare(void *p1, void *p2);
-int comp_exp_destroy(void *p);
+void comp_exp_destroy(void *p);
 
 /* initialise list */
 void comp_exp_init(comp_exp_type *exp)
@@ -253,7 +253,7 @@ int comp_exp_compare(void *p1, void *p2)
 }
 
 /* free memory */
-int comp_exp_destroy(void *p)
+void comp_exp_destroy(void *p)
 {
-  return comp_atom_destroy((comp_atom_type *) p);
+  comp_atom_destroy((comp_atom_type *) p);
 }

@@ -105,31 +105,25 @@ int comp_atom_create_subst(comp_atom_type **atom,
 }
 
 /* destroys atom structure */
-int comp_atom_destroy(comp_atom_type *atom)
+void comp_atom_destroy(comp_atom_type *atom)
 {
-  if (atom == NULL)
-    return -1;
+  if (atom != NULL) {
+    if (EPI_ATOM_IS_HOLDS(*atom)) {
+      name_destroy(atom->atom.holds.subject);
+      name_destroy(atom->atom.holds.access);
+      name_destroy(atom->atom.holds.object);
+    }
+    else if (EPI_ATOM_IS_MEMB(*atom)) {
+      name_destroy(atom->atom.memb.element);
+      name_destroy(atom->atom.memb.group);
+    }
+    else if (EPI_ATOM_IS_SUBST(*atom)) {
+      name_destroy(atom->atom.subst.group1);
+      name_destroy(atom->atom.subst.group2);
+    }
 
-  if (EPI_ATOM_IS_HOLDS(*atom)) {
-    if (name_destroy(atom->atom.holds.subject) != 0 ||
-        name_destroy(atom->atom.holds.access) != 0 ||
-        name_destroy(atom->atom.holds.object))
-      return -1;
+    free(atom);
   }
-  else if (EPI_ATOM_IS_MEMB(*atom)) {
-    if (name_destroy(atom->atom.memb.element) != 0 ||
-        name_destroy(atom->atom.memb.group))
-      return -1;
-  }
-  else if (EPI_ATOM_IS_SUBST(*atom)) {
-    if (name_destroy(atom->atom.subst.group1) != 0 ||
-        name_destroy(atom->atom.subst.group2))
-      return -1;
-  } 
-
-  free(atom);
-
-  return 0;
 }
 
 /* return 0 if the atom is valid */

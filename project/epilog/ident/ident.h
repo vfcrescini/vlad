@@ -15,7 +15,7 @@ typedef struct {
 int ident_create(ident_type **ident, char *name, unsigned short type);
 
 /* free ident struct, including allocated space for name */
-int ident_destroy(ident_type *ident);
+void ident_destroy(ident_type *ident);
 
 /* return 0 if contents of ident1 and ident2 are identical */
 int ident_compare(ident_type ident1, ident_type ident2);
