@@ -103,8 +103,7 @@ uninstall-bins :
 	$(foreach i,$(BINS),$(call exec,$(RM) $(bindir)/$(i)))
 
 clean :
-	$(foreach i,$(OBJECTS),$(call exec,$(RM) $(i)))
-	$(foreach i,$(TEMPS1),$(call exec,$(RM) $(i)))
+	$(foreach i,$(TEMPS1) $(OBJECTS),$(call exec,$(RM) $(i)))
 
 distclean : clean
 	$(foreach i,$(INCLUDES),$(call exec,$(RM) $(DISTDIR)/include/vlad/$(i)))
@@ -113,6 +112,5 @@ distclean : clean
 	$(foreach i,$(SHARED_LIBS),$(call exec,$(RM) $(DISTDIR)/lib/$(shell echo $(i) | cut -d. -f1,2,3)))
 	$(foreach i,$(SHARED_LIBS),$(call exec,$(RM) $(DISTDIR)/lib/$(shell echo $(i) | cut -d. -f1,2)))
 	$(foreach i,$(BINS),$(call exec,$(RM) $(DISTDIR)/bin/$(i)))
-	$(foreach i,$(TEMPS2),$(call exec,$(RM) $(i)))
 	$(RM) -r $(DISTDIR)/include/vlad
-	$(RM) Makefile
+	$(RM) $(TEMPS2) $(STATIC_LIBS) $(SHARED_LIBS) $(BINS) Makefile
