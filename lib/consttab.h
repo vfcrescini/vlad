@@ -16,14 +16,14 @@ class constraint : public list_item
   public :
     constraint();
     ~constraint();
-    bool cmp(list_item *item);
-    int init(expression *e, expression *c, expression *n);
-    int get(expression **e, expression **c, expression **n);
+    bool cmp(list_item *a_item);
+    int init(expression *a_exp, expression *a_cond, expression *a_ncond);
+    int get(expression **a_exp, expression **a_cond, expression **a_ncond);
   private :
-    bool initialised;
-    expression *exp;
-    expression *cond;
-    expression *ncond;
+    bool m_init;
+    expression *m_exp;
+    expression *m_cond;
+    expression *m_ncond;
 } ;
 
 class consttab : public list
@@ -31,8 +31,10 @@ class consttab : public list
   public :
     consttab();
     ~consttab();
-    int add(expression *e, expression *c, expression *n);
-    int get(unsigned int i, expression **e, expression **c, expression **n);
+    int add(expression *a_exp, expression *a_cond, expression *a_ncond);
+    int get(unsigned int a_index,
+            expression **a_exp,
+            expression **a_cond,
+            expression **a_ncond);
 } ;
-
 #endif
