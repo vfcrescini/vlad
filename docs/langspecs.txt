@@ -147,7 +147,7 @@ Started 2002 Dec 8
     A transformation definition statement must be defined in the following
     syntax:
 
-      trans <trans-identifier>([<var1>[,<var2>][,...]]])
+      <trans-identifier>([<var1>[,<var2>][,...]]])
       causes <post-condition-expression>
       if <pre-condition-expression>
 
@@ -165,7 +165,7 @@ Started 2002 Dec 8
 
     Note that a transformation definition statement may have variables:
 
-      trans tdelete-write(vSUBJECT, vOBJECT)
+      tdelete-write(vSUBJECT, vOBJECT)
       causes !holds(vSUBJECT, a_write, vOBJECT)
       if holds(vSUBJECT, a_write, vOBJECT)
 
@@ -191,12 +191,14 @@ Started 2002 Dec 8
     The case where the pre-condition is an empty-set (ie. the transformation
     has no pre-condition) does not have to be a special case:
 
-      trans <trans-identifier>()
+      <trans-identifier>()
+      causes <post-condition-expression> 
+
+    is equivalent to:
+
+      <trans-identifier>()
       causes <post-condition-expression> 
       if true
-
-    The constant expression "true" can be used to indicate that there are no
-    pre-conditions required for this transformation.
 
   2.4. Policy Proposition Definition Statement
 

@@ -81,26 +81,27 @@ Started 2002 Dec 08
 
 <always-stmt>           : <always> <ground-exp> <semicolon>
 
-<trans-stmt>            : <trans> <identifier> <trans-var-def>
-                          <causes> <comp-exp> <if> <comp-exp> <semicolon>
+<trans-stmt>            : <identifier> <trans-var-def> <causes> <comp-exp> 
+                          <if-clause> <semicolon>
+
+<if-clause>             : <nil> | <if> <comp-exp>
 
 <trans-var-def>         : <open-parent> <close-parent> |
                           <open-parent> <trans-var-list> <close-parent> 
                         
 <trans-var-list>        : <identifier> | <trans-var-list> <comma> <identifier>
 
-<query-stmt>            : <is-clause> <after-clause> <semicolon> |
-                          <is-clause> <semicolon>
+<query-stmt>            : (is> <ground-exp> <after-clause> <semicolon>
                         
-<is-clause>             : <is> <ground-exp>
-                        
-<after-clause>          : <after> <trans-ref-list>
+<after-clause>          : <nil> | <after> <trans-ref-list>
                         
 <trans-ref-list>        : <trans-ref-def> | <trans-ref-list> <comma>
                           <trans-ref-def>
                         
 <trans-ref-def>         : <identifier> <open-parent>
-                          <trans-ref-ident-list> <close-parent>
+                          <trans-ref-ident-args> <close-parent>
+
+<trans-ref-ident-args>  : <nil> | <trans-ref-ident-list>
                         
 <trans-ref-ident-list>  : <identifier> | <trans-ref-ident-list> <comma> 
                           <identifier>
@@ -159,8 +160,6 @@ Started 2002 Dec 08
                         
 <subset>                : subst
                         
-<transform>             : trans
-
 <initially>             : initially
                         
 <causes>                : causes
