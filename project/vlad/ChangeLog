@@ -1,5 +1,11 @@
 2003-04-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/querytab.h :
+	* kb/querytab.cpp :
+
+	  - We do not need to store the queries into a table. These
+	    files should have been removed when sequence was added.
+
 	* kb/kb.cpp :
 	* kb/kb.h :
 	* kb/sequence.cpp :
