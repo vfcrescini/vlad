@@ -1,5 +1,13 @@
 2003-01-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/Makefile.in :
+	* common/vlad.h :
+	* common/list.h :
+	* common/list.cpp :
+	* main/Makefile.in :
+
+	  - Added a simple linked-list structure (void *) for general use.
+
 	* configure.ac :
 
 	  - Took out silly lex/yacc testing. Let it fail in the build
