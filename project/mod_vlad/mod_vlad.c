@@ -422,7 +422,7 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
 
   /* it seems that this function is called twice, once on 2 processes.
    * since the first one seems to die anyway, so we only initialize the
-   * module on the second process whose parent seems to be init. */
+   * module on the second process. */
 
   apr_pool_userdata_get(&data, MODVLAD_USERDATA_KEY, a_s->process->pool);
 
