@@ -1,66 +1,103 @@
-Vino Crescini  <jcrescin@cit.uws.edu.au>
-2002 July 08
 
 BNF
 
-<alpha>                 : <small-caps> | <large-caps>
-                        
-<small-caps>            : a | b | c | d | e | f | g | h | i | j | k | l | m | n |
-                          o | p | q | r | s | t | u | v | w | x | y | z
-                        
-<large-caps>            : A | B | C | D | E | F | G | H | I | J | K | L | M | N |
-                          O | P | Q | R | S | T | U | V | W | X | Y | Z
-                        
-<digit>                 : 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-                        
-<alpha-num>             : <alpha> | <digit>
-                        
-<alpha-num-uscr>        : <alpha-num> | <underscore>
-                        
-<alpha-num-uscr-str>    : <alpha-num-uscr> | <alpha-num-uscr> <alpha-num-uscr-str>
-                        
-<s-subject-ident>       : s | s <alpha-num-uscr-str>
-                        
-<s-access-ident>        : a | a <alpha-num-uscr-str>
-                        
-<s-object-ident >       : o | o <alpha-num-uscr-str>
-                        
-<g-subject-ident>       : S | S <alpha-num-uscr-str>
-                        
-<g-access-ident>        : A | A <alpha-num-uscr-str>
-                        
-<g-object-ident >       : O | O <alpha-num-uscr-str>
-                        
-<ground-sub-ident>      : <s-subject-ident> | <g-subject-ident>
-                        
-<ground-acc-ident>      : <s-access-ident> | <g-access-ident>
-                        
-<ground-obj-ident>      : <s-object-ident> | <g-object-ident>
-                        
-<var-identifier>        : v | V | v <alpha-num-uscr-str> | 
-                          V <alpha-num-usrc-str>
-                        
-<trans-identifier>      : t | T | t <alpha-num-uscr-str> | 
-                          T <alpha-num-usrc-str>
-                        
-<sub-acc-obj-ident>     : <ground-sub-ident> |
-                          <ground-acc-ident> |
-                          <ground-obj-ident>
-                        
-<comp-sub-ident>        : <s-subject-ident> | <g-subject-ident> |
-                          <var-identifier>
-                        
-<comp-acc-ident>        : <s-access-ident> | <g-access-ident>
-                          <var-identifier>
-                        
-<comp-obj-ident>        : <s-object-ident> | <g-object-ident>
-                          <var-identifier>
+Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-<comp-single-var-ident> : <s-subject-ident> | <s-access-ident> |
-                          <s-object-ident> | <var-identifier>
+Started 2002 Jul 08
+Updated 2002 Aug 13
 
-<comp-group-var-ident>  : <g-subject-ident> | <g-access-ident> |
-                          <g-object-ident> | <var-identifier>
+
+<start>                 : <program>
+
+<program>               : <statement-list>
+
+<statement-list>        : <ident-stmt-list> <other-stmt-list>
+
+<ident-stmt-list>       : <ident-stmt> | <ident-stmt> <ident-stmt-list>
+                        
+<other-stmt-list>       : <other-stmt> | <other-stmt> <other-stmt-list>
+                        
+<other-stmt>            : <initial-stmt> | <trans-stmt> | <policy-stmt>
+
+<ident-stmt>            : <ident> <ident-declaration> <semicolon>
+
+<ident-declaration>     : <sub-ident-decl> | <obj-ident-decl> | acc-ident-decl> |
+                          <sub-grp-ident-decl> | <obj-grp-ident-decl> |
+                          <acc-grp-ident-decl>
+
+<sub-ident-decl>        : <sub-type> <sub-ident-list>
+
+<acc-ident-decl>        : <acc-type> <acc-ident-list>
+
+<obj-ident-decl>        : <obj-type> <obj-ident-list>
+
+<sub-grp-ident-decl>    : <sub-grp-type> <sub-grp-ident-list>
+
+<acc-grp-ident-decl>    : <acc-grp-type> <acc-grp-ident-list>
+
+<obj-grp-ident-decl>    : <obj-grp-type> <obj-grp-ident-list>
+
+<sub-ident-list>        : <identifier> | <identifier> <comma> <sub-ident-list>
+
+<obj-ident-list>        : <identifier> | <identifier> <comma> <obj-ident-list>
+
+<acc-ident-list>        : <identifier> | <identifier> <comma> <acc-ident-list>
+
+<sub-grp-ident-list>    : <identifier> | <identifier> <comma> <sub-grp-ident-list>
+
+<obj-grp-ident-list>    : <identifier> | <identifier> <comma> <obj-grp-ident-list>
+
+<acc-grp-ident-list>    : <identifier> | <identifier> <comma> <acc-grp-ident-list>
+
+<initial-stmt>          : <initially> <expression> <semicolon>
+                        
+<trans-stmt>            : <trans> <identifier> <trans-var-def>
+                          <causes> <expression> <if> <expression> <semicolon>
+                        
+<trans-var-def>         : <open-parent> <close-parent> |
+                          <open-parent> <trans-var-list> <close-parent> 
+                        
+<trans-var-list>        : <identifier> | <identifier> <comma>
+                          <trans-var-list>
+                        
+<policy-stmt>           : <is-clause> <after-clause> <semicolon> |
+                          <is-clause> <semicolon>
+                        
+<is-clause>             : <is> <expression>
+                        
+<after-clause>          : <after> <trans-ref-list>
+                        
+<trans-ref-list>        : <trans-ref-def> | <trans-ref-def> <comma> 
+                          <trans-ref-list>
+                        
+<trans-ref-def>         : <identifier> <open-parent>
+                          <trans-ref-ident-list> <close-parent>
+                        
+<trans-ref-ident-list>  : <identifier> | <identifier> <comma>
+                          <trans-ref-ident-list>
+
+<expression>            : <boolean-exp> <logical-op> <expression> |
+                          <boolean-exp>
+                        
+<boolean-exp>           : <not> <atom-exp> | <atom-exp>
+                        
+<atom-exp>              : <holds-exp> | <subst-exp> | <memb-exp> | 
+                          <logical-const>
+                        
+<holds-exp>             : <holds> <open-parent> <identfier> <comma>
+                          <identifier> <comma> <identifier> <close-parent>
+ 
+<subst-exp>             : <subset> <open-parent> <identifier>
+                          <comma> <identifier> <close-parent>
+                        
+<memb-exp>              : <member> <open-parent> <identifier>
+                          <comma> <identifier> <close-parent>
+
+<logical-const>         : <true> | <false>
+                        
+<logical-op>            : <and>
+                        
+<identifier>            : <alpha> | <alpha-num-uscr-str>
 
 <true>                  : true
                         
@@ -77,7 +114,7 @@ BNF
 <subset>                : subst
                         
 <transform>             : trans
-                        
+
 <initially>             : initially
                         
 <causes>                : causes
@@ -87,6 +124,20 @@ BNF
 <is>                    : is
                         
 <after>                 : after
+
+<ident>                 : ident
+
+<sub-type>              : sub
+
+<obj-type>              : obj
+
+<acc-type>              : acc
+
+<sub-grp-type>          : sub-grp
+
+<obj-grp-type>          : obj-grp
+
+<acc-grp-type>          : acc-grp
                         
 <underscore>            : _
 
@@ -98,93 +149,18 @@ BNF
                         
 <semicolon>             : ;
                         
-<logical-const>         : <true> | <false>
+<alpha>                 : <small-caps> | <large-caps>
                         
-<logical-op>            : <and>
+<alpha-num>             : <alpha> | <digit>
                         
-<comp-exp>              : <comp-boolean-exp> <logical-op> <comp-exp> |
-                          <comp-boolean-exp>
+<alpha-num-uscr>        : <alpha-num> | <underscore>
                         
-<comp-boolean-exp>      : <not> <comp-atom> | <comp-atom>
+<alpha-num-uscr-str>    : <alpha-num-uscr> | <alpha-num-uscr> <alpha-num-uscr-str>
+
+<small-caps>            : a | b | c | d | e | f | g | h | i | j | k | l | m | 
+                          n | o | p | q | r | s | t | u | v | w | x | y | z
                         
-<comp-atom>             : <comp-holds> | <comp-subst> | <comp-memb> | 
-                          <logical-const>
+<large-caps>            : A | B | C | D | E | F | G | H | I | J | K | L | M |
+                          N | O | P | Q | R | S | T | U | V | W | X | Y | Z
                         
-<comp-holds>            : <holds> <open-parent> <comp-sub-ident> <comma>
-                          <comp-acc-ident> <comma> <comp-obj-ident>
-                          <close-parent>
-                        
-<comp-subst>            : <subset> <open-parent> <comp-grp-var-ident>
-                          <comma> <comp-group-var-ident> <close-parent>
-                        
-<comp-memb>             : <member> <open-parent> <comp-single-var-ident>
-                          <comma> <comp-group-var-ident> <close-parent>
-                        
-<ground-exp>            : <ground-boolean-exp> <logical-op> <ground-exp> |
-                          <ground-boolean-exp>
-                        
-<ground-boolean-exp>    : <not> <ground-atom> | <ground-atom>
-                        
-<ground-atom>           : <ground-holds> | <ground-subst> | ground-memb> | 
-                          <logical-const>
-                        
-<ground-holds>          : <holds> <open-parent> <ground-sub-ident> <comma>
-                          <ground-acc-ident> <comma> <ground-obj-ident>
-                          <close-parent>
-                        
-<ground-subst>          : <ground-subject-subst> | <ground-access-subst> |
-                          <ground-object-subst>
-                        
-<ground-memb>           : <ground-subject-memb> | <ground-access-memb> |
-                          <ground-object-memb>
-                        
-<ground-subject-subst>  : <subset> <open-parent> <g-subject-ident>
-                          <comma> <g-subject-ident> <close-parent>
-                        
-<ground-object-subst>   : <subset> <open-parent> <g-object-ident>
-                          <comma> <g-object-ident> <close-parent>
-                        
-<ground-access-subst>   : <subset> <open-parent> <g-access-ident>
-                          <comma> <g-access-ident> <close-parent>
-                        
-<ground-subject-memb>   : <member> <open-parent> <s-subject-ident>
-                          <comma> <g-subject-ident> <close-parent>
-                        
-<ground-access-memb>    : <member> <open-parent> <s-access-ident>
-                          <comma> <g-access-ident> <close-parent>
-                        
-<ground-object-memb>    : <member> <open-parent> <s-object-ident>
-                          <comma> <g-object-ident> <close-parent>
-                        
-<initial-stmt>          : <initially> <ground-exp> <semicolon>
-                        
-<trans-stmt>            : <trans> <trans-identifier> <trans-var-def>
-                          <causes> <ground-exp> <if> <ground-exp> <semicolon>
-                        
-<trans-var-def>         : <open-parent> <close-parent> |
-                          <open-parent> <trans-var-list> <close-parent> 
-                        
-<trans-var-list>        : <var-identifier> | <var-identifier> <comma>
-                          <trans-var-list>
-                        
-<policy-stmt>           : <is-clause> <after-clause> <semicolon> |
-                          <is-clause> <semicolon>
-                        
-<is-clause>             : <is> <ground-exp>
-                        
-<after-clause>          : <after> <trans-ref-list>
-                        
-<trans-ref-list>        : <trans-ref-def> | <trans-ref-def> <comma> 
-                          <trans-ref-list>
-                        
-<trans-ref-def>         : <trans-identifier> <open-parent>
-                          <sub-acc-obj-list> <close-parent>
-                        
-<sub-acc-obj-list>      : <sub-acc-obj-ident> | <sub-acc-obj-ident> <comma>
-                          <sub-acc-obj-list>
-                        
-<program>               : <statement-list>
-                        
-<statement-list>        : <statement> | <statement> <statement-list>
-                        
-<statement>             : <initial-stmt> | <trans-stmt> | <policy-stmt>
+<digit>                 : 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9

@@ -1,5 +1,17 @@
 2002-08-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* docs/bnf.txt :
+	* docs/langspecs.txt :
+	* docs/sample :
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Changed language so that identifiers are all the same (ie. no
+	    1-letter prefix to determine its type.
+
+	  - Identifiers will now have to be declared first before being used
+	    in an expression. Transformation identifiers and variables do not.
+
 	* kb/gnd_atomlist.c :
 	* kb/gnd_atomlist.h :
 

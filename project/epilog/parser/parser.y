@@ -4,9 +4,11 @@
 
 %{
 #include <stdlib.h>
+/*
 #include <symtab.h>
 #include <gnd_atom.h>
 #include <gnd_atomlist.h>
+*/
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -17,7 +19,7 @@ extern int yyerror(char *error);
 %}
 
 %union {
-  gnd_atom_type gnd_atom;
+  char *identifier;
   unsigned int terminal;
 }
 
@@ -38,24 +40,14 @@ extern int yyerror(char *error);
 %token <terminal> EPI_SYM_IF
 %token <terminal> EPI_SYM_IS
 %token <terminal> EPI_SYM_AFTER
-%token <terminal> EPI_SYM_S_SUB_IDENT
-%token <terminal> EPI_SYM_S_ACC_IDENT
-%token <terminal> EPI_SYM_S_OBJ_IDENT
-%token <terminal> EPI_SYM_G_SUB_IDENT
-%token <terminal> EPI_SYM_G_ACC_IDENT
-%token <terminal> EPI_SYM_G_OBJ_IDENT
-%token <terminal> EPI_SYM_VAR_IDENT
-%token <terminal> EPI_SYM_TRANS_IDENT
-
-%type <gnd_atom> ground_subst
-%type <gnd_atom> ground_memb
-
-%type <gnd_atom> ground_subject_subst 
-%type <gnd_atom> ground_access_subst
-%type <gnd_atom> ground_object_subst 
-%type <gnd_atom> ground_subject_memb 
-%type <gnd_atom> ground_access_memb 
-%type <gnd_atom> ground_object_memb 
+%token <terminal> EPI_SYM_SUBTYPE
+%token <terminal> EPI_SYM_OBJTYPE
+%token <terminal> EPI_SYM_ACCTYPE
+%token <terminal> EPI_SYM_SUBGRPTYPE
+%token <terminal> EPI_SYM_OBJGRPTYPE
+%token <terminal> EPI_SYM_ACCGRPTYPE
+%token <terminal> EPI_SYM_IDENT
+%token <terminal> EPI_SYM_IDENTIFIER
 
 %start program
 
@@ -66,24 +58,139 @@ program :
   ;
 
 statement_list : 
-  statement 
-  | statement statement_list
+  ident_stmt_list
+  | other_stmt_list
   ;
 
-statement : 
+ident_stmt_list :
+  ident_stmt
+  | ident_stmt ident_stmt_list
+  ;
+
+other_stmt_list :
+  other_stmt
+  | other_stmt other_stmt_list
+  ;
+
+ident_stmt :
+  EPI_SYM_IDENT ident_declaration EPI_SYM_SEMICOLON
+  {
+  }
+  ;
+
+other_stmt :
   initial_stmt 
   | trans_stmt 
   | policy_stmt
   ;
 
+ident_declaration :
+  sub_ident_decl
+  | obj_ident_decl
+  | acc_ident_decl
+  | sub_grp_ident_decl
+  | obj_grp_ident_decl
+  | acc_grp_ident_decl
+  ;
+
+sub_ident_decl :
+  EPI_SYM_SUBTYPE sub_ident_list
+  {
+  }
+  ;
+
+obj_ident_decl :
+  EPI_SYM_OBJTYPE obj_ident_list
+  {
+  }
+  ;
+
+acc_ident_decl :
+  EPI_SYM_ACCTYPE acc_ident_list
+  {
+  }
+  ;
+
+sub_grp_ident_decl :
+  EPI_SYM_SUBGRPTYPE sub_grp_ident_list
+  {
+  }
+  ;
+
+obj_grp_ident_decl :
+  EPI_SYM_OBJGRPTYPE obj_grp_ident_list
+  {
+  }
+  ;
+
+acc_grp_ident_decl :
+  EPI_SYM_ACCGRPTYPE acc_grp_ident_list
+  {
+  }
+  ;
+
+sub_ident_list :
+  EPI_SYM_IDENTIFIER 
+  {
+  }
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_ident_list
+  {
+  }
+  ;
+
+obj_ident_list :
+  EPI_SYM_IDENTIFIER 
+  {
+  }
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_ident_list
+  {
+  }
+  ;
+
+acc_ident_list :
+  EPI_SYM_IDENTIFIER
+  {
+  }
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_ident_list
+  {
+  }
+  ;
+
+sub_grp_ident_list :
+  EPI_SYM_IDENTIFIER 
+  {
+  }
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_grp_ident_list
+  {
+  }
+  ;
+
+obj_grp_ident_list :
+  EPI_SYM_IDENTIFIER
+  {
+  }
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_grp_ident_list
+  {
+  }
+  ;
+
+acc_grp_ident_list :
+  EPI_SYM_IDENTIFIER 
+  {
+  }
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_grp_ident_list
+  {
+  }
+  ;
+
 initial_stmt : 
-  EPI_SYM_INITIALLY ground_exp EPI_SYM_SEMICOLON
+  EPI_SYM_INITIALLY expression EPI_SYM_SEMICOLON
   {
   }
   ;
 
 trans_stmt : 
-  EPI_SYM_TRANS EPI_SYM_TRANS_IDENT trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON
+  EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES expression EPI_SYM_IF expression EPI_SYM_SEMICOLON
   {
   }
   ;
@@ -103,16 +210,16 @@ trans_var_def :
   ;
 
 trans_var_list : 
-  EPI_SYM_VAR_IDENT 
+  EPI_SYM_IDENTIFIER 
   {
   }
-  | EPI_SYM_VAR_IDENT EPI_SYM_COMMA trans_var_list
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA trans_var_list
   {
   }
   ;
 
 is_clause : 
-  EPI_SYM_IS ground_exp
+  EPI_SYM_IS expression
   {
   }
   ;
@@ -133,24 +240,18 @@ trans_ref_list :
   ;
 
 trans_ref_def : 
-  EPI_SYM_TRANS_IDENT EPI_SYM_OPEN_PARENT sub_acc_obj_list EPI_SYM_CLOSE_PARENT
+  EPI_SYM_IDENTIFIER EPI_SYM_OPEN_PARENT trans_ref_ident_list EPI_SYM_CLOSE_PARENT
   {
   }
   ;
 
-sub_acc_obj_list : 
-  sub_acc_obj_ident
+trans_ref_ident_list : 
+  EPI_SYM_IDENTIFIER
   {
   }
-  | sub_acc_obj_ident EPI_SYM_COMMA sub_acc_obj_list
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA trans_ref_ident_list
   {
   }
-  ;
-
-sub_acc_obj_ident : 
-  ground_sub_ident
-  | ground_acc_ident
-  | ground_obj_ident
   ;
 
 logical_op :
@@ -159,71 +260,32 @@ logical_op :
   }
   ;
 
-comp_exp :
-  comp_boolean_exp logical_op comp_exp 
-  | comp_boolean_exp
-  ;
-
-comp_boolean_exp :
-  EPI_SYM_NOT comp_atom
+expression : 
+  boolean_exp logical_op expression
   {
   }
-  | comp_atom
+  | boolean_exp
   {
   }
   ;
 
-comp_atom :
-  comp_holds
-  | comp_subst
-  | comp_memb
-  | logical_const
-  ;
-
-comp_holds :
-  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT comp_sub_ident EPI_SYM_COMMA comp_acc_ident EPI_SYM_COMMA comp_obj_ident EPI_SYM_CLOSE_PARENT
+boolean_exp :
+  EPI_SYM_NOT atom_exp
+  {
+  }
+  | atom_exp
   {
   }
   ;
 
-comp_subst :
-  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT comp_group_var_ident EPI_SYM_COMMA comp_group_var_ident EPI_SYM_CLOSE_PARENT
+atom_exp :
+  holds_exp
   {
   }
-  ;
-
-comp_memb :
-  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT comp_single_var_ident EPI_SYM_COMMA comp_group_var_ident EPI_SYM_CLOSE_PARENT
+  | subst_exp
   {
   }
-  ;
-
-ground_exp : 
-  ground_boolean_exp logical_op ground_exp
-  {
-  }
-  | ground_boolean_exp
-  {
-  }
-  ;
-
-ground_boolean_exp :
-  EPI_SYM_NOT ground_atom
-  {
-  }
-  | ground_atom
-  {
-  }
-  ;
-
-ground_atom :
-  ground_holds
-  {
-  }
-  | ground_subst
-  {
-  }
-  | ground_memb
+  | memb_expr
   {
   }
   | logical_const
@@ -231,176 +293,20 @@ ground_atom :
   }
   ;
 
-ground_holds :
-  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT ground_sub_ident EPI_SYM_COMMA ground_acc_ident EPI_SYM_COMMA ground_obj_ident EPI_SYM_CLOSE_PARENT
+holds_exp :
+  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
   }
   ;
 
-ground_subst :
-  ground_subject_subst
-  {
-    $$ = $1;
-    $$.type = EPI_ATOM_SUBST;
-  }
-  | ground_access_subst
-  {
-    $$ = $1;
-    $$.type = EPI_ATOM_SUBST;
-  }
-  | ground_object_subst
-  {
-    $$ = $1;
-    $$.type = EPI_ATOM_SUBST;
-  }
-  ;
-
-ground_memb :
-  ground_subject_memb
-  {
-    $$ = $1;
-    $$.type =  EPI_ATOM_MEMB;
-  }
-  | ground_access_memb
-  {
-    $$ = $1;
-    $$.type =  EPI_ATOM_MEMB;
-  }
-  | ground_object_memb
-  {
-    $$ = $1;
-    $$.type =  EPI_ATOM_MEMB;
-  }
-  ;
-
-ground_subject_subst :
-  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_G_SUB_IDENT EPI_SYM_COMMA EPI_SYM_G_SUB_IDENT EPI_SYM_CLOSE_PARENT
-  {
-    $$.atom.subst.group1 = $3;
-    $$.atom.subst.group2 = $5;
-  }
-  ;
-
-ground_access_subst :
-  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_G_ACC_IDENT EPI_SYM_COMMA EPI_SYM_G_ACC_IDENT EPI_SYM_CLOSE_PARENT
-  {
-    $$.atom.subst.group1 = $3;
-    $$.atom.subst.group2 = $5;
-  }
-  ;
-
-ground_object_subst :
-  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_G_OBJ_IDENT EPI_SYM_COMMA EPI_SYM_G_OBJ_IDENT EPI_SYM_CLOSE_PARENT
-  {
-    $$.atom.subst.group1 = $3;
-    $$.atom.subst.group2 = $5;
-  }
-  ;
-
-ground_subject_memb :
-  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_S_SUB_IDENT EPI_SYM_COMMA EPI_SYM_G_SUB_IDENT EPI_SYM_CLOSE_PARENT
-  {
-    $$.atom.memb.member = $3;
-    $$.atom.memb.group = $5;
-  }
-  ;
-
-ground_access_memb :
-  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_S_ACC_IDENT EPI_SYM_COMMA EPI_SYM_G_ACC_IDENT EPI_SYM_CLOSE_PARENT
-  {
-    $$.atom.memb.member = $3;
-    $$.atom.memb.group = $5;
-  }
-  ;
-
-ground_object_memb :
-  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_S_OBJ_IDENT EPI_SYM_COMMA EPI_SYM_G_OBJ_IDENT EPI_SYM_CLOSE_PARENT 
-  {
-    $$.atom.memb.member = $3;
-    $$.atom.memb.group = $5;
-  }
-  ;
-
-comp_sub_ident :
-  ground_sub_ident
-  {
-  }
-  | EPI_SYM_VAR_IDENT
+subst_exp :
+  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
   }
   ;
 
-comp_acc_ident :
-  ground_acc_ident
-  {
-  }
-  | EPI_SYM_VAR_IDENT
-  {
-  }
-  ;
-
-comp_obj_ident :
-  ground_obj_ident
-  {
-  }
-  | EPI_SYM_VAR_IDENT
-  {
-  }
-  ;
-
-comp_single_var_ident :
-  EPI_SYM_S_SUB_IDENT
-  {
-  }
-  | EPI_SYM_S_ACC_IDENT
-  {
-  }
-  | EPI_SYM_S_OBJ_IDENT
-  {
-  }
-  | EPI_SYM_VAR_IDENT
-  {
-  }
-  ;
-
-comp_group_var_ident :
-  EPI_SYM_G_SUB_IDENT
-  {
-  }
-  | EPI_SYM_G_ACC_IDENT
-  {
-  }
-  | EPI_SYM_G_OBJ_IDENT
-  {
-  }
-  | EPI_SYM_VAR_IDENT
-  {
-  }
-  ;
-
-ground_sub_ident : 
-  EPI_SYM_S_SUB_IDENT
-  {
-  }
-  | EPI_SYM_G_SUB_IDENT
-  {
-  }
-  ;
-
-ground_acc_ident :
-  EPI_SYM_S_ACC_IDENT 
-  {
-  }
-  | EPI_SYM_G_ACC_IDENT
-  {
-  }
-  ;
-
-ground_obj_ident : 
-  EPI_SYM_S_OBJ_IDENT 
-  {
-  }
-  | EPI_SYM_G_OBJ_IDENT
+memb_expr :
+  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
   }
   ;

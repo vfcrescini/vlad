@@ -6,10 +6,7 @@
 %option always-interactive
 
 %{
-#include <gnd_atom.h>
-#include <gnd_atomlist.h>
 #include "y.tab.h"
-#include "symtab.h"
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -36,21 +33,14 @@ causes             causes
 if                 if
 is                 is
 after              after
-lower_case         [a-z]
-upper_case         [A-Z]
-digit              [0-9]
-alpha              {lower_case}|{upper_case}
-alpha_num          {alpha}|{digit}
-alpha_num_uscr     {alpha_num}|{underscore}
-alpha_num_uscr_str ({alpha_num_uscr})+ 
-s_subject_ident    s|s{alpha_num_uscr_str}
-s_access_ident     a|a{alpha_num_uscr_str}
-s_object_ident     o|o{alpha_num_uscr_str}
-g_subject_ident    S|S{alpha_num_uscr_str}
-g_access_ident     A|A{alpha_num_uscr_str}
-g_object_ident     O|O{alpha_num_uscr_str}
-v_ident            v|V|v{alpha_num_uscr_str}|V{alpha_num_uscr_str}
-t_ident            t|t{alpha_num_uscr_str}|T{alpha_num_uscr_str}
+sub_type           sub
+obj_type           obj
+acc_type           acc
+sub_grp_type       sub-grp
+obj_grp_type       obj_grp
+acc_grp_type       acc_grp
+ident              ident
+identifier         [a-zA-Z]([a-zA-Z0-9_])*
 whitespace         [\t ]+
 
 %%
@@ -72,61 +62,19 @@ whitespace         [\t ]+
 {if} return EPI_SYM_IF;
 {is} return EPI_SYM_IS;
 {after} return EPI_SYM_AFTER;
-{s_subject_ident} {
-  symtab_add((char *) yytext, &(yylval.terminal));
+{sub_type} return EPI_SYM_SUBTYPE;
+{obj_type} return EPI_SYM_OBJTYPE;
+{acc_type} return EPI_SYM_ACCTYPE;
+{sub_grp_type} return EPI_SYM_SUBGRPTYPE;
+{obj_grp_type} return EPI_SYM_OBJGRPTYPE;
+{acc_grp_type} return EPI_SYM_ACCGRPTYPE;
+{ident} return EPI_SYM_IDENT;
+{identifier} {
 #ifdef DEBUG
-  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+  printf("identifier: %s\n", yytext);
 #endif
-  return EPI_SYM_S_SUB_IDENT;
-}
-{s_access_ident} {
-  symtab_add((char *) yytext, &(yylval.terminal));
-#ifdef DEBUG
-  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
-#endif
-  return EPI_SYM_S_ACC_IDENT;
-}
-{s_object_ident} {
-  symtab_add((char *) yytext, &(yylval.terminal));
-#ifdef DEBUG
-  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
-#endif
-  return  EPI_SYM_S_OBJ_IDENT;
-}
-{g_subject_ident} {
-  symtab_add((char *) yytext, &(yylval.terminal));
-#ifdef DEBUG
-  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
-#endif
-  return EPI_SYM_G_SUB_IDENT;
-}
-{g_access_ident} {
-  symtab_add((char *) yytext, &(yylval.terminal));
-#ifdef DEBUG
-  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
-#endif
-  return EPI_SYM_G_ACC_IDENT;
-}
-{g_object_ident} {
-  symtab_add((char *) yytext, &(yylval.terminal));
-#ifdef DEBUG
-  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
-#endif
-  return EPI_SYM_G_OBJ_IDENT;
-}
-{v_ident} {
-  symtab_add((char *) yytext, &(yylval.terminal));
-#ifdef DEBUG
-  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
-#endif
-  return EPI_SYM_VAR_IDENT;
-}
-{t_ident} {
-  symtab_add((char *) yytext, &(yylval.terminal));
-#ifdef DEBUG
-  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
-#endif
- return EPI_SYM_TRANS_IDENT;
+ yylval.identifier = yytext;
+ return EPI_SYM_IDENTIFIER;
 }
 {whitespace}
 
