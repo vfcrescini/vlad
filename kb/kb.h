@@ -112,6 +112,12 @@ class kb {
     int generate_complementary(unsigned int state_tot,
                                numberlist **l1,
                                numberlist **l2);
+    /* gives a list of encoded atom id's that represent intertial rules */
+    int generate_inertial(unsigned int state_tot,
+                          numberlist **l1,
+                          numberlist **l2,
+                          numberlist **l3);
+
     /* gives a list of encoded atom id's that represent initial state atoms */
     int generate_initialstate(numberlist **l1);
 

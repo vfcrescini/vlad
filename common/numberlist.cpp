@@ -46,7 +46,7 @@ unsigned int number::get()
   return num;
 }
 
-numberlist::numberlist() : list(true)
+numberlist::numberlist() : list(false)
 {
 }
 

@@ -23,7 +23,7 @@ class number : public list_item
 } ;
 
 /* a list of numbers */
-class numberlist : public list_item, list
+class numberlist : public list_item, public list
 {
   public :
     numberlist();

@@ -3,10 +3,14 @@
 	* kb/kb.cpp :
 	* kb/kb.h :
 
+	  - generate_nlp() now uses the new generate() functions.
+
 	  - Separated the generate() functions. Cleanup work.
 
 	* common/numberlist.cpp :
 	* common/numberlist.h :
+
+	  - Not unique anymore.
 
 	  - Added another class: numberlistlist, which is simply a list of
 	    lists of numbers.
