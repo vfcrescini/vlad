@@ -39,7 +39,7 @@ BNF
 
 <var-identifier>       : v | v <alpha-num-uscr-str>
 
-<trans-identifier>     : <alpha-num> <alpha-num-uscr-str>
+<trans-identifier>     : <alpha> <alpha-num-uscr-str>
 
 <sub-acc-obj-ident>    : <subject-identifier> |
                          <access-identifier> |
