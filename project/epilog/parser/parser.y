@@ -282,16 +282,12 @@ acc_grp_ident_list :
 initial_stmt : 
   EPI_SYM_INITIALLY ground_exp EPI_SYM_SEMICOLON {
     unsigned int i;
-    unsigned int len;
     gnd_atom_type *tmp_atom = NULL;
 
     /* now we have to go through these expressions and see if they're aleady
      * in the initial state expression */
 
-    if (gnd_exp_length($2, &len) != 0)
-      exit_error("internal error");
-
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < gnd_exp_length($2); i++) {
       if (gnd_exp_get($2, i, &tmp_atom) != 0) 
         exit_error("internal error");
 
@@ -347,16 +343,12 @@ policy_stmt :
     res_type result;
     gnd_exp_type curr;
     gnd_exp_type prev;
-    unsigned int len;
     unsigned int i;
 
     if (gnd_exp_copy(initial_exp, &prev))
       exit_error("internal error1");
 
-    if (translist_length($2, &len) != 0)
-      exit_error("internal error2");
-
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < translist_length($2); i++) {
       if (translist_get($2, i, &tmp_trans) != 0)
         exit_error("internal error3");
       if (transtab_transform(prev, *tmp_trans, &curr) != 0)
@@ -412,8 +404,7 @@ policy_stmt :
 
 trans_var_def : 
   EPI_SYM_OPEN_PARENT EPI_SYM_CLOSE_PARENT {
-    if (stringlist_init(&$$) != 0)
-      exit_error("internal error");
+    stringlist_init(&$$);
   }
   | EPI_SYM_OPEN_PARENT trans_var_list EPI_SYM_CLOSE_PARENT {
     $$ = $2;
@@ -425,8 +416,7 @@ trans_var_list :
     if (symtab_find($1) == 0)
       exit_error("variable name already declared as an identiifer");
 
-    if (stringlist_init(&$$) != 0)
-      exit_error("internal error");
+    stringlist_init(&$$);
 
     if (stringlist_add(&$$, $1) != 0) 
       exit_error("internal error");
@@ -456,8 +446,8 @@ after_clause :
 
 trans_ref_list : 
   trans_ref_def {
-    if (translist_init(&$$) != 0)
-      exit_error("internal error");
+    translist_init(&$$);
+
     if (translist_add(&$$, $1) != 0)
       exit_error("internal error");
   }
@@ -481,8 +471,8 @@ trans_ref_ident_list :
   EPI_SYM_IDENTIFIER {
     ident_type *tmp_ident = NULL;
 
-    if (identlist_init(&$$) != 0)
-      exit_error("internal error");
+    identlist_init(&$$);
+
     if (symtab_get($1, &tmp_ident) != 0)
       exit_error("identifier not declared");
     if (identlist_add(&$$, tmp_ident) != 0)
@@ -506,8 +496,7 @@ logical_op :
 
 ground_exp : 
   ground_boolean_atom { 
-    if (gnd_exp_init(&$$) != 0) 
-      exit_error("internal error");
+    gnd_exp_init(&$$);
 
     if (gnd_exp_find($$, $1) == 0)
       yywarn("atom already declared");
@@ -625,8 +614,7 @@ ground_memb_atom :
 
 comp_exp :
   comp_boolean_atom {
-    if (comp_exp_init(&$$) != 0) 
-      exit_error("internal error");
+    comp_exp_init(&$$);
 
     if (comp_exp_find($$, $1) == 0)
       yywarn("atom already declared");
@@ -872,14 +860,9 @@ int initialise(void)
   fprintf(yyerr, "initialising global lists\n");
 #endif
 
-  if (symtab_init() != 0)
-    return -1;
-
-  if (gnd_exp_init(&initial_exp) != 0)
-    return -1;
-
-  if (transtab_init() != 0)
-    return -1;
+  symtab_init();
+  gnd_exp_init(&initial_exp);
+  transtab_init();
 
   return 0;
 }
@@ -888,14 +871,22 @@ int initialise(void)
 int destroy(void)
 {
 #ifdef DEBUG
-  fprintf(yyerr, "destroying global lists\n");
+  fprintf(yyerr, "destroying symtab\n");
 #endif
 
   if (symtab_purge() != 0)
     return -1;
 
+#ifdef DEBUG
+  fprintf(yyerr, "destroying initial expression\n");
+#endif
+
   if (gnd_exp_purge(&initial_exp) != 0)
     return -1;
+
+#ifdef DEBUG
+  fprintf(yyerr, "destroying transtab\n");
+#endif
 
   if (transtab_purge() != 0)
     return -1;
@@ -914,12 +905,9 @@ void exit_error(char *message)
 int dump_strlist(stringlist_type list)
 {
   unsigned int i;
-  unsigned int len;
   char *tmp_string = NULL;
 
-  stringlist_length(list, &len);
-
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < stringlist_length(list); i++) {
     stringlist_get(list, i, &tmp_string);
     fprintf(yyerr, "    %s\n", tmp_string);
   }
@@ -977,12 +965,9 @@ int dump_comp_atom(comp_atom_type atom)
 int dump_gnd_exp(gnd_exp_type exp)
 {
   unsigned int i;
-  unsigned int len;
   gnd_atom_type *tmp_atom = NULL;
 
-  gnd_exp_length(exp, &len);
-
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < gnd_exp_length(exp); i++) {
     gnd_exp_get(exp, i, &tmp_atom);
     dump_gnd_atom(*tmp_atom);
   }
@@ -992,12 +977,9 @@ int dump_gnd_exp(gnd_exp_type exp)
 int dump_comp_exp(comp_exp_type exp)
 {
   unsigned int i;
-  unsigned int len;
   comp_atom_type *tmp_atom = NULL;
 
-  comp_exp_length(exp, &len);
-
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < comp_exp_length(exp); i++) {
     comp_exp_get(exp, i, &tmp_atom);
     dump_comp_atom(*tmp_atom);
   }

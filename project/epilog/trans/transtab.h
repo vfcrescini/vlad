@@ -12,13 +12,13 @@
 #include "transdef.h"
 
 /* initialise list */
-int transtab_init(void);
+void transtab_init(void);
+
+/* gives the length of the list */
+unsigned int transtab_length(void);
 
 /* add transformation into table */
 int transtab_add(transdef_type trans);
-
-/* gives the length of the list */
-int transtab_length(unsigned int *len);
 
 /* gives a reference to a transdef_type structure */
 int transtab_get(char *name, transdef_type **trans);

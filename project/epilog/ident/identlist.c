@@ -11,15 +11,15 @@ int identlist_compare(void *p1, void *p2);
 int identlist_destroy(void *p);
 
 /* initialise list */
-int identlist_init(identlist_type *list)
+void identlist_init(identlist_type *list)
 {
-  return simplelist_init(list);
+  simplelist_init(list);
 }
 
 /* gives the number of identifiers in the list */
-int identlist_length(identlist_type list, unsigned int *len)
+unsigned int identlist_length(identlist_type list)
 {
-  return simplelist_length(list, len);
+  return simplelist_length(list);
 }
 
 /* return 0 if name is already used */
@@ -65,16 +65,12 @@ int identlist_del(identlist_type *list, unsigned int index)
 /* delete all entries but not free the identifiers */
 int identlist_purge(identlist_type *list)
 {
-  unsigned int len;
   unsigned int i;
 
   if (list == NULL)
     return -1;
 
-  if (simplelist_length(*list, &len) != 0)
-    return -1;
-
-  for (i = 0; i < len; i++)
+  for (i = 0; i < simplelist_length(*list); i++)
     if (simplelist_del_index(list, 0, NULL) != 0)
       return -1;
 

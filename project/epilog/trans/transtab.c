@@ -12,12 +12,18 @@
 int transtab_compare(void *p1, void *p2);
 int transtab_destroy(void *p);
 
-simplelist_type list;
+static simplelist_type list;
 
 /* initialise list */
-int transtab_init(void)
+void transtab_init(void)
 {
-  return simplelist_init(&list);
+  simplelist_init(&list);
+}
+
+/* gives the length of the list */
+unsigned int transtab_length(void)
+{
+  return simplelist_length(list);
 }
 
 /* add transformation into table */
@@ -32,12 +38,6 @@ int transtab_add(transdef_type trans)
     return -1;
 
   return simplelist_add(&list, (void *) new_trans);
-}
-
-/* gives the length of the list */
-int transtab_length(unsigned int *len)
-{
-  return simplelist_length(list, len);
 }
 
 /* gives a reference to a transdef_type structure */
@@ -85,7 +85,6 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
   gnd_exp_type tmp_precond;
   gnd_exp_type tmp_postcond;
   res_type tmp_res;
-  unsigned int len;
   unsigned int i;
 
   if (res == NULL)
@@ -132,10 +131,7 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
     return -1;
 
   /* now we individually add each atom in the postcondition to res */
-  if (gnd_exp_length(tmp_postcond, &len) != 0)
-    return -1;
-
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < gnd_exp_length(tmp_postcond); i++) {
     if (gnd_exp_get(tmp_postcond, i, &tmp_atom) != 0)
       return -1;
     if (gnd_exp_add(res, *tmp_atom) != 0)
@@ -148,15 +144,12 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
 /* empty the list */
 int transtab_purge(void)
 {
-  unsigned int len;
   unsigned int i;
   
-  if (simplelist_length(list, &len) != 0)
-    return -1;
-    
-  for (i = 0; i < len; i++)
+  for (i = 0; i < simplelist_length(list); i++) {
     if (simplelist_del_index(&list, 0, transtab_destroy) != 0)
       return -1;
+  }
 
   return 0;
 }

@@ -7,26 +7,18 @@
 #include "simplelist.h"
 
 /* initialise list */
-int simplelist_init(simplelist_type *list)
+void simplelist_init(simplelist_type *list)
 {
-  if (list == NULL)
-    return -1; 
-
-  list->list = NULL;
-  list->length = 0;
-
-  return 0;
+  if (list != NULL) {
+    list->list = NULL;
+    list->length = 0;
+  }
 }
 
 /* return length */
-int simplelist_length(simplelist_type list, unsigned int *length)
+unsigned int simplelist_length(simplelist_type list)
 {
-  if (length == NULL)
-    return -1;
-
-  *length = list.length;
-
-  return 0;
+  return list.length;
 }
 
 /* gives the index of the first instance of the node that matches data */
@@ -191,9 +183,7 @@ int simplelist_get_data(simplelist_type list,
       cmp == NULL) 
     return -1;
 
-  if (simplelist_init(res) != 0)
-    return -1;
-  
+  simplelist_init(res);
   curr = list.list;
 
   while (curr != NULL) {

@@ -23,10 +23,10 @@ typedef struct simplelist_type
 } simplelist_type;
 
 /* initialise list */
-int simplelist_init(simplelist_type *list);
+void simplelist_init(simplelist_type *list);
 
 /* return length */
-int simplelist_length(simplelist_type list, unsigned int *length);
+unsigned int simplelist_length(simplelist_type list);
 
 /* gives the index of the first instance of the node that matches data */
 int simplelist_index(simplelist_type list,

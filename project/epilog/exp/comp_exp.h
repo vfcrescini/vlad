@@ -15,10 +15,10 @@
 #define comp_exp_type simplelist_type
 
 /* initialise list */
-int comp_exp_init(comp_exp_type *exp);
+void comp_exp_init(comp_exp_type *exp);
 
 /* gives the number of atoms in the expression */
-int comp_exp_length(comp_exp_type exp, unsigned int *len);
+unsigned int comp_exp_length(comp_exp_type exp);
 
 /* return 0 if the atom is in the expression */
 int comp_exp_find(comp_exp_type exp, comp_atom_type atom);

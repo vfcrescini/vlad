@@ -23,7 +23,7 @@
  */
 
 /* initialise list */
-int symtab_init(void);
+void symtab_init(void);
 
 /* return 0 if name is already in the list */
 int symtab_find(char *name);

@@ -11,12 +11,12 @@
 int symtab_compare(void *p1, void *p2);
 int symtab_destroy(void *p);
 
-simplelist_type list;
+static simplelist_type list;
 
 /* initialise list */
-int symtab_init(void)
+void symtab_init(void)
 {
-  return simplelist_init(&list);
+  simplelist_init(&list);
 }
 
 /* return 0 if name is already in the list */
@@ -91,13 +91,9 @@ int symtab_del(char *name)
 /* delete all entries and free everything */
 int symtab_purge(void)
 {
-  unsigned int len;
   unsigned int i;
 
-  if (simplelist_length(list, &len) != 0)
-    return -1;
-
-  for (i = 0; i < len; i++)
+  for (i = 0; i < simplelist_length(list); i++)
     if (simplelist_del_index(&list, 0, symtab_destroy) != 0)
       return -1;
 

@@ -128,7 +128,6 @@ int comp_atom_destroy(comp_atom_type *atom)
   } 
 
   free(atom);
-  atom = NULL;
 
   return 0;
 }

@@ -20,15 +20,15 @@ int comp_exp_compare(void *p1, void *p2);
 int comp_exp_destroy(void *p);
 
 /* initialise list */
-int comp_exp_init(comp_exp_type *exp)
+void comp_exp_init(comp_exp_type *exp)
 {
-  return simplelist_init(exp);
+  simplelist_init(exp);
 }
 
 /* gives the number of atoms in the expression */
-int comp_exp_length(comp_exp_type exp, unsigned int *len)
+unsigned int comp_exp_length(comp_exp_type exp)
 {
-  return simplelist_length(exp, len);
+  return simplelist_length(exp);
 }
 
 /* return 0 if the atom is in the expression */
@@ -91,9 +91,6 @@ int comp_exp_replace(comp_exp_type comp,
                      identlist_type identlist)
 {
   unsigned int i;
-  unsigned int len_exp;
-  unsigned int len_vlist;
-  unsigned int len_ilist;
   gnd_atom_type tmp_gnd_atom;
   comp_atom_type *tmp_comp_atom = NULL;
 
@@ -101,18 +98,12 @@ int comp_exp_replace(comp_exp_type comp,
     return -1;
 
   /* first we ensure that the varlist and the identlist are of equal length */
-  if (stringlist_length(varlist, &len_vlist) != 0 ||
-      identlist_length(identlist, &len_ilist) != 0 ||
-      len_vlist != len_ilist)
+  if (stringlist_length(varlist) != identlist_length(identlist))
     return -1;
   
-  if (gnd_exp_init(ground) != 0)
-    return -1;
+  gnd_exp_init(ground);
 
-  if (comp_exp_length(comp, &len_exp) != 0)
-    return -1;
-  
-  for (i = 0; i < len_exp; i++) {
+  for (i = 0; i < comp_exp_length(comp); i++) {
     if (comp_exp_get(comp, i, &tmp_comp_atom) != 0)
       return -1;
 
@@ -144,16 +135,12 @@ int comp_exp_del(comp_exp_type *exp, comp_atom_type atom)
 /* delete all atoms from this expression */
 int comp_exp_purge(comp_exp_type *exp)
 {
-  unsigned int len;
   unsigned int i;
 
   if (exp == NULL)
     return -1;
 
-  if (simplelist_length(*exp, &len) != 0)
-    return -1;
-  
-  for (i = 0; i < len; i++)
+  for (i = 0; i < simplelist_length(*exp); i++)
     if (simplelist_del_index(exp, 0, comp_exp_destroy) != 0)
       return -1;
 

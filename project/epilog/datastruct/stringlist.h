@@ -11,10 +11,10 @@
 #define stringlist_type simplelist_type
 
 /* initialise list */
-int stringlist_init(stringlist_type *list);
+void stringlist_init(stringlist_type *list);
 
 /* gives the number of strings in the stringlist */
-int stringlist_length(stringlist_type list, unsigned int *len);
+unsigned int stringlist_length(stringlist_type list);
 
 /* return 0 if the string is in the stringlist */
 int stringlist_find(stringlist_type list, char *string);

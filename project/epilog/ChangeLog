@@ -1,3 +1,36 @@
+2002-10-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+	* datastruct/stringlist.c :
+	* datastruct/stringlist.h :
+	* exp/comp_atom.c :
+	* exp/comp_exp.c :
+	* exp/comp_exp.h :
+	* exp/gnd_exp.c :
+	* exp/gnd_exp.h :
+	* ident/identlist.c :
+	* ident/identlist.h :
+	* ident/symtab.c :
+	* ident/symtab.h :
+	* parser/parser.y :
+	* trans/translist.c :
+	* trans/translist.h :
+	* trans/transtab.c :
+	* trans/transtab.h :
+
+	  - Changed init function to return void. It cannot fail 
+	    anyway.
+
+	  - Changed length function to return the length
+	    instead of passing it through a variable reference
+
+
+	* ident/symtab.c :
+	* trans/transtab.c :
+
+	  - Changed internal lists to static.
+
 2002-10-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* VERSION :

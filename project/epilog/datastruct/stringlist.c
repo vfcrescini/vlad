@@ -11,15 +11,15 @@ int stringlist_compare(void *p1, void *p2);
 int stringlist_destroy(void *p);
 
 /* initialise list */
-int stringlist_init(stringlist_type *list)
+void stringlist_init(stringlist_type *list)
 {
-  return simplelist_init(list);
+  simplelist_init(list);
 }
 
 /* gives the number of strings in the stringlist */
-int stringlist_length(stringlist_type list, unsigned int *len)
+unsigned int stringlist_length(stringlist_type list)
 {
-  return simplelist_length(list, len);
+  return simplelist_length(list);
 }
 
 /* return 0 if the string is in the stringlist */
@@ -71,16 +71,12 @@ int stringlist_del(stringlist_type *list, char *string)
 /* delete all strings from this stringlist */
 int stringlist_purge(stringlist_type *list)
 {
-  unsigned int len;
   unsigned int i;
 
   if (list == NULL)
     return -1;
 
-  if (simplelist_length(*list, &len) != 0)
-    return -1;
-
-  for (i = 0; i < len; i++)
+  for (i = 0; i < simplelist_length(*list); i++)
     if (simplelist_del_index(list, 0, stringlist_destroy) != 0)
       return -1;
 

@@ -10,9 +10,15 @@
 int translist_destroy(void *p);
 
 /* initialise list */
-int translist_init(translist_type *list)
+void translist_init(translist_type *list)
 {
-  return simplelist_init(list);
+  simplelist_init(list);
+}
+
+/* gives the length of the list */
+unsigned int translist_length(translist_type list)
+{
+  return simplelist_length(list);
 }
 
 /* add into list given the transref_type structure */
@@ -29,12 +35,6 @@ int translist_add(translist_type *list, transref_type trans)
   return simplelist_add(list, (void *) new_trans);
 }
 
-/* gives the length of the list */
-int translist_length(translist_type list, unsigned int *len)
-{
-  return simplelist_length(list, len);  
-}
-
 /* gives ar reference to the index'th transref */
 int translist_get(translist_type list,
                   unsigned int index,
@@ -46,16 +46,12 @@ int translist_get(translist_type list,
 /* empty the list along with its members */
 int translist_purge(translist_type *list)
 {
-  unsigned int len;
   unsigned int i;
   
   if (list == NULL)
     return -1;
     
-  if (simplelist_length(*list, &len) != 0)
-    return -1;
-    
-  for (i = 0; i < len; i++)
+  for (i = 0; i < simplelist_length(*list); i++)
     if (simplelist_del_index(list, 0, translist_destroy) != 0)
       return -1;
 

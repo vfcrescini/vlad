@@ -12,13 +12,13 @@
 #define translist_type simplelist_type
 
 /* initialise list */
-int translist_init(translist_type *list);
+void translist_init(translist_type *list);
+
+/* gives the length of the list */
+unsigned int translist_length(translist_type list);
 
 /* add into list given the transref_type structure */
 int translist_add(translist_type *list, transref_type trans);
-
-/* gives the length of the list */
-int translist_length(translist_type list, unsigned int *len);
 
 /* gives ar reference to the index'th transref */
 int translist_get(translist_type list,

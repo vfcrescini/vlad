@@ -12,10 +12,10 @@
 #define gnd_exp_type simplelist_type
 
 /* initialise list */
-int gnd_exp_init(gnd_exp_type *exp);
+void gnd_exp_init(gnd_exp_type *exp);
 
 /* gives the number of atoms in the gnd_exp */
-int gnd_exp_length(gnd_exp_type exp, unsigned int *len);
+unsigned int gnd_exp_length(gnd_exp_type exp);
 
 /* return 0 if the atom is in the gnd_exp */
 int gnd_exp_find(gnd_exp_type exp, gnd_atom_type atom);
