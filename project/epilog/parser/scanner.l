@@ -1,9 +1,11 @@
 /*
+ * scanner.l
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 %option nounput
 %option always-interactive
+%s COMMENT
 
 %{
 #include "y.tab.h"
@@ -13,8 +15,11 @@
 #endif
 
 extern YYSTYPE yylval;
+unsigned int line_no = 1;
 %}
 
+begin_comment      \/\*
+end_comment        \*\/
 underscore         _
 open_parent        \(
 close_parent       \)
@@ -33,49 +38,102 @@ causes             causes
 if                 if
 is                 is
 after              after
+ident              ident
+sub_grp_type       sub-grp
+obj_grp_type       obj-grp
+acc_grp_type       acc-grp
 sub_type           sub
 obj_type           obj
 acc_type           acc
-sub_grp_type       sub-grp
-obj_grp_type       obj_grp
-acc_grp_type       acc_grp
-ident              ident
 identifier         [a-zA-Z]([a-zA-Z0-9_])*
-whitespace         [\t ]+
+whitespace         ([\t ])+
+newline            \n
+everything         .
 
 %%
 
-{open_parent} return EPI_SYM_OPEN_PARENT;
-{close_parent} return EPI_SYM_CLOSE_PARENT;
-{comma} return EPI_SYM_COMMA;
-{semicolon} return EPI_SYM_SEMICOLON;
-{and} return EPI_SYM_AND;
-{not} return EPI_SYM_NOT;
-{true} return EPI_SYM_TRUE;
-{false} return EPI_SYM_FALSE;
-{holds} return EPI_SYM_HOLDS;
-{member} return EPI_SYM_MEMB;
-{subset} return EPI_SYM_SUBST;
-{initially} return EPI_SYM_INITIALLY;
-{transform} return EPI_SYM_TRANS;
-{causes} return EPI_SYM_CAUSES;
-{if} return EPI_SYM_IF;
-{is} return EPI_SYM_IS;
-{after} return EPI_SYM_AFTER;
-{sub_type} return EPI_SYM_SUBTYPE;
-{obj_type} return EPI_SYM_OBJTYPE;
-{acc_type} return EPI_SYM_ACCTYPE;
-{sub_grp_type} return EPI_SYM_SUBGRPTYPE;
-{obj_grp_type} return EPI_SYM_OBJGRPTYPE;
-{acc_grp_type} return EPI_SYM_ACCGRPTYPE;
-{ident} return EPI_SYM_IDENT;
-{identifier} {
+<INITIAL>{open_parent} return EPI_SYM_OPEN_PARENT;
+
+<INITIAL>{close_parent} return EPI_SYM_CLOSE_PARENT;
+
+<INITIAL>{comma} return EPI_SYM_COMMA;
+
+<INITIAL>{semicolon} return EPI_SYM_SEMICOLON;
+
+<INITIAL>{and} return EPI_SYM_AND;
+
+<INITIAL>{not} return EPI_SYM_NOT;
+
+<INITIAL>{true} return EPI_SYM_TRUE;
+
+<INITIAL>{false} return EPI_SYM_FALSE;
+
+<INITIAL>{holds} return EPI_SYM_HOLDS;
+
+<INITIAL>{member} return EPI_SYM_MEMB;
+
+<INITIAL>{subset} return EPI_SYM_SUBST;
+
+<INITIAL>{initially} return EPI_SYM_INITIALLY;
+
+<INITIAL>{transform} return EPI_SYM_TRANS;
+
+<INITIAL>{causes} return EPI_SYM_CAUSES;
+
+<INITIAL>{if} return EPI_SYM_IF;
+
+<INITIAL>{is} return EPI_SYM_IS;
+
+<INITIAL>{after} return EPI_SYM_AFTER;
+
+<INITIAL>{ident} return EPI_SYM_IDENT;
+
+<INITIAL>{sub_grp_type} return EPI_SYM_SUBGRPTYPE;
+
+<INITIAL>{obj_grp_type} return EPI_SYM_OBJGRPTYPE;
+
+<INITIAL>{acc_grp_type} return EPI_SYM_ACCGRPTYPE;
+
+<INITIAL>{sub_type} return EPI_SYM_SUBTYPE;
+
+<INITIAL>{obj_type} return EPI_SYM_OBJTYPE;
+
+<INITIAL>{acc_type} return EPI_SYM_ACCTYPE;
+
+<INITIAL>{identifier} {
 #ifdef DEBUG
   printf("identifier: %s\n", yytext);
 #endif
  yylval.identifier = yytext;
  return EPI_SYM_IDENTIFIER;
 }
-{whitespace}
+
+<INITIAL>{begin_comment} {
+  BEGIN COMMENT;
+}
+
+<INITIAL>{end_comment} {
+  return EPI_SYM_ERROR;
+}
+
+<COMMENT>{end_comment} {
+  BEGIN INITIAL;
+}
+
+<COMMENT><<EOF>> {
+  return EPI_SYM_ERROR;
+}
+
+{whitespace} ;
+
+{newline} {
+  line_no++;
+}
+
+<COMMENT>{everything} ;
+
+<INITIAL>{everything} {
+  return EPI_SYM_ERROR;
+}
 
 %%

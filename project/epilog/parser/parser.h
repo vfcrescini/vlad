@@ -10,6 +10,9 @@
 extern FILE *yyin;
 extern FILE *yyout;
 
+/* vars that can be referenced */
+extern unsigned int line_no;
+
 /* available function */
 extern int yyparse();
 

@@ -1,8 +1,20 @@
-ident sub s1;
-ident sub s2;
-ident sub s3;
+/*
+ * sample program
+ * Vino Crescini  <jcrescin@cit.uws.edu.au
+ */
+
+ident sub s1,s2;
+ident acc a1;
+ident obj o1;
+ident sub-grp S1, S2;
+ident acc-grp A1;
+ident obj-grp O1;
 
 initially holds(s1,a1,o1);
-trans t_delete1(v1,v2) causes memb(v1, S1) && subst(v2, S2) if holds(v1,v2, O1);
-trans t_add1(v1) causes holds(v1,a1,o1) if true;
-is holds(s1,a1,o2);
+initially memb(s1,A1) && subst(S1,S2);
+
+trans something1(var1, var2) causes holds(var1, a1, var2) if memb(var1, S1) && subst(S1, S2);
+trans something2(var3) causes holds(s1, a1, var3) && holds(s2, a1, var3) if true;
+
+/* /* nested comment */
+/* comment1 */   /* comment2 */

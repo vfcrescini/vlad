@@ -9,9 +9,12 @@ Updated 2002 Aug 13
 
 <start>                 : <program>
 
-<program>               : <statement-list>
+<program>               : <first-part> | <last-part> |
 
-<statement-list>        : <ident-stmt-list> <other-stmt-list>
+<first-part>            : <ident-stmt-list> | 
+                          <ident-stmt-list> <last-part>
+
+<last-part>             : <other-stmt-list>
 
 <ident-stmt-list>       : <ident-stmt> | <ident-stmt> <ident-stmt-list>
                         

@@ -1,4 +1,5 @@
 /*
+ * parser.y
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -23,6 +24,8 @@ extern int yyerror(char *error);
   unsigned int terminal;
 }
 
+%token <terminal> EPI_SYM_EOF
+%token <terminal> EPI_SYM_ERROR
 %token <terminal> EPI_SYM_OPEN_PARENT
 %token <terminal> EPI_SYM_CLOSE_PARENT
 %token <terminal> EPI_SYM_COMMA
@@ -54,13 +57,18 @@ extern int yyerror(char *error);
 %%
 
 program : 
-  statement_list
+  first_part
+  | last_part
+  |
   ;
 
-statement_list : 
+first_part :
   ident_stmt_list
-  | other_stmt_list
+  | ident_stmt_list last_part
   ;
+
+last_part :
+  other_stmt_list;
 
 ident_stmt_list :
   ident_stmt
@@ -261,19 +269,19 @@ logical_op :
   ;
 
 expression : 
-  boolean_exp logical_op expression
+  boolean_exp
   {
   }
-  | boolean_exp
+  | boolean_exp logical_op expression
   {
   }
   ;
 
 boolean_exp :
-  EPI_SYM_NOT atom_exp
+  atom_exp
   {
   }
-  | atom_exp
+  | EPI_SYM_NOT atom_exp
   {
   }
   ;

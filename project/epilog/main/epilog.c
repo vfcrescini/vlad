@@ -20,7 +20,7 @@ int main()
 
 int yyerror(char *error)
 {
-  fprintf(stderr, "%s\n", error);
+  fprintf(stderr, "line %d: %s\n", line_no, error);
 
   return 0;
 }
