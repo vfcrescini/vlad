@@ -1,5 +1,5 @@
 /*
- * atom.h
+ * atom.c
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -32,9 +32,9 @@ int atom_create_holds(atom_type **atom,
     return -1;
 
   /* must be subject, access, object (in that order) or variables. */
-  if (!(EPI_IDENT_IS_SUBJECT(sub->type) || EPI_IDENT_IS_VAR(sub->type)) ||
-      !(EPI_IDENT_IS_ACCESS(acc->type) || EPI_IDENT_IS_VAR(acc->type)) ||
-      !(EPI_IDENT_IS_OBJECT(obj->type) || EPI_IDENT_IS_VAR(obj->type)))
+  if (!(EPI_IDENT_IS_SUBJECT(*sub) || EPI_IDENT_IS_VAR(*sub)) ||
+      !(EPI_IDENT_IS_ACCESS(*acc) || EPI_IDENT_IS_VAR(*acc)) ||
+      !(EPI_IDENT_IS_OBJECT(*obj) || EPI_IDENT_IS_VAR(*obj)))
     return -1;
 
   if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
@@ -60,10 +60,10 @@ int atom_create_memb(atom_type **atom,
 
   /* the assumption is that only subjects can be elements of subject-groups,
    * etc. */
-  if ((EPI_IDENT_IS_GROUP(element->type) && !EPI_IDENT_IS_VAR(element->type)) ||
-      (!EPI_IDENT_IS_GROUP(group->type) && !EPI_IDENT_IS_VAR(group->type)) ||
-      (!EPI_IDENT_IS_VAR(element->type) && !EPI_IDENT_IS_VAR(group->type) &&
-      EPI_IDENT_BASETYPE(element->type) != EPI_IDENT_BASETYPE(group->type)))
+  if ((EPI_IDENT_IS_GROUP(*element) && !EPI_IDENT_IS_VAR(*element)) ||
+      (!EPI_IDENT_IS_GROUP(*group) && !EPI_IDENT_IS_VAR(*group)) ||
+      (!EPI_IDENT_IS_VAR(*element) && !EPI_IDENT_IS_VAR(*group) &&
+      EPI_IDENT_BASETYPE(*element) != EPI_IDENT_BASETYPE(*group)))
     return -1;
 
   if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
@@ -87,9 +87,9 @@ int atom_create_subst(atom_type **atom,
     return -1;
 
   /* the groups must be of the same type */
-  if ((!EPI_IDENT_IS_GROUP(group1->type) && !EPI_IDENT_IS_VAR(group1->type)) ||
-      (!EPI_IDENT_IS_GROUP(group2->type) && !EPI_IDENT_IS_VAR(group2->type)) ||
-      (!EPI_IDENT_IS_VAR(group1->type) && !EPI_IDENT_IS_VAR(group2->type) &&
+  if ((!EPI_IDENT_IS_GROUP(*group1) && !EPI_IDENT_IS_VAR(*group1)) ||
+      (!EPI_IDENT_IS_GROUP(*group2) && !EPI_IDENT_IS_VAR(*group2)) ||
+      (!EPI_IDENT_IS_VAR(*group1) && !EPI_IDENT_IS_VAR(*group2) &&
        group1->type != group2->type))
     return -1;
 
@@ -119,42 +119,42 @@ int atom_destroy(atom_type *atom)
 /* return 0 if the atom is valid */
 int atom_check(atom_type atom)
 {
-  if (EPI_ATOM_IS_CONST(atom.type))
+  if (EPI_ATOM_IS_CONST(atom))
     return 0;
 
-  if (EPI_ATOM_IS_HOLDS(atom.type)) {
+  if (EPI_ATOM_IS_HOLDS(atom)) {
     /* subject field must be subject or variable */
-    if (!EPI_IDENT_IS_SUBJECT(atom.atom.holds.subject->type) && !EPI_IDENT_IS_VAR(atom.atom.holds.subject->type))
+    if (!EPI_IDENT_IS_SUBJECT(*(atom.atom.holds.subject)) && !EPI_IDENT_IS_VAR(*(atom.atom.holds.subject)))
       return -1;
     /* access field must be access or variable */
-    if (!EPI_IDENT_IS_ACCESS(atom.atom.holds.access->type) && !EPI_IDENT_IS_VAR(atom.atom.holds.access->type))
+    if (!EPI_IDENT_IS_ACCESS(*(atom.atom.holds.access)) && !EPI_IDENT_IS_VAR(*(atom.atom.holds.access)))
       return -1;
     /* object field must be access or variable */
-    if (!EPI_IDENT_IS_OBJECT(atom.atom.holds.object->type) && !EPI_IDENT_IS_VAR(atom.atom.holds.object->type))
+    if (!EPI_IDENT_IS_OBJECT(*(atom.atom.holds.object)) && !EPI_IDENT_IS_VAR(*(atom.atom.holds.object)))
       return -1;
   }
-  else if (EPI_ATOM_IS_MEMB(atom.type)) {
+  else if (EPI_ATOM_IS_MEMB(atom)) {
     /* first field must not be a group or a variable */
-    if (EPI_IDENT_IS_GROUP(atom.atom.memb.element->type) && !EPI_IDENT_IS_VAR(atom.atom.memb.element->type))
+    if (EPI_IDENT_IS_GROUP(*(atom.atom.memb.element)) && !EPI_IDENT_IS_VAR(*(atom.atom.memb.element)))
       return -1;
     /* second field must be a group or a variable */
-    if (!EPI_IDENT_IS_GROUP(atom.atom.memb.group->type) && !EPI_IDENT_IS_VAR(atom.atom.memb.group->type))
+    if (!EPI_IDENT_IS_GROUP(*(atom.atom.memb.group)) && !EPI_IDENT_IS_VAR(*(atom.atom.memb.group)))
       return -1;
     /* if both non-variables, base type must be the same */
-    if (!EPI_IDENT_IS_VAR(atom.atom.memb.element->type) && !EPI_IDENT_IS_VAR(atom.atom.memb.group->type) &&
-        EPI_IDENT_BASETYPE(atom.atom.memb.element->type) != EPI_IDENT_BASETYPE(atom.atom.memb.group->type))
+    if (!EPI_IDENT_IS_VAR(*(atom.atom.memb.element)) && !EPI_IDENT_IS_VAR(*(atom.atom.memb.group)) &&
+        EPI_IDENT_BASETYPE(*(atom.atom.memb.element)) != EPI_IDENT_BASETYPE(*(atom.atom.memb.group)))
       return -1;
   }
-  else if (EPI_ATOM_IS_SUBST(atom.type)) {
+  else if (EPI_ATOM_IS_SUBST(atom)) {
     /* first field must be a group or a variable */
-    if (!EPI_IDENT_IS_GROUP(atom.atom.subst.group1->type) && !EPI_IDENT_IS_VAR(atom.atom.subst.group1->type))
+    if (!EPI_IDENT_IS_GROUP(*(atom.atom.subst.group1)) && !EPI_IDENT_IS_VAR(*(atom.atom.subst.group1)))
       return -1;
     /* second field must be a group or a variable */
-    if (!EPI_IDENT_IS_GROUP(atom.atom.subst.group2->type) && !EPI_IDENT_IS_VAR(atom.atom.subst.group2->type))
+    if (!EPI_IDENT_IS_GROUP(*(atom.atom.subst.group2)) && !EPI_IDENT_IS_VAR(*(atom.atom.subst.group2)))
       return -1;
     /* if both non-variables, base type must be the same */
-    if (!EPI_IDENT_IS_VAR(atom.atom.subst.group1->type) && !EPI_IDENT_IS_VAR(atom.atom.subst.group2->type) &&
-        EPI_IDENT_BASETYPE(atom.atom.subst.group1->type) != EPI_IDENT_BASETYPE(atom.atom.subst.group2->type))
+    if (!EPI_IDENT_IS_VAR(*(atom.atom.subst.group1)) && !EPI_IDENT_IS_VAR(*(atom.atom.subst.group2)) &&
+        EPI_IDENT_BASETYPE(*(atom.atom.subst.group1)) != EPI_IDENT_BASETYPE(*(atom.atom.subst.group2)))
       return -1;
   }
   else
@@ -169,20 +169,20 @@ int atom_copy(atom_type **atom2, atom_type atom1)
   if (atom2 == NULL)
     return -1;
 
-  if (EPI_ATOM_IS_CONST(atom1.type))
+  if (EPI_ATOM_IS_CONST(atom1))
     return atom_create_const(atom2, atom1.truth);
-  else if (EPI_ATOM_IS_HOLDS(atom1.type))
+  else if (EPI_ATOM_IS_HOLDS(atom1))
     return atom_create_holds(atom2,
                              atom1.atom.holds.subject,
                              atom1.atom.holds.access,
                              atom1.atom.holds.object,
                              atom1.truth);
-  else if (EPI_ATOM_IS_MEMB(atom1.type))
+  else if (EPI_ATOM_IS_MEMB(atom1))
     return atom_create_memb(atom2,
                             atom1.atom.memb.element,
                             atom1.atom.memb.group,
                             atom1.truth);
-  else if (EPI_ATOM_IS_SUBST(atom1.type))
+  else if (EPI_ATOM_IS_SUBST(atom1))
     return atom_create_subst(atom2,
                              atom1.atom.subst.group1,
                              atom1.atom.subst.group2,
@@ -200,7 +200,7 @@ int atom_compare(atom_type atom1, atom_type atom2)
   if (atom1.truth != atom2.truth)
     return -1;
   
-  if (EPI_ATOM_IS_HOLDS(atom1.type)) {
+  if (EPI_ATOM_IS_HOLDS(atom1)) {
     if (ident_compare(*(atom1.atom.holds.subject), *(atom2.atom.holds.subject)) != 0)
       return -1;
     if (ident_compare(*(atom1.atom.holds.access), *(atom2.atom.holds.access)) != 0)
@@ -208,13 +208,13 @@ int atom_compare(atom_type atom1, atom_type atom2)
     if (ident_compare(*(atom1.atom.holds.object), *(atom2.atom.holds.object)) != 0)
       return -1;
   }
-  else if (EPI_ATOM_IS_MEMB(atom1.type)) {
+  else if (EPI_ATOM_IS_MEMB(atom1)) {
     if (ident_compare(*(atom1.atom.memb.element), *(atom2.atom.memb.element)) != 0)
       return -1;
     if (ident_compare(*(atom1.atom.memb.group), *(atom2.atom.memb.group)) != 0)
       return -1;
   }
-  else if (EPI_ATOM_IS_SUBST(atom1.type)) {
+  else if (EPI_ATOM_IS_SUBST(atom1)) {
     if (ident_compare(*(atom1.atom.subst.group1), *(atom2.atom.subst.group1)) != 0)
       return -1;
     if (ident_compare(*(atom1.atom.subst.group2), *(atom2.atom.subst.group2)) != 0)

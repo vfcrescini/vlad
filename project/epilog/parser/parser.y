@@ -117,20 +117,20 @@ destroy :
     for (i = 0; i < len; i++) {
       expression_get(initial_exp, i, &tmp_atom);
 
-      if (EPI_ATOM_IS_CONST(tmp_atom->type))
+      if (EPI_ATOM_IS_CONST(*tmp_atom))
         printf("initial state: constant %s\n", tmp_atom->truth == 0 ? "true" : "false");
-      else if (EPI_ATOM_IS_HOLDS(tmp_atom->type))
+      else if (EPI_ATOM_IS_HOLDS(*tmp_atom))
         printf("initial state: %sholds(%s, %s, %s)\n",
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.holds.subject->name,
                tmp_atom->atom.holds.access->name,
                tmp_atom->atom.holds.object->name);
-      else if (EPI_ATOM_IS_MEMB(tmp_atom->type))
+      else if (EPI_ATOM_IS_MEMB(*tmp_atom))
         printf("initial state: %smemb(%s, %s)\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.memb.element->name,
                tmp_atom->atom.memb.group->name);  
-      else if (EPI_ATOM_IS_SUBST(tmp_atom->type))
+      else if (EPI_ATOM_IS_SUBST(*tmp_atom))
         printf("initial state: %ssubst(%s, %s)\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.subst.group1->name,
@@ -311,20 +311,20 @@ initial_stmt :
         exit_error("internal error");
 
 #ifdef DEBUG
-      if (EPI_ATOM_IS_CONST(tmp_atom->type))
+      if (EPI_ATOM_IS_CONST(*tmp_atom))
         printf("adding constant %s into the initial state\n", tmp_atom->truth == 0 ? "true" : "false");
-      else if (EPI_ATOM_IS_HOLDS(tmp_atom->type))
+      else if (EPI_ATOM_IS_HOLDS(*tmp_atom))
         printf("adding %sholds(%s, %s, %s) into the initial state\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.holds.subject->name,
                tmp_atom->atom.holds.access->name,
                tmp_atom->atom.holds.object->name);
-      else if (EPI_ATOM_IS_MEMB(tmp_atom->type))
+      else if (EPI_ATOM_IS_MEMB(*tmp_atom))
         printf("adding %smemb(%s, %s) into the initial state\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.memb.element->name,
                tmp_atom->atom.memb.group->name);  
-      else if (EPI_ATOM_IS_SUBST(tmp_atom->type))
+      else if (EPI_ATOM_IS_SUBST(*tmp_atom))
         printf("adding %ssubst(%s, %s) into the initial state\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.subst.group1->name,
@@ -442,11 +442,15 @@ ground_exp :
     if (expression_init(&$$) != 0) 
       exit_error("internal error");
 
-    if (expression_add(&$$, $1) != 0) 
+    if (expression_find($$, $1) == 0)
+      yywarn("atom already declared");
+    else if (expression_add(&$$, $1) != 0)
       exit_error("internal error");
   }
-  | ground_boolean_atom logical_op ground_exp { 
-    if (expression_add(&$3, $1) != 0) 
+  | ground_boolean_atom logical_op ground_exp {
+    if (expression_find($3, $1) == 0)
+      yywarn("atom already declared");
+    else if (expression_add(&$3, $1) != 0) 
       exit_error("internal error");
 
     $$ = $3;
@@ -489,13 +493,13 @@ ground_holds_atom :
         identlist_get($7, &object) != 0) 
       exit_error("undeclared identifier");
 
-    if (!EPI_IDENT_IS_SUBJECT(subject->type)) 
+    if (!EPI_IDENT_IS_SUBJECT(*subject)) 
       exit_error("first parameter of holds must be a subject");
  
-    if (!EPI_IDENT_IS_ACCESS(access->type)) 
+    if (!EPI_IDENT_IS_ACCESS(*access)) 
       exit_error("second parameter of holds must be an access-right");
 
-    if (!EPI_IDENT_IS_OBJECT(object->type))
+    if (!EPI_IDENT_IS_OBJECT(*object))
       exit_error("third parameter of holds must be an object");
 
     $$.type = EPI_ATOM_HOLDS;
@@ -515,7 +519,7 @@ ground_subst_atom :
         identlist_get($5, &group2) != 0) 
       exit_error("undeclared identifier");
 
-    if (!EPI_IDENT_IS_GROUP(group1->type)) 
+    if (!EPI_IDENT_IS_GROUP(*group1)) 
       exit_error("parameters of subst must be groups");
  
     if (group1->type != group2->type)
@@ -537,13 +541,13 @@ ground_memb_atom :
         identlist_get($5, &group) != 0) 
       exit_error("undeclared identifier");
 
-    if (EPI_IDENT_IS_GROUP(element->type)) 
+    if (EPI_IDENT_IS_GROUP(*element)) 
       exit_error("first parameter of memb must not be a group");
  
-    if (!EPI_IDENT_IS_GROUP(group->type)) 
+    if (!EPI_IDENT_IS_GROUP(*group)) 
       exit_error("second parameter of memb must be a group");
 
-    if (EPI_IDENT_BASETYPE(element->type) != EPI_IDENT_BASETYPE(group->type))
+    if (EPI_IDENT_BASETYPE(*element) != EPI_IDENT_BASETYPE(*group))
       exit_error("parameters of memb are of different types");
 
     $$.type = EPI_ATOM_MEMB;
@@ -656,10 +660,12 @@ comp_holds_atom :
       object = NULL;
 
     if (subject != NULL) {
-      if (!EPI_IDENT_IS_SUBJECT(subject->type))
+      /* subject is an identifier */
+      if (!EPI_IDENT_IS_SUBJECT(*subject))
         exit_error("first parameter of holds must be a subject");
     }
     else {
+      /* subject is a variable */
       if (ident_create(&subject, $3, 0) != 0)
         exit_error("internal error");
 
@@ -668,10 +674,12 @@ comp_holds_atom :
     }
 
     if (access != NULL) {
-      if (!EPI_IDENT_IS_ACCESS(access->type))
+      /* access is an identifier */
+      if (!EPI_IDENT_IS_ACCESS(*access))
         exit_error("second parameter of holds must be an access-right");
     }
     else {
+      /* access is a variable */
       if (ident_create(&access, $5, 0) != 0) 
         exit_error("internal error");
 
@@ -680,10 +688,12 @@ comp_holds_atom :
     }
 
     if (object != NULL) {
-      if (!EPI_IDENT_IS_OBJECT(object->type))
+      /* object is an identifier */
+      if (!EPI_IDENT_IS_OBJECT(*object))
         exit_error("third parameter of holds must be an object");
     }
     else {
+      /* object is a variable */
       if (ident_create(&object, $7, 0) != 0) 
         exit_error("internal error");
 
@@ -720,10 +730,12 @@ comp_subst_atom :
     }
 
     if (group1 != NULL) {
-      if (!EPI_IDENT_IS_GROUP(group1->type))
+      /* group1 is an identifier */
+      if (!EPI_IDENT_IS_GROUP(*group1))
         exit_error("first parameter of subst must be a group");
     }
     else {
+      /* group1 is a variable */
       if (ident_create(&group1, $5, 0) != 0) 
         exit_error("internal error");
 
@@ -732,10 +744,12 @@ comp_subst_atom :
     }
 
     if (group2 != NULL) {
-      if (!EPI_IDENT_IS_GROUP(group2->type))
+      /* group2 is an identifier */
+      if (!EPI_IDENT_IS_GROUP(*group2))
         exit_error("first parameter of subst must be a group");
     }
     else {
+      /* group2 is a variable */
       if (ident_create(&group2, $5, 0) != 0) 
         exit_error("internal error");
 
@@ -766,15 +780,17 @@ comp_memb_atom :
       group = NULL;
 
     if (element != NULL && group != NULL) {
-      if (EPI_IDENT_BASETYPE(element->type) != EPI_IDENT_BASETYPE(group->type))
+      if (EPI_IDENT_BASETYPE(*element) != EPI_IDENT_BASETYPE(*group))
         exit_error("parameters of memb are of different types");
     }
 
     if (element != NULL) {
-      if (EPI_IDENT_IS_GROUP(element->type))
+      /* element is an identifier */
+      if (EPI_IDENT_IS_GROUP(*element))
         exit_error("first parameter of memb must not be a group");
     }
     else {
+      /* element is a variable */
       if (ident_create(&element, $3, 0) != 0) 
         exit_error("internal error");
 
@@ -783,10 +799,12 @@ comp_memb_atom :
     }
 
     if (group != NULL) {
-      if (!EPI_IDENT_IS_GROUP(group->type)) 
+      /* group is an identifier */
+      if (!EPI_IDENT_IS_GROUP(*group)) 
         exit_error("second parameter of memb must be a group");
     }
     else {
+      /* group is a variable */
       if (ident_create(&group, $5, 0) != 0) 
         exit_error("internal error");
 
@@ -820,17 +838,17 @@ int add_identifier(char ident[], unsigned short type)
   }
   
 #ifdef DEBUG
-  if (EPI_IDENT_IS_SUBJECT(type) && ! EPI_IDENT_IS_GROUP(type))
+  if (EPI_IDENT_TYPE_IS_SUBJECT(type) && ! EPI_IDENT_TYPE_IS_GROUP(type))
     printf("declared subject identifier %s\n", ident);
-  else if (EPI_IDENT_IS_OBJECT(type) && ! EPI_IDENT_IS_GROUP(type))
+  else if (EPI_IDENT_TYPE_IS_OBJECT(type) && ! EPI_IDENT_TYPE_IS_GROUP(type))
     printf("declared object identifier %s\n", ident);
-  else if (EPI_IDENT_IS_ACCESS(type) && ! EPI_IDENT_IS_GROUP(type))
+  else if (EPI_IDENT_TYPE_IS_ACCESS(type) && ! EPI_IDENT_TYPE_IS_GROUP(type))
     printf("declared access identifier %s\n", ident); 
-  if (EPI_IDENT_IS_SUBJECT(type) && EPI_IDENT_IS_GROUP(type))
+  if (EPI_IDENT_TYPE_IS_SUBJECT(type) && EPI_IDENT_TYPE_IS_GROUP(type))
     printf("declared subject-group identifier %s\n", ident);
-  else if (EPI_IDENT_IS_OBJECT(type) && EPI_IDENT_IS_GROUP(type))
+  else if (EPI_IDENT_TYPE_IS_OBJECT(type) && EPI_IDENT_TYPE_IS_GROUP(type))
     printf("declared object-group identifier %s\n", ident);
-  else if (EPI_IDENT_IS_ACCESS(type) && EPI_IDENT_IS_GROUP(type))
+  else if (EPI_IDENT_TYPE_IS_ACCESS(type) && EPI_IDENT_TYPE_IS_GROUP(type))
     printf("declared access-group identifier %s\n", ident); 
 #endif
 

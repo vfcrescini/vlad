@@ -30,11 +30,16 @@ int ident_compare(ident_type ident1, ident_type ident2);
 #define EPI_IDENT_GROUP          4
 
 /* some convenience macros */
-#define EPI_IDENT_IS_VAR(X)      ((X) == EPI_IDENT_VAR)
-#define EPI_IDENT_IS_SUBJECT(X)  (((X) & 3) == EPI_IDENT_SUBJECT)
-#define EPI_IDENT_IS_ACCESS(X)   (((X) & 3) == EPI_IDENT_ACCESS)
-#define EPI_IDENT_IS_OBJECT(X)   (((X) & 3) == EPI_IDENT_OBJECT)
-#define EPI_IDENT_IS_GROUP(X)    ((X) & EPI_IDENT_GROUP)
-#define EPI_IDENT_BASETYPE(X)    ((X) & 3)
+#define EPI_IDENT_IS_VAR(X)          ((X).type == EPI_IDENT_VAR)
+#define EPI_IDENT_IS_SUBJECT(X)      (((X).type & 3) == EPI_IDENT_SUBJECT)
+#define EPI_IDENT_IS_ACCESS(X)       (((X).type & 3) == EPI_IDENT_ACCESS)
+#define EPI_IDENT_IS_OBJECT(X)       (((X).type & 3) == EPI_IDENT_OBJECT)
+#define EPI_IDENT_IS_GROUP(X)        ((X).type & EPI_IDENT_GROUP)
+#define EPI_IDENT_BASETYPE(X)        ((X).type & 3)
+#define EPI_IDENT_TYPE_IS_VAR(X)     ((X) == EPI_IDENT_VAR)
+#define EPI_IDENT_TYPE_IS_SUBJECT(X) (((X) & 3) == EPI_IDENT_SUBJECT)
+#define EPI_IDENT_TYPE_IS_ACCESS(X)  (((X) & 3) == EPI_IDENT_ACCESS)
+#define EPI_IDENT_TYPE_IS_OBJECT(X)  (((X) & 3) == EPI_IDENT_OBJECT)
+#define EPI_IDENT_TYPE_IS_GROUP(X)   ((X) & EPI_IDENT_GROUP)
 
 #endif

@@ -85,9 +85,10 @@ int atom_compare(atom_type atom1, atom_type atom2);
 #define EPI_ATOM_SUBST       4
 
 /* some convenience macros */
-#define EPI_ATOM_IS_CONST(X) (((X) & 7) == EPI_ATOM_CONST)
-#define EPI_ATOM_IS_HOLDS(X) (((X) & 7) == EPI_ATOM_HOLDS)
-#define EPI_ATOM_IS_MEMB(X)  (((X) & 7) == EPI_ATOM_MEMB)
-#define EPI_ATOM_IS_SUBST(X) (((X) & 7) == EPI_ATOM_SUBST)
+#define EPI_ATOM_IS_CONST(X) (((X).type & 7) == EPI_ATOM_CONST)
+#define EPI_ATOM_IS_HOLDS(X) (((X).type & 7) == EPI_ATOM_HOLDS)
+#define EPI_ATOM_IS_MEMB(X)  (((X).type & 7) == EPI_ATOM_MEMB)
+#define EPI_ATOM_IS_SUBST(X) (((X).type & 7) == EPI_ATOM_SUBST)
+#define EPI_ATOM_NEGATE(X)   ((X).truth = ((X).truth == epi_true) ? epi_false : epi_true)
 
 #endif

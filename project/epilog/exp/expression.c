@@ -1,5 +1,5 @@
 /* 
- * expression.h
+ * expression.c
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -37,6 +37,7 @@ int expression_get(expression_type exp, unsigned int index, atom_type **atom)
 int expression_add(expression_type *exp, atom_type atom)
 {
   atom_type *new_atom = NULL;
+  atom_type false_atom;
   
   if (exp == NULL)
     return -1;
@@ -45,16 +46,29 @@ int expression_add(expression_type *exp, atom_type atom)
   if (expression_find(*exp, atom) == 0)
     return 0;
 
-  /* if the negation of an atom is aleady in, we replace the
-   * the whole expression with a constant false */
-  atom.truth = (atom.truth == epi_true) ? epi_false : epi_true;
-  if (expression_find(*exp, atom) == 0) {
-    expression_purge(exp);
-    atom_create_const(&new_atom, epi_false);
+  /* if the expression contains a FALSE constant, just return success */
+  false_atom.type = EPI_ATOM_CONST;
+  false_atom.truth = epi_false;
+
+  if (expression_find(*exp, false_atom) == 0)
+    return 0;
+
+  /* if the negation of an atom is aleady in, or if the atom is a FALSE
+   * constant, we replace the the whole expression with a constant false */
+  
+  EPI_ATOM_NEGATE(atom);
+  if ((EPI_ATOM_IS_CONST(atom) && atom.truth == epi_true) ||
+      expression_find(*exp, atom) == 0) {
+    if (expression_purge(exp) != 0)
+      return -1;
+    if (atom_create_const(&new_atom, epi_false) != 0)
+      return -1;
   }
   else {
-    atom.truth = (atom.truth == epi_true) ? epi_false : epi_true;
-    atom_copy(&new_atom, atom);
+    if (atom_copy(&new_atom, atom) != 0)
+      return -1;
+
+    EPI_ATOM_NEGATE(*new_atom);
   }
 
   return simplelist_add(exp, (void *) new_atom);

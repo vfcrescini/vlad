@@ -1,5 +1,24 @@
 2002-08-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/atom.c :
+	* exp/atom.h :
+	* ident/ident.h :
+
+	  - Simplified macros by taking the base structure as the parameter,
+	    instead of the unsigned ints.
+
+	  - Cleanups.
+
+	* parser/parser.y :
+	* exp/expression.c :
+
+	  - Before adding an atom into an expression, first perform a few
+	    checks:
+
+	    - Is the atom already in the expression ?
+	    - Is the entire expression already false ?
+	    - Is the negation of the new atom already in the expression ?
+
 	* exp/expression.c :
 
 	  - Adding atoms to an expression will now be checked first.
