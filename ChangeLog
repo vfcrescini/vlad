@@ -7,6 +7,9 @@
 	* kb/wrapper.cpp :
 	* kb/wrapper.h :
 
+	  - Added stages to ensure that functions are called in the right
+	    order.
+
 	  - Enumerated all possible combinations of the different formats
 	    of add_rule().
 
