@@ -746,9 +746,9 @@ query holds(alice, read, file);
     !holds(alice, read, secret_data);
           \end{verbatim}
 
-          Given that there are 3 policy update references in the sequence list
-          $\psi$ (i.e. $|\psi|$ $=$ $3$), the language ${\cal L}^{*}$
-          equivalent is as follows:
+          Given 3 policy update references in the sequence list $\psi$ 
+          (i.e. $|\psi|$ $=$ $3$), the language ${\cal L}^{*}$ equivalent is as
+          follows:
 
           \begin{quote}
             \begin{math}
@@ -1328,245 +1328,205 @@ query holds(alice, read, file);
 
   \section{Implementation}
 
+    \subsection{System Structure}
+
     \begin{figure}[ht]
       \begin{center}
         \epsfig{file=system.eps}
-        \caption{System Structure}
+        \caption{Structure of PolicyUpdater}
         \label{fig-1}
       \end{center}
     \end{figure}
 
-    Although the semantics of language ${\cal L}$ shows that any program $P$
-    of language ${\cal L}$ can be translated into an extended logic program
-    $P^{*}$ of language ${\cal L}^{*}$, the stable model semantics requires 
-    a normal logic program for computation. Therefore, a program $P$ of
-    language ${\cal L}$ must then be further translated into a normal logic
-    program first before any query evaluation or policy update can be
-    performed.
+      \subsubsection{Data Structures}
 
-    An extended logic program $P^{*}$ in language ${\cal L}^{*}$ is translated
-    into a normal logic program by performing 2 additional steps:
+        As a program of language ${\cal L}$ is parsed, each statement
+        containing entity declarations, facts, constraint rules and policy
+        updates must be stored in a buffer structure before the translation
+        process is started. This buffer structure is composed of the symbol
+        table, the policy base and the policy update sequence.
 
-    \begin{itemize}
-      \item
-        Removal of classical negation
-      \item
-        Representing facts in propositional form
-    \end{itemize}
+        [generic list structure]
 
-    The removal of classical negation from facts of language ${\cal L}$ is a
-    straightforward procedure: each classically negated fact $\lnot$ $f$ is
-    replaced by a new and unique positive fact $f'$ that represents the
-    negation of fact $f$. Then, the following constraint rule must be added to 
-    preserve the consistency of the policy base for all facts $f$ in the
-    domain.
+        \paragraph{Symbol Table.}
 
-    \begin{quote}
-      $FALSE$ $\leftarrow$ $f$, $f'$
-    \end{quote}
-
-    Semantically, an atom of language ${\cal L}^{*}$ is defined as a relational
-    binding of 2 to 3 entity identifiers and a state parameter. To translate
-    into a normal logic program, atoms of this first-order logic form must be
-    converted into propositional form, that is, an atom must be represented by
-    a single identity or symbol instead of a relation. Such translation is
-    achieved by the following functions:
-
-    \begin{itemize}
-      \item
-        $f^{NLP}$ = $Encode$($f^{\cal L}$)
-      \item
-        $f^{\cal L}$ = $Decode$($f^{NLP}$)
-    \end{itemize}
-
-    Our proposed translation method from language ${\cal L}$ to a normal logic
-    program relies mainly on the representation of atoms and facts in the
-    implementation. As we shall illustrate in the following sections, the
-    representation of atoms and facts plays a major role in both the removal of
-    classical negation and the translation to propositional form. However,
-    before showing the translation, the data structures used for storage must
-    first be defined.
-
-    \subsection{Data Structures}
-
-      As a program of language ${\cal L}$ is parsed, each statement containing
-      entity declarations, facts, constraint rules and policy updates must
-      be stored in a buffer structure before the translation process is
-      started. This buffer structure is composed of the symbol table and the
-      policy base.
-
-      \subsubsection{Symbol Table}
-
-        The symbol table is used to store the identifier entities defined in the
-        entity identifier declaration section of language ${\cal L}$ programs.
-        The symbol table is composed of 6 separate string lists:
-
-        \begin{quote}
-          \begin{tabular}[t]{|l|l|l|}
-            \hline
-            \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-            \hline
-            $ss$ & string list & single subject \\
-            \hline
-            $sg$ & string list & group subject \\
-            \hline
-            $as$ & string list & single access \\
-            \hline
-            $ag$ & string list & group access right \\
-            \hline
-            $os$ & string list & single object \\
-            \hline
-            $og$ & string list & group object \\
-            \hline
-          \end{tabular}
-        \end{quote}
- 
-        In addition to the above lists, the symbol table also defines 3
-        pseudo-lists that are concatenations of the above lists:
- 
-        \begin{quote}
-          \begin{tabular}[t]{|l|l|l|}
-            \hline
-            \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-            \hline
-            $s$ & string list & $ss$ $+$ $sg$ \\
-            \hline
-            $a$ & string list & $as$ $+$ $ag$ \\
-            \hline
-            $o$ & string list & $os$ $+$ $og$ \\
-            \hline
-          \end{tabular}
-        \end{quote}
-
-        Each entity identifier are sorted in the above lists accoring to their
-        type, and ordered accoring to the order in which they are declared in
-        the program. Each list is indexed by consecutive positive integers
-        starting from zero. Pseudo-lists are ordered in the same manner as the
-        other lists, with the single list elements starting at index 0, and
-        the group list elements offset by the length of the single list.
-
-      \subsubsection{Policy Base}
-
-        When a language ${\cal L}$ program is parsed, each of the facts, rules
-        and policy updates must be stored into the policy base before they can
-        be translated into language $\cal L^{*}$. The policy base is composed
-        of 4 tables to store the following: initial state facts, constraint
-        rules, policy update definitions and the policy update sequence.
-
-        \paragraph{Atoms.}
-          The three types of atoms are represented as structures of 2 to 3
-          strings, with each string matching an entity identifier in the
-          symbol table.
-
-          \subparagraph{Holds atom.}
-            \begin{quote}
-              \begin{tabular}[t]{|l|l|l|}
-                \hline
-                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-                \hline
-                $sub$ & string & subject entity identifier \\
-                \hline
-                $acc$ & string & access right entity identifier \\
-                \hline
-                $obj$ & string & object entity identifier \\
-                \hline
-              \end{tabular}
-            \end{quote}
-
-          \subparagraph{Member atom.}
-            \begin{quote}
-              \begin{tabular}[t]{|l|l|l|}
-                \hline
-                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-                \hline
-                $elt$ & string & single entity identifier \\
-                \hline
-                $grp$ & string & group entity identifier \\
-                \hline
-              \end{tabular}
-            \end{quote}
-
-          \subparagraph{Subset atom.}
-            \begin{quote}
-              \begin{tabular}[t]{|l|l|l|}
-                \hline
-                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-                \hline
-                $grp1$ & string & subgroup entity identifier \\
-                \hline
-                $grp2$ & string & supergroup entity identifier \\
-                \hline
-              \end{tabular}
-            \end{quote}
-
-        \paragraph{Facts.}
-          Facts are represented as a three-element structure composed of the
-          following: polymorphic type which can be any of the three atom
-          structures above; a type indicator to specify whether the fact is
-          holds, member or subset; and a truth flag, to indicate whether the
-          atom is classically negated or not ({\em true}, if the fact holds
-          and {\em false}, if the classical negation of the fact holds.
+          The symbol table is used to store the identifier entities defined in 
+          the entity identifier declaration section of language ${\cal L}$
+          programs. The symbol table is composed of 6 separate string lists:
 
           \begin{quote}
             \begin{tabular}[t]{|l|l|l|}
               \hline
               \textbf{Field} & \textbf{Type} & \textbf{Description} \\
               \hline
-              $atom$ & atom type & polymorphic structure \\
+              $ss$ & string list & single subject \\
               \hline
-              $type$ & \{h$|$m$|$s\} & holds, member or subset \\ 
+              $sg$ & string list & group subject \\
               \hline
-              $truth$ & boolean & negation indicator \\
+              $as$ & string list & single access \\
+              \hline
+              $ag$ & string list & group access right \\
+              \hline
+              $os$ & string list & single object \\
+              \hline
+              $og$ & string list & group object \\
               \hline
             \end{tabular}
           \end{quote}
  
-        \paragraph{Expressions.}
-          Since expressions are simply conjunctions of facts, they are
-          represented as a list of fact structures.
-
-        \paragraph{Initial State Facts Table.}
-          The initial state facts table is represented as a single list of
-          fact structures, or an expression. Each fact in all {\em initially}
-          statements are added into the initial state facts table.
+          In addition to the above lists, the symbol table also defines 3
+          pseudo-lists that are concatenations of the above lists:
  
-        \paragraph{Constraint Table.}
-          The constraint table is represented as a list of constraint
-          structures, with each structure composed of the following:
-
           \begin{quote}
             \begin{tabular}[t]{|l|l|l|}
               \hline
               \textbf{Field} & \textbf{Type} & \textbf{Description} \\
               \hline
-              $exp$ & expression type & consequent \\
+              $s$ & string list & $ss$ $+$ $sg$ \\
               \hline
-              $pcond$ & expression type & positive premise \\ 
+              $a$ & string list & $as$ $+$ $ag$ \\
               \hline
-              $ncond$ & expression type & negative premise \\
+              $o$ & string list & $os$ $+$ $og$ \\
               \hline
             \end{tabular}
           \end{quote}
- 
-        \paragraph{Policy Update Table.}
-          Another list of structures is the policy update table. Each element
-          structure of this table is composed of the following 4 fields:
 
-          \begin{quote}
-            \begin{tabular}[t]{|l|l|l|}
-              \hline
-              \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-              \hline
-              $name$ & string & update identifier \\
-              \hline
-              $vlist$ & ordered string list & variables \\
-              \hline
-              $pre$ & expression type & precondition \\
-              \hline
-              $post$ & expression type & postcondition \\
-              \hline
-            \end{tabular}
-          \end{quote}
+          Each entity identifier are sorted in the above lists accoring to
+          their type, and ordered accoring to the order in which they are
+          declared in the program. Each list is indexed by consecutive
+          positive integers starting from zero. Pseudo-lists are ordered in
+          the same manner as the other lists, with the single list elements
+          starting at index 0, and the group list elements offset by the
+          length of the single list.
+
+        \paragraph{Policy Base.}
+
+          When a language ${\cal L}$ program is parsed, each of the facts,
+          rules and policy updates must be stored into the policy base before
+          they can be translated into language $\cal L^{*}$. The policy base is
+          composed of 4 tables to store the following: initial state facts,
+          constraint rules, policy update definitions and the policy update
+          sequence.
+
+          \subparagraph{Atoms.}
+
+            The three types of atoms are represented as structures of 2 to 3
+            strings, with each string matching an entity identifier in the
+            symbol table.
+
+            \begin{itemize}
+              \item
+                Holds \\
+                \begin{tabular}[t]{|l|l|l|}
+                  \hline
+                  \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                  \hline
+                  $sub$ & string & subject entity identifier \\
+                  \hline
+                  $acc$ & string & access right entity identifier \\
+                  \hline
+                  $obj$ & string & object entity identifier \\
+                  \hline
+                \end{tabular}
+
+              \item
+                Member \\
+                \begin{tabular}[t]{|l|l|l|}
+                  \hline
+                  \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                  \hline
+                  $elt$ & string & single entity identifier \\
+                  \hline
+                  $grp$ & string & group entity identifier \\
+                  \hline
+                \end{tabular}
+
+              \item
+                Subset \\
+                \begin{tabular}[t]{|l|l|l|}
+                  \hline
+                  \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                  \hline
+                  $grp1$ & string & subgroup entity identifier \\
+                  \hline
+                  $grp2$ & string & supergroup entity identifier \\
+                  \hline
+                \end{tabular}
+              \end{itemize}
+
+          \subparagraph{Facts.}
+
+            Facts are represented as a three-element structure composed of the
+            following: polymorphic type which can be any of the three atom
+            structures above; a type indicator to specify whether the fact is
+            holds, member or subset; and a truth flag, to indicate whether the
+            atom is classically negated or not ({\em true}, if the fact holds
+            and {\em false}, if the classical negation of the fact holds.
+
+            \begin{quote}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                \hline
+                $atom$ & atom type & polymorphic structure \\
+                \hline
+                $type$ & \{h$|$m$|$s\} & holds, member or subset \\ 
+                \hline
+                $truth$ & boolean & negation indicator \\
+                \hline
+              \end{tabular}
+            \end{quote}
+ 
+          \subparagraph{Expressions.}
+
+            Since expressions are simply conjunctions of facts, they are
+            represented as a list of fact structures.
+
+          \subparagraph{Initial state facts table.}
+
+            The initial state facts table is represented as a single list of
+            fact structures, or an expression. Each fact in all {\em initially}
+            statements are added into the initial state facts table.
+ 
+          \subparagraph{Constraint table.}
+
+            The constraint table is represented as a list of constraint
+            structures, with each structure composed of the following:
+
+            \begin{quote}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                \hline
+                $exp$ & expression type & consequent \\
+                \hline
+                $pcond$ & expression type & positive premise \\ 
+                \hline
+                $ncond$ & expression type & negative premise \\
+                \hline
+              \end{tabular}
+            \end{quote}
+ 
+          \subparagraph{Policy update definition table.}
+
+            Another list of structures is the policy update table. Each element
+            structure of this table is composed of the following 4 fields:
+
+            \begin{quote}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                \hline
+                $name$ & string & update identifier \\
+                \hline
+                $vlist$ & ordered string list & variables \\
+                \hline
+                $pre$ & expression type & precondition \\
+                \hline
+                $post$ & expression type & postcondition \\
+                \hline
+              \end{tabular}
+            \end{quote}
  
         \paragraph{Policy Update Sequence Table.}
  
@@ -1585,159 +1545,167 @@ query holds(alice, read, file);
             \end{tabular}
           \end{quote}
 
-    \subsection{Translation to Normal Logic Program}
+      \subsubsection{Parser}
 
-      \subsubsection{Grounding of Constraint Variables}
+    \subsection{Algorithms}
 
-      \subsubsection{Representing Facts in Propositional Form}
+      \subsubsection{Grounding Constraint Variables}
 
-        The next step in the translation of language ${\cal L}$ to a normal
-        logic program is to represent each fact in propositional form.
+      \subsubsection{Policy Updates}
 
-        Given the symbol table $st$, we first enumerate all facts defined
-        in the policy base:
+      \subsubsection{Translation to Normal Logic Program}
 
-        \paragraph{Holds}
-          \noindent
+        \paragraph{Representing Facts in Propositional Form.}
 
-          \begin{tabular}[t]{|l|l|l|}
-            \hline
-            $st.s[0]$ & $st.a[0]$ & $st.o[0]$ \\
-            \hline
-            ... & ... & ... \\
-            \hline
-            $st.s[0]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
-            \hline
-             ... & ... & ... \\
-            \hline
-            $st.s[0]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
-            \hline
-            ... & ... & ... \\
-            \hline
-            $st.s[0]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
-            \hline
-            ... & ... & ... \\
-            \hline
-            $st.s[len(st.s)]$ & $st.a[0]$ & $st.o[0]$ \\
-            \hline
-            ... & ... & ... \\
-            \hline
-            $st.s[len(st.s)]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
-            \hline
-            ... & ... & ... \\
-            \hline
-            $st.s[len(st.s)]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
-            \hline
-            ... & ... & ... \\
-            \hline
-            $st.s[len(st.s)]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
-            \hline
-          \end{tabular}
+          The next step in the translation of language ${\cal L}$ to a normal
+          logic program is to represent each fact in propositional form.
 
-        \paragraph{Member}
-          \noindent
+          Given the symbol table $st$, we first enumerate all facts defined
+          in the policy base:
 
-          \begin{tabular}[t]{|l|l|}
-            \hline
-            % subject
-            $st.ss[0]$ & $st.sg[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.ss[0]$ & $st.sg[len(st.sg)]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.ss[len(st.ss)]$ & $st.sg[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.ss[len(st.ss)]$ & $st.sg[len(st.sg)]$ \\
-            \hline
-            % access right
-            $st.as[0]$ & $st.ag[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.as[0]$ & $st.ag[len(st.ag)]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.as[len(st.as)]$ & $st.ag[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.as[len(st.as)]$ & $st.ag[len(st.ag)]$ \\
-            \hline
-            % object
-            $st.os[0]$ & $st.og[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.os[0]$ & $st.og[len(st.og)]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.os[len(st.os)]$ & $st.og[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.os[len(st.os)]$ & $st.og[len(st.og)]$ \\
-            \hline
-          \end{tabular}
+          \begin{itemize}
+            \item 
+              Holds \\
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                $st.s[0]$ & $st.a[0]$ & $st.o[0]$ \\
+                \hline
+                ... & ... & ... \\
+                \hline
+                $st.s[0]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
+                \hline
+                 ... & ... & ... \\
+                \hline
+                $st.s[0]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
+                \hline
+                ... & ... & ... \\
+                \hline
+                $st.s[0]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
+                \hline
+                ... & ... & ... \\
+                \hline
+                $st.s[len(st.s)]$ & $st.a[0]$ & $st.o[0]$ \\
+                \hline
+                ... & ... & ... \\
+                \hline
+                $st.s[len(st.s)]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
+                \hline
+                ... & ... & ... \\
+                \hline
+                $st.s[len(st.s)]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
+                \hline
+                ... & ... & ... \\
+                \hline
+                $st.s[len(st.s)]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
+                \hline
+              \end{tabular}
+            \item
+              Member \\
+              \begin{tabular}[t]{|l|l|}
+                \hline
+                % subject
+                $st.ss[0]$ & $st.sg[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.ss[0]$ & $st.sg[len(st.sg)]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.ss[len(st.ss)]$ & $st.sg[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.ss[len(st.ss)]$ & $st.sg[len(st.sg)]$ \\
+                \hline
+                % access right
+                $st.as[0]$ & $st.ag[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.as[0]$ & $st.ag[len(st.ag)]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.as[len(st.as)]$ & $st.ag[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.as[len(st.as)]$ & $st.ag[len(st.ag)]$ \\
+                \hline
+                % object
+                $st.os[0]$ & $st.og[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.os[0]$ & $st.og[len(st.og)]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.os[len(st.os)]$ & $st.og[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.os[len(st.os)]$ & $st.og[len(st.og)]$ \\
+                \hline
+              \end{tabular}
+            \item
+              Subset \\
+              \begin{tabular}[t]{|l|l|}
+                \hline
+                % subject
+                $st.sg[0]$ & $st.sg[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.sg[0]$ & $st.sg[len(st.sg)]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.sg[len(st.sg)]$ & $st.sg[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.sg[len(st.sg)]$ & $st.sg[len(st.sg)]$ \\
+                \hline
+                % access right
+                $st.ag[0]$ & $st.ag[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.ag[0]$ & $st.ag[len(st.ag)]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.ag[len(st.ag)]$ & $st.ag[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.ag[len(st.ag)]$ & $st.ag[len(st.ag)]$ \\
+                \hline
+                % object
+                $st.og[0]$ & $st.og[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.og[0]$ & $st.og[len(st.og)]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.og[len(st.og)]$ & $st.og[0]$ \\
+                \hline
+                ... & ... \\
+                \hline
+                $st.og[len(st.og)]$ & $st.og[len(st.og)]$ \\
+                \hline
+              \end{tabular}
+            \end{itemize}
 
-        \paragraph{Subset}
-          \noindent
+        \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
-          \begin{tabular}[t]{|l|l|}
-            \hline
-            % subject
-            $st.sg[0]$ & $st.sg[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.sg[0]$ & $st.sg[len(st.sg)]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.sg[len(st.sg)]$ & $st.sg[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.sg[len(st.sg)]$ & $st.sg[len(st.sg)]$ \\
-            \hline
-            % access right
-            $st.ag[0]$ & $st.ag[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.ag[0]$ & $st.ag[len(st.ag)]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.ag[len(st.ag)]$ & $st.ag[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.ag[len(st.ag)]$ & $st.ag[len(st.ag)]$ \\
-            \hline
-            % object
-            $st.og[0]$ & $st.og[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.og[0]$ & $st.og[len(st.og)]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.og[len(st.og)]$ & $st.og[0]$ \\
-            \hline
-            ... & ... \\
-            \hline
-            $st.og[len(st.og)]$ & $st.og[len(st.og)]$ \\
-            \hline
-          \end{tabular}
+      \subsubsection{Query Evaluation}
 
+    \subsection{Performance Analysis}
 
   \section{A Case Study: Web Server Application}
 
