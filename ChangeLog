@@ -1,5 +1,11 @@
 2005-04-06  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* VERSION :
+	* configure :
+	* configure.ac :
+
+	  - Incremented version to 1.0.3.
+
 	* lib/kb.cpp :
 
 	  - compute_generate() now dumps normal logic program in a
