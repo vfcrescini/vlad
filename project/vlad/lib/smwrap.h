@@ -28,15 +28,20 @@ class smwrap
     /* add an axiom (always true or always false) */
     int add_axiom(bool a_tr, unsigned int a_count, ...);
     /* add rule: variable argument list */
-    int add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int a_head, ...);
+    int add_rule(unsigned int a_pcount,
+                 unsigned int a_ncount,
+                 unsigned int a_head,
+                 ...);
     /* add rule: numberlist */
-    int add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbody);
+    int add_rule(unsigned int a_head,
+                 numberlist *a_pbody,
+                 numberlist *a_nbody);
     /* give T or F depending on whether atom is in ALL models or not */
     int ask(unsigned int a_atom, bool *a_res);
   private :
-    Smodels *pr_smod;
-    Api *pr_api;
-    int pr_stage;
+    Smodels *m_smod;
+    Api *m_api;
+    int m_stage;
 } ;
 
 #endif
