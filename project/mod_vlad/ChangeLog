@@ -1,6 +1,13 @@
 2003-07-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* proc.c :
+	* util.c :
+	* util.h :
+
+	  - Added a message id (random number) in every pipe message for
+	    concurrency testing.
+
+	* proc.c :
 
 	  - Added error pipe messages.
 

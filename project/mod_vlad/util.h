@@ -44,4 +44,7 @@ int modvlad_parse_args(apr_pool_t *a_p,
 /* gets the document root without request_rec */
 const char *modvlad_docroot(apr_pool_t *a_p, server_rec *a_s);
 
+/* generates a random id between 0 and MODVLAD_MAXID */
+unsigned int modvlad_idgen();
+
 #endif

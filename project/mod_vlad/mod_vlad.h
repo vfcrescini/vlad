@@ -29,6 +29,7 @@
 #define MODVLAD_MUTEX_PATH      "/tmp/mod_vlad.lock"
 
 #define MODVLAD_MAXSTR_LEN      5120
+#define MODVLAD_MAXID           999999
 
 /* access-rights (http methods) */
 #define MODVLAD_ACCESS_OPTIONS  "OPTIONS"
@@ -66,6 +67,8 @@
 #define MODVLAD_INVALIDINPUT    -4
 /* buffer capacity exceeded */
 #define MODVLAD_BUFFEROVERFLOW  -5
+/* message received/sent is out of sequence */
+#define MODVLAD_OUTOFSEQ        -6
 
 /* convenience marcos */
 #define MODVLAD_LASTCHAR(X)     (X[strlen(X) > 0 ? strlen(X) - 1 : 0])

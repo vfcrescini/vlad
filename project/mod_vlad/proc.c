@@ -332,6 +332,7 @@ int modvlad_client_query(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_sub || !a_acc || !a_obj || !a_res)
     return MODVLAD_NULLPTR;
@@ -339,7 +340,7 @@ int modvlad_client_query(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "Q");
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, a_sub);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, a_acc);
@@ -347,6 +348,9 @@ int modvlad_client_query(apr_pool_t *a_p,
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "QR"))
     return MODVLAD_FAILURE;
@@ -371,6 +375,7 @@ int modvlad_client_trans_total(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_tot)
     return MODVLAD_NULLPTR;
@@ -378,11 +383,14 @@ int modvlad_client_trans_total(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "TT");
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "TTR"))
     return MODVLAD_FAILURE;
@@ -402,6 +410,7 @@ int modvlad_client_trans_get(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_name)
     return MODVLAD_NULLPTR;
@@ -409,12 +418,15 @@ int modvlad_client_trans_get(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "TG");
   *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", a_index);
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "TGR"))
     return MODVLAD_FAILURE;
@@ -433,6 +445,7 @@ int modvlad_client_ident_total(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_tot)
     return MODVLAD_NULLPTR;
@@ -440,11 +453,14 @@ int modvlad_client_ident_total(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "IT");
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "ITR"))
     return MODVLAD_FAILURE;
@@ -463,6 +479,7 @@ int modvlad_client_ident_get(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_name)
     return MODVLAD_NULLPTR;
@@ -470,12 +487,15 @@ int modvlad_client_ident_get(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "IG");
   *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", a_index);
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "IGR"))
     return MODVLAD_FAILURE;
@@ -493,6 +513,7 @@ int modvlad_client_seq_total(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_tot)
     return MODVLAD_NULLPTR;
@@ -500,11 +521,14 @@ int modvlad_client_seq_total(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "ST");
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "STR"))
     return MODVLAD_FAILURE;
@@ -523,6 +547,7 @@ int modvlad_client_seq_get(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_name)
     return MODVLAD_NULLPTR;
@@ -530,12 +555,15 @@ int modvlad_client_seq_get(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "SG");
   *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", a_index);
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "SGR"))
     return MODVLAD_FAILURE;
@@ -554,6 +582,7 @@ int modvlad_client_seq_add(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_name || !a_parms)
     return MODVLAD_NULLPTR;
@@ -561,7 +590,7 @@ int modvlad_client_seq_add(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "SA");
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, a_name);
   *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", a_parms->nelts);
@@ -570,6 +599,9 @@ int modvlad_client_seq_add(apr_pool_t *a_p,
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "SAR"))
     return MODVLAD_FAILURE;
@@ -585,6 +617,7 @@ int modvlad_client_seq_del(apr_pool_t *a_p,
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
+  unsigned int id = modvlad_idgen();
 
   if (!a_p || !a_fdin || !a_fdout || !a_mx)
     return MODVLAD_NULLPTR;
@@ -592,12 +625,15 @@ int modvlad_client_seq_del(apr_pool_t *a_p,
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
   arr_in = apr_array_make(a_p, 1, sizeof(char *));
 
-  *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "69");
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "SD");
   *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", a_index);
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (id != atoi((((char **)arr_in->elts)[0])))
+    return MODVLAD_OUTOFSEQ;
 
   if (strcmp(((char **)arr_in->elts)[1], "SDR"))
     return MODVLAD_FAILURE;
