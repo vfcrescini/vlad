@@ -156,6 +156,8 @@ int modvlad_add_object(void *a_kb, const char *a_path, apr_pool_t *a_p)
   apr_dir_open(&tmpdir, a_path, a_p);
 
   while (apr_dir_read(&finfo, APR_FINFO_NAME, tmpdir) == APR_SUCCESS) {
+    if (!strcmp(".", finfo.name) || !strcmp("..", finfo.name))
+      continue;
     fprintf(stderr, "XXX %s\n", finfo.name);
   }
 
