@@ -10,16 +10,16 @@
 
 int policyerror(char *errmsg);
 int policylex();
+
+#ifdef YYBYACC
+int policyparse();
+#endif
 %}
 
 %union {
   unsigned int tok;
   char ident[128];
 }
-
-#ifdef YYBYACC
-int policyparse();
-#endif
 
 %token <tok> MODVLAD_SYM_EOF
 %token <tok> MODVLAD_SYM_ERROR
