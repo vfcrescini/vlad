@@ -14,14 +14,17 @@
 #include "apr_strings.h"
 #include "apr_md5.h"
 
-#include <unistd.h>
-
 #include <vlad/vlad.h>
 #include <vlad/wrapper.h>
 
 #include "mod_vlad.h"
 #include "util.h"
 #include "admin.h"
+
+/* including unistd.h causes compiler warnings so we explicitly declare here */
+#ifndef _UNISTD_H
+extern int getppid();
+#endif
 
 /* some static functions */
 static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s);
