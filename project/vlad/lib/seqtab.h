@@ -18,7 +18,7 @@ class transref : public list_item
     bool cmp(list_item *item);
     int init(const char *n, stringlist *il);
     int get(char **n, stringlist **il);
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     void print(char *s);
 #endif
   private :
@@ -40,7 +40,7 @@ class seqtab : public list
      int del(unsigned int i);
      /* get i'th name and ilist */
      int get(unsigned int i, char **n, stringlist **il);
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     void print(char *s);
 #endif
 } ;

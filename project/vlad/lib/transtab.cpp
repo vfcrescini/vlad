@@ -8,7 +8,6 @@
 #include <cstring>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/transtab.h>
 

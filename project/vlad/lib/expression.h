@@ -24,7 +24,7 @@ class expression : public list
     int get(unsigned int i, atom **a);
     /* replace vars in vlist to ident in ilist. create a new expression */
     int replace(stringlist *vlist, stringlist *ilist, expression **e);
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *s);
 #endif

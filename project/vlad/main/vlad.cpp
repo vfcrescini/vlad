@@ -10,14 +10,13 @@
 
 #include <getopt.h>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include "parser.h"
 
 int main(int argc, char *argv[])
 {
   int retval;
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
   char *arglist = "vhe";
   char *helpstring = "-v|-h|[-e] program-filename [operation-filename]";
 #else
@@ -35,12 +34,12 @@ int main(int argc, char *argv[])
   while ((curr_opt = getopt(argc, argv, arglist)) != -1) {
     switch(curr_opt) {
       case 'v' :
-        fprintf(stdout, "vLad %s\n", VERSION);
+        fprintf(stdout, "vLad %s\n", VLAD_VERSION);
         return VLAD_OK;
       case 'h' :
         fprintf(stdout, "usage: %s %s\n", argv[0], helpstring);
         return VLAD_OK;;
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
       case 'e' :
 	mode = VLAD_MODE_EVALUATE;
 	break;

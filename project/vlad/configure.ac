@@ -2,7 +2,7 @@
 
 AC_INIT(vlad,0.9.3,jcrescin@cit.uws.edu.au)
 
-AC_CONFIG_HEADERS(config.h)
+AC_CONFIG_HEADERS(lib/config.h)
 
 # set language
 AC_LANG(C++)
@@ -14,8 +14,8 @@ CXXFLAGS="$CXXFLAGS"
 # set flags
 VLAD_C_WFLG="-Wall -Wshadow -Wcast-align -Wnested-externs -Wstrict-prototypes"
 VLAD_C_OFLG="-ansi -pedantic"
-VLAD_CFLAGS="$VLAD_C_OFLG $VLAD_C_WFLG -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
-VLAD_CXXFLAGS="$VLAD_C_OFLG $VLAD_C_WFLG -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
+VLAD_CFLAGS="$VLAD_C_OFLG $VLAD_C_WFLG -I\$(DISTDIR)/include"
+VLAD_CXXFLAGS="$VLAD_C_OFLG $VLAD_C_WFLG -I\$(DISTDIR)/include"
 VLAD_LDFLAGS="-L\$(DISTDIR)/lib"
 
 # some tests
@@ -83,7 +83,7 @@ fi
 AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & compile with -g (default is disabled)]))
 
 if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
-  AC_DEFINE(DEBUG,[yes])
+  AC_DEFINE(VLAD_DEBUG,[yes])
   AC_SUBST(DEBUG,[yes])
   VLAD_CFLAGS="-g $VLAD_CFLAGS"
   VLAD_CXXFLAGS="-g $VLAD_CXXFLAGS"
@@ -103,7 +103,7 @@ fi
 AC_ARG_ENABLE(wrapper,AC_HELP_STRING([--enable-wrapper],[enable C-interface wrapper (default is disabled)]))
 
 if test "x$enable_wrapper" != "x" && test "x$enable_wrapper" != "xno"; then
-  AC_DEFINE(WRAPPER,[yes])
+  AC_DEFINE(VLAD_WRAPPER,[yes])
   AC_SUBST(WRAPPER,[yes])
 fi
 
@@ -111,7 +111,7 @@ fi
 AC_ARG_WITH(smodels, AC_HELP_STRING([--with-smodels],[enable smodels support: yes or path to smodels source tree (default is no)]))
 
 if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
-  AC_DEFINE(SMODELS,[yes])
+  AC_DEFINE(VLAD_SMODELS,[yes])
   AC_SUBST(SMODELS,[yes])
   if test "x$with_smodels" = "xyes"; then
     AC_MSG_CHECKING([if smodels is installed and usable])
@@ -168,7 +168,7 @@ CFLAGS="$VLAD_CFLAGS $CFLAGS"
 CXXFLAGS="$VLAD_CXXFLAGS $CXXFLAGS"
 LDFLAGS="$VLAD_LDFLAGS $LDFLAGS"
 
-AC_DEFINE_UNQUOTED(VERSION,"$PACKAGE_VERSION")
+AC_DEFINE_UNQUOTED(VLAD_VERSION,"$PACKAGE_VERSION")
 AC_SUBST(VERSION,"$PACKAGE_VERSION")
 AC_SUBST(DISTDIR,"\$(TOPSRCDIR)/dist")
 

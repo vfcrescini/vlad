@@ -9,7 +9,6 @@
 #include <cstdio>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
 
@@ -25,7 +24,7 @@ static unsigned char mode = VLAD_MODE_GENERATE;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
 static unsigned int cnt_operation = 0;
 #endif
 
@@ -114,10 +113,10 @@ statement :
 query_stmt :
   VLAD_SYM_QUERY expression VLAD_SYM_SEMICOLON {
     int retval;
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
     unsigned char res;
 #endif
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     char q[VLAD_MAXLEN_STR];
 #endif
 
@@ -137,7 +136,7 @@ query_stmt :
       }
       break;
     }
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
     case VLAD_MODE_EVALUATE : {
       switch(retval = kbase->query_evaluate($2, &res)) {
         case VLAD_OK :
@@ -161,7 +160,7 @@ query_stmt :
       return VLAD_FAILURE;
   }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     $2->print(q);
 
     fprintf(ferr, "query[%d]:\n", cnt_operation++);
@@ -187,7 +186,7 @@ compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
             return retval;
         }
         break;
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
       case VLAD_MODE_EVALUATE :
         switch(retval = kbase->compute_evaluate()) {
           case VLAD_OK :

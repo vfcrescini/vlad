@@ -8,7 +8,6 @@
 #include <cstring>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/atom.h>
 
@@ -370,7 +369,7 @@ void atom::negate()
   truth = truth ? false : true;
 }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
 /* assuming s has enough memory allocation */
 void atom::print(char *s)
 {

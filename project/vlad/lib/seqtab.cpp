@@ -8,7 +8,6 @@
 #include <cstring>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/seqtab.h>
 
@@ -77,7 +76,7 @@ int transref::get(char **n, stringlist **il)
   return VLAD_OK;
 }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
 void transref::print(char *s)
 {
   char tmps[VLAD_MAXLEN_STR];
@@ -147,7 +146,7 @@ int seqtab::get(unsigned int i, char **n, stringlist **il)
   return tmp_ref->get(n, il);
 }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
 void seqtab::print(char *s)
 {
   unsigned int i;

@@ -146,7 +146,12 @@ ifdef BINS
 endif
 
 clean :
-	$(RM) $(OBJECTS) $(TEMP)
+ifdef OBJECTS
+	$(RM) $(OBJECTS)
+endif
+ifdef TEMPS1
+	$(RM) $(TEMPS1)
+endif
 
 distclean : clean
 	$(RM) $(STATIC_LIBS) $(SHARED_LIBS) $(BINS) Makefile
@@ -169,4 +174,7 @@ ifdef BINS
 	@for i in $(BINS); do                                                  \
 	$(RM) $(DISTDIR)/bin/$$i;                                              \
 	done
+endif
+ifdef TEMPS2
+	$(RM) $(TEMPS2)
 endif

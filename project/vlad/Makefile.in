@@ -28,4 +28,4 @@ distclean :
 	@set -e && for i in $(DIRS); do \
 	$(MAKE) -C $$i distclean;       \
 	done
-	$(RM) -r $(DISTDIR) Makefile config.h config.status config.log autom4te.cache
+	$(RM) -r $(DISTDIR) Makefile config.status config.log autom4te.cache

@@ -3,8 +3,8 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#ifndef __VLAD_WRAPPER_H
-#define __VLAD_WRAPPER_H
+#ifndef __VLAD_VLAD_WRAPPER_H
+#define __VLAD_VLAD_WRAPPER_H
 
 #ifdef __cplusplus
 #include <cstdio>

@@ -1,3 +1,43 @@
+2003-06-20  vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Makefile.in :
+	* configure :
+	* configure.ac :
+	* rules.mk :
+	* lib/Makefile.in :
+	* lib/atom.cpp :
+	* lib/atom.h :
+	* lib/consttab.cpp :
+	* lib/expression.cpp :
+	* lib/expression.h :
+	* lib/kb.cpp :
+	* lib/kb.h :
+	* lib/list.cpp :
+	* lib/numberlist.cpp :
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+	* lib/smwrap.cpp :
+	* lib/stringlist.cpp :
+	* lib/stringlist.h :
+	* lib/symtab.cpp :
+	* lib/transtab.cpp :
+	* lib/vlad.h :
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+	* main/Makefile.in :
+	* main/operation.l :
+	* main/operation.y :
+	* main/program.l :
+	* main/program.y :
+	* main/vlad.cpp :
+	* lib/config.h.in :
+	* config.h.in :
+
+	  - Build system fixup.
+
+	  - config.h is now in the lib directory to allow it to be included in
+	    the installation.
+
 2003-06-18  vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/wrapper.h :

@@ -8,11 +8,10 @@
 #include <cstring>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
 #include <vlad/numberlist.h>
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
   #include <vlad/smwrap.h>
 #endif
 
@@ -23,7 +22,7 @@ kb::kb()
   ctable = NULL;
   ttable = NULL;
   setable = NULL;
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
   smobject = NULL;
 #endif
   stage = 0;
@@ -56,7 +55,7 @@ kb::~kb()
   if (setable != NULL)
     delete setable;
 
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
   if (smobject != NULL)
     delete smobject;
 #endif
@@ -105,7 +104,7 @@ int kb::init()
   if ((setable = VLAD_NEW(seqtab())) == NULL)
     return VLAD_MALLOCFAILED;
 
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
   /* smodels smwrap */
   if (smobject != NULL)
     delete smobject;
@@ -987,7 +986,7 @@ int kb::compute_generate(FILE *f)
   return VLAD_OK;
 }
 
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
 /* prepares the kb for queries */
 int kb::compute_evaluate()
 {
@@ -1460,7 +1459,7 @@ int kb::compute_evaluate()
 }
 #endif
 
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
 /* use smwrap class to evaluate a query */
 int kb::query_evaluate(expression *e, unsigned char *r)
 {

@@ -10,7 +10,6 @@
 #include <cstdarg>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/smwrap.h>
 
@@ -89,7 +88,7 @@ int smwrap::close_rule()
 
   pr_api->done();
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
   pr_smod->program.print();
 #endif
 
@@ -98,7 +97,7 @@ int smwrap::close_rule()
   if (!pr_smod->model())
     return VLAD_NOMODEL;
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     pr_smod->printAnswer();
 #endif
 
