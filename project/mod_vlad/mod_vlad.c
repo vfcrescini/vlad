@@ -15,9 +15,11 @@
 #include "apr_md5.h"
 
 #include <unistd.h>
+
 #include <vlad/vlad.h>
 #include <vlad/wrapper.h>
 
+#include "mod_vlad.h"
 #include "util.h"
 #include "admin.h"
 
@@ -88,13 +90,11 @@ static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
 {
   modvlad_config_rec *conf = NULL;
 
-#ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
+                APLOG_INFO,
                 0,
                 a_p,
-                "modvlad_create_dir_config");
-#endif
+                "modvlad: create config");
 
   if ((conf = (modvlad_config_rec *) apr_palloc(a_p, sizeof(*conf)))) {
     conf->user_file = NULL;
@@ -586,13 +586,11 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
 
 static void modvlad_register_hooks(apr_pool_t *a_p)
 {
-#ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
+                APLOG_INFO,
                 0,
                 a_p,
-                "modvlad_register_hooks");
-#endif
+                "modvlad: register hooks");
 
   ap_hook_handler(modvlad_handler, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_access_checker(modvlad_access, NULL, NULL, APR_HOOK_FIRST);

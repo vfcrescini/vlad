@@ -6,7 +6,9 @@
 #ifndef __MODVLAD_ADMIN_H
 #define __MODVLAD_ADMIN_H
 
-#include "util.h"
+#include "httpd.h"
+
+#include "mod_vlad.h"
 
 void modvlad_generate_header(request_rec *a_r);
 void modvlad_generate_footer(request_rec *a_r);

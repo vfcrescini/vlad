@@ -1,5 +1,20 @@
 2003-07-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Makefile.in :
+
+	  - Fixed dependencies.
+
+	* admin.c :
+	* admin.h :
+	* mod_vlad.c :
+	* mod_vlad.h :
+	* util.c :
+	* util.h :
+
+	  - Moved macros and config_rec to mod_vlad.h.
+
+	  - Little cleanup.
+
 	* mod_vlad.c :
 	* policy.l :
 	* util.c :

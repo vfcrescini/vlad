@@ -30,13 +30,13 @@ ifndef DEBUG
   endif
 endif
 
-mod_vlad.o : mod_vlad.c
-	$(CC) $(CFLAGS) -fPIC -c -o $(@) $(^)
+mod_vlad.o : util.h admin.h mod_vlad.h mod_vlad.c
+	$(CC) $(CFLAGS) -fPIC -c -o $(@) mod_vlad.c
 
-util.o : util.h util.c
+util.o : mod_vlad.h util.h util.c
 	$(CC) $(CFLAGS) -o $(@) -c util.c
 
-admin.o : util.h admin.h admin.c
+admin.o : mod_vlad.h admin.h admin.c
 	$(CC) $(CFLAGS) -o $(@) -c admin.c
 
 policy_p.o : policy.tab.h policy.tab.c

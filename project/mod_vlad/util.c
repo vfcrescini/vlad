@@ -18,6 +18,7 @@
 #include <vlad/wrapper.h>
 
 #include "util.h"
+#include "mod_vlad.h"
 
 /* some external functions from the parser & lexer */
 extern void policyparse();
@@ -218,14 +219,12 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
     user = ap_getword(a_p, &lineptr, ':');
 
     /* now that we have the user, we can then add it to the kb */
-#ifdef MODVLAD_DEBUG
     ap_log_perror(APLOG_MARK,
-                  MODVLAD_LOGLEVEL,
+                  APLOG_NOTICE,
                   0,
                   a_p,
                   "mod_vlad: adding subject %s into kb",
                   user);
-#endif
 
     /* do not add administrator */
     if (!strcmp(user, MODVLAD_ADMIN_USERNAME))
@@ -260,14 +259,12 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
 
   while((access = *(array_ptr++)) != NULL) {
 
-#ifdef MODVLAD_DEBUG
     ap_log_perror(APLOG_MARK,
-                  MODVLAD_LOGLEVEL,
+                  APLOG_NOTICE,
                   0,
                   a_p,
                   "mod_vlad: adding access-right %s into kb",
                   access);
-#endif
 
     retval = vlad_kb_add_symtab(a_kb, access, VLAD_IDENT_ACCESS);
 
@@ -317,15 +314,13 @@ static int add_object(apr_pool_t *a_p,
   if (!strcmp(realrelpath, MODVLAD_ADMIN_DIRNAME))
     return 0;
 
-#ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
+                APLOG_NOTICE,
                 0,
                 a_p,
                 "mod_vlad: adding object from %s as %s into kb",
                 realfullpath,
                 realrelpath);
-#endif
 
   /* now open directory */
   if (apr_dir_open(&pdir, realfullpath, a_p) != APR_SUCCESS)

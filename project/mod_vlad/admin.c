@@ -3,14 +3,17 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#include "admin.h"
-
-#include "vlad/wrapper.h"
-
+#include "httpd.h"
 #include "http_log.h"
 #include "http_core.h"
 #include "http_protocol.h"
 #include "apr_strings.h"
+
+#include <vlad/wrapper.h>
+
+#include "mod_vlad.h"
+#include "util.h"
+#include "admin.h"
 
 void modvlad_generate_header(request_rec *a_r)
 {
