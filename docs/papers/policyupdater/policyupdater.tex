@@ -1365,7 +1365,7 @@
               are expressed as follows:
 
               \begin{vquote}
-                $\forall$($\hat{\alpha}$,$u$) $\exists$$\hat{\alpha}'$,
+                $\forall$ ($\hat{\alpha}$,$u$) $\exists$$\hat{\alpha}'$,
               \end{vquote}
 
               \begin{vquote}
@@ -1381,6 +1381,25 @@
                 $u$ $\in$ $\psi$,
                 $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
               \end{vquote}
+            \item
+              {\em Identity rules.}
+              Lastly, explicit rules must be given to show that every set is
+              a subset of itself.
+
+              \begin{vquote}
+                $\forall$ ($g$, $\sigma$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{subst}$($g$, $g$, $\sigma$)
+              \end{vquote}
+
+              \begin{vquote}
+                where
+
+                $g$ $\in$ (${\cal E}_{sg}$ $\cup$ ${\cal E}_{ag}$ $\cup$ ${\cal E}_{og}$),
+                $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+              \end{vquote}
           \end{itemize}
 
         \begin{vdefinition}
@@ -1389,8 +1408,8 @@
           ${\cal L^{*}}$ translation $Trans$(${\cal D_{L}}$) is an extended
           logic program of language ${\cal L}$ consisting of: (1) initial fact
           rules, (2) constraint rules, (3) policy update rules, (4) inheritance
-          rules, (5) transitivity rules, and (6) inertial rules, as described
-          above.
+          rules, (5) transitivity rules, (6) inertial rules, and (7) identity
+          rules as described above.
 
           The domain description ${\cal D_{L}}$ of language ${\cal L}$ is said
           to be {\em consistent} if and only if the translation
@@ -1430,13 +1449,17 @@
          \begin{vquote}
             $|$$Trans$(${\cal D_{L}}$)$|$ $\leq$
 
-            \hspace{1em}
             % initially
+            \hspace{1em}
             $M_{i}$ $|{\cal S}_{i}|$ $+$
+
             % constraints
-            $M_{c}$ $|{\cal S}_{c}|$ $|\psi|$ $+$
+            \hspace{1em}
+            $|\psi|$ $M_{c}$ $|{\cal S}_{c}|$ $+$
+
             % policy updates
-            $M_{u}$ $|\psi|$ $+$
+            \hspace{1em}
+            $|\psi|$ $M_{u}$ $+$
 
             % membership inheritance
             \hspace{1em}
@@ -1446,7 +1469,7 @@
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$ $+$
 
             % subset inheritance
             \hspace{1em}
@@ -1456,7 +1479,7 @@
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$ $+$
 
             % transitivity rules
             \hspace{1em}
@@ -1467,7 +1490,12 @@
 
             % inertial rules
             \hspace{1em}
-            $2$ $|{\cal A}|$ $|\psi|$ $+$
+            $2$ $|\psi|$ $|{\cal A}|$ $+$
+
+            % identity rules
+            \hspace{1em}
+            $|\psi|$
+            $($$|{\cal E}_{sg}|$ $+$ $|{\cal E}_{ag}|$ $+$ $|{\cal E}_{og}|$$)$
           \end{vquote}
         \end{vtheorem}
 
@@ -1479,26 +1507,27 @@
             $|$$Trans$(${\cal D_{L}}$)$|$ =
 
             \hspace{1em}
-            $|{\cal F}_{int}|$ $+$
-            $|{\cal F}_{con}|$ $+$
-            $|{\cal F}_{upd}|$ $+$
-            $|{\cal F}_{inh}|$ $+$
-            $|{\cal F}_{tra}|$ $+$
-            $|{\cal F}_{ine}|$
+            $|{\cal F}_{in}|$ $+$
+            $|{\cal F}_{co}|$ $+$
+            $|{\cal F}_{up}|$ $+$
+            $|{\cal F}_{ih}|$ $+$
+            $|{\cal F}_{tr}|$ $+$
+            $|{\cal F}_{ie}|$ $+$
+            $|{\cal F}_{id}|$
           \end{vquote}
 
-          where ${\cal F}_{int}$, ${\cal F}_{con}$, ${\cal F}_{upd}$,
-          ${\cal F}_{inh}$, ${\cal F}_{tra}$, ${\cal F}_{ine}$ are the sets of
-          initial fact rules, constraint rules, policy update rules,
-          inheritance rules, transitivity rules and inertial rules,
-          respectively.
+          where ${\cal F}_{in}$, ${\cal F}_{co}$, ${\cal F}_{up}$,
+          ${\cal F}_{ih}$, ${\cal F}_{tr}$, ${\cal F}_{ie}$, and
+          ${\cal F}_{id}$ are the sets of initial fact rules, constraint rules,
+          policy update rules, inheritance rules, transitivity rules,
+          inertial rules, and identity rules, respectively.
 
           As no $initially$ statement in ${\cal S}_{i}$ contain an expression
           with more than $M_{i}$ facts, the maximum number of initial fact
           rules generated in the translation is:
 
           \begin{vquote}
-            $|{\cal F}_{int}|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
+            $|{\cal F}_{in}|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
           \end{vquote}
 
           Each language ${\cal L}$ constraint statement in ${\cal S}_{c}$
@@ -1509,7 +1538,7 @@
           statement, we have:
 
           \begin{vquote}
-            $|{\cal F}_{con}|$ $\leq$ $M_{c}$ $|$${\cal S}_{c}$$|$ $|\psi|$
+            $|{\cal F}_{co}|$ $\leq$ $|\psi|$ $M_{c}$ $|$${\cal S}_{c}$$|$ 
           \end{vquote}
 
           For policy update statements, only those that are applied are
@@ -1518,7 +1547,7 @@
           applied policy update statement, we have:
 
           \begin{vquote}
-            $|{\cal F}_{con}|$ $\leq$ $M_{u}$ $|\psi|$
+            $|{\cal F}_{up}|$ $\leq$ $|\psi|$ $M_{u}$
           \end{vquote}
 
           The total number of inheritance rules generated in the translation is
@@ -1526,9 +1555,9 @@
           subset inheritance rules:
 
           \begin{vquote}
-            $|{\cal F}_{inh}|$ =
-            $|{\cal F}_{inh_{m}}|$ $+$
-            $|{\cal F}_{inh_{s}}|$
+            $|{\cal F}_{ih}|$ =
+            $|{\cal F}_{ih_{m}}|$ $+$
+            $|{\cal F}_{ih_{s}}|$
           \end{vquote}
 
           Since the membership inheritance rules show the relationships between
@@ -1536,7 +1565,7 @@
           number of states times 2 (for negative facts), we have:
 
           \begin{vquote}
-            $|{\cal F}_{inh_{m}}|$ =
+            $|{\cal F}_{ih_{m}}|$ =
 
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
@@ -1552,7 +1581,7 @@
           entities are considered:
 
           \begin{vquote}
-            $|{\cal F}_{inh_{s}}|$ =
+            $|{\cal F}_{ih_{s}}|$ =
 
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
@@ -1569,18 +1598,30 @@
           transitivity rules is shown below:
 
           \begin{vquote}
-            $|$${\cal F}_{tra}$$|$ =
+            $|$${\cal F}_{tr}$$|$ =
             $|\psi|$
             ($|{\cal E}_{sg}|^{3}$ $+$
             $|{\cal E}_{ag}|^{3}$ $+$
             $|{\cal E}_{og}|^{3}$)
           \end{vquote}
 
-          Finally, a single atom in language ${\cal L}$ corresponds to $n$
-          inertial rules in language ${\cal L}^{*}$, where $n$ is the number of
-          states times 2 (for negative facts). This means the total number of
-          inertial rules generated is $|{\cal F}_{ine}|$ = $2$ $|{\cal A}|$
-          $|\psi|$.
+          A single atom in language ${\cal L}$ corresponds to $n$ inertial
+          rules in language ${\cal L}^{*}$, where $n$ is the number of states
+          times 2 (for negative facts). This means the total number of
+          inertial rules generated is:
+
+          \begin{vquote}
+            $|{\cal F}_{ie}|$ = $2$ $|\psi|$ $|{\cal A}|$
+          \end{vquote}
+
+          Lastly, the total number of identity rules is equal to the total
+          number of group entities times the number of states:
+
+          \begin{vquote}
+            $|{\cal F}_{id}|$ =
+            $|\psi|$
+            $($$|{\cal E}_{sg}|$ $+$ $|{\cal E}_{ag}|$ $+$ $|{\cal E}_{og}|$$)$
+          \end{vquote}
         \end{vproof}
 
   \section{Domain Consistency Checking and Evaluation}
@@ -2923,6 +2964,22 @@
 
            \hspace{1em}
            $not$ $\hat{memb}(grp3, grp3, S_{1})$
+         \end{vquote}
+       \item
+         Identity Rules
+
+         \begin{vquote}
+           $\hat{subset}(grp1, grp1, S_{0})$ $\leftarrow$
+
+           $\hat{subset}(grp2, grp2, S_{0})$ $\leftarrow$
+
+           $\hat{subset}(grp3, grp3, S_{0})$ $\leftarrow$
+
+           $\hat{subset}(grp1, grp1, S_{1})$ $\leftarrow$
+
+           $\hat{subset}(grp2, grp2, S_{1})$ $\leftarrow$
+
+           $\hat{subset}(grp3, grp3, S_{1})$ $\leftarrow$
          \end{vquote}
      \end{enumerate}
 
