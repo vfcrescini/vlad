@@ -590,28 +590,28 @@ int add_identifier(const char *n, unsigned char t)
 #ifdef DEBUG
       switch (t) {
         case VLAD_IDENT_SUBJECT :
-          fprintf(yyerr, "declared subject identifier %s\n", n);
+          fprintf(yyerr, "declared identifier subject: %s\n", n);
           break;
         case VLAD_IDENT_ACCESS :
-          fprintf(yyerr, "declared access identifier %s\n", n);
+          fprintf(yyerr, "declared identifier access: %s\n", n);
           break;
         case VLAD_IDENT_OBJECT :
-          fprintf(yyerr, "declared object identifier %s\n", n);
+          fprintf(yyerr, "declared identifier object: %s\n", n);
           break;
         case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
-           fprintf(yyerr, "declared subject-group identifier %s\n", n);
+           fprintf(yyerr, "declared identifier subject-group: %s\n", n);
           break;
         case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP :
-           fprintf(yyerr, "declared access-group identifier %s\n", n);
+           fprintf(yyerr, "declared identifier access-group: %s\n", n);
           break;
         case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
-           fprintf(yyerr, "declared object-group identifier %s\n", n);
+           fprintf(yyerr, "declared identiifer object-group: %s\n", n);
           break;
       }
 #endif
       break;
     case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", n);
+      fprintf(yyerr, "already declared: identifier %s\n", n);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
