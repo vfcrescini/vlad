@@ -36,6 +36,8 @@ gzip_cmd="gzip -9"
 # prefix for each backup archive
 prefix="bak-"
 
+cd /
+
 # first and foremost, ensure that backup_dir is writable and readable
 if \
   [ ! -d "${backup_dir}" ] || \
@@ -46,12 +48,12 @@ fi
 
 # now do it
 for i in ${source_dirs}; do
+  # remove leading /
+  i="${i#/}"
   # ignore those that do not have sufficient priviledges
   if [ -d "${i}" ] && [ -r "${i}" ] && [ -x "${i}" ]; then
-    # remove leading /
-    srcdir="${i#/}"
     # convert / to _
-    name="${prefix}`echo ${srcdir} | tr [/] [_]`"
+    name="${prefix}`echo ${i} | tr [/] [_]`"
 
     # rotate the backups
     count=${backlog}
@@ -71,8 +73,15 @@ for i in ${source_dirs}; do
       count=$((${count}-1))
     done
 
+    # if the name is blank, then it must have been /, which is the curr dir
+    if [ -z "${i}" ]; then
+      srcdir="."
+    else
+      srcdir="${i}"
+    fi
+
     # now tar it up and compress
-    ${tar_cmd} "${i}" | ${gzip_cmd} > "${backup_dir}/${name}-0.tar.gz"
+    ${tar_cmd} "${srcdir}" | ${gzip_cmd} > "${backup_dir}/${name}-0.tar.gz"
   fi
 done
 
