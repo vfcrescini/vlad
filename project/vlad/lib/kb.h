@@ -31,8 +31,8 @@ class kb {
     /* after this is called, no further calls to add_inittab(), add_consttab()
      * or add_transtab() is allowed */
     int close_kb();
-    /* gives the length of the symtab */
-    int length_symtab(unsigned int *l);
+    /* returns the length of the symtab */
+    unsigned int length_symtab();
     /* gets the i'th identifier from symtab */
     int get_symtab(unsigned int i, char **s);
     /* checks whether n of type t is in symtab */
@@ -48,8 +48,8 @@ class kb {
                      stringlist *v,
                      expression *pr,
                      expression *po);
-    /* gives the length of the transformation table */
-    int length_transtab(unsigned int *l);
+    /* returns the length of the transformation table */
+    unsigned int length_transtab();
     /* gives the i'th entry in the transformation table */
     int get_transtab(unsigned int i,
                      char **n,
@@ -62,8 +62,8 @@ class kb {
     int del_seqtab(unsigned int i);
     /* enumerate the sequences in the sequence table, output to f */
     int list_seqtab(FILE *f);
-    /* gives the length of the sequence table */
-    int length_seqtab(unsigned int *l);
+    /* returns the length of the sequence table */
+    unsigned int length_seqtab();
     /* gives the i'th entry in the sequence table */
     int get_seqtab(unsigned int i, char **n, stringlist **il);
     /* generate the rules necessary to evaluate queries */

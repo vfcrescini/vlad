@@ -167,18 +167,13 @@ int kb::close_kb()
   return VLAD_OK;
 }
 
-/* gives the length of the symtab */
-int kb::length_symtab(unsigned int *l)
+/* returns the length of the symtab */
+unsigned int kb::length_symtab()
 {
   if (stage < 2)
-    return VLAD_INVALIDOP;
+    return 0;
 
-  if (l == NULL)
-    return VLAD_NULLPTR;
-
-  *l = stable->length();
-
-  return VLAD_OK;
+  return stable->length();
 }
 
 /* gets the i'th identifier from symtab */
@@ -386,18 +381,13 @@ int kb::add_transtab(const char *n,
   return ttable->add(name, vlist, precond, postcond);
 }
 
-/* gives the length of the transformation table */
-int kb::length_transtab(unsigned int *l)
+/* returns the length of the transformation table */
+unsigned int kb::length_transtab()
 {
-  if (l == NULL)
-    return VLAD_NULLPTR;
-
   if (stage < 2)
-    return VLAD_INVALIDOP;
+    return 0;
 
-  *l = ttable->length();
-
-  return VLAD_OK;
+  return ttable->length();
 }
 
 /* gives the i'th entry in the transformation table */
@@ -500,18 +490,13 @@ int kb::list_seqtab(FILE *f)
   return VLAD_OK;
 }
 
-/* gives the length of the sequence table */
-int kb::length_seqtab(unsigned int *l)
+/* returns the length of the sequence table */
+unsigned int kb::length_seqtab()
 {
-  if (l == NULL)
-    return VLAD_NULLPTR;
-
   if (stage < 2)
-    return VLAD_INVALIDOP;
+    return 0;
 
-  *l = setable->length();
-
-  return VLAD_OK;
+  return setable->length();
 }
 
 /* gives the i'th entry in the sequence table */

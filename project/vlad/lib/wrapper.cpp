@@ -90,18 +90,18 @@ VLAD_EXTERN int vlad_kb_close_kb(void *a_kb)
   return tmp_kb->close_kb();
 }
 
-/* gives the length of the symtab */
-VLAD_EXTERN int vlad_kb_length_symtab(void *a_kb, unsigned int *a_len)
+/* returns the length of the symtab */
+VLAD_EXTERN unsigned int vlad_kb_length_symtab(void *a_kb)
 {
   kb *tmp_kb = NULL;
 
   if (a_kb == NULL)
-    return VLAD_NULLPTR;
+    return 0;
 
   if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
-    return VLAD_INVALIDINPUT;
+    return 0;
 
-  return tmp_kb->length_symtab(a_len);
+  return tmp_kb->length_symtab();
 }
 
 /* gets the i'th identifier from symtab */
@@ -206,18 +206,18 @@ VLAD_EXTERN int vlad_kb_add_transtab(void *a_kb,
                               VLAD_WRAPPER_CAST(a_po, expression *));
 }
 
-/* gives the length of the transformation table */
-VLAD_EXTERN int vlad_kb_length_transtab(void *a_kb, unsigned int *a_len)
+/* returns the length of the transformation table */
+VLAD_EXTERN unsigned int vlad_kb_length_transtab(void *a_kb)
 {
   kb *tmp_kb = NULL;
 
   if (a_kb == NULL)
-    return VLAD_NULLPTR;
+    return 0;
 
   if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
-    return VLAD_INVALIDINPUT;
+    return 0;
 
-  return tmp_kb->length_transtab(a_len);
+  return tmp_kb->length_transtab();
 }
 
 /* gives the i'th entry in the transformation table */
@@ -298,17 +298,18 @@ VLAD_EXTERN int vlad_kb_list_seqtab(void *a_kb, FILE *a_fs)
   return tmp_kb->list_seqtab(a_fs);
 }
 
-VLAD_EXTERN int vlad_kb_length_seqtab(void *a_kb, unsigned int *a_len)
+/* returns the length of the sequence table */
+VLAD_EXTERN unsigned int vlad_kb_length_seqtab(void *a_kb)
 {
   kb *tmp_kb = NULL;
 
   if (a_kb == NULL)
-    return VLAD_NULLPTR;
+    return 0;
 
   if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
-    return VLAD_INVALIDINPUT;
+    return 0;
 
-  return tmp_kb->length_seqtab(a_len);
+  return tmp_kb->length_seqtab();
 }
 
 /* gives the i'th entry in the sequence table */
