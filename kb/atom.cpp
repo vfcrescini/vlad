@@ -22,28 +22,7 @@ atom::atom()
 
 atom::~atom()
 {
-  switch(type) {
-    case VLAD_ATOM_HOLDS :
-      if (holds.subject != NULL)
-        free(holds.subject); 
-      if (holds.access != NULL)
-        free(holds.access); 
-      if (holds.object != NULL)
-        free(holds.object); 
-      break;
-    case VLAD_ATOM_MEMBER :
-      if (member.element != NULL)
-        free(member.element);
-      if (member.group != NULL)
-        free(member.group);
-      break;
-    case VLAD_ATOM_SUBSET :
-      if (subset.group1 != NULL)
-        free(subset.group1);
-      if (subset.group2 != NULL)
-        free(subset.group2);
-      break;
-  }
+  reset();
 }
 
 bool atom::cmp(list_item *item)
@@ -170,6 +149,8 @@ int atom::init_atom(atom *a)
 
 int atom::init_const(bool c, bool t)
 {
+  reset();
+
   type = VLAD_ATOM_CONST;
   truth = t;
   constant = c;
@@ -181,6 +162,8 @@ int atom::init_holds(const char *s, const char *a, const char *o, bool t)
 {
   if (s == NULL || a == NULL || o == NULL)
     return VLAD_NULLPTR;
+
+  reset();
 
   type = VLAD_ATOM_HOLDS;
   truth = t;
@@ -205,6 +188,8 @@ int atom::init_member(const char *e, const char *g, bool t)
   if (e == NULL || g == NULL)
     return VLAD_NULLPTR;
 
+  reset();
+
   type = VLAD_ATOM_MEMBER;
   truth = t;
 
@@ -225,6 +210,8 @@ int atom::init_subset(const char *g1, const char *g2, bool t)
   if (g1 == NULL || g2 == NULL)
     return VLAD_NULLPTR;
 
+  reset();
+
   type = VLAD_ATOM_SUBSET;
   truth = t;
 
@@ -240,6 +227,7 @@ int atom::init_subset(const char *g1, const char *g2, bool t)
   return VLAD_OK;
 }
 
+/* replaces vars in vlist with idents in ilist. new atom a */
 int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
 {
   int retval;
@@ -248,11 +236,19 @@ int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
   if (vlist == NULL || ilist == NULL || a == NULL)
     return VLAD_NULLPTR;
 
+  /* make sure lengths are equal */
   if (vlist->length() != ilist->length())
     return VLAD_INVALIDINPUT;
 
   if ((*a = VLAD_NEW(atom())) == NULL)
     return VLAD_MALLOCFAILED;
+
+
+  /* 
+   * at this level we don't really care if the identifiers are valid or not.
+   * we simply replace strings from the first list with strings from the
+   * second list.
+   */
 
   switch(type) {
     case VLAD_ATOM_CONST :
@@ -372,3 +368,31 @@ void atom::print(char *s)
   }
 }
 #endif
+
+int atom::reset()
+{
+  switch(type) {
+    case VLAD_ATOM_HOLDS :
+      if (holds.subject != NULL)
+        free(holds.subject); 
+      if (holds.access != NULL)
+        free(holds.access); 
+      if (holds.object != NULL)
+        free(holds.object); 
+      break;
+    case VLAD_ATOM_MEMBER :
+      if (member.element != NULL)
+        free(member.element);
+      if (member.group != NULL)
+        free(member.group);
+      break;
+    case VLAD_ATOM_SUBSET :
+      if (subset.group1 != NULL)
+        free(subset.group1);
+      if (subset.group2 != NULL)
+        free(subset.group2);
+      break;
+  }
+
+  return VLAD_OK;
+}
