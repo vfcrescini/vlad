@@ -458,14 +458,75 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(s); i++) {
     unsigned int i_truth;
-    unsigned int i_group;
+    unsigned int i_grp1;
+    unsigned int i_grp2;
     unsigned int i_sub;
     unsigned int i_acc;
     unsigned int i_obj;
     /* truth loop */
     for (i_truth = 0; i_truth < 2; i_truth++) {
+
+      /* subset inheritance */
+
+       /* subject groups */
+      for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+        for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
+          if (i_grp1 == i_grp2)
+            continue;
+          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              fprintf(f,
+                      "  %d %s %d %s %d\n",
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp1 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      VLAD_STR_ARROW,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp2 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      VLAD_STR_AND,
+                      (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2);
+            }
+          }
+        }
+      }
+      /* access groups */
+      for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+        for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
+          if (i_grp1 == i_grp2)
+            continue;
+          for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              fprintf(f,
+                      "  %d %s %d %s %d\n",
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp1 + a_len) * (o_len + og_len)) + i_obj,
+                      VLAD_STR_ARROW,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp2 + a_len) * (o_len + og_len)) + i_obj,
+                      VLAD_STR_AND,
+                      (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * ag_len) + i_grp2);
+            }
+          }
+        }
+      }
+      /* object groups */
+      for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+        for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
+          if (i_grp1 == i_grp2)
+            continue;
+          for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+            for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+              fprintf(f,
+                      "  %d %s %d %s %d\n",
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp1 + o_len,
+                      VLAD_STR_ARROW,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp2 + o_len,
+                      VLAD_STR_AND,
+                      (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * og_len) + i_grp2);
+            }
+          }
+        }     
+      }
+
+      /* member inheritance */
+
       /* subject groups */
-      for (i_group = 0; i_group < sg_len; i_group++) {
+      for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
         for (i_sub = 0; i_sub < s_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
@@ -473,15 +534,15 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
                       "  %d %s %d %s %d\n",
                       (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp1 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_group);
+                      (i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_grp1);
             }
           }
         }
       }
       /* access groups */
-      for (i_group = 0; i_group < ag_len; i_group++) {
+      for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
@@ -489,15 +550,15 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
                       "  %d %s %d %s %d\n",
                       (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp1 + a_len) * (o_len + og_len)) + i_obj,
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group);
+                      (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_grp1);
             }
           }
         }
       }
       /* object groups */
-      for (i_group = 0; i_group < og_len; i_group++) {
+      for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len; i_obj++) {
@@ -505,9 +566,9 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
                       "  %d %s %d %s %d\n",
                       (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len,
+                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp1 + o_len,
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group);
+                      (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_grp1);
             }
           }
         }
@@ -809,15 +870,21 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(s); i++) {
     unsigned int i_truth;
-    unsigned int i_group;
+    unsigned int i_grp1;
+    unsigned int i_grp2;
     unsigned int i_sub;
     unsigned int i_acc;
     unsigned int i_obj;
     /* truth loop */
     for (i_truth = 0; i_truth < 2; i_truth++) {
+
+      /* subset inheritance */
+
       /* subject groups */
-      for (i_group = 0; i_group < sg_len; i_group++) {
-        for (i_sub = 0; i_sub < s_len; i_sub++) {
+      for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+        for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
+          if (i_grp1 == i_grp2)
+            continue;
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
               unsigned int tmp_num1;
@@ -828,9 +895,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_group;
+              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp1 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp2 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2;
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);
@@ -844,9 +911,11 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         }
       }
       /* access groups */
-      for (i_group = 0; i_group < ag_len; i_group++) {
-        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-          for (i_acc = 0; i_acc < a_len; i_acc++) {
+      for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+        for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
+          if (i_grp1 == i_grp2)
+            continue;
+          for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
               unsigned int tmp_num1;
               unsigned int tmp_num2;
@@ -856,9 +925,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group;
+              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp1 + a_len) * (o_len + og_len)) + i_obj;
+              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp2 + a_len) * (o_len + og_len)) + i_obj;
+              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * ag_len) + i_grp2;
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);
@@ -872,7 +941,96 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         }
       }
       /* object groups */
-      for (i_group = 0; i_group < og_len; i_group++) {
+      for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+        for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
+          if (i_grp1 == i_grp2)
+            continue;
+          for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+            for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+              unsigned int tmp_num1;
+              unsigned int tmp_num2;
+              unsigned int tmp_num3;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
+
+              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp1 + o_len;
+              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp2 + o_len;
+              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * og_len) + i_grp2;
+
+              tmp_list->add(tmp_num2);
+              tmp_list->add(tmp_num3);
+
+              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+                return retval;
+
+              delete tmp_list;
+            }
+          }
+        }     
+      }
+
+      /* member inheritance */
+
+      /* subject groups */
+      for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+        for (i_sub = 0; i_sub < s_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              unsigned int tmp_num1;
+              unsigned int tmp_num2;
+              unsigned int tmp_num3;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
+
+              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp1 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_grp1;
+
+              tmp_list->add(tmp_num2);
+              tmp_list->add(tmp_num3);
+
+              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+                return retval;
+
+              delete tmp_list;
+            }
+          }
+        }
+      }
+      /* access groups */
+      for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              unsigned int tmp_num1;
+              unsigned int tmp_num2;
+              unsigned int tmp_num3;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
+
+              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp1 + a_len) * (o_len + og_len)) + i_obj;
+              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_grp1;
+
+              tmp_list->add(tmp_num2);
+              tmp_list->add(tmp_num3);
+
+              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+                return retval;
+
+              delete tmp_list;
+            }
+          }
+        }
+      }
+      /* object groups */
+      for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len; i_obj++) {
@@ -885,8 +1043,8 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
                 return VLAD_MALLOCFAILED;
 
               tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group;
+              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp1 + o_len;
+              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_grp1;
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);

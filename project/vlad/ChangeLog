@@ -8,6 +8,9 @@
 
 	  - Added identity rules (ie. each set is a subset of itself).
 
+	  - Added an extension to the inheritance rules (for subsets) where
+	    a set inherits all the properties of its superset.
+
 	  - Query now works properly.
 
 	  - Fixed bug with the generation of some rules.
