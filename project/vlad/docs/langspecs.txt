@@ -110,7 +110,7 @@ Started 2002 Dec 08
 
      [a-zA-Z][a-zA-Z0-9]*
 
-2. Definition Statements
+2. Program Definition Statements
 
   2.1 Identifier Definition Statements
 
@@ -184,20 +184,7 @@ Started 2002 Dec 08
       <trans-identifier>()
       causes <post-condition-expression> 
 
-  2.4. Query Statement
-
-    This statement is used to enter queries.
-
-      query <query-expression> 
-      after <trans-identifier-1>, <trans-identifier-2>, ...
-
-    Or, to query the initial state:
-
-      query <query-expression> 
-
-    The statement will return one of the following: true, false or ?
-
-  2.5. Constraint Definition Statement
+  2.4. Constraint Definition Statement
 
     In addition to the initial statement definitions, it is also possible
     to define constraints (or default proposition) in the knowledge base.
@@ -226,7 +213,55 @@ Started 2002 Dec 08
 
       always <expression1>
 
-3. Comments
+3. Operations Statements
+
+  3.1. Query Statement
+
+    This statement is used to evaluate queries from the current state. The
+    current state will then be derived from the initial state after all
+    transformations in the sequence (see below) has been applied.
+
+      query <expression> 
+
+    The statement will return one of the following: true, false or ?
+
+  3.2. Transformation Sequence Manipulations
+
+    3.2.1. Add
+
+      This statement is used to append a transformation reference at the end of
+      the transformation sequence list. A transformation reference must, of
+      course, be a valid transformation defined in the transformation
+      definition section.
+
+        seq add <trans-ident>([arg1][,arg2][,...]);
+
+    3.2.2. List
+
+      This statement will trigger the output of the transformation sequence
+      list.
+
+        seq list;
+
+      Output format is:
+
+        <index1> <trans-ident1>([arg1][,arg2][,...]);
+        <index2> <trans-ident2>([arg1][,arg2][,...]);
+        ...
+
+      Where <indexn> is the ordinal index (starting from 0) of a transformation 
+      as it appears in the sequence.
+
+    3.2.3. Delete
+
+      To remove a transformation from the transformation sequence:
+
+        seq del <index>;
+
+      Where <index> is the ordinal index of the corresponding transformation
+      as listed by the "seq list" statement.
+
+4. Comments
 
   C-style comments may appear anywhere in the file. Any characters
   between "/*" and "*/" will be ignored by the parser.
