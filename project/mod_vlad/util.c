@@ -103,7 +103,7 @@ int modvlad_init(apr_pool_t *a_p,
     return -1;
   if (add_access(a_p, a_conf->kb))
     return -1;
-  if (add_object(a_p, a_conf->kb, *a_exp, get_docroot(a_p, a_conf->path, a_s), NULL))
+  if (add_object(a_p, a_conf->kb, *a_exp, get_docroot(a_p, "/", a_s), NULL))
     return -1;
 
   return 0;

@@ -56,7 +56,6 @@ typedef struct {
   char *user_file;
   char *policy_file;
   void *kb;
-  const char *path;
 } modvlad_config_rec;
 
 /* a version of yyinput that uses apache apr */

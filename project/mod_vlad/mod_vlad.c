@@ -28,7 +28,7 @@ extern void policy_set_yyinput(int (*a_func)(void *, char *, int),
                                void *a_stream);
 
 /* some static functions */
-static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d);
+static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s);
 static char *modvlad_get_passwd(request_rec *a_r,
                                 char *a_user,
                                 char *a_passwd_file);
@@ -47,7 +47,7 @@ static const command_rec modvlad_auth_cmds[] =
   AP_INIT_TAKE2("VladFiles",
                 modvlad_set_init,
                 NULL,
-                OR_AUTHCFG,
+                RSRC_CONF,
                 "\"user-file\" \"policy-file\""),
   {NULL},
 };
@@ -56,35 +56,30 @@ static const command_rec modvlad_auth_cmds[] =
 module AP_MODULE_DECLARE_DATA modvlad_module =
 {
   STANDARD20_MODULE_STUFF,
-  modvlad_create_dir_config,
   NULL,
   NULL,
+  modvlad_create_config,
   NULL,
   modvlad_auth_cmds,
   modvlad_register_hooks,
 };
 
-static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
+static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
 {
   modvlad_config_rec *conf = NULL;
-
-  if (!a_d)
-    return NULL;
 
 #ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
                 0,
                 a_p,
-                "modvlad_create_dir_config: %s",
-                a_d);
+                "modvlad_create_dir_config");
 #endif
 
   if ((conf = (modvlad_config_rec *) apr_palloc(a_p, sizeof(*conf)))) {
     conf->user_file = NULL;
     conf->policy_file = NULL;
     conf->kb = NULL;
-    conf->path = modvlad_strip_url(a_p, apr_pstrdup(a_p, a_d));
   }
 
   return conf;
@@ -145,7 +140,7 @@ static int modvlad_authenticate(request_rec *a_r)
                 "modvlad_authenticate");
 #endif
 
-  conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
+  conf = (modvlad_config_rec *) ap_get_module_config(a_r->server->module_config,
                                                      &modvlad_module);
 
   /* first we make sure we are activated */
@@ -218,7 +213,7 @@ static int modvlad_authorize(request_rec *a_r)
   unsigned char qres;
 #endif
 
-  conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
+  conf = (modvlad_config_rec *) ap_get_module_config(a_r->server->module_config,
                                                      &modvlad_module);
 
   /* first we make sure we are activated */
@@ -358,7 +353,7 @@ static int modvlad_handler(request_rec *a_r)
                 a_r->uri);
 #endif
 
-  conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
+  conf = (modvlad_config_rec *) ap_get_module_config(a_r->server->module_config,
                                                      &modvlad_module);
 
   /* first we make sure we are activated */
@@ -411,14 +406,13 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
                 a_p,
                 "modvlad_register_hooks");
 #endif
-
   ap_hook_check_user_id(modvlad_authenticate, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_auth_checker(modvlad_authorize, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_handler(modvlad_handler, NULL, NULL, APR_HOOK_FIRST);
 }
 
 static const char *modvlad_set_init(cmd_parms *a_cmd,
-                                    void *a_config,
+                                    void *a_dummy,
                                     const char *a_uname,
                                     const char *a_pname)
 {
@@ -435,13 +429,14 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                 a_cmd->pool,
                 "modvlad_set_init");
 #endif
+  conf = ap_get_module_config(a_cmd->server->module_config, &modvlad_module);
 
-  if (!(conf = (modvlad_config_rec *) a_config)) {
+  if (!conf) {
     ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
                   a_cmd->pool,
-                  "mod_vlad: NULL per-dir config pointer");
+                  "mod_vlad: NULL config pointer");
     return NULL;
   }
 
@@ -461,6 +456,7 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                   "mod_vlad: error occurred while initializing module");
     return NULL;
   }
+
 
   /* parse the policy file */
   status = apr_file_open(&polfile,
