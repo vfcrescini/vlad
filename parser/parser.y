@@ -352,7 +352,7 @@ initial_stmt :
      * at a time to ensure uniqueness and integrity.
      */
 
-    for (i = 0; i < $2->length(); i++) {
+    for (i = 0; i < VLAD_LIST_LENGTH($2); i++) {
       if ((retval = $2->get(i, &a)) != VLAD_OK) {
         fprintf(yyerr, "internal error: %d\n", retval);
         return retval;
