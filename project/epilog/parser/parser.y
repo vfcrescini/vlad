@@ -286,14 +286,6 @@ logical_const :
 
 %%
 
-int main()
-{
-  symtab_init();
-  yyparse();
-
-  return 0;
-}
-
 int yyerror(char *error)
 {
   fprintf(stderr, "%s\n", error);

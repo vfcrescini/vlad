@@ -1,4 +1,14 @@
-2002-08-07  Vino Crescini  <vfcrescini@froggy.com>
+2002-08-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/Makefile :
+	* parser/parser.y :
+	* main/Makefile :
+	* main/epilog.c :
+	* Makefile :
+
+	  - Moved main function into a different file.
+
+2002-08-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* docs/bnf :
 	* docs/langspecs :
@@ -13,7 +23,7 @@
 
 	  - Took out association/parentheses from the language and parser.
 
-2002-07-25  Vino Crescini  <vfcrescini@froggy.com>
+2002-07-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* ChangeLog :
 

@@ -1,14 +1,24 @@
-# Vino Crescini  <jcrescin@cit.uws.edu.au>
+# Vino Crescini <jcrescin@cit.uws.edu.au>
 
 TOPSRCDIR = ..
-CFLAGS = -O2 -ansi -I${TOPSRCDIR}/include -L${TOPSRCDIR}/lib
-WFLAGS = -Wall
-TARGETS = main
+CFLAGS = -O2 -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
+TARGETS = libparser.a
+INCLUDES =
 
-all : $(TARGETS)
+all : public
 
-main : parser.o scanner.o
-	$(CC) $(CFLAGS) $(WFLAGS) -o$(@) parser.o scanner.o -ll -lsymtab -ldatastruct
+public : $(TARGETS)
+	@mkdir -p $(TOPSRCDIR)/include
+	@mkdir -p $(TOPSRCDIR)/lib
+	@for i in $(INCLUDES); do \
+	ln -sf ../parser/$$i $(TOPSRCDIR)/include; \
+	done
+	@for i in $(TARGETS); do \
+	ln -sf ../parser/$$i $(TOPSRCDIR)/lib; \
+	done
+
+libparser.a : parser.o scanner.o 
+	$(AR) -rcs $(@) parser.o scanner.o
 
 scanner.o : y.tab.h lex.yy.c
 	$(CC) $(CFLAGS) -o$(@) -c lex.yy.c
@@ -27,3 +37,9 @@ y.tab.h : parser.y
 
 clean :
 	$(RM) $(TARGETS) *.o lex.yy.c y.tab.c y.tab.h
+	@for i in $(INCLUDES); do \
+	$(RM) $(TOPSRCDIR)/include/$$i; \
+	done
+	@for i in $(TARGETS); do \
+	$(RM) $(TOPSRCDIR)/lib/$$i; \
+	done

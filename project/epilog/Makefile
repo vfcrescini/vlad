@@ -1,7 +1,6 @@
-# Vino Crescini
-# 2002 May 30
+# Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-DIRS = datastruct symtab parser
+DIRS = datastruct symtab parser main
 
 all :
 	@for i in $(DIRS); do \
