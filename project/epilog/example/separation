@@ -48,19 +48,19 @@ trans Request_Approve(X, Y)
 
 /* queries */
 
-is holds(S, Submit, O) after Request_Submit(S, O);
-is holds(S, Evaluate, O) after Request_Submit(S, O);
-is holds(S, Approve, O) after Request_Submit(S, O);
+query holds(S, Submit, O) after Request_Submit(S, O);
+query holds(S, Evaluate, O) after Request_Submit(S, O);
+query holds(S, Approve, O) after Request_Submit(S, O);
 
-is holds(S, Submit, O) after Request_Evaluate(S, O);
-is holds(S, Evaluate, O) after Request_Evaluate(S, O);
-is holds(S, Approve, O) after Request_Evaluate(S, O);
+query holds(S, Submit, O) after Request_Evaluate(S, O);
+query holds(S, Evaluate, O) after Request_Evaluate(S, O);
+query holds(S, Approve, O) after Request_Evaluate(S, O);
 
-is holds(S, Submit, O) after Request_Approve(S, O);
-is holds(S, Evaluate, O) after Request_Approve(S, O);
-is holds(S, Approve, O) after Request_Approve(S, O);
+query holds(S, Submit, O) after Request_Approve(S, O);
+query holds(S, Evaluate, O) after Request_Approve(S, O);
+query holds(S, Approve, O) after Request_Approve(S, O);
 
-is holds(S, Submit, O) 
+query holds(S, Submit, O) 
   after 
     Request_Approve(S, O), 
     Request_Evaluate(S, O),

@@ -53,62 +53,62 @@ trans Revise_Doc(X, Y)
     holds(X, Pat_Reject, Y);
 
 /* queries */
-is 
+query 
   holds(Pat_Off, Review, Doc) && !holds(Sci, Write, Doc)
 after
   Request(Sci, Doc, Pat_Off);
 
-is
+query
   holds(Sci, Pat_Ok, Doc) && !holds(Pat_Off, Review, Doc)
 after
   Request(Sci, Doc, Pat_Off),
   Get_Approval(Sci, Doc, Pat_Off);
 
-is
+query
   holds(Sci, Pat_Reject, Doc) && !holds(Pat_Off, Review, Doc)
 after
   Request(Sci, Doc, Pat_Off),
   Get_Rejection(Sci, Doc, Pat_Off);
 
-is
+query
   holds(Sci, Release, Doc) && holds(Sci, Pat_Ok, Doc)
 after
   Request(Sci, Doc, Pat_Off),
   Get_Approval(Sci, Doc, Pat_Off),
   Release_Doc(Sci, Doc);
 
-is
+query
   holds(Sci, Write, Doc)
 after
   Request(Sci, Doc, Pat_Off),
   Get_Rejection(Sci, Doc, Pat_Off),
   Revise_Doc(Sci, Doc);
 
-is
+query
   holds(Sci, Own, Doc)
 after
   Request(Sci, Doc, Pat_Off);
 
-is
+query
   holds(Sci, Own, Doc)
 after
   Request(Sci, Doc, Pat_Off),
   Get_Approval(Sci, Doc, Pat_Off);
 
-is
+query
   holds(Sci, Own, Doc)
 after
   Request(Sci, Doc, Pat_Off),
   Get_Rejection(Sci, Doc, Pat_Off);
 
-is
+query
   holds(Sci, Own, Doc)
 after
   Request(Sci, Doc, Pat_Off),
   Get_Approval(Sci, Doc, Pat_Off),
   Release_Doc(Sci, Doc);
 
-is
+query
   holds(Sci, Own, Doc)
 after
   Request(Sci, Doc, Pat_Off),

@@ -2,6 +2,21 @@
 
 	* docs/bnf.txt :
 	* docs/langspecs.txt :
+	* example/chinese_wall :
+	* example/document_release :
+	* example/geography :
+	* example/read_write :
+	* example/recursive :
+	* example/sample :
+	* example/separation :
+	* example/subset :
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Changed "is" statement to "query".
+
+	* docs/bnf.txt :
+	* docs/langspecs.txt :
 	* example/read_write :
 	* example/sample :
 	* exp/comp_atom.c :

@@ -26,7 +26,7 @@ Updated 2003 Apr 10
                         
 <other-stmt-list>       : <other-stmt> | <other-stmt-list> <other-stmt>
                         
-<other-stmt>            : <initial-stmt> | <trans-stmt> | <policy-stmt>
+<other-stmt>            : <initial-stmt> | <trans-stmt> | <query-stmt>
 
 <ident-stmt>            : <ident> <ident-declaration> <semicolon>
 
@@ -70,10 +70,10 @@ Updated 2003 Apr 10
                         
 <trans-var-list>        : <identifier> | <trans-var-list> <comma> <identifier>
 
-<policy-stmt>           : <is-clause> <after-clause> <semicolon> |
-                          <is-clause> <semicolon>
+<query-stmt>            : <query-clause> <after-clause> <semicolon> |
+                          <query-clause> <semicolon>
                         
-<is-clause>             : <is> <ground-exp>
+<query-clause>          : <query> <ground-exp>
                         
 <after-clause>          : <after> <trans-ref-list>
                         
@@ -144,7 +144,7 @@ Updated 2003 Apr 10
                         
 <if>                    : if
                         
-<is>                    : is
+<query>                 : query
                         
 <after>                 : after
 

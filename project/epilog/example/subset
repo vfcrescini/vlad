@@ -11,4 +11,4 @@ initially memb(E1, G3) && memb(E2, G3) && memb(E4, G3) && memb(E5, G3);
 initially subst(G2, G3);
 initially memb(E3, G2);
 
-is subst(G1, G3);
+query subst(G1, G3);

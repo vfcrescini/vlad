@@ -20,10 +20,10 @@ initially !subst(penrith, melbourne);
 
 /* queries */
 
-is subst(sydney, australia);
-is subst(sydney, nsw);
-is subst(blacktown, australia);
-is subst(melbourne, nsw);
-is subst(melbourne, victoria);
-is subst(blacktown, victoria);
-is subst(sydney, victoria);
+query subst(sydney, australia);
+query subst(sydney, nsw);
+query subst(blacktown, australia);
+query subst(melbourne, nsw);
+query subst(melbourne, victoria);
+query subst(blacktown, victoria);
+query subst(sydney, victoria);

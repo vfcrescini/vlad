@@ -53,28 +53,28 @@ trans dumbify_alice()
 
 /* queries */
 
-is holds(alice, read, file1)
+query holds(alice, read, file1)
   after give_exec_access(alice, file1), 
         give_write_access(alice, file1),
         give_read_access(alice, file2);
 
-is holds(alice, read, file1)
+query holds(alice, read, file1)
   after give_exec_access(alice, file1), 
         give_write_access(alice, file1),
         give_read_access(alice, file1);
 
-is memb(bob, scientists);
+query memb(bob, scientists);
 
-is memb(bob, scientists)
+query memb(bob, scientists)
   after become_astrologer(bob);
 
-is memb(bob, scientists)
+query memb(bob, scientists)
   after become_astrologer(bob), become_biologist(bob);
 
-is subst(astrologers, scientists);
-is subst(biologists, scientists);
-is !subst(astrologers, scientists);
-is !subst(biologists, scientists);
+query subst(astrologers, scientists);
+query subst(biologists, scientists);
+query !subst(astrologers, scientists);
+query !subst(biologists, scientists);
 
-is memb(alice, biologists) after dumbify_alice();
-is memb(alice, astrologers) after dumbify_alice();
+query memb(alice, biologists) after dumbify_alice();
+query memb(alice, astrologers) after dumbify_alice();

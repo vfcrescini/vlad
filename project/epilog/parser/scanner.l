@@ -42,7 +42,7 @@ initially          initially
 transform          trans
 causes             causes
 if                 if
-is                 is
+query              query
 after              after
 ident              ident
 sub_grp_type       sub-grp
@@ -84,7 +84,7 @@ everything         .
 
 <INITIAL>{if} return EPI_SYM_IF;
 
-<INITIAL>{is} return EPI_SYM_IS;
+<INITIAL>{query} return EPI_SYM_QUERY;
 
 <INITIAL>{after} return EPI_SYM_AFTER;
 

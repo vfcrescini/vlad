@@ -70,7 +70,7 @@ gnd_exp_type initial_exp;
 %token <terminal> EPI_SYM_TRANS
 %token <terminal> EPI_SYM_CAUSES
 %token <terminal> EPI_SYM_IF
-%token <terminal> EPI_SYM_IS
+%token <terminal> EPI_SYM_QUERY
 %token <terminal> EPI_SYM_AFTER
 %token <terminal> EPI_SYM_SUBTYPE
 %token <terminal> EPI_SYM_OBJTYPE
@@ -82,7 +82,7 @@ gnd_exp_type initial_exp;
 %token <identifier> EPI_SYM_IDENTIFIER
 
 %type <gexp> ground_exp
-%type <gexp> is_clause;
+%type <gexp> query_clause;
 %type <cexp> comp_exp
 %type <cexp> if_clause;
 %type <gatm> ground_atom_exp
@@ -164,7 +164,7 @@ other_stmt :
   }
   | trans_stmt {
   }
-  | policy_stmt {
+  | query_stmt {
   }
   ;
 
@@ -343,8 +343,8 @@ trans_stmt :
   }
   ;
 
-policy_stmt : 
-  is_clause after_clause EPI_SYM_SEMICOLON {
+query_stmt : 
+  query_clause after_clause EPI_SYM_SEMICOLON {
     transref_type *tmp_trans;
     unsigned short int result;
     gnd_exp_type curr;
@@ -401,7 +401,7 @@ policy_stmt :
     translist_purge(&$2);
     gnd_exp_purge(&$1);
   }
-  | is_clause EPI_SYM_SEMICOLON {
+  | query_clause EPI_SYM_SEMICOLON {
     unsigned short int result;
 
     if (gnd_exp_eval($1, initial_exp, &result) != EPI_OK)
@@ -474,8 +474,8 @@ trans_var_list :
   }
   ;
 
-is_clause : 
-  EPI_SYM_IS ground_exp {
+query_clause : 
+  EPI_SYM_QUERY ground_exp {
     $$ = $2;
   }
   ;
