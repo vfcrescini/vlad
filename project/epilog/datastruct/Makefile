@@ -3,7 +3,7 @@
 TOPSRCDIR = ..
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libdatastruct.a
-INCLUDES = index.h indexedlist.h simplelist.h stringlist.h
+INCLUDES = simplelist.h stringlist.h
 
 ifdef DEBUG
 CFLAGS += -g -DDEBUG
@@ -23,14 +23,8 @@ public : $(TARGETS)
 	ln -sf ../datastruct/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libdatastruct.a : index.o indexedlist.o simplelist.o stringlist.o
-	$(AR) -rcs $(@) index.o indexedlist.o simplelist.o stringlist.o
-
-index.o : index.h index.c
-	$(CC) $(CFLAGS) -o $(@) -c index.c
-	
-indexedlist.o : indexedlist.h indexedlist.c index.h
-	$(CC) $(CFLAGS) -o $(@) -c indexedlist.c
+libdatastruct.a : simplelist.o stringlist.o
+	$(AR) -rcs $(@) simplelist.o stringlist.o
 
 simplelist.o : simplelist.h simplelist.c
 	$(CC) $(CFLAGS) -o $(@) -c simplelist.c
