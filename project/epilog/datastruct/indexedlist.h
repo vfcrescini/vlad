@@ -1,6 +1,6 @@
 /*
  * indexedlist.h
- * Vino Crescini
+ * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #ifndef __EPI_INDEXEDLIST_H

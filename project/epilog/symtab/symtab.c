@@ -1,6 +1,6 @@
 /*
  * symtab.c
- * Vino Crescini
+ * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-Vino Crescini
+Vino Crescini  <jcrescin@cit.uws.edu.au>
 2002 July 08
 
 Language Specifications

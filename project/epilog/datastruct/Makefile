@@ -1,4 +1,4 @@
-# Vino Crescini
+# Vino Crescini <jcrescin@cit.uws.edu.au>
 
 TOPSRCDIR = ..
 CFLAGS = -O2 -Wall -ansi -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib

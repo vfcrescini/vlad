@@ -1,7 +1,5 @@
 /*
- * Vino Crescini
- * 2002 July 08
- *
+ * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 %{
