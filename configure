@@ -796,6 +796,11 @@ Optional Features:
                           is disabled)
   --enable-strip          run strip program (default is disabled)
 
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-smodels-src      path to smodels source tree (default is disabled)
+
 Some influential environment variables:
   CC          C compiler command
   CFLAGS      C compiler flags
@@ -1169,9 +1174,9 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers config.h"
 
 
-CFLAGS="-ansi -Wall -Wstrict-prototypes -I. -I\$(TOPSRCDIR) -I\$(TOPSRCDIR)/include -L\$(TOPSRCDIR)/lib"
-CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I. -I\$(TOPSRCDIR) -I\$(TOPSRCDIR)/include -L\$(TOPSRCDIR)/lib"
-LDFLAGS="-L\$(TOPSRCDIR)/lib"
+TMP_CFLAGS="-ansi -Wall -Wstrict-prototypes -I. -I\$(TOPSRCDIR) -I\$(TOPSRCDIR)/include -L\$(TOPSRCDIR)/lib"
+TMP_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I. -I\$(TOPSRCDIR) -I\$(TOPSRCDIR)/include -L\$(TOPSRCDIR)/lib"
+TMP_LDFLAGS="-L\$(TOPSRCDIR)/lib $LDFLAGS"
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -2566,11 +2571,11 @@ _ACEOF
 
   DEBUG=1
 
-  CFLAGS="$CFLAGS -g"
-  CXXFLAGS="$CXXFLAGS -g"
+  TMP_CFLAGS="$TMP_CFLAGS -g"
+  TMP_CXXFLAGS="$TMP_CXXFLAGS -g"
 else
-  CFLAGS="$CFLAGS -O2"
-  CXXFLAGS="$CXXFLAGS -O2"
+  TMP_CFLAGS="$TMP_CFLAGS -O2"
+  TMP_CXXFLAGS="$TMP_CXXFLAGS -O2"
 fi
 
 # Check whether --enable-strip or --disable-strip was given.
@@ -2583,10 +2588,39 @@ if test "$enable_strip" != "" && test "$enable_strip" != "no"; then
 
 fi
 
+
+# Check whether --with-smodels-src or --without-smodels-src was given.
+if test "${with_smodels_src+set}" = set; then
+  withval="$with_smodels_src"
+
+fi;
+
+if test "$with_smodels_src" != "" && test "$with_smodels_src" != "no"; then
+  SMODELS=1
+
+  if test "$with_smodels_src" == "yes"; then
+    SMODELS_PATH=yes
+
+  else
+    if ! test -d "$withval"; then
+      { { echo "$as_me:$LINENO: error: *** invalid path: $with_smodels_src ***" >&5
+echo "$as_me: error: *** invalid path: $with_smodels_src ***" >&2;}
+   { (exit 1); exit 1; }; }
+    else
+      SMODELS_PATH=$with_smodels_src
+
+    fi
+  fi
+fi
+
 cat >>confdefs.h <<_ACEOF
 #define VERSION "$PACKAGE_VERSION"
 _ACEOF
 
+
+CFLAGS="$TMP_CFLAGS $CFLAGS"
+CXXFLAGS="$TMP_CXXFLAGS $CXXFLAGS"
+LDFLAGS="$TMP_LDFLAGS $LDFLAGS"
 
 ac_config_files="$ac_config_files Makefile common/Makefile kb/Makefile parser/Makefile main/Makefile"
 
@@ -3165,6 +3199,8 @@ s,@YACC@,$YACC,;t t
 s,@LN_S@,$LN_S,;t t
 s,@DEBUG@,$DEBUG,;t t
 s,@STRIP@,$STRIP,;t t
+s,@SMODELS@,$SMODELS,;t t
+s,@SMODELS_PATH@,$SMODELS_PATH,;t t
 CEOF
 
 _ACEOF
