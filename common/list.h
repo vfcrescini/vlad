@@ -33,6 +33,7 @@ class list
     list(bool u);
     list(const char *n, bool u);
     virtual ~list();
+    bool cmp(list *l);
     unsigned int length();
   private :
     unsigned int len;
