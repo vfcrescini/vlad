@@ -14,11 +14,13 @@
 class constraint : public list_item
 {
   public :
-    constraint(expression *e, expression *c, expression *n);
+    constraint();
     ~constraint();
     bool cmp(list_item *item);
+    int init(expression *e, expression *c, expression *n);
     int get(expression **e, expression **c, expression **n);
   private :
+    bool initialised;
     expression *exp;
     expression *cond;
     expression *ncond;
