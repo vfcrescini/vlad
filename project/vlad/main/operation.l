@@ -35,6 +35,7 @@ holds              holds
 member             memb
 subset             subst
 query              query
+compute            compute
 sequence           seq
 add                add
 delete             del
@@ -69,6 +70,8 @@ everything         .
 <INITIAL>{subset} return VLAD_SYM_SUBST;
 
 <INITIAL>{query} return VLAD_SYM_QUERY;
+
+<INITIAL>{compute} return VLAD_SYM_COMPUTE;
 
 <INITIAL>{sequence} return VLAD_SYM_SEQUENCE;
 

@@ -18,9 +18,11 @@ Updated 2003 May 05
 
 <destroy>                : <nil>
 
-<statement>              : <query-stmt> | <sequence-stmt>
+<statement>              : <query-stmt> <compute-stmt> | <sequence-stmt>
 
 <query-stmt>             : <query> <expression> <semicolon>
+
+<compute-stmt>           : <compute> <semicolon>
 
 <sequence-stmt>          : <sequence> <sequence-cmd-clause> <semicolon>
 
@@ -72,6 +74,8 @@ Updated 2003 May 05
 <subset>                 : subst
 
 <query>                  : query
+
+<compute>                : compute
 
 <sequence>               : seq
 
