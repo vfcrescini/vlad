@@ -99,7 +99,7 @@ stringlist.o : list.h stringlist.h stringlist.cpp
 numberlist.o : list.h numberlist.h numberlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
 
-fact.o : fact.h fact.cpp
+fact.o : stringlist.h symtab.h fact.h fact.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c fact.cpp
 
 expression.o : list.h fact.h expression.h expression.cpp

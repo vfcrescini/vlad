@@ -1,3 +1,12 @@
+2004-01-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/Makefile.in :
+	* lib/fact.cpp :
+	* lib/fact.h :
+	* lib/vlad.h :
+
+	  - Added verify function.
+
 2004-01-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/vlad.h :
