@@ -16,6 +16,15 @@ kb::kb()
   stable = NULL;
   initialised = false;
   closed = false;
+  s_len = 0;
+  a_len = 0;
+  o_len = 0;
+  sg_len = 0;
+  ag_len = 0;
+  og_len = 0;
+  h_tot = 0;
+  m_tot = 0;
+  s_tot = 0;
 }
 
 kb::~kb()
@@ -49,6 +58,17 @@ int kb::close()
   if (!initialised)
     return VLAD_UNINITIALISED;
 
+  /* first get some needed values */
+  s_len = stable->length(VLAD_IDENT_SUBJECT);
+  a_len = stable->length(VLAD_IDENT_ACCESS);
+  o_len = stable->length(VLAD_IDENT_OBJECT);
+  sg_len = stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
+  ag_len = stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
+  og_len = stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
+  h_tot = (s_len + sg_len) * (a_len + ag_len) * (o_len + og_len);
+  m_tot = (s_len * sg_len) + (a_len * ag_len) + (o_len * og_len);
+  s_tot = (sg_len * sg_len) + (ag_len * ag_len) + (og_len * og_len);
+
   closed = true;
 
   return VLAD_OK;
@@ -74,14 +94,6 @@ int kb::get_atom(const char *n1,
                  unsigned int *a)
 {
   int retval;
-  unsigned int s_len;
-  unsigned int a_len;
-  unsigned int o_len;
-  unsigned int sg_len;
-  unsigned int ag_len;
-  unsigned int og_len;
-  unsigned int holds_len;
-  unsigned int memb_len;
 
   if (!initialised)
     return VLAD_UNINITIALISED;
@@ -92,16 +104,6 @@ int kb::get_atom(const char *n1,
 
   if (a == NULL)
     return VLAD_NULLPTR;
-
-  /* get the total lengths of the identifier lists */
-  s_len = stable->length(VLAD_IDENT_SUBJECT);
-  a_len = stable->length(VLAD_IDENT_ACCESS);
-  o_len = stable->length(VLAD_IDENT_OBJECT);
-  sg_len = stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
-  ag_len = stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
-  og_len = stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
-  holds_len = (s_len + sg_len) * (a_len + ag_len) * (o_len + og_len);
-  memb_len = (s_len * sg_len) + (a_len * ag_len) + (o_len * og_len);
 
   switch(t) {
     case VLAD_ATOM_CONST : {
@@ -173,13 +175,13 @@ int kb::get_atom(const char *n1,
       /* now compute */
       switch(VLAD_IDENT_BASETYPE(e_type)) {
         case VLAD_IDENT_SUBJECT :
-          *a = holds_len + (e_index * sg_len) + g_index + 2;
+          *a = h_tot + (e_index * sg_len) + g_index + 2;
           break;
         case VLAD_IDENT_ACCESS :
-          *a = holds_len + (s_len * sg_len) + (e_index * ag_len) + g_index + 2;
+          *a = h_tot + (s_len * sg_len) + (e_index * ag_len) + g_index + 2;
           break;
         case VLAD_IDENT_OBJECT :
-          *a = holds_len + (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index + 2;
+          *a = h_tot + (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index + 2;
           break;
         default :
           /* this should never happen */
@@ -207,13 +209,13 @@ int kb::get_atom(const char *n1,
       /* now we compute */
       switch(VLAD_IDENT_BASETYPE(g1_type)) {
         case VLAD_IDENT_SUBJECT :
-          *a = holds_len + memb_len + (g1_index * sg_len) + g2_index + 2;
+          *a = h_tot + m_tot + (g1_index * sg_len) + g2_index + 2;
           break;
         case VLAD_IDENT_ACCESS :
-          *a = holds_len + memb_len + (sg_len * sg_len) + (g1_index * ag_len) + g2_index + 2;
+          *a = h_tot + m_tot + (sg_len * sg_len) + (g1_index * ag_len) + g2_index + 2;
           break;
         case VLAD_IDENT_OBJECT :
-          *a = holds_len + memb_len + (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index + 2;
+          *a = h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index + 2;
           break;
         default :
           /* this should never happen */
