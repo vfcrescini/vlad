@@ -8,6 +8,7 @@ LEX = @LEX@
 YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
+LN_S = @LN_S@
 TARGETS = libcommon.a
 INCLUDES = vlad.h list.h stringlist.h numberlist.h
 OBJECTS = list.o stringlist.o numberlist.o
@@ -17,13 +18,13 @@ all : copy-includes copy-targets
 copy-includes : $(INCLUDES)
 	@mkdir -p $(DISTDIR)/include/vlad
 	@for i in $(INCLUDES); do \
-	ln -sf ../../../common/$$i $(DISTDIR)/include/vlad; \
+	(cd $(DISTDIR)/include/vlad && $(LN_S) -f ../../../common/$$i $$i); \
 	done
 
 copy-targets : $(TARGETS)
 	@mkdir -p $(DISTDIR)/lib/vlad
 	@for i in $(TARGETS); do \
-	ln -sf ../../../common/$$i $(DISTDIR)/lib/vlad; \
+	(cd $(DISTDIR)/lib/vlad && $(LN_S) -f ../../../common/$$i $$i); \
 	done
 
 libcommon.a : $(OBJECTS)
