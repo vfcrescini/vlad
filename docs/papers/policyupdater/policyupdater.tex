@@ -68,8 +68,8 @@
   \end{abstract}
 
   \footnotetext{
-    web page at \tt \scriptsize http://www.cit.uws.edu.au/\~{}jcrescin/
-    projects/PolicyUpdater/index.html
+    PolicyUpdater homepage: {\tt \scriptsize http://www.cit.uws.edu.au/
+    \~{}jcrescin/projects/PolicyUpdater/index.html}
   }
 
   \section{Introduction}
@@ -114,16 +114,16 @@
 
     The rest of this paper is organised as follows. In Section \ref{sec-langl},
     the paper introduces language ${\cal L}$, with its formal syntax, semantics
-    and some examples. In section \ref{sec-cons}, the issues of consistency and
+    and some examples. In Section \ref{sec-cons}, the issues of consistency and
     query evaluation are addressed. The implementation, as discussed in Section
     \ref{sec-implement}, gives an overview of the PolicyUpdater system as
     a whole, its internal and external components, and most importantly, an
     outline of the underlying mechanisms responsible for processing of language
-    ${\cal L}$ policies for query evaluation and dynamic updates. In Section
-    \ref{sec-conclusion}, the concluding remarks addresses some possible
-    extensions to this system. The case study presented in Appendix
-    \ref{app-case} shows a typical application of the PolicyUpdater system: an
-    access control system for web servers. Appendix \ref{app-store} shows
+    ${\cal L}$ policies for query evaluation and dynamic updates. The case
+    study presented in Section \ref{sec-case} shows a typical application of
+    the PolicyUpdater system: an access control system for web servers. In
+    Section \ref{sec-conclusion}, the concluding remarks addresses some
+    possible extensions to this system.  Appendix \ref{app-store} shows
     detailed specifications of the data structures used by the system.
 
   \section{Language $\cal{L}$}
@@ -320,7 +320,7 @@
           \begin{vverbatim}
   <up\_id>([<var\_id>[, ...]])
     causes <exp1>
-    if <exp2>;
+    [if <exp2>];
           \end{vverbatim}
 
           $up\_id$ is the policy update identifier to be used in referencing
@@ -1884,7 +1884,9 @@
         possible by checking whether each fact of a given query holds in each
         generated answer set of the normal logic program.
 
-        \footnotetext{Smodels from http://www.tcs.hut.fi/Software/smodels}
+        \footnotetext{
+          Smodels ({\tt \scriptsize http://www.tcs.hut.fi/Software/smodels})
+        }
 
         If a given fact indeed holds in all the answer sets, it is then
         evaluated to be true. On the other hand, if the negation of a fact
@@ -1892,31 +1894,8 @@
         or its negation that does not hold in every answer set is neither true
         nor false.
 
-  \section{Conclusion}
-    \label{sec-conclusion}
-
-    In this paper, we have presented the PolicyUpdater system, a logic-based
-    authorisation system that features query evaluation and dynamic policy
-    updates. This is made possible by the use of a first-order logic
-    authorisation language, language ${\cal L}$, for the definition, updating
-    and querying of access control policies. As we have shown, language
-    ${\cal L}$ is expressive enough to represent constraints and default rules.
-
-    The case study in Appendix \ref{app-case} is a demonstration of how the
-    PolicyUpdater system can be adapted to be used in a real-world web server
-    authorisation application.
-
-    One possible future extension to this work is the integration of temporal
-    logic to language ${\cal L}$ to allow time properties to be expressed in
-    access control policies. Such extension will be useful in access control
-    systems such as e-commerce applications where authorisations are granted
-    or denied based on policies that are time dependent.
-
-  \newpage
-  \appendix
-
-  \vappsection{Case Study: Web Server Application}
-    \label{app-case}
+  \section{Case Study: Web Server Application}
+    \label{sec-case}
 
     \begin{figure}[ht]
       \begin{center}
@@ -1931,7 +1910,7 @@
     authorisation application. In this application, PolicyUpdater serves as
     an authorisation module for the {\em Apache}\footnotemark web server.
 
-    \footnotetext{Apache Web Server (\tt http://www.apache.org)}
+    \footnotetext{Apache Web Server ({\tt \scriptsize http://www.apache.org})}
 
     The Apache web server provides a generic access control system as provided
     by its {\em mod\_auth} and {\em mod\_access} modules \cite{AP,LAU}. With
@@ -2070,6 +2049,28 @@
           Revert to a previous state of the policy base by removing a
           previously applied policy update from the policy base.
       \end{itemize}
+
+  \section{Conclusion}
+    \label{sec-conclusion}
+
+    In this paper, we have presented the PolicyUpdater system, a logic-based
+    authorisation system that features query evaluation and dynamic policy
+    updates. This is made possible by the use of a first-order logic
+    authorisation language, language ${\cal L}$, for the definition, updating
+    and querying of access control policies. As we have shown, language
+    ${\cal L}$ is expressive enough to represent constraints and default rules.
+
+    The case study in Section \ref{sec-case} is a demonstration of how the
+    PolicyUpdater system can be adapted to be used in a real-world web server
+    authorisation application.
+
+    One possible future extension to this work is the integration of temporal
+    logic to language ${\cal L}$ to allow time properties to be expressed in
+    access control policies. Such extension will be useful in access control
+    systems such as e-commerce applications where authorisations are granted
+    or denied based on policies that are time dependent.
+
+  \appendix
 
   \vappsection{Storage Structures}
 
@@ -2249,57 +2250,57 @@
       Apache Software Foundation,
       Authentication, Authorization and Access Control.
       {\em Apache HTTP Server 2.1 Documentation}, \\
-      {\scriptsize \tt http://httpd.apache.org/docs-2.1/}, 2004.
+      {\tt \scriptsize http://httpd.apache.org/docs-2.1/}, 2004.
 
     \bibitem{BA1}
       Bai, Y., Varadharajan, V.,
       On Formal Languages for Sequences of Authorization Transformations.
       In {\em Proceedings of Safety, Reliability and Security of Computer
       Systems}. Also in {\em Lecture Notes in Computer Science},
-      vol. 1698, pp. 375-384. Springer-Verlag, 1999.
+      Vol. 1698, pp. 375-384. Springer-Verlag, 1999.
 
     \bibitem{BA2}
       Bai, Y., Varadharajan, V.,
       On Transformation of Authorization Policies.
       In {\em Data and Knowledge Engineering},
-      vol. 45, no. 3, pp. 333-357, 2003.
+      Vol. 45, No. 3, pp. 333-357, 2003.
 
     \bibitem{BE1}
       Bertino, E., Buccafurri, F., Ferrari, E., Rullo, P.,
       A Logic-based Approach for Enforcing Access Control.
-      In {\em Journal of Computer Security},
-      vol. 8, no. 2-3, pp. 109-140, IOS Press, 2000.
+      {\em Journal of Computer Security},
+      Vol. 8, No. 2-3, pp. 109-140, IOS Press, 2000.
 
     \bibitem{BE2}
-      Bertino, E., Mileo A., Provetti, A.
+      Bertino, E., Mileo, A., Provetti, A.
       Policy Monitoring with User-Preferences in PDL.
       In {\em Proceedings of IJCAI-03 Workshop for Nonmonotonic Reasoning,
       Action and Change},
       pp. 37-44, 2003.
 
     \bibitem{CHO}
-      Chomicki, J., Lobo, J., Naqvi S.,
+      Chomicki, J., Lobo, J., Naqvi, S.,
       A Logic Programming Approach to Conflict Resolution in Policy Management.
       In {\em Proceedings of KR2000, 7th International Conference on Principles
       of Knowledge Representation and Reasoning},
       pp. 121-132, Kaufmann, 2000.
 
     \bibitem{CRE}
-      Crescini, V. F., Zhang Y.,
+      Crescini, V. F., Zhang, Y.,
       {\em PolicyUpdater - A System for Dynamic Access Control}.
       (manuscript) 2004.
 
     \bibitem{HAL}
-      Halpern, J. Y., Weissman V.,
+      Halpern, J. Y., Weissman, V.,
       Using First-Order Logic to Reason About Policies.
       In {\em Proceedings of the 16th IEEE Computer Security Foundations
-      Workshop}, pp.187-201, 2003.
+      Workshop}, pp. 187-201, 2003.
 
     \bibitem{JAJ}
       Jajodia, S., Samarati, P., Sapino, M. L., Subrahmanian, V. S.,
       Flexible Support for Multiple Access Control Policies.
-      In {\em ACM Transactions on Database Systems},
-      vol. 29, no. 2, pp. 214-260, ACM, 2001.
+      {\em ACM Transactions on Database Systems},
+      Vol. 29, No. 2, pp. 214-260, ACM, 2001.
 
     \bibitem{LAU}
       Laurie, B., Laurie, P.,
@@ -2307,13 +2308,13 @@
       O'Reilly \& Associates Inc., 2003.
 
     \bibitem{LI}
-      Li N., Grosof B. N., Feigenbaum, J.,
+      Li, N., Grosof, B. N., Feigenbaum, J.,
       Delegation Logic: A Logic-based Approach to Distributed Authorization.
-      In {\em ACM Transactions on Information and System Security (TISSEC)},
-      vol. 6, no. 1, pp. 128-171, ACM, 2003.
+      {\em ACM Transactions on Information and System Security (TISSEC)},
+      Vol. 6, No. 1, pp. 128-171, 2003.
 
     \bibitem{LOB}
-      Lobo J., Bhatia R., Naqvi S.,
+      Lobo, J., Bhatia, R., Naqvi, S.,
       A Policy Description Language.
       In {\em Proceedings of AAAI 16th National Conference on Artificial
       Intelligence and 11th Conference on Innovative Applications of Artificial
@@ -2323,21 +2324,21 @@
       Network Working Group,
       {\em HTTP 1.1 (RFC 2616)}.
       The Internet Society, \\
-      {\scriptsize \tt ftp://ftp.isi.edu/in-notes/rfc2616.txt},
+      {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2616.txt},
       1999.
 
     \bibitem{HTTP2}
       Network Working Group,
       {\em HTTP Authentication (RFC 2617)}.
       The Internet Society, \\
-      {\scriptsize \tt ftp://ftp.isi.edu/in-notes/rfc2617.txt},
+      {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2617.txt},
       1999.
 
     \bibitem{SIM}
       Simons., P.,
       Efficient Implementation of the Stable Model Semantics for Normal Logic
       Programs.
-      In {\em Research Reports, Helsinki University of Technology},
-      no. 35, 1995.
+      {\em Research Reports, Helsinki University of Technology},
+      No. 35, 1995.
   \end{thebibliography}
 \end{document}
