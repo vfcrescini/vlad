@@ -17,6 +17,7 @@ class constraint : public list_item
     constraint(expression *e, expression *c, expression *n);
     ~constraint();
     bool cmp(list_item *item);
+    int get(expression **e, expression **c, expression **n);
   private :
     expression *exp;
     expression *cond;
@@ -29,6 +30,7 @@ class consttab : public list
     consttab();
     ~consttab();
     int add(expression *e, expression *c, expression *n);
+    int get(unsigned int i, expression **e, expression **c, expression **n);
 } ;
 
 #endif

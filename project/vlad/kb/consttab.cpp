@@ -62,6 +62,18 @@ bool constraint::cmp(list_item *item)
   return true;
 }
 
+int constraint::get(expression **e, expression **c, expression **n)
+{
+  if (e == NULL || c == NULL || n == NULL)
+    return VLAD_NULLPTR;
+
+  *e = exp;
+  *c = cond;
+  *n = ncond;
+
+  return VLAD_OK;
+}
+
 consttab::consttab() : list(true)
 {
 }
@@ -82,4 +94,15 @@ int consttab::add(expression *e, expression *c, expression *n)
     return VLAD_MALLOCFAILED;
 
   return list::add((list_item *) tmp);
+}
+
+int consttab::get(unsigned int i, expression **e, expression **c, expression **n)
+{
+  int retval;
+  constraint *tmp;
+
+  if ((retval = list::get(i, (list_item **) &tmp)) != VLAD_OK)
+    return retval;
+
+  return tmp->get(e, c, n);
 }
