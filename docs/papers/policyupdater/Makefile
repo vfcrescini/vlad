@@ -10,8 +10,8 @@ FIG2DEV=fig2dev
 LATEX_SRCS=policyupdater
 XFIG_SRCS=figure-01 figure-02 figure-03
 
-CLASS=
-STYLE=latex8.sty
+CLASS=svjour.cls
+STYLE=
 
 .PHONY :    \
   all       \

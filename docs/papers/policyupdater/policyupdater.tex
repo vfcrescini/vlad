@@ -1,5 +1,4 @@
-\documentclass[11pt, twocolumn]{article}
-\usepackage{latex8}
+\documentclass[global,twocolumn]{svjour}
 \usepackage{times}
 \usepackage{amsmath}
 \usepackage{alltt}
@@ -27,6 +26,9 @@
 \newenvironment{vverbatim}
   {\begin{alltt}}
   {\vspace{-\baselineskip}\end{alltt}}
+% define subparagraph
+\newenvironment{subparagraph}[1]
+{{\em #1}}
 % define a section command to be used in the appendices
 \makeatletter
 \newcommand{\vappsection}[1]{
@@ -44,15 +46,13 @@
 
 \begin{document}
   \title{PolicyUpdater -- A System for Dynamic Access Control}
-  \author{
-    Vino Fernando Crescini and Yan Zhang                   \\
-    School of Computing and Information Technology         \\
-    University of Western Sydney                           \\
-    Penrith South DC, NSW 1797, Australia                  \\
-    E-mail: \{jcrescin,yan\}@cit.uws.edu.au
+  \author{Vino Fernando Crescini and Yan Zhang}
+  \institute{
+    School of Computing and Information Technology \\
+    University of Western Sydney                   \\
+    Penrith South DC, NSW 1797, Australia          \\
+    \email{\{jcrescin,yan\}@cit.uws.edu.au}        \\
   }
-
-  \date{}
 
   \maketitle
 
@@ -394,7 +394,6 @@
           \end{vverbatim}
 
         \subparagraph{Computing an update sequence.}
-
           The policy updates in the sequence list does not get applied until
           the $compute$ directive is issued. The directive causes the policy
           update references in the sequence list to be applied one at a time in
@@ -909,7 +908,6 @@
           explicitly defined in language ${\cal L}^{*}$.
 
           \subparagraph{Inheritance rules.}
-
             All properties held by a group is inherited by all the members and
             subsets of that group. This rule is easy to apply for subject group
             entities. However, careful attention must be given to access right
@@ -1070,7 +1068,6 @@
             \end{enumerate}
 
           \subparagraph{Transitivity rules.}
-
             Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of $G'$
             and $G'$ is a subset of $G''$, then $G$ must also be a subset of
             $G''$. The following rules ensure that the transitive property of
@@ -1127,7 +1124,6 @@
             \end{enumerate}
 
           \subparagraph{Inertial rules.}
-
             Intuitively, all facts in the current state that are not affected
             by a policy update should be carried over to the next state after
             the update. In language ${\cal L}^{*}$, this rule must be
