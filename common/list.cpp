@@ -24,27 +24,6 @@ list::list()
   len = 0;
   head = NULL;
   tail = NULL;
-  name = NULL;
-}
-
-list::list(const char *n, bool u)
-{
-  unique = u;
-  len = 0;
-  head = NULL;
-  tail = NULL;
-  name = NULL;
-
-  /* name is entirely optional */
-  if (n != NULL) {
-    if ((name = VLAD_STRING_MALLOC(n)) != NULL)
-      strcpy(name, n);
-  }
-
-#ifdef DEBUG
-  if (name != NULL) 
-    fprintf(stderr, "list %s is %s\n", name, u ? "unique" : "not-unique");
-#endif
 }
 
 list::list(bool u)
@@ -53,20 +32,11 @@ list::list(bool u)
   len = 0;
   head = NULL;
   tail = NULL;
-  name = NULL;
 }
 
 list::~list()
 {
   purge(true);
-
-#ifdef DEBUG
-  if (name != NULL)
-    fprintf(stderr, "list %s is destroyed\n", name);
-#endif
-
-  if (name != NULL)
-    free(name);
 }
 
 bool list::cmp(list *l)

@@ -14,7 +14,7 @@
 class expression : public list
 {
   public :
-    expression(const char *n);
+    expression();
     ~expression();
     /* add pre-malloc'ed atom */
     int add(atom *a);

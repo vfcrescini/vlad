@@ -28,7 +28,7 @@ class transdef : public list_item
 class transtab : public list
 {
   public :
-    transtab(const char *n);
+    transtab();
     ~transtab();
     int add(const char *n, stringlist *v, expression *pr, expression *po);
     int get(const char *n, transdef **t);

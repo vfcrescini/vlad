@@ -66,17 +66,17 @@ int symtab::init()
     free(f_const);
 
   /* now create them */
-  if ((sub_list = VLAD_NEW(stringlist("sub"))) == NULL)
+  if ((sub_list = VLAD_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((acc_list = VLAD_NEW(stringlist("acc"))) == NULL)
+  if ((acc_list = VLAD_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((obj_list = VLAD_NEW(stringlist("obj"))) == NULL)
+  if ((obj_list = VLAD_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((sub_grp_list = VLAD_NEW(stringlist("sub-grp"))) == NULL)
+  if ((sub_grp_list = VLAD_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((acc_grp_list = VLAD_NEW(stringlist("acc-grp"))) == NULL)
+  if ((acc_grp_list = VLAD_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((obj_grp_list = VLAD_NEW(stringlist("obj-grp"))) == NULL)
+  if ((obj_grp_list = VLAD_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
   if ((t_const = VLAD_STRING_MALLOC(VLAD_CONST_TRUE)) == NULL)
     return VLAD_MALLOCFAILED;

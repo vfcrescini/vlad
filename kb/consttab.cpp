@@ -62,7 +62,7 @@ bool constraint::cmp(list_item *item)
   return true;
 }
 
-consttab::consttab(const char *n) : list(n, true)
+consttab::consttab() : list(true)
 {
 }
 

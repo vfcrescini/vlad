@@ -67,7 +67,7 @@ stringlist *transdef::get_vlist()
   return vlist;
 }
 
-transtab::transtab(const char *n) : list(n, true)
+transtab::transtab() : list(true)
 {
 }
 
