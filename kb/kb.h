@@ -48,6 +48,17 @@ class kb {
     expression *itable;
     consttab *ctable;
     transtab *ttable;
+    unsigned int c_len;
+    unsigned int s_len;
+    unsigned int a_len;
+    unsigned int o_len;
+    unsigned int sg_len;
+    unsigned int ag_len;
+    unsigned int og_len;
+    unsigned int h_tot;
+    unsigned int m_tot;
+    unsigned int s_tot;
+    unsigned int pos_tot;
     unsigned char stage;
     /* make sure atom a is valid */
     int kb::verify_atom(atom *a, stringlist *v);
@@ -72,6 +83,20 @@ class kb {
     int verify_atom_subset(const char *g1, const char *g2, stringlist *v);
     /* make sure transref is valid */
     int verify_transref(transref *r);
+    /* functions for encoding atoms */
+    int encode_const(const char *c, unsigned int *n);
+    int encode_holds(const char *s, const char *a, const char *o, unsigned int *n);
+    int encode_member(const char *e, const char *g, unsigned int *n);
+    int encode_subset(const char *g1, const char *g2, unsigned int *n);
+    /* gives an atom id based on the identifiers already given */
+    int encode_atom(const char *n1,
+                    const char *n2,
+                    const char *n3,
+                    unsigned char ty,
+                    unsigned int s,
+                    bool tr,
+                    unsigned int *a);
+
 } ;
 
 #endif

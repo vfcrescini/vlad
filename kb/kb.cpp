@@ -19,6 +19,17 @@ kb::kb()
   ctable = NULL;
   ttable = NULL;
   stage = 0;
+  c_len = 0;
+  s_len = 0;
+  a_len = 0;
+  o_len = 0;
+  sg_len = 0;
+  ag_len = 0;
+  og_len = 0;
+  h_tot = 0;
+  m_tot = 0;
+  s_tot = 0;
+  pos_tot = 0;
 }
 
 kb::~kb()
@@ -82,6 +93,25 @@ int kb::close_symtab()
 {
   if (stage != 1)
     return VLAD_FAILURE;
+
+  /* first get some needed values */
+  
+  /* get list lengths */
+  c_len = stable->length(VLAD_IDENT_CONST);
+  s_len = stable->length(VLAD_IDENT_SUBJECT);
+  a_len = stable->length(VLAD_IDENT_ACCESS);
+  o_len = stable->length(VLAD_IDENT_OBJECT); 
+  sg_len = stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
+  ag_len = stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
+  og_len = stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
+  
+  /* total atoms (only +ve) */
+  h_tot = (s_len + sg_len) * (a_len + ag_len) * (o_len + og_len);
+  m_tot = (s_len * sg_len) + (a_len * ag_len) + (o_len * og_len);
+  s_tot = (sg_len * sg_len) + (ag_len * ag_len) + (og_len * og_len);
+  
+  /* total +ve atoms */
+  pos_tot = h_tot + m_tot + s_tot + c_len;
 
   stage = 2;
   
@@ -328,6 +358,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 {
   int retval;
   unsigned int i;
+  unsigned int j;
+  unsigned int k;
+  unsigned int l;
+  unsigned int m;
 
   /* we only allow this function after transtab is closed */
   if (stage != 5)
@@ -353,6 +387,123 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         return retval;
       if ((retval = verify_transref(tmp1)) != VLAD_OK)
         return retval;
+    }
+  }
+
+  /* first we print out all the possible atoms in the kb */
+
+  /* state loop */
+  for (i = 0; i <= ((s == NULL) ? 0 : s->length()); i++) {
+    /* truth loop */
+    for (j = 0; j < 2; j++) {
+      /* constants */
+      for (k = 0; k < c_len; k++) {
+        char *tmp1;
+        unsigned int tmp2;
+
+        stable->get(k, VLAD_IDENT_CONST, &tmp1);
+        encode_atom(tmp1, NULL, NULL, VLAD_ATOM_CONST, i, j, &tmp2);
+        fprintf(f, "%6d = state %d %s%s\n", tmp2, i, j ? "" : "!", tmp1);
+      }
+      /* holds */
+      for (k = 0; k < s_len + sg_len; k++) {
+        char *tmp1;
+
+        if (k < s_len)
+          stable->get(k, VLAD_IDENT_SUBJECT, &tmp1);
+        else
+          stable->get(k - s_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp1);
+
+        for (l = 0; l < a_len; l++) {
+          char *tmp2;
+
+          if (l < a_len)
+            stable->get(l, VLAD_IDENT_ACCESS, &tmp2);
+          else
+            stable->get(l - a_len, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
+        
+          for (m = 0; m < o_len; m++) {
+            char *tmp3;
+            unsigned int tmp4;
+
+            if (m < o_len)
+              stable->get(m, VLAD_IDENT_OBJECT, &tmp3);
+            else
+              stable->get(m - o_len, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp3);
+
+            encode_atom(tmp1, tmp2, tmp3, VLAD_ATOM_HOLDS, i, j, &tmp4);
+            fprintf(f, "%6d = state %d %sholds(%s, %s, %s)\n", tmp4, i, j ? "" : "!", tmp1, tmp2, tmp3);
+          }
+        }
+      }
+      /* member */
+      for (k = 0; k < stable->length(VLAD_IDENT_SUBJECT); k++) {
+        char *tmp1;
+        stable->get(k, VLAD_IDENT_SUBJECT, &tmp1);
+        for (l = 0; l < stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP); l++) {
+          char *tmp2;
+          unsigned int tmp3;
+          stable->get(l, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp2);
+          encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_MEMBER, i, j, &tmp3);
+          fprintf(f, "%6d = state %d %smemb(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+        }
+      }
+      for (k = 0; k < stable->length(VLAD_IDENT_ACCESS); k++) {
+        char *tmp1;
+        stable->get(k, VLAD_IDENT_ACCESS, &tmp1);
+        for (l = 0; l < stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP); l++) {
+          char *tmp2;
+          unsigned int tmp3;
+          stable->get(l, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
+          encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_MEMBER, i, j, &tmp3);
+          fprintf(f, "%6d = state %d %smemb(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+        }
+      }
+      for (k = 0; k < stable->length(VLAD_IDENT_OBJECT); k++) {
+        char *tmp1;
+        stable->get(k, VLAD_IDENT_OBJECT, &tmp1);
+        for (l = 0; l < stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP); l++) {
+          char *tmp2;
+          unsigned int tmp3;
+          stable->get(l, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp2);
+          encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_MEMBER, i, j, &tmp3);
+          fprintf(f, "%6d = state %d %smemb(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+        }
+      }
+      /* subset */
+      for (k = 0; k < stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP); k++) {
+        char *tmp1;
+        stable->get(k, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp1);
+        for (l = 0; l < stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP); l++) {
+          char *tmp2;
+          unsigned int tmp3;
+          stable->get(l, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp2);
+          encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp3);
+          fprintf(f, "%6d = state %d %ssubst(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+        }
+      }
+      for (k = 0; k < stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP); k++) {
+        char *tmp1;
+        stable->get(k, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp1);
+        for (l = 0; l < stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP); l++) {
+          char *tmp2;
+          unsigned int tmp3;
+          stable->get(l, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
+          encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp3);
+          fprintf(f, "%6d = state %d %ssubst(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+        }
+      }
+      for (k = 0; k < stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP); k++) {
+        char *tmp1;
+        stable->get(k, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp1);
+        for (l = 0; l < stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP); l++) {
+          char *tmp2;
+          unsigned int tmp3;
+          stable->get(l, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp2);
+          encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp3);
+          fprintf(f, "%6d = state %d %ssubst(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+        }
+      }
     }
   }
 
@@ -623,5 +774,168 @@ int kb::verify_transref(transref *r)
       return retval;
   }
 
+  return VLAD_OK;
+}
+
+/* gives an atom id based on the identifiers already given */
+int kb::encode_atom(const char *n1,
+                    const char *n2,
+                    const char *n3,
+                    unsigned char ty,
+                    unsigned int s,
+                    bool tr,
+                    unsigned int *a) 
+{
+  int retval;
+  unsigned int tmp;
+
+  if (stage < 5)
+    return VLAD_FAILURE;
+
+  if (a == NULL)
+    return VLAD_NULLPTR;
+
+  /* get the unsigned, unstated id of the atom */
+  switch(ty) {
+    case VLAD_ATOM_CONST :
+      if ((retval = encode_const(n1, &tmp)) != VLAD_OK)
+        return retval;
+      break;
+    case VLAD_ATOM_HOLDS :
+      if ((retval = encode_holds(n1, n2, n3, &tmp)) != VLAD_OK)
+        return retval;
+      tmp = tmp + c_len;
+      break;
+    case VLAD_ATOM_MEMBER :
+      if ((retval = encode_member(n1, n2, &tmp)) != VLAD_OK)
+        return retval;
+      tmp = tmp + c_len + h_tot;
+      break;
+    case VLAD_ATOM_SUBSET :
+      if ((retval = encode_subset(n1, n2, &tmp)) != VLAD_OK)
+        return retval;
+      tmp = tmp + c_len + h_tot + m_tot;
+      break;
+    default :
+      return VLAD_INVALIDINPUT;
+  }
+
+  /* consider the truth value */
+  tmp = tmp + (tr ? pos_tot : 0);
+   
+  /* now the state */
+  *a = tmp + (s * (pos_tot * 2));
+
+  return VLAD_OK;
+}
+
+int kb::encode_const(const char *c, unsigned int *n)
+{
+  int retval;
+  unsigned int c_index;
+  unsigned char c_type;
+
+  /* get from symbol table */
+  if ((retval = stable->get(c, &c_index, &c_type)) != VLAD_OK)
+    return retval;
+
+  *n = c_index;
+
+  return VLAD_OK;
+}
+
+int kb::encode_holds(const char *s, const char *a, const char *o, unsigned int *n)
+{
+  int retval;
+  unsigned int s_index;
+  unsigned int a_index;
+  unsigned int o_index;
+  unsigned char s_type;
+  unsigned char a_type;
+  unsigned char o_type;
+  unsigned int hs;
+  unsigned int ha;
+  unsigned int ho;
+
+  /* get the indices of the identifiers */
+  if ((retval = stable->get(s, &s_index, &s_type)) != VLAD_OK)
+    return retval;
+  if ((retval = stable->get(a, &a_index, &a_type)) != VLAD_OK)
+    return retval;
+  if ((retval = stable->get(o, &o_index, &o_type)) != VLAD_OK)
+    return retval;
+
+  /* now compute */
+  hs = s_index + (VLAD_IDENT_IS_GROUP(s_type) ? s_len : 0);
+  ha = a_index + (VLAD_IDENT_IS_GROUP(a_type) ? a_len : 0);
+  ho = o_index + (VLAD_IDENT_IS_GROUP(o_type) ? o_len : 0);
+
+  *n = (hs * (a_len + ag_len) * (o_len + og_len)) + (ha * (o_len + og_len)) + ho;
+
+  return VLAD_OK;
+}
+
+int kb::encode_member(const char *e, const char *g, unsigned int *n)
+{
+  int retval;
+  unsigned int e_index;
+  unsigned int g_index;
+  unsigned char e_type;
+  unsigned char g_type;
+
+  /* get the indices of the identifiers */
+  if ((retval = stable->get(e, &e_index, &e_type)) != VLAD_OK)
+    return retval;
+  if ((retval = stable->get(g, &g_index, &g_type)) != VLAD_OK)
+    return retval;
+
+  /* now compute */
+  switch(VLAD_IDENT_BASETYPE(e_type)) {
+    case VLAD_IDENT_SUBJECT :
+      *n = (e_index * sg_len) + g_index;
+      break;
+    case VLAD_IDENT_ACCESS :
+      *n = (s_len * sg_len) + (e_index * ag_len) + g_index;
+      break;
+    case VLAD_IDENT_OBJECT :
+      *n = (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index;
+      break;
+    default :
+      /* this should never happen */
+      return VLAD_FAILURE;
+  }
+
+  return VLAD_OK;
+}
+
+int kb::encode_subset(const char *g1, const char *g2, unsigned int *n)
+{
+  int retval;
+  unsigned int g1_index;
+  unsigned int g2_index;
+  unsigned char g1_type;
+  unsigned char g2_type;
+
+  /* get the indices of the identifiers */
+  if ((retval = stable->get(g1, &g1_index, &g1_type)) != VLAD_OK)
+    return retval;
+  if ((retval = stable->get(g2, &g2_index, &g2_type)) != VLAD_OK)
+    return retval;
+
+  /* now we compute */
+  switch(VLAD_IDENT_BASETYPE(g1_type)) {
+    case VLAD_IDENT_SUBJECT :
+      *n = (g1_index * sg_len) + g2_index;
+      break;
+    case VLAD_IDENT_ACCESS :
+      *n = (sg_len * sg_len) + (g1_index * ag_len) + g2_index;
+      break;
+    case VLAD_IDENT_OBJECT :
+      *n = (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index;
+      break;
+    default :
+      /* this should never happen */
+      return VLAD_FAILURE;
+  }
   return VLAD_OK;
 }
