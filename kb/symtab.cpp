@@ -225,6 +225,102 @@ int symtab::get(unsigned int i, unsigned char t, char **s)
   return VLAD_INVALIDINPUT; 
 }
 
+/* get an array of identifiers that matches the given type */
+int symtab::get(unsigned char t, char ***a, unsigned int *s)
+{
+  int retval;
+  unsigned int i;
+
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (a == NULL || s == NULL)
+    return VLAD_NULLPTR;
+
+  if (VLAD_IDENT_IS_CONST(t)) {
+
+    *s = 2;
+
+    if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
+      return VLAD_MALLOCFAILED;
+
+    (*a)[0] = f_const;
+    (*a)[1] = t_const;
+
+    return VLAD_OK;
+  }
+  else if (VLAD_IDENT_IS_SUBJECT(t)) {
+    unsigned int s_len;
+    unsigned int sg_len;
+
+    s_len = sub_list->length();
+    sg_len = sub_grp_list->length();
+    *s = s_len + sg_len;
+
+    if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
+      return VLAD_MALLOCFAILED;
+     
+    /* non-group subject */
+    for (i = 0; i < s_len; i++)
+      if ((retval = sub_list->get(i, &((*a)[i]))) != VLAD_OK)
+        return retval;
+
+    /* group subject */
+    for (i = s_len; i < *s; i++)
+      if ((retval = sub_grp_list->get(i - s_len, &((*a)[i]))) != VLAD_OK)
+        return retval;
+
+    return VLAD_OK;
+  }
+  else if (VLAD_IDENT_IS_ACCESS(t)) {
+    unsigned int a_len;
+    unsigned int ag_len;
+
+    a_len = acc_list->length();
+    ag_len = acc_grp_list->length();
+    *s = a_len + ag_len;
+
+    if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
+      return VLAD_MALLOCFAILED;
+     
+    /* non-group access */
+    for (i = 0; i < a_len; i++)
+      if ((retval = acc_list->get(i, &((*a)[i]))) != VLAD_OK)
+        return retval;
+
+    /* group access */
+    for (i = a_len; i < *s; i++)
+      if ((retval = acc_grp_list->get(i - a_len, &((*a)[i]))) != VLAD_OK)
+        return retval;
+
+    return VLAD_OK;
+  }
+  else if (VLAD_IDENT_IS_OBJECT(t)) {
+    unsigned int o_len;
+    unsigned int og_len;
+
+    o_len = obj_list->length();
+    og_len = obj_grp_list->length();
+    *s = o_len + og_len;
+
+    if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
+      return VLAD_MALLOCFAILED;
+     
+    /* non-group object */
+    for (i = 0; i < o_len; i++)
+      if ((retval = obj_list->get(i, &((*a)[i]))) != VLAD_OK)
+        return retval;
+
+    /* group object */
+    for (i = o_len; i < *s; i++)
+      if ((retval = obj_grp_list->get(i - o_len, &((*a)[i]))) != VLAD_OK)
+        return retval;
+    return VLAD_OK;
+  }
+
+  return VLAD_INVALIDINPUT;
+}
+
 /* return the number of identifiers that are of type t */
 unsigned int symtab::length(unsigned char t)
 {

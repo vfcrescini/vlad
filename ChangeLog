@@ -1,5 +1,11 @@
 2003-04-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/symab.h :
+	* kb/symtab.cpp :
+
+	  - Added yet another get() function to give an array of all
+	    identifier matching the given type.
+
 	* common/vlad.h :
 	* common/list.cpp :
 
