@@ -15,11 +15,11 @@ class number : public list_item
     number();
     ~number();
     /* compare item with this number */
-    bool cmp(list_item *item);
-    int init(unsigned int n);
+    bool cmp(list_item *a_item);
+    int init(unsigned int a_num);
     unsigned int get();
   private :
-    unsigned int num;
+    unsigned int m_number;
 } ;
 
 /* a list of numbers */
@@ -29,9 +29,9 @@ class numberlist : public list
     numberlist();
     ~numberlist();
     /* add a number in the list */
-    int add(unsigned int n);
+    int add(unsigned int a_num);
     /* get the i'th number in the list */
-    int get(unsigned int i, unsigned int *n);
+    int get(unsigned int a_index, unsigned int *a_num);
     /* empty the list */
     void purge();
 } ;
