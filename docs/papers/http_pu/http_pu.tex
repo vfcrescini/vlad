@@ -40,7 +40,10 @@
     Section \ref{webserver} gives an overview of the standard access control
     system built into existing web servers. More importantly, the section
     discusses how the PolicyUpdater system is used as an authorisation module
-    to restrict access to resources provided by web server.
+    for the Apache\footnotemark web server to restrict access to resources
+    provided by web server.
+
+    \footnotetext{Apache Homepage at {\tt http://httpd.apache.org}}
 
     Finally, Section \ref{conclusion} has some concluding remarks that
     addresses some possible extensions and improvements to the system.
@@ -628,8 +631,19 @@ query holds(alice, read, file);\end{verbatim}
   \section{Conclusion}
      \label{conclusion}
 
-    In this paper, we have presented a logic based approach for web server
-    access control systems.
+    In this paper, we have presented a logic based approach for access control
+    in web servers. As we have shown, the core PolicyUpdater used in conjuction
+    with an interface module that plugs into a web server provides a flexible
+    policy base framework that provides dynamic and conditional updates and
+    access control query request evaluations.
+
+    One possible future extension to this work is the integration of temporal
+    logic to language ${\cal L}$ (and therefore language ${\cal L'}$ to allow
+    time properties to be expressed in access control policies. Such extension
+    will be useful in access control systems such as e-commerce applications
+    where authorisations are granted or denied based on policies that are time
+    dependent. Another possible extension to the system and language is to
+    consider multi-agent / multi-policy environments.
 
   \begin{thebibliography}{5}
     \bibitem{AP}
