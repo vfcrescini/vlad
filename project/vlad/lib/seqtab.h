@@ -10,11 +10,11 @@
 #include <vlad/expression.h>
 #include <vlad/stringlist.h>
 
-class transref : public list_item
+class updateref : public list_item
 {
   public :
-    transref();
-    ~transref();
+    updateref();
+    ~updateref();
     bool cmp(list_item *a_item);
     int init(const char *a_name, stringlist *a_list);
     int get(char **a_name, stringlist **a_list);
@@ -32,8 +32,8 @@ class seqtab : public list
    public :
      seqtab();
      ~seqtab();
-     /* add pre-malloc'ed transref */
-     int add(transref *a_tref);
+     /* add pre-malloc'ed updateref */
+     int add(updateref *a_uref);
      /* add pre-malloc'ed name and ilist */
      int add(const char *a_name, stringlist *a_list);
      /* delete i'th item */
