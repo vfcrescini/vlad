@@ -38,10 +38,10 @@
 
       \subsubsection{Components of Language $\cal{L}$}
 
-        \noindent\underline{\emph{Identifiers.}} Language $\cal{L}$ consists of
-        8 types of disjoint identifier types: $subjects$, $access-rights$ and
-        $objects$, with each type being either singular or group, plus the
-        the $policy update$ identifiers and the variables:
+        \noindent{\emph{Identifiers.}} Language $\cal{L}$ consists of
+        8 disjoint identifier types: $subjects$, $access-rights$ and $objects$,
+        with each type being either singular or group, plus the $policy update$
+        identifiers and the variables:
 
         \begin{itemize}
           \item
@@ -65,20 +65,20 @@
             or groups of these.
         \end{itemize}
 
-        The first character of an identifier byst be an alpha character
+        The first character of an identifier must be an alpha character
         followed by 0 to 127 characters of alpha, digit or underscore
         characters.
 
         \begin{verbatim}[a-zA-Z]([a_zA-Z0-9_]){0,127}\end{verbatim}
 
-        \noindent\underline{\emph{Atoms.}} Atoms are composed of a relation
-        plus two or more identifier constants to represent a logical
-        relationship between the identifiers. There are three types of atoms:
+        \noindent{\emph{Atoms.}} Atoms are composed of a relation plus two or
+        more identifiers represent a logical relationship between the
+        identifiers. There are three types of atoms:
 
         \begin{itemize}
           \item
-            $Holds$. An atom of this type states that the subject
-            $sub$ holds the access-right $acc$ for the object $obj$.
+            $Holds$. An atom of this type states that the subject $sub$ holds
+            the access-right $acc$ for the object $obj$.
 
             \begin{verbatim}holds(<sub>, <acc>, <obj>)\end{verbatim}
           \item
@@ -91,19 +91,20 @@
           \item
             $Subset$. The subset atom claims that the groups $grp1$ and $grp2$
             are of the same types and that group $grp1$ is a subset of the
-            group $grp2$. 
+            group $grp2$.
             \begin{verbatim}subst(<grp1>, <grp2>)\end{verbatim}
         \end{itemize}
 
-        \noindent\underline{\emph{Facts.}} A fact makes a claim that the
-        relationship represented by an atom or its negation holds. Atoms
-        are negated by the use of the negation operator ($!$).
+        \noindent{\emph{Facts.}} A fact makes a claim that the relationship
+        represented by an atom or its negation holds. Facts are negated by the
+        use of the negation operator ($!$). The following shows the formal
+        syntax of a fact:
 
         \begin{verbatim}[!]<holds-atm>|<memb-atm>|<subst-atm>\end{verbatim}
 
-        \noindent\underline{\emph{Expressions.}} An expression is either a
-        fact, or a logical conjunction of facts, separated by the
-        double-ampersand characters $\&\&$.
+        \noindent{\emph{Expressions.}} An expression is either a fact, or a
+        logical conjunction of facts, separated by the double-ampersand
+        characters $\&\&$.
 
         \begin{verbatim}<fact1> [&& <fact2> [&& ...]]\end{verbatim}
 
@@ -115,11 +116,11 @@
 
       \subsubsection{Policy Update Directives}
 
-        \noindent\underline{\emph{Adding an Update into the Sequence}}
+        \noindent{\emph{Adding an Update into the Sequence}}
 
-        \noindent\underline{\emph{Listing the Updates in the Sequence}}
+        \noindent{\emph{Listing the Updates in the Sequence}}
 
-        \noindent\underline{\emph{Removing an Update from the Sequence}}
+        \noindent{\emph{Removing an Update from the Sequence}}
 
       \subsubsection{Query Directive}
 
@@ -127,23 +128,23 @@
 
       \subsubsection{Formal Domain Definition}
 
-        \noindent\underline{\emph{Sorts}}
+        \noindent{\emph{Sorts}}
 
-        \noindent\underline{\emph{Initial State}}
+        \noindent{\emph{Initial State}}
 
-        \noindent\underline{\emph{Constraints}}
+        \noindent{\emph{Constraints}}
 
-        \noindent\underline{\emph{Policy Updates}}
+        \noindent{\emph{Policy Updates}}
 
-        \noindent\underline{\emph{Queries}}
+        \noindent{\emph{Queries}}
 
       \subsubsection{Additional Constraints}
 
-        \noindent\underline{\emph{Inheritance Rules}}
+        \noindent{\emph{Inheritance Rules}}
 
-        \noindent\underline{\emph{Transitivity Rules}}
+        \noindent{\emph{Transitivity Rules}}
 
-        \noindent\underline{\emph{Contradictory Rule}}
+        \noindent{\emph{Contradictory Rule}}
 
           $false$ $\leftarrow$ $A$ $\land$ $\lnot$ $A$
 
