@@ -1,6 +1,6 @@
 /*
  * util.c
- * Vino Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #define CORE_PRIVATE
