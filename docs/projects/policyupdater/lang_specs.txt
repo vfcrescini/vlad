@@ -196,6 +196,9 @@ Language LT
     constraint definition statement is limited to that definition statement
     only.
 
+    Note that the expressions that make up constraints may be non-ground. This
+    means that an entity variable may occur within them.
+
   2.5. Policy Update Definition
 
     <update_id>([<var_id>[, ...]])
@@ -205,11 +208,62 @@ Language LT
     where <expression1> and <expression2> are composed of atoms that may
     contain entity variables listed in variable list (<var_id>, ...).
 
+    As with constraints, policy update definition exressions may be non-ground.
+
 3. Directives
 
   3.1. Query Directive
 
-    query <expression> [where <interval-relation>[, ...]];
+    This directive may be used to query the system whether a given ground
+    expression holds while the given interval relations hold. The directive
+    returns one of the following replies:
+
+      - TRUE
+      - FALSE
+      - UNKNOWN
+
+    Syntax:
+
+      query <ground-expression> [where <interval-relation>[, ...]];
+
+    In each of the atoms in the expression, a temporal interval variable
+    may occur. These existentially qualifed temporal variables are used for
+    the sole purpose of representing temporal interval relations between any
+    two facts occuring in the given query expression. As such, the scope of
+    these temporal interval variables are limited to the query directive
+    statement that contain them.
+
+    Valid Query Examples:
+
+      - Does s0 hold access right a0 for object o0 from time index 9 to time
+        index 17?
+
+        query holds(s0, a0, o0, [9-17]);
+
+      - Does s0 hold access right a0 for object o0 at any time between time
+        index 5 to time index 10?
+
+        query holds(s0, a0, o0, I0) where during(I0, [5-10]);
+
+      - Does s0 hold access right a0 for object o0 at any time before s1 holds
+        access right a1 for object o1?
+
+        query holds(s0, a0, o0, I0), holds(s1, a1, o1, I1)
+        where before(i0, I1);
+
+    Invalid Query Examples:
+
+      The following are invalid because the given information are insufficient
+      to ground the given temporal interval variables:
+
+      - query holds(s0, a0, o0, I0); 
+
+      - query holds(s0, a0, o0, I0), holds(s1, a1, o1, I1);
+
+      - query holds(s0, a0, o0, I0) where meets(i0, I1);
+
+      - query holds(s0, a0, o0, I0), holds(s1, a1, o1, I1)
+        where overlaps(I0, I2), equals(I1, I3);
 
   3.2. Compute Directive
 
@@ -233,20 +287,26 @@ Language LT
 
 4. Translation
 
-  4.1. Initial Expression Rules
+  4.1. Data Structures
 
-  4.2. Constraint Rules
+  4.2. Translation of Statements to Rules
 
-  4.3. Policy Update Rules
+    4.2.1. Initial Expression Rules
 
-  4.4. Inheritance Rules
+    4.2.2. Constraint Rules
 
-    4.4.1. Membership Inheritance
+    4.2.3. Policy Update Rules
 
-    4.4.2. Subset Interhitance
+    4.2.4. Other Rules
 
-  4.5. Transitivity Rules
+      4.2.4.1. Inheritance Rules
 
-  4.6. Inertial Rules
+        4.2.4.1.1. Membership Inheritance
+
+        4.2.4.1.2. Subset Interhitance
+
+      4.2.4.2. Transitivity Rules
+
+      4.2.4.3. Inertial Rules
 
 5. Evaluation
