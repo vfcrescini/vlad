@@ -2,40 +2,38 @@
 VCalc
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-Finite State Machine Table
+State Transition Table
 
--------------------------------------------------------------------------------------------
-State   Description            Action                       Input Text           Next State
--------------------------------------------------------------------------------------------
-0       numeric input 1        store number in display      0|1|2|3|4|5|6|7|8|9  0
+----------------------------------------------------------------------------------------
+State  Description        Action                         Input Text           Next State
+----------------------------------------------------------------------------------------
+0      numeric input 1    display += num                 0|1|2|3|4|5|6|7|8|9  0
 
-                               store operator in op buffer  +|-|*|/              1
+                          op_buf = operator              +|-|*|/              1
 
-                                                            =                    0
--------------------------------------------------------------------------------------------
-1       op correction          store operator in op buffer  +|-|*|/              1
+                                                         =                    0
+----------------------------------------------------------------------------------------
+1      op correction      op_buf = operator              +|-|*|/              1
 
-                               store display number in      0|1|2|3|4|5|6|7|8|9  2
-                               buffer, then display new
-                               number
+                          buffer = display               0|1|2|3|4|5|6|7|8|9  2
+                          display = num
 
-                               copy display number in       =                    3
-                               buffer
--------------------------------------------------------------------------------------------
-2       numeric input 2        display numnber              0|1|2|3|4|5|6|7|8|9  2
+                          buffer = display               =                    3
+----------------------------------------------------------------------------------------
+2      numeric input 2    display += num                 0|1|2|3|4|5|6|7|8|9  2
 
-                               calculate result, display    +|-|*|/              1
-                               result, store op in op
-                               buffer
-                                 
-                               calculate result, display    =                    3
-                               result, put result in 
-                               buffer
--------------------------------------------------------------------------------------------
-3      repeat op               calculate result, display    =                    3
-                               result
+                          res = op_buf(buffer, display)  +|-|*|/              1
+                          display = res
+                          op_buf = op
+                                
+                          res = op_buf(buffer, display)  =                    3
+                          display = res
+----------------------------------------------------------------------------------------
+3      repeat op          res = op_buf(buffer, display)  =                    3
+                          display = res
 
-                               clear buffer, clear op       
-                               buffer, display number       0|1|2|3|4|5|6|7|8|9  0
+                          buffer = 0                     0|1|2|3|4|5|6|7|8|9  0
+                          op_buf = none
+                          display = num
 
-                               store operator in op buffer  +|-|*|/              1
+                          op_buf = operator              +|-|*|/              1
