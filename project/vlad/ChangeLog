@@ -1,3 +1,20 @@
+2003-04-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.cpp :
+	* common/list.h :
+
+	  - Added macro for easy comparisons between two list_items.
+
+	  - Safety check before purge().
+
+	* kb/atom.cpp :
+	* kb/consttab.cpp :
+	* kb/kb.cpp :
+	* kb/sequence.cpp :
+	* kb/transtab.cpp :
+
+	  - Now empty lists are stored as NULL pointers to save space.
+
 2003-04-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
 	* docs/bnf.txt :
 	* docs/langspecs.txt :

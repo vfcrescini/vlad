@@ -169,17 +169,25 @@ int transtab::replace(const char *n, stringlist *ilist, expression **pr, express
   expression *tmp_postcond;
   stringlist *tmp_vlist;
 
-  if (n == NULL || ilist == NULL || pr == NULL || po == NULL)
+  if (n == NULL || pr == NULL || po == NULL)
     return VLAD_NULLPTR;
 
   if ((retval = get(n, &tmp_vlist, &tmp_precond, &tmp_postcond)) != VLAD_OK)
     return retval;
 
-  if ((retval = tmp_precond->replace(tmp_vlist, ilist, pr)) != VLAD_OK)
-    return retval;
+  if (tmp_precond != NULL) {
+    if ((retval = tmp_precond->replace(tmp_vlist, ilist, pr)) != VLAD_OK)
+      return retval;
+  }
+  else
+    *pr = NULL;
 
-  if ((retval = tmp_postcond->replace(tmp_vlist, ilist, po)) != VLAD_OK)
-    return retval;
+  if (tmp_postcond != NULL) {
+    if ((retval = tmp_postcond->replace(tmp_vlist, ilist, po)) != VLAD_OK)
+      return retval;
+  }
+  else
+    *po = NULL;
 
   return VLAD_OK;
 }

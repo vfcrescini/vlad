@@ -311,7 +311,7 @@ void list::purge(bool f)
       prev = curr;
       curr = curr->next;
 
-      if (f)
+      if (f && (prev->data != NULL))
         delete (prev->data);
 
       free(prev);

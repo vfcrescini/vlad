@@ -517,7 +517,7 @@ trans_var_list :
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      fprintf(yyerr, "interal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -525,7 +525,7 @@ trans_var_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      fprintf(yyerr, "interal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -581,7 +581,7 @@ trans_ref_list :
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      fprintf(yyerr, "interal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -589,7 +589,7 @@ trans_ref_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      fprintf(yyerr, "interal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -639,7 +639,7 @@ trans_ref_ident_list :
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      fprintf(yyerr, "interal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -647,7 +647,7 @@ trans_ref_ident_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      fprintf(yyerr, "interal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }

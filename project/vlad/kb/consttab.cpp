@@ -47,15 +47,14 @@ bool constraint::cmp(list_item *item)
   if (!tmp->initialised)
     return false;
 
-  /* components can never be null */
-
+  /* exp cannot be NULL */
   if (!exp->cmp(tmp->exp))
     return false;
 
-  if (!cond->cmp(tmp->cond))
+  if (!VLAD_LIST_ITEMCMP(cond, tmp->cond))
     return false;
 
-  if (!ncond->cmp(tmp->ncond))
+  if (!VLAD_LIST_ITEMCMP(ncond, tmp->ncond))
     return false;
 
   return true;
@@ -63,7 +62,7 @@ bool constraint::cmp(list_item *item)
 
 int constraint::init(expression *e, expression *c, expression *n)
 {
-  if (e == NULL || c == NULL || n == NULL)
+  if (e == NULL)
     return VLAD_NULLPTR;
 
   if (exp != NULL)
