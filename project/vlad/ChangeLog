@@ -1,3 +1,11 @@
+2003-06-18  vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/wrapper.h :
+	* lib/wrapper.cpp :
+
+	   - Prefixed each function with vlad_ to avoid namespace pollution
+	     of linked apps.
+
 2003-06-17  vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/wrapper.h :
