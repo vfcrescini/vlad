@@ -78,14 +78,14 @@ int symtab::init()
     return VLAD_MALLOCFAILED;
   if ((obj_grp_list = VLAD_NEW(stringlist("obj-grp"))) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((t_const = VLAD_STRING_MALLOC(VLAD_STRING_TRUE)) == NULL)
+  if ((t_const = VLAD_STRING_MALLOC(VLAD_CONST_TRUE)) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((f_const = VLAD_STRING_MALLOC(VLAD_STRING_FALSE)) == NULL)
+  if ((f_const = VLAD_STRING_MALLOC(VLAD_CONST_FALSE)) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* strcpy never fails */
-  strcpy(t_const, VLAD_STRING_TRUE);
-  strcpy(f_const, VLAD_STRING_FALSE);
+  strcpy(t_const, VLAD_CONST_TRUE);
+  strcpy(f_const, VLAD_CONST_FALSE);
 
   initialised = true;
 
