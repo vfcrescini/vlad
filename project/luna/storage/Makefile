@@ -1,5 +1,5 @@
 CFLAGS = -O2 -Wall
-PROGS  =
+PROGS  = test
 OBJS   = list.o
 
 all : $(OBJS) $(PROGS)
@@ -9,3 +9,6 @@ clean :
 
 list.o : list.c list.h
 	$(CC) $(CFLAGS) -c -o $(@) list.c
+
+test : test.c $(OBJS)
+	$(CC) $(CFLAGS) test.c $(OBJS)
