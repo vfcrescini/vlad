@@ -19,22 +19,14 @@ int identlist_init(identlist_type *list)
 /* return 0 if name is already used */
 int identlist_find(identlist_type list, char *name)
 {
-  int found = -1;
-  ident_type *temp_ident = NULL;
+  ident_type tmp_ident;
 
-  if (name == NULL)
+  if ((tmp_ident.name = name) == NULL)
     return -1;
 
-  if (ident_create(&temp_ident, name, 0) != 0)
-    return -1;
-
-  found = simplelist_find_data(list,
-                               (void *) temp_ident,
-                               identlist_compare);
-
-  ident_destroy(temp_ident);
-
-  return found;
+  return simplelist_find_data(list,
+                              (void *) &tmp_ident,
+                              identlist_compare);
 }
 
 /* add identifier */
@@ -54,16 +46,15 @@ int identlist_add(identlist_type *list, char *name, unsigned short type)
 /* get identifier structure based on name */
 int identlist_get(identlist_type list, char *name, ident_type **ident)
 {
-  ident_type temp_ident;
+  ident_type tmp_ident;
 
   if (name == NULL || ident == NULL)
     return -1;
 
-  temp_ident.name = name;
-  temp_ident.type = 0;
+  tmp_ident.name = name;
 
   return simplelist_get_data(list, 
-                             (void *) &temp_ident,
+                             (void *) &tmp_ident,
                              (void **) ident,
                              identlist_compare);
 }
@@ -71,16 +62,15 @@ int identlist_get(identlist_type list, char *name, ident_type **ident)
 /* delete identifier entry based on name */
 int identlist_del(identlist_type *list, char *name)
 {
-  ident_type temp_ident;
+  ident_type tmp_ident;
 
   if (list == NULL || name == NULL)
     return -1;
 
-  temp_ident.name = name;
-  temp_ident.type = 0;
+  tmp_ident.name = name;
 
   return simplelist_del_data(list,
-                             (void *) &temp_ident,
+                             (void *) &tmp_ident,
                              identlist_compare,
                              identlist_destroy);
 }
