@@ -1,53 +1,53 @@
 /*
- * Document Release Example
- * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+ * document release eXample
+ * vino fernando crescini  <jcrescin@cit.uws.edu.au>
  */
 
-ident sub Sci, Pat_Off;
-ident acc Own, Read, Write, Review, Pat_Ok, Pat_Reject, Release;
-ident obj Doc;
+ident sub sci, pat_off;
+ident acc own, read, write, review, pat_ok, pat_reject, release;
+ident obj doc;
 
 /* initial facts */
 
-initially holds(Sci, Own, Doc);
-initially holds(Sci, Read, Doc);
-initially holds(Sci, Write, Doc);
+initially holds(sci, own, doc);
+initially holds(sci, read, doc);
+initially holds(sci, write, doc);
 
 /* transformations */
 
-Request(X, Y, Z)
+request(X, Y, Z)
   causes
-    holds(Z, Review, Y) &&
-    !holds(X, Write, Y)
+    holds(Z, review, Y) &&
+    !holds(X, write, Y)
   if
-    holds(X, Own, Y) &&
-    holds(X, Write, Y);
+    holds(X, own, Y) &&
+    holds(X, write, Y);
 
-Get_Approval(X, Y, Z)
+get_approval(X, Y, Z)
   causes
-    holds(X, Pat_Ok, Y) &&
-    !holds(Z, Review, Y)
+    holds(X, pat_ok, Y) &&
+    !holds(Z, review, Y)
   if
-    holds(Z, Review, Y) &&
-    holds(X, Own, Y);
+    holds(Z, review, Y) &&
+    holds(X, own, Y);
 
-Get_Rejection(X, Y, Z)
+get_rejection(X, Y, Z)
   causes
-    holds(X, Pat_Reject, Y) &&
-    !holds(Z, Review, Y)
+    holds(X, pat_reject, Y) &&
+    !holds(Z, review, Y)
   if
-    holds(Z, Review, Y) &&
-    holds(X, Own, Y);
+    holds(Z, review, Y) &&
+    holds(X, own, Y);
 
-Release_Doc(X, Y)
+release_doc(X, Y)
   causes
-    holds(X, Release, Y) &&
-    !holds(X, Pat_Ok, Y)
+    holds(X, release, Y) &&
+    !holds(X, pat_ok, Y)
   if
-    holds(X, Pat_Ok, Y);
+    holds(X, pat_ok, Y);
 
-Revise_Doc(X, Y)
+revise_doc(X, Y)
   causes
-    holds(X, Write, Y)
+    holds(X, write, Y)
   if
-    holds(X, Pat_Reject, Y);
+    holds(X, pat_reject, Y);
