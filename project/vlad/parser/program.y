@@ -21,7 +21,6 @@ static FILE *fin = NULL;
 static FILE *fout = NULL;
 static FILE *ferr = NULL;
 static kb *kbase = NULL;
-static unsigned char mode = VLAD_MODE_GENERATE;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
 
