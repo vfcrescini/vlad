@@ -353,7 +353,7 @@ static const char *get_parent(apr_pool_t *a_p, const char *a_path)
   int slash = 0;
   int i;
 
-  if (a_path == NULL)
+  if (a_path == NULL || a_p == NULL)
     return NULL;
 
   strcpy(tmpstring, a_path);

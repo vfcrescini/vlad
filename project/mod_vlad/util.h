@@ -14,6 +14,8 @@
 #define MODVLAD_LOGLEVEL APLOG_NOTICE
 #endif
 
+#define MODVLAD_DEFAULTACTION HTTP_UNAUTHORIZED
+
 typedef struct {
   char *user_file;
   char *policy_file;

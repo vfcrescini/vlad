@@ -205,7 +205,14 @@ static int modvlad_authenticate(request_rec *a_r)
 
 static int modvlad_authorize(request_rec *a_r)
 {
+  int retval;
   modvlad_config_rec *conf = NULL;
+  void *atom = NULL;
+  void *exp = NULL;
+  char *real_uri;
+#ifndef MODVLAD_DEBUG
+  unsigned char qres;
+#endif
 
   conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
                                                      &modvlad_module);
@@ -220,27 +227,95 @@ static int modvlad_authorize(request_rec *a_r)
     return DECLINED;
   }
 
-#ifdef MODVLAD_DEBUG
+  /* strip the trailing slash from the uri */
+  real_uri = a_r->unparsed_uri;
+
   ap_log_rerror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
+                APLOG_NOTICE,
                 0,
                 a_r,
-                "modvlad_authorize\n\turi: %s\n\tunparsed-uri: %s\n\tfilename: %s\n\tpath-info: %s\n\targs: %s\n\thostname: %s\n\tmethod: %s\n\tdocroot: %s\n\tconf: %x\n\tkb: %x\n\tpolicy-file: %s\n\tpath: %s",
-                a_r->uri,
-                a_r->unparsed_uri,
-                a_r->filename,
-                a_r->path_info,
-                a_r->args,
-                a_r->hostname,
+                "received request: user=%s access=%s object=%s",
+                a_r->user,
                 a_r->method,
-                ap_document_root(a_r),
-                (unsigned int) conf,
-                (unsigned int) conf->kb,
-                conf->policy_file,
-                conf->path);
-#endif
+                real_uri);
+
+  /* create stuff we need */
+  if ((retval = vlad_atom_create(&atom)) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "could not create atom: %d",
+                  retval);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  if ((retval = vlad_exp_create(&exp)) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "could not create expression: %d",
+                  retval);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  retval = vlad_atom_init_holds(atom, a_r->user, a_r->method, real_uri, 1);
+  if (retval != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "could not initialize atom: %d",
+                  retval);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+  
+  if ((retval = vlad_exp_add(exp, atom)) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "could not add atom into expression: %d",
+                  retval);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  /* finally, make the query */
+#ifndef MODVLAD_DEBUG
+  if ((retval = vlad_kb_query_evaluate(conf->kb, exp, &qres)) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "could not add atom into expression: %d",
+                  retval);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  switch(qres) {
+    case VLAD_RESULT_TRUE :
+      return OK;
+    case VLAD_RESULT_FALSE :
+      return HTTP_UNAUTHORIZED;
+    default :
+      return MODVLAD_DEFAULTACTION;
+  }
+#else
+  if ((retval = vlad_kb_query_generate(conf->kb, exp, stderr)) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "could not add atom into expression: %d",
+                  retval);
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  fflush(stderr);
 
   return OK;
+#endif
 }
 
 static void modvlad_register_hooks(apr_pool_t *a_p)
