@@ -396,18 +396,21 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
 
       Extended logic programs are \emph{flat} or stateless. The proposed
       language, however, is composed of logic facts that have a states as
-      a result of the transformation property. Translating the proposed 
-      language into an extended logic program requires a stateless set of 
-      axioms and propositions.
+      a result of the transformation property. Formally, a state represents
+      a transition of facts as a result of the application of a transformation.
+      As a consequence, the number of states is equal to the number of
+      transformations plus 1 (the initial state, before any transformations
+      are applied).
+
+      Translating the proposed language into an extended logic program requires
+      a stateless set of axioms and propositions. The first step in the 
+      translation is to reduce every atom, which is composed of two to three
+      parameters into a single proposition. This procedure, although does not
+      seem necessary is to allow us to have a simplified representation of
+      propositions. For example, the atoms holds(s1, a1, o1) and memb(e1, g1)
+      can be reduced to propositions A and B, respectively.
 
       \subsubsection{Adding a State Parameter to the Atoms}
-
-        The first step in the translation is to reduce every atom, which is
-        composed of two to three parameters into a single proposition. This
-        procedure, although does not seem necessary is to allow us to have
-        a simplified representation of propositions. For example, the atoms
-        holds(s1, a1, o1) and memb(e1, g1) can be reduced to propositions
-        A and B, respectively.
 
         The next step is to add a state parameter into the definiton of an
         atom. This procedure will allow us to differentiate between atoms of
@@ -479,6 +482,39 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
         for all states S in the domain.
 
       \subsubsection{Example}
+
+        The following lists a small program written in the proposed language:
+
+        \begin{list}{}{}
+          \item initially holds(s, a, o1), !holds(s, a, o2), !holds(s, a, o3)
+          \item holds(s, a, o2) implies holds(s, a, o3)
+          \item trans causes holds(s, a, o2) if !holds(s, a, o2)
+        \end{list}
+
+        First we represent the atoms with simple propositions:
+
+        \begin{list}{}{}
+          \item A = holds(s, a, o1)
+          \item B = holds(s, a, o2)
+          \item C = holds(s, a, o3)
+        \end{list}
+
+        The equivalent extended logic program is:
+
+        \begin{list}{}{Initial State}
+          \item holds(A, S0)
+          \item $\lnot$ holds(B, S0)
+          \item $\lnot$ holds(C, S0)
+        \end{list}
+
+        \begin{list}{}{Constraint}
+          \item holds(C, S0) $\leftarrow$ holds(B, S0)
+          \item holds(C, S1) $\leftarrow$ holds(B, S1)
+        \end{list}
+
+        \begin{list}{}{Transformation}
+          \item holds(B, S1) $\leftarrow$ $\lnot$ holds(B, S0)
+        \end{list}
 
     \subsection{Removal of Classical Negation}
 
