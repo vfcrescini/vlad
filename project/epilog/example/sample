@@ -71,7 +71,7 @@ is memb(bob, scientists)
   after become_astrologer(bob);
 
 is memb(bob, scientists)
-  after become_astrologer(bob), become_biologist(bob);
+  after become_astrologer(bob), become_biologist();
 
 is subst(astrologers, scientists);
 is subst(biologists, scientists);

@@ -80,7 +80,9 @@ Updated 2002 Aug 23
                           <trans-ref-def>
                         
 <trans-ref-def>         : <identifier> <open-parent>
-                          <trans-ref-ident-list> <close-parent>
+                          <trans-ref-ident-args> <close-parent>
+
+<trans-ref-ident-args>  : | <trans-ref-ident-list>
                         
 <trans-ref-ident-list>  : <identifier> | <trans-ref-ident-list> <comma> 
                           <identifier>

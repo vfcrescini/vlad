@@ -103,6 +103,7 @@ gnd_exp_type initial_exp;
 %type <translist> trans_ref_list;
 %type <translist> after_clause;
 %type <ident> trans_ref_ident_list;
+%type <ident> trans_ref_ident_args;
 
 %start program
 
@@ -506,7 +507,7 @@ trans_ref_list :
   ;
 
 trans_ref_def : 
-  EPI_SYM_IDENTIFIER EPI_SYM_OPEN_PARENT trans_ref_ident_list EPI_SYM_CLOSE_PARENT {
+  EPI_SYM_IDENTIFIER EPI_SYM_OPEN_PARENT trans_ref_ident_args EPI_SYM_CLOSE_PARENT {
     if (transtab_find($1) != EPI_OK)
       exit_error("transformation not declared");
 
@@ -519,6 +520,15 @@ trans_ref_def :
       default :
         exit_error("internal error");
     }
+  }
+  ;
+
+trans_ref_ident_args :
+  {
+    identlist_init(&$$);
+  }
+  | trans_ref_ident_list {
+    $$ = $1;
   }
   ;
 

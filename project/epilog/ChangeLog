@@ -1,3 +1,11 @@
+2002-12-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+	* docs/bnf.txt :
+
+	  - Fixed bug that prevented the use of transformations that
+	    do not have any parameters.
+
 2002-10-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* parser/parser.y :
