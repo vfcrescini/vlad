@@ -44,7 +44,7 @@ clean :
 	$(RM) $(OBJECTS) $(TEMP)
 
 distclean : clean
-	$(RM) $(LIBS) $(BINS) Makefile
+	$(RM) $(STATIC_LIBS) $(SHARED_LIBS) $(BINS) Makefile
 ifdef INCLUDES
 	@for i in $(INCLUDES); do \
 	$(RM) $(DISTDIR)/include/vlad/$$i; \
