@@ -169,7 +169,7 @@ int symtab::get(unsigned int i, unsigned char t, char **s)
     case VLAD_IDENT_SUBJECT :
       return sub_list->get(i, s);
     case VLAD_IDENT_ACCESS :
-      return sub_list->get(i, s);
+      return acc_list->get(i, s);
     case VLAD_IDENT_OBJECT :
       return obj_list->get(i, s);
     case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
