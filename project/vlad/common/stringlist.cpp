@@ -32,7 +32,8 @@ bool string::cmp(list_item *item)
   if (item == NULL)
     return false;
 
-  tmp = dynamic_cast<string *> (item);
+  if ((tmp = dynamic_cast<string *> (item)) == NULL)
+    return false;
 
   /* only return true if they are both NULL */
   if (tmp->str == NULL)
