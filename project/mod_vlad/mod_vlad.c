@@ -19,21 +19,21 @@ typedef struct {
 } modvlad_config_rec;
 
 static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d);
-static char *modvlad_get_passwd(request_rec *a_r, 
-                                char *a_user, 
+static char *modvlad_get_passwd(request_rec *a_r,
+                                char *a_user,
                                 char *a_passwd_file);
 static int modvlad_authenticate(request_rec *a_r);
 static int modvlad_authorize(request_rec *a_r);
 static void modvlad_register_hooks (apr_pool_t *a_p);
-static const char *modvlad_set_auth_slot(cmd_parms *a_cmd, 
-                                         void *a_offset, 
+static const char *modvlad_set_auth_slot(cmd_parms *a_cmd,
+                                         void *a_offset,
                                          const char *a_f,
                                          const char *a_t);
 
 static const command_rec modvlad_auth_cmds[] =
 {
-  AP_INIT_TAKE12("VladUserFile", 
-                 modvlad_set_auth_slot, 
+  AP_INIT_TAKE12("VladUserFile",
+                 modvlad_set_auth_slot,
                  (void *)APR_OFFSETOF(modvlad_config_rec, user_file),
                  OR_AUTHCFG,
                  "authentication / user file (htpasswd)"),
@@ -79,7 +79,7 @@ static char *modvlad_get_passwd(request_rec *a_r,
   apr_status_t status;
 
   status = ap_pcfg_openfile(&f, a_r->pool, a_passwd_file);
-      
+
   if (status != APR_SUCCESS) {
 
     ap_log_rerror(APLOG_MARK,
@@ -141,8 +141,8 @@ static int modvlad_authenticate(request_rec *a_r)
   if (!real_passwd) {
 
     ap_log_rerror(APLOG_MARK, APLOG_ERR,
-                  0, 
-                  a_r, 
+                  0,
+                  a_r,
                   "user %s not found: %s",
                   a_r->user,
                   a_r->uri);
@@ -198,7 +198,7 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
 }
 
 static const char *modvlad_set_auth_slot(cmd_parms *a_cmd,
-                                         void *a_offset, 
+                                         void *a_offset,
                                          const char *a_f,
                                          const char *a_t)
 {

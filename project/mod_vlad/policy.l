@@ -99,10 +99,10 @@ everything         .
   if (policytext == NULL) {
     strcpy(policylval.ident, "");
     return MODVLAD_SYM_ERROR;
-  } 
-  
+  }
+
   strcpy(policylval.ident, policytext);
-  
+
   return MODVLAD_SYM_IDENTIFIER;
 }
 
