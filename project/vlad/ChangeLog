@@ -1,5 +1,11 @@
 2003-03-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/list.cpp :
+
+	  - Fixed get() and del() to make sure that data is retrieved/deleted
+	    in the right order. Used to be in reverse order, which was carried
+	    over from epilog.
+
 	* kb/kb.cpp :
 
 	  - Now add_transtab() allows precond and varlist to be null.
