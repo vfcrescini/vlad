@@ -1,3 +1,13 @@
+2003-06-17  vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/wrapper.h :
+	* lib/wrapper.cpp :
+
+	  - Cleanup.
+
+	  - Fixed the ifdef for smodels dependent function: will now return 
+	    failure if used without smodels support.
+
 2003-06-13  vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/atom.h :
