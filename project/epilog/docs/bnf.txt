@@ -4,40 +4,49 @@
 BNF
 
 
-<letter>        : <small-caps> | <large-caps>
+<letter>           : <small-caps> | <large-caps>
+                   
+<small-caps>       : a | b | c | d | e | f | g | h | i | j | k | l | m | n |
+                     o | p | q | r | s | t | u | v | w | x | y | z
+                   
+<large-caps>       : A | B | C | D | E | F | G | H | I | J | K | L | M | N |
+                     O | P | Q | R | S | T | U | V | W | X | Y | Z
+                   
+<alpha>            : <letter> | <letter> <alpha>
+                   
+<digit>            : 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+                   
+<alpha-num>        : <letter> | <digit> | <letter> <alpha-num> | <digit> <alpha-num>
+                   
+<identifier>       : <letter> <alpha-num>
+                   
+<and>              : and
+                   
+<or>               : or
+                   
+<sholds>           : sholds
+                   
+<gholds>           : gholds
+                   
+<element>          : element
+                   
+<containment>      : conain
+                   
+<tranform>         : trans
+                   
+<open-bracket>     : (
+                   
+<close-bracket>    : )
+                   
+<comma>            : ,
+                   
+<semicolon>        : ;
+                   
+<program>          : <statement> <semicolon> | <statement> <semicolon> <program>
+                   
+<statement>        : <query-statement> | <domain-statement>
 
-<small-caps>    : a | b | c | d | e | f | g | h | i | j | k | l | m | n |
-                  o | p | q | r | s | t | u | v | w | x | y | z
+<query-statement>  : <query> <open-bracket> <ground-fact> <comma> <trans-series> <bracket-close>
 
-<large-caps>    : A | B | C | D | E | F | G | H | I | J | K | L | M | N |
-                  O | P | Q | R | S | T | U | V | W | X | Y | Z
-                
-<alpha>         : <letter> | <letter> <alpha>
-                
-<digit>         : 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-                
-<alpha-num>     : <letter> | <digit> | <letter> <alpha-num> | <digit> <alpha-num>
-                
-<identifier>    : <letter> <alpha-num>
-                
-<and>           : and
-                
-<or>            : or
-                
-<sholds>        : sholds
-                
-<gholds>        : gholds
-                
-<element>       : element
-                
-<containment>   : conain
-                
-<tranform>      : trans
 
-<open-bracket>  : (
 
-<close-bracket> : )
-
-<comma>         : ,
-
-<semicolon>     : ;
