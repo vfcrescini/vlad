@@ -1,3 +1,14 @@
+2003-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+	* lib/vlad.h :
+
+	  - Simplified class by defining an array of stringlists instead
+	    of separately managing 6 individual stringlists.
+
+	  - Identifier types now made separate from each other.
+
 2003-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Makefile.in :

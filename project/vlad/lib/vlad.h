@@ -34,13 +34,13 @@
 #define VLAD_MAXLEN_NUM          32
 #define VLAD_MAXLEN_IDENT        128
 
-/* identifier type values indicated by the first 2 bits */
-#define VLAD_IDENT_SUBJECT       1
-#define VLAD_IDENT_ACCESS        2
-#define VLAD_IDENT_OBJECT        3
-
-/* identifier group bit indicated by the 3th bit */
-#define VLAD_IDENT_GROUP         4
+/* identifier types */
+#define VLAD_IDENT_SUB_SING      0
+#define VLAD_IDENT_ACC_SING      1
+#define VLAD_IDENT_OBJ_SING      2
+#define VLAD_IDENT_SUB_GRP       3
+#define VLAD_IDENT_ACC_GRP       4
+#define VLAD_IDENT_OBJ_GRP       5
 
 /* atom type */
 #define VLAD_ATOM_HOLDS          1

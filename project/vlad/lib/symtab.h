@@ -13,35 +13,29 @@ class symtab
   public :
     symtab();
     ~symtab();
+    /* initialise */
     int init();
+    /* after this call no further calls to add are allowed */
+    int close();
     /* add symbol in symbol table */
-    int add(const char *s, unsigned char t);
-    /* get the i'th identifier */
-    int get(unsigned int i, char **s);
+    int add(const char *a_s, unsigned char a_t);
     /* get the index and type of the identifier based on the name */
-    int get(const char *s, unsigned int *i, unsigned char *t);
+    int get(const char *a_s, unsigned int *a_i, unsigned char *a_t);
     /* get the ith identifier of type t */
-    int get(unsigned int i, unsigned char t, char **s);
+    int get(unsigned int a_i, unsigned char a_t, char **a_s);
     /* get an array of identifiers that matches the given type */
-    int get(unsigned char t, char ***a, unsigned int *s);
-    /* return the total number of indentifers */
-    unsigned int length();
+    int get(unsigned char a_t, char ***a_a, unsigned int *a_s);
     /* return the number of identifiers that are of type t */
-    unsigned int length(unsigned char t);
+    unsigned int length(unsigned char a_t);
     /* return 0 if symbol is in the table */
-    int find(const char *s);
+    int find(const char *a_s);
     /* return 0 if symbol of type t is in the table */
-    int find(const char *s, unsigned char t);
+    int find(const char *a_s, unsigned char a_t);
     /* give the type of the given identifier */
-    int type(const char *s, unsigned char *t);
+    int type(const char *a_s, unsigned char *a_t);
   private :
-    stringlist *sub_list;
-    stringlist *acc_list;
-    stringlist *obj_list;
-    stringlist *sub_grp_list;
-    stringlist *acc_grp_list;
-    stringlist *obj_grp_list;
-    bool initialised;
+    stringlist *m_lists[6];
+    unsigned char m_stage;
 } ;
 
 #endif
