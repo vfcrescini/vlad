@@ -77,8 +77,8 @@
     the same type. Similarly, a \emph{Subset} atom shows the relationship
     between a group and its supergroup. The negation of an atom is represented
     in $\cal{L}$ by prepending the exclamation symbol $!$ to the atom.
-    \emph{Expressions} are atoms or conjunctions of atoms linked together by
-    the double ampersand characters $\&\&$.
+    \emph{Expressions} are atoms, negative atoms or conjunctions of these
+    linked together by the double ampersand characters $\&\&$.
 
     \begin{verbatim}
 [!]holds(<sub-identifier>, <acc-identifier>, <obj-identifier>)
@@ -87,43 +87,46 @@
 \end{verbatim}
 
     \noindent
-    \emph{Domain Declaration.} Entity and group identifiers must first be
-    declared by the following statement before they appear anywhere in the
-    language $\cal{L}$:
+    \underline{\emph{Domain Declaration.}}
+    Entity and group identifiers must first be declared by the following
+    statement before they appear anywhere in the language $\cal{L}$:
 
     \begin{verbatim}ident {sub|acc|obj}[-grp] <identifier>;\end{verbatim}
 
     \noindent
-    \emph{Initial State Definition.} Initial state expressions may be defined
+    \underline{\emph{Initial State Definition.}}
+    Initial state expressions may be defined
     to represent the initial facts of the policy base before any policy update
     is applied.
 
     \begin{verbatim}initially <expression>;\end{verbatim}
 
     \noindent
-    \emph{Constraint Definition.} Constraints are the logical rules that must
-    hold in the initial state and any other state of the policy base after
-    any policy update. The syntax below states that $exp1$ must hold if
-    $exp2$ is true and that there is no evidence that $exp3$ is true.
+    \underline{\emph{Constraint Definition.}}
+    Constraints are the logical rules that must hold in the initial state and
+    any other state of the policy base after any policy update. The syntax
+    below states that $exp1$ must hold if $exp2$ is true and that there is no
+    evidence that $exp3$ is true. Note that the presence of the "with absence"
+    clause denotes a default proposition.
 
     \begin{verbatim}always exp1 [implied by exp2 [with absence exp3]];\end{verbatim}
 
     \noindent
-    \emph{Policy Update Definition.} The following policy update definition
-    statement defines a policy update which, when applied, will generate a new
-    state by applying $exp1$ to the current state if and only if $exp2$ is
-    true in the current state. The variable parameters that may occur in any
-    of the expressions allow identifiers to be set dynamically when the update
-    is applied.
+    \underline{\emph{Policy Update Definition.}}
+    The following policy update definition statement defines a policy update
+    which, when applied, will generate a new state by applying $exp1$ to the
+    current state if and only if $exp2$ is true in the current state. The
+    variable parameters that may occur in any of the expressions allow
+    identifiers to be set dynamically when the update is applied.
 
     \begin{verbatim}<update-identifier>([<var1>[,...]]) causes exp1 if exp2;\end{verbatim}
 
     \noindent
-    \emph{Sequence Manipulation Directives.} The current state of the policy
-    base (the state in which queries will be evaluated) is derived by applying
-    the updates that are appended into the policy update sequence list. Below
-    is the syntax for adding, removing and listing defined policy updates in
-    the sequence.
+    \underline{\emph{Sequence Manipulation Directives.}}
+    The current state of the policy base (the state in which queries will be
+    evaluated) is derived by applying the updates that are appended into the
+    policy update sequence list. Below is the syntax for adding, removing and
+    listing defined policy updates in the sequence.
 
 \begin{verbatim}
 seq add <update-identifier>([<var1>[,...]]);
@@ -132,19 +135,19 @@ seq list;
 \end{verbatim}
 
     \noindent
-    \emph{Query Directive.} Queries are evaluated after all the policy
-    updates in the sequence and all the defined constraints have been
-    applied. Query directives are always answered by either $true$,
-    $false$, or $unknown$.
+    \underline{\emph{Query Directive.}}
+    Queries are evaluated after all the policy updates in the sequence and all
+    the defined constraints have been applied. Query directives are always
+    answered by either $true$, $false$, or $unknown$.
 
   \section{Implementation Issues}
 
     \noindent
-    \emph{Integration of Set Theory.} Since entities in language $\cal{L}$ may 
-    be singular or collective groups, the following constraints must be applied
-    to ensure that set theory holds.
+    \underline{\emph{Integration of Set Theory.}}
+    Since entities in language $\cal{L}$ may be singular or collective groups,
+    the following constraints must be applied to ensure that set theory holds.
 
-    \begin{enumerate} 
+    \begin{enumerate}
       \item
         Group members inherit all properties held by their super groups.
       \item
@@ -155,38 +158,38 @@ seq list;
     \end{enumerate}
 
     \noindent
-    \emph{Domain Description Translation.} To translate the language into a
-    normal logic program, the states need to be flattened to produce a
-    stateless policy base. This flattening procedure is achieved by treating
-    the state as a property of each atom.
+    \underline{\emph{Domain Description Translation.}}
+    To translate the language into a normal logic program, the states need to
+    be flattened to produce a stateless policy base. This flattening procedure
+    is achieved by treating the state as a property of each atom.
 
     \begin{enumerate}
       \item
-        For all initial state atoms $A$: $holds(A, 0)$.
+        For all initial state facts $holds(A)$ or $\lnot$ $holds(A)$: 
+        $holds(A, 0)$ or $\lnot$ $holds(A, 0)$, respectively.
       \item
-        Given a constraint of the form "Always A implied by B with
-        absence C", for all states $S$:
+        Given a constraint of the form "Always $A$ implied by $B$ with
+        absence $C$", for all states $S$:
         $holds(A, S)$ $\leftarrow$ $holds(B, S)$ $\land$ $not$ $holds(C, S)$.
       \item
-        Given an update "U causes A if B":
+        Given an update "$U$ causes $A$ if $B$":
         $holds(A, Res(U, S))$ $\leftarrow$ $holds(B, S)$.
       \item
-        Given an update "U causes A if B":
+        Given an update "$U$ causes $A$ if $B$":
         $holds(A, Res(U, S))$ $\leftarrow$ $holds(A, S)$ $\land$ $not$ $\lnot$
         $holds(A, Res(U, S))$.
       \item
-        Given an update "U causes A if B":
+        Given an update "$U$ causes $A$ if $B$":
         $\lnot$ $holds(A, Res(U, S))$ $\leftarrow$ $\lnot$ $holds(A, S)$
         $\land$ $not$ $holds(A, Res(U, S))$.
     \end{enumerate}
 
     Rule 1 shows that initial state expressions are easily translated since
-    the additional state property is fixed to the initial state 0. The atom
-    $holds(sub, acc, obj)$ in the initial state is translated to $holds(sub,
-    acc, obj, 0)$. Rule 2 states that every atom in a constraint rule must be
-    given a new state property. However, since constraint rules apply to all
-    states in the policy base, an instance of each constraint rules is copied
-    for every state.
+    the additional state property is fixed to the initial state 0. Rule 2
+    states that every atom in a constraint rule must be given a new state
+    property. However, since constraint rules apply to all states in the
+    policy base, an instance of each constraint rules is copied for every
+    state.
 
     For the policy update Rules 3, 4 and 5, the $Res$ function returns
     the resulting state after update $U$ is applied to state $S$. Rules 4 and
@@ -200,9 +203,11 @@ seq list;
     \vspace{0.05cm}
 
     \noindent
-    \emph{Conflict Resolution.} A logical conflict arises when constraints
-    contradict each other. PolicyUpdater resolves this conflict by assuming
-    that negative facts have higher precedence over its positive counterpart.
+    \underline{\emph{Conflict Resolution.}}
+    A logical conflict arises when constraints contradict each other. Such
+    contradictions may occur due to the presence of $not$. PolicyUpdater
+    resolves this conflict by assuming that negative facts have higher
+    precedence over its positive counterpart.
 
   \section{A Web Server Application of PolicyUpdater}
 
@@ -222,17 +227,17 @@ seq list;
     facts, constraints and update propositions in the policy base make up the
     domain of language $\cal{L}$.
 
-    Figure \ref{fig-1} shows how the PolicyUpdater module work within a typical
-    HTTP request. (1) User $S$ makes a HTTP request $A$ for file $O$ and is
-    authenticated by Apache through the Basic HTTP Authentication Scheme. (2)
-    Once properly authenticated, Apache passes the request tuple $\{S, A, O\}$
-    to the PolicyUpdater module. (3) PolicyUpdater then queries the policy base
-    to verify the atom $holds(S, A, O)$ and returns a reply (4) back to Apache.
-    If the request is allowed, as determined by the module in the policy base,
-    Apache accepts and honors the request $A$ to the file $O$ (5) and sends the
-    results back to user $S$ (6). Optionally, an Administrator, once properly
-    authenticated can dynamically update the policy (7) by altering the
-    update sequence in the policy base.
+    Figure \ref{fig-1} shows how the PolicyUpdater module works within a
+    typical HTTP request. (1) User $S$ makes a HTTP request $A$ for file
+    $O$ and is authenticated by Apache through the Basic HTTP Authentication
+    Scheme. (2) Once properly authenticated, Apache passes the request tuple
+    $\{S, A, O\}$ to the PolicyUpdater module. (3) PolicyUpdater then queries
+    the policy base to verify the atom $holds(S, A, O)$ and returns a reply
+    (4) back to Apache. If the request is allowed, as determined by the module
+    in the policy base, Apache accepts and honors the request $A$ to the file
+    $O$ (5) and sends the results back to user $S$ (6). Optionally, an
+    Administrator, once properly authenticated can dynamically update the
+    policy (7) by altering the update sequence in the policy base.
 
     \footnotetext{Apache Web Server (\tt http://www.apache.org).}
 
