@@ -236,10 +236,10 @@ VLAD_EXTERN int kb_query_generate(void *a_kb, void *a_exp, FILE *a_fs)
   return tmp_kb->query_generate(tmp_exp, a_fs);
 }
 
-#ifdef SMODELS
 /* prepares the kb for queries */
 VLAD_EXTERN int kb_compute_evaluate(void *a_kb)
 {
+#ifdef SMODELS
   kb *tmp_kb = NULL;
 
   if (a_kb == NULL)
@@ -249,11 +249,17 @@ VLAD_EXTERN int kb_compute_evaluate(void *a_kb)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->compute_evaluate();
+#else
+  return VLAD_FAILURE;
+#endif 
 }
 
 /* use smwrap class to evaluate a query */
-VLAD_EXTERN int kb_query_evaluate(void *a_kb, void *a_exp, unsigned char *a_res)
+VLAD_EXTERN int kb_query_evaluate(void *a_kb,
+                                  void *a_exp,
+                                  unsigned char *a_res)
 {
+#ifdef SMODELS
   kb *tmp_kb = NULL;
   expression *tmp_exp = NULL;
 
@@ -266,8 +272,10 @@ VLAD_EXTERN int kb_query_evaluate(void *a_kb, void *a_exp, unsigned char *a_res)
   tmp_exp = static_cast<expression *>(a_exp);
 
   return tmp_kb->query_evaluate(tmp_exp, a_res);
-}
+#else
+  return VLAD_FAILURE;
 #endif
+}
 
 /* create a stringlist */
 VLAD_EXTERN int strlist_create(void **a_slist)
@@ -348,7 +356,11 @@ VLAD_EXTERN int atom_destroy(void *a_atm)
 }
 
 /* initialise atoms */
-VLAD_EXTERN int atom_init_holds(void *a_atm, const char *a_s, const char *a_a, const char *a_o, int a_t)
+VLAD_EXTERN int atom_init_holds(void *a_atm,
+                                const char *a_s,
+                                const char *a_a,
+                                const char *a_o,
+                                int a_t)
 {
   atom *tmp_atm = NULL;
 
@@ -361,7 +373,10 @@ VLAD_EXTERN int atom_init_holds(void *a_atm, const char *a_s, const char *a_a, c
   return tmp_atm->init_holds(a_s, a_a, a_o, (bool) a_t);
 }
 
-VLAD_EXTERN int atom_init_member(void *a_atm, const char *a_e, const char *a_g, int a_t)
+VLAD_EXTERN int atom_init_member(void *a_atm,
+                                 const char *a_e,
+                                 const char *a_g,
+                                 int a_t)
 {
   atom *tmp_atm = NULL;
 
@@ -374,7 +389,10 @@ VLAD_EXTERN int atom_init_member(void *a_atm, const char *a_e, const char *a_g, 
   return tmp_atm->init_member(a_e, a_g, (bool) a_t);
 }
 
-VLAD_EXTERN int atom_init_subset(void *a_atm, const char *a_g1, const char *a_g2, int a_t)
+VLAD_EXTERN int atom_init_subset(void *a_atm,
+                                 const char *a_g1,
+                                 const char *a_g2,
+                                 int a_t)
 {
   atom *tmp_atm = NULL;
 

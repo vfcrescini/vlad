@@ -46,7 +46,9 @@ VLAD_EXTERN int kb_query_generate(void *a_kb, void *a_exp, FILE *a_fs);
 /* prepares the kb for queries */
 VLAD_EXTERN int kb_compute_evaluate(void *a_kb);
 /* use smwrap class to evaluate a query */
-VLAD_EXTERN int kb_query_evaluate(void *a_kb, void *a_exp, unsigned char *a_res);
+VLAD_EXTERN int kb_query_evaluate(void *a_kb,
+                                  void *a_exp,
+                                  unsigned char *a_res);
 #endif
 
 /* create a stringlist */
@@ -61,9 +63,19 @@ VLAD_EXTERN int atom_create(void **a_atm);
 /* destroy an atom */
 VLAD_EXTERN int atom_destroy(void *a_atm);
 /* initialise atoms */
-VLAD_EXTERN int atom_init_holds(void *a_atm, const char *a_s, const char *a_a, const char *a_o, int a_t);
-VLAD_EXTERN int atom_init_member(void *a_atm, const char *a_e, const char *a_g, int a_t);
-VLAD_EXTERN int atom_init_subset(void *a_atm, const char *a_g1, const char *a_g2, int a_t);
+VLAD_EXTERN int atom_init_holds(void *a_atm,
+                                const char *a_s,
+                                const char *a_a,
+                                const char *a_o,
+                                int a_t);
+VLAD_EXTERN int atom_init_member(void *a_atm,
+                                 const char *a_e,
+                                 const char *a_g,
+                                 int a_t);
+VLAD_EXTERN int atom_init_subset(void *a_atm,
+                                 const char *a_g1,
+                                 const char *a_g2,
+                                 int a_t);
 
 /* create an expression */
 VLAD_EXTERN int exp_create(void **a_exp);
