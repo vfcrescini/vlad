@@ -10,9 +10,9 @@
 
 typedef enum
 {
-  subject = 0,
-  access = 1,
-  object = 2
+  subject_ident = 0,
+  access_ident = 1,
+  object_ident = 2
 } ident_type;
 
 class identifier : public list_item

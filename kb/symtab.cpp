@@ -38,7 +38,7 @@ int symtab::del(const char *n)
   int retval;
   identifier ident;
  
-  if ((retval = ident.init(n, subject, false)) != VLAD_OK)
+  if ((retval = ident.init(n, subject_ident, false)) != VLAD_OK)
     return retval;
 
   if ((retval = list::del_d(&ident, true)) != VLAD_OK)
@@ -55,7 +55,7 @@ int symtab::get(const char *n, identifier **i)
   identifier ident;
   identifier **array;
  
-  if ((retval = ident.init(n, subject, false)) != VLAD_OK)
+  if ((retval = ident.init(n, subject_ident, false)) != VLAD_OK)
     return retval;
   
   if ((retval = list::get_d(&ident, (list_item ***) &array, &size)) != VLAD_OK)
@@ -75,7 +75,7 @@ int symtab::find(const char *n)
   int retval;
   identifier ident;
  
-  if ((retval = ident.init(n, subject, false)) != VLAD_OK)
+  if ((retval = ident.init(n, subject_ident, false)) != VLAD_OK)
     return retval;
   
   if ((retval = list::find(&ident)) != VLAD_OK)
