@@ -9,6 +9,7 @@ LEX = @LEX@
 YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
+LDFLAGS = @LDFLAGS@
 LN_S = @LN_S@
 DEBUG = @DEBUG@
 STRIP = @STRIP@
@@ -60,6 +61,7 @@ TEMP =                \
 ifdef SMODELS
 SMINCLUDES = wrapper.h
 SMOBJECTS = wrapper.o
+SMLIBS = -lsmodels
 endif
 
 ifdef BUILDSHARED
@@ -72,7 +74,7 @@ libvlad.a : $(OBJECTS)
 	$(AR) -rcs $(@) $(OBJECTS)
 
 libvlad.so.$(VERSION) : $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -shared -Wl,-soname,`echo $(@) | cut -d. -f1,2,3` -o $(@) $(OBJECTS)
+	$(CXX) $(LDFLAGS) $(CXXFLAGS) -shared -Wl,-soname,`echo $(@) | cut -d. -f1,2,3` -o $(@) $(OBJECTS) $(SMLIBS)
 ifndef DEBUG
   ifdef STRIP
 	strip $(@)
