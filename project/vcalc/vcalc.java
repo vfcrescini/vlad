@@ -226,6 +226,7 @@ class calcdisplay extends Panel {
         break;
       case 1 :
         buffer1 = fvalue;
+	buffer2 = fvalue;
         state = 3;
         break;
       case 2 :
