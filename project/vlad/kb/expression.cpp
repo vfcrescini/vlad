@@ -5,6 +5,7 @@
 
 #include <cstdlib>
 #include <cstddef>
+#include <cstring>
 #include <new>
   
 #include <config.h>
