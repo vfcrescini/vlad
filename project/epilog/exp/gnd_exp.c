@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <identlist.h>
 #include "gnd_exp.h"
-#include <stdio.h>
 
 int gnd_exp_cpy(void *p1, void **p2);
 int gnd_exp_cmp_subst_group1(void *p1, void *p2);
