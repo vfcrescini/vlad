@@ -1,0 +1,16 @@
+/*
+ * read_write
+ * Vino Crescini  <jcrescin@cit.uws.edu.au>
+ */
+
+ident sub s;
+ident acc read, write;
+ident obj f;
+
+initially holds(s, read, f);
+
+trans assign_write(X, Y) causes holds(X, write, Y) if true;
+trans delete_write(X, Y) causes !holds(X, write, Y) if holds(X, write, Y);
+
+is holds(s, write, f) after assign_write(s, f);
+is !holds(s, write, f) after assign_write(s, f), delete_write(s, f);
