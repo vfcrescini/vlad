@@ -16,6 +16,12 @@ int identlist_init(identlist_type *list)
   return simplelist_init(list);
 }
 
+/* gives the number of identifiers in the list */
+int identlist_length(identlist_type list, unsigned int *len)
+{
+  return simplelist_length(list, len);
+}
+
 /* return 0 if name is already used */
 int identlist_find(identlist_type list, char *name)
 {

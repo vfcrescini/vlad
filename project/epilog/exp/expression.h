@@ -12,6 +12,13 @@ typedef enum
   epi_false = 1
 } truth_type;
 
+typedef enum
+{
+  epi_res_true = 0,
+  epi_res_false = 1,
+  epi_res_unknown = 2
+} res_type;
+
 /* first 3 bits indicate the type */
 #define EPI_ATOM_CONST       1
 #define EPI_ATOM_HOLDS       2
