@@ -86,6 +86,28 @@ class polbase {
 #ifdef VLAD_SMODELS
     smwrap *m_smobject;
 #endif
+    /* returns a holds fact id based on the info given */
+    unsigned int compute_holds(unsigned int a_state,
+                               bool a_truth,
+                               unsigned int a_sub,
+                               unsigned int a_acc,
+                               unsigned int a_obj);
+    /* returns a memb fact id based on the info given */
+    unsigned int compute_memb(unsigned int a_state,
+                              bool a_truth,
+                              unsigned char a_type,
+                              unsigned int a_elt,
+                              unsigned int a_grp);
+    /* returns a subst fact id based on the info given */
+    unsigned int compute_subst(unsigned a_state,
+                               bool a_truth,
+                               unsigned char a_type,
+                               unsigned char a_grp1,
+                               unsigned char a_grp2);
+    /* returns a fact id based on the info given */
+    unsigned int compute_fact(unsigned int a_state,
+                              bool a_truth,
+                              unsigned int a_fact);
     /* gives a unique id based on the holds entities given */
     int encode_holds(const char *a_sub,
                      const char *a_acc,
@@ -117,21 +139,27 @@ class polbase {
      * verifies that e and g are in the symtab and that they are of the right
      * type, or listed in vlist if vlist is non-null
      */
-    int verify_fact_member(const char *a_elt,
-                           const char *a_grp,
-                           stringlist *a_vlist);
+    int verify_fact_memb(const char *a_elt,
+                         const char *a_grp,
+                         stringlist *a_vlist);
     /*
      * verifies that g1 and g2 are in the symtab and that they are of the right
      * type, or listed in v if v is non-null
      */
-    int verify_fact_subset(const char *a_grp1,
-                           const char *a_grp2,
-                           stringlist *a_vlist);
+    int verify_fact_subst(const char *a_grp1,
+                          const char *a_grp2,
+                          stringlist *a_vlist);
     /* make sure fact is valid */
     int verify_fact(fact *a_fact, stringlist *a_vlist);
     /* make sure expression e is valid */
     int verify_expression(expression *a_exp);
     /* make sure updateref is valid */
     int verify_updateref(char *a_name, stringlist *a_ilist);
+    /* returns the id of the negation of the given fact id */
+    unsigned int negate_fact(unsigned int a_fact);
+#ifdef VLAD_SMODELS
+    /* checks whether the given fact is true, false or unknown */
+    int evaluate_fact(unsigned int a_fact, unsigned char *a_res);
+#endif
 } ;
 #endif

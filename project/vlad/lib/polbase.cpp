@@ -455,6 +455,30 @@ int polbase::check_symtab(const char *a_name, unsigned char a_type)
 /* prepares the kb for queries */
 int polbase::compute_evaluate()
 {
+  int retval;
+  unsigned int i;
+                                                                               
+  /* we only allow this after kb is closed */
+  if (m_stage != 3 && m_stage != 4)
+    return VLAD_INVALIDOP;
+                                                                               
+  /* create a new instance of the smodels smwrap and init it */
+  if (m_smobject != NULL)
+    delete m_smobject;
+  if ((m_smobject = VLAD_NEW(smwrap())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((retval = m_smobject->init()) != VLAD_OK)
+    return retval;
+                                                                               
+  /* first we register all the possible atoms in smodels */
+  for (i = 0; i < (m_tot_atom * 2 * (VLAD_LIST_LENGTH(m_setable) + 1)); i++) {
+    if ((retval = m_smobject->add_atom(i)) != VLAD_OK)
+      return retval;
+  }
+  m_smobject->close_atom();
+
+  /* now *sigh* we register all the built-in rules */
+
   return VLAD_OK;
 }
 #endif
@@ -463,9 +487,115 @@ int polbase::compute_evaluate()
 /* use smwrap class to evaluate a query */
 int polbase::query_evaluate(expression *a_exp, unsigned char *a_res)
 {
+  int retval;
+  unsigned int i;
+
+  *a_res = VLAD_RESULT_TRUE;
+
+  /* we only allow this after a call to compute() */
+  if (m_stage != 4)
+    return VLAD_INVALIDOP;
+
+  /* verify expression */
+  if ((retval = verify_expression(a_exp)) != VLAD_OK)
+    return retval;
+
+  /* go through the atoms to test */
+  for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
+    fact *tmp_fact;
+    unsigned int tmp_num;
+    unsigned char tmp_res;
+
+    if ((retval = a_exp->get(i, &tmp_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_fact(tmp_fact, VLAD_LIST_LENGTH(m_setable), &tmp_num)) != VLAD_OK)
+      return retval;
+
+    if ((retval = evaluate_fact(tmp_num, &tmp_res)) != VLAD_OK)
+      return retval;
+
+    switch (tmp_res) {
+      case VLAD_RESULT_TRUE :
+        continue;
+      case VLAD_RESULT_FALSE :
+        *a_res = VLAD_RESULT_FALSE;
+        return VLAD_OK;
+      default :
+        *a_res = VLAD_RESULT_UNKNOWN;
+    }
+  }
+
   return VLAD_OK;
 }
 #endif
+
+unsigned int polbase::compute_holds(unsigned int a_state,
+                                    bool a_truth,
+                                    unsigned int a_sub,
+                                    unsigned int a_acc,
+                                    unsigned int a_obj)
+{
+  return compute_fact(a_state,
+                      a_truth,
+                      (a_sub * (aslen + aglen) * (oslen + oglen)) +
+                      (a_acc * (oslen + oglen)) + a_obj);
+}
+
+unsigned int polbase::compute_memb(unsigned int a_state,
+                                   bool a_truth,
+                                   unsigned char a_type,
+                                   unsigned int a_elt,
+                                   unsigned int a_grp)
+{
+  switch(VLAD_IDENT_BASETYPE(a_type)) {
+    case VLAD_IDENT_SUB_SIN :
+      return compute_fact(a_state,
+                          a_truth,
+                          m_tot_atoms[VLAD_ATOM_HOLDS] + (a_elt * sglen) + a_grp);
+    case VLAD_IDENT_ACC_SIN :
+      return compute_fact(a_state,
+                          a_truth,
+                          m_tot_atoms[VLAD_ATOM_HOLDS] + (sslen * sglen) + (a_elt * aglen) + a_grp);
+    case VLAD_IDENT_OBJ_SIN :
+      return compute_fact(a_state,
+                          a_truth,
+                          m_tot_atoms[VLAD_ATOM_HOLDS] + (sslen * sglen) + (aslen * aglen) + (a_elt * oglen) + a_grp);
+  }
+                                                                               
+  return 0;
+}
+
+unsigned int polbase::compute_subst(unsigned a_state,
+                                    bool a_truth,
+                                    unsigned char a_type,
+                                    unsigned char a_grp1,
+                                    unsigned char a_grp2)
+{
+  switch(VLAD_IDENT_BASETYPE(a_type)) {
+    case VLAD_IDENT_SUB_SIN :
+      return compute_fact(a_state,
+                          a_truth,
+                          m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER] + (a_grp1 * sglen) + a_grp2);
+    case VLAD_IDENT_ACC_SIN :
+      return compute_fact(a_state,
+                          a_truth,
+                          m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER] + (sglen * sglen) + (a_grp1 * aglen) + a_grp2);
+    case VLAD_IDENT_OBJ_SIN :
+      return compute_fact(a_state,
+                          a_truth,
+                          m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER] + (sglen * sglen) + (aglen * aglen) + (a_grp1 * oglen) + a_grp2);
+  }
+                                                                               
+  return 0;
+
+}
+
+unsigned int polbase::compute_fact(unsigned int a_state,
+                                   bool a_truth,
+                                   unsigned int a_fact)
+{
+  return (a_state * m_tot_atom * 2) + (a_truth ? m_tot_atom : 0) + a_fact;
+}
 
 /* gives a unique id based on the holds entities given */
 int polbase::encode_holds(const char *a_sub, const char *a_acc, const char *a_obj, unsigned int *a_id)
@@ -488,10 +618,12 @@ int polbase::encode_holds(const char *a_sub, const char *a_acc, const char *a_ob
       !VLAD_IDENT_IS_OBJECT(type[2]))
     return VLAD_INVALIDINPUT;
 
-  /* now compute */
-  *a_id = (index[0] * (aslen + aglen) * (oslen + oglen)) +
-          (index[1] * (oslen + oglen)) +
-          (index[2]);
+  /* adjust for groups */
+  index[0] += (VLAD_IDENT_IS_GROUP(type[0]) ? sslen : 0);
+  index[1] += (VLAD_IDENT_IS_GROUP(type[1]) ? aslen : 0);
+  index[2] += (VLAD_IDENT_IS_GROUP(type[2]) ? oslen : 0);
+
+  *a_id = compute_holds(0, false, index[0], index[1], index[2]);
 
   return VLAD_OK;
 }
@@ -515,29 +647,7 @@ int polbase::encode_memb(const char *a_elt, const char *a_grp, unsigned int *a_i
   if (type[0] != VLAD_IDENT_BASETYPE(type[1]))
     return VLAD_INVALIDINPUT;
 
-  *a_id = m_tot_atoms[VLAD_ATOM_HOLDS];
-
-  /* now compute */
-  switch(type[0]) {
-    case VLAD_IDENT_SUB_SIN :
-      *a_id = *a_id +
-              (index[0] * sglen) +
-              index[1];
-      break;
-    case VLAD_IDENT_ACC_SIN :
-      *a_id = *a_id +
-              (sslen * sglen) +
-              (index[0] * aglen) +
-              index[1];
-      break;
-    case VLAD_IDENT_OBJ_SIN :
-      *a_id = *a_id +
-              (sslen * sglen) +
-              (aslen * aglen) +
-              (index[0] * oglen) +
-              index[1];
-      break;
-  }
+  *a_id = compute_memb(0, false, type[0], index[0], index[1]);
 
   return VLAD_OK;
 }
@@ -561,28 +671,7 @@ int polbase::encode_subst(const char *a_grp1, const char *a_grp2, unsigned int *
   if (VLAD_IDENT_BASETYPE(type[0]) != VLAD_IDENT_BASETYPE(type[1]))
     return VLAD_INVALIDINPUT;
 
-  *a_id = m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER];
-
-  switch(type[0]) {
-    case VLAD_IDENT_SUB_GRP :
-      *a_id = *a_id +
-              (index[0] * sglen) +
-              index[1];
-      break;
-    case VLAD_IDENT_ACC_GRP :
-      *a_id = *a_id +
-               (sglen * sglen) +
-               (index[0] * aglen) +
-               index[1];
-      break;
-    case VLAD_IDENT_OBJ_GRP :
-      *a_id = *a_id +
-              (sglen * sglen) +
-              (aglen * aglen) +
-              (index[0] * oglen) +
-              index[1];
-      break;
-  }
+  *a_id = compute_subst(0, false, type[0], index[0], index[1]);
 
   return VLAD_OK;
 }
@@ -595,34 +684,23 @@ int polbase::encode_fact(fact *a_fact,
   int retval;
   unsigned char type;
   bool truth;
-  char *tmp1;
-  char *tmp2;
-  char *tmp3;
+  char *tmp[3];
 
   if (a_fact == NULL || a_id == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = a_fact->type(&type)) != VLAD_OK)
-    return retval;
-
-  if ((retval = a_fact->truth(&truth)) != VLAD_OK)
+  if ((retval = a_fact->get(&tmp[0], &tmp[1], &tmp[2], &type, &truth)) != VLAD_OK)
     return retval;
 
   *a_id = (a_state * m_tot_atom * 2) + (truth ? m_tot_atom : 0);
 
   switch(type) {
     case VLAD_ATOM_HOLDS :
-      if ((retval = a_fact->get_holds(&tmp1, &tmp2, &tmp3)) != VLAD_OK)
-        return retval;
-      return encode_holds(tmp1, tmp2, tmp3, a_id);
+      return encode_holds(tmp[0], tmp[1], tmp[2], a_id);
     case VLAD_ATOM_MEMBER :
-      if ((retval = a_fact->get_member(&tmp1, &tmp2)) != VLAD_OK)
-        return retval;
-      return encode_memb(tmp1, tmp2, a_id);
+      return encode_memb(tmp[0], tmp[1], a_id);
     case VLAD_ATOM_SUBSET :
-      if ((retval = a_fact->get_subset(&tmp1, &tmp2)) != VLAD_OK)
-        return retval;
-      return encode_subst(tmp1, tmp2, a_id);
+      return encode_subst(tmp[0], tmp[1], a_id);
   }
 
   return VLAD_FAILURE;
@@ -852,9 +930,9 @@ int polbase::verify_fact_holds(const char *a_sub,
  * verifies that e and g are in the symtab and that they are of the right
  * type, or listed in vlist if vlist is non-null
  */
-int polbase::verify_fact_member(const char *a_elt,
-                                const char *a_grp,
-                                stringlist *a_vlist)
+int polbase::verify_fact_memb(const char *a_elt,
+                              const char *a_grp,
+                              stringlist *a_vlist)
 {
  int retval;
   unsigned char type_elt;
@@ -913,9 +991,9 @@ int polbase::verify_fact_member(const char *a_elt,
  * verifies that g1 and g2 are in the symtab and that they are of the right
  * type, or listed in v if v is non-null
  */
-int polbase::verify_fact_subset(const char *a_grp1,
-                                const char *a_grp2,
-                                stringlist *a_vlist)
+int polbase::verify_fact_subst(const char *a_grp1,
+                               const char *a_grp2,
+                               stringlist *a_vlist)
 {
   int retval;
   unsigned char type_grp1;
@@ -991,9 +1069,9 @@ int polbase::verify_fact(fact *a_fact, stringlist *a_vlist)
     case VLAD_ATOM_HOLDS :
       return verify_fact_holds(tmp1, tmp2, tmp3, a_vlist);
     case VLAD_ATOM_MEMBER :
-      return verify_fact_member(tmp1, tmp2, a_vlist);
+      return verify_fact_memb(tmp1, tmp2, a_vlist);
     case VLAD_ATOM_SUBSET :
-      return verify_fact_subset(tmp1, tmp2, a_vlist);
+      return verify_fact_subst(tmp1, tmp2, a_vlist);
   }
 
   return VLAD_INVALIDINPUT;
@@ -1045,3 +1123,48 @@ int polbase::verify_updateref(char *a_name, stringlist *a_ilist)
   }
   return VLAD_OK;
 }
+
+/* returns the id of the negation of the given fact id */
+unsigned int polbase::negate_fact(unsigned int a_fact)
+{
+  unsigned int state;
+  bool truth;
+                                                                               
+  /* first extract the state */
+  state = a_fact / (m_tot_atom * 2);
+  a_fact = a_fact % (m_tot_atom * 2);
+                                                                               
+  /* then get truth value */
+  truth = ! (a_fact >= m_tot_atom);
+  a_fact = a_fact % m_tot_atom;
+                                                                               
+  return (state * m_tot_atom * 2) + (truth ? m_tot_atom : 0) + a_fact;
+}
+
+#ifdef VLAD_SMODELS
+/* checks whether the given fact is true, false or unknown */
+int polbase::evaluate_fact(unsigned int a_fact, unsigned char *a_res)
+{
+  int retval;
+  bool tmp_res;
+
+  if (m_stage != 4)
+    return VLAD_INVALIDOP;
+  if (a_res == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = m_smobject->ask(a_fact, &tmp_res)) != VLAD_OK)
+    return retval;
+
+  if (tmp_res)
+    *a_res = VLAD_RESULT_TRUE;
+  else {
+    /* false, so we must try the negation */
+    if ((retval = m_smobject->ask(negate_fact(a_fact), &tmp_res)) != VLAD_OK)
+      return retval;
+
+    *a_res = (tmp_res ? VLAD_RESULT_FALSE : VLAD_RESULT_UNKNOWN);
+  }
+  return VLAD_OK;
+}
+#endif
