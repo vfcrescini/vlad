@@ -63,7 +63,8 @@
 
   \footnotetext{
     \tt http://www.cit.uws.edu.au/\~{}jcrescin/
-    projects/PolicyUpdater}
+    projects/PolicyUpdater/index.html
+  }
 
   \section{Introduction}
 
@@ -733,8 +734,8 @@ initially
 
           \begin{vverbose}
 always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
-implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
-with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
+  implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
+  with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
           \end{vverbose}
 
           Each fact in the $always$ clause of language ${\cal L}$ corresponds
@@ -1428,7 +1429,115 @@ grant\_write()
               \end{math}
           \end{enumerate}
         \end{vexample}
-      \subsection{Evaluation}
+      \subsection{Domain Consistency Checking and Evaluation}
+
+        Given a domain description ${\cal D_{L}}$ composed of the following
+        language ${\cal L}$ statements:
+
+        \begin{vverbose}
+initially
+  \(a\sb{0}\) &&\ldots&& \(a\sb{n}\) && !\(b\sb{0}\) &&\ldots&& !\(b\sb{m}\)
+
+always
+  \(c\sb{0}\) &&\ldots &&\(c\sb{o}\) && !\(d\sb{0}\) &&\ldots&& !\(d\sb{p}\)
+  implied by
+    \(e\sb{0}\) &&\ldots&& \(e\sb{q}\) && !\(f\sb{0}\) &&\ldots&& !\(f\sb{r}\)
+  with absence
+    \(g\sb{0}\) &&\ldots&& \(g\sb{s}\) && !\(h\sb{0}\) &&\ldots&& !\(h\sb{t}\)
+
+update()
+  causes
+    \(i\sb{0}\) &&\ldots && \(i\sb{u}\) && !\(j\sb{0}\) &&\ldots&& !\(j\sb{v}\)
+  if
+    \(k\sb{0}\) &&\ldots && \(k\sb{w}\) && !\(l\sb{0}\) &&\ldots&& !\(l\sb{x}\)
+        \end{vverbose}
+
+        We define the following sets of ground facts:
+
+        \begin{itemize}
+          \item
+            $\Upsilon^{+}_{int}$ = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
+          \item
+            $\Upsilon^{-}_{int}$ = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
+          \item
+            $\Upsilon^{+}_{con}$ = \{$c_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $o$\}
+          \item
+            $\Upsilon^{-}_{con}$ = \{$d_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $p$\}
+          \item
+            $\Upsilon^{+}_{upd}$ = \{$i_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $u$\}
+          \item
+            $\Upsilon^{-}_{upd}$ = \{$j_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $v$\}
+        \end{itemize}
+
+        Additionally, we use the complementary notation
+        $\overline{\Upsilon}$ to denote a set containing the negation of
+        facts of set $\Upsilon$, i.e. $\overline{\Upsilon}$ =
+        \{$\lnot\upsilon$ $\mid$ $\upsilon$ $\in$ $\Upsilon$\}.
+
+        Let $\gamma$ be an initial, constraint or update definition statement of
+        language ${\cal L}$. We then define $Eff$($\gamma$) to be the set
+        \{$a_{0}$,\ldots,$a_{n}$,$b_{0}$,\ldots,$b_{m}$\}, 
+        \{$c_{0}$,\ldots,$c_{o}$,$d_{0}$,\ldots,$d_{p}$\} or
+        \{$i_{0}$,\ldots,$i_{u}$,$j_{0}$,\ldots,$j_{v}$\}, respectively;
+        $Def$($\gamma$) to be the set $\emptyset$,
+        \{$g_{0}$,\ldots,$g_{s}$,$h_{0}$,\ldots,$h_{t}$\} or
+        $\emptyset$, respectively; and $Pre$($\gamma$) to be the set
+        $\emptyset$, \{$e_{0}$,\ldots,$e_{q}$,$f_{0}$,\ldots,$f_{r}$\} or
+        \{$k_{0}$,\ldots,$k_{w}$,$l_{0}$,\ldots,$l_{x}$\}, respectively.
+
+        \begin{vdefinition}
+          Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
+          two ground facts $\delta$ and $\delta'$ are {\bf mutually exclusive} 
+          in ${\cal D_{L}}$ if:
+          \begin{vquote}
+            $\delta$ $\in$ \{$\Upsilon^{+}_{int}$ $\cup$
+            $\overline{\Upsilon^{-}_{int}}$ $\cup$ $\Upsilon^{+}_{con}$ $\cup$
+            $\overline{\Upsilon^{-}_{con}}$ $\cup$ $\Upsilon^{+}_{upd}$ $\cup$
+            $\overline{\Upsilon^{-}_{upd}}$\}
+
+            implies
+
+            $\delta'$ $\not\in$ \{$\Upsilon^{+}_{int}$ $\cup$
+            $\overline{\Upsilon^{-}_{int}}$ $\cup$ $\Upsilon^{+}_{con}$ $\cup$
+            $\overline{\Upsilon^{-}_{con}}$ $\cup$ $\Upsilon^{+}_{upd}$ $\cup$
+            $\overline{\Upsilon^{-}_{upd}}$\}
+          \end{vquote}
+        \end{vdefinition}
+
+        \begin{vdefinition}
+          Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
+          two statements $\gamma$ and $\gamma'$ are {\bf complementary} in
+          ${\cal D_{L}}$ if one of the following conditions holds:
+          \begin{enumerate}
+            \item
+              $\gamma$ and $\gamma'$ are both constraint statements and
+              $Eff(\gamma)$ = $\overline{Eff(\gamma')}$.
+            \item
+              $\gamma$ is a constraint statement, $\gamma'$ is an update
+              statement and $Eff(\gamma)$ = $\overline{Eff(\gamma')}$.
+          \end{enumerate}
+        \end{vdefinition}
+
+        \begin{vdefinition}
+          Given a domain description ${\cal D_{L}}$, ${\cal D_{L}}$ is said to
+          be {\bf normal} if it satisfies all of the following conditions:
+          \begin{enumerate}
+            \item
+              $\Upsilon^{+}_{int}$ $\cap$ $\Upsilon^{-}_{int}$ = $\emptyset$
+            \item
+              For all constraint statements $\gamma$ in ${\cal D_{L}}$,
+              $\overline{Eff(\gamma)}$ $\cap$ $Pre(\gamma)$ = $\emptyset$.
+            \item
+              For any two constraint statements $\gamma$ and $\gamma'$ in
+              ${\cal D_{L}}$, $Def(\gamma)$ $\cap$ $Eff(\gamma')$ =
+              $\emptyset$.
+            \item
+              For any two complementary statements $\gamma$ and $\gamma'$ in
+              ${\cal D_{L}}$, there exists a pair of ground expression $\eta$
+              $\in$ $\gamma$ and $\eta'$ $\in$ $\gamma'$ such that $\eta$ and
+              $\eta'$ are mutually exclusive.
+          \end{enumerate}
+        \end{vdefinition}
 
         \begin{vdefinition}
           Given a consistent domain description ${\cal D}_{\cal L}$, ground
