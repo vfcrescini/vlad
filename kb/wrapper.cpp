@@ -165,6 +165,9 @@ int wrapper::add_rule_chead_mbody(bool h, numberlist *pb, numberlist *nb)
     pr_api->add_body(pr_api->get_atom(tmp_name), false);
   }
 
+  if (VLAD_LIST_LENGTH(pb) == 0 && VLAD_LIST_LENGTH(nb) == 0)
+    pr_api->add_body(pr_api->get_atom(VLAD_STR_TRUE), true);
+
   pr_api->end_rule();
 
   return VLAD_OK;
@@ -254,6 +257,9 @@ int wrapper::add_rule_shead_mbody(unsigned int h, numberlist *pb, numberlist *nb
     pr_api->add_body(pr_api->get_atom(tmp_name), false);
   }
 
+  if (VLAD_LIST_LENGTH(pb) == 0 && VLAD_LIST_LENGTH(nb) == 0)
+    pr_api->add_body(pr_api->get_atom(VLAD_STR_TRUE), true);
+
   pr_api->end_rule();
 
   return VLAD_OK;
@@ -270,6 +276,9 @@ int wrapper::add_rule_mhead_cbody(numberlist *h, bool b)
 
   if (stage != 2)
     return VLAD_FAILURE;
+
+  if (VLAD_LIST_LENGTH(h) == 0)
+    return VLAD_INVALIDINPUT;
 
   pr_api->begin_rule(CHOICERULE);
 
@@ -299,6 +308,9 @@ int wrapper::add_rule_mhead_sbody(numberlist *h, unsigned int pb, unsigned int n
 
   if (stage != 2)
     return VLAD_FAILURE;
+
+  if (VLAD_LIST_LENGTH(h) == 0)
+    return VLAD_INVALIDINPUT;
 
   pr_api->begin_rule(CHOICERULE);
 
@@ -335,6 +347,9 @@ int wrapper::add_rule_mhead_mbody(numberlist *h, numberlist *pb, numberlist *nb)
   if (stage != 2)
     return VLAD_FAILURE;
 
+  if (VLAD_LIST_LENGTH(h) == 0)
+    return VLAD_INVALIDINPUT;
+
   pr_api->begin_rule(CHOICERULE);
 
   /* add head */
@@ -363,6 +378,9 @@ int wrapper::add_rule_mhead_mbody(numberlist *h, numberlist *pb, numberlist *nb)
     sprintf(tmp_name, "%d", tmp_num);
     pr_api->add_body(pr_api->get_atom(tmp_name), false);
   }
+
+  if (VLAD_LIST_LENGTH(pb) == 0 && VLAD_LIST_LENGTH(nb) == 0)
+    pr_api->add_body(pr_api->get_atom(VLAD_STR_TRUE), true);
 
   pr_api->end_rule();
 
