@@ -6,7 +6,7 @@ PSPDF=ps2pdf
 FIG2DEV=fig2dev
 
 LATEX_SRCS=policyupdater
-XFIG_SRCS=system
+XFIG_SRCS=system flowchart
 
 CLASS=
 STYLE=latex8.sty
@@ -40,7 +40,7 @@ ps : $(patsubst %,%.ps,$(LATEX_SRCS))
 
 pdf : $(patsubst %,%.pdf,$(LATEX_SRCS))
 
-policyupdater.dvi : policyupdater.tex system.fig $(CLASS) $(STYLE) 
+policyupdater.dvi : policyupdater.tex system.fig flowchart.fig $(CLASS) $(STYLE) 
 	$(LATEX) policyupdater.tex
 	$(LATEX) policyupdater.tex
 
