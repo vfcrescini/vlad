@@ -67,6 +67,15 @@ stringlist *transdef::get_vlist()
   return vlist;
 }
 
+expression *transdef::get_precond()
+{
+  return precond;
+}
+expression *transdef::get_postcond()
+{
+  return postcond;
+}
+
 transtab::transtab() : list(true)
 {
 }
@@ -116,6 +125,35 @@ int transtab::get(const char *n, transdef **t)
 
   free(list);
   delete tmp;
+
+  return VLAD_OK;
+}
+
+/* replace variables with identifiers in v, then get pr and pp */
+int transtab::get(unsigned int i, stringlist *ilist, expression **pr, expression **po)
+{
+  int retval;
+  transdef *tmp_trans;
+  expression *tmp_precond;
+  expression *tmp_postcond;
+
+  if (ilist == NULL || pr == NULL || po == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = list::get(i, (list_item **) &tmp_trans)) != VLAD_OK)
+    return retval;
+
+  if ((tmp_precond = tmp_trans->get_precond()) != NULL)
+    return VLAD_FAILURE;
+
+  if ((tmp_postcond = tmp_trans->get_postcond()) != NULL)
+    return VLAD_FAILURE;
+  
+  if ((retval = tmp_precond->replace(tmp_trans->get_vlist(), ilist, pr)) != VLAD_OK)
+    return retval;
+
+  if ((retval = tmp_postcond->replace(tmp_trans->get_vlist(), ilist, po)) != VLAD_OK)
+    return retval;
 
   return VLAD_OK;
 }

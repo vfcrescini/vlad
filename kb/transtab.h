@@ -18,6 +18,8 @@ class transdef : public list_item
     bool cmp(list_item *item);
     char *get_name();
     stringlist *get_vlist();
+    expression *get_precond();
+    expression *get_postcond();
   private :
     char *name;
     stringlist *vlist;
@@ -32,6 +34,8 @@ class transtab : public list
     ~transtab();
     int add(const char *n, stringlist *v, expression *pr, expression *po);
     int get(const char *n, transdef **t);
+    /* replace variables with identifiers in ilist, then get pr and pp */
+    int get(unsigned int i, stringlist *ilist, expression **pr, expression **po);
 } ; 
 
 #endif
