@@ -7,6 +7,7 @@
 #define __VLAD_KB_H
 
 #include <symtab.h>
+#include <numberlist.h>
 
 /* atom type */
 #define VLAD_ATOM_CONST  0
@@ -35,8 +36,11 @@ class kb {
     int get_atom(const char *n1,
                  const char *n2,
                  const char *n3,
-                 unsigned char t,
+                 unsigned char ty,
+                 bool tr,
                  unsigned int *a);
+    /* returns the negation of the given atom */
+    int negate_atom(unsigned int in, unsigned int *out);
   private :
     symtab *stable;
     unsigned int s_len;
@@ -48,6 +52,8 @@ class kb {
     unsigned int h_tot;
     unsigned int m_tot;
     unsigned int s_tot;
+    unsigned int pos_tot;
+    unsigned int neg_tot;
     bool initialised;
     bool closed;
 } ;

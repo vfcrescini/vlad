@@ -26,6 +26,8 @@ kb::kb()
   h_tot = 0;
   m_tot = 0;
   s_tot = 0;
+  pos_tot = 0;
+  neg_tot = 0;
 }
 
 kb::~kb()
@@ -69,6 +71,8 @@ int kb::close()
   h_tot = (s_len + sg_len) * (a_len + ag_len) * (o_len + og_len);
   m_tot = (s_len * sg_len) + (a_len * ag_len) + (o_len * og_len);
   s_tot = (sg_len * sg_len) + (ag_len * ag_len) + (og_len * og_len);
+  pos_tot = h_tot + m_tot + s_tot;
+  neg_tot = pos_tot;
 
   closed = true;
 
@@ -91,7 +95,8 @@ int kb::add_ident(const char *n, unsigned char t)
 int kb::get_atom(const char *n1,
                  const char *n2,
                  const char *n3,
-                 unsigned char t,
+                 unsigned char ty,
+                 bool tr,
                  unsigned int *a)
 {
   int retval;
@@ -106,13 +111,13 @@ int kb::get_atom(const char *n1,
   if (a == NULL)
     return VLAD_NULLPTR;
 
-  switch(t) {
+  switch(ty) {
     case VLAD_ATOM_CONST : {
       if (n1 != NULL) {
         if (!strcmp("false", n1))
-          *a = 0;
+          *a = (tr) ? 0 : 1;
         else if (!strcmp("true", n1))
-          *a = 1;
+          *a = (tr) ? 1 : 0;
         else
           return VLAD_NOTFOUND;
       }
@@ -152,7 +157,7 @@ int kb::get_atom(const char *n1,
       hs = VLAD_IDENT_IS_GROUP(s_type) ? s_index + s_len : s_index;
       ha = VLAD_IDENT_IS_GROUP(a_type) ? a_index + a_len : a_index;
       ho = VLAD_IDENT_IS_GROUP(o_type) ? o_index + o_len : o_index;
-      *a = (hs * (a_len + ag_len) * (o_len + og_len)) + (ha * (o_len + og_len)) + ho + 2;
+      *a = ((tr) ? 0 : pos_tot) + (hs * (a_len + ag_len) * (o_len + og_len)) + (ha * (o_len + og_len)) + ho + 2;
 
       break;
     }
@@ -176,13 +181,13 @@ int kb::get_atom(const char *n1,
       /* now compute */
       switch(VLAD_IDENT_BASETYPE(e_type)) {
         case VLAD_IDENT_SUBJECT :
-          *a = h_tot + (e_index * sg_len) + g_index + 2;
+          *a = ((tr) ? 0 : pos_tot) + h_tot + (e_index * sg_len) + g_index + 2;
           break;
         case VLAD_IDENT_ACCESS :
-          *a = h_tot + (s_len * sg_len) + (e_index * ag_len) + g_index + 2;
+          *a = ((tr) ? 0 : pos_tot) + h_tot + (s_len * sg_len) + (e_index * ag_len) + g_index + 2;
           break;
         case VLAD_IDENT_OBJECT :
-          *a = h_tot + (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index + 2;
+          *a = ((tr) ? 0 : pos_tot) + h_tot + (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index + 2;
           break;
         default :
           /* this should never happen */
@@ -210,13 +215,13 @@ int kb::get_atom(const char *n1,
       /* now we compute */
       switch(VLAD_IDENT_BASETYPE(g1_type)) {
         case VLAD_IDENT_SUBJECT :
-          *a = h_tot + m_tot + (g1_index * sg_len) + g2_index + 2;
+          *a = ((tr) ? 0 : pos_tot) + h_tot + m_tot + (g1_index * sg_len) + g2_index + 2;
           break;
         case VLAD_IDENT_ACCESS :
-          *a = h_tot + m_tot + (sg_len * sg_len) + (g1_index * ag_len) + g2_index + 2;
+          *a = ((tr) ? 0 : pos_tot) + h_tot + m_tot + (sg_len * sg_len) + (g1_index * ag_len) + g2_index + 2;
           break;
         case VLAD_IDENT_OBJECT :
-          *a = h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index + 2;
+          *a = ((tr) ? 0 : pos_tot) + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index + 2;
           break;
         default :
           /* this should never happen */
@@ -228,5 +233,20 @@ int kb::get_atom(const char *n1,
     default :
       return VLAD_INVALIDINPUT;
   }
+  return VLAD_OK;
+}
+
+/* returns the negation of the given atom */
+int kb::negate_atom(unsigned int in, unsigned int *out)
+{
+   if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  /* of course, symtab must be closed first */
+  if (!closed)
+    return VLAD_FAILURE; 
+
+  *out = ((in < pos_tot) ? 0 : pos_tot) + in;
+
   return VLAD_OK;
 }
