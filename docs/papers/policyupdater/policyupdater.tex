@@ -741,8 +741,8 @@ query holds(alice, read, file);
     !holds(alice, read, secret_data);
           \end{verbatim}
 
-          Given 3 policy update references in the sequence list $\psi$
-          (i.e. $|\psi|$ $=$ $3$), the language ${\cal L}^{*}$ equivalent is as
+          Given a policy update reference in the sequence list $\psi$ (i.e.
+          $|\psi|$ $=$ $1$), the language ${\cal L}^{*}$ equivalent is as
           follows:
 
           \begin{quote}
@@ -777,39 +777,6 @@ query holds(alice, read, file);
                  & not \lnot \hat{holds}(alice, read, secret\_data, S_{1})
               \end{aligned}
             \end{math}
-
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, read, secret\_data, S_{2}) \leftarrow \\
-                 & \hat{memb}(alice, admin, S_{2}), \\
-                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{2})
-              \end{aligned}
-            \end{math}
-
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, write, secret\_data, S_{2}) \leftarrow \\
-                 & \hat{memb}(alice, admin, S_{2}), \\
-                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{2})
-              \end{aligned}
-            \end{math}
-
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, read, secret\_data, S_{3}) \leftarrow \\
-                 & \hat{memb}(alice, admin, S_{3}), \\
-                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{3})
-              \end{aligned}
-            \end{math}
-
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, write, secret\_data, S_{3}) \leftarrow \\
-                 & \hat{memb}(alice, admin, S_{3}), \\
-                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{3})
-              \end{aligned}
-            \end{math}
-
           \end{quote}
 
         \paragraph{Policy Updates.}
@@ -1680,17 +1647,35 @@ query holds(alice, read, file);
   \section{Conclusion}
     \label{sec-conclusion}
 
-    [effectiveness of system/application]
+    In this paper, we have presented the PolicyUpdater system, a logic-based
+    authorisation system that features query evaluation and dynamic policy
+    updates. This is made possible by the use of a first-order logic
+    authorisation language, language ${\cal L}$, for the definition, updating
+    and querying of access control policies. As we have shown, language
+    ${\cal L}$ is expressive enough to represent constraints and default rules.
+    Because language ${\cal L}$ is a first-order logic language, the underlying
+    semantics allow the language to be translated into an extended logic
+    program, and then into a normal logic program through the application of
+    the rules discussed in this paper. Through these translation rules we have
+    also shown that dynamic and conditional policy updates can be achieved by
+    the application of translated constraint rules.
 
-    [future work]
+    One possible future extension to this work is the integration of temporal
+    logic to language ${\cal L}$ to allow time properties to be expressed in
+    access control policies. Such extension will be useful in access control
+    systems such as e-commerce applications where authorisations are granted
+    or denied based on policies that are time dependent. Another possible
+    extension to the system and language to include a more flexible conflict
+    resolution strategy to replace the system's current
+    {\em negation-has-higher-precedence} resolution rule.
 
   \appendix
 
   \section{Appendices}
 
     \subsection{Storage Structures}
-
       \label{app-store}
+
       The data structures outlined in this section are used as a storage
       structure to hold the elements of language ${\cal L}$ before any
       operations are performed.
@@ -1861,8 +1846,8 @@ query holds(alice, read, file);
         \end{quote}
 
     \subsection{A Case Study: Web Server Application}
-
       \label{app-case}
+
       \begin{figure}[ht]
         \begin{center}
           \epsfig{file=app.eps}
