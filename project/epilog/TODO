@@ -1,6 +1,8 @@
 EPILOG TODO
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+- More verbose error messages.
+
 - Clean up ground expressions.
 
 - Check malloc/free.
