@@ -78,7 +78,8 @@ int modvlad_client_seq_get(apr_pool_t *a_p,
                            apr_file_t *a_fdout,
                            apr_proc_mutex_t *a_mx,
                            unsigned int a_index,
-                           const char **a_name);
+                           const char **a_name,
+                           apr_array_header_t *a_parm);
 
 int modvlad_client_seq_add(apr_pool_t *a_p,
                            apr_file_t *a_fdin,

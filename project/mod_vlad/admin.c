@@ -41,9 +41,9 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 {
   unsigned int i;
   unsigned int j;
-  unsigned int slen;
-  unsigned int tlen;
-  unsigned int ilen;
+  unsigned int slen = 0;
+  unsigned int tlen = 0;
+  unsigned int ilen = 0;
   const char *uri = NULL;
 
   if (!a_r || !a_conf)
@@ -66,17 +66,31 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   for (i = 0; i < slen; i++) {
     const char *st_name = NULL;
+    apr_array_header_t *parm = NULL;
+    unsigned int pcnt;
+
+    parm = apr_array_make(a_r->pool, 1, sizeof(char *));
 
     modvlad_client_seq_get(a_r->pool,
                            a_conf->pipe_cli[0],
                            a_conf->pipe_cli[1],
                            a_conf->mutex,
                            i,
-                           &st_name);
+                           &st_name,
+                           parm);
 
     ap_rprintf(a_r, "         <tr>\n");
     ap_rprintf(a_r, "           <td align=\"center\">%d</th>\n", i);
-    ap_rprintf(a_r, "           <th align=\"center\">%s</th>\n", st_name);
+    ap_rprintf(a_r, "           <th align=\"center\">\n");
+    ap_rprintf(a_r, "             %s(", st_name);
+
+    for (pcnt = 0; pcnt < parm->nelts; pcnt++)
+      ap_rprintf(a_r, pcnt == 0 ? "%s" : ", %s", ((char **)parm->elts)[pcnt]);
+
+    ap_rprintf(a_r, ")\n");
+    ap_rprintf(a_r, "           </th>\n");
+
+
     ap_rprintf(a_r, "           <td align=\"center\"><input type=\"button\" value=\"delete\" onclick=\"delform.index.value=%d;delform.submit();\"/></td>\n", i);
     ap_rprintf(a_r, "         </tr>\n");
   }  

@@ -272,6 +272,8 @@ static int processreq(apr_pool_t *a_p,
     char *name = NULL;
     char *idx = NULL;
     void *list = NULL;
+    unsigned int listlen;
+    unsigned int i;
 
     idx = ((char **)a_req->elts)[2];
 
@@ -280,8 +282,19 @@ static int processreq(apr_pool_t *a_p,
       return MODVLAD_FAILURE;
     }
 
+    listlen = vlad_list_length(list);
+
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "SGR");
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, name);
+    *(const char **) apr_array_push(a_rep) = apr_psprintf(a_rep->pool, "%d", listlen);
+
+    for (i = 0; i < listlen; i++) {
+      char *tmpstr = NULL;
+
+      vlad_strlist_get(list, i, &tmpstr);
+
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, tmpstr);
+    }
   }
   else if (!strcmp(cmd, "SA")) {
     /* add to sequence */
@@ -630,13 +643,16 @@ int modvlad_client_seq_get(apr_pool_t *a_p,
                            apr_file_t *a_fdout,
                            apr_proc_mutex_t *a_mx,
                            unsigned int a_index,
-                           const char **a_name)
+                           const char **a_name,
+                           apr_array_header_t *a_parm)
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
   unsigned int id = modvlad_idgen();
+  unsigned int parmlen;
+  unsigned int i;
 
-  if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_name)
+  if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_name || !a_parm)
     return MODVLAD_NULLPTR;
 
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
@@ -656,6 +672,11 @@ int modvlad_client_seq_get(apr_pool_t *a_p,
     return MODVLAD_FAILURE;
 
   *a_name = apr_pstrdup(a_p, ((char **)arr_in->elts)[2]);
+
+  parmlen = atoi(((char **)arr_in->elts)[3]);
+
+  for (i = 0; i < parmlen; i++)
+   *(char **) apr_array_push(a_parm) = apr_pstrdup(a_p, ((char **)arr_in->elts)[4 + i]);
 
   return MODVLAD_OK;
 }

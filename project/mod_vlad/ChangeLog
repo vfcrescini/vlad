@@ -1,5 +1,11 @@
 2003-07-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* admin.c :
+	* proc.c :
+	* proc.h :
+
+	  - Now manipulator gui shows trans sequences with parameters.
+
 	* mod_vlad.c :
 	* proc.c :
 	* proc.h :
