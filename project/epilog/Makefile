@@ -3,7 +3,7 @@
 DIRS = datastruct symtab kb parser main
 
 all :
-	@for i in $(DIRS); do \
+	@set -e && for i in $(DIRS); do \
 	$(MAKE) -C $$i all; \
 	done
 

@@ -2,13 +2,18 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-
 %option nounput
 %option always-interactive
 
 %{
+#include <gnd_atom.h>
+#include <gnd_atomlist.h>
 #include "y.tab.h"
 #include "symtab.h"
+
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 
 extern YYSTYPE yylval;
 %}
@@ -68,36 +73,60 @@ whitespace         [\t ]+
 {is} return EPI_SYM_IS;
 {after} return EPI_SYM_AFTER;
 {s_subject_ident} {
-  symtab_add(yytext, &yylval);
+  symtab_add((char *) yytext, &(yylval.terminal));
+#ifdef DEBUG
+  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+#endif
   return EPI_SYM_S_SUB_IDENT;
 }
 {s_access_ident} {
-  symtab_add(yytext, &yylval);
+  symtab_add((char *) yytext, &(yylval.terminal));
+#ifdef DEBUG
+  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+#endif
   return EPI_SYM_S_ACC_IDENT;
 }
 {s_object_ident} {
-  symtab_add(yytext, &yylval);
+  symtab_add((char *) yytext, &(yylval.terminal));
+#ifdef DEBUG
+  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+#endif
   return  EPI_SYM_S_OBJ_IDENT;
 }
 {g_subject_ident} {
-  symtab_add(yytext, &yylval);
+  symtab_add((char *) yytext, &(yylval.terminal));
+#ifdef DEBUG
+  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+#endif
   return EPI_SYM_G_SUB_IDENT;
 }
 {g_access_ident} {
-  symtab_add(yytext, &yylval);
+  symtab_add((char *) yytext, &(yylval.terminal));
+#ifdef DEBUG
+  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+#endif
   return EPI_SYM_G_ACC_IDENT;
 }
 {g_object_ident} {
-  symtab_add(yytext, &yylval);
+  symtab_add((char *) yytext, &(yylval.terminal));
+#ifdef DEBUG
+  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+#endif
   return EPI_SYM_G_OBJ_IDENT;
 }
 {v_ident} {
-  symtab_add(yytext, &yylval);
+  symtab_add((char *) yytext, &(yylval.terminal));
+#ifdef DEBUG
+  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+#endif
   return EPI_SYM_VAR_IDENT;
 }
 {t_ident} {
-  symtab_add(yytext, &yylval);
-  return EPI_SYM_TRANS_IDENT;
+  symtab_add((char *) yytext, &(yylval.terminal));
+#ifdef DEBUG
+  printf("inserting symbol %s with index %d\n", yytext, yylval.terminal);
+#endif
+ return EPI_SYM_TRANS_IDENT;
 }
 {whitespace}
 

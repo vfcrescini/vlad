@@ -5,6 +5,10 @@ CFLAGS = -O2 -Wall -ansi -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libparser.a
 INCLUDES = parser.h
 
+ifdef DEBUG
+CFLAGS += -DDEBUG
+endif
+
 all : public
 
 public : $(TARGETS)

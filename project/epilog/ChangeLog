@@ -1,6 +1,27 @@
 2002-08-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Makefile :
+
+	  - Added a "set -e" to prevent make from continuing after
+	    an error has occured.
+
+	* main/Makefile :
+
+	  - Added the kb library to be linked.
+
+	  - Do not strip in a debug build.
+
+	* parser/Makefile :
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Added ifdef'ed debug output.
+
+	  - Declared union type for yylval.
+
+	  - Added some basic yacc actions.
+
+	* Makefile :
 	* kb/gnd_atom.h :
 	* kb/gnd_atomlist.c :
 	* kb/gnd_atom.c :

@@ -7,9 +7,11 @@ TARGETS = epilog
 
 all : $(TARGETS)
 
-epilog : epilog.o
-	$(CC) $(LFLAGS) -o $(@) epilog.o -lparser -lsymtab -ldatastruct -ll
+epilog : epilog.o $(TOPSRCDIR)/lib/*
+	$(CC) $(LFLAGS) -o $(@) epilog.o -lparser -lsymtab -ldatastruct -lkb -ll
+ifndef DEBUG
 	strip $(@)
+endif
 
 epilog.o : epilog.c
 	$(CC) $(CFLAGS) -o $(@) -c epilog.c
