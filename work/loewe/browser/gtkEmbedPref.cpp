@@ -23,6 +23,7 @@
 #include "gtkEmbedPref.h"
 #include "nsCOMPtr.h"
 #include "nsIInterfaceRequestor.h"
+#include "nsIServiceManager.h"
 #include "nsIComponentManager.h"
 
 gtkEmbedPref::gtkEmbedPref()

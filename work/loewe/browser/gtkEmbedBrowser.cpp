@@ -1616,7 +1616,7 @@ static void findRequest(char *aString, int aMode)
      findInstance->SetWrapFind(false);
 
    // set the search string
-   findInstance->SetSearchString(tempString.GetUnicode());
+   findInstance->SetSearchString(tempString.ToNewUnicode());
 
    // now find it
    findInstance->FindNext(&tempResult);
