@@ -17,10 +17,6 @@
 #define VLAD_TRUE            0
 #define VLAD_FALSE           1
 
-/* boolean string */
-#define VLAD_STRING_TRUE     "true"
-#define VLAD_STRING_FALSE    "false"
-
 /* error codes */
 
 /* success */
