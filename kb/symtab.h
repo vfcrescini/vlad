@@ -6,7 +6,7 @@
 #ifndef __VLAD_SYMTAB_H
 #define __VLAD_SYMTAB_H
 
-#include "identifier.h"
+#include <identifier.h>
 
 class symtab : public list
 {
