@@ -10,15 +10,15 @@ YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 LN_S = @LN_S@
+DEBUG = @DEBUG@
+STRIP = @STRIP@
+BUILDSHARED = @BUILDSHARED@
 SMODELS = @SMODELS@
-
-ifdef SMODELS
-SMINCLUDES = wrapper.h
-SMOBJECTS = wrapper.o
-endif
-
+STATIC = @STATIC@
+VERSION = @VERSION@
 BINS =
-LIBS = libvlad.a
+STATIC_LIBS = libvlad.a
+SHARED_LIBS = libvlad.so.$(VERSION)
 INCLUDES =            \
   vlad.h              \
   list.h              \
@@ -57,10 +57,27 @@ TEMP =                \
   *.tab.h             \
   $(NULL)
 
+ifdef SMODELS
+SMINCLUDES = wrapper.h
+SMOBJECTS = wrapper.o
+endif
+
+ifdef BUILDSHARED
+CXXFLAGS += -fPIC
+endif
+
 include $(TOPSRCDIR)/rules.mk
 
 libvlad.a : $(OBJECTS)
 	$(AR) -rcs $(@) $(OBJECTS)
+
+libvlad.so.$(VERSION) : $(OBJECTS)
+	(name=$(@) && $(CXX) $(CXXFLAGS) -shared -Wl,-soname,$${name%.*.*} -o $(@) $(OBJECTS))
+ifndef DEBUG
+  ifdef STRIP
+	strip $(@)
+  endif
+endif
 
 list.o : list.h list.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c list.cpp

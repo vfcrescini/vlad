@@ -792,6 +792,8 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-static         generate a statically-linked executable (default is
+                          disabled)
   --enable-debug          enable debugging output & compile with -g (default
                           is disabled)
   --enable-strip          run strip program (default is disabled)
@@ -2573,6 +2575,65 @@ echo "${ECHO_T}no, using $LN_S" >&6
 fi
 
 
+# check compiler options
+cat >> $$.c << \EOF
+int main(void) {return 0;}
+EOF
+
+# check if -fPIC works
+echo "$as_me:$LINENO: checking whether $CXX accepts -fPIC" >&5
+echo $ECHO_N "checking whether $CXX accepts -fPIC... $ECHO_C" >&6
+if "${CXX}" -fPIC -o $$ $$.c > /dev/null 2>&1; then
+  VLAD_FPIC="yes"
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  VLAD_FPIC="no"
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+# check if -shared works
+echo "$as_me:$LINENO: checking whether $CXX compiler accepts -shared" >&5
+echo $ECHO_N "checking whether $CXX compiler accepts -shared... $ECHO_C" >&6
+if "${CXX}" -shared -o $$ $$.c > /dev/null 2>&1; then
+  VLAD_SHARED="yes"
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  VLAD_SHARED="no"
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+# make sure they both are supported
+if test "x$VLAD_FPIC" = "xyes" && test "x$VLAD_SHARED" = "xyes"; then
+  BUILDSHARED=yes
+
+fi
+
+# cleanup
+rm -f $$ $$.c
+
+# --enable-static
+# Check whether --enable-static or --disable-static was given.
+if test "${enable_static+set}" = set; then
+  enableval="$enable_static"
+
+fi;
+
+if test "x$enable_static" != "x" && test "x$enable_static" != "xno"; then
+  STATIC=yes
+
+else
+  if test "x$VLAD_FPIC" = "xno" || test "x$VLAD_SHARED" = "xno"; then
+    { echo "$as_me:$LINENO: WARNING: cannot build shared libraries, will link statically" >&5
+echo "$as_me: WARNING: cannot build shared libraries, will link statically" >&2;}
+    STATIC=yes
+
+  fi
+fi
+
 # --enable-debug
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
@@ -2794,6 +2855,7 @@ cat >>confdefs.h <<_ACEOF
 #define VERSION "$PACKAGE_VERSION"
 _ACEOF
 
+VERSION="$PACKAGE_VERSION"
 
 DISTDIR="\$(TOPSRCDIR)/dist"
 
@@ -3371,9 +3433,12 @@ s,@LEXLIB@,$LEXLIB,;t t
 s,@LEX_OUTPUT_ROOT@,$LEX_OUTPUT_ROOT,;t t
 s,@YACC@,$YACC,;t t
 s,@LN_S@,$LN_S,;t t
+s,@BUILDSHARED@,$BUILDSHARED,;t t
+s,@STATIC@,$STATIC,;t t
 s,@DEBUG@,$DEBUG,;t t
 s,@STRIP@,$STRIP,;t t
 s,@SMODELS@,$SMODELS,;t t
+s,@VERSION@,$VERSION,;t t
 s,@DISTDIR@,$DISTDIR,;t t
 CEOF
 
