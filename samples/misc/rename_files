@@ -1,56 +1,105 @@
 #!/bin/sh
-
-# rename_files
-# Vino Crescini
-# 11 June 2001
-
-# rename all the files 
-# in a directory to numbers
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GNU CC; see the file COPYING.  If not, write to
+# the Free Software Foundation, 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+#
+# Copyright (C) 2002-2003 Vino Fernando Crescini
+#
+# Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+# Started: 11 Jun 2001
+# Updated: 07 Dec 2003
 
 counter=1
 charlen=5
-tempdir=./.tmp_$$_
+tmpdir="./.tmp_$$_"
+args="${*}"
 
-if [ "${#}" = "1" ] && [ "${1}" = "-r" ]; then
-  RECURSIVE=1
-fi
+unset lowcase
+unset prefix
+unset recursive
+unset verbose
 
-mkdir $tempdir
+while [ $# -ge 1 ]; do
+  if [ "${1}" = "-h" ]; then
+    echo "usage:       rename_files [options]"
+    echo "options:"
+    echo "  -h         print this usage and exit"
+    echo "  -r         recursively go into subdirectories"
+    echo "  -l         force file extensions to lowercase"
+    echo "  -p prefix  prepend \"prefix\" for each file"
+    echo "  -v         verbose output"
+    echo ""
+    exit 0
+  elif [ "${1}" = "-l" ]; then
+    lowcase="1"
+  elif [ "${1}" = "-p" ]; then
+    if [ -n "${2}" ]; then
+      prefix="${2}"
+      shift 1
+    fi
+  elif [ "${1}" = "-r" ]; then
+    recursive="1"
+  elif [ "${1}" = "-v" ]; then
+    verbose="1"
+  fi
+  shift 1
+done
 
-for tempFile in *
+mkdir "$tmpdir"
+
+for tmpfile in *
 do
-  if [ "${RECURSIVE}" = "1" ] && [ -d "${tempFile}" ]; then
-    cd "${tempFile}"
-    echo entering `pwd`
-    ${0} -r
-    echo exiting `pwd`
+  if [ -n "${recursive}" ] && [ -d "${tmpfile}" ]; then
+    cd "${tmpfile}"
+    [ -n "${verbose}" ] && echo "entering `pwd`"
+    "${0}" ${args}
+    [ -n "${verbose}" ] && echo "exiting `pwd`"
     cd ..
   fi
 
   # get extension
-  extension="${tempFile##*.}"
+  extension=".${tmpfile##*.}"
 
-  if [ "${extension}" = "${tempFile}" ]
-  then
-    # no extension so just drop the name
-    extension=
-  else
-    extension=".${extension}"
+  if [ "${extension}" = ".${tmpfile}" ]; then
+    unset extension
+  fi
+
+  # to lower case
+  if [ -n "${lowcase}" ]; then
+    extension="`echo ${extension} | tr [A-Z] [a-z]`"
   fi
 
   # pad the name with zeroes
-  name=${counter}
-  while [ `echo -n ${name} | wc -c` -lt ${charlen} ]
+  name="${counter}"
+  while [ `echo -n "${name}" | wc -c` -lt "${charlen}" ]
   do
-    name=0${name}
+    name="0${name}"
   done
 
-  echo "renaming ${tempFile} to ${name}${extension}"
+  # prepend prefix
+  fullname="${prefix}${name}${extension}"
 
-  mv "${tempFile}" $tempdir/${name}${extension}
+  # now rename
+  [ -n "${verbose}" ] && echo "renaming ${tmpfile} to ${fullname}"
+  mv -- "${tmpfile}" "${tmpdir}/${fullname}"
 
   counter=$[$counter+1]
 done
 
-mv $tempdir/* .
-rmdir $tempdir
+# now move them back
+mv -- "${tmpdir}"/* .
+rmdir "${tmpdir}"
+
+exit 0
