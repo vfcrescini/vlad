@@ -8,25 +8,25 @@
 # and dirs differently
 
 DIR_PERMISSION=775
-FILE_PERMISSION=644
+FILE_PERMISSION=664
 OWNER=root
 GROUP=users
 
 if [ ${#} = 1 ] 
 then
-  if [ -d ${1} ]
+  if [ -d "${1}" ]
   then
-    find ${1} | while read i
+    find "${1}" | while read i
     do
       if [ -d "${i}" ]
       then
-        chown ${OWNER}:${GROUP} "${i}"
         chmod ${DIR_PERMISSION} "${i}"
         echo dir : ${i}
       else
         chmod ${FILE_PERMISSION} "${i}"
         echo file : ${i}
       fi
+      chown ${OWNER}:${GROUP} "${i}"
     done
   fi
 fi
