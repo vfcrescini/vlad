@@ -26,7 +26,7 @@ class transreflist : public list
    public :
      transreflist(const char *n);
      ~transreflist();
-     int add(const char *n, stringlist *i);
+     int add(transref *t);
 } ;
 
 class query : public list_item

@@ -12,6 +12,7 @@
 #include <symtab.h>
 #include <consttab.h>
 #include <transtab.h>
+#include <querytab.h>
 
 class kb {
   public :

@@ -62,17 +62,12 @@ transreflist::~transreflist()
   purge(true);
 }
 
-int transreflist::add(const char *n, stringlist *i)
+int transreflist::add(transref *t)
 {
-  transref *tmp;
-
-  if (n == NULL || i == NULL)
+  if (t == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp = VLAD_NEW(transref(n, i))) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  return list::add((list_item *) tmp);
+  return list::add((list_item *) t);
 }
 
 query::query(expression *p, transreflist *r)

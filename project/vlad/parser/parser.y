@@ -38,7 +38,9 @@ int yylex(void);
   unsigned int terminal;
   atom *atm;
   expression *exp;
-  stringlist *varlist;
+  stringlist *vlist;
+  transref *tref;
+  transreflist *treflist;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -80,8 +82,13 @@ int yylex(void);
 %type <exp> expression
 %type <exp> with_clause
 %type <exp> if_clause
-%type <varlist> trans_var_list
-%type <varlist> trans_var_def
+%type <vlist> trans_var_list
+%type <vlist> trans_var_def
+%type <vlist> trans_ref_ident_args
+%type <vlist> trans_ref_ident_list
+%type <tref> trans_ref_def
+%type <treflist> trans_ref_list
+%type <treflist> after_clause
 
 %start program
 
@@ -477,9 +484,11 @@ trans_stmt :
 #endif
 
     /* cleanup */
-    delete $2;
+    if ($2 != NULL)
+      delete $2;
+    if ($5 != NULL)
+      delete $5;
     delete $4;
-    delete $5;
   }
   ;
 
@@ -527,35 +536,90 @@ trans_var_list :
 query_stmt : 
   VLAD_SYM_IS expression after_clause VLAD_SYM_SEMICOLON {
     delete $2;
+    if ($3 != NULL)
+      delete $3;
   }
   ;
 
-after_clause : 
+after_clause : {
+    $$ = NULL;
+  }
   | VLAD_SYM_AFTER trans_ref_list {
+    $$ = $2;
   }
   ;
 
 trans_ref_list : 
   trans_ref_def {
+    int retval;
+
+    if (($$ = VLAD_NEW(transreflist(NULL))) == NULL) {
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((retval = $$->add($1)) != VLAD_OK) {
+      fprintf(stderr, "interal error: %d\n", retval);
+      return retval;
+    }
   }
   | trans_ref_list VLAD_SYM_COMMA trans_ref_def {
+    int retval;
+
+    if ((retval = $$->add($3)) != VLAD_OK) {
+      fprintf(stderr, "interal error: %d\n", retval);
+      return retval;
+    }
   }
   ;
 
 trans_ref_def : 
   VLAD_SYM_IDENTIFIER VLAD_SYM_OPEN_PARENT trans_ref_ident_args VLAD_SYM_CLOSE_PARENT {
+    char *name;
+
+    if ((name = VLAD_STRING_MALLOC($1)) == NULL) {
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }
+
+    strcpy(name, $1);
+ 
+    if (($$ = VLAD_NEW(transref(name, $3))) == NULL) {
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }   
   }
   ;
 
-trans_ref_ident_args :
+trans_ref_ident_args : {
+    $$ = NULL;
+  }
   | trans_ref_ident_list {
+    $$ = $1;
   }
   ;
 
 trans_ref_ident_list : 
   VLAD_SYM_IDENTIFIER {
+    int retval;
+
+    if (($$ = VLAD_NEW(stringlist(NULL))) == NULL) {
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((retval = $$->add($1)) != VLAD_OK) {
+      fprintf(stderr, "interal error: %d\n", retval);
+      return retval;
+    }
   }
   | trans_ref_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+    int retval;
+
+    if ((retval = $$->add($3)) != VLAD_OK) {
+      fprintf(stderr, "interal error: %d\n", retval);
+      return retval;
+    }
   }
   ;
 

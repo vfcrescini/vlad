@@ -1,8 +1,14 @@
 2003-04-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* parser/parser.y :
+
+	  - Now storing transref/transreflist.
+
 	* kb/querytab.h :
 	* kb/querytab.cpp :
 	* kb/Makefile.in :
+
+	  - Changed transreflist to add pre-malloc'ed transref.
 
 	  - Added a class structure to hold queries with transformation
 	    sequences.
