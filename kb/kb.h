@@ -8,6 +8,7 @@
 
 #include <atom.h>
 #include <expression.h>
+#include <consttab.h>
 #include <symtab.h>
 
 class kb {
@@ -20,16 +21,19 @@ class kb {
     int close_symtab();
     /* after this is called, no further calls to add_inittab() is allowed */
     int close_inittab();
+    /* after this is called, no further calls to add_consttab() is allowed */
+    int close_consttab();
     /* register an identifier in the kb */
     int add_symtab(const char *n, unsigned char t);
     /* add an atom into the initial state table */
     int add_inittab(atom *a);
-    private :
+    /* add an expression into the constraints table */
+    int add_consttab(expression *e, expression *c, expression *n);
+  private :
     symtab *stable;
     expression *itable;
-    bool initialised;
-    bool stage1;
-    bool stage2;
+    consttab *ctable;
+    unsigned char stage;
     /* make sure atom a is valid */
     int kb::verify_atom(atom *a);
 } ;

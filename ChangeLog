@@ -1,5 +1,21 @@
 2003-03-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/consttab.h :
+	* kb/consttab.cpp :
+
+	  - Now stores expressions instead of an integer list.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Fixed stages.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+	* parser/parser.y :
+
+	  - Added support for storing constraints.
+
 	* samples/chinese_wall :
 
 	  - Modified to add constraints.
