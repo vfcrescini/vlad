@@ -5,6 +5,7 @@ Language Specifications
 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started 2002 Dec 08
+Updated 2004 Jan 06
 -------------------------------------------------------------------------------
 
 1. Expressions
@@ -15,22 +16,22 @@ Started 2002 Dec 08
     character of an identifier must be an alpha character followed by
     zero to 127 characters of alpha, digit or underscore characters.
     Identifiers may be used to identify subject, access-right and object
-    entities or groups, transformations or variables.
+    entities or groups, policy updates or variables.
 
       [a-zA-Z][a-zA-Z0-9_]{0,127}
 
     See Definition section for information on how to delcare identifiers.
 
-  1.2. Atoms
+  1.2. Facts
 
-    1.2.1. Relational Atoms
+    1.2.1. Relational Facts
 
       A single logical fact stating a relation between a subject and an object.
       There is no distinction between singular entities and group entities.
 
         holds(subject, access_right, object)
 
-    1.2.2. Subset Atoms
+    1.2.2. Subset Facts
 
       A single logical fact describing a set containment relationship to
       another set.
@@ -45,7 +46,7 @@ Started 2002 Dec 08
 
         "group Subject_1 is a subset of group Subject_2"
 
-    1.2.3. Membership Atoms
+    1.2.3. Membership Facts
 
       A single logical fact describing the membership of a singular
       subject/access-right/object to a subject/access-right/object group.
@@ -60,18 +61,18 @@ Started 2002 Dec 08
 
     1.3.1. Conjuction
 
-      Atoms can be grouped together with the logical conjunction AND. Note that
+      Facts can be grouped together with the logical conjunction AND. Note that
       DISJUNCTIONS are NOT allowed in this language. The symbol for this
       conjuction is && (double ampersand, as it is in C).
 
-        <atom> && <atom> && ...
+        <fact> && <fact> && ...
 
     1.3.2. Negation
 
-      Atoms can be negated with the ! symbol (exclamation-point, as it is
+      Facts can be negated with the ! symbol (exclamation-point, as it is
       in C).
 
-        ! <atom>
+        ! <fact>
 
     1.3.3. Operator Precedence
 
@@ -101,22 +102,22 @@ Started 2002 Dec 08
 
     1.3.4. Parentheses
 
-      Parenthesis is not allowed to be used to enclose atoms and expressions.
+      Parenthesis is not allowed to be used to enclose facts and expressions.
 
   1.4. Variables
 
-   Variables are only permitted to occur on transformation proposition
+   Variables are only permitted to occur on policy update proposition
    statements. They must be in the form:
 
      [a-zA-Z][a-zA-Z0-9]*
 
-2. Program Definition Statements
+2. Policy Definition Statements
 
   2.1 Identifier Definition Statements
 
-    All identifiers, except transformation and variable identifiers, must be
-    declared first before any proposition and query statements are declared.
-    The following syntax must be used to declare identifiers.
+    All identifiers, except those for update and variable identifiers, must
+    be declared first before any proposition and query statements are
+    declared. The following syntax must be used to declare identifiers.
 
       ident <type> <identifier>[,<identifier2>[,...]]
 
@@ -131,29 +132,29 @@ Started 2002 Dec 08
 
       initially <expression>
 
-    Note that <expression> may be a conjuction of many atoms. Also, the
+    Note that <expression> may be a conjuction of many facts. Also, the
     initially clause may be used more than once.
 
-  2.3. Transformation Definition Statement
+  2.3. Policy Update Definition Statement
 
-    A transformation definition statement must be defined in the following
+    A policy update definition statement must be defined in the following
     syntax:
 
-      <trans-identifier>([<var1>[,<var2>][,...]]])
+      <update-identifier>([<var1>[,<var2>][,...]]])
       causes <post-condition-expression>
       [if <pre-condition-expression>]
 
     where:
 
-      <trans-identifier> is the identifier of this transformation.
+      <update-identifier> is the identifier of this update.
 
       <post-condition-expression> an expression that will be true in the
-        resulting state after the transformation is applied.
+        resulting state after the update is applied.
 
       <pre-condition-expression> an expression that must be true in the
-        current state before the transformation may be applied.
+        current state before the update may be applied.
 
-    Note that a transformation definition statement may have variables:
+    Note that an update definition statement may have variables:
 
       delete_write(vSUBJECT, vOBJECT)
       causes !holds(vSUBJECT, a_write, vOBJECT)
@@ -178,10 +179,10 @@ Started 2002 Dec 08
     if subject1 and subject2 had write access rights to object1 and object2,
     respectively.
 
-    The case where the pre-condition is an empty-set (ie. the transformation
-    has no pre-condition) is represented by omitting the if clause:
+    The case where the pre-condition is an empty-set (ie. the update has no
+    pre-condition) is represented by omitting the if clause:
 
-      <trans-identifier>()
+      <update-identifier>()
       causes <post-condition-expression>
 
   2.4. Constraint Definition Statement
@@ -190,7 +191,7 @@ Started 2002 Dec 08
     to define constraints (or default proposition) in the knowledge base.
 
     Constraint expressions are true in the intial state and remain true
-    after any transformation.
+    after any policy update.
 
     The most general form:
 
@@ -219,7 +220,7 @@ Started 2002 Dec 08
 
     This statement is used to evaluate queries from the current state. The
     current state will then be derived from the initial state after all
-    transformations in the sequence (see below) has been applied.
+    the updates in the sequence (see below) have been applied.
 
       query <expression>
 
@@ -231,41 +232,39 @@ Started 2002 Dec 08
     base for queries. It is important that this statement is declared between
     any number of sequence manipulation statements and query statements.
 
-  3.3. Transformation Sequence Manipulations
+  3.3. Policy Update Sequence Manipulations
 
     3.3.1. Add
 
-      This statement is used to append a transformation reference at the end of
-      the transformation sequence list. A transformation reference must, of
-      course, be a valid transformation defined in the transformation
-      definition section.
+      This statement is used to append an update reference at the end of
+      the update sequence list. An update reference must, of course, be a
+      valid update defined in the update definition section.
 
-        seq add <trans-ident>([arg1][,arg2][,...]);
+        seq add <update-ident>([arg1][,arg2][,...]);
 
     3.3.2. List
 
-      This statement will trigger the output of the transformation sequence
-      list.
+      This statement will trigger the output of the update sequence list.
 
         seq list;
 
       Output format is:
 
-        <index1> <trans-ident1>([arg1][,arg2][,...]);
-        <index2> <trans-ident2>([arg1][,arg2][,...]);
+        <index1> <update-ident1>([arg1][,arg2][,...]);
+        <index2> <update-ident2>([arg1][,arg2][,...]);
         ...
 
-      Where <indexn> is the ordinal index (starting from 0) of a transformation
+      Where <indexn> is the ordinal index (starting from 0) of an update
       as it appears in the sequence.
 
     3.3.3. Delete
 
-      To remove a transformation from the transformation sequence:
+      To remove an update from the update sequence:
 
         seq del <index>;
 
-      Where <index> is the ordinal index of the corresponding transformation
-      as listed by the "seq list" statement.
+      Where <index> is the ordinal index of the corresponding update as
+      listed by the "seq list" statement.
 
 4. Comments
 
