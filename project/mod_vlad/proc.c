@@ -328,8 +328,14 @@ static int processreq(apr_pool_t *a_p,
     name = ((char **)a_req->elts)[2];
     num = ((char **)a_req->elts)[3];
 
-    if (vlad_strlist_create(&slist) != VLAD_OK ||
-        vlad_tref_create(&tref) != VLAD_OK) {
+    if (atoi(num) > 0) {
+      if (vlad_strlist_create(&slist) != VLAD_OK) {
+        *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+        return MODVLAD_FAILURE;
+      }
+    }
+
+    if (vlad_tref_create(&tref) != VLAD_OK) {
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
       return MODVLAD_FAILURE;
     }
@@ -344,9 +350,17 @@ static int processreq(apr_pool_t *a_p,
       }
     }
 
-    if (vlad_tref_init(tref, name, slist) != VLAD_OK ||
-        vlad_kb_add_seqtab(a_kb, tref) != VLAD_OK ||
-        vlad_kb_compute_evaluate(a_kb) != VLAD_OK) {
+    if (vlad_tref_init(tref, name, slist) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
+
+    if (vlad_kb_add_seqtab(a_kb, tref) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
+
+    if (vlad_kb_compute_evaluate(a_kb) != VLAD_OK) {
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
       return MODVLAD_FAILURE;
     }
@@ -721,7 +735,7 @@ int modvlad_client_seq_add(apr_pool_t *a_p,
 
   if (id != atoi((((char **)arr_in->elts)[0])))
     return MODVLAD_OUTOFSEQ;
-
+  
   if (strcmp(((char **)arr_in->elts)[1], "SAR"))
     return MODVLAD_FAILURE;
 

@@ -117,8 +117,6 @@ void modvlad_generate_form(request_rec *a_r, modvlad_ipc a_ipc)
 
     ap_rprintf(a_r, ")\n");
     ap_rprintf(a_r, "           </th>\n");
-
-
     ap_rprintf(a_r, "           <td align=\"center\"><input type=\"button\" value=\"delete\" onclick=\"delform.index.value=%d;delform.submit();\"/></td>\n", i);
     ap_rprintf(a_r, "         </tr>\n");
   }  
@@ -154,15 +152,15 @@ void modvlad_generate_form(request_rec *a_r, modvlad_ipc a_ipc)
     ap_rprintf(a_r, "        <tr>\n");
     ap_rprintf(a_r, "          <th align=\"center\" colspan=\"2\">%s</th>\n", tt_name);
     ap_rprintf(a_r, "          <th align=\"center\"><input type=\"button\" value=\"add\" onclick=\"addform%d.submit();\"/></th>\n", i);
-    ap_rprintf(a_r, "        <tr>\n");
+    ap_rprintf(a_r, "        </tr>\n");
 
     /* the parameters of this transformation */
     for (j = 0; j < tt_list->nelts; j++) {
-      ap_rprintf(a_r, "     <tr>\n");
-      ap_rprintf(a_r, "       <td align=\"center\">parameter %d (%s)</td>\n", j, ((char **)tt_list->elts)[j]);
-      ap_rprintf(a_r, "       <td align=\"center\"><input type=\"text\" name=\"arg%d\" value=\"\" readonly=\"1\"/></td>\n", j);
-      ap_rprintf(a_r, "       <td align=\"center\"><input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\"/></td>\n", i, j);
-      ap_rprintf(a_r, "     </tr>\n");
+      ap_rprintf(a_r, "        <tr>\n");
+      ap_rprintf(a_r, "          <td align=\"center\">parameter %d (%s)</td>\n", j, ((char **)tt_list->elts)[j]);
+      ap_rprintf(a_r, "          <td align=\"center\"><input type=\"text\" name=\"arg%d\" value=\"\" readonly=\"1\"/></td>\n", j);
+      ap_rprintf(a_r, "          <td align=\"center\"><input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\"/></td>\n", i, j);
+      ap_rprintf(a_r, "        </tr>\n");
     }
 
     ap_rprintf(a_r, "      </table>\n");
@@ -224,8 +222,8 @@ void modvlad_handle_form(request_rec *a_r, modvlad_ipc a_ipc)
 
     for (i = 0; i < args; i++) {
       const char *value = NULL;
-      value = apr_table_get(tab, apr_psprintf(a_r->pool, "arg%d", i));
 
+      value = apr_table_get(tab, apr_psprintf(a_r->pool, "arg%d", i));
       *(char **) apr_array_push(parms) = apr_pstrdup(a_r->pool, apr_table_get(tab, apr_psprintf(a_r->pool, "arg%d", i)));
     }
 
