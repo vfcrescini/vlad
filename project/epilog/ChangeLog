@@ -1,5 +1,14 @@
 2002-08-23  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* docs/bnf.txt :
+	* main/epilog.c :
+	* parser/parser.h :
+	* parser/parser.y :
+
+	  - Moved list initialisation from main file to parser. Made
+	    dummy rules at the beginning and end to initialise and
+	    destroy lists.
+
 	* Makefile :
 
 	  - Top level makefile now cleans all dirs even without the debug

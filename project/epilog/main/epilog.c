@@ -5,20 +5,13 @@
 
 #include <stdio.h>
 #include <parser.h>
-#include <identlist.h>
-#include <expression.h>
 
 int main(int argc, char *argv[])
 {
   yyin = stdin;
   yyout = stdout;
 
-  identlist_init();
-  expression_init(&initial_exp);
-  
   yyparse();
-
-  identlist_purge();
 
   return 0;
 }

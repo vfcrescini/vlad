@@ -21,6 +21,8 @@ extern int yywarn(char *warning);
 int yylex(void);
 
 int add_identifier(char ident[], unsigned short type);
+
+expression_type initial_exp;
 %}
 
 %union {
@@ -78,7 +80,25 @@ int add_identifier(char ident[], unsigned short type);
 
 %%
 
-program : 
+program :
+  init body destroy
+  ;
+
+init :
+  {
+    identlist_init();
+    expression_init(&initial_exp);
+  }
+  ;
+
+destroy :
+  {
+    identlist_purge();
+    expression_purge(&initial_exp);
+  }
+  ;
+
+body :
   first_part 
   | last_part
   |

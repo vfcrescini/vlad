@@ -9,7 +9,13 @@ Updated 2002 Aug 23
 
 <start>                 : <program>
 
-<program>               : <first-part> | <last-part> |
+<program>               : <init> <body> <destroy>
+
+<init>                  :
+
+<destroy>               :
+
+<body>                  : <first-part> | <last-part> |
 
 <first-part>            : <ident-stmt-list> | 
                           <ident-stmt-list> <last-part>
