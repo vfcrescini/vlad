@@ -17,10 +17,15 @@
     authorisation policies might include the following:
 
     \begin{itemize}
-      \item Regional Managers have read and write access to the regional database.
-      \item Branch Managers have no read and write access to the regional database.
-      \item Branch Managers have read and write access to their branch database.
-      \item If the branch manager is also a regional manager then he has read but not write access to the regional database.
+      \item
+        Regional Managers have read and write access to the regional database.
+      \item
+        Branch Managers have no read and write access to the regional database.
+      \item 
+        Branch Managers have read and write access to their branch database.
+      \item 
+         If the branch manager is also a regional manager then he has read
+         but not write access to the regional database.
     \end{itemize}
 
     \subsection{Background}
@@ -136,6 +141,9 @@
         An atom may also be negated by the \emph{not} ! operator. (e.g.
         !holds(S,A,O))
 
+        In addition to the three types of atoms, two special constant atom are
+        also defined in this language: \emph{true} and \emph{false}.
+
       \subsubsection{Expressions}
 
         An expression is simply a conjuntion of atoms. In this language,
@@ -145,11 +153,18 @@
         (not E $\in$ G) $\land$ (G1 $\subseteq$ G2).
 
         Since negated expressions yield a disjunction of atoms, only
-        atoms are allowed to be negated. For example, De Morgan's Law
-        states that not (holds(S1,A1,O1) $\land$ holds(S2,A2,O2)) is
-        equivalent to (not holds(S1,A1,O1)) $\lor$ (not holds(S2,A2,O2)).
-        As a consequence, parentheses are allowed only to enclose literals
-        within atoms but not to group atoms together. 
+        atoms are allowed to be negated. To illustrate: De Morgan's Law
+        states that \emph{not} (holds(S1,A1,O1) $\land$ holds(S2,A2,O2)) is
+        equivalent to (\emph{not} holds(S1,A1,O1)) $\lor$ (\emph{not}
+        holds(S2,A2,O2)). As a consequence, parentheses are allowed only
+        to enclose literals within atoms but not to group atoms together. 
+
+        Because the constants \emph{true} and \emph{false} are atoms, they may 
+        appear within expressions as well. However, the constants are more
+        useful without any other atoms within the same exression, as an
+        expression added with the constant \emph{true} will have no effect
+        and an expression added with the constant \emph{false} will set the
+        entire expression to false.
 
     \subsection{Syntax and Semantics}
 
@@ -171,8 +186,8 @@
 ident <type> <identifier>[,<identifier2>[,...]]
 \end{verbatim}
 
-        where type is one of the following: sub, acc, obj, sub-grp, acc-grp
-        or obj-grp.
+        where type is one of the following: \emph{sub}, \emph{acc}, \emph{obj},
+        \emph{sub-grp}, \emph{acc-grp} or \emph{obj-grp}.
 
         Example:
 
@@ -324,7 +339,8 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
             place of the variables used in the tranformation declarations.
         \end{itemize}
 
-    The statement will return one of the following: true, false or ?
+    The statement will return one of the following: \emph{true}, \emph{false}
+    or \emph{?}.
 
     \pagebreak
 
