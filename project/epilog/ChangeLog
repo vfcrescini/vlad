@@ -1,5 +1,9 @@
 2002-10-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* main/Makefile :
+
+	  - Now makes a symlink to executable in top directory.
+
 	* main/epilog.c :
 
 	  - Added getopt options: -h and -v (help and version, resp).
