@@ -28,22 +28,28 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#define SOCKET_SRV_BACKLOG        5
-#define SOCKET_SRV_MAXMESGLEN     1024
+#define SOCKET_SRV_BACKLOG             5
+#define SOCKET_SRV_MAXMESGLEN          1024
 
-#define SOCKET_SRV_ERR_NOFILE     -1
-#define SOCKET_SRV_ERR_NOSOCKET   -2
-#define SOCKET_SRV_ERR_CANTBIND   -3
-#define SOCKET_SRV_ERR_CANTLISTEN -4
-#define SOCKET_SRV_ERR_CANTWRITE  -5
-#define SOCKET_SRV_ERR_CANTREAD   -6
-#define SOCKET_SRV_ERR_BADFD      -7
+#define SOCKET_SRV_ERR_NOFILE          -1
+#define SOCKET_SRV_ERR_NOSOCKET        -2
+#define SOCKET_SRV_ERR_CANTBIND        -3
+#define SOCKET_SRV_ERR_CANTLISTEN      -4
+#define SOCKET_SRV_ERR_CANTWRITE       -5
+#define SOCKET_SRV_ERR_CANTREAD        -6
+#define SOCKET_SRV_ERR_BADFD           -7
 
-#define SOCKET_SRV_DELIMITER      '\004'
-#define SOCKET_SRV_TERMINATOR     '\000'
-#define SOCKET_SRV_OUTPUTPREFIX   "[Received] "
+#define SOCKET_SRV_DELIMITER_UI        ' '
+#define SOCKET_SRV_DELIMITER_UI_FIELD  ','
+#define SOCKET_SRV_DELIMITER_UI_TUPPLE ';'
+#define SOCKET_SRV_DELIMITER           '\004'
+#define SOCKET_SRV_DELIMITER_FIELD     '\002'
+#define SOCKET_SRV_DELIMITER_TUPPLE    '\003'
+#define SOCKET_SRV_TERMINATOR          '\000'
 
-#define SOCKET_SRV_MAX(x,y) (((x) >= (y)) ? (x) : (y))
+#define SOCKET_SRV_OUTPUTPREFIX        "[Received] "
+
+#define SOCKET_SRV_MAX(x,y)            (((x) >= (y)) ? (x) : (y))
 
 int checkSocket(int);
 int acceptConnection(int);
@@ -86,8 +92,10 @@ int checkSocket(int aInputFD)
   return 0;
 }
 
-// convert DELIMITER to spc and add a newline before
-// TERMINATOR. assume aTarget has enough mem allocation
+// assumes aTarget has enough mem allocation
+// convert: DELIMITER        --> space
+//          FIELD_DELIMITER  --> , 
+//          TUPPLE_DELIMITER --> ;
 void transformToUI(char *aSource, char *aTarget)
 {
   char tempBuffer[SOCKET_SRV_MAXMESGLEN];
@@ -102,7 +110,15 @@ void transformToUI(char *aSource, char *aTarget)
     if (*tempSourcePtr == SOCKET_SRV_TERMINATOR)
       break;
     else if (*tempSourcePtr == SOCKET_SRV_DELIMITER) {
-      *tempBufferPtr++ = ' ';
+      *tempBufferPtr++ = SOCKET_SRV_DELIMITER_UI;
+      tempSourcePtr++;
+    }
+    else if (*tempSourcePtr == SOCKET_SRV_DELIMITER_FIELD) {
+      *tempBufferPtr++ = SOCKET_SRV_DELIMITER_UI_FIELD;
+      tempSourcePtr++;
+    }
+    else if (*tempSourcePtr == SOCKET_SRV_DELIMITER_TUPPLE) {
+      *tempBufferPtr++ = SOCKET_SRV_DELIMITER_UI_TUPPLE;
       tempSourcePtr++;
     }
     else
@@ -119,8 +135,10 @@ void transformToUI(char *aSource, char *aTarget)
           tempBuffer);
 }
 
-// convert spc to DELIMITER, strip newline
-// assume aTarget has enough mem allocation
+// assumes aTarget has enough mem allocation
+// convert: space --> DELIMITER
+//          ,     --> FIELD_DELIMITER
+//          ;     --> TUPPLE_DELIMITER
 void transformFromUI(char *aSource, char *aTarget)
 {
   char *tempTargetPtr = aTarget;
@@ -132,8 +150,16 @@ void transformFromUI(char *aSource, char *aTarget)
   while (*tempSourcePtr != '\0') { 
     if (*tempSourcePtr == '\n')
       break;
-    else if (*tempSourcePtr == ' ') {
+    else if (*tempSourcePtr == SOCKET_SRV_DELIMITER_UI) {
       *tempTargetPtr++ = SOCKET_SRV_DELIMITER;
+      tempSourcePtr++;
+    }
+    else if (*tempSourcePtr == SOCKET_SRV_DELIMITER_UI_FIELD) {
+      *tempTargetPtr++ = SOCKET_SRV_DELIMITER_FIELD;
+      tempSourcePtr++;
+    }
+    else if (*tempSourcePtr == SOCKET_SRV_DELIMITER_UI_TUPPLE) {
+      *tempTargetPtr++ = SOCKET_SRV_DELIMITER_TUPPLE;
       tempSourcePtr++;
     }
     else

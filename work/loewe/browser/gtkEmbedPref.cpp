@@ -23,7 +23,6 @@
 #include "gtkEmbedPref.h"
 #include "nsCOMPtr.h"
 #include "nsIInterfaceRequestor.h"
-#include "nsIServiceManager.h"
 #include "nsIComponentManager.h"
 
 gtkEmbedPref::gtkEmbedPref()
@@ -89,7 +88,8 @@ bool gtkEmbedPref::GetBoolPref(char *aString)
   int tempInt = 0;
 
   if (aString && gPrefService)
-    gPrefService->GetBoolPref(aString, &tempInt);
+    if (NS_FAILED(gPrefService->GetBoolPref(aString, &tempInt)))
+      return true;
 
   return (tempInt != 0);
 }

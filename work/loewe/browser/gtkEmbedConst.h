@@ -32,6 +32,9 @@
 #define BROWSER_LISTENER_DELIMITER        '\004'
 #define BROWSER_LISTENER_TERMINATOR       '\000'
 
+#define BROWSER_PROMPT_FIELD_DELIMITER    '\002'
+#define BROWSER_PROMPT_TUPPLE_DELIMITER   '\003'
+
 // constants used by the window manager
 #define BROWSER_WINDOW_MAX                64
 #define BROWSER_WINDOW_DEFAULT            2
@@ -64,6 +67,14 @@
 #define DIALOG_SSL_ENTER_WEAK             "__GTK_EMBED_INTERNAL_SSL_ENTER_WEAK"
 #define DIALOG_SSL_LEAVE_SECURE           "__GTK_EMBED_INTERNAL_SSL_LEAVE_SECURE"
 
+#define DIALOG_INTERNAL_TYPE              1
+#define DIALOG_ALERT_TYPE                 2
+#define DIALOG_CONFIRM_TYPE               3
+#define DIALOG_PROMPT_TYPE                4
+#define DIALOG_PASSWORD_TYPE              5
+#define DIALOG_USERPASSWORD_TYPE          6
+#define DIALOG_SELECT_TYPE                7
+
 // constants used by the id manager
 #define IDMANAGER_MAX_DIGIT               3
 #define IDMANAGER_MAX_ID                  BROWSER_WINDOW_MAX
@@ -87,10 +98,13 @@
 #define BROWSER_ERROR_INVALID_FONTSIZE    5
 #define BROWSER_ERROR_INVALID_VIEW_LIST   6
 #define BROWSER_ERROR_INVALID_FINDMODE    7
-#define BROWSER_ERROR_CANT_GO_BACK        8
-#define BROWSER_ERROR_CANT_GO_FORWARD     9
-#define BROWSER_ERROR_CANT_RELOAD         10
-#define BROWSER_ERROR_CANT_STOP           11
-#define BROWSER_ERROR_CANT_PRINT          12
+#define BROWSER_ERROR_INVALID_MESG_ID     8
+#define BROWSER_ERROR_CANT_GO_BACK        9
+#define BROWSER_ERROR_CANT_GO_FORWARD     10
+#define BROWSER_ERROR_CANT_RELOAD         11
+#define BROWSER_ERROR_CANT_STOP           12
+#define BROWSER_ERROR_CANT_PRINT          13
+#define BROWSER_ERROR_CANT_REPLY          14
+#define BROWSER_ERROR_CANT_ACKNOWLEDGE    15
 
 #endif

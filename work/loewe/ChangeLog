@@ -1,3 +1,54 @@
+2001-09-07   <vino.crescini@tuxia.com>
+
+	* browser/gtkEmbedBrowser.cpp:
+	* browser/gtkEmbedBrowser.h:
+	* browser/gtkEmbedPromptDialog.cpp:
+	* browser/gtkEmbedPrompDialog.h:
+	* browser/gtkEmbedDialogManager.cpp:
+	* browser/gtkEmbedDialogManager.h:
+
+	  - Fixed confirm, prompt (normal, password & username),
+            and select dialogs.
+
+	* browser/gtkEmbedPref.cpp:
+
+	  - Modified GetBoolPref() to default to true if the
+	    pref string is not in the file.
+
+2001-09-06   <vino.crescini@tuxia.com>
+
+	* browser/gtkEmbedParamList.cpp:
+	* browser/gtkEmbedParamList.h:
+
+	  - Added a list implementation to pass parameter to and and
+	    from the dialogs.
+
+2001-09-05   <vino.crescini@tuxia.com>
+
+	* browser/gtkEmbedBrowser.cpp:
+	* browser/gtkEmbedConst.h:
+	* browser/gtkEmbedDialogManager.cpp:
+	* browser/gtkEmbedDialogManager.h:
+	* browser/gtkEmbedPromptDialog.cpp:
+	* browser/gtkEmbedPromptDialog.h:
+
+	  - Implemented YesNoDialog / YesNoDialogReply with
+	    blocking.
+
+	  - Modified dialog manager so that only one callback
+	    function is required to be passed from gtkEmbedBrowser.
+
+2001-09-04    <vino.crescini@tuxia.com>
+
+	* browser/gtkEmbedConst.h:
+	* browser/gtkEmbedDialogManager.cpp:
+	* browser/gtkEmbedDialogManager.h:
+	* browser/gtkEmbedPromptDialog.cpp:
+	* browser/gtkEmbedPromptDialog.h:
+
+	  - Modified dialog manager so that the callback functions 
+	    do not need to be passed to the dialogs.
+
 2001-08-31    <vino.crescini@tuxia.com>
 
 	* browser/gtkEmbedBrowser.cpp:

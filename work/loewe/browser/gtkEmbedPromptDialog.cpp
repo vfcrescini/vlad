@@ -32,13 +32,14 @@
 
 NS_IMPL_ISUPPORTS1(gtkEmbedPromptDialog, nsIPromptService)
 
-static bool (*gSSLSecureCB)(nsIDOMWindow *, bool) = NULL;
-static bool (*gAlertCB)(nsIDOMWindow *, const char *) = NULL;
-static bool (*gPromptCB)(nsIDOMWindow *, const char *, const char *, bool *) = NULL;
-static bool (*gConfirmCB)(nsIDOMWindow *, const char *, bool *) = NULL;
-static bool (*gPasswdCB)(nsIDOMWindow *, const char *, const char *, bool *) = NULL;
-static bool (*gUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *) = NULL;
-static bool (*gSelectCB)(nsIDOMWindow *, const char **, int *, bool *) = NULL;
+// open dialog callback
+static bool (*gOpenDialogCB)(nsIDOMWindow *,
+                             int,
+                             int,
+                             const char *,
+                             gtkEmbedParamList *,
+                             int *,
+                             bool *);
 
 gtkEmbedPromptDialog::gtkEmbedPromptDialog()
 {
@@ -56,25 +57,15 @@ gtkEmbedPromptDialog::~gtkEmbedPromptDialog()
 #endif
 }
 
-bool gtkEmbedPromptDialog::Init(bool (*aSSLSecureCB)(nsIDOMWindow *, bool),
-                                bool (*aAlertCB)(nsIDOMWindow *, const char *),
-                                bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-                                bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
-                                bool (*aPasswdCB)(nsIDOMWindow *, const char *, const char *, bool *),
-                                bool (*aUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *),
-                                bool (*aSelectCB)(nsIDOMWindow *, const char **, int *, bool *))
-
+bool gtkEmbedPromptDialog::Init(bool (*aOpenDialogCB)(nsIDOMWindow *,
+                                                      int,
+                                                      int,
+                                                      const char *,
+                                                      gtkEmbedParamList *,
+                                                      int *,
+                                                      bool *))
 {
-  // store our static references so that every
-  // instance can have access to it
-  gSSLSecureCB  = aSSLSecureCB;
-  gAlertCB      = aAlertCB;
-  gPromptCB     = aPromptCB;
-  gConfirmCB    = aConfirmCB;
-  gPasswdCB     = aPasswdCB;
-  gUserPasswdCB = aUserPasswdCB;
-  gSelectCB     = aSelectCB;
-  
+  gOpenDialogCB = aOpenDialogCB;
   return true;
 }
 
@@ -86,26 +77,24 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Alert(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::Alert()\n");
 #endif
 
-  // check if it's an internal message
-  if (!strcmp(NS_ConvertUCS2toUTF8(aTitle).get(), DIALOG_INTERNAL_MESSAGE)) {
-    if (!strcmp(NS_ConvertUCS2toUTF8(aText).get(), DIALOG_SSL_ENTER_SECURE)) {
-      if (gSSLSecureCB)
-        (*gSSLSecureCB)(aParent, true);
-    }
-    else if (!strcmp(NS_ConvertUCS2toUTF8(aText).get(), DIALOG_SSL_ENTER_WEAK)) {
-      if (gSSLSecureCB)
-        (*gSSLSecureCB)(aParent, true);
-    }
-    else if (!strcmp(NS_ConvertUCS2toUTF8(aText).get(), DIALOG_SSL_LEAVE_SECURE)) {
-      if (gSSLSecureCB)
-        (*gSSLSecureCB)(aParent, false);
-    }
+  if (gOpenDialogCB) {
+    if (!strcmp(NS_ConvertUCS2toUTF8(aTitle).get(), DIALOG_INTERNAL_MESSAGE))
+      (*gOpenDialogCB)(aParent,
+                       DIALOG_INTERNAL_TYPE,
+                       0,
+                       NS_ConvertUCS2toUTF8(aText).get(),
+                       NULL,
+                       NULL,
+                       NULL);
+    else
+      (*gOpenDialogCB)(aParent,
+                       DIALOG_ALERT_TYPE,
+                       0,
+                       NS_ConvertUCS2toUTF8(aText).get(),
+                       NULL,
+                       NULL,
+                       NULL);
   }
-  else {
-    // regular message
-    if (gAlertCB)
-      (*gAlertCB)(aParent, NS_ConvertUCS2toUTF8(aText).get());
-  }	
 
   return NS_OK;
 }
@@ -120,9 +109,7 @@ NS_IMETHODIMP gtkEmbedPromptDialog::AlertCheck(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::AlertCheck()\n");
 #endif
 
-  *aChkBoxValue = false;
-
-  return NS_OK;
+  return Alert(aParent, aTitle, aText);
 }
 
 NS_IMETHODIMP gtkEmbedPromptDialog::Confirm(nsIDOMWindow *aParent,
@@ -134,7 +121,18 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Confirm(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::Confirm()\n");
 #endif
 
-  *aResult = true;
+  if (!gOpenDialogCB) {
+    *aResult = false;
+    return NS_OK;
+  }
+
+  (*gOpenDialogCB)(aParent,
+                   DIALOG_CONFIRM_TYPE,
+                   0,
+                   NS_ConvertUCS2toUTF8(aText).get(),
+                   NULL,
+                   NULL,
+                   (bool *) aResult);
 
   return NS_OK;
 }
@@ -150,10 +148,7 @@ NS_IMETHODIMP gtkEmbedPromptDialog::ConfirmCheck(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::ConfirmCheck()\n");
 #endif
 
-  *aChkBoxValue = false;
-  *aResult      = true;
-
-  return NS_OK;
+  return Confirm(aParent, aTitle, aText, aResult);
 }
 
 NS_IMETHODIMP gtkEmbedPromptDialog::Prompt(nsIDOMWindow *aParent,
@@ -169,8 +164,34 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Prompt(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::Prompt()\n");
 #endif
 
-  *aValue  = NULL;
-  *aResult = false;
+  char *tempString = NULL;
+  gtkEmbedParamList *fieldList = new gtkEmbedParamList();
+
+  if (!gOpenDialogCB) {
+    *aValue  = NULL;
+    *aResult = false;
+    return NS_OK;
+  }
+
+  // push the field and the default value into the list
+  fieldList->Push("field", NS_ConvertUCS2toUTF8(*aValue).get());
+
+  // open the dialog
+  (*gOpenDialogCB)(aParent,
+                   DIALOG_PROMPT_TYPE,
+                   1,
+                   NS_ConvertUCS2toUTF8(aText).get(),
+                   fieldList,
+                   NULL,
+                   (bool *) aResult);
+
+  // get the result from the list
+  fieldList->Get("field", &tempString);
+
+  // convert to PRUnichar
+  *aValue = NS_ConvertASCIItoUCS2(tempString).ToNewUnicode();
+
+  free(tempString);
 
   return NS_OK;
 }
@@ -189,9 +210,40 @@ NS_IMETHODIMP gtkEmbedPromptDialog::PromptUsernameAndPassword(
   fprintf(stderr, "gtkEmbedPromptDialog::PromptUsernameAndPassword()\n");
 #endif
 
-  *aUsername = NULL;
-  *aPassword = NULL;
-  *aResult   = false;
+  char *tempString1 = NULL;
+  char *tempString2 = NULL;
+  gtkEmbedParamList *fieldList = new gtkEmbedParamList();
+
+  if (!gOpenDialogCB) {
+     *aUsername = NULL;
+    *aPassword = NULL;
+    *aResult   = false;
+    return NS_OK;
+  }
+
+  // push the field and the default value into the list
+  fieldList->Push("username", NS_ConvertUCS2toUTF8(*aUsername).get());
+  fieldList->Push("password", NS_ConvertUCS2toUTF8(*aPassword).get());
+
+  // open dialog
+  (*gOpenDialogCB)(aParent,
+                   DIALOG_USERPASSWORD_TYPE,
+                   2,
+                   NS_ConvertUCS2toUTF8(aText).get(),
+                   fieldList,
+                   NULL,
+                   (bool *) aResult);
+
+  // get values from list
+  fieldList->Get("username", &tempString1); 
+  fieldList->Get("password", &tempString2); 
+
+  // convert to PRUnichar
+  *aUsername = NS_ConvertASCIItoUCS2(tempString1).ToNewUnicode();
+  *aPassword = NS_ConvertASCIItoUCS2(tempString2).ToNewUnicode();
+
+  free(tempString1);
+  free(tempString2);
 
   return NS_OK;
 }
@@ -208,8 +260,34 @@ NS_IMETHODIMP gtkEmbedPromptDialog::PromptPassword(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::PromptPassword()\n");
 #endif
 
-  *aPassword = NULL;
-  *aResult   = false;
+  char *tempString = NULL;
+  gtkEmbedParamList *fieldList = new gtkEmbedParamList();
+
+  if (!gOpenDialogCB) {
+    *aPassword = NULL;
+    *aResult   = false;
+    return NS_OK;  
+  } 
+
+  // push the field and the default value into the list
+  fieldList->Push("password", NS_ConvertUCS2toUTF8(*aPassword).get());
+
+  // open the dialog
+  (*gOpenDialogCB)(aParent,
+                   DIALOG_PASSWORD_TYPE,
+                   1,
+                   NS_ConvertUCS2toUTF8(aText).get(),
+                   fieldList,
+                   NULL,
+                   (bool *) aResult);
+
+  // get values from list
+  fieldList->Get("password", &tempString); 
+
+  // convert to PRUnichar
+  *aPassword = NS_ConvertASCIItoUCS2(tempString).ToNewUnicode();
+
+  free(tempString);
 
   return NS_OK;
 }
@@ -226,8 +304,27 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Select(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::Select()\n");
 #endif
 
-  *aOutSelection = 0;
-  *aResult       = true;
+  gtkEmbedParamList *fieldList = new gtkEmbedParamList();
+  int i;
+
+  if (!gOpenDialogCB) {
+    *aOutSelection = 0;
+    *aResult       = true;
+    return NS_OK;
+  }
+
+  // push the contents of the array into the list
+  for (i = 0; i < (int) aCount; i++) 
+    fieldList->Push(NS_ConvertUCS2toUTF8(aSelectList[i]).get(), NULL); 
+
+  // open the dialog
+  (*gOpenDialogCB)(aParent,
+                   DIALOG_SELECT_TYPE,
+                   aCount,
+                   NS_ConvertUCS2toUTF8(aText).get(),
+                   fieldList,
+                   aOutSelection,
+                   (bool *) aResult);
 
   return NS_OK;
 }
@@ -248,10 +345,30 @@ NS_IMETHODIMP gtkEmbedPromptDialog::ConfirmEx(nsIDOMWindow *aParent,
   fprintf(stderr, "gtkEmbedPromptDialog::ConfirmEx\n");
 #endif
 
+  nsresult tempReturn;
+  PRBool tempResult = false;
+  const PRUnichar *tempStrings[] = {
+    aButton0Title,
+    aButton1Title,
+    aButton2Title
+  } ;
+  
   *aChkBoxValue = false;
-  *aResult      = true;
 
-  return NS_OK;
+  // use select
+  tempReturn = Select(aParent,
+                      aTitle,
+                      aText,
+                      3,
+                      tempStrings,
+                      aResult,
+                      &tempResult);
+  
+  // if select was cancelled, select the default one
+  if (!tempResult)
+    *aResult = 0;
+    
+  return tempReturn;
 }
 
 NS_DEF_FACTORY(PromptDialog, gtkEmbedPromptDialog);

@@ -37,6 +37,7 @@ CPPSRCS		= \
 		gtkEmbedPromptDialog.cpp \
 		gtkEmbedHelperAppDialog.cpp \
 		gtkEmbedDialogManager.cpp \
+		gtkEmbedParamList.cpp \
 		$(NULL) 
 
 PROGRAM		= gtkEmbedBrowser 

@@ -20,30 +20,49 @@
  *   Vino Crescini <vino.crescini@tuxia.com>
  */
 
-#ifndef __GTKEMBEDHELPERAPPDIALOG_H
-#define __GTKEMBEDHELPERAPPDIALOG_H
+#ifndef __GTKEMBEDPARAMLIST_H
+#define __GTKEMBEDPARAMLIST_H
 
-#include "nsIFactory.h"
-#include "nsIHelperAppLauncherDialog.h"
-
-extern nsresult newHelperAppDialogFactory(nsIFactory **aResult);
-
-// class to implement (replace) the helper app dialog
-class gtkEmbedHelperAppDialog : public nsIHelperAppLauncherDialog
+class gtkEmbedParamListNode
 {
   public :
 
-    gtkEmbedHelperAppDialog();
-    virtual ~gtkEmbedHelperAppDialog();
+    gtkEmbedParamListNode();
+    ~gtkEmbedParamListNode();
 
-    bool Init();
+    bool Get(char **, char **);
+    bool Set(const char *, const char *);
+    bool Replace(const char *);
 
-    NS_DECL_ISUPPORTS
-    NS_DECL_NSIHELPERAPPLAUNCHERDIALOG
+    gtkEmbedParamListNode *gNext;
+
+  private :
+
+    char *gField;
+    char *gValue;
 } ;
 
-// CID of the component we want to override
-#define NS_HELPERAPPLAUNCHERDIALOG_CID \
-  {0xf68578eb, 0x6ec2, 0x4169, {0xae, 0x19, 0x8c, 0x62, 0x43, 0xf0, 0xab, 0xe1}}
+class gtkEmbedParamList
+{
+  public :
+
+    gtkEmbedParamList();
+    ~gtkEmbedParamList();
+
+    void Init();
+    bool Push(const char *, const char *);
+    bool Pop(char **, char **);
+    bool Get(const char *, char **);
+    bool Get(int, char **, char **);
+    bool Replace(const char *, const char *);
+    int Find(const char *);
+    int Size();
+
+  private :
+
+    gtkEmbedParamListNode *gHead;
+    gtkEmbedParamListNode *gTail;
+    int gSize;
+} ;
 
 #endif

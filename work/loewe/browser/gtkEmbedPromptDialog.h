@@ -26,6 +26,7 @@
 #include "nsIFactory.h"
 #include "nsIPromptService.h"
 #include "nsIDOMWindow.h"
+#include "gtkEmbedParamList.h"
 
 extern nsresult newPromptDialogFactory(nsIFactory **aResult);
 
@@ -36,14 +37,14 @@ class gtkEmbedPromptDialog : public nsIPromptService
     gtkEmbedPromptDialog();
     virtual ~gtkEmbedPromptDialog();
 
-    bool Init(bool (*aSSLSecureCB)(nsIDOMWindow *, bool),
-              bool (*aAlertCB)(nsIDOMWindow *, const char *),
-              bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-              bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
-	      bool (*aPasswdCB)(nsIDOMWindow *, const char * , const char *, bool *),
-              bool (*aUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *),
-              bool (*aSelectCB)(nsIDOMWindow *, const char **, int *, bool *));
-    
+    bool Init(bool (*aOpenDialogCB)(nsIDOMWindow *,
+                                    int,
+                                    int,
+                                    const char *,
+                                    gtkEmbedParamList *,
+                                    int *,
+                                    bool *));
+
     NS_DECL_ISUPPORTS
     NS_DECL_NSIPROMPTSERVICE
 } ;

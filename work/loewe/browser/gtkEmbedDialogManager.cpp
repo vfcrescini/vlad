@@ -20,6 +20,7 @@
  *   Vino Crescini <vino.crescini@tuxia.com>
  */
 
+#include <stdlib.h>
 #include "nsCOMPtr.h"
 #include "nsIFactory.h"
 #include "nsIComponentManager.h"
@@ -29,14 +30,17 @@
 #define DIALOGMANAGER_SSLDIALOG_CONTRACTID       "@mozilla.org/nsNSSDialogs;1"
 #define DIALOGMANAGER_HELPERAPPDIALOG_CONTRACTID "@mozilla.org/helperapplauncherdialog;1"
 
+// cid declarations
 static NS_DEFINE_CID(kPromptDialogCID, NS_PROMPTSERVICE_CID);
 static NS_DEFINE_CID(kSSLDialogCID, NS_NSSDIALOGS_CID);
 static NS_DEFINE_CID(kHelperAppDialogCID, NS_HELPERAPPLAUNCHERDIALOG_CID);
 
 gtkEmbedDialogManager::gtkEmbedDialogManager()
 {
-  gPromptDialog = NULL;
-  gSSLDialog    = NULL;
+  gPromptDialog    = NULL;
+  gSSLDialog       = NULL;
+  gHelperAppDialog = NULL;
+  gOpenDialog      = NULL;
 }
 
 gtkEmbedDialogManager::~gtkEmbedDialogManager()
@@ -46,15 +50,18 @@ gtkEmbedDialogManager::~gtkEmbedDialogManager()
 
   if (gSSLDialog)
     delete gSSLDialog;
+
+  if (gHelperAppDialog);
+    delete gHelperAppDialog;
 }
 
-bool gtkEmbedDialogManager::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool),
-                                 bool (*aAlertCB)(nsIDOMWindow *, const char *),
-                                 bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
-                                 bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *),
-                                 bool (*aPasswdCB)(nsIDOMWindow *, const char *, const char *, bool *),
-                                 bool (*aUserPasswdCB)(nsIDOMWindow *, const char *, const char *, const char *, bool *),
-                                 bool (*aSelectCB)(nsIDOMWindow *, const char **, int *, bool *))
+bool gtkEmbedDialogManager::Init(bool (*aOpenDialog)(nsIDOMWindow *, 
+                                                     int, 
+                                                     int,
+                                                     const char *,
+                                                     gtkEmbedParamList *,
+                                                     int *,
+                                                     bool *))
 {
   nsCOMPtr<nsIFactory>    promptDialog;
   nsCOMPtr<nsIFactory>    sslDialog;
@@ -63,6 +70,9 @@ bool gtkEmbedDialogManager::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool),
   gtkEmbedSSLDialog       *sslDialogInstance;
   gtkEmbedHelperAppDialog *helperAppDialogInstance;
 
+  // store the callback function
+  gOpenDialog = aOpenDialog;
+  
   // register our own implementation of nsIPromptService
   if (NS_FAILED(newPromptDialogFactory(getter_AddRefs(promptDialog))))
     return false;
@@ -102,18 +112,12 @@ bool gtkEmbedDialogManager::Init(bool (*aSSLActiveCB)(nsIDOMWindow *, bool),
     return false;
 
   // call their respective init functions
-  promptDialogInstance->Init(aSSLActiveCB,
-                             aAlertCB,
-                             aPromptCB,
-                             aConfirmCB,
-                             aPasswdCB,
-                             aUserPasswdCB,
-                             aSelectCB);
+  promptDialogInstance->Init(gOpenDialog);
   sslDialogInstance->Init();
   helperAppDialogInstance->Init();
 
   // now keep a reference to these objects to retain
-  // the static values
+  // their static values
   gPromptDialog    = promptDialogInstance;
   gSSLDialog       = sslDialogInstance;
   gHelperAppDialog = helperAppDialogInstance;
