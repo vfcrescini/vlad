@@ -8,10 +8,10 @@
 #include <stdlib.h>
 #include "loggerType.h"
 
-#define LOGGERTYPE_STRINGINFO    "Logger Info  :"
-#define LOGGERTYPE_STRINGTRACE   "Logger Trace :"
-#define LOGGERTYPE_STRINGWARN    "Logger Warn  :"
 #define LOGGERTYPE_STRINGERROR   "Logger Error :"
+#define LOGGERTYPE_STRINGWARN    "Logger Warn  :"
+#define LOGGERTYPE_STRINGTRACE   "Logger Trace :"
+#define LOGGERTYPE_STRINGINFO    "Logger Info  :"
 #define LOGGERTYPE_STRINGHEADER  "---------------------------------------"
 #define LOGGERTYPE_STRINGTRAILER "---------------------------------------"
 
