@@ -98,6 +98,16 @@ int kb::close_consttab()
   return VLAD_OK;
 }
 
+/* after this is called, no further calls to add_transtab() is allowed */
+int kb::close_transtab()
+{
+  if (stage != 4)
+    return VLAD_FAILURE;
+
+  stage = 5;
+  return VLAD_OK;
+}
+
 /* register an identifier in the kb */
 int kb::add_symtab(const char *n, unsigned char t)
 {
