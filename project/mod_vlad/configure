@@ -2237,6 +2237,8 @@ fi
 if test "${with_libvlad+set}" = set; then
   withval="$with_libvlad"
 
+else
+  with_libvlad=yes
 fi;
 
 if test "x$with_libvlad" != "x" && test "x$with_libvlad" != "xno"; then
@@ -2366,6 +2368,8 @@ fi
 if test "${with_apache+set}" = set; then
   withval="$with_apache"
 
+else
+  with_apache=yes
 fi;
 
 if test "x$with_apache" != "x" && test "x$with_apache" != "xno"; then

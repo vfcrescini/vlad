@@ -67,8 +67,8 @@ if test "x$enable_strip" != "x" && test "x$enable_strip" != "xno"; then
 fi
 
 # --with-libvlad
-AC_ARG_WITH(libvlad, AC_HELP_STRING([--with-libvlad],[yes or path to libvlad (default is yes)]))
-                                                                              
+AC_ARG_WITH(libvlad, AC_HELP_STRING([--with-libvlad],[yes or path to libvlad (default is yes)]),,with_libvlad=[yes])
+
 if test "x$with_libvlad" != "x" && test "x$with_libvlad" != "xno"; then
   if test "x$with_libvlad" = "xyes"; then
     AC_MSG_CHECKING([if libvlad is installed and usable])
@@ -109,7 +109,7 @@ else
 fi
 
 # --with-apache
-AC_ARG_WITH(apache, AC_HELP_STRING([--with-apache],[yes or path to apache (default is yes)]))
+AC_ARG_WITH(apache, AC_HELP_STRING([--with-apache],[yes or path to apache (default is yes)]),,with_apache=[yes])
                                                                               
 if test "x$with_apache" != "x" && test "x$with_apache" != "xno"; then
   if test "x$with_apache" = "xyes"; then
