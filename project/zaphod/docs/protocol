@@ -4,21 +4,23 @@ ZAPHOD DAEMON PROTOCOL
 Vino Crescini
 jvcrescini@yahoo.com
 
-- Protocol
+- Server Protocol
+
+  Incoming
 
   Message               Reply
   -----------------------------------------------------------------------
-  count                 n (where n is the number of messages)
-  get(n)                message (nth message)
-  del(n)                m (where m is the number of messages after message
-                           n is deleted)
-  put(message)          n (where n is the number of messages after message
-                           is added)
+  count\n               x\n or error\n (where x is the number of messages)
+  get|x\n               message\n or error\n
+  del|x\n               ok\n|error\n
+  put|message\n         ok\n|error\n
+  ping\n                pong\n
 
-- Messages
 
-  The message text itself must have certain characters escaped.
+- Special Characters
 
-  - Backslash (\) must be escaped to double backslash (\\)
-  - Open Parenthesis ( must be escaped to \(
-  - Close Parenthesis ) must be escaped to \)
+  The entire message text must not contain the delimiter character or
+  the terminator character.
+
+  terminator = \n
+  delimiter  = |
