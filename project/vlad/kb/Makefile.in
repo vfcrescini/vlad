@@ -8,7 +8,7 @@ YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 TARGETS = libkb.a
-INCLUDES = identifier.h symtab.h atom.h
+INCLUDES = identifier.h symtab.h atom.h atomlist.h
 
 all : public
 
@@ -22,8 +22,8 @@ public : $(TARGETS)
 	ln -sf ../kb/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libkb.a : identifier.o symtab.o atom.o
-	$(AR) -rcs $(@) identifier.o symtab.o atom.o
+libkb.a : identifier.o symtab.o atom.o atomlist.o
+	$(AR) -rcs $(@) identifier.o symtab.o atom.o atomlist.o
 
 identifier.o : identifier.h identifier.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c identifier.cpp
@@ -33,6 +33,9 @@ symtab.o : symtab.h symtab.cpp identifier.o
 
 atom.o : atom.h atom.cpp identifier.o
 	$(CXX) $(CXXFLAGS) -o $(@) -c atom.cpp
+
+atomlist.o : atomlist.h atomlist.cpp atom.o
+	$(CXX) $(CXXFLAGS) -o $(@) -c atomlist.cpp
 
 clean :
 	$(RM) *.o

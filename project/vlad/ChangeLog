@@ -1,6 +1,12 @@
 2003-02-24  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-	* kb/atom.c :
+	* kb/Makefile.in :
+	* kb/atomlist.cpp :
+	* kb/atomlist.h :
+
+	  - Added atom list class.
+
+	* kb/atom.cpp :
 	* kb/atom.h :
 
 	  - Atom class is now a derived class of list_item. This is to make
