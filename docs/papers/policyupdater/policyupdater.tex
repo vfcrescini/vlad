@@ -1528,7 +1528,7 @@
     \begin{vdefinition}
       \label{def-mutex}
       Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
-      two ground facts $\rho$ and $\rho'$ are {\bf mutually exclusive}
+      two ground facts $\rho$ and $\rho'$ are {\em mutually exclusive}
       in ${\cal D_{L}}$ if:
       \begin{vquote}
         $\rho$ $\in$ \{${\cal F}^{+}_{int}$ $\cup$
@@ -1552,7 +1552,7 @@
     \begin{vdefinition}
       \label{def-comp}
       Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
-      two statements $\gamma$ and $\gamma'$ are {\bf complementary} in
+      two statements $\gamma$ and $\gamma'$ are {\em complementary} in
       ${\cal D_{L}}$ if one of the following conditions holds:
       \begin{enumerate}
         \item
@@ -1567,7 +1567,7 @@
     \begin{vdefinition}
       \label{def-norm}
       Given a domain description ${\cal D_{L}}$, ${\cal D_{L}}$ is said to
-      be {\bf normal} if it satisfies all of the following conditions:
+      be {\em normal} if it satisfies all of the following conditions:
       \begin{enumerate}
         \item
           ${\cal F}^{+}_{int}$ $\cap$ ${\cal F}^{-}_{int}$ = $\emptyset$
@@ -1579,10 +1579,10 @@
           ${\cal D_{L}}$, $Def(\gamma)$ $\cap$ $Eff(\gamma')$ =
           $\emptyset$.
         \item
-          For any two {\bf complementary} statements $\gamma$ and $\gamma'$ in
+          For any two {\em complementary} statements $\gamma$ and $\gamma'$ in
           ${\cal D_{L}}$, there exists a pair of ground expression $\epsilon$
           $\in$ $Pre(\gamma)$ and $\epsilon'$ $\in$ $Pre(\gamma')$ such that
-          $\epsilon$ and $\epsilon'$ are {\bf mutually exclusive}.
+          $\epsilon$ and $\epsilon'$ are {\em mutually exclusive}.
       \end{enumerate}
     \end{vdefinition}
 
@@ -1591,8 +1591,8 @@
 
     \begin{vtheorem}{Domain Consistency}
       \label{the-cons}
-      A {\bf normal} domain description of language ${\cal L}$ is also
-      {\bf consistent} \footnotemark.
+      A {\em normal} domain description of language ${\cal L}$ is also
+      {\em consistent} \footnotemark.
     \end{vtheorem}
 
     \footnotetext{
@@ -1601,12 +1601,12 @@
     }
 
     Basically, only consistent domain descriptions can be evaluated in terms
-    of user queries. For this reason, Theorem \ref{the-cons} can be used to
+    of user queries. For this reason, Theorem \ref{the-cons} may be used to
     check whether a domain description is consistent.
 
     \begin{vdefinition}
       \label{def-eval}
-      Given a {\bf consistent} domain description ${\cal D}_{\cal L}$, ground
+      Given a {\em consistent} domain description ${\cal D}_{\cal L}$, ground
       query expression $\phi$ and a finite sequence list $\psi$, we say
       {\em query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
       in sequence list $\psi$ have been applied}, denoted as
@@ -1619,6 +1619,14 @@
       where $\alpha$ $\in$ ${\cal A}^{|\psi|}$, [$\lnot$]$\alpha$ is in
       every answer set of $Trans$(${\cal D}_{\cal L}$).
     \end{vdefinition}
+
+    Definition \ref{def-eval} shows that given a finite list of policy updates
+    $\psi$, a query expression $\phi$ may be evaluated from a consistent
+    language ${\cal L}$ domain ${\cal D_{L}}$. This is achieved by generating a
+    set of answer sets from the normal logic program translation
+    $Trans$(${\cal D_{L}}$). $\phi$ is then said to hold in ${\cal D_{L}}$
+    after the policy updates in $\psi$ have been applied if and only if every
+    answer set generated contains every fact in the query expression $\phi$.
 
     \begin{vexample}
       \label{ex-3}
@@ -1643,8 +1651,7 @@
     \label{sec-implement}
 
     As mentioned earlier, {\em PolicyUpdater} is a fully implemented system.
-    In this section, we briefly describe the implementation details of this
-    system.
+    In this section, we describe the implementation details of this system.
 
     \subsection{System Structure}
 
@@ -1876,10 +1883,10 @@
 
         Once a normal logic program has been generated from the policy stored
         in the storage structure, a set of answer sets may then be generated
-        by using the stable model semantics with the {\em smodels}\footnotemark
-        program. Query evaluation then becomes possible by checking whether
-        each fact of a given query holds in each generated answer set of the
-        normal logic program.
+        by using the stable model semantics \cite{SIM} with the
+        {\em smodels}\footnotemark program. Query evaluation then becomes
+        possible by checking whether each fact of a given query holds in each
+        generated answer set of the normal logic program.
 
         \footnotetext{Smodels from http://www.tcs.hut.fi/Software/smodels}
 
@@ -1907,9 +1914,7 @@
     logic to language ${\cal L}$ to allow time properties to be expressed in
     access control policies. Such extension will be useful in access control
     systems such as e-commerce applications where authorisations are granted
-    or denied based on policies that are time dependent. Another possible
-    extension to the system and language is to consider multi-agent
-    environments.
+    or denied based on policies that are time dependent.
 
   \newpage
   \appendix
@@ -2331,5 +2336,12 @@
       The Internet Society, \\
       {\scriptsize \tt ftp://ftp.isi.edu/in-notes/rfc2617.txt},
       1999.
+
+    \bibitem{SIM}
+      Simons., P.,
+      Efficient Implementation of the Stable Model Semantics for Normal Logic
+      Programs.
+      In {\em Research Reports, Helsinki University of Technology},
+      no. 35, 1995.
   \end{thebibliography}
 \end{document}
