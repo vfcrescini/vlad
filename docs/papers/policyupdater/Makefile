@@ -6,7 +6,7 @@ PSPDF=ps2pdf
 FIG2DEV=fig2dev
 
 LATEX_SRCS=policyupdater
-XFIG_SRCS=system list
+XFIG_SRCS=system
 
 CLASS=
 STYLE=latex8.sty
