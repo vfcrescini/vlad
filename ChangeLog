@@ -3,6 +3,10 @@
 	* kb/kb.h :
 	* kb/kb.cpp :
 
+	  - decode_atom() is now used to generate atom list.
+
+	  - Added decode_atom().
+
 	  - Cleanup so some of the rules are generated mathematically.
 
 	  - Added inertial and complementary rules.

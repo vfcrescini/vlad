@@ -88,6 +88,11 @@ class kb {
     int encode_holds(const char *s, const char *a, const char *o, unsigned int *n);
     int encode_member(const char *e, const char *g, unsigned int *n);
     int encode_subset(const char *g1, const char *g2, unsigned int *n);
+    /* functions for decoding atoms */
+    int decode_const(char **c, unsigned int n);
+    int decode_holds(char **s, char **a, char **o, unsigned int n);
+    int decode_member(char **e, char **g, unsigned int n);
+    int decode_subset(char **g1, char **g2, unsigned int n);
     /* gives an atom id based on the identifiers already given */
     int encode_atom(const char *n1,
                     const char *n2,
@@ -96,7 +101,14 @@ class kb {
                     unsigned int s,
                     bool tr,
                     unsigned int *a);
-
+    /* returns the atom details given the id */
+    int decode_atom(char **n1,
+                    char **n2,
+                    char **n3,
+                    unsigned char *ty,
+                    unsigned int *s,
+                    bool *tr,
+                    unsigned int a);
 } ;
 
 #endif
