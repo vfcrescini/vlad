@@ -10,16 +10,14 @@ Language Specifications
      1.1.1. Relational Atoms
 
        A single logical fact stating a relation between a subject and an object.
-       There is no distiction between the subject/object relation and the 
-       subject-group/object-group relation. This implies that any given access-
-       right can be used for both subject/object relations and subject-
-       group/object-group relations.
+       There is no distinction between singular entities and group entities.
 
          holds(subject, access-right, object)
 
        where
 
         subject can be a singular subject or a group of subjects.
+        access-right can be a singular access-right or a group of access-rights.
         object can be a singular object or a group of objects.
 
      1.1.2. Containment Atoms
@@ -36,7 +34,7 @@ Language Specifications
      1.1.3. Membership Atoms
 
        A single logical fact describing the membership of a singular 
-       subject/object to a subject/object group.
+       subject/access-right/object to a subject/access-right/object group.
 
          elt(subject-1, subject-group-1)
 
