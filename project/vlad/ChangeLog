@@ -1,5 +1,20 @@
 2003-06-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/kb.cpp :
+	* lib/kb.h :
+
+	  - Changes (including api) to allow apps to trigger computation
+	    before queries.
+
+	  - Took out useless condition to close inittab, transtab and
+	    consttab. Now a more general close_kb() is used.
+
+	* main/operation.y :
+	* main/program.y :
+
+	  - Fixes to reflect above changes. Still computes models on the fly
+	    at every query.
+
 	* lib/wrapper.cpp :
 
 	  - ask() now checks all possible models.

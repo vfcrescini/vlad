@@ -23,6 +23,9 @@ kb::kb()
   ctable = NULL;
   ttable = NULL;
   setable = NULL;
+#ifdef SMODELS
+  smobject = NULL;
+#endif
   stage = 0;
   s_len = 0;
   a_len = 0;
@@ -52,6 +55,11 @@ kb::~kb()
 
   if (setable != NULL)
     delete setable;
+
+#ifdef SMODELS
+  if (smobject != NULL)
+    delete smobject;
+#endif
 }
 
 /* (re)init kb */
@@ -97,6 +105,14 @@ int kb::init()
   if ((setable = VLAD_NEW(seqtab())) == NULL)
     return VLAD_MALLOCFAILED;
 
+#ifdef SMODELS
+  /* smodels wrapper */
+  if (smobject != NULL)
+    delete smobject;
+
+  smobject = NULL;
+#endif
+
   stage = 1;
 
   return VLAD_OK;
@@ -131,34 +147,15 @@ int kb::close_symtab()
   return VLAD_OK;
 }
 
-/* after this is called, no further calls to add_inittab() is allowed */
-int kb::close_inittab()
+/* after this is called, no further calls to add_inittab(), add_consttab()
+ * or add_transtab() is allowed */
+int kb::close_kb()
 {
   if (stage != 2)
     return VLAD_INVALIDOP;
 
   stage = 3;
 
-  return VLAD_OK;
-}
-
-/* after this is called, no further calls to add_consttab() is allowed */
-int kb::close_consttab()
-{
-  if (stage != 3)
-    return VLAD_INVALIDOP;
-
-  stage = 4;
-  return VLAD_OK;
-}
-
-/* after this is called, no further calls to add_transtab() is allowed */
-int kb::close_transtab()
-{
-  if (stage != 4)
-    return VLAD_INVALIDOP;
-
-  stage = 5;
   return VLAD_OK;
 }
 
@@ -205,7 +202,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
   atom *tmp1;
   atom *tmp2;
 
-  if (stage != 3)
+  if (stage != 2)
     return VLAD_INVALIDOP;
 
   /* only e is required to be non-null */
@@ -284,8 +281,8 @@ int kb::add_transtab(const char *n,
   expression *precond = NULL;
   expression *postcond = NULL;
 
-  /* we only allow this function after consttab is closed */
-  if (stage != 4)
+  /* we only allow this function after symtab is closed */
+  if (stage != 2)
     return VLAD_INVALIDOP;
 
   /* precondition and vlist are allowed to be NULL */
@@ -362,8 +359,8 @@ int kb::add_seqtab(transref *t)
   char *tmp_name;
   stringlist *tmp_ilist;
   
-  /* we only allow this function after transtab is closed */
-  if (stage != 5)
+  /* we only allow this function after kb is closed */
+  if (stage < 3)
     return VLAD_INVALIDOP;
 
   if (t == NULL)
@@ -378,17 +375,31 @@ int kb::add_seqtab(transref *t)
     return retval;
 
   /* if all is well, add */
-  return setable->add(t);
+  if ((retval = setable->add(t)) != VLAD_OK)
+    return retval;
+
+  /* set back to stage 3 to prevent query before compute */
+  stage = 3;
+
+  return VLAD_OK;
 }
 
 /* delete a transformation reference from the sequence table */
 int kb::del_seqtab(unsigned int i)
 {
-  /* only allow this after transtab is closed */
-  if (stage != 5)
+  int retval;
+
+  /* we only allow this function after kb is closed */
+  if (stage < 3)
     return VLAD_INVALIDOP;
 
-  return setable->del(i);
+  if ((retval = setable->del(i)) != VLAD_OK)
+    return retval;
+
+  /* set back to stage 3 to prevent query before compute */
+  stage = 3;
+
+  return retval;
 }
 
 /* enumerate the sequences in the sequence table, output to f */
@@ -400,8 +411,8 @@ int kb::list_seqtab(FILE *f)
   char *tmp_name;
   stringlist *tmp_ilist;
 
-  /* only allow this after transtab is closed */
-  if (stage != 5)
+  /* we only allow this function after kb is closed */
+  if (stage < 3)
     return VLAD_INVALIDOP;
 
   if (f == NULL)
@@ -434,8 +445,8 @@ int kb::generate_nlp(expression *e, FILE *f)
   int retval;
   unsigned int i;
 
-  /* we only allow this function after transtab is closed */
-  if (stage != 5)
+  /* we only allow this function after kb is closed */
+  if (stage < 3)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
@@ -883,35 +894,35 @@ int kb::generate_nlp(expression *e, FILE *f)
 }
 
 #ifdef SMODELS
-/* use wrapper class to evaluate a query */
-int kb::evaluate_query(expression *e, unsigned char *r)
+/* prepares the kb for queries */
+int kb::compute()
 {
   int retval;
   unsigned int i;
-  wrapper *wrap;
 
-  /* we only allow this function after transtab is closed */
-  if (stage != 5)
+  /* we only allow this after kb is closed */
+  if (stage < 3)
     return VLAD_INVALIDOP;
 
-  /* verify expression */
-  if ((retval = verify_expression(e)) != VLAD_OK)
-    return retval;
+  /* create a new instance of the smodels wrapper and init it */
+  if (smobject != NULL)
+    delete smobject;
 
-  /* create and init a wrapper object */
-  if ((wrap = VLAD_NEW(wrapper())) == NULL)
+  if ((smobject = VLAD_NEW(wrapper())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = wrap->init()) != VLAD_OK)
+  if ((retval = smobject->init()) != VLAD_OK)
     return retval;
 
-  /* first we register all the possible atoms in the kb */
+  /* first we register all the possible atoms in smodels */
   for (i = 0; i < (pos_tot * 2 * (VLAD_LIST_LENGTH(setable) + 1)); i++) {
-    if ((retval = wrap->add_atom(i)) != VLAD_OK)
+    if ((retval = smobject->add_atom(i)) != VLAD_OK)
       return retval;
   }
 
-  wrap->close_atom();
+  smobject->close_atom();
+
+  /* now *sigh* we register all the built-in rules */
 
   /* identity rules */
 
@@ -921,19 +932,19 @@ int kb::evaluate_query(expression *e, unsigned char *r)
     /* subject groups */
     for (i_grp = 0; i_grp < sg_len; i_grp++) {
       unsigned int tmp_num = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp, i_grp);
-      if ((retval = wrap->add_axiom(true, 1, tmp_num)) != VLAD_OK)
+      if ((retval = smobject->add_axiom(true, 1, tmp_num)) != VLAD_OK)
         return retval;
     }
     /* access groups */
     for (i_grp = 0; i_grp < ag_len; i_grp++) {
       unsigned int tmp_num = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp, i_grp);
-      if ((retval = wrap->add_axiom(true, 1, tmp_num)) != VLAD_OK)
+      if ((retval = smobject->add_axiom(true, 1, tmp_num)) != VLAD_OK)
         return retval;
     }
     /* object groups */
     for (i_grp = 0; i_grp < og_len; i_grp++) {
       unsigned int tmp_num = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp, i_grp);
-      if ((retval = wrap->add_axiom(true, 1, tmp_num)) != VLAD_OK)
+      if ((retval = smobject->add_axiom(true, 1, tmp_num)) != VLAD_OK)
         return retval;
     }
   }
@@ -968,7 +979,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
               tmp_num2 = compute_holds(i, i_truth, i_grp2 + s_len, i_acc, i_obj);
               tmp_num3 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2);
 
-              if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
                 return retval;
             }
           }
@@ -989,7 +1000,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
               tmp_num2 = compute_holds(i, i_truth, i_sub, i_grp2 + a_len, i_obj);
               tmp_num3 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2);
 
-              if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
                 return retval;
             }
           }
@@ -1010,7 +1021,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
               tmp_num2 = compute_holds(i, i_truth, i_sub, i_acc, i_grp2 + o_len);
               tmp_num3 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2);
 
-              if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
                 return retval;
             }
           }
@@ -1032,7 +1043,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
               tmp_num2 = compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj);
               tmp_num3 = compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1);
 
-              if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
                 return retval;
             }
           }
@@ -1051,7 +1062,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
               tmp_num2 = compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj);
               tmp_num3 = compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1);
 
-              if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
                 return retval;
             }
           }
@@ -1070,7 +1081,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
               tmp_num2 = compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len);
               tmp_num3 = compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1);
 
-              if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
                 return retval;
             }
           }
@@ -1105,7 +1116,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
           tmp_num2 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2);
           tmp_num3 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp2, i_grp3);
 
-          if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+          if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
             return retval;
         }
       }
@@ -1129,7 +1140,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
           tmp_num2 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2);
           tmp_num3 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp2, i_grp3);
 
-          if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+          if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
             return retval;
         }
       }
@@ -1153,7 +1164,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
           tmp_num2 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2);
           tmp_num3 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp2, i_grp3);
 
-          if ((retval = wrap->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+          if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
             return retval;
         }
       }
@@ -1168,7 +1179,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
       unsigned int tmp_num1 = compute_atom(i, true, i_atom);
       unsigned int tmp_num2 = compute_atom(i, false, i_atom);
-      if ((retval = wrap->add_axiom(false, 2, tmp_num1, tmp_num2)) != VLAD_OK)
+      if ((retval = smobject->add_axiom(false, 2, tmp_num1, tmp_num2)) != VLAD_OK)
         return retval;
     }
   }
@@ -1187,14 +1198,14 @@ int kb::evaluate_query(expression *e, unsigned char *r)
       tmp_num2 = compute_atom(i, true, i_atom);
       tmp_num3 = compute_atom(i + 1, false, i_atom);
 
-      if ((retval = wrap->add_rule(1, 1, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+      if ((retval = smobject->add_rule(1, 1, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
         return retval;
 
       tmp_num1 = compute_atom(i + 1, false, i_atom);
       tmp_num2 = compute_atom(i, false, i_atom);
       tmp_num3 = compute_atom(i + 1, true, i_atom);
 
-      if ((retval = wrap->add_rule(1, 1, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+      if ((retval = smobject->add_rule(1, 1, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
         return retval;
     }
   }
@@ -1209,7 +1220,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
       return retval;
     if ((retval = encode_atom(tmp_atom, 0, &tmp_num)) != VLAD_OK)
       return retval;
-    if ((retval = wrap->add_axiom(true, 1, tmp_num)) != VLAD_OK)
+    if ((retval = smobject->add_axiom(true, 1, tmp_num)) != VLAD_OK)
       return retval;
   }
 
@@ -1264,7 +1275,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
         if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
           return retval;
 	/* for every atom in the exression, we add a separate rule */
-        if ((retval = wrap->add_rule(tmp_num, tmp_list1, tmp_list2)) != VLAD_OK)
+        if ((retval = smobject->add_rule(tmp_num, tmp_list1, tmp_list2)) != VLAD_OK)
           return retval;
       }
 
@@ -1312,7 +1323,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
       if ((retval = encode_atom(tmp_atom, i + 1, &tmp_num)) != VLAD_OK)
         return retval;
       /* for every atom in the postcondition we add a rule */
-      if ((retval = wrap->add_rule(tmp_num, tmp_list, NULL)) != VLAD_OK)
+      if ((retval = smobject->add_rule(tmp_num, tmp_list, NULL)) != VLAD_OK)
         return retval;
     }
 
@@ -1320,7 +1331,28 @@ int kb::evaluate_query(expression *e, unsigned char *r)
   }
 
   /* this might not succeed as there might not exist a model for this query */
-  if ((retval = wrap->close_rule()) != VLAD_OK)
+  if ((retval = smobject->close_rule()) != VLAD_OK)
+    return retval;
+
+  stage = 4;
+
+  return VLAD_OK;
+}
+#endif
+
+#ifdef SMODELS
+/* use wrapper class to evaluate a query */
+int kb::evaluate_query(expression *e, unsigned char *r)
+{
+  int retval;
+  unsigned int i;
+
+  /* we only allow this after a call to compute() */
+  if (stage != 4)
+    return VLAD_INVALIDOP;
+
+  /* verify expression */
+  if ((retval = verify_expression(e)) != VLAD_OK)
     return retval;
 
   *r = VLAD_RESULT_UNKNOWN;
@@ -1335,7 +1367,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
       return retval;
     if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(setable), &tmp_num)) != VLAD_OK)
       return retval;
-    if ((retval = wrap->ask(tmp_num, &tmp_res)) != VLAD_OK)
+    if ((retval = smobject->ask(tmp_num, &tmp_res)) != VLAD_OK)
       return retval;
     if (tmp_res == VLAD_RESULT_TRUE) {
       *r = VLAD_RESULT_TRUE;
@@ -1347,7 +1379,7 @@ int kb::evaluate_query(expression *e, unsigned char *r)
 
       if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(setable), &tmp_num)) != VLAD_OK)
         return retval;
-      if ((retval = wrap->ask(tmp_num, &tmp_res)) != VLAD_OK)
+      if ((retval = smobject->ask(tmp_num, &tmp_res)) != VLAD_OK)
         return retval;
       if (tmp_res == VLAD_RESULT_TRUE)
         *r = VLAD_RESULT_FALSE;
@@ -1430,9 +1462,6 @@ int kb::verify_transref(char *n, stringlist *il)
   stringlist *tmp_vlist;
   expression *tmp_pr;
   expression *tmp_po;
-
-  if (stage < 5)
-    return VLAD_INVALIDOP;
 
   if (n == NULL)
     return VLAD_NULLPTR;
@@ -1751,7 +1780,7 @@ int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
   unsigned char ty;
   bool tr;
 
-  if (stage < 5)
+  if (stage < 2)
     return VLAD_INVALIDOP;
 
   if (a == NULL || n == NULL)
@@ -1834,7 +1863,7 @@ int kb::decode_atom(atom **a, unsigned int *s, unsigned int n)
   unsigned char ty;
   bool tr;
 
-  if (stage < 5)
+  if (stage < 2)
     return VLAD_INVALIDOP;
 
   if (a == NULL || s == NULL)

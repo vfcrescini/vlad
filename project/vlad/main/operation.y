@@ -124,14 +124,22 @@ operation_stmt :
 #ifdef SMODELS
     case VLAD_MODE_EVALUATE : {
       unsigned char res;
-      switch(retval = kbase->evaluate_query($2, &res)) {
+      switch(retval = kbase->compute()) {
         case VLAD_OK :
-          fprintf(fout, "%s\n", VLAD_RESULT_STRING(res));
           break;
         case VLAD_NOMODEL :
           errorcode = retval;
           operationerror("could not evaluate query: conflict encountered");
           return VLAD_NOMODEL;
+        default :
+          errorcode = retval;
+          operationerror("could not evaluate query: unexpected error");
+          return retval;
+      }
+      switch(retval = kbase->evaluate_query($2, &res)) {
+        case VLAD_OK :
+          fprintf(fout, "%s\n", VLAD_RESULT_STRING(res));
+          break;
         default :
           errorcode = retval;
           operationerror("could not evaluate query: unexpected error");
