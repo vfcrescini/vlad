@@ -22,9 +22,9 @@
     functions are achieved by the use of a logic-based language to represent
     access control policies. In this paper, we discuss the underlying details
     of the PolicyUpdater system as well as the issues arising from its
-    application to a web server. Integrating the PolicyUpdater system with a
-    web server provides a more flexible and expressive means of representing
-    authorisation policies.
+    application to a web server access control system. Integrating the
+    PolicyUpdater system with a web server provides a more flexible and
+    expressive means of representing authorisation policies.
   \end{abstract}
 
   \footnotetext{Homepage at {\tt http://www.cit.uws.edu.au/{\homedir}jcrescin/project/PolicyUpdater/}}
@@ -68,7 +68,7 @@
     languages will not have the ability to dynamically update the policies.
 
     To overcome these limitations, we propose the general purpose PolicyUpdater
-    access control system, which, with its own access control language,
+    access control system, which, with its own authorisation language,
     provides a formal logic-based representation of policies, with variable
     resolution and default propositions, a mechanism to conditionally and
     dynamically perform a sequence of policy updates, and a means of evaluating
@@ -83,8 +83,7 @@
     Section \ref{webserver} gives an overview of the standard access control
     system built into existing web servers. More importantly, the section
     discusses how the PolicyUpdater system is used as an authorisation module
-    for the Apache\footnotemark web server to restrict access to resources
-    provided by web server.
+    for the Apache\footnotemark web server.
 
     \footnotetext{Apache Homepage at {\tt http://httpd.apache.org}}
 
@@ -98,7 +97,7 @@
     be used in a variety of applications. The key feature of the PolicyUpdater
     system is that policies are stored and evaluated as logic programs. By
     using this approach, the PolicyUpdater system can provide the means to
-    allow the policies to by dynamically altered (or updated) in the policy
+    allow the policies to by dynamically altered or updated in the policy
     base. Another feature of the PolicyUpdater system is that it allows
     policies to be defined with conditional constraints and default rules. Like
     the dynamic update facility, this feature is possible because of the
