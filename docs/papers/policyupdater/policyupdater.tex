@@ -425,15 +425,14 @@
           rule-based document access control system scenario.
 
           In this example, the subject $alice$ is initially a member of the
-          subject group $grp3$, which is a subset of group $grp2$, which in
-          turn is a subset of group $grp1$. The group $grp1$ also initially
-          holds a $read$ access right for the object $file$. The constraint
-          states that if the group $grp1$ has $read$ access for $file$, and no
-          other information is present to conclude that $grp1$ do not have
-          $write$ access for $file$, then the group $grp1$ is granted $write$
-          access for $file$. For simplicity, we only consider one policy
-          update $delete\_read$ and a few queries that are evaluated after
-          the policy update is performed.
+          subject group $grp2$, which is a subset of group $grp1$. The group
+          $grp1$ also initially holds a $read$ access right for the object
+          $file$. The constraint states that if the group $grp1$ has $read$
+          access for $file$, and no other information is present to conclude
+          that $grp3$ do not have $write$ access for $file$, then the group
+          $grp1$ is granted $write$ access for $file$. For simplicity, we only
+          consider one policy update $delete\_read$ and a few queries that are
+          evaluated after the policy update is performed.
 
           \begin{vverbatim}
   ident sub alice;
@@ -442,16 +441,15 @@
   ident obj file;
 
   initially
-    memb(alice, grp3) &&
+    memb(alice, grp2) &&
     holds(grp1, read, file) &&
-    subst(grp3, grp2) &&
     subst(grp2, grp1);
 
   always holds(grp1, write, file)
     implied by
       holds(grp1, read, file)
     with absence
-      !holds(grp1, write, file);
+      !holds(grp3, write, file);
 
   delete\_read(SG0, OS0)
     causes !holds(SG0, read, OS0);
@@ -795,7 +793,7 @@
   implied by
     memb(alice, admin)
   with absence
-    !holds(alice, read, data);
+    !holds(alice, own, data);
           \end{vverbatim}
 
           Given a policy update reference in the sequence list $\psi$ (i.e.
@@ -807,7 +805,7 @@
               \begin{aligned}[t]
                 \hat{holds}&(alice, read, data, S_{0}) \leftarrow \\
                  & \hat{memb}(alice, admin, S_{0}), \\
-                 & not \lnot \hat{holds}(alice, read, data, S_{0})
+                 & not \lnot \hat{holds}(alice, own, data, S_{0})
               \end{aligned}
             \end{math}
 
@@ -815,7 +813,7 @@
               \begin{aligned}[t]
                 \hat{holds}&(alice, write, data, S_{0}) \leftarrow \\
                  & \hat{memb}(alice, admin, S_{0}), \\
-                 & not \lnot \hat{holds}(alice, read, data, S_{0})
+                 & not \lnot \hat{holds}(alice, own, data, S_{0})
               \end{aligned}
             \end{math}
 
@@ -823,7 +821,7 @@
               \begin{aligned}[t]
                 \hat{holds}&(alice, read, data, S_{1}) \leftarrow \\
                  & \hat{memb}(alice, admin, S_{1}), \\
-                 & not \lnot \hat{holds}(alice, read, data, S_{1})
+                 & not \lnot \hat{holds}(alice, own, data, S_{1})
               \end{aligned}
             \end{math}
 
@@ -831,7 +829,7 @@
               \begin{aligned}[t]
                 \hat{holds}&(alice, write, data, S_{1}) \leftarrow \\
                  & \hat{memb}(alice, admin, S_{1}), \\
-                 & not \lnot \hat{holds}(alice, read, data, S_{1})
+                 & not \lnot \hat{holds}(alice, own, data, S_{1})
               \end{aligned}
             \end{math}
           \end{vquote}
@@ -920,11 +918,11 @@
             subsets of that group. This rule is easy to apply for subject group
             entities. However, careful attention must be given to access right
             and object groups. A subject holding an access right for an object
-            group implies that subject also holds that access right for all
-            objects in the object group. Similarly, a subject holding an access
-            right group for a particular object implies that the subject holds
-            all access rights contained in the access right group for that
-            object.
+            group implies that the subject also holds that access right for
+            all objects in the object group. Similarly, a subject holding an
+            access right group for a particular object implies that the subject
+            holds all access rights contained in the access right group for
+            that object.
 
             A conflict is encountered when a particular property is to be
             inherited by an entity from a group of which it is a member or
@@ -1168,13 +1166,11 @@
 
           \begin{enumerate}
             \item
-              Initial State Rules
+              Initial Fact Rules
 
-              $\hat{memb}(alice, grp3, S_{0}) \leftarrow$
+              $\hat{memb}(alice, grp2, S_{0}) \leftarrow$
 
               $\hat{holds}(grp1, read, file,S_{0}) \leftarrow$
-
-              $\hat{subst}(grp3, grp2, S_{0}) \leftarrow$
 
               $\hat{subst}(grp2, grp1, S_{0}) \leftarrow$
 
@@ -1186,11 +1182,11 @@
                   % constraints (S0)
                   \hat{holds}&(grp1, write, file, S_{0}) \leftarrow \\
                   & \hat{holds}(grp1, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp1, write, file, S_{0}) \\
+                  & not \lnot \hat{holds}(grp3, write, file, S_{0}) \\
                   % constraints (S1)
                   \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
                   & \hat{holds}(grp1, read, file, S_{1}), \\
-                  & not \lnot \hat{holds}(grp1, write, file, S_{1})
+                  & not \lnot \hat{holds}(grp3, write, file, S_{1})
                 \end{aligned}
               \end{math}
 
@@ -1232,7 +1228,7 @@
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\ldots$
+              $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1273,7 +1269,7 @@
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\ldots$
+              $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1325,7 +1321,7 @@
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\ldots$
+              $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1353,7 +1349,7 @@
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\ldots$
+              $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1381,7 +1377,7 @@
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\ldots$
+              $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1409,7 +1405,7 @@
                 \end{aligned}
               \end{math}
 
-              \hspace{1cm} $\ldots$
+              $\ldots$
 
               \begin{math}
                 \begin{aligned}[t]
@@ -1496,9 +1492,9 @@
       =
       \begin{math}
         \begin{cases}
-          \mbox{\{$a_{0}$, \ldots, $a_{n}$, $b_{0}$, \ldots, $b_{m}$\}, if $\gamma$ is initially} \\
-          \mbox{\{$c_{0}$, \ldots, $c_{o}$, $d_{0}$, \ldots, $d_{p}$\}, if $\gamma$ is constraint} \\
-          \mbox{\{$i_{0}$, \ldots, $i_{u}$, $j_{0}$, \ldots, $j_{v}$\}, if $\gamma$ is update}
+          \mbox{\{$a_{0}$, \ldots, $a_{n}$, $\lnot$$b_{0}$, \ldots, $\lnot$$b_{m}$\}, if $\gamma$ is init.} \\
+          \mbox{\{$c_{0}$, \ldots, $c_{o}$, $\lnot$$d_{0}$, \ldots, $\lnot$$d_{p}$\}, if $\gamma$ is const.} \\
+          \mbox{\{$i_{0}$, \ldots, $i_{u}$, $\lnot$$j_{0}$, \ldots, $\lnot$$j_{v}$\}, if $\gamma$ is upd.}
         \end{cases}
       \end{math}
     \end{vquote}
@@ -1509,9 +1505,9 @@
       =
       \begin{math}
         \begin{cases}
-          \mbox{$\emptyset$, if $\gamma$ is initially} \\
-          \mbox{\{$g_{0}$, \ldots, $g_{s}$, $h_{0}$, \ldots, $h_{t}$\}, if $\gamma$ is constraint} \\
-          \mbox{$\emptyset$, if $\gamma$ is update}
+          \mbox{$\emptyset$, if $\gamma$ is init.} \\
+          \mbox{\{$g_{0}$, \ldots, $g_{s}$, $\lnot$$h_{0}$, \ldots, $\lnot$$h_{t}$\}, if $\gamma$ is const.} \\
+          \mbox{$\emptyset$, if $\gamma$ is upd.}
         \end{cases}
       \end{math}
     \end{vquote}
@@ -1522,9 +1518,9 @@
       =
       \begin{math}
         \begin{cases}
-          \mbox{$\emptyset$, if $\gamma$ is initially} \\
-          \mbox{\{$e_{0}$, \ldots, $e_{q}$, $f_{0}$, \ldots, $f_{r}$\}, if $\gamma$ is constraint} \\
-          \mbox{\{$k_{0}$, \ldots, $k_{w}$, $l_{0}$, \ldots, $l_{x}$\}, if $\gamma$ is update}
+          \mbox{$\emptyset$, if $\gamma$ is init.} \\
+          \mbox{\{$e_{0}$, \ldots, $e_{q}$, $\lnot$$f_{0}$, \ldots, $\lnot$$f_{r}$\}, if $\gamma$ is const.} \\
+          \mbox{\{$k_{0}$, \ldots, $k_{w}$, $\lnot$$l_{0}$, \ldots, $\lnot$$l_{x}$\}, if $\gamma$ is upd.}
         \end{cases}
       \end{math}
     \end{vquote}
@@ -1583,10 +1579,10 @@
           ${\cal D_{L}}$, $Def(\gamma)$ $\cap$ $Eff(\gamma')$ =
           $\emptyset$.
         \item
-          For any two complementary statements $\gamma$ and $\gamma'$ in
+          For any two {\bf complementary} statements $\gamma$ and $\gamma'$ in
           ${\cal D_{L}}$, there exists a pair of ground expression $\epsilon$
-          $\in$ $\gamma$ and $\epsilon'$ $\in$ $\gamma'$ such that $\epsilon$ and
-          $\epsilon'$ are mutually exclusive.
+          $\in$ $Pre(\gamma)$ and $\epsilon'$ $\in$ $Pre(\gamma')$ such that
+          $\epsilon$ and $\epsilon'$ are {\bf mutually exclusive}.
       \end{enumerate}
     \end{vdefinition}
 
