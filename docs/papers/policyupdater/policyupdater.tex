@@ -48,22 +48,17 @@
         \paragraph{Identifiers.}
           The most basic unit of language $\cal{L}$ is an identifier.
           Identifiers are used to represent the different components of the
-          language. 
+          language.  
     
-          The first character of an identifier must be an alpha character
-          followed by 0 to 127 characters of alpha, digit or underscore
-          characters.
-
-          \begin{verbatim}[a-zA-Z]([a_zA-Z0-9_]){0,127}\end{verbatim}
-
           Identifiers are divided into three main classes:
 
           \begin{itemize}
             \item
-              $Entity$ $Identifiers$ represent entities that make up a logical
-              atom. They are further divided into three types, with each type
-              again divided into the $singular$ $entity$ and $group$ $entity$
-              categories:
+              $Entity$ $Identifiers$ represent constant entities that make up a
+              logical atom. They are divided further into three types, with
+              each type again divided into the $singular$ $entity$ and $group$
+              $entity$ categories:
+
               \begin{itemize}
                 \item
                   $Subjects$: privilege holders (e.g. alice, lecturers,
@@ -74,18 +69,77 @@
                   $Objects$: privilege entities (e.g. file, database,
                   directory).
               \end{itemize}
+
+              An entity identifier is defined as a lower-case alpha character,
+              followed by 0 to 127 characters of alpha, digit or underscore
+              characters. The following regular expression shows the syntax
+              of entity identifiers:
+
+              \begin{verbatim}[a-z]([a-zA-Z0-9_]{0,127}\end{verbatim}
+
             \item
-              $Policy$ $Update$ $Identifiers$ are used to name a policy
-              update definition or directive.
+              $Policy$ $Update$ $Identifiers$ are used for the sole purpose of
+              naming a policy update. These identifier names are then used as
+              labels to refer to policy update definitions and directives. As
+              labels, identifiers of this class occupies a different namespace
+              from entity identifiers. For this reason, policy update
+              identifiers share the same syntax with entity identifiers:
+
+              \begin{verbatim}[a-z]([a-zA-Z0-9_]{0,127}\end{verbatim}
+ 
             \item
               $Variable$ $Identifiers$ are used as entity identifier
-              place-holders in policy updates.
+              place-holers, and as such, are subject to the entity identifier
+              types. Variable identifiers are prefixed with 1 or 2 upper-case
+              characters to distinguish them from entity identifiers, followed
+              by a number composed of 1 to 6 digits. The upper-case characters
+              determines the type of the variable identifier. The following is
+              a list of regular expressions for each variable identifier type:
+
+              \begin{itemize}
+                \item
+                  Subject variables (singular and group)
+
+                  \begin{verbatim}S([0-9]){1,6}\end{verbatim}
+                \item
+                  Subject variables (singular)
+
+                  \begin{verbatim}SS([0-9]){1,6}\end{verbatim}
+                \item
+                  Subject variables (group)
+
+                  \begin{verbatim}SG([0-9]){1,6}\end{verbatim}
+                \item
+                  Access Right variables (singular and group)
+
+                  \begin{verbatim}A([0-9]){1,6}\end{verbatim}
+                \item
+                  Access Right variables (singular)
+
+                  \begin{verbatim}AS([0-9]){1,6}\end{verbatim}
+                \item
+                  Access Right variables (group)
+
+                  \begin{verbatim}AG([0-9]){1,6}\end{verbatim}
+                \item
+                  Object variables (singular and group)
+
+                  \begin{verbatim}O([0-9]){1,6}\end{verbatim}
+                \item
+                  Object variables (singluar)
+
+                  \begin{verbatim}OS([0-9]){1,6}\end{verbatim}
+                \item
+                  Object variables (group)
+
+                  \begin{verbatim}OG([0-9]){1,6}\end{verbatim}
+              \end{itemize}
           \end{itemize}
 
         \paragraph{Atoms.}
-          An atom is composed of a relation with 2 to 3 entity identifiers
-          that represent a logical relationship between the entities. There are
-          three types of atoms:
+          An atom is composed of a relation with 2 to 3 entity or variable
+          identifiers that represent a logical relationship between the
+          entities. There are three types of atoms:
 
           \begin{itemize}
             \item
@@ -109,6 +163,9 @@
               \begin{verbatim}subst(<grp1>, <grp2>)\end{verbatim}
           \end{itemize}
 
+          Atoms that contain no variables, i.e. composed entirely of entity
+          identifiers, are called $ground$ $atoms$.
+
         \paragraph{Facts.}
           A fact makes a claim that the relationship represented by an atom or
           its negation holds in the current context. Facts are negated by the
@@ -116,12 +173,19 @@
           syntax of a fact:
  
           \begin{verbatim}[!]<holds_atm>|<memb_atm>|<subst_atm>\end{verbatim}
+
+          Note that facts may be made up of atoms that contain variable
+          identifiers. Facts with no variable occurences are called $ground$
+          $facts$.
  
         \paragraph{Expressions.}
           An expression is either a fact, or a logical conjunction of facts,
           separated by the double-ampersand characters $\&\&$.
 
           \begin{verbatim}<fact1> [&& <fact2> [&& ...]]\end{verbatim}
+
+          Expressions that are made up of only ground facts are called $ground$
+          $expressions$.
 
       \subsubsection{Entity Identifier Declaration}
 
@@ -135,10 +199,11 @@
 
       \subsubsection{Initial State Definition}
 
-        The initial facts in the policy base can be defined by the following
-        syntax:
+        The initial facts of the policy base, facts that hold before any
+        policy updates are performed, are defined by using the following
+        definition syntax:
 
-        \begin{verbatim}initially <expression>;\end{verbatim}
+        \begin{verbatim}initially <ground-exp>;\end{verbatim}
 
       \subsubsection{Constraint Definition}
 
@@ -153,8 +218,9 @@
         of proof that an expression holds implies that the default expression
         holds.
 
-        Note that the conditional clauses $implied$ $by$ and $with$ $absence$
-        are optional.
+        It is important to note that the expressions $exp1$, $exp2$ and $exp3$
+        are non-ground expressions, which means identifiers within them may
+        be variables.
 
 \begin{verbatim}
 always <exp1>
@@ -174,17 +240,17 @@ always <exp1>
 \end{verbatim}
 
         $up\_ident$ is the policy update identifier to be used in referencing
-        this identifier. The optional $var\_ident$ list are the variable
-        identifiers occurring the expressions and will eventually be replaced
-        by entity identifiers when the update is referenced. The postcondition
-        expression $exp1$ is an expression that will hold in the state after
-        this update is applied. The expression $exp2$ is a precondition
-        expression that must hold in the current state before this update is
-        applied.
+        this policy update. The optional $var\_ident$ list are the variable
+        identifiers occurring the expressions $exp1$ and $exp2$ and will
+        eventually be replaced by entity identifiers when the update is
+        referenced. The postcondition expression $exp1$ is an expression that
+        will hold in the state after this update is applied. The expression
+        $exp2$ is a precondition expression that must hold in the current
+        state before this update is applied.
 
-        It is important to note that a defined policy update has no effect
-        whatsoever on the policy base until it is applied by one of the
-        directives described in the next section.
+        It is important to not that a policy base definition will have no
+        effect on the policy base until it is appled by one of the directives
+        described in the following section.
 
       \subsubsection{Policy Update Directives}
 
@@ -192,24 +258,22 @@ always <exp1>
         defined policy updates in the domain. The policy updates in the
         sequence list are applied to the current state of the policy base one
         at a time to produce a policy base state upon which queries can be
-        evaluated. The order in which the policy update references appear in
-        sequence list is the same order in which they were added.
+        evaluated. The policy updates are applied to the policy base in the
+        same order as they appear in the sequence list.
 
         The following four directives are the policy sequence manipulation
         features of language $\cal{L}$.
 
         \paragraph{Adding an Update into the Sequence.}
           Defined policy updates are added into the sequence list through the
-          syntax below.
+          use of the following directive:
 
           \begin{verbatim}seq add <up_ident>([<e_ident>[, ...]]);\end{verbatim}
 
           \noindent where $up\_ident$ is the identifier of a defined policy
           update and the $e\_ident$ list is a comma-separated list of entity
           identifiers that will replace the variable identifiers that occur in
-          the definition of the policy update. It is important to note that the
-          replacement of variable identifiers with entity identifiers is
-          dependent on the order in which they appear in the list.
+          the definition of the policy update. 
 
         \paragraph{Listing the Updates in the Sequence.}
           The following directive may be used to list the current contents of
@@ -231,8 +295,8 @@ always <exp1>
           The syntax below shows the directive to remove a policy update
           reference from the list. $n$ is the ordinal index of the policy
           update to be removed. Note that removing a policy update reference
-          from the sequence list may change the ordinal index of the other
-          update references.
+          from the sequence list may change the ordinal index of other update
+          references.
 
           \begin{verbatim}seq del <n>;\end{verbatim}
 
@@ -251,13 +315,13 @@ always <exp1>
 
         A query expression may be issued against the current state of the
         policy base. This current state is derived after all the updates in
-        the update sequence has been applied, one at a time, onto the initial
+        the update sequence has been applied, one at a time, upon the initial
         state. Query expressions are answered with a \emph{true}, \emph{false}
         or an \emph{unknown}, depending on whether the queried expression
         holds, its negation holds, or neither, respectively. Syntax is as
         follows:
 
-        \begin{verbatim}query <exp>;\end{verbatim} 
+        \begin{verbatim}query <ground-exp>;\end{verbatim} 
 
       \begin{example}
         The following language L program code listing shows the chinese-wall
@@ -296,21 +360,21 @@ always memb(db2, comp2);
 
 /* policy update definitions */
 
-req_read_comp1(SUB, OBJ)
+req_read_comp1(SS0, OS0)
   causes
-    holds(SUB, read, OBJ) &&
-    !holds(SUB, readable, comp2)
+    holds(SS0, read, OS0) &&
+    !holds(SS0, readable, comp2)
   if
-    memb(OBJ, comp1) &&
-    holds(SUB, readable, comp1);
+    memb(OS0, comp1) &&
+    holds(SS0, readable, comp1);
 
-req_read_comp2(SUB, OBJ)
+req_read_comp2(SS0, OS0)
   causes
-    holds(SUB, read, OBJ) &&
-    !holds(SUB, readable, comp1)
+    holds(SS0, read, OS0) &&
+    !holds(SS0, readable, comp1)
   if
-    memb(OBJ, comp2) &&
-    holds(SUB, readable, comp2);
+    memb(OS0, comp2) &&
+    holds(SS0, readable, comp2);
 
 /* sequence manipluation */
 
@@ -347,8 +411,8 @@ FALSE
             \begin{math}
               {\cal D}_{\cal L} = 
               \begin{cases}
-                \mbox{set of Initial State Facts $\alpha$} \\
-                \mbox{set of Constraint Rules $\beta$} \\
+                \mbox{set of Ground Initial State Facts $\alpha$} \\
+                \mbox{set of Ground Constraint Rules $\beta$} \\
                 \mbox{set of Policy Update Definitions $\gamma$}
               \end{cases}
             \end{math}
