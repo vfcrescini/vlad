@@ -2596,6 +2596,10 @@ if test "${with_smodels_src+set}" = set; then
 fi;
 
 if test "$with_smodels_src" != "" && test "$with_smodels_src" != "no"; then
+  cat >>confdefs.h <<\_ACEOF
+#define SMODELS 1
+_ACEOF
+
   SMODELS=1
 
   if test "$with_smodels_src" == "yes"; then

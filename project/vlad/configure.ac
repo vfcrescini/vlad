@@ -34,6 +34,7 @@ fi
 AC_ARG_WITH(smodels-src,AC_HELP_STRING([--with-smodels-src],[path to smodels source tree (default is disabled)]))
 
 if test "$with_smodels_src" != "" && test "$with_smodels_src" != "no"; then
+  AC_DEFINE(SMODELS,1)
   AC_SUBST(SMODELS,1)
   if test "$with_smodels_src" == "yes"; then
     AC_SUBST(SMODELS_PATH,[yes])
