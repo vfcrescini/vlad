@@ -135,10 +135,10 @@ BNF
 <trans-var-list>       : <var-identifier> | <var-identifier> <comma>
                          <trans-var-list>
 
-<policy-stmt>          : <policy-prop> <after-clause> <semicolon> |
-                         <policy-prop> <semicolon>
+<policy-stmt>          : <is-clause> <after-clause> <semicolon> |
+                         <is-clause> <semicolon>
 
-<policy-prop>          : <is> <ground-exp>
+<is-clause>            : <is> <ground-exp>
 
 <after-clause>         : <after> <trans-ref-list>
 
