@@ -1,5 +1,14 @@
 2003-06-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb.cpp :
+	* kb.h :
+	* symtab.cpp :
+	* symtab.h :
+	* wrapper.cpp :
+	* wrapper.h :
+
+	  - Added functions to retrieve symtab identifiers.
+
 	* lib/kb.cpp :
 	* lib/kb.h :
 	* lib/transtab.cpp :
