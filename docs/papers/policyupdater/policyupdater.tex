@@ -1675,7 +1675,9 @@ query holds(alice, read, file);
       The algorithms presented in this section shows how the language
       ${\cal L}$ policy stored in the data structures described in the previous
       section is translated into a normal logic program, how it can be updated
-      dynamically and how it can be manipulated to evaluate queries.
+      dynamically and how it can be manipulated to evaluate queries. The
+      flowchart in figure \ref{fig-2} gives an overview of the system
+      processes.
 
       \begin{figure}[ht]
         \begin{center}
@@ -1689,111 +1691,48 @@ query holds(alice, read, file);
 
         While constraints are in the process of being added into the
         constraints table, each variable identifier that occurs within each
-        constraint is grounded by replacing it with a set of constraints where
-        each instance of the variable is replaced by all entity identifiers
-        defined in the symbol table. Note that only those entity identifiers
-        that are valid in the fact are used as replacement (e.g. only singular
-        subject entity identifiers are used to replace an element variable
-        occuring in a subject member fact). This means each constraint with
-        variables are replaced by $n_0$ $\times$ $n_1$ $\times$ $\hdots$
-        $\times$ $n_m$ constraints, where $m$ is the number of distinct
-        variable occurences and $n_i$ ($0$ $\leq$ $i$ $\leq$ $m$) is the
-        number of entity identifiers of the same type as variable $i$.
+        constraint is grounded by replacing that constraint with a set of
+        constraints wherein each instance of the variable is replaced by all
+        entity identifiers defined in the symbol table. Note that only those
+        entity identifiers that are valid for each fact in the current
+        constraint are used to replace the variable (e.g. only singular subject entity
+        identifiers are used to replace an element variable occuring in a
+        subject member fact). 
 
-        \begin{example}
-          Given the symbol table below:
+        For example, given that the symbol table contains three singular
+        subject entity identifiers: $alice$, $bob$ and $charlie$, and the
+        following constraint:
 
-          \begin{quote}
-            \begin{tabular}[t]{|l|l|l|l|l|l|}
-              \hline
-              \textbf{ss} & \textbf{sa} & \textbf{so} & \textbf{sg} & \textbf{ag} & \textbf{og} \\
-              \hline
-              alice & read & file & students & & \\
-              bob & write & & & & \\
-              charlie & & & & & \\
-              \hline
-            \end{tabular}
-          \end{quote}
-
-          grounding the following constraint:
-
-          \begin{verbatim}
-  always holds(SS0, write, file)
+        \begin{verbatim}
+  always holds(SSUB, write, file)
     implied by
-      holds(SS0, read, file) &&
-      memb(SS0, students)
+      holds(SSUB, read, file) &&
+      memb(SSUB, students)
     with absence
-      !holds(SS0, write, file)
-          \end{verbatim}
+      !holds(SSUB, write, file)
+        \end{verbatim}
 
-          produces the following constraints table:
-
-          \begin{quote}
-            \begin{tabular}[t]{|l|l|l|}
-              \hline
-              % line 1
-              \multirow{4}{*}{0} &
-              \textbf{exp} &
-              $holds$($alice$, $write$, $file$) \\
-              \cline{2-3}
-              % line 2
-              & 
-              \multirow{2}{*}{\textbf{pcond}} &
-              $holds$($alice$, $read$, $file$), \\
-              % line 3
-              &
-              &
-              $memb$($alice$, $students$) \\
-              \cline{2-3}
-              % line 4
-              & \textbf{ncond} & $!holds$($alice$, $write$, $file$) \\
-              \hline
-              \hline
-              % line 1
-              \multirow{4}{*}{1} &
-              \textbf{exp} &
-              $holds$($bob$, $write$, $file$) \\
-              \cline{2-3}
-              % line 2
-              & 
-              \multirow{2}{*}{\textbf{pcond}} &
-              $holds$($bob$, $read$, $file$), \\
-              % line 3
-              &
-              &
-              $memb$($bob$, $students$) \\
-              \cline{2-3}
-              % line 4
-              & \textbf{ncond} & $!holds$($bob$, $write$, $file$) \\
-              \hline
-              \hline
-              % line 1
-              \multirow{4}{*}{2} &
-              \textbf{exp} &
-              $holds$($charlie$, $write$, $file$) \\
-              \cline{2-3}
-              % line 2
-              & 
-              \multirow{2}{*}{\textbf{pcond}} &
-              $holds$($charlie$, $read$, $file$), \\
-              % line 3
-              &
-              &
-              $memb$($charlie$, $students$) \\
-              \cline{2-3}
-              % line 4
-              & \textbf{ncond} & $!holds$($charlie$, $write$, $file$) \\
-              \hline
-            \end{tabular}
-          \end{quote}
-
-          Note that the subject group identifier $students$ is not used to
-          replace the variable $SS0$, since $memb$($students$, $students$) is
-          not a valid fact.
-
-        \end{example}
+        Grounding the constraint will yield three new constraints, each
+        replacing occurences of the variable $SSUB$ with $alice$, $bob$ and
+        $charlie$, respectively.
 
       \subsubsection{Policy Updates}
+
+        In the semantics section, it is shown that policy updates are performed
+        by treating each update as a constraint. This constraint is composed of
+        a premise, which are the preconditions in the current state and a 
+        consequent, which is the postcondition of the resulting state after the
+        application of the policy update. The resulting state in this procedure
+        represents the updated policy.
+
+        The most crucial step in performing a policy update is the translation
+        of the policy updates into normal logic program constraints. This step
+        involves identifying which policy updates are to be applied from the
+        update sequence table and then composing the required constraint from
+        the update definition the policy base. Once the policy update
+        constraints are composed, they are then treated as any other
+        constraint rules and are translated with the rest of the policy into
+        a normal logic program.
 
       \subsubsection{Translation to Normal Logic Program}
 
@@ -1812,25 +1751,21 @@ query holds(alice, read, file);
 
           The removal process is achieved by adding a boolean parameter to
           each fact to indicate whether the fact is classically negated or
-          not. For example, given the fact:
+          not. 
+
+          For example, given the fact:
 
           \begin{quote}
-            $holds$($alice$, $exec$, $file$)
+            $\lnot$ $holds$($alice$, $exec$, $file$)
           \end{quote}
 
-          this fact is now changed to:
-
-          \begin{quote}
-            $holds$($alice$, $exec$, $file$, $true$)
-          \end{quote}
-
-          with classical negation, the fact becomes:
+          To remove classical negation, this fact is replaced by:
 
           \begin{quote}
             $holds$($alice$, $exec$, $file$, $false$)
           \end{quote}
 
-          for consistency, the following constraint is added:
+          For consistency, the following constraint is added:
 
           \begin{quote}
             \begin{math}
@@ -1840,11 +1775,6 @@ query holds(alice, read, file);
               \end{aligned}
             \end{math}
           \end{quote}
-
-
-          As shown in the next section, the removal of classical negation from
-          facts of language $\cal{L}$ is achieved in the technique used in the
-          representation of facts.
 
         \paragraph{Representing Facts in Propositional Form.}
 
