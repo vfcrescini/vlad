@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <cstring>
 #include <new>
-  
+
 #include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/expression.h>

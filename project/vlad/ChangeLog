@@ -59,7 +59,7 @@
 
 	    to :
 
-	      holds(Se, A, O) <- holds(Sg, A, O) AND memb(Se, Sg) AND NOT 
+	      holds(Se, A, O) <- holds(Sg, A, O) AND memb(Se, Sg) AND NOT
 	      !holds(Se, A, O)
 
               holds(S, Ae, O) <- holds(S, Ag, O) AND memb(Ae, Ag) AND NOT
@@ -817,7 +817,7 @@
 	* kb/kb.cpp :
 	* kb/kb.h :
 
-	  - Fixed add_transtab(). 
+	  - Fixed add_transtab().
 
 	  - verify_atom() now checks both ground and non-ground atoms.
 
@@ -1236,14 +1236,14 @@
 	* parser/parser.y :
 	* parser/scanner.l :
 
-	  - Changed include directives to use stdc++ instead of stdc. Was 
+	  - Changed include directives to use stdc++ instead of stdc. Was
 	    causing "deprecated" warnings.
 
 	  - Changed to use new macro.
 
 	* main/Makefile.in :
 
-	  - Took out strip --strip-all. Apparently, not all versions of strip 
+	  - Took out strip --strip-all. Apparently, not all versions of strip
 	    support it.
 
 2003-02-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
@@ -1258,7 +1258,7 @@
 
 	* kb/atom.cpp :
 
-	  - Sanity checks to ensure that the identifiers given the 
+	  - Sanity checks to ensure that the identifiers given the
 	    init() functions are valid.
 
 2003-02-11  Vino Crescini  <jcrescin@cit.uws.edu.au>

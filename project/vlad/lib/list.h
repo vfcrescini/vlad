@@ -22,8 +22,8 @@ class list_item
 
 /*
  * simple list works like a queue, except the api allows the data to be
- * accessed given its ordinal index (the order in which it was added to the 
- * list). 
+ * accessed given its ordinal index (the order in which it was added to the
+ * list).
  */
 
 typedef struct list_node

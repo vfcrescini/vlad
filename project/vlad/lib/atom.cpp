@@ -50,10 +50,10 @@ bool atom::cmp(list_item *item)
 
   switch(type) {
     case VLAD_ATOM_HOLDS :
-      return 
+      return
         (truth == tmp->truth) &&
-        !strcmp(holds.subject, tmp->holds.subject) && 
-        !strcmp(holds.access, tmp->holds.access) && 
+        !strcmp(holds.subject, tmp->holds.subject) &&
+        !strcmp(holds.access, tmp->holds.access) &&
         !strcmp(holds.object, tmp->holds.object);
     case VLAD_ATOM_MEMBER :
       return
@@ -282,7 +282,7 @@ int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
   if ((*a = VLAD_NEW(atom())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  /* 
+  /*
    * at this level we don't really care if the identifiers are valid or not.
    * we simply replace strings from the first list with strings from the
    * second list.
@@ -412,11 +412,11 @@ int atom::reset()
     switch(type) {
       case VLAD_ATOM_HOLDS :
         if (holds.subject != NULL)
-          free(holds.subject); 
+          free(holds.subject);
         if (holds.access != NULL)
-          free(holds.access); 
+          free(holds.access);
         if (holds.object != NULL)
-          free(holds.object); 
+          free(holds.object);
         break;
       case VLAD_ATOM_MEMBER :
         if (member.element != NULL)

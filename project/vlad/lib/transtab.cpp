@@ -50,7 +50,7 @@ bool transdef::cmp(list_item *item)
   if (!tmp->initialised)
     return false;
 
-  /* 
+  /*
    * here we are only concerned about the name. if the names match,
    * then we consider the transformations equivalent.
    */
@@ -77,7 +77,7 @@ int transdef::init(const char *n, stringlist *v, expression *pr, expression *po)
   name = (char *) n;
   vlist = v;
   precond = pr;
-  postcond = po; 
+  postcond = po;
 
   initialised = true;
 
