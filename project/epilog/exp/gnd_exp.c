@@ -820,6 +820,14 @@ int gnd_exp_eval_holds_atom(ident_type sub,
   if ((tmp_res = gnd_exp_get_supergroups(obj, &tmp_obj, exp, 1)) != EPI_OK)
     return tmp_res;
 
+  /* we also need to add the identifiers themselves in the list */
+  if ((tmp_res = identlist_add(&tmp_sub, &sub)) != EPI_OK)
+    return tmp_res;
+  if ((tmp_res = identlist_add(&tmp_acc, &acc)) != EPI_OK)
+    return tmp_res;
+  if ((tmp_res = identlist_add(&tmp_obj, &obj)) != EPI_OK)
+    return tmp_res;
+
   /* now go through all the possible combinations of all three lists to
    * see if we find a match */
   for (i = 0; i < identlist_length(tmp_sub); i++) {
@@ -831,6 +839,15 @@ int gnd_exp_eval_holds_atom(ident_type sub,
       for (k = 0; k < identlist_length(tmp_obj); k++) {
         if ((tmp_res = identlist_get(tmp_obj, k, &(EPI_ATOM_HOLDS_OBJECT(tmp_atom)))) != EPI_OK)
           return tmp_res;
+
+	/* if all three identifiers are the original one, skip. we should only
+         * consider those atoms that can be derived, not those that are
+         * explicit */
+        if (ident_compare(*EPI_ATOM_HOLDS_SUBJECT(tmp_atom), sub) == 0 &&
+            ident_compare(*EPI_ATOM_HOLDS_ACCESS(tmp_atom), acc) == 0 &&
+            ident_compare(*EPI_ATOM_HOLDS_OBJECT(tmp_atom), obj) == 0)
+          continue;
+
         if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == EPI_OK) { 
           *ans = EPI_RESULT_TRUE;
           identlist_purge(&tmp_sub);

@@ -1,3 +1,11 @@
+2003-03-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/gnd_exp.c :
+
+	  - Fixed bug where a non-group identifier does not inherit
+	    the properties of its supergroup if the properties themselves
+	    are non-groups. See chinese-wall example.
+
 2002-12-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* parser/parser.y :
