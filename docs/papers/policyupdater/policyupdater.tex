@@ -62,7 +62,7 @@
               \begin{itemize}
                 \item
                   {\em Subjects}: privilege holders (e.g. alice, lecturers,
-                  students).
+                  grp).
                 \item
                   {\em Access Rights}: privilege (e.g. read, write, own).
                 \item
@@ -331,43 +331,49 @@ always <exp1>
           The following language ${\cal L}$ program code listing shows a simple
           rule-based document access control system scenario.
 
-          In this example, the subject $alice$ initially holds a $read$ access
-          right for the object $file$. The constraint states that if $alice$
-          has $read$ access for $file$, and it cannot be proven that $alice$ do
-          not have $write$ access for $file$, then $alice$ is granted $write$
-          access for $file$.
+          In this example, the subject $alice$ initially is a member of the
+          subject group $sudents$, which is holds a $read$ access right for the
+          object $file$. The constraint states that if the $grp$ group
+          has $read$ access for $file$, and no other information is present to
+          conclude that $grp$ do not have $write$ access for $file$, then
+          the $grp$ group is granted $write$ access for $file$.
 
           \begin{verbatim}
 /* entity identifier definitions */
 
 ident sub alice;
+ident sub-grp grp;
 ident acc read, write;
 ident obj file;
 
 /* initial fact definitions */
 
-initially holds(alice, read, file);
+initially 
+  memb(alice, grp) &&
+  holds(grp, read, file);
 
 /* constraint definitions */
 
-always holds(alice, write, file) 
+always holds(grp, write, file)
   implied by
-    holds(alice, read, file)
+    holds(grp, read, file)
   with absence
-    !holds(alice, write, file);
+    !holds(grp, write, file);
 
 /* policy update definitions */
 
-delete_read(SS0, OS0)
-  causes !holds(SS0, read,  OS0);
+delete_read(SG0, OS0)
+  causes !holds(SG0, read,  OS0);
 
 /* sequence manipluation directives */
 
-seq add delete_read(alice, file);
+seq add delete_read(grp, file);
 compute;
 
 /* query directives */
 
+query holds(grp, write, file);
+query holds(grp, read, file);
 query holds(alice, write, file);
 query holds(alice, read, file);
           \end{verbatim}
@@ -981,9 +987,115 @@ query holds(alice, read, file);
             \end{quote}
 
         \begin{example}
-          [Language ${\cal L}$ program in Example1 translated into
-          ${\cal L}^{*}$.]
+          The following shows the language ${\cal L}$ program listing in
+          Example1,  translated into language ${\cal L}^{*}$.
 
+          % initial facts
+          $\hat{memb}$($alice$, $grp$, $S_{0}$)
+
+          $\hat{holds}$($grp$, $read$, $file$,$S_{0}$)
+
+          % constraints (S0)
+          $\hat{holds}$($grp$, $write$, $file$, $S_{0}$) $\leftarrow$
+          $\hat{holds}$($grp$, $read$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($student$, $write$, $file$, $S_{0}$)
+
+          % constraints (S1)
+          $\hat{holds}$($grp$, $write$, $file$, $S_{1}$) $\leftarrow$
+          $\hat{holds}$($grp$, $read$, $file$, $S_{1}$),
+          $not$ $\lnot$ $\hat{holds}$($student$, $write$, $file$, $S_{1}$)
+
+          % policy update
+          $\lnot$ $\hat{holds}$($grp$, $read$, $file$, $S_{1}$) $\leftarrow$
+
+          % inertial rules (positive, read, S0)
+          $\hat{holds}$($alice$, $read$, $file$, $S_{0}$) $\leftarrow$
+          $\hat{holds}$($grp$, $read$, $file$, $S_{0}$),
+          $\hat{memb}$($alice$, $grp$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $S_{0}$)
+
+          % inertial rules (negative, read, S0)
+          $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $S_{0}$) $\leftarrow$
+          $\lnot$ $\hat{holds}$($grp$, $read$, $file$, $S_{0}$),
+          $\hat{memb}$($alice$, $grp$, $S_{0}$)
+
+          % inertial rules (positive, write, S0)
+          $\hat{holds}$($alice$, $write$, $file$, $S_{0}$) $\leftarrow$
+          $\hat{holds}$($grp$, $write$, $file$, $S_{0}$),
+          $\hat{memb}$($alice$, $grp$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $S_{0}$)
+
+          % inertial rules (negative, write, S0)
+          $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $S_{0}$) $\leftarrow$
+          $\lnot$ $\hat{holds}$($grp$, $write$, $file$, $S_{0}$),
+          $\hat{memb}$($alice$, $grp$, $S_{0}$)
+
+          % inertial rules (positive, read, S1)
+          $\hat{holds}$($alice$, $read$, $file$, $S_{1}$) $\leftarrow$
+          $\hat{holds}$($grp$, $read$, $file$, $S_{1}$),
+          $\hat{memb}$($alice$, $grp$, $S_{1}$),
+          $not$ $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $S_{1}$)
+
+          % inertial rules (negative, read, S1)
+          $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $S_{1}$) $\leftarrow$
+          $\lnot$ $\hat{holds}$($grp$, $read$, $file$, $S_{1}$),
+          $\hat{memb}$($alice$, $grp$, $S_{1}$)
+
+          % inertial rules (positive, write, S1)
+          $\hat{holds}$($alice$, $write$, $file$, $S_{1}$) $\leftarrow$
+          $\hat{holds}$($grp$, $write$, $file$, $S_{1}$),
+          $\hat{memb}$($alice$, $grp$, $S_{1}$),
+          $not$ $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $S_{1}$)
+
+          % inertial rules (negative, write, S1)
+          $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $S_{1}$) $\leftarrow$
+          $\lnot$ $\hat{holds}$($grp$, $write$, $file$, $S_{1}$),
+          $\hat{memb}$($alice$, $grp$, $S_{1}$)
+
+          % no transitivity rules
+
+          % inertial rules
+          $\hat{holds}$($alice$, $read$, $file$, $S_{1}$) $\leftarrow$
+          $\hat{holds}$($alice$, $read$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $S_{1}$)
+
+          $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $S_{1}$) $\leftarrow$
+          $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $S_{1}$)
+
+          $\hat{holds}$($alice$, $write$, $file$, $S_{1}$) $\leftarrow$
+          $\hat{holds}$($alice$, $write$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $S_{1}$)
+
+          $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $S_{1}$) $\leftarrow$
+          $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $S_{1}$)
+
+
+          $\hat{holds}$($grp$, $read$, $file$, $S_{1}$) $\leftarrow$
+          $\hat{holds}$($grp$, $read$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($grp$, $read$, $file$, $S_{1}$)
+
+          $\lnot$ $\hat{holds}$($grp$, $read$, $file$, $S_{1}$) $\leftarrow$
+          $\lnot$ $\hat{holds}$($grp$, $read$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($grp$, $read$, $file$, $S_{1}$)
+
+          $\hat{holds}$($grp$, $write$, $file$, $S_{1}$) $\leftarrow$
+          $\hat{holds}$($grp$, $write$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($grp$, $write$, $file$, $S_{1}$)
+
+          $\lnot$ $\hat{holds}$($grp$, $write$, $file$, $S_{1}$) $\leftarrow$
+          $\lnot$ $\hat{holds}$($grp$, $write$, $file$, $S_{0}$),
+          $not$ $\lnot$ $\hat{holds}$($grp$, $write$, $file$, $S_{1}$)
+
+
+          $\hat{memb}$($alice$, $grp$, $S_{1}$) $\leftarrow$
+          $\hat{memb}$($alice$, $grp$, $S_{0}$),
+          $not$ $\lnot$ $\hat{memb}$($alice$, $grp$, $S_{1}$)
+         
+          $\lnot$ $\hat{memb}$($alice$, $grp$, $S_{1}$) $\leftarrow$
+          $\lnot$ $\hat{memb}$($alice$, $grp$, $S_{0}$),
+          $not$ $\hat{memb}$($alice$, $grp$, $S_{1}$)
         \end{example}
 
       \subsection{Evaluation}
