@@ -428,26 +428,26 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(s); i++) {
-    unsigned int i_group;
+    unsigned int i_grp;
     /* subject groups */
-    for (i_group = 0; i_group < sg_len; i_group++)
+    for (i_grp = 0; i_grp < sg_len; i_grp++)
       fprintf(f,
               "  %d %s %s\n",
-              (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * sg_len) + i_group,
+              compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp, i_grp),
               VLAD_STR_ARROW,
               VLAD_STR_TRUE);
     /* access groups */
-    for (i_group = 0; i_group < ag_len; i_group++)
+    for (i_grp = 0; i_grp < ag_len; i_grp++)
       fprintf(f,
               "  %d %s %s\n",
-              (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * ag_len) + i_group,
+              compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp, i_grp),
               VLAD_STR_ARROW,
               VLAD_STR_TRUE);
     /* object groups */
-    for (i_group = 0; i_group < og_len; i_group++)
+    for (i_grp = 0; i_grp < og_len; i_grp++)
       fprintf(f,
               "  %d %s %s\n",
-              (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * og_len) + i_group,
+              compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp, i_grp),
               VLAD_STR_ARROW,
               VLAD_STR_TRUE);
   }
@@ -477,11 +477,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
               fprintf(f,
                       "  %d %s %d %s %d\n",
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp1 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj),
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp2 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_grp2 + s_len, i_acc, i_obj),
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2);
+                      compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2));
             }
           }
         }
@@ -495,11 +495,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
               fprintf(f,
                       "  %d %s %d %s %d\n",
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp1 + a_len) * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj),
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp2 + a_len) * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_sub, i_grp2 + a_len, i_obj),
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * ag_len) + i_grp2);
+                      compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2));
             }
           }
         }
@@ -513,11 +513,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
               fprintf(f,
                       "  %d %s %d %s %d\n",
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp1 + o_len,
+                      compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len),
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp2 + o_len,
+                      compute_holds(i, i_truth, i_sub, i_acc, i_grp2 + o_len),
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * og_len) + i_grp2);
+                      compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2));
             }
           }
         }     
@@ -532,11 +532,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
               fprintf(f,
                       "  %d %s %d %s %d\n",
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_sub, i_acc, i_obj),
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp1 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj),
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_grp1);
+                      compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1));
             }
           }
         }
@@ -548,11 +548,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
               fprintf(f,
                       "  %d %s %d %s %d\n",
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_sub, i_acc, i_obj),
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp1 + a_len) * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj),
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_grp1);
+                      compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1));
             }
           }
         }
@@ -564,11 +564,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             for (i_obj = 0; i_obj < o_len; i_obj++) {
               fprintf(f,
                       "  %d %s %d %s %d\n",
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
+                      compute_holds(i, i_truth, i_sub, i_acc, i_obj),
                       VLAD_STR_ARROW,
-                      (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp1 + o_len,
+                      compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len),
                       VLAD_STR_AND,
-                      (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_grp1);
+                      compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1));
             }
           }
         }
@@ -594,11 +594,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
           fprintf(f,
                   "  %d %s %d %s %d\n",
-                  (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp3,
+                  compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp3),
                   VLAD_STR_ARROW,
-                  (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2,
+                  compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2),
                   VLAD_STR_AND,
-                  (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp2 * sg_len) + i_grp3);
+                  compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp2, i_grp3));
         }
       }
     }
@@ -611,11 +611,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             continue;
           fprintf(f,
                   "  %d %s %d %s %d\n",
-                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp3,
-                 VLAD_STR_ARROW,
-                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp2,
-                 VLAD_STR_AND,
-                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp2 * sg_len) + i_grp3);
+                  compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp3),
+                  VLAD_STR_ARROW,
+                  compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2),
+                  VLAD_STR_AND,
+                  compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp2, i_grp3));
         }
       }
     }
@@ -628,11 +628,11 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             continue;
           fprintf(f,
                   "  %d %s %d %s %d\n",
-                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp3,
-                 VLAD_STR_ARROW,
-                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp2,
-                 VLAD_STR_AND,
-                 (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp2 * sg_len) + i_grp3);
+                  compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp3),
+                  VLAD_STR_ARROW,
+                  compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2),
+                  VLAD_STR_AND,
+                  compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp2, i_grp3));
         }
       }
     }
@@ -649,9 +649,9 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
               "  %s %s %d %s %d\n",
               VLAD_STR_FALSE,
               VLAD_STR_ARROW,
-              (i * pos_tot * 2) + i_atom + pos_tot,
+              compute_atom(i, true, i_atom),
               VLAD_STR_AND,
-              (i * pos_tot * 2) + i_atom);
+              compute_atom(i, false, i_atom));
     }
   }
 
@@ -664,20 +664,20 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
       fprintf(f,
               "  %d %s %d %s %s %d\n",
-              ((i + 1) * pos_tot * 2) + i_atom + pos_tot,
+              compute_atom(i + 1, true, i_atom),
               VLAD_STR_ARROW,
-              (i * pos_tot * 2) + i_atom + pos_tot,
+              compute_atom(i, true, i_atom),
               VLAD_STR_AND,
               VLAD_STR_NOT,
-              ((i + 1) * pos_tot * 2) + i_atom);
+              compute_atom(i + 1, false, i_atom));
       fprintf(f,
               "  %d %s %d %s %s %d\n",
-              ((i + 1) * pos_tot * 2) + i_atom,
+              compute_atom(i + 1, false, i_atom),
               VLAD_STR_ARROW,
-              (i * pos_tot * 2) + i_atom,
+              compute_atom(i, false, i_atom),
               VLAD_STR_AND,
               VLAD_STR_NOT,
-              ((i + 1) * pos_tot * 2) + i_atom + pos_tot);
+              compute_atom(i + 1, true, i_atom));
     }
   }
 
@@ -841,25 +841,25 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(s); i++) {
-    unsigned int i_group;
+    unsigned int i_grp;
     /* subject groups */
-    for (i_group = 0; i_group < sg_len; i_group++) {
+    for (i_grp = 0; i_grp < sg_len; i_grp++) {
       unsigned int tmp_num;
-      tmp_num = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * sg_len) + i_group;
+      tmp_num = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp, i_grp);
       if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
         return retval;
     }
     /* access groups */
-    for (i_group = 0; i_group < ag_len; i_group++) {
+    for (i_grp = 0; i_grp < ag_len; i_grp++) {
       unsigned int tmp_num;
-      tmp_num = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * ag_len) + i_group;
+      tmp_num = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp, i_grp);
       if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
         return retval;
     }
     /* object groups */
-    for (i_group = 0; i_group < og_len; i_group++) {
+    for (i_grp = 0; i_grp < og_len; i_grp++) {
       unsigned int tmp_num;
-      tmp_num = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_group * og_len) + i_group;
+      tmp_num = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp, i_grp);
       if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
         return retval;
     }
@@ -895,9 +895,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp1 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp2 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2;
+              tmp_num1 = compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj);
+              tmp_num2 = compute_holds(i, i_truth, i_grp2 + s_len, i_acc, i_obj);
+              tmp_num3 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2);
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);
@@ -925,9 +925,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp1 + a_len) * (o_len + og_len)) + i_obj;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp2 + a_len) * (o_len + og_len)) + i_obj;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * ag_len) + i_grp2;
+              tmp_num1 = compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj);
+              tmp_num2 = compute_holds(i, i_truth, i_sub, i_grp2 + a_len, i_obj);
+              tmp_num3 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2);
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);
@@ -955,9 +955,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp1 + o_len;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp2 + o_len;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * og_len) + i_grp2;
+              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len); 
+              tmp_num2 = compute_holds(i, i_truth, i_sub, i_acc, i_grp2 + o_len);
+              tmp_num3 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2);
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);
@@ -986,9 +986,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_grp1 + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_grp1;
+              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
+              tmp_num2 = compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj);
+              tmp_num3 = compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1);
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);
@@ -1014,9 +1014,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_grp1 + a_len) * (o_len + og_len)) + i_obj;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_grp1;
+              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
+              tmp_num2 = compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj);
+              tmp_num3 = compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1);
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);
@@ -1042,9 +1042,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_grp1 + o_len;
-              tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_grp1;
+              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
+              tmp_num2 = compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len);
+              tmp_num3 = compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1);
 
               tmp_list->add(tmp_num2);
               tmp_list->add(tmp_num3);
@@ -1086,9 +1086,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
             return VLAD_MALLOCFAILED;
 
-          tmp_num1 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp3;
-          tmp_num2 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2;
-          tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp2 * sg_len) + i_grp3;
+          tmp_num1 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp3);
+          tmp_num2 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2);
+          tmp_num3 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp2, i_grp3);
 
           tmp_list->add(tmp_num2);
           tmp_list->add(tmp_num3);
@@ -1119,9 +1119,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
             return VLAD_MALLOCFAILED;
 
-          tmp_num1 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp3,
-          tmp_num2 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp2;
-          tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp2 * sg_len) + i_grp3;
+          tmp_num1 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp3);
+          tmp_num2 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2);
+          tmp_num3 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp2, i_grp3);
 
           tmp_list->add(tmp_num2);
           tmp_list->add(tmp_num3);
@@ -1152,9 +1152,9 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
             return VLAD_MALLOCFAILED;
 
-          tmp_num1 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp3;
-          tmp_num2 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp2;
-          tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp2 * sg_len) + i_grp3;
+          tmp_num1 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp3);
+          tmp_num2 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2);
+          tmp_num3 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp2, i_grp3);
 
           tmp_list->add(tmp_num2);
           tmp_list->add(tmp_num3);
@@ -1179,8 +1179,8 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
       if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
         return VLAD_MALLOCFAILED;
 
-      tmp_list->add((i * pos_tot * 2) + i_atom + pos_tot);
-      tmp_list->add((i * pos_tot * 2) + i_atom);
+      tmp_list->add(compute_atom(i, true, i_atom));
+      tmp_list->add(compute_atom(i, false, i_atom));
 
       if ((retval = wrap->add_axiom(tmp_list, false)) != VLAD_OK)
         return retval;
@@ -1199,16 +1199,16 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
       unsigned int tmp_num2;
       unsigned int tmp_num3;
 
-      tmp_num1 = ((i + 1) * pos_tot * 2) + i_atom + pos_tot;
-      tmp_num2 = (i * pos_tot * 2) + i_atom + pos_tot;
-      tmp_num3 = ((i + 1) * pos_tot * 2) + i_atom;
+      tmp_num1 = compute_atom(i + 1, true, i_atom);
+      tmp_num2 = compute_atom(i, true, i_atom);
+      tmp_num3 = compute_atom(i + 1, false, i_atom);
 
       if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
         return retval;
 
-      tmp_num1 = ((i + 1) * pos_tot * 2) + i_atom;
-      tmp_num2 = (i * pos_tot * 2) + i_atom;
-      tmp_num3 = ((i + 1) * pos_tot * 2) + i_atom + pos_tot;
+      tmp_num1 = compute_atom(i + 1, false, i_atom);
+      tmp_num2 = compute_atom(i, false, i_atom);
+      tmp_num3 = compute_atom(i + 1, true, i_atom);
 
       if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
         return retval;
@@ -1979,4 +1979,46 @@ int kb::decode_atom(atom **a, unsigned int *s, unsigned int n)
   }
 
   return VLAD_OK;
+}
+
+/* returns an atom id based on the info given */
+unsigned int kb::compute_atom(unsigned int a_st, bool a_tr, unsigned int a_atm)
+{
+  return (a_st * pos_tot * 2) + (a_tr ? pos_tot : 0) + a_atm;
+}
+
+/* returns a holds atom id based on the info given */
+unsigned int kb::compute_holds(unsigned int a_st, bool a_tr, unsigned int a_sub, unsigned int a_acc, unsigned int a_obj)
+{
+  return compute_atom(a_st, a_tr, (a_sub * (a_len + ag_len) * (o_len + og_len)) + (a_acc * (o_len + og_len)) + a_obj);
+}
+
+/* returns a member atom id based on the info given */
+unsigned int kb::compute_member(unsigned int a_st, bool a_tr, char a_ty, unsigned int a_elt, unsigned int a_grp)
+{
+  switch(a_ty) {
+    case VLAD_IDENT_SUBJECT :
+      return compute_atom(a_st, a_tr, h_tot + (a_elt * sg_len) + a_grp);
+    case VLAD_IDENT_ACCESS :
+      return compute_atom(a_st, a_tr, h_tot + (sg_len * sg_len) + (a_elt * ag_len) + a_grp);
+    case VLAD_IDENT_OBJECT :
+      return compute_atom(a_st, a_tr, h_tot + (sg_len * sg_len) + (ag_len + ag_len) + (a_elt * og_len) + a_grp);
+  }
+
+  return 0;
+}
+
+/* returns a subset atom id based on the info given */
+unsigned int kb::compute_subset(unsigned int a_st, bool a_tr, char a_ty, unsigned int a_grp1, unsigned int a_grp2)
+{
+  switch(a_ty) {
+    case VLAD_IDENT_SUBJECT :
+      return compute_atom(a_st, a_tr, h_tot + m_tot + (a_grp1 * sg_len) + a_grp2);
+    case VLAD_IDENT_ACCESS :
+      return compute_atom(a_st, a_tr, h_tot + m_tot + (sg_len * sg_len) + (a_grp1 * ag_len) + a_grp2);
+    case VLAD_IDENT_OBJECT :
+      return compute_atom(a_st, a_tr, h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (a_grp1 * og_len) + a_grp2);
+  }
+
+  return 0;
 }
