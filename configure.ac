@@ -102,7 +102,7 @@ fi
 # --enable-wrapper
 AC_ARG_ENABLE(wrapper,AC_HELP_STRING([--enable-wrapper],[enable C-interface wrapper (default is disabled)]))
 
-if test "X$enable_wrapper" != "x" && test "x$enable_wrapper" != "xno"; then
+if test "x$enable_wrapper" != "x" && test "x$enable_wrapper" != "xno"; then
   AC_DEFINE(WRAPPER,[yes])
   AC_SUBST(WRAPPER,[yes])
 fi
