@@ -148,7 +148,10 @@
 
         The constraint syntax below shows that for any state of the policy
         base, expression $exp1$ holds if expression $exp2$ is true and there
-        is no evidence that $exp3$ is true.
+        is no evidence that $exp3$ is true. The $with$ $absence$ clause allows
+        constraints to behave like default propositions, where the absence
+        of proof that an expression holds implies that the default expression
+        holds.
 
         Note that the conditional clauses $implied$ $by$ and $with$ $absence$
         are optional.
@@ -220,8 +223,8 @@ always <exp1>
           \begin{verbatim}<n> <up_ident>([e_ident[, ...]])\end{verbatim}
 
           \noindent where $n$ is the ordinal index of the policy update within
-          the sequence list starting at 0. $up_ident$ is the policy update
-          identifier and the $e_ident$ list is the list of entity identifiers
+          the sequence list starting at 0. $up\_ident$ is the policy update
+          identifier and the $e\_ident$ list is the list of entity identifiers
           used to replace the variable identifier place-holders.
 
         \paragraph{Removing an Update from the Sequence.}
@@ -236,7 +239,7 @@ always <exp1>
         \paragraph{Computing after a Policy Update.}
 
           The policy updates in the sequence list does not get applied until
-          the compute directive is issued. The directive causes the policy
+          the $compute$ directive is issued. The directive causes the policy
           update references in the sequence list to be applied one at a time in
           the same order that they appear in the list. The directive also
           causes the system to generate the policy base models against which
