@@ -80,7 +80,7 @@ int transref::get(char **n, stringlist **il)
 #ifdef DEBUG
 void transref::print(char *s)
 {
-  char tmps[1024];
+  char tmps[VLAD_MAXLEN_STR];
 
   if (initialised) {
     strcpy(tmps, "");
@@ -145,7 +145,7 @@ int sequence::get(unsigned int i, char **n, stringlist **il)
 void sequence::print(char *s)
 {
   unsigned int i;
-  char tmps[1024];
+  char tmps[VLAD_MAXLEN_STR];
   transref *tmpr;
 
   strcpy(s, "");

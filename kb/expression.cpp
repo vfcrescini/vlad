@@ -78,7 +78,7 @@ int expression::replace(stringlist *vlist, stringlist *ilist, expression **e)
 void expression::print(char *s)
 {
   unsigned int i;
-  char tmps[128];
+  char tmps[VLAD_MAXLEN_STR];
   atom *tmpa;
 
   strcpy(s, "");
