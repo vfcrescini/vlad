@@ -74,3 +74,6 @@ is memb(bob, scientists)
   after become_astrologer(bob), become_biologist(bob);
 
 is subst(astrologers, scientists);
+is subst(biologists, scientists);
+is !subst(astrologers, scientists);
+is !subst(biologists, scientists);
