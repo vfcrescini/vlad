@@ -67,23 +67,8 @@ int transdef_copy(transdef_type **trans2, transdef_type trans1)
                       trans1.postcond);
 }
 
-/* frees this trans and the name */
-int transdef_destroy(transdef_type *trans)
-{
-  if (trans == NULL)
-    return -1;
-
-  if (trans->name != NULL)
-   free(trans->name);
-
-  free(trans);
-  trans = NULL;
-
-  return 0;
-}
-
 /* frees this trans and all its members */
-int transdef_destroy_all(transdef_type *trans)
+int transdef_destroy(transdef_type *trans)
 {
   if (trans == NULL)
     return -1;

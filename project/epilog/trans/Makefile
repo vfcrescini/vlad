@@ -3,7 +3,7 @@
 TOPSRCDIR = ..
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libtrans.a
-INCLUDES = transdef.h transref.h transdeflist.h transreflist.h
+INCLUDES = transdef.h transref.h transtab.h translist.h
 
 ifdef DEBUG
 CFLAGS += -g -DDEBUG
@@ -23,8 +23,8 @@ public : $(TARGETS)
 	ln -sf ../trans/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libtrans.a : transdef.o transref.o transdeflist.o transreflist.o
-	$(AR) -rcs $(@) transdef.o transref.o transdeflist.o transreflist.o
+libtrans.a : transdef.o transref.o transtab.o translist.o
+	$(AR) -rcs $(@) transdef.o transref.o transtab.o translist.o
 
 transdef.o : transdef.c transdef.h
 	$(CC) $(CFLAGS) -o $(@) -c transdef.c
@@ -32,11 +32,11 @@ transdef.o : transdef.c transdef.h
 transref.o : transref.c transref.h
 	$(CC) $(CFLAGS) -o $(@) -c transref.c
 
-transdeflist.o : transdeflist.c transdeflist.h transdef.h
-	$(CC) $(CFLAGS) -o $(@) -c transdeflist.c
+transtab.o : transtab.c transtab.h transdef.h
+	$(CC) $(CFLAGS) -o $(@) -c transtab.c
 
-transreflist.o : transreflist.c transreflist.h transref.h
-	$(CC) $(CFLAGS) -o $(@) -c transreflist.c
+translist.o : translist.c translist.h transref.h
+	$(CC) $(CFLAGS) -o $(@) -c translist.c
 
 clean :
 	$(RM) $(TARGETS) *.o

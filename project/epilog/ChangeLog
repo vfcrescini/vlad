@@ -1,5 +1,18 @@
 2002-09-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* trans/Makefile :
+	* trans/transdef.c :
+	* trans/transdef.h :
+	* trans/transdeflist.c :
+	* trans/transdeflist.h :
+	* trans/transreflist.c :
+	* trans/transreflist.h :
+
+	  - Renamed transdeflist with transtab. Also defined the list
+	    internally.
+
+	  - Renamed transreflist with translist.
+
 	* ident/Makefile :
 	* ident/identlist.c :
 	* ident/identlist.h :
