@@ -43,5 +43,6 @@
 /* convenience macro(s) */
 #define VLAD_ADT_MALLOC(X)    ((X *) malloc(sizeof(X)))
 #define VLAD_STRING_MALLOC(X) ((char *) malloc(sizeof(char) * (strlen(X) + 1)))
+#define VLAD_NEW(X)           (new(std::nothrow) X)
 
 #endif

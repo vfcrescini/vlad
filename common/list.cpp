@@ -3,8 +3,7 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#include <stdlib.h>
-#include <new.h>
+#include <cstdlib>
 
 #include <config.h>
 #include <vlad.h>

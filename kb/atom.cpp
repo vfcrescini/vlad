@@ -3,8 +3,9 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#include <stdlib.h>
-#include <new.h>
+#include <cstdlib>
+#include <cstddef>
+#include <new>
 
 #include <config.h>
 #include <vlad.h>
@@ -120,7 +121,7 @@ int atom::init_holds(identifier *s, identifier *a, identifier *o, bool t)
       !VLAD_IDENT_IS_OBJECT(*o))
     return VLAD_INVALIDINPUT;
 
-  if ((holds =  new(nothrow) holds_atom(s, a, o)) == NULL)
+  if ((holds =  VLAD_NEW(holds_atom(s, a, o))) == NULL)
     return VLAD_MALLOCFAILED;
 
   type = VLAD_ATOM_HOLDS;
@@ -139,7 +140,7 @@ int atom::init_member(identifier *e, identifier *g, bool t)
       VLAD_IDENT_BASETYPE(*e) != VLAD_IDENT_BASETYPE(*g))
     return VLAD_INVALIDINPUT;
 
-  if ((member = new(nothrow) member_atom(e, g)) == NULL)
+  if ((member = VLAD_NEW(member_atom(e, g))) == NULL)
     return VLAD_MALLOCFAILED;
 
   type = VLAD_ATOM_MEMBER;
@@ -158,7 +159,7 @@ int atom::init_subset(identifier *g1, identifier *g2, bool t)
       VLAD_IDENT_BASETYPE(*g1) != VLAD_IDENT_BASETYPE(*g2))
     return VLAD_INVALIDINPUT;
 
-  if ((subset = new(nothrow) subset_atom(g1, g2)) == NULL)
+  if ((subset = VLAD_NEW(subset_atom(g1, g2))) == NULL)
     return VLAD_MALLOCFAILED;
 
   type = VLAD_ATOM_MEMBER;

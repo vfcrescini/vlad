@@ -3,9 +3,10 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
 #include <getopt.h>
 
 #include <config.h>

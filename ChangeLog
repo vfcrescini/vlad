@@ -1,3 +1,30 @@
+2003-02-18  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* configure :
+	* configure.ac :
+
+	  - Fixed CFLAGS/CXXFLAGS = -L..\lib to -L../lib
+
+	* common/vlad.h :
+
+	  - Added a macro for new(nothrow)
+
+	  - Changed new(nothrow) to new(std::nothrow) to keep gcc happy.
+
+	* common/list.cpp :
+	* kb/atom.cpp :
+	* kb/identifier.cpp :
+	* kb/symtab.cpp :
+	* main/Makefile.in :
+	* main/vlad.cpp :
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Changed include directives to use stdc++ instead of stdc. Was 
+	    causing "deprecated" warnings.
+
+	  - Changed to use new macro.
+
 2003-02-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* README :
@@ -279,3 +306,4 @@
 	* ChangeLog :
 
 	  - Changelog started.
+
