@@ -77,7 +77,7 @@ void transref::print(char *s)
 }
 #endif
 
-transreflist::transreflist(const char *n) : list(n, false)
+transreflist::transreflist() : list(false)
 {
 }
 
@@ -160,7 +160,7 @@ bool query::cmp(list_item *item)
   return true;
 }
 
-querytab::querytab(const char *n) : list(n, true)
+querytab::querytab() : list(true)
 {
 }
 

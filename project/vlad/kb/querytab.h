@@ -29,7 +29,7 @@ class transref : public list_item
 class transreflist : public list
 {
    public :
-     transreflist(const char *n);
+     transreflist();
      ~transreflist();
      /* add pre-malloc'ed transref */
      int add(transref *t);
@@ -53,7 +53,7 @@ class query : public list_item
 class querytab : public list
 {
   public :
-    querytab(const char *n);
+    querytab();
     ~querytab();
     int add(expression *p, transreflist *r);
 } ;

@@ -12,7 +12,7 @@
 #include <vlad.h>
 #include <expression.h>
 
-expression::expression(const char *n) : list(n, true)
+expression::expression() : list(true)
 {
 }
 

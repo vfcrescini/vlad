@@ -514,7 +514,7 @@ trans_var_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
-    if (($$ = VLAD_NEW(stringlist(NULL))) == NULL) {
+    if (($$ = VLAD_NEW(stringlist())) == NULL) {
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
@@ -578,7 +578,7 @@ trans_ref_list :
   trans_ref_def {
     int retval;
 
-    if (($$ = VLAD_NEW(transreflist(NULL))) == NULL) {
+    if (($$ = VLAD_NEW(transreflist())) == NULL) {
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
@@ -628,7 +628,7 @@ trans_ref_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
-    if (($$ = VLAD_NEW(stringlist(NULL))) == NULL) {
+    if (($$ = VLAD_NEW(stringlist())) == NULL) {
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
@@ -657,7 +657,7 @@ expression :
   boolean_atom { 
     int retval;
 
-    if (($$ = VLAD_NEW(expression(NULL))) == NULL) {
+    if (($$ = VLAD_NEW(expression())) == NULL) {
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }

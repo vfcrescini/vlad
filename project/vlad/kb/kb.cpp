@@ -59,21 +59,21 @@ int kb::init()
   if (itable != NULL)
     delete itable;
 
-  if ((itable = VLAD_NEW(expression("initial state table"))) == NULL)
+  if ((itable = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* constraints table */
   if (ctable != NULL)
     delete ctable;
 
-  if ((ctable = VLAD_NEW(consttab("constraint table"))) == NULL)
+  if ((ctable = VLAD_NEW(consttab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* transformation declaration table */
   if (ttable != NULL)
     delete ttable;
 
-  if ((ttable = VLAD_NEW(transtab("tranformation declaration table"))) == NULL)
+  if ((ttable = VLAD_NEW(transtab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* query table */
@@ -81,7 +81,7 @@ int kb::init()
   if (qtable != NULL)
     delete qtable;
 
-  if ((qtable = VLAD_NEW(querytab("query table"))) == NULL)
+  if ((qtable = VLAD_NEW(querytab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   stage = 1;
@@ -185,11 +185,11 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
     return VLAD_NULLPTR;
 
   /* create new expressions */
-  if ((exp = VLAD_NEW(expression(NULL))) == NULL)
+  if ((exp = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((cond = VLAD_NEW(expression(NULL))) == NULL)
+  if ((cond = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((ncond = VLAD_NEW(expression(NULL))) == NULL)
+  if ((ncond = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* 
@@ -275,7 +275,7 @@ int kb::add_transtab(const char *n,
   strcpy(name, n);
 
   /* verify and copy varlist */
-  if ((vlist = VLAD_NEW(stringlist(NULL))) == NULL)
+  if ((vlist = VLAD_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if (v != NULL) {
@@ -292,7 +292,7 @@ int kb::add_transtab(const char *n,
   }
 
   /* verify and copy precondition */
-  if ((precond = VLAD_NEW(expression(NULL))) == NULL)
+  if ((precond = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if (pr != NULL) {
@@ -313,7 +313,7 @@ int kb::add_transtab(const char *n,
   }
 
   /* verify and copy the postcondition */
-  if ((postcond = VLAD_NEW(expression(NULL))) == NULL)
+  if ((postcond = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < po->length(); i++) {
@@ -351,7 +351,7 @@ int kb::add_querytab(expression *e, transreflist *r)
     return VLAD_NULLPTR;
 
   /* verify and copy query expression */
-  if ((exp = VLAD_NEW(expression(NULL))) == NULL)
+  if ((exp = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < e->length(); i++) {
@@ -370,7 +370,7 @@ int kb::add_querytab(expression *e, transreflist *r)
   }
 
   /* now verify and copy transref */
-  if ((rlist = VLAD_NEW(transreflist(NULL))) == NULL)
+  if ((rlist = VLAD_NEW(transreflist())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if (r != NULL) {

@@ -1,3 +1,26 @@
+2003-04-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.cpp :
+	* common/list.h :
+	* common/numberlist.cpp :
+	* common/numberlist.h :
+	* common/stringlist.cpp :
+	* common/stringlist.h :
+	* kb/consttab.cpp :
+	* kb/consttab.h :
+	* kb/expression.cpp :
+	* kb/expression.h :
+	* kb/kb.cpp :
+	* kb/querytab.cpp :
+	* kb/querytab.h :
+	* kb/symtab.cpp :
+	* kb/transtab.cpp :
+	* kb/transtab.h :
+	* parser/parser.y :
+
+	  - Took out debug code from list to keep things simple.
+
+
 2003-04-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.h :

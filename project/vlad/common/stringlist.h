@@ -29,7 +29,7 @@ class stringlist : public list
 {
   public :
     /* n is the optional name for the list */
-    stringlist(const char *n);
+    stringlist();
     ~stringlist();
     /* add a string in the list */
     int add(const char *s);

@@ -24,8 +24,7 @@ class number : public list_item
 class numberlist : public list
 {
   public :
-    /* n is the optional name for the list */
-    numberlist(const char *n);
+    numberlist();
     ~numberlist();
     /* add a number in the list */
     int add(unsigned int n);

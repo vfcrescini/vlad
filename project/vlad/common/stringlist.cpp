@@ -69,9 +69,7 @@ void string::print(char *s)
 }
 #endif
 
-
-/* n is the optional tmp for the list */
-stringlist::stringlist(const char *n) : list(n, true)
+stringlist::stringlist() : list(true)
 {
 }
 

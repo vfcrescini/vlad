@@ -26,7 +26,7 @@ class constraint : public list_item
 class consttab : public list
 {
   public :
-    consttab(const char *n);
+    consttab();
     ~consttab();
     int add(expression *e, expression *c, expression *n);
 } ;
