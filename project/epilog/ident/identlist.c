@@ -30,7 +30,7 @@ int identlist_find(identlist_type list, char *name)
 }
 
 /* add identifier */
-int identlist_add_ref(identlist_type *list, ident_type *ident)
+int identlist_add(identlist_type *list, ident_type *ident)
 {
   if (list == NULL || ident == NULL)
     return -1;
