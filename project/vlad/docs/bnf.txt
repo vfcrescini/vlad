@@ -73,14 +73,14 @@ Updated 2003 Mar 31
 
 <initial-stmt>          : <initially> <expression> <semicolon>
 
-<constraint-stmt>       : <implies-stmt> | <always-stmt>
-                        
-<implies-stmt>          : <expression> <implies> <expression> <with-clause> 
+<constraint-stmt>       : <always> <expression> <implied-clause> <with-clause>
                           <semicolon>
 
-<with-clause>           : <nil> | <with> <absence> <expression>
+<implied-clause>        : <nil> | <implied> <by> <expression>
 
-<always-stmt>           : <always> <expression> <semicolon>
+<with-clause>           : <nil> | <with> <absence> <expression>
+                        
+<with-clause>           : <nil> | <with> <absence> <expression>
 
 <trans-stmt>            : <identifier> <trans-var-def> <causes> <expression> 
                           <if-clause> <semicolon>
@@ -141,7 +141,9 @@ Updated 2003 Mar 31
                         
 <causes>                : causes
 
-<implies>               : implies
+<implied>               : implied
+
+<by>                    : by
 
 <with>                  : with
 

@@ -56,7 +56,8 @@ int yylex(void);
 %token <terminal> VLAD_SYM_MEMB
 %token <terminal> VLAD_SYM_SUBST
 %token <terminal> VLAD_SYM_INITIALLY
-%token <terminal> VLAD_SYM_IMPLIES
+%token <terminal> VLAD_SYM_IMPLIED
+%token <terminal> VLAD_SYM_BY
 %token <terminal> VLAD_SYM_WITH
 %token <terminal> VLAD_SYM_ABSENCE
 %token <terminal> VLAD_SYM_ALWAYS
@@ -78,6 +79,7 @@ int yylex(void);
 %type <atm> subst_atom 
 %type <atm> memb_atom 
 %type <exp> expression
+%type <exp> implied_clause
 %type <exp> with_clause
 %type <exp> if_clause
 %type <vlist> trans_var_list
@@ -375,27 +377,24 @@ initial_stmt :
   }
   ;
 
-constraint_stmt :
-  implies_stmt
-  | always_stmt
-  ;
-
-implies_stmt :
-  expression VLAD_SYM_IMPLIES expression with_clause VLAD_SYM_SEMICOLON {
+constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
     char e[VLAD_MAXLEN_STR];
     char c[VLAD_MAXLEN_STR];
     char n[VLAD_MAXLEN_STR];
 #endif
-    if ((retval = kbase.add_consttab($3, $1, $4)) != VLAD_OK) {
+    if ((retval = kbase.add_consttab($2, $3, $4)) != VLAD_OK) {
       fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
 
 #ifdef DEBUG
-    $3->print(e);
-    $1->print(c);
+    $2->print(e);
+    if ($3 != NULL)
+      $3->print(c);
+    else
+      strcpy(c, "none");
     if ($4 != NULL)
       $4->print(n);
     else
@@ -408,10 +407,19 @@ implies_stmt :
 #endif
 
     /* cleanup */
-    delete $1;
-    delete $3;
+    delete $2;
+    if ($3 != NULL)
+      delete $3;
     if ($4 != NULL)
       delete $4;
+  }
+  ;
+
+implied_clause : {
+    $$ = NULL;
+  }
+  | VLAD_SYM_IMPLIED VLAD_SYM_BY expression {
+    $$ = $3;
   }
   ;
 
@@ -420,30 +428,6 @@ with_clause : {
   }
   | VLAD_SYM_WITH VLAD_SYM_ABSENCE expression {
     $$ = $3;
-  }
-  ;
-
-always_stmt :
-  VLAD_SYM_ALWAYS expression VLAD_SYM_SEMICOLON {
-    int retval;
-#ifdef DEBUG
-    char e[VLAD_MAXLEN_STR];
-#endif
-
-    if ((retval = kbase.add_consttab($2, NULL, NULL)) != VLAD_OK) {
-      fprintf(yyerr, "internal error: %d\n", retval);
-      return retval;
-    }
-
-#ifdef DEBUG
-    $2->print(e);
-
-    fprintf(yyerr, "constraint[%d]:\n", cnt_const++);
-    fprintf(yyerr, "  expression: %s\n", e);
-    fprintf(yyerr, "  condition:   none\n");
-    fprintf(yyerr, "  absence:     none\n");
-#endif
-    delete $2;
   }
   ;
 

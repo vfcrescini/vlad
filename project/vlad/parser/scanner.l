@@ -33,7 +33,8 @@ holds              holds
 member             memb
 subset             subst
 initially          initially
-implies            implies
+implied            implied
+by                 by
 with               with
 absence            absence
 always             always
@@ -75,7 +76,9 @@ everything         .
 
 <INITIAL>{initially} return VLAD_SYM_INITIALLY;
 
-<INITIAL>{implies} return VLAD_SYM_IMPLIES;
+<INITIAL>{implied} return VLAD_SYM_IMPLIED;
+
+<INITIAL>{by} return VLAD_SYM_BY;
 
 <INITIAL>{with} return VLAD_SYM_WITH;
 
