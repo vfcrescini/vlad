@@ -115,6 +115,11 @@ int atom::init_holds(identifier *s, identifier *a, identifier *o, bool t)
   if (s == NULL || a == NULL || o == NULL)
     return VLAD_NULLPTR;
 
+  if (!VLAD_IDENT_IS_SUBJECT(*s) ||
+      !VLAD_IDENT_IS_ACCESS(*a) ||
+      !VLAD_IDENT_IS_OBJECT(*o))
+    return VLAD_INVALIDINPUT;
+
   if ((holds =  new(nothrow) holds_atom(s, a, o)) == NULL)
     return VLAD_MALLOCFAILED;
 
@@ -129,6 +134,11 @@ int atom::init_member(identifier *e, identifier *g, bool t)
   if (e == NULL || g == NULL)
     return VLAD_NULLPTR;
 
+  if (VLAD_IDENT_IS_GROUP(*e) ||
+      !VLAD_IDENT_IS_GROUP(*g) || 
+      VLAD_IDENT_BASETYPE(*e) != VLAD_IDENT_BASETYPE(*g))
+    return VLAD_INVALIDINPUT;
+
   if ((member = new(nothrow) member_atom(e, g)) == NULL)
     return VLAD_MALLOCFAILED;
 
@@ -142,6 +152,11 @@ int atom::init_subset(identifier *g1, identifier *g2, bool t)
 {
   if (g1 == NULL || g2 == NULL)
     return VLAD_NULLPTR;
+
+  if (!VLAD_IDENT_IS_GROUP(*g1) ||
+      !VLAD_IDENT_IS_GROUP(*g2) || 
+      VLAD_IDENT_BASETYPE(*g1) != VLAD_IDENT_BASETYPE(*g2))
+    return VLAD_INVALIDINPUT;
 
   if ((subset = new(nothrow) subset_atom(g1, g2)) == NULL)
     return VLAD_MALLOCFAILED;

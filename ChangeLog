@@ -1,3 +1,10 @@
+2003-02-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.cpp :
+
+	  - Sanity checks to ensure that the identifiers given the 
+	    init() functions are valid.
+
 2003-02-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/Makefile.in :
