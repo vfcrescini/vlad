@@ -7,10 +7,8 @@
 #include <stdlib.h>
 #include "symtab.h"
 
-extern FILE *yyin;
-int yyparse();
-int yyerror(char *);
 int yylex();
+extern int yyerror(char *error);
 %}
 
 %token EPI_SYM_OPEN_PARENT
@@ -285,10 +283,3 @@ logical_const :
   ;
 
 %%
-
-int yyerror(char *error)
-{
-  fprintf(stderr, "%s\n", error);
-
-  return 0;
-}

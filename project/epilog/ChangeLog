@@ -1,3 +1,12 @@
+2002-08-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* main/epilog.c :
+	* parser/Makefile :
+	* parser/parser.y :
+	* parser/parser.h :
+
+	  - Moved vars/funcs into the main file.
+
 2002-08-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* docs/sample :

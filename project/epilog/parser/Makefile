@@ -3,12 +3,16 @@
 TOPSRCDIR = ..
 CFLAGS = -O2 -Wall -ansi -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libparser.a
+INCLUDES = parser.h
 
 all : public
 
 public : $(TARGETS)
 	@mkdir -p $(TOPSRCDIR)/include
 	@mkdir -p $(TOPSRCDIR)/lib
+	@for i in $(INCLUDES); do \
+	ln -sf ../parser/$$i $(TOPSRCDIR)/include; \
+	done
 	@for i in $(TARGETS); do \
 	ln -sf ../parser/$$i $(TOPSRCDIR)/lib; \
 	done
@@ -33,6 +37,9 @@ y.tab.h : parser.y
 
 clean :
 	$(RM) $(TARGETS) *.o lex.yy.c y.tab.c y.tab.h
+	@for i in $(INCLUDES); do \
+	$(RM) $(TOPSRCDIR)/include/$$i; \
+	done
 	@for i in $(TARGETS); do \
 	$(RM) $(TOPSRCDIR)/lib/$$i; \
 	done

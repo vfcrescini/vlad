@@ -21,7 +21,7 @@ libsymtab.a : symtab.o
 	$(AR) -rcs $(@) symtab.o
 
 symtab.o : symtab.h symtab.c
-	$(CC) $(CFLAGS) -c symtab.c -o $(@)
+	$(CC) $(CFLAGS) -o $(@) -c symtab.c
 	
 clean :
 	$(RM) $(TARGETS) *.o
