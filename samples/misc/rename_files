@@ -25,6 +25,8 @@ counter=1
 charlen=5
 tmpdir="./.tmp_$$_"
 args="${*}"
+progname="rename_files"
+progver="1.0"
 
 unset lowcase
 unset prefix
@@ -33,13 +35,14 @@ unset verbose
 
 while [ $# -ge 1 ]; do
   if [ "${1}" = "-h" ]; then
-    echo "usage:       rename_files [options]"
+    echo "usage:       ${progname} [options]"
     echo "options:"
     echo "  -h         print this usage and exit"
     echo "  -r         recursively go into subdirectories"
     echo "  -l         force file extensions to lowercase"
     echo "  -p prefix  prepend \"prefix\" for each file"
     echo "  -v         verbose output"
+    echo "  -V         print version and exit"
     echo ""
     exit 0
   elif [ "${1}" = "-l" ]; then
@@ -53,6 +56,9 @@ while [ $# -ge 1 ]; do
     recursive="1"
   elif [ "${1}" = "-v" ]; then
     verbose="1"
+  elif [ "${1}" = "-V" ]; then
+    echo "${progname} ${progver}"
+    exit 0;
   fi
   shift 1
 done
