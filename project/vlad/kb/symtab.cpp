@@ -41,9 +41,33 @@ int identlist::add(const char *n)
     delete ident;
     return retval;
   }
-
   return VLAD_OK; 
 }
+
+/* get the index of the identifier */
+int identlist::get(const char *n, unsigned int *i)
+{
+  int retval;
+  identifier ident;
+  unsigned int size;
+  unsigned int *array;
+
+  if (n == NULL || i == NULL)
+    return VLAD_NULLPTR;
+ 
+  if ((retval = ident.init(n, type)) != VLAD_OK)
+    return retval;
+  
+  if ((retval = list::get(&ident, &array, &size)) != VLAD_OK)
+    return retval;
+
+  /* there should be exactly one in the array */
+  *i = array[0];
+
+  free(array);
+
+  return VLAD_OK; 
+}   
 
 /* get the identifier object associated with the given name */
 int identlist::get(const char *n, identifier **i)
@@ -53,7 +77,7 @@ int identlist::get(const char *n, identifier **i)
   identifier ident;
   identifier **array;
 
-  if (n == NULL)
+  if (n == NULL || i == NULL)
     return VLAD_NULLPTR;
  
   if ((retval = ident.init(n, type)) != VLAD_OK)
@@ -184,6 +208,51 @@ int symtab::add(const char *n, unsigned char t)
   return VLAD_INVALIDINPUT;
 }
 
+/* get the index and type of the identifier based on name */
+int symtab::get(const char *n, unsigned int *i, unsigned char *t)
+{
+  int retval;
+
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (n == NULL || i == NULL || t == NULL)
+    return VLAD_NULLPTR;
+
+  /* try to get n from all the lists sequentially */
+  if ((retval = sub_list->get(n, i)) != VLAD_NOTFOUND) {
+    if ((retval == VLAD_OK))
+      *t = VLAD_IDENT_SUBJECT;
+    return retval;
+  }
+  if ((retval = acc_list->get(n, i)) != VLAD_NOTFOUND) {
+    if ((retval == VLAD_OK))
+      *t = VLAD_IDENT_ACCESS;
+    return retval;
+  }
+  if ((retval = obj_list->get(n, i)) != VLAD_NOTFOUND) {
+    if ((retval == VLAD_OK))
+      *t = VLAD_IDENT_OBJECT;
+    return retval;
+  }
+  if ((retval = sub_grp_list->get(n, i)) != VLAD_NOTFOUND) {
+    if ((retval == VLAD_OK))
+      *t = VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP;
+    return retval;
+  }
+  if ((retval = acc_grp_list->get(n, i)) != VLAD_NOTFOUND) {
+    if ((retval == VLAD_OK))
+      *t = VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP;
+    return retval;
+  }
+  if ((retval = obj_grp_list->get(n, i)) != VLAD_NOTFOUND) {
+    if ((retval == VLAD_OK))
+      *t = VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP;
+    return retval;
+  }
+  return VLAD_NOTFOUND;
+}
+
 /* get the identifier object associated with the given name */
 int symtab::get(const char *n, identifier **i)
 {
@@ -233,10 +302,10 @@ int symtab::get(unsigned int i, unsigned char t, identifier **id)
 }
 
 /* return the number of identifiers that are of type t */
-int symtab::length(unsigned char t)
+unsigned int symtab::length(unsigned char t)
 {
   if (!initialised)
-    return VLAD_UNINITIALISED;
+    return 0;
 
   switch(t) { 
     case VLAD_IDENT_SUBJECT :
@@ -252,7 +321,7 @@ int symtab::length(unsigned char t)
     case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
       return obj_grp_list->length();
   }
-  return VLAD_INVALIDINPUT;
+  return 0;
 }
 
 /* return true if symbol is in the table */

@@ -15,6 +15,8 @@ class identlist : public list
     ~identlist();
     /* add an identifier in the list */
     int add(const char *n);
+    /* get the index of the identifier */
+    int get(const char *n, unsigned int *i);
     /* get the identifier object associated with the given name */
     int get(const char *n, identifier **i);
     /* get the ith identifier of the list */
@@ -38,12 +40,14 @@ class symtab
     int init();
     /* add symbol in symbol table */
     int add(const char *n, unsigned char t);
+    /* get the index and type of the identifier based on name */
+    int get(const char *n, unsigned int *i, unsigned char *t);
     /* get the identifier object associated with the given name */
     int get(const char *n, identifier **i);
     /* get the ith identifier of type t */
     int get(unsigned int i, unsigned char t, identifier **id);
     /* return the number of identifiers that are of type t */
-    int length(unsigned char t);
+    unsigned int length(unsigned char t);
     /* return true if symbol is in the table */
     int find(const char *n);
   private :
