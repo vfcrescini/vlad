@@ -6,9 +6,10 @@
 
   \long\def\comment#1{}
 
-  \title{The Implementation of Policy Updater - A System of Dynamic Access Control}
+  \title{The Implementation of Policy Updater}
+  \subtitle{A System for Dynamic Access Control}
 
-  \author{\em Vino Fernando Crescini and Yan Zhang}
+  \author{Vino Fernando Crescini \and Yan Zhang}
 
   \institute{School of Computing and Information Technology\\
              University of Western Sydney\\
@@ -18,10 +19,22 @@
   \maketitle
 
   \begin{abstract}
+    In this paper, we propose an access control system, \emph{Policy Updater},
+    that provides policy evaluation as well as dynamic policy manipulation.
+    This is achieved by the use of the proposed logic-based language L to
+    represent the access control policies. As the language L is logic-based,
+    policy manipulation is achieved by adding or removing atoms and constraints
+    that make up the policy base. The policy base can then be translated into a
+    normal logic program and then by using the \emph{Stable Models} semantics,
+    authorization queries can be evaluated.
+
+    [needs to be edited]
   \end{abstract}
 
   \section{Introduction}
+    [text]
 
+  \newpage
   \section{Language L}
 
     \subsection{Initial State Definition}
@@ -36,6 +49,7 @@
 
     \subsection{Query Directive}
 
+  \newpage
   \section{Implementation}
 
     \subsection{Translation to Logic Program}
@@ -53,6 +67,7 @@
           \item Removal of Classical Negation
         \end{itemize}
 
+  \newpage
   \section{Application: Dynamic Access Control System in Web Servers}
 
   \begin{thebibliography}{5}
