@@ -11,6 +11,7 @@
 #include <vlad/numberlist.h>
 #include <smodels.h>
 #include <api.h>
+#include <atomrule.h>
 
 class wrapper
 {
@@ -24,22 +25,14 @@ class wrapper
     int close_rule();
     /* register an atom */
     int add_atom(unsigned int a);
-    /* constant head & single body */
-    int add_rule_chead_sbody(bool h, unsigned int pb, unsigned int nb);
-    /* constant head & multiple body */
-    int add_rule_chead_mbody(bool h, numberlist *pb, numberlist *nb);
-    /* single head & constant body */
-    int add_rule_shead_cbody(unsigned int h, bool b);
-    /* single head & single body */
-    int add_rule_shead_sbody(unsigned int h, unsigned int pb, unsigned int nb);
-    /* single head & multiple body */
-    int add_rule_shead_mbody(unsigned int h, numberlist *pb, numberlist *nb);
-    /* multiple head & constant body */
-    int add_rule_mhead_cbody(numberlist *h, bool b);
-    /* multiple head & single body */
-    int add_rule_mhead_sbody(numberlist *h, unsigned int pb, unsigned int nb);
-    /* multiple head & multiple body */
-    int add_rule_mhead_mbody(numberlist *h, numberlist *pb, numberlist *nb);
+    /* add a single axiom (always true or always false) */
+    int add_axiom(unsigned int a, bool t);
+    /* add multiple axiom (always true or always false) */
+    int add_axiom(numberlist *a, bool t);
+    /* add single rule (single head, pos body and neg body */
+    int add_rule(unsigned int h, unsigned int pb, unsigned int nb);
+    /* add multiple rule (single head, pos body list and neg body list */
+    int add_rule(unsigned int h, numberlist *pb, numberlist *nb);
   private :
     Smodels *pr_smod;
     Api *pr_api;
