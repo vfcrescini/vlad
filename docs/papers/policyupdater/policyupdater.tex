@@ -143,7 +143,10 @@
       comments delimited by the "/*" and "*/" characters may appear anywhere in
       the logic program.
 
-      \subsubsection{Components of Language $\cal{L}$}
+      \subsubsection{Components of Language $\cal{L}$.}
+
+        Each language ${\cal L}$ statement is composed of the following
+        components: identifiers, atoms, facts and expressions.
 
         \paragraph{Identifiers.}
           The most basic unit of language $\cal{L}$ is the identifier.
@@ -263,7 +266,10 @@
           Expressions that are made up of only ground facts are called
           {\em ground expressions}.
 
-      \subsubsection{Definition Statements}
+      \subsubsection{Definition Statements.}
+
+        These statements are used to define the different rules that make up
+        the policy base.
 
         \paragraph{Entity Identifier Definition.}
 
@@ -336,7 +342,10 @@
           policy base until it is applied by one of the directives described in
           the following section.
 
-        \subsubsection{Directive Statements}
+        \subsubsection{Directive Statements.}
+
+          These statements are used to issue policy update and query directives
+          to the PolicyUpdater system.
 
         \paragraph{Policy Update Directives.}
 
@@ -515,7 +524,11 @@
         \end{enumerate}
       \end{vdefinition}
 
-      \subsubsection{Domain Description of Language ${\cal L}$}
+      \subsubsection{Domain Description of Language ${\cal L}$.}
+
+        The definition below gives a formal definition of the domain
+        description of language ${\cal L}$.
+
         \begin{vdefinition}
           \label{def-domain}
           The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
@@ -531,7 +544,8 @@
         or more identifier entities to replace the variable place-holders in
         the policy update definitions.
 
-      \subsubsection{Language ${\cal L}^{*}$}
+      \subsubsection{Language ${\cal L}^{*}$.} 
+
         In language ${\cal L}$, the policy base is subject to change, which is
         triggered by the application of policy updates. Such changes bring
         forth the concept of policy base states. Conceptually, a state may be
@@ -675,7 +689,7 @@
             $[\lnot]$$\hat{\alpha}$, $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$
           \end{vquote}
 
-      \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
+      \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$.}
 
         Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, we
         translate ${\cal D_{L}}$ into an extended logic program of language
@@ -2346,7 +2360,11 @@
       allows administrators to dynamically update the policy base by adding
       or removing update directives in the policy update table.
 
-      \subsubsection{Parsers}
+      \subsubsection{Parsers.}
+
+        As the policy itself is written in language ${\cal L}$, the system uses
+        two parsers to act as interfaces to the authorisation agent and
+        the the language ${\cal L}$ policy.
 
         \paragraph{Policy Parser.}
 
@@ -2367,7 +2385,7 @@
           directive requires one. Such directives may be to query the policy
           base or to manipulate the policy update sequence table.
 
-      \subsubsection{Data Structures}
+      \subsubsection{Data Structures.}
 
         As language ${\cal L}$ program is parsed, each statement containing
         entity declarations, initial facts, constraint rules and policy
@@ -2397,11 +2415,11 @@
         \end{center}
       \end{figure}
 
-      \subsubsection{Grounding Constraint Variables}
+      \subsubsection{Grounding Constraint Variables.}
 
-        While the constraint statements are in the process of being added into
-        the constraints table, each variable identifier that occurs within each
-        constraint is grounded by replacing that constraint with a set of
+        As the constraints are in the process of being added into the
+        constraints table, each variable identifier that occurs within
+        every constraint is grounded by replacing that constraint with a set of
         constraints wherein each instance of the variable is replaced by all
         entity identifiers defined in the symbol table. Note that only those
         entity identifiers that are valid for each fact in the current
@@ -2426,7 +2444,7 @@
         constraint rules, each replacing occurrences of the variable $SSUB$
         with $alice$, $bob$ and $charlie$, respectively.
 
-      \subsubsection{Policy Updates}
+      \subsubsection{Policy Updates.}
 
         In Section \ref{subsec-semantics}, it is shown that policy updates are
         performed by treating each update as a constraint. This constraint is
@@ -2444,7 +2462,7 @@
         constraint rules and are translated with the rest of the policy into
         a normal logic program.
 
-      \subsubsection{Translation to Normal Logic Program}
+      \subsubsection{Translation to Normal Logic Program.}
 
         The semantics of language ${\cal L}$ shows that any consistent language
         ${\cal L}$ program can be translated into an equivalent extended logic
@@ -2576,7 +2594,7 @@
           rules. By applying the $Encode$ function above for each fact in each
           of these rules, a normal logic program is generated.
 
-      \subsubsection{Query Evaluation}
+      \subsubsection{Query Evaluation.}
 
         Once a normal logic program has been generated from the policy stored
         in the storage structure, a set of answer sets may then be generated
