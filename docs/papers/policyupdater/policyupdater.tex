@@ -1431,13 +1431,32 @@ query holds(alice, read, file);
       \end{center}
     \end{figure}
 
+      As shown in figure \ref{fig-1}, the PolicyUpdater system works in
+      collaboration with an authorisation agent program that queries the
+      policy base to determine whether to allow users access to resources.
+      Through an authorisation agent program, the PolicyUpdater system also
+      allows administrators to dynamically update the policy base.
+
       \subsubsection{Parsers}
 
         \paragraph{Policy Parser.}
 
-        \paragraph{Update Parser.}
+          The policy parser is responsible for correctly reading the policy
+          file into the core PolicyUpdater system. The parser ensures that
+          the policy file stricly adheres to the language $\cal{L}$ syntax
+          then systematically stores entity identifiers into the symbol table
+          and initial state facts, constraint expressions and policy update
+          definitions are stored into their respective tables in the policy
+          base.
 
-        \paragraph{Query Parser.}
+        \paragraph{Agent Parser.}
+
+          The agent parser is the direct link between the core PolicyUpdater
+          system and the authorisation agent program. The parser's sole purpose
+          is to receive language $\cal{L}$ directives from an agent, perform
+          the directive upon the policy base and return a reply if the
+          directive requires one. Such directives may be to query the policy
+          base or to manipulate the policy update sequence table.
 
       \subsubsection{Data Structures}
 
