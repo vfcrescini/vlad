@@ -13,9 +13,13 @@
 #include "apr_strings.h"
 #include "apr_md5.h"
 
+#include <vlad/vlad.h>
+#include <vlad/wrapper.h>
+
 typedef struct {
   char *user_file;
   char *policy_file;
+  void *kb;
 } modvlad_config_rec;
 
 static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d);
@@ -25,24 +29,27 @@ static char *modvlad_get_passwd(request_rec *a_r,
 static int modvlad_authenticate(request_rec *a_r);
 static int modvlad_authorize(request_rec *a_r);
 static void modvlad_register_hooks (apr_pool_t *a_p);
-static const char *modvlad_set_auth_slot(cmd_parms *a_cmd,
-                                         void *a_offset,
-                                         const char *a_f,
-                                         const char *a_t);
+static const char *modvlad_set_user_file(cmd_parms *a_cmd,
+                                         void *a_config,
+                                         const char *a_fname);
+
+static const char *modvlad_set_policy_file(cmd_parms *a_cmd,
+                                           void *a_config,
+                                           const char *a_fname);
 
 static const command_rec modvlad_auth_cmds[] =
 {
-  AP_INIT_TAKE12("VladUserFile",
-                 modvlad_set_auth_slot,
-                 (void *)APR_OFFSETOF(modvlad_config_rec, user_file),
+  AP_INIT_TAKE1("VladUserFile",
+                 modvlad_set_user_file,
+                 NULL,
                  OR_AUTHCFG,
-                 "authentication / user file (htpasswd)"),
+                "authentication/user file (htpasswd)"),
 
-  AP_INIT_TAKE12("VladPolicyFile",
-                 modvlad_set_auth_slot,
-                 (void *)APR_OFFSETOF(modvlad_config_rec, policy_file),
-                 OR_AUTHCFG,
-                 "authorization / policy file"),
+  AP_INIT_TAKE1("VladPolicyFile",
+                modvlad_set_policy_file,
+                NULL,
+                OR_AUTHCFG,
+                "authorization/policy file"),
 
   {NULL},
 };
@@ -62,9 +69,16 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
 {
   modvlad_config_rec *conf;
 
-  conf = (modvlad_config_rec *) apr_palloc(a_p, sizeof(*conf));
-  conf->user_file = NULL;
-  conf->policy_file = NULL;
+  fprintf(stderr, "modvlad_create_dir_config %s\n", a_d);
+
+  if (a_d == NULL)
+    return NULL;
+
+  if ((conf = (modvlad_config_rec *) apr_palloc(a_p, sizeof(*conf)))) {
+    conf->user_file = NULL;
+    conf->policy_file = NULL;
+    conf->kb = NULL;
+  }
 
   return conf;
 }
@@ -78,6 +92,8 @@ static char *modvlad_get_passwd(request_rec *a_r,
   const char *rpw, *w;
   apr_status_t status;
 
+  fprintf(stderr, "modvlad_get_passwd\n");
+
   status = ap_pcfg_openfile(&f, a_r->pool, a_passwd_file);
 
   if (status != APR_SUCCESS) {
@@ -86,7 +102,7 @@ static char *modvlad_get_passwd(request_rec *a_r,
                   APLOG_ERR,
                   status,
                   a_r,
-                  "could not open aunthentication / user file: %s",
+                  "could not open aunthentication/user file: %s",
                   a_passwd_file);
 
     return NULL;
@@ -176,6 +192,11 @@ static int modvlad_authenticate(request_rec *a_r)
 
 static int modvlad_authorize(request_rec *a_r)
 {
+  modvlad_config_rec *conf = NULL;
+
+  conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
+                                                     &modvlad_module);
+
   fprintf(stderr, "authorize\n");
   fflush(stderr);
   fprintf(stderr, "uri: %s\n", a_r->uri);
@@ -186,6 +207,7 @@ static int modvlad_authorize(request_rec *a_r)
   fprintf(stderr, "hostname: %s\n", a_r->hostname);
   fprintf(stderr, "method: %s\n", a_r->method);
   fprintf(stderr, "docroot: %s\n", ap_document_root(a_r));
+  fprintf(stderr, "policy_file: %s\n", conf->policy_file);
   fflush(stderr);
 
   return OK;
@@ -193,17 +215,30 @@ static int modvlad_authorize(request_rec *a_r)
 
 static void modvlad_register_hooks(apr_pool_t *a_p)
 {
+  fprintf(stderr, "modvlad_register_hooks\n");
+
   ap_hook_check_user_id(modvlad_authenticate, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_auth_checker(modvlad_authorize, NULL, NULL, APR_HOOK_FIRST);
 }
 
-static const char *modvlad_set_auth_slot(cmd_parms *a_cmd,
-                                         void *a_offset,
-                                         const char *a_f,
-                                         const char *a_t)
+static const char *modvlad_set_user_file(cmd_parms *a_cmd,
+                                         void *a_config,
+                                         const char *a_fname)
 {
-  if (a_t && strcmp(a_t, "standard"))
-    return apr_pstrcat(a_cmd->pool, "invalid file type", a_t, NULL);
+  fprintf(stderr, "modvlad_set_user_file\n");
 
-  return ap_set_file_slot(a_cmd, a_offset, a_f);
+  ((modvlad_config_rec *) a_config)->user_file = (char *) a_fname;
+
+  return NULL;
+}
+
+static const char *modvlad_set_policy_file(cmd_parms *a_cmd,
+                                           void *a_config,
+                                           const char *a_fname)
+{
+  fprintf(stderr, "modvlad_set_policy_file\n");
+
+  ((modvlad_config_rec *) a_config)->policy_file = (char *) a_fname;
+
+  return NULL;
 }
