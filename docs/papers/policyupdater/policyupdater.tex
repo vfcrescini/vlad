@@ -549,7 +549,7 @@ FALSE
             \item
               ${\cal A}^{\sigma} = {\cal A}^{\sigma}_{H} \cup {\cal A}^{\sigma}_{M} \cup {\cal A}^{\sigma}_{S}$
             \item
-              ${\cal A}^{\sigma}_{H} = \{\forall (s \in {\cal E}_{S}, a \in {\cal E}_{A}, o \in {\cal E}_{O}, holds(s, a, o, \sigma) \}$
+              \mbox{${\cal A}^{\sigma}_{H} = \{\forall (s \in {\cal E}_{S}, a \in {\cal E}_{A}, o \in {\cal E}_{O}), holds(s, a, o, \sigma) \}$}
             \item
               ${\cal A}^{\sigma}_{M} = {\cal A}^{\sigma}_{MS} \cup {\cal A}^{\sigma}_{MA} \cup {\cal A}^{\sigma}_{MO}$
             \item
@@ -591,7 +591,7 @@ FALSE
 
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
-        \noindent \textbf{\emph{Initial State Expression}}
+        \paragraph{Initial State Expression.}
 
           To translate the initial state expressions of language ${\cal L}$ to
           language ${\cal L}^{*}$, the state parameter $\sigma$ of every atom
@@ -608,7 +608,7 @@ FALSE
 
           \end{definition}
 
-        \noindent \textbf{\emph{Constraints}}
+        \paragraph{Constraints.}
 
           Constraints in ${\cal L}$ is in the form:
 
@@ -647,7 +647,7 @@ FALSE
 
           \end{definition}
 
-        \noindent \textbf{\emph{Policy Updates}}
+        \paragraph{Policy Updates.}
 
           With all variable occurences grounded to entity identifiers, a
           policy update $U$ is of the form:
@@ -691,7 +691,7 @@ FALSE
         constraints implied by language ${\cal L}$ that needs to be explicitly
         stated in language ${\cal L}^{*}$.
 
-        \noindent \textbf{\emph{Inheritance Rules}}
+        \paragraph{Inheritance Rules.}
 
           All properties held by a group is inherited by all the members and
           subsets of that group. This rule is easy to apply for subject group
@@ -805,7 +805,7 @@ FALSE
             \end{enumerate}
           \end{definition}
 
-        \noindent \textbf{\emph{Transitivity Rules}}
+        \paragraph{Transitivity Rules.}
 
           Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of $G'$
           and $G'$ is a subset of $G''$, then $G$ must also be a subset of
@@ -858,7 +858,7 @@ FALSE
             \end{enumerate}
           \end{definition}
 
-        \noindent \textbf{\emph{Inertial Rules}}
+        \paragraph{Inertial Rules.}
 
           Intuitively, all facts in the current state that are not affected by
           a policy update should be carried over to the next state after the
