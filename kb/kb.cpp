@@ -184,9 +184,9 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
 {
   int retval;
   unsigned int i;
-  expression *exp;
-  expression *cond;
-  expression *ncond;
+  expression *exp = NULL;
+  expression *cond = NULL;
+  expression *ncond = NULL;
   atom *tmp1;
   atom *tmp2;
 
@@ -197,12 +197,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
   if (e == NULL)
     return VLAD_NULLPTR;
 
-  /* create new expressions */
-  if ((exp = VLAD_NEW(expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((cond = VLAD_NEW(expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((ncond = VLAD_NEW(expression())) == NULL)
+    if ((ncond = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* 
@@ -212,6 +207,9 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
    */
 
   /* exression */
+  if ((exp = VLAD_NEW(expression())) == NULL)
+    return VLAD_MALLOCFAILED;
+
   for (i = 0; i < e->length(); i++) {
     if ((retval = e->get(i, &tmp1)) != VLAD_OK)
       return retval;
@@ -223,8 +221,11 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
       return retval;
   }
 
-  /* condition: if there is no condition, simply use an empty expression */
+  /* condition */
   if (c != NULL) {
+    if ((cond = VLAD_NEW(expression())) == NULL)
+      return VLAD_MALLOCFAILED;
+
     for (i = 0; i < c->length(); i++) {
       if ((retval = c->get(i, &tmp1)) != VLAD_OK)
         return retval;
@@ -237,8 +238,11 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
     }
   }
 
-  /* negative condition: if there is no negative cond, use empty expression */
+  /* negative condition */
   if (n != NULL) {
+    if ((ncond = VLAD_NEW(expression())) == NULL)
+      return VLAD_MALLOCFAILED;
+
     for (i = 0; i < n->length(); i++) {
       if ((retval = n->get(i, &tmp1)) != VLAD_OK)
         return retval;
@@ -264,14 +268,15 @@ int kb::add_transtab(const char *n,
   int retval;
   unsigned int i;
   char *name;
-  stringlist *vlist;
-  expression *precond;
-  expression *postcond;
+  stringlist *vlist = NULL;
+  expression *precond = NULL;
+  expression *postcond = NULL;
 
   /* we only allow this function after consttab is closed */
   if (stage != 4)
     return VLAD_FAILURE;
 
+  /* precondition and vlist are allowed to be NULL */
   if (n == NULL || po == NULL)
     return VLAD_NULLPTR;
 
@@ -282,10 +287,10 @@ int kb::add_transtab(const char *n,
   strcpy(name, n);
 
   /* verify and copy varlist */
-  if ((vlist = VLAD_NEW(stringlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
   if (v != NULL) {
+    if ((vlist = VLAD_NEW(stringlist())) == NULL)
+      return VLAD_MALLOCFAILED;
+
     for (i = 0; i < v->length(); i++) {
       char *tmp;
       if ((retval = v->get(i, &tmp)) != VLAD_OK)
@@ -299,10 +304,10 @@ int kb::add_transtab(const char *n,
   }
 
   /* verify and copy precondition */
-  if ((precond = VLAD_NEW(expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-
   if (pr != NULL) {
+    if ((precond = VLAD_NEW(expression())) == NULL)
+      return VLAD_MALLOCFAILED;
+
     for (i = 0; i < pr->length(); i++) {
       atom *tmp1;
       atom *tmp2;
@@ -353,7 +358,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   unsigned int tmp_n1;
   unsigned int tmp_n2;
   unsigned int tmp_n3;
-
+  
   /* we only allow this function after transtab is closed */
   if (stage != 5)
     return VLAD_FAILURE;
@@ -371,21 +376,21 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   }
 
   /* now verify transref */
-  if (s != NULL) {
-    for (i = 0; i < s->length(); i++) {
-      char *tmp_name;
-      stringlist *tmp_ilist;
-      if ((retval = s->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
-        return retval;
-      if ((retval = verify_transref(tmp_name, tmp_ilist)) != VLAD_OK)
-        return retval;
-    }
+  for (i = 0; i < ((s == NULL) ? 0 : s->length()); i++) {
+    char *tmp_name;
+    stringlist *tmp_ilist;
+
+    if ((retval = s->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
+      return retval;
+
+    if ((retval = verify_transref(tmp_name, tmp_ilist)) != VLAD_OK)
+      return retval;
   }
 
   /* first we print out all the possible atoms in the kb */
   fprintf(f, "Atoms\n");
 
-  for (i = 0; i < pos_tot * 2 * ((s == NULL) ? 1 : s->length() + 1); i++) {
+  for (i = 0; i < (pos_tot * 2 * ((s == NULL) ? 1 : s->length() + 1)); i++) {
     atom *tmp_atom;
     unsigned char tmp_ty;
     unsigned int tmp_s;
@@ -418,7 +423,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   /* inheritance rules */
   fprintf(f, "Inheritance Rules\n");
 
-  if ((retval = generate_inheritance(s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
+  if ((retval = generate_inheritance((s == NULL) ? 0 :s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
     return retval;
 
   for (i = 0; i < tmp_l1->length(); i++) {
@@ -431,11 +436,15 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
     fprintf(f, "  %d <- %d AND %d\n", tmp_n1, tmp_n2, tmp_n3);
   }
+
+  delete tmp_l1;
+  delete tmp_l2;
+  delete tmp_l3;
 
   /* transitivity */
   fprintf(f, "Transitivity Rules\n");
 
-  if ((retval = generate_transitivity(s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
+  if ((retval = generate_transitivity((s == NULL) ? 0 : s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
     return retval;
 
   for (i = 0; i < tmp_l1->length(); i++) {
@@ -449,10 +458,14 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     fprintf(f, "  %d <- %d AND %d\n", tmp_n1, tmp_n2, tmp_n3);
   }
 
+  delete tmp_l1;
+  delete tmp_l2;
+  delete tmp_l3;
+
   /* complementary rules */
   fprintf(f, "Complementary Rules\n");
 
-  if ((retval = generate_complementary(s->length(), &tmp_l1, &tmp_l2)) != VLAD_OK)
+  if ((retval = generate_complementary((s == NULL) ? 0 : s->length(), &tmp_l1, &tmp_l2)) != VLAD_OK)
     return retval;
 
   for (i = 0; i < tmp_l1->length(); i++) {
@@ -464,10 +477,13 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     fprintf(f, "  false <- %d AND %d\n", tmp_n1, tmp_n2);
   }
 
+  delete tmp_l1;
+  delete tmp_l2;
+
   /* inertial rules */
   fprintf(f, "Inertial Rules\n");
 
-  if ((retval = generate_inertial(s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
+  if ((retval = generate_inertial((s == NULL) ? 0 : s->length(), &tmp_l1, &tmp_l2, &tmp_l3)) != VLAD_OK)
     return retval;
 
   for (i = 0; i < tmp_l1->length(); i++) {
@@ -480,6 +496,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
     fprintf(f, "  %d <- %d AND NOT %d\n", tmp_n1, tmp_n2, tmp_n3);
   }
+
+  delete tmp_l1;
+  delete tmp_l2;
+  delete tmp_l3;
 
   /* initial state */
   fprintf(f, "Initial State\n");
@@ -494,10 +514,12 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     fprintf(f, "  %d <-\n", tmp_n1);
   }
 
+  delete tmp_l1;
+
   /* constraints */
   fprintf(f, "Constraints\n");
 
-  if ((retval = generate_constraints(s->length(), &tmp_ll1, &tmp_ll2, &tmp_ll3)) != VLAD_OK)
+  if ((retval = generate_constraints((s == NULL) ? 0 : s->length(), &tmp_ll1, &tmp_ll2, &tmp_ll3)) != VLAD_OK)
     return retval;
 
   for (i = 0; i < tmp_ll1->length(); i++) {
@@ -531,6 +553,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     fprintf(f, "\n");
   }
 
+  delete tmp_ll1;
+  delete tmp_ll2;
+  delete tmp_ll3;
+
   /* transformation rules */
   fprintf(f, "Transformation Rules\n");
 
@@ -559,6 +585,9 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
     fprintf(f, "\n");
   }
+
+  delete tmp_ll1;
+  delete tmp_ll2;
 
   return VLAD_OK;
 }
@@ -799,15 +828,19 @@ int kb::verify_transref(char *n, stringlist *il)
   if (stage < 5)
     return VLAD_FAILURE;
 
-  if (n == NULL || il == NULL)
+  if (n == NULL)
     return VLAD_NULLPTR;
 
   /* retrieve respective trans in transtab */
   if ((retval = ttable->get(n, &tmp_vlist, &tmp_pr, &tmp_po)) != VLAD_OK)
     return retval;
 
+  /* if both lists are NULL, there is nothing to check */
+  if (il == NULL && tmp_vlist == NULL)
+    return VLAD_OK;
+
   /* check that the number of ident listed is the same as the transformation */
-  if (tmp_vlist->length() != il->length())
+  if (il == NULL || tmp_vlist == NULL || tmp_vlist->length() != il->length())
     return VLAD_INVALIDINPUT;
 
   /* check that every ident is valid in symtab */
@@ -1467,23 +1500,27 @@ int kb::generate_constraints(unsigned int state_tot,
       }
 
       /* constraint condition */
-      for (i_exp = 0; i_exp < tmp_c->length(); i_exp++) {
-        if ((retval = tmp_c->get(i_exp, &tmp_atom)) != VLAD_OK)
-          return retval;
-        if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
-          return retval;
-        if ((retval = sl2->add(tmp_num)) != VLAD_OK)
-          return retval;
+      if (tmp_c != NULL) {
+        for (i_exp = 0; i_exp < tmp_c->length(); i_exp++) {
+          if ((retval = tmp_c->get(i_exp, &tmp_atom)) != VLAD_OK)
+            return retval;
+          if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
+            return retval;
+          if ((retval = sl2->add(tmp_num)) != VLAD_OK)
+            return retval;
+        }
       }
 
       /* constraint negative condition */
-      for (i_exp = 0; i_exp < tmp_n->length(); i_exp++) {
-        if ((retval = tmp_n->get(i_exp, &tmp_atom)) != VLAD_OK)
-          return retval;
-        if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
-          return retval;
-        if ((retval = sl3->add(tmp_num)) != VLAD_OK)
-          return retval;
+      if (tmp_n != NULL) {
+        for (i_exp = 0; i_exp < tmp_n->length(); i_exp++) {
+          if ((retval = tmp_n->get(i_exp, &tmp_atom)) != VLAD_OK)
+            return retval;
+          if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
+            return retval;
+          if ((retval = sl3->add(tmp_num)) != VLAD_OK)
+            return retval;
+        }
       }
 
       /* now add each sublist in the main lists */
@@ -1512,7 +1549,7 @@ int kb::generate_transformation(sequence *seq,
   if (stage != 5)
     return VLAD_FAILURE;
 
-  if (seq == NULL || l1 == NULL || l2 == NULL)
+  if (l1 == NULL || l2 == NULL)
     return VLAD_NULLPTR;
 
   /* create number list lists */
@@ -1521,14 +1558,18 @@ int kb::generate_transformation(sequence *seq,
   if ((*l2 = VLAD_NEW(numberlistlist())) == NULL)
     return VLAD_MALLOCFAILED;
 
+  /* check if the sequence list is null */
+  if (seq == NULL)
+    return VLAD_OK;
+
   /* state loop */
   for (i_state = 0; i_state < seq->length(); i_state++) {
     char *tmp_name;
     atom *tmp_atom;
     unsigned int tmp_num;
-    stringlist *tmp_ilist;
-    expression *tmp_pre;
-    expression *tmp_post;
+    stringlist *tmp_ilist = NULL;
+    expression *tmp_pre = NULL;
+    expression *tmp_post = NULL;
     numberlist *sl1;
     numberlist *sl2;
 
@@ -1545,13 +1586,15 @@ int kb::generate_transformation(sequence *seq,
       return VLAD_MALLOCFAILED;
 
     /* precondition loop */
-    for (i_exp = 0; i_exp < tmp_pre->length(); i_exp++) {
-      if ((retval = tmp_pre->get(i_exp, &tmp_atom)) != VLAD_OK)
-        return retval;
-      if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
-        return retval;
-      if ((retval = sl1->add(tmp_num)) != VLAD_OK)
-        return retval;
+    if (tmp_pre != NULL) {
+      for (i_exp = 0; i_exp < tmp_pre->length(); i_exp++) {
+        if ((retval = tmp_pre->get(i_exp, &tmp_atom)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
+          return retval;
+        if ((retval = sl1->add(tmp_num)) != VLAD_OK)
+          return retval;
+      }
     }
 
     /* postcondition loop */

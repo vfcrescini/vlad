@@ -267,13 +267,18 @@ int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
   if (!initialised)
     return VLAD_UNINITIALISED;
 
-  if (vlist == NULL || ilist == NULL || a == NULL)
+  if (a == NULL)
     return VLAD_NULLPTR;
 
-  /* make sure lengths are equal */
-  if (vlist->length() != ilist->length())
+  /* if both lists are null or if the lengths are zero, return the atom */
+  if ((vlist == NULL && ilist == NULL) || vlist->length() == ilist->length() == 0)
+    return copy(a);
+
+  /* make sure lists are non-NULL and their lengths are equal */
+  if (vlist == NULL || ilist == NULL || vlist->length() != ilist->length())
     return VLAD_INVALIDINPUT;
 
+  /* all clear */
   if ((*a = VLAD_NEW(atom())) == NULL)
     return VLAD_MALLOCFAILED;
 

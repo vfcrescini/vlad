@@ -44,18 +44,16 @@ bool transref::cmp(list_item *item)
   if (!tmp->initialised)
     return false;
 
+  /* name cannot be NULL */
   if (strcmp(name, tmp->name))
     return false;
 
-  if (!ilist->cmp(tmp->ilist))
-    return false;
-
-  return true;
+  return VLAD_LIST_ITEMCMP(ilist, tmp->ilist);
 }
 
 int transref::init(const char *n, stringlist *il)
 {
-  if (n == NULL || il == NULL)
+  if (n == NULL)
     return VLAD_NULLPTR;
 
   name = (char *) n;
@@ -157,7 +155,8 @@ void sequence::print(char *s)
       break;
 
     strcpy(tmps, "");
-    tmpr->print(tmps);
+    if (tmpr != NULL)
+      tmpr->print(tmps);
     sprintf(s, "%s %s", s, tmps);
   }
 }
