@@ -60,7 +60,6 @@ int stringlist_del(stringlist_type *list, char *string)
                              (void *) string,
                              stringlist_compare,
                              stringlist_destroy);
-
 }
 
 /* delete all strings from this stringlist */
@@ -101,4 +100,3 @@ int stringlist_destroy(void *p)
 
   return 0;
 }
-
