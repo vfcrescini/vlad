@@ -1,5 +1,10 @@
 2003-03-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/numberlist.cpp :
+	* common/stringlist.cpp :
+
+	  - Ensured that dynamic_cast failure will not cause a segfault.
+
 	* kb/kb.cpp :
 	* kb/kb.h :
 

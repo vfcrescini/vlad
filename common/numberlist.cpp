@@ -29,7 +29,8 @@ bool number::cmp(list_item *item)
   if (item == NULL)
     return false;
 
-  tmp = dynamic_cast<number *> (item);
+  if ((tmp = dynamic_cast<number *> (item)) == NULL)
+    return false;
 
   return (tmp->num == num);
 }
