@@ -234,6 +234,40 @@
 
   \section{Conclusion}
 
+    The expressiveness of language $\cal{L}$ and the effectiveness of the
+    implementation can best be demonstrated by a web server authorization
+    application of PolicyUpdater. The application serves as an authorization
+    module for the popular web server, \emph{Apache}\footnotemark. Although the
+    PolicyUpdater module has not yet reached the full functionality provided
+    by Apache's built-in authorization module \emph{mod\_auth}, it does provide
+    a flexible logic-based authorization system which is capable of dynamic and
+    conditional updates.
+
+    The PolicyUpdater module works by intercepting all authenticated HTTP
+    requests made to the web server. Users or groups of users directly
+    correspond to the language $\cal{L}$ subjects, HTTP request methods
+    (i.e. GET, POST, etc.) are the access-rights, and files, directories
+    and other resources in the document root are the objects. These entities
+    plus any initial facts, constraints and update propositions in the 
+    policy base make up the domain of language $\cal{L}$.
+
+    Figure 1 shows how the PolicyUpdate module work within a typical HTTP
+    request. (1) User S makes a HTTP request A for file O and is authenticated
+    by Apache through the Basic HTTP Authentication Scheme. (2) Once properly
+    authenticated, Apache passes the request tuple {S, A, O} to the
+    PolicyUpdater module. (3) PolicyUpdater then queries the policy base 
+    to verify the atom holds(S, A, O) and returns a reply (4) back to Apache.
+    If the request is allowed, as determined by the module in the policy base,
+    Apache accepts and honors the request A to the file O (5) and sends the
+    results back to the user (6). Optionally, an Administrator, once properly
+    authenticated can dynamically update the policy (7) by altering the
+    update sequence in the policy base.
+
+    \footnotetext{Apache Web Server (http://www.apache.org)}
+
+
+
+
     \epsfig{file=fig1.eps}
 
   \begin{thebibliography}{5}
