@@ -111,7 +111,7 @@
           Classical negation \emph{$\lnot$} means that a proposition is
           false, explicitly. Negation as failure \emph{not}, on the other 
           hand, simply means that a proposition is assumed to be false if
-          there is no evidence that the proposition is true.
+          there is no evidence that the proposition is true. \cite{GV}
 
           The language uses \emph{not}, or symbolically, \emph{!} as classical
           negation. Negation as failure is achieved by the \emph{with absence}
@@ -188,11 +188,11 @@
           group literal G, where E and G are of the same literal type.
           E $\in$ G.
 
-          \item subst(G1, G2)
+          \item subst(G$_{1}$, G$_{2}$)
 
-          This atom states that the group literal G1 is a proper subset of the
-          group literal G2, where G1 and G2 are of the same literal type.
-          G1 $\subseteq$ G2.
+          This atom states that the group literal G$_{1}$ is a proper
+          subset of the group literal G$_{2}$, where G$_{1}$ and G$_{2}$
+          are of the same literal type. G$_{1}$ $\subseteq$ G$_{2}$.
 
         \end{itemize}
 
@@ -207,14 +207,16 @@
         An expression is simply a conjuntion of atoms. In this language,
         disjunctions are not allowed. The conjunction \emph{and} is 
         represented by the symbol \&\&. For example, holds(S, A, O) \&\& 
-        !memb(E, G) \&\& subst(G1, G2) is interpreted as holds(S, A, O) $\land$
-        (not E $\in$ G) $\land$ (G1 $\subseteq$ G2).
+        !memb(E, G) \&\& subst(G$_{1}$, G$_{2}$) is interpreted as
+        holds(S, A, O) $\land$ (not E $\in$ G) $\land$ (G$_{1}$
+        $\subseteq$ G$_{2}$).
 
         Since negated expressions yield a disjunction of atoms, only
         atoms are allowed to be negated. To illustrate: De Morgan's Law
-        states that \emph{not} (holds(S1, A1, O1) $\land$ holds(S2, A2, O2)) is
-        equivalent to (\emph{not} holds(S1, A1, O1)) $\lor$ (\emph{not}
-        holds(S2, A2, O2)). As a consequence, parentheses are allowed only
+        states that \emph{not} (holds(S$_{1}$, A$_{1}$, O$_{1}$) $\land$
+        holds(S$_{2}$, A$_{2}$, O$_{2}$)) is equivalent to (\emph{not} 
+        holds(S$_{1}$, A$_{1}$, O$_{1}$)) $\lor$ (\emph{not} holds(S$_{2}$, 
+        A$_{2}$, O$_{2}$)). As a consequence, parentheses are allowed only
         to enclose literals within atoms but not to group atoms together. 
 
         Because the constants \emph{true} and \emph{false} are atoms, they may 
@@ -419,7 +421,7 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
       translation is to reduce every atom, which is composed of two to three
       parameters into a single proposition. This procedure, although does not
       seem necessary is to allow us to have a simplified representation of
-      propositions. For example, the atoms holds(s1, a1, o1) and memb(e1, g1)
+      propositions. For example, the atoms holds(s1, a1, o$_{1}$) and memb(e1, g1)
       can be reduced to propositions A and B, respectively.
 
       \subsubsection{Adding a State Parameter to the Atoms}
@@ -524,66 +526,63 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
 
         The following lists a small program written in the proposed language:
 
-        \begin{list}{}{}
-          \item initially holds(s, a, o1), !holds(s, a, o2), !holds(s, a, o3)
-          \item holds(s, a, o2) implies holds(s, a, o3)
-          \item trans causes holds(s, a, o2) if !holds(s, a, o2)
-        \end{list}
+        \begin{verbatim}
+initially holds(s, a, o1), !holds(s, a, o2), !holds(s, a, o3);
+holds(s, a, o2) implies holds(s, a, o3);
+trans causes holds(s, a, o3) if !holds(s, a, o2);
+        \end{verbatim}
 
         First we represent the atoms with simple propositions:
 
         \begin{list}{}{}
-          \item A = holds(s, a, o1)
-          \item B = holds(s, a, o2)
-          \item C = holds(s, a, o3)
+          \item A = holds(s, a, o$_{1}$)
+          \item B = holds(s, a, o$_{2}$)
+          \item C = holds(s, a, o$_{3}$)
         \end{list}
 
         The equivalent extended logic program is:
 
         \begin{list}{}{Initial State}
-          \item holds(A, S0)
-          \item $\lnot$ holds(B, S0)
-          \item $\lnot$ holds(C, S0)
+          \item holds(A, S$_{0}$)
+          \item $\lnot$ holds(B, S$_{0}$)
+          \item $\lnot$ holds(C, S$_{0}$)
         \end{list}
 
         \begin{list}{}{Constraint}
-          \item holds(C, S0) $\leftarrow$ holds(B, S0)
-          \item holds(C, S1) $\leftarrow$ holds(B, S1)
+          \item holds(C, S$_{0}$) $\leftarrow$ holds(B, S$_{0}$)
+          \item holds(C, S$_{1}$) $\leftarrow$ holds(B, S$_{1}$)
         \end{list}
 
         \begin{list}{}{Transformation}
-          \item holds(B, S1) $\leftarrow$ $\lnot$ holds(B, S0)
+          \item holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$)
         \end{list}
 
         \begin{list}{}{Inertial Rules}
           \item
-            holds(A, S1) $\leftarrow$ holds(A, S0) $\land$ not $\lnot$ holds(A, S1)
+            holds(A, S$_{1}$) $\leftarrow$ holds(A, S$_{0}$) $\land$ not
+            $\lnot$ holds(A, S$_{1}$)
           \item
-            $\lnot$ holds(A, S1) $\leftarrow$ $\lnot$ holds(A, S0) $\land$ not holds(A, S1)
+            $\lnot$ holds(A, S$_{1}$) $\leftarrow$ $\lnot$ holds(A, S$_{0}$) 
+            $\land$ not holds(A, S$_{1}$)
           \item
-            holds(B, S1) $\leftarrow$ holds(B, S0) $\land$ not $\lnot$ holds(B, S1)
+            holds(B, S$_{1}$) $\leftarrow$ holds(B, S$_{0}$) $\land$ not
+            $\lnot$ holds(B, S$_{1}$)
           \item
-            $\lnot$ holds(B, S1) $\leftarrow$ $\lnot$ holds(B, S0) $\land$ not holds(B, S1)
+            $\lnot$ holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$) 
+            $\land$ not holds(B, S$_{1}$)
           \item
-            holds(C, S1) $\leftarrow$ holds(C, S0) $\land$ not $\lnot$ holds(C, S1)
+            holds(C, S$_{1}$) $\leftarrow$ holds(C, S$_{0}$) $\land$ not
+            $\lnot$ holds(C, S$_{1}$)
           \item
-            $\lnot$ holds(C, S1) $\leftarrow$ $\lnot$ holds(C, S0) $\land$ not holds(C, S1)
+            $\lnot$ holds(C, S$_{1}$) $\leftarrow$ $\lnot$ holds(C, S$_{0}$)
+            $\land$ not holds(C, S$_{1}$)
         \end{list}
 
     \subsection{Convertion to Normal Logic Program: Removal of Classical Negation}
 
       Translation to from extended logic program to normal logic program 
       requires one more additional step: to remove all instances of classical 
-      negation. This step can easily be achieved by replacing classically
-      negated atoms with a new positive atom that represents the negated one.
-
-      However, two new implications must be added to produce the negation
-      effect of the new atom A over the classically negated atom B:
-
-      \begin{list}{}{}
-        \item A $\leftarrow$ not B
-        \item B $\leftarrow$ not A
-      \end{list}
+      negation. 
 
     \pagebreak
 
@@ -604,6 +603,7 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
   \begin{thebibliography}{}
     \bibitem{BV1}Y. Bai and V. Varadharajan, \emph{On Transformation of Authorization Policies}. School of Computing and Information Technology, University of Western Sydney, 1997.
     \bibitem{BV2}Y. Bai and V. Varadharajan, \emph{On Sequence of Authorization Policy Transformations}. School of Computing and Information Technology, University of Western Sydney, 1997.
+    \bibitem{GV}M. Gelfond and V. Lifschitz, \emph{Classical Negation in Logic Programs and Disjunctive Databases}. New Generation Computing, 1991.
     \bibitem{RN}S. Russell and P. Norvig, \emph{Artificial Intelligence - A Modern Approach}. Prentice Hall, 1995.
     \bibitem{WL}.Y.C. Woo and S.S. Lam, \emph{Authorization in Distributed systems: A Formal Approach}. Proceedings of IEEE Symposium on Research in Security and Privacy, 1992.
   \end{thebibliography}
