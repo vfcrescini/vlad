@@ -27,7 +27,7 @@ all : $(TARGETS)
 	done
 
 vlad : $(OBJECTS) $(DISTDIR)/lib/vlad/*
-	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIB) -lparser -lkb -lcommon $(LEXLIB)
+	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIB) -lparser -lkb -lcommon
 ifndef DEBUG
   ifdef STRIP
 	strip $(@)
