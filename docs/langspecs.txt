@@ -207,20 +207,24 @@ Started 2002 Dec 08
 
     The most general form:
 
-      <expression1> implies <expression2> with absence <expression3>
+      always <expression1> implied by <expression2> with absence <expression3>
 
-    states that expression2 holds if expression1 is true and the truth 
+    states that expression1 holds if expression2 is true and the truth 
     value of expression3 is unknown. 
 
-    If the "with absence" clause is omitted, then expression2 is applied
-    if and only if expression1 is true:
+    If the "with absence" clause is omitted, then expression1 is applied
+    if and only if expression2 is true:
 
-      <expression1> implies <expression2>
+      always <expression1> implied by <expression2>
 
-    A special case of the above is when expression1 is the empty set.
-    In this case, expression2 is always applied:
+    Likewise, if the "implied by" clause is omitted, then expression1 holds
+    if there is no evidence that expression3 is true:
 
-      always <expression2>
+      always <expression1> with absence <expression3>
+
+    Finally, if both conditions are omitted, then expression1 will always hold:
+
+      always <expression1>
 
 3. Comments
 
