@@ -14,7 +14,7 @@ then
   exit 0
 fi
 
-if ! [ -d ${1} ] || ! [ -w ${1} ]
+if ! [ -d "${1}" ] || ! [ -w "${1}" ]
 then
   echo "${1} does not exist / not writable"
   exit 0
@@ -38,5 +38,5 @@ do
   done
   
   echo "${filename} -> ${1}/${name}.au"
-  ${mpgprog} -sq "${filename}" > ${1}/${name}.au
+  ${mpgprog} -sq "${filename}" > "${1}/${name}.au"
 done
