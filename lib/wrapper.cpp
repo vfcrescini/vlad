@@ -622,44 +622,6 @@ VLAD_EXTERN int vlad_tref_init(void *a_tref, const char *a_n, void *a_slist)
   return tmp_tref->init(tmp_name, VLAD_WRAPPER_CAST(a_slist, stringlist *));
 }
 
-/* create a consttab */
-VLAD_EXTERN int vlad_consttab_create(void **a_ct)
-{
-  return VLAD_WRAPPER_CREATE(consttab, a_ct);
-}
-
-/* destroy a consttab */
-VLAD_EXTERN int vlad_consttab_destroy(void *a_ct)
-{
-  consttab *tmp_ct = NULL;
-
-  if (a_ct == NULL)
-    return VLAD_NULLPTR;
-
-  if ((tmp_ct = VLAD_WRAPPER_CAST(a_ct, consttab *)) == NULL)
-    return VLAD_INVALIDINPUT;
-
-  delete tmp_ct;
-
-  return VLAD_OK;
-}
-
-/* add expressions into a consttab */
-VLAD_EXTERN int vlad_consttab_add(void *a_ct, void *a_e, void *a_c, void *a_n)
-{
-  consttab *tmp_ct = NULL;
-
-  if (a_ct == NULL)
-    return VLAD_NULLPTR;
-
-  if ((tmp_ct = VLAD_WRAPPER_CAST(a_ct, consttab *)) == NULL)
-    return VLAD_INVALIDINPUT;
-
-  return tmp_ct->add(VLAD_WRAPPER_CAST(a_e, expression *),
-                     VLAD_WRAPPER_CAST(a_c, expression *),
-                     VLAD_WRAPPER_CAST(a_n, expression *));
-}
-
 /* get the length of the list */
 VLAD_EXTERN int vlad_list_length(void *a_list)
 {
