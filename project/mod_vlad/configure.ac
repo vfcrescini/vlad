@@ -1,6 +1,6 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-AC_INIT(mod_vlad,0.0.1,jcrescin@cit.uws.edu.au)
+AC_INIT(mod_vlad,0.0.2,jcrescin@cit.uws.edu.au)
 
 # set language
 AC_LANG(C)
