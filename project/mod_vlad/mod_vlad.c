@@ -82,7 +82,7 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
     conf->user_file = NULL;
     conf->policy_file = NULL;
     conf->kb = NULL;
-    conf->path = apr_pstrdup(a_p, a_d);
+    conf->path = modvlad_strip_slash(a_p, apr_pstrdup(a_p, a_d));
   }
 
   return conf;

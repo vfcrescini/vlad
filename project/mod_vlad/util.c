@@ -245,12 +245,12 @@ static int add_object(apr_pool_t *a_p,
 
   /* realrelpath is / or path relative to basepath */
   realrelpath = apr_pstrdup(a_p,
-                            ((!a_relpath || !strcmp(a_relpath, "")) ? "/" : a_relpath));
+                            (!a_relpath || !strcmp(a_relpath, "")) ? "/" : a_relpath);
   /* realfullpath is basepath/realrelpath */
   realfullpath = apr_pstrcat(a_p,
                              a_basepath,
-                             (MODVLAD_LASTCHAR(realrelpath) == '/' ? "" : "/"), 
-                             realrelpath,
+                             (MODVLAD_LASTCHAR(a_basepath) == '/' || MODVLAD_FIRSTCHAR(realrelpath)) ? "" : "/",
+                             !strcmp(realrelpath, "/") ? "" : realrelpath,
                              NULL);
 
 #ifdef MODVLAD_DEBUG
@@ -258,7 +258,8 @@ static int add_object(apr_pool_t *a_p,
                 MODVLAD_LOGLEVEL,
                 0,
                 a_p,
-                "mod_vlad: adding object from %s into kb",
+                "mod_vlad: adding object from %s as %s into kb",
+                realfullpath,
                 realrelpath);
 #endif
 

@@ -20,7 +20,7 @@ typedef struct {
   char *user_file;
   char *policy_file;
   void *kb;
-  char *path;
+  const char *path;
 } modvlad_config_rec;
 
 #define MODVLAD_ACCESS_OPTIONS "OPTIONS"
@@ -45,7 +45,8 @@ typedef struct {
   NULL,                         \
 }
 
-#define MODVLAD_LASTCHAR(X) (X[strlen(X) - 1])
+#define MODVLAD_LASTCHAR(X)  (X[strlen(X) > 0 ? strlen(X) - 1 : 0])
+#define MODVLAD_FIRSTCHAR(X) (X[0])
 
 /* a version of yyinput that uses apache apr */
 int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max);
