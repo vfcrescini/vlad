@@ -108,7 +108,7 @@
     perform a sequence of policy updates, and a means of evaluating queries
     against the policies.
 
-    The rest of this paper is organised as follows. In Section \ref{sec-langl},
+     The rest of this paper is organised as follows. In Section \ref{sec-langl},
     the paper introduces language ${\cal L}$, with its formal syntax, semantics
     and some examples. In Section \ref{sec-cons}, the issues of consistency and
     query evaluation are addressed. The implementation, as discussed in Section
@@ -120,6 +120,11 @@
     the PolicyUpdater system: an access control system for web servers. In
     Section \ref{sec-conclusion}, the concluding remarks address some
     possible extensions to this system.
+
+    The PolicyUpdater system was originally introduced in the conference
+    proceedings paper \cite{CR1}. Another conference proceedings paper
+    \cite{CR2} focuses on a web server authorisation system based on the
+    core PolicyUpdater system.
 
   \section{Language $\cal{L}$}
     \label{sec-langl}
@@ -471,6 +476,10 @@
       After giving a detailed syntactic definition of language ${\cal L}$,
       we now define its formal semantics.
 
+      The semantics for language ${\cal L}$ is based on the well-known answer
+      set semantics of extended logic programs proposed by Gelfond and
+      Lifschitz \cite{GEL}.
+
       \subsubsection{Domain Description of Language ${\cal L}$}
         \begin{vdefinition}
           \label{def-domain}
@@ -698,7 +707,7 @@
           As shown above, the number of initial fact rules generated from the
           translation is the number of facts $n$ in the given language
           ${\cal L}$ initial fact expression.
-          
+
           The following code shows an example of a language ${\cal L}$
           $initially$ statement:
 
@@ -990,11 +999,11 @@
                   \end{vquote}
                 \item
                   Access Right Group Membership Inheritance
- 
+
                   \begin{vquote}
                     $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$),
                     where
- 
+
                     $s \in {\cal E}_{s}$,
                     $a_{s} \in {\cal E}_{as}$,
                     $a_{g} \in {\cal E}_{ag}$,
@@ -1018,7 +1027,7 @@
 
                  \item
                   Object Group Membership Inheritance
- 
+
                   \begin{vquote}
                     $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$),
                     where
@@ -1043,10 +1052,10 @@
                       \end{aligned}
                     \end{math}
                   \end{vquote}
- 
+
                 \item
                   Subject Group Subset Inheritance
- 
+
                   \begin{vquote}
                     $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$),
                     where
@@ -1056,7 +1065,7 @@
                     $o \in {\cal E}_{o}$,
                     $S_{0} \leq \sigma \leq S_{|\psi|}$
                   \end{vquote}
- 
+
                   \begin{vquote}
                     \begin{math}
                       \begin{aligned}[t]
@@ -1069,15 +1078,15 @@
                         & \hat{subst}(s_{g1}, s_{g2}, \sigma)
                       \end{aligned}
                     \end{math}
-                  \end{vquote} 
- 
+                  \end{vquote}
+
                 \item
                   Access Right Group Subset Inheritance
- 
+
                   \begin{vquote}
                     $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$),
                     where
-  
+
                     $s \in {\cal E}_{s}$,
                     $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
                     $o \in {\cal E}_{o}$,
@@ -1097,14 +1106,14 @@
                       \end{aligned}
                     \end{math}
                   \end{vquote}
- 
+
                 \item
                   Object Group Subset Inheritance
- 
+
                   \begin{vquote}
                     $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$),
                     where
- 
+
                     $s \in {\cal E}_{s}$,
                     $a \in {\cal E}_{a}$,
                     $o_{g1}, o_{g2} \in {\cal E}_{og}$,
@@ -1136,11 +1145,11 @@
               \begin{enumerate}
                 \item
                   Subject Group Transitivity
- 
+
                   \begin{vquote}
                     $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$),
                     where
- 
+
                     $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
                     $S_{0} \leq \sigma \leq S_{|\psi|}$
                   \end{vquote}
@@ -1154,14 +1163,14 @@
                       \end{aligned}
                     \end{math}
                   \end{vquote}
- 
+
                 \item
                   Access Right Group Transitivity
 
-                  \begin{vquote} 
+                  \begin{vquote}
                     $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$),
                     where
-  
+
                     $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
                     $S_{0} \leq \sigma \leq S_{|\psi|}$
                   \end{vquote}
@@ -1175,14 +1184,14 @@
                       \end{aligned}
                     \end{math}
                   \end{vquote}
- 
+
                 \item
                   Object Group Transitivity
- 
+
                   \begin{vquote}
                     $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$),
                     where
-  
+
                     $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
                     $S_{0} \leq \sigma \leq S_{|\psi|}$
                   \end{vquote}
@@ -1205,7 +1214,7 @@
               the update. In language ${\cal L}^{*}$, this rule must be
               explicitly stated as a constraint. Formally, the inertial rules
               are expressed as follows:
- 
+
               \begin{vquote}
                 $\forall$($\hat{\alpha}$,$u$) $\exists$$\hat{\alpha}'$,
                 where
@@ -1217,7 +1226,7 @@
 
               \begin{vquote}
                 $\hat{\alpha}'$ $\leftarrow$ $\hat{\alpha}$, $not$ $\lnot$ $\hat{\alpha}'$
- 
+
                 $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
               \end{vquote}
           \end{itemize}
@@ -1334,7 +1343,7 @@
                   \end{aligned}
                 \end{math}
               \end{vquote}
- 
+
               \begin{vquote}
                 \begin{math}
                   \begin{aligned}[t]
@@ -1751,18 +1760,18 @@
     \begin{vverbatim}
   initially
     \(a\sb{0}\) && \ldots && \(a\sb{n}\) && !\(b\sb{0}\) && \ldots && !\(b\sb{m}\)
-                                                                   
-  always                                                           
+
+  always
     \(c\sb{0}\) && \ldots && \(c\sb{o}\) && !\(d\sb{0}\) && \ldots && !\(d\sb{p}\)
-    implied by                                                     
+    implied by
     \(e\sb{0}\) && \ldots && \(e\sb{q}\) && !\(f\sb{0}\) && \ldots && !\(f\sb{r}\)
-    with absence                                                   
+    with absence
     \(g\sb{0}\) && \ldots && \(g\sb{s}\) && !\(h\sb{0}\) && \ldots && !\(h\sb{t}\)
-                                                                   
-  update()                                                         
-    causes                                                         
+
+  update()
+    causes
     \(i\sb{0}\) && \ldots && \(i\sb{u}\) && !\(j\sb{0}\) && \ldots && !\(j\sb{v}\)
-    if                                                             
+    if
     \(k\sb{0}\) && \ldots && \(k\sb{w}\) && !\(l\sb{0}\) && \ldots && !\(l\sb{x}\)
     \end{vverbatim}
 
@@ -2045,7 +2054,7 @@
         For example, given that the symbol table contains three singular
         subject entity identifiers: $alice$, $bob$ and $charlie$, and the
         following constraint:
-        
+
         \begin{vverbatim}
   always holds(SSUB, write, file)
     implied by
@@ -2614,6 +2623,26 @@
       In {\em Proceedings of KR2000, 7th International Conference on Principles
       of Knowledge Representation and Reasoning},
       pp. 121-132, Kaufmann, 2000.
+
+    \bibitem{CR1}
+      Crescini, V. F., Zhang, Y.,
+      A Logic Based Approach for Dynamic Access Control.
+      In {\em Proceedings of the 17th Australian Joint Conference on Artificial
+      Intelligence},
+      2004. (to be published)
+
+    \bibitem{CR2}
+      Crescini, V. F., Zhang, Y., Wang, W.,
+      Web Server Authorisation with the PolicyUpdater Access Control System.
+      In {\em Proceedings of the 2004 IADIS WWW/Internet Conference},
+      2004. (to be published)
+
+    \bibitem{GEL}
+      Gelfond, M., Lifschitz, V.,
+      The Stable Model Semantics for Logic Programming.
+      In {\em Proceedings of the 5th Joint International Conference and
+      Symposium},
+      pp. 1070-1080, MIT Press, 1998.
 
     \bibitem{HAL}
       Halpern, J. Y., Weissman, V.,
