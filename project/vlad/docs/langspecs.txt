@@ -198,19 +198,18 @@ Started 2002 Dec 08
       causes <post-condition-expression> 
       if true
 
-  2.4. Policy Proposition Definition Statement
+  2.4. Query Statement
 
-    This statement is used for queries.
+    This statement is used to enter queries.
 
-      is <policy-expression> 
+      query <query-expression> 
       after <trans-identifier-1>, <trans-identifier-2>, ...
 
     Or, to query the initial state:
 
-      is <policy-expression> 
+      query <query-expression> 
 
     The statement will return one of the following: true, false or ?
-
 
   2.5. Constraint Definition Statement
 

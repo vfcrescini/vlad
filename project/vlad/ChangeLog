@@ -1,3 +1,13 @@
+2003-04-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* docs/bnf.txt :
+	* docs/langspecs.txt :
+	* parser/parser.y :
+	* parser/scanner.l :
+	* samples/chinese_wall :
+
+	  - Changed "is" to "query".
+
 2003-04-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.cpp :

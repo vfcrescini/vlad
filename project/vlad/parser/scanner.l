@@ -39,7 +39,7 @@ absence            absence
 always             always
 causes             causes
 if                 if
-is                 is
+query              query
 after              after
 ident              ident
 sub_grp_type       sub-grp
@@ -91,7 +91,7 @@ everything         .
 
 <INITIAL>{if} return VLAD_SYM_IF;
 
-<INITIAL>{is} return VLAD_SYM_IS;
+<INITIAL>{query} return VLAD_SYM_QUERY;
 
 <INITIAL>{after} return VLAD_SYM_AFTER;
 
