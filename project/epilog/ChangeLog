@@ -1,5 +1,9 @@
 2002-09-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/comp_exp.c :
+
+	  - Fixed pointer bug.
+
 	* exp/gnd_exp.c :
 	* exp/gnd_exp.h :
 

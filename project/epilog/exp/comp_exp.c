@@ -94,7 +94,7 @@ int comp_exp_replace(comp_exp_type comp,
   unsigned int len_exp;
   unsigned int len_vlist;
   unsigned int len_ilist;
-  gnd_atom_type *tmp_gnd_atom = NULL;
+  gnd_atom_type tmp_gnd_atom;
   comp_atom_type *tmp_comp_atom = NULL;
 
   if (ground == NULL)
@@ -111,18 +111,17 @@ int comp_exp_replace(comp_exp_type comp,
 
   if (comp_exp_length(comp, &len_exp) != 0)
     return -1;
-
+  
   for (i = 0; i < len_exp; i++) {
     if (comp_exp_get(comp, i, &tmp_comp_atom) != 0)
       return -1;
-
     if (comp_exp_replace_atom(*tmp_comp_atom,
-                              tmp_gnd_atom,
+                              &tmp_gnd_atom,
                               varlist,
                               identlist) != 0)
       return -1;
 
-    if (gnd_exp_add(ground, *tmp_gnd_atom) != 0)
+    if (gnd_exp_add(ground, tmp_gnd_atom) != 0)
       return -1;
   }
 
@@ -247,6 +246,7 @@ int comp_exp_get_ident(name_type name,
 
     return 0;
   }
+
   if (EPI_NAME_IS_IDENT(name)) {
     *ident = name.name.ident;
     return 0;
