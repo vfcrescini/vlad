@@ -11,10 +11,22 @@ counter=1
 charlen=5
 tempdir=./.tmp_$$_
 
+if [ "${#}" = "1" ] && [ "${1}" = "-r" ]; then
+  RECURSIVE=1
+fi
+
 mkdir $tempdir
 
 for tempFile in *
 do
+  if [ "${RECURSIVE}" = "1" ] && [ -d "${tempFile}" ]; then
+    cd "${tempFile}"
+    echo entering `pwd`
+    ${0} -r
+    echo exiting `pwd`
+    cd ..
+  fi
+
   # get extension
   extension="${tempFile##*.}"
 
