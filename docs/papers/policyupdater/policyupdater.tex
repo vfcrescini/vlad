@@ -30,9 +30,9 @@
     that provides policy evaluations as well as dynamic policy updates. These
     are achieved by the use of a logic-based language ${\cal L}$ to represent
     the underlying access control policies, constraints and update
-    propositions. The system performs general authorisation query evaluations
-    and conditional policy updates by first translating the language $\cal{L}$
-    to a normal logic program in a form suitable for evaluation using the
+    propositions. The system performs authorisation query evaluations and
+    conditional policy updates by first translating the language $\cal{L}$ to a
+    normal logic program in a form suitable for evaluation using the
     {\em Stable Model} semantics.
   \end{abstract}
 
@@ -41,13 +41,57 @@
 
   \section{Introduction}
 
-    \subsection{Overview of Logic-Based Approaches}
+    The traditional access control mechanism is the {\em Access Control Matrix}
+    where columns represent subjects, rows represent objects and each cell
+    contains the access-rights of a subject over a particular object. However,
+    flexibility and scalability issues arise when such method is used on
+    real-world applications. A more effective paradigm of access control
+    systems is the logic-based approach. In this approach, instead of
+    explicitly defining all access-rights of all subjects for all objects
+    in a domain, a set of logical facts and rules are used to define the
+    policy base.
 
-    \subsection{Contributions}
+    Recent advances in the field have produced a number of different approaches
+    to logic-based access control systems. Bertino, et. al. \cite{BE1} proposed
+    such a system based on ordered logic with ordered domains. Jajodia, et. al.
+    \cite{JAJ} on the other hand, proposed a general access control framework
+    that features handling of multiple policies. Another significant work is
+    the system proposed by Bai and Varadharajan \cite{BAI}. Their system's key
+    characteristic is the ability to dynamically update the otherwise static
+    policy base. These systems, effective as they are, lack the details
+    necessary to address the issues involved in the implementation of such a
+    system. 
 
-    \subsection{Structure of This Paper}
+    The {\em Policy Description Language}, or {\cal PDL}, developed by Lobo,
+    et. al. \cite{LOB}, is a language for representing event and action
+    oriented generic policies. {\cal PDL} is later extended by Chomicki, et.
+    al. \cite{CHO} to include {\em policy monitors} which, in effect, are
+    policy constraints. Bertino, et. al. \cite{BE2}, again took ${\cal PDL}$ a
+    step further by extending {\em policy monitors} to allow users to express
+    preferred constraints. While these generic languages are expressive enough
+    to be used for access control systems, systems built for such languages
+    will not have the ability to dynamically update the policies.
+
+    To overcome these limitations, we propose the PolicyUpdater access control
+    system, which, with its own access control language, provides: a formal
+    logic-based representation of policies, with variable resolution and
+    default propositions; a mechanism to conditionally and dynamically
+    perform a sequence of policy updates; and a means to evaluate queries
+    against a policy or updated policies.
+
+    In Section \ref{sec-langl}, the paper introduces language ${\cal L}$, with
+    its formal syntax, semantics and some examples. The implementation as
+    discussed in Section \ref{sec-implement} gives a brief overview of
+    PolicyUpdater system as a whole, its internal and external components, and
+    most importantly, an outline of the underlying mechanisms responsible for
+    processing of language ${\cal L}$ policies for query evaluation and dynamic
+    updates. Appendix \ref{app-store} shows detailed specifications of the
+    data structures used by the system. The case study presented in Appendix
+    \ref{app-case} shows a typical application of the PolicyUpdater system:
+    an access control system for web servers.
 
   \section{Language $\cal{L}$}
+    \label{sec-langl}
 
     Language $\cal{L}$ is a first-order logic language that represents a policy
     base for an authorisation system. Two key features of the language are: (1)
@@ -318,7 +362,6 @@ always <exp1>
           access for $file$.
 
           \begin{verbatim}
-/* policy definitions */
 ident sub alice;
 ident sub-grp grp1, grp2, grp3;
 ident acc read, write;
@@ -339,7 +382,6 @@ always holds(grp1, write, file)
 delete_read(SG0, OS0)
   causes !holds(SG0, read, OS0);
 
-/* directives */
 seq add delete_read(grp1, file);
 
 compute;
@@ -1385,6 +1427,7 @@ query holds(alice, read, file);
     \end{example}
 
   \section{Implementation}
+    \label{sec-implement}
 
     \subsection{System Structure}
 
@@ -1428,7 +1471,7 @@ query holds(alice, read, file);
         As a program of language ${\cal L}$ is parsed, each statement
         containing entity declarations, facts, constraint rules and policy
         updates must be stored into a structure before the translation process
-        is started. As shown in appendix \ref{app-1}, the structure is composed
+        is started. As shown in appendix \ref{app-store}, the structure is composed
         of the symbol table, the policy base and the policy update sequence
         table.
 
@@ -1593,7 +1636,8 @@ query holds(alice, read, file);
             indices produced in the above step represent positive facts. Since
             negative facts are just mirror images of their positive
             counterparts, their indices are calculated by adding $n$ to the
-            indices of the corresponding positive facts. Furthermore, this
+            indices of the corresponding positive facts. Thus, indices $i$
+            ($n$ $\leq$ $i$ $<$ $2n$) are negative facts. Furthermore, this
             procedure is again extended to represent the states of the facts.
             The process is similar: indices $i$ ($0$ $\leq$ $i$ $<$ $2n$)
             represent facts of state $S_{0}$, indices $i$ ($2n$ $\leq$ $i$ $<$
@@ -1608,7 +1652,7 @@ query holds(alice, read, file);
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
           With the language ${\cal L}$ policy elements stored into the storage
-          structure (see appendix \ref{app-1}), a normal logic program can
+          structure (see appendix \ref{app-store}), a normal logic program can
           then be generated for evaluation. Using the translation methods
           described in the semantics section and the method for eliminating
           classical negation, each initial state expression, constraint rule
@@ -1625,7 +1669,7 @@ query holds(alice, read, file);
         each fact of a given query holds in each generated answer set of the
         normal logic program.
 
-        \footnotetext{Smodels [smodels homepage url]}
+        \footnotetext{Smodels from http://www.tcs.hut.fi/Software/smodels}
 
         If a given fact indeed holds in all the answer sets, it is then
         evaluated to be true. On the other hand, if the negation of a fact
@@ -1634,12 +1678,55 @@ query holds(alice, read, file);
         nor false: inconclusive.
 
   \section{Conclusion}
+    \label{sec-conclusion}
 
     [effectiveness of system/application]
 
     [future work]
 
   \begin{thebibliography}{5}
+    \bibitem{BAI}
+      Bai, Y., Varadharajan, V.,
+      On Formal Languages for Sequences of Authorization Transformations.
+      In \emph{Proceedings of Safety, Reliability and Security of Computer
+      Systems}. Also in {\em Lecture Notes in Computer Science},
+      Vol. 1698, pp 375-384. Springer-Verlag, 1999
+                                                                                
+    \bibitem{BE1}
+      Bertino, E., Buccafurri, F., Ferrari, E., Rullo, P.,
+      A Logic-based Approach for Enforcing Access Control.
+      {\em Journal of Computer Security},
+      Vol. 8, No. 2-3,
+      pp 109-140.
+      IOS Press, 2000
+
+    \bibitem{BE2}
+      Bertino, E., Mileo A., Provetti, A. [XXX]
+
+    \bibitem{CHO}
+      Chomicki, J., Lobo, J., Naqvi S.,
+      A Logic Programming Approach to Conflict Resolution in Policy Management.
+      In {\em Proceedings of KR2000, 7th International conferece on Principles
+              of Knowledge Representation and Reasoning},
+
+      pp. 121 - 1332
+      Kaufmann, 2000.
+                                                                                
+    \bibitem{JAJ}
+      Jajodia, S., Samarati, P., Sapino, M. L., Subrahmanian, V. S.,
+      Flexible Support for Multiple Access Control Policies.
+      In {\em ACM Transactions on Database Systems},
+      Vol. 29, No. 2,
+      pp 214-260.
+      ACM, 2001
+
+    \bibitem{LOB}
+      Lobo J., Bhatia R., Naqvi S.,
+      A Policy Description Language.
+      In {\em American Association for Artificial Intelligence},
+      AAAI-99.
+      pp 291-298
+      1999
   \end{thebibliography}
 
   \appendix
@@ -1648,7 +1735,7 @@ query holds(alice, read, file);
 
     \subsection{Storage Structures}
 
-      \label{app-1}
+      \label{app-store}
       The data structures outlined in this section are used as a storage
       structure to hold the elements of language ${\cal L}$ before any
       operations are performed.
@@ -1821,6 +1908,7 @@ query holds(alice, read, file);
 
     \subsection{A Case Study: Web Server Application}
 
+      \label{app-case}
       \begin{figure}[ht]
         \begin{center}
           \epsfig{file=app.eps}
