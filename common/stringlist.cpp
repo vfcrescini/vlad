@@ -74,7 +74,7 @@ stringlist::~stringlist()
 int stringlist::add(const char *s)
 {
   int retval;
-  string *tmp;
+  string *tmp = NULL;
 
   if (s == NULL)
     return VLAD_NULLPTR;
@@ -120,8 +120,8 @@ int stringlist::get(const char *s, unsigned int *i)
 /* get the ith string in the list */
 int stringlist::get(unsigned int i, char **s)
 {
-  string *tmp = NULL;
   int retval;
+  string *tmp = NULL;
 
   /*
    * this will give a reference to the actual string and not a copy,
