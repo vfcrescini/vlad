@@ -8,8 +8,10 @@
 
 #include <atom.h>
 #include <expression.h>
-#include <consttab.h>
+#include <stringlist.h>
 #include <symtab.h>
+#include <consttab.h>
+#include <transtab.h>
 
 class kb {
   public :
@@ -29,12 +31,18 @@ class kb {
     int add_symtab(const char *n, unsigned char t);
     /* add an atom into the initial state table */
     int add_inittab(atom *a);
-    /* add an expression into the constraints table */
+    /* add a constrant into the constraints table */
     int add_consttab(expression *e, expression *c, expression *n);
+    /* add a transformation declaration in the trans table */
+    int add_transtab(const char *n,
+                     stringlist *v,
+                     expression *pr,
+                     expression *po);
   private :
     symtab *stable;
     expression *itable;
     consttab *ctable;
+    transtab *ttable;
     unsigned char stage;
     /* make sure atom a is valid */
     int kb::verify_atom(atom *a);

@@ -17,6 +17,7 @@ kb::kb()
   stable = NULL;
   itable = NULL;
   ctable = NULL;
+  ttable = NULL;
   stage = 0;
 }
 
@@ -29,7 +30,10 @@ kb::~kb()
     delete itable;
 
   if (ctable != NULL)
-    delete ctable; 
+    delete ctable;
+
+  if (ttable != NULL)
+    delete ttable;
 }
 
 /* (re)init kb */
@@ -59,6 +63,13 @@ int kb::init()
     delete ctable;
 
   if ((ctable = VLAD_NEW(consttab("constraint table"))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* transformation declaration table */
+  if (ttable != NULL)
+    delete ttable;
+
+  if ((ttable = VLAD_NEW(transtab("tranformation declaration table"))) == NULL)
     return VLAD_MALLOCFAILED;
 
   stage = 1;
@@ -223,6 +234,29 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
 
   /* finally, we add the expressions into the cosntraints table */
   return ctable->add(exp, cond, ncond);
+}
+
+/* add a transformation declaration in the trans table */
+int kb::add_transtab(const char *n,
+                     stringlist *v,
+                     expression *pr,
+                     expression *po)
+{
+  stringlist *vlist;
+  expression *precond;
+  expression *postcond;
+
+  if ((vlist = VLAD_NEW(stringlist(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((precond = VLAD_NEW(expression(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((postcond = VLAD_NEW(expression(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  if (n == NULL)
+    return VLAD_NULLPTR;
+
+  return VLAD_OK;
 }
 
 /* make sure atom a is valid */
