@@ -1,5 +1,10 @@
 2003-03-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Added provisions for negative atoms.
+
 	* common/list.h :
 	* common/list.cpp :
 
