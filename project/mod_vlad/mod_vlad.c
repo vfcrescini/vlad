@@ -19,19 +19,12 @@
 
 #include "util.h"
 
-
 /* some external functions from the parser & lexer */
 extern void policyparse();
-extern void policy_set_yyinput(int (*a_func)(void *, char *, int), 
+extern void policy_set_yyinput(int (*a_func)(void *, char *, int),
                                void *a_stream);
 
-typedef struct {
-  char *user_file;
-  char *policy_file;
-  void *kb;
-  char *path;
-} modvlad_config_rec;
-
+/* some static functions */
 static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d);
 static char *modvlad_get_passwd(request_rec *a_r,
                                 char *a_user,
@@ -44,6 +37,7 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                                     const char *a_uname,
                                     const char *a_pname);
 
+/* our command rec */
 static const command_rec modvlad_auth_cmds[] =
 {
   AP_INIT_TAKE2("VladFiles",
@@ -54,6 +48,7 @@ static const command_rec modvlad_auth_cmds[] =
   {NULL},
 };
 
+/* the module */
 module AP_MODULE_DECLARE_DATA modvlad_module =
 {
   STANDARD20_MODULE_STUFF,
@@ -158,7 +153,7 @@ static int modvlad_authenticate(request_rec *a_r)
                   APLOG_NOTICE,
                   0,
                   a_r,
-                  "mod_vlad: declining authentication request");                  
+                  "mod_vlad: declining authentication request");
     return DECLINED;
   }
 
@@ -243,6 +238,11 @@ static int modvlad_authorize(request_rec *a_r)
                 conf->path);
 #endif
 
+#ifdef DEBUG
+  kb_compute_generate(conf->kb, stderr);
+  fflush(stderr);
+#endif
+
   return OK;
 }
 
@@ -285,26 +285,7 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
     return NULL;
   }
 
-  /* set up filenames */
-  conf->user_file = ap_server_root_relative(a_cmd->pool, a_uname);
-  conf->policy_file = ap_server_root_relative(a_cmd->pool, a_pname);
-
-  /* set up kb */
-  kb_create(&(conf->kb));
-  kb_init(conf->kb);
-
-  /* register the kb to be destroyed with this pool */
-  apr_pool_cleanup_register(a_cmd->pool,
-                            conf->kb,
-                            kb_destroy,
-                            apr_pool_cleanup_null);
-
-  /* now for some real initialisation */
-  modvlad_add_subject(conf->kb, conf->user_file, a_cmd->pool); 
-  modvlad_add_access(conf->kb, a_cmd->pool);
-  modvlad_add_object(conf->kb,
-                     modvlad_get_docroot(conf->path, a_cmd->server, a_cmd->pool),
-                     a_cmd->pool);
+  modvlad_init(a_cmd->pool, a_cmd->server, conf, a_uname, a_pname);
 
   /* parse the policy file */
   apr_file_open(&polfile,
@@ -319,6 +300,9 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
   policyparse();
 
   apr_file_close(polfile);
+
+  kb_close_symtab(conf->kb);
+  kb_close_kb(conf->kb);
 
   return NULL;
 }

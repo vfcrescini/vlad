@@ -14,6 +14,13 @@
 #define MODVLAD_LOGLEVEL APLOG_NOTICE
 #endif
 
+typedef struct {
+  char *user_file;
+  char *policy_file;
+  void *kb;
+  char *path;
+} modvlad_config_rec;
+
 #define MODVLAD_ACCESS_OPTIONS "options"
 #define MODVLAD_ACCESS_GET     "get"
 #define MODVLAD_ACCESS_HEAD    "head"
@@ -42,17 +49,11 @@ int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max);
 /* a version of yyinput that uses libc fread */
 int modvlad_default_yyinput(void *a_stream, char *a_buf, int a_maxsize);
 
-/* register the users into the kb */
-int modvlad_add_subject(void *a_kb, const char *a_fname, apr_pool_t *a_p);
+/* initialze conf */
+int modvlad_init(apr_pool_t *a_p,
+                 server_rec *a_s,
+                 modvlad_config_rec *a_conf,
+                 const char *a_uname,
+                 const char *a_pname);
 
-/* add built in access rights into the kb */
-int modvlad_add_access(void *a_kb, apr_pool_t *a_p);
-
-/* add the path's directory structure into the kb */
-int modvlad_add_object(void *a_kb, const char *a_path, apr_pool_t *a_p);
-
-/* converts / to docroot */
-const char *modvlad_get_docroot(const char *a_path,
-                                server_rec *a_s,
-                                apr_pool_t *a_p);
 #endif
