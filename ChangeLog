@@ -3,6 +3,8 @@
 	* rules.mk :
 	* lib/Makefile.in :
 
+	  - Linked libsmodels.so to libvlad.so.
+
 	  - Changed parameter expansions (${var%%pattern}) into a cut command.
 	    This should keep non-posix compiant shells happy.
 
