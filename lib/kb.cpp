@@ -188,6 +188,18 @@ int kb::get_symtab(unsigned int i, char **s)
   return stable->get(i, s);
 }
 
+/* gives an array of identifiers of type t */
+int kb::get_symtab(unsigned char t, char ***a, unsigned int *s)
+{
+  if (stage < 2)
+    return VLAD_INVALIDOP;
+
+  if (s == NULL)
+    return VLAD_NULLPTR;
+
+  return stable->get(t, a, s);
+}
+
 /* register an identifier in the kb */
 int kb::add_symtab(const char *n, unsigned char t)
 {

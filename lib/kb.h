@@ -35,6 +35,8 @@ class kb {
     unsigned int length_symtab();
     /* gets the i'th identifier from symtab */
     int get_symtab(unsigned int i, char **s);
+    /* gives an array of identifiers of type t */
+    int get_symtab(unsigned char t, char ***a, unsigned int *s);
     /* checks whether n of type t is in symtab */
     int check_symtab(const char *n, unsigned char t);
     /* register an identifier in the kb */
