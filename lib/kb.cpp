@@ -433,7 +433,7 @@ int kb::add_seqtab(transref *t)
   if ((retval = t->get(&tmp_name, &tmp_ilist)) != VLAD_OK)
     return retval;
 
-  /* now verify the sequence */
+  /* now verify the transformation */
   if ((retval = verify_transref(tmp_name, tmp_ilist)) != VLAD_OK)
     return retval;
 
@@ -1639,34 +1639,24 @@ int kb::verify_expression(expression *e)
 int kb::verify_transref(char *n, stringlist *il)
 {
   int retval;
-  unsigned int i;
-  stringlist *tmp_vlist;
   expression *tmp_pr;
   expression *tmp_po;
 
   if (n == NULL)
     return VLAD_NULLPTR;
 
-  /* retrieve respective trans in transtab */
-  if ((retval = ttable->get(n, &tmp_vlist, &tmp_pr, &tmp_po)) != VLAD_OK)
+  /* replace the variables in transformation n with the identifiers in il */
+  if ((retval = ttable->replace(n, il, &tmp_pr, &tmp_po)) != VLAD_OK)
     return retval;
 
-  /* if both lists are NULL, there is nothing to check */
-  if (il == NULL && tmp_vlist == NULL)
-    return VLAD_OK;
-
-  /* check that the number of ident listed is the same as the transformation */
-  if (il == NULL || tmp_vlist == NULL || VLAD_LIST_LENGTH(tmp_vlist) != VLAD_LIST_LENGTH(il))
-    return VLAD_INVALIDINPUT;
-
-  /* check that every ident is valid in symtab */
-  for (i = 0; i < VLAD_LIST_LENGTH(il); i++) {
-    char *tmp_ident;
-
-    if ((retval = il->get(i, &tmp_ident)) != VLAD_OK)
+  /* now verify the pre and post condition expressions */
+  if (tmp_pr != NULL) {
+    if ((retval = verify_expression(tmp_pr)) != VLAD_OK)
       return retval;
-
-    if ((retval = stable->find(tmp_ident)) != VLAD_OK)
+  }
+  
+  if (tmp_po != NULL) {
+    if ((retval = verify_expression(tmp_po)) != VLAD_OK)
       return retval;
   }
 
