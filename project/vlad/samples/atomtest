@@ -595,8 +595,11 @@ initially subst(og5, og3);
 initially subst(og5, og4);
 initially subst(og5, og5);
 
+/*
 initially !false;
 initially !true;
+*/
+
 initially !holds(s1,a1,o1);
 initially !holds(s1,a1,o2);
 initially !holds(s1,a1,o3);

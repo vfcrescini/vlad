@@ -1,3 +1,9 @@
+2003-03-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.cpp :
+
+	  - Dupicates are not allowed.
+
 2003-03-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/atom.cpp :

@@ -112,11 +112,7 @@ int kb::add_inittab(atom *a)
   if ((retval = tmp->init_atom(a)) != VLAD_OK)
     return retval;
 
-  /* ignore duplicates */
-  if ((retval = itable->add(tmp)) == VLAD_DUPLICATE)
-    return VLAD_OK;
-
-  return retval;
+  return itable->add(tmp);
 }
 
 /* make sure atom a is valid */
