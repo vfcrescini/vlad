@@ -1,3 +1,11 @@
+2002-10-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/simplelist.c :
+
+	  - Copy function : reversed the order in which items are entered in 
+	    the new list. Add will prepend in the beginning but to preserve
+	    the original order, we must append in the end.
+
 2002-09-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* trans/transtab.c :

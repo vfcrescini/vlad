@@ -238,6 +238,8 @@ int simplelist_copy(simplelist_type l1,
 
 {
   simplelist_node *curr;
+  simplelist_node *new;
+  simplelist_node *last;
   void *data;
 
   if (l2 == NULL || cpy == NULL)
@@ -247,13 +249,26 @@ int simplelist_copy(simplelist_type l1,
 
   l2->list = NULL;
   l2->length = 0;
+  last = NULL;
 
   while (curr != NULL) {
     if (cpy(curr->data, &data) != 0)
       return -1;
-    if (simplelist_add(l2, data) != 0)
-      return -1;
     
+    /* we have to attach the new node at the end of the list to
+     * preserve the original order */
+    if ((new = (simplelist_node *) malloc(sizeof(simplelist_node))) == NULL)
+      return -1;
+
+    if (last == NULL)
+      l2->list = new;
+    else 
+      last->next = new;
+
+    (l2->length)++;
+    new->data = data;
+    new->next = NULL;
+    last = new;
     curr = curr->next;
   }
 
