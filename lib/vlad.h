@@ -27,6 +27,16 @@
 #define VLAD_STR_HOLDS           "holds"
 #define VLAD_STR_MEMBER          "member"
 #define VLAD_STR_SUBSET          "subset"
+#define VLAD_STR_FACTS           "facts"
+#define VLAD_STR_IDENTITY        "identity"
+#define VLAD_STR_INHERITANCE     "inheritance"
+#define VLAD_STR_TRANSITIVITY    "transitivity"
+#define VLAD_STR_NEGATION        "negation"
+#define VLAD_STR_INERTIAL        "inertial"
+#define VLAD_STR_INITSTATE       "initial state"
+#define VLAD_STR_CONSTRAINT      "constraint"
+#define VLAD_STR_UPDATE          "update"
+#define VLAD_STR_RULES           "rules"
 #define VLAD_STR_QUERY           "?"
 
 /* string lengths */

@@ -307,7 +307,7 @@ int polbase::add_seqtab(updateref *a_uref)
   char *name;
   stringlist *ilist;
 
-  /* we only allow this function after kb is closed */
+  /* we only allow this function after policy base is closed */
   if (m_stage < 3)
     return VLAD_INVALIDOP;
 
@@ -376,7 +376,7 @@ int polbase::del_seqtab(unsigned int a_index)
 {
   int retval;
 
-  /* we only allow this function after kb is closed */
+  /* we only allow this function after policy base is closed */
   if (m_stage < 3)
     return VLAD_INVALIDOP;
 
@@ -459,7 +459,7 @@ int polbase::list_seqtab(FILE *a_file)
   unsigned int j;
   char *tmp_name;
   stringlist *tmp_ilist;
-                                                                                  /* we only allow this function after kb is closed */
+                                                                                  /* we only allow this function after policy base is closed */
   if (m_stage < 3)
     return VLAD_INVALIDOP;
 
@@ -490,23 +490,558 @@ int polbase::list_seqtab(FILE *a_file)
 /* generate the rules necessary to evaluate queries */
 int polbase::compute_generate(FILE *a_file)
 {
+  int retval;
+  unsigned int i;
+
+  /* we only allow this function after kb is closed */
+  if (m_stage < 3)
+    return VLAD_INVALIDOP;
+
+  /* make sure the filestream is not NULL */
+  if (a_file == NULL)
+    return VLAD_NULLPTR;
+
+  /* first we print out all the possible facts in the kb */
+  fprintf(a_file, "%s\n", VLAD_STR_FACTS);
+
+  for (i = 0; i < (m_tot_atom * 2 * (VLAD_LIST_LENGTH(m_setable) + 1)); i++) {
+    fact *tmp_fact;
+    unsigned char tmp_ty;
+    unsigned int tmp_s;
+    bool tmp_tr;
+    char *tmp_param1;
+    char *tmp_param2;
+    char *tmp_param3;
+
+    if ((retval = decode_fact(&tmp_fact, &tmp_s, i)) != VLAD_OK)
+      return retval;
+
+    if ((retval = tmp_fact->get(&tmp_param1, &tmp_param2, &tmp_param3, &tmp_ty, &tmp_tr)) != VLAD_OK)
+      return retval;
+
+    switch(tmp_ty) {
+      case VLAD_ATOM_HOLDS :
+        fprintf(a_file,
+                "  %d = %s(S%d, %s, %s, %s, %s, %s)\n",
+                i,
+                VLAD_STR_HOLDS,
+                tmp_s,
+                tmp_tr ? VLAD_STR_TRUE : VLAD_STR_FALSE,
+                VLAD_STR_HOLDS,
+                tmp_param1,
+                tmp_param2,
+                tmp_param3);
+        break;
+      case VLAD_ATOM_MEMBER :
+          fprintf(a_file,
+                  "  %d = %s(S%d, %s, %s, %s, %s)\n",
+                  i, VLAD_STR_HOLDS,
+                  tmp_s,
+                  tmp_tr ? VLAD_STR_TRUE : VLAD_STR_FALSE,
+                  VLAD_STR_MEMBER,
+                  tmp_param1,
+                  tmp_param2);
+        break;
+      case VLAD_ATOM_SUBSET :
+          fprintf(a_file,
+                  "  %d = %s(S%d, %s, %s, %s, %s)\n",
+                  i,
+                  VLAD_STR_HOLDS,
+                  tmp_s,
+                  tmp_tr ? VLAD_STR_TRUE : VLAD_STR_FALSE,
+                  VLAD_STR_SUBSET,
+                  tmp_param1,
+                  tmp_param2);
+        break;
+    }
+
+    delete tmp_fact;
+  }
+
+  /* identity rules */
+  fprintf(a_file, "%s %s\n", VLAD_STR_IDENTITY, VLAD_STR_RULES);
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_grp;
+    /* subject groups */
+    for (i_grp = 0; i_grp < sglen; i_grp++)
+      fprintf(a_file,
+              "  %d %s %s\n",
+              compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp, i_grp),
+              VLAD_STR_ARROW,
+              VLAD_STR_TRUE);
+    /* access groups */
+    for (i_grp = 0; i_grp < aglen; i_grp++)
+      fprintf(a_file,
+              "  %d %s %s\n",
+              compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp, i_grp),
+              VLAD_STR_ARROW,
+              VLAD_STR_TRUE);
+    /* object groups */
+    for (i_grp = 0; i_grp < oglen; i_grp++)
+      fprintf(a_file,
+              "  %d %s %s\n",
+              compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp, i_grp),
+              VLAD_STR_ARROW,
+              VLAD_STR_TRUE);
+  }
+
+  /* inheritance rules */
+  fprintf(a_file, "%s %s\n", VLAD_STR_INHERITANCE, VLAD_STR_RULES);
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_grp1;
+    unsigned int i_grp2;
+    unsigned int i_sub;
+    unsigned int i_acc;
+    unsigned int i_obj;
+    /* subset inheritance */
+
+     /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < sglen; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_acc = 0; i_acc < aslen + aglen; i_acc++) {
+          for (i_obj = 0; i_obj < oslen + oglen; i_obj++) {
+            fprintf(a_file,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_grp1 + sslen, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_grp2 + sslen, i_acc, i_obj),
+                    VLAD_STR_AND,
+                    compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp1, i_grp2),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_grp1 + sslen, i_acc, i_obj));
+            fprintf(a_file,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_grp1 + sslen, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_grp2 + sslen, i_acc, i_obj),
+                    VLAD_STR_AND,
+                    compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp1, i_grp2));
+          }
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < aglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < aglen; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_sub = 0; i_sub < sslen + sglen; i_sub++) {
+          for (i_obj = 0; i_obj < oslen + oglen; i_obj++) {
+            fprintf(a_file,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_grp1 + aslen, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_sub, i_grp2 + aslen, i_obj),
+                    VLAD_STR_AND,
+                    compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp1, i_grp2),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_grp1 + aslen, i_obj));
+            fprintf(a_file,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_grp1 + aslen, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_sub, i_grp2 + aslen, i_obj),
+                    VLAD_STR_AND,
+                    compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp1, i_grp2));
+          }
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < oglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < oglen; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_sub = 0; i_sub < sslen + sglen; i_sub++) {
+          for (i_acc = 0; i_acc < aslen + aglen; i_acc++) {
+            fprintf(a_file,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_acc, i_grp1 + oslen),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_sub, i_acc, i_grp2 + oslen),
+                    VLAD_STR_AND,
+                    compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_acc, i_grp1 + oslen));
+            fprintf(a_file,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_acc, i_grp1 + oslen),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_sub, i_acc, i_grp2 + oslen),
+                    VLAD_STR_AND,
+                    compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2));
+          }
+        }
+      }
+    }
+
+    /* member inheritance */
+
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sglen; i_grp1++) {
+      for (i_sub = 0; i_sub < sslen; i_sub++) {
+        for (i_acc = 0; i_acc < aslen + aglen; i_acc++) {
+          for (i_obj = 0; i_obj < oslen + oglen; i_obj++) {
+            fprintf(a_file,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_grp1 + sslen, i_acc, i_obj),
+                    VLAD_STR_AND,
+                    compute_memb(i, true, VLAD_IDENT_SUB_SIN, i_sub, i_grp1),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_acc, i_obj));
+            fprintf(a_file,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_grp1 + sslen, i_acc, i_obj),
+                    VLAD_STR_AND,
+                    compute_memb(i, true, VLAD_IDENT_SUB_SIN, i_sub, i_grp1));
+          }
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < aglen; i_grp1++) {
+      for (i_sub = 0; i_sub < sslen + sglen; i_sub++) {
+        for (i_acc = 0; i_acc < aslen; i_acc++) {
+          for (i_obj = 0; i_obj < oslen + oglen; i_obj++) {
+            fprintf(a_file,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_sub, i_grp1 + aslen, i_obj),
+                    VLAD_STR_AND,
+                    compute_memb(i, true, VLAD_IDENT_ACC_SIN, i_acc, i_grp1),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_acc, i_obj));
+            fprintf(a_file,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_sub, i_grp1 + aslen, i_obj),
+                    VLAD_STR_AND,
+                    compute_memb(i, true, VLAD_IDENT_ACC_SIN, i_acc, i_grp1));
+          }
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < oglen; i_grp1++) {
+      for (i_sub = 0; i_sub < sslen + sglen; i_sub++) {
+        for (i_acc = 0; i_acc < aslen + aglen; i_acc++) {
+          for (i_obj = 0; i_obj < oslen; i_obj++) {
+            fprintf(a_file,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_sub, i_acc, i_grp1 + oslen),
+                    VLAD_STR_AND,
+                    compute_memb(i, true, VLAD_IDENT_OBJ_SIN, i_obj, i_grp1),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_acc, i_obj));
+            fprintf(a_file,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_sub, i_acc, i_grp1 + oslen),
+                    VLAD_STR_AND,
+                    compute_memb(i, true, VLAD_IDENT_OBJ_SIN, i_obj, i_grp1));
+          }
+        }
+      }
+    }
+  }
+
+  /* transitivity */
+  fprintf(a_file, "%s %s\n", VLAD_STR_TRANSITIVITY, VLAD_STR_RULES);
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_grp1;
+    unsigned int i_grp2;
+    unsigned int i_grp3;
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < sglen; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < sglen; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+
+          fprintf(a_file,
+                  "  %d %s %d %s %d\n",
+                  compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp1, i_grp3),
+                  VLAD_STR_ARROW,
+                  compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp1, i_grp2),
+                  VLAD_STR_AND,
+                  compute_subst(i, true, VLAD_IDENT_SUB_SIN, i_grp2, i_grp3));
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < aglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < aglen; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < aglen; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+          fprintf(a_file,
+                  "  %d %s %d %s %d\n",
+                  compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp1, i_grp3),
+                  VLAD_STR_ARROW,
+                  compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp1, i_grp2),
+                  VLAD_STR_AND,
+                  compute_subst(i, true, VLAD_IDENT_ACC_SIN, i_grp2, i_grp3));
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < oglen; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < oglen; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < oglen; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+          fprintf(a_file,
+                  "  %d %s %d %s %d\n",
+                  compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp1, i_grp3),
+                  VLAD_STR_ARROW,
+                  compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2),
+                  VLAD_STR_AND,
+                  compute_subst(i, true, VLAD_IDENT_OBJ_SIN, i_grp2, i_grp3));
+        }
+      }
+    }
+  }
+
+  /* negation rules */
+  fprintf(a_file, "%s %s\n", VLAD_STR_NEGATION, VLAD_STR_RULES);
+
+  /* state loop */
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_atom;
+    for (i_atom = 0; i_atom < m_tot_atom; i_atom++) {
+      fprintf(a_file,
+              "  %s %s %d %s %d\n",
+              VLAD_STR_FALSE,
+              VLAD_STR_ARROW,
+              compute_fact(i, true, i_atom),
+              VLAD_STR_AND,
+              compute_fact(i, false, i_atom));
+    }
+  }
+
+  /* inertial rules */
+  fprintf(a_file, "%s %s\n", VLAD_STR_INERTIAL, VLAD_STR_RULES);
+
+  /* state loop */
+  for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_atom;
+    for (i_atom = 0; i_atom < m_tot_atom; i_atom++) {
+      fprintf(a_file,
+              "  %d %s %d %s %s %d\n",
+              compute_fact(i + 1, true, i_atom),
+              VLAD_STR_ARROW,
+              compute_fact(i, true, i_atom),
+              VLAD_STR_AND,
+              VLAD_STR_NOT,
+              compute_fact(i + 1, false, i_atom));
+      fprintf(a_file,
+              "  %d %s %d %s %s %d\n",
+              compute_fact(i + 1, false, i_atom),
+              VLAD_STR_ARROW,
+              compute_fact(i, false, i_atom),
+              VLAD_STR_AND,
+              VLAD_STR_NOT,
+              compute_fact(i + 1, true, i_atom));
+    }
+  }
+
+  /* initial state */
+  fprintf(a_file, "%s %s\n", VLAD_STR_INITSTATE, VLAD_STR_RULES);
+
+  for (i = 0; i < VLAD_LIST_LENGTH(m_itable); i++) {
+    fact *tmp_fact;
+    unsigned int tmp_num;
+
+    if ((retval = m_itable->get(i, &tmp_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_fact(tmp_fact, 0, &tmp_num)) != VLAD_OK)
+      return retval;
+
+    fprintf(a_file, "  %d %s %s\n", tmp_num, VLAD_STR_ARROW, VLAD_STR_TRUE);
+  }
+
+  /* constraints */
+  fprintf(a_file, "%s %s\n", VLAD_STR_CONSTRAINT, VLAD_STR_RULES);
+
+  for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int  i_const;
+    unsigned int i_exp;
+
+    /* constraint loop */
+    for (i_const = 0; i_const < VLAD_LIST_LENGTH(m_ctable); i_const++) {
+      expression *tmp_e;
+      expression *tmp_c;
+      expression *tmp_n;
+      fact *tmp_fact;
+      unsigned int tmp_num;
+
+      if ((retval = m_ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
+        return retval;
+
+      fprintf(a_file, " ");
+
+      /* constaint expression */
+      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_e); i_exp++) {
+        if ((retval = tmp_e->get(i_exp, &tmp_fact)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
+          return retval;
+        fprintf(a_file, " %d", tmp_num);
+      }
+
+      fprintf(a_file, " %s", VLAD_STR_ARROW);
+
+      /* constraint condition */
+      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_c); i_exp++) {
+        if ((retval = tmp_c->get(i_exp, &tmp_fact)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
+          return retval;
+        fprintf(a_file, " %d", tmp_num);
+      }
+
+      /* constraint negative condition */
+      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_n); i_exp++) {
+        if ((retval = tmp_n->get(i_exp, &tmp_fact)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
+          return retval;
+        fprintf(a_file, " %s %d", VLAD_STR_NOT, tmp_num);
+      }
+
+      if (tmp_c == NULL && tmp_n == NULL)
+        fprintf(a_file, " %s\n", VLAD_STR_TRUE);
+      else
+        fprintf(a_file, "\n");
+    }
+  }
+
+  /* update rules */
+  fprintf(a_file, "%s %s\n", VLAD_STR_UPDATE, VLAD_STR_RULES);
+
+  /* state loop */
+  for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_exp;
+    char *tmp_name;
+    fact *tmp_fact;
+    unsigned int tmp_num;
+    stringlist *tmp_ilist = NULL;
+    expression *tmp_pre = NULL;
+    expression *tmp_post = NULL;
+
+    if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
+      return retval;
+
+    if ((retval = m_utable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
+      return retval;
+
+    fprintf(a_file, " ");
+
+    /* postcondition loop */
+    for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_post); i_exp++) {
+      if ((retval = tmp_post->get(i_exp, &tmp_fact)) != VLAD_OK)
+        return retval;
+      if ((retval = encode_fact(tmp_fact, i + 1, &tmp_num)) != VLAD_OK)
+        return retval;
+      fprintf(a_file, " %d", tmp_num);
+    }
+
+    fprintf(a_file, " %s", VLAD_STR_ARROW);
+
+    /* precondition loop */
+    for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_pre); i_exp++) {
+      if ((retval = tmp_pre->get(i_exp, &tmp_fact)) != VLAD_OK)
+        return retval;
+      if ((retval = encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
+        return retval;
+      fprintf(a_file, " %d", tmp_num);
+    }
+
+    if (tmp_pre == NULL)
+      fprintf(a_file, " %s\n", VLAD_STR_TRUE);
+    else
+      fprintf(a_file, "\n");
+  }
+
   return VLAD_OK;
 }
 
 /* generate the query */
 int polbase::query_generate(expression *a_exp, FILE *a_file)
 {
+  int retval;
+  unsigned int i;
+
+  /* only allowed after policy base has closed */
+  if (m_stage < 3)
+    return VLAD_INVALIDOP;
+
+  /* make sure the filestream is not NULL */
+  if (a_file == NULL)
+    return VLAD_NULLPTR;
+
+  /* verify expression */
+  if ((retval = verify_expression(a_exp)) != VLAD_OK)
+    return retval;
+
+  /* and now for the queries */
+  fprintf(a_file, "Queries\n");
+
+  for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
+    fact *tmp_fact;
+    unsigned int tmp_num;
+
+    if ((retval = a_exp->get(i, &tmp_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_fact(tmp_fact, VLAD_LIST_LENGTH(m_setable), &tmp_num)) != VLAD_OK)
+      return retval;
+
+    if (i == 0)
+      fprintf(a_file, "  ");
+
+    if (i + 1 == VLAD_LIST_LENGTH(a_exp))
+      fprintf(a_file, "%d %s\n", tmp_num, VLAD_STR_QUERY);
+    else
+      fprintf(a_file, "%d %s ", tmp_num, VLAD_STR_AND);
+  }
+
   return VLAD_OK;
 }
 
 #ifdef VLAD_SMODELS
-/* prepares the kb for queries */
+/* prepares the policy base for queries */
 int polbase::compute_evaluate()
 {
   int retval;
   unsigned int i;
 
-  /* we only allow this after kb is closed */
+  /* we only allow this after policy base is closed */
   if (m_stage != 3 && m_stage != 4)
     return VLAD_INVALIDOP;
 
@@ -1246,8 +1781,6 @@ int polbase::decode_memb(unsigned int a_id, char **a_elt, char **a_grp)
 {
   int retval;
 
-  a_id = a_id - m_tot_atoms[VLAD_ATOM_HOLDS];
-
   if (a_id < (sslen * sglen)) {
     /* subject member fact */
     if ((retval = m_stable->get(a_id / sglen, VLAD_IDENT_SUB_SIN, a_elt)) != VLAD_OK)
@@ -1279,8 +1812,6 @@ int polbase::decode_memb(unsigned int a_id, char **a_elt, char **a_grp)
 int polbase::decode_subst(unsigned int a_id, char **a_grp1, char **a_grp2)
 {
   int retval;
-
-  a_id = a_id - (m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER]);
 
   if (a_id < (sglen * sglen)) {
     /* subject subset fact */
