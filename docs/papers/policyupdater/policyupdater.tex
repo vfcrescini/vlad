@@ -538,19 +538,19 @@ query holds(alice, read, file);
 
         \paragraph{}
 
-          The $Base$ function takes an atom $\alpha$ of language ${\cal L}^{*}$
-          in some state $\sigma$ and returns a set of entities that make up
-          the atom.
+          The $Base$ function takes an atom $\hat{\alpha}$ of language
+          ${\cal L}^{*}$ in some state $\sigma$ and returns a set of
+          entities that make up the atom.
 
           \begin{quote}
-            $Base$($\alpha$)
+            $Base$($\hat{\alpha}$)
  
             = 
             \begin{math}
               \begin{cases}
-                \mbox{\{$s$, $a$, $o$\}, if $\alpha$ = $\hat{holds}$($s$, $a$, $o$, $\sigma$)} \\
-                \mbox{\{$e$, $g$\}, if $\alpha$ = $\hat{memb}$($e$, $g$, $\sigma$)} \\
-                \mbox{\{$g_{1}$, $g_{2}$\}, if $\alpha$ = $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)}
+                \mbox{\{$s$, $a$, $o$\}, if $\hat{\alpha}$ = $\hat{holds}$($s$, $a$, $o$, $\sigma$)} \\
+                \mbox{\{$e$, $g$\}, if $\hat{\alpha}$ = $\hat{memb}$($e$, $g$, $\sigma$)} \\
+                \mbox{\{$g_{1}$, $g_{2}$\}, if $\hat{\alpha}$ = $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)}
               \end{cases}
             \end{math}
           \end{quote}
