@@ -395,6 +395,7 @@ always_stmt :
     char s[1024];
 #endif
 
+    /* XXX: should we add a constant here? true? false? */
     if ((cond = VLAD_NEW(numberlist(NULL))) == NULL) {
       fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
