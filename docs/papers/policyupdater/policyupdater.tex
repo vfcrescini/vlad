@@ -26,9 +26,6 @@
 \newenvironment{vverbatim}
   {\begin{alltt}}
   {\vspace{-\baselineskip}\end{alltt}}
-% define subparagraph
-\newenvironment{subparagraph}[1]
-{{\em #1}}
 % define a section command to be used in the appendices
 \makeatletter
 \newcommand{\vappsection}[1]{
@@ -913,240 +910,264 @@
           other implicit constraint rules implied by language ${\cal L}$
           that need to be explicitly defined in language ${\cal L}^{*}$.
 
-          \subparagraph{Inheritance rules.}
-            All properties held by a group is inherited by all the members and
-            subsets of that group. This rule is easy to apply for subject group
-            entities. However, careful attention must be given to access right
-            and object groups. A subject holding an access right for an object
-            group implies that the subject also holds that access right for
-            all objects in the object group. Similarly, a subject holding an
-            access right group for a particular object implies that the subject
-            holds all access rights contained in the access right group for
-            that object.
+          \begin{itemize}
+            \item
+              {\em Inheritance rules.}
+              All properties held by a group is inherited by all the members
+              and subsets of that group. This rule is easy to apply for subject
+              group entities. However, careful attention must be given to access
+              right and object groups. A subject holding an access right for an
+              object group implies that the subject also holds that access
+              right for all objects in the object group. Similarly, a subject
+              holding an access right group for a particular object implies
+              that the subject holds all access rights contained in the access
+              right group for that object.
 
-            A conflict is encountered when a particular property is to be
-            inherited by an entity from a group of which it is a member or
-            subset, and the contained entity already holds the negation of
-            that property. This conflict is resolved by giving negative facts
-            higher precedence over its positive counterpart: by allowing member
-            or subset entities to inherit its parent group's properties only if
-            the entities do not already hold the negation of those properties.
+              A conflict is encountered when a particular property is to be
+              inherited by an entity from a group of which it is a member or
+              subset, and the contained entity already holds the negation of
+              that property. This conflict is resolved by giving negative facts
+              higher precedence over its positive counterpart: by allowing
+              member or subset entities to inherit its parent group's
+              properties only if the entities do not already hold the negation
+              of those properties.
 
-            The following are the inheritance constraint rules to allow the
-            properties held by a group to propagate to its members and
-            subsets that do not already hold the negation of the properties.
+              The following are the inheritance constraint rules to allow the
+              properties held by a group to propagate to its members and
+              subsets that do not already hold the negation of the properties.
 
-            \begin{enumerate}
-              \item
-                Subject Group Membership Inheritance
+              \begin{enumerate}
+                \item
+                  Subject Group Membership Inheritance
 
-                $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$), where
+                  $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$)
+ 
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{holds}&(s_{s}, a, o, \sigma) \leftarrow \\
+                      & \hat{holds}(s_{g}, a, o, \sigma), \\
+                      & \hat{memb}(s_{s}, s_{g}, \sigma), \\
+                      & not \lnot \hat{holds}(s_{s}, a, o, \sigma) \\
+                      \lnot \hat{holds}&(s_{s}, a, o, \sigma) \leftarrow \\
+                      & \lnot \hat{holds}(s_{g}, a, o, \sigma), \\
+                      & \hat{memb}(s_{s}, s_{g}, \sigma)
+                    \end{aligned}
+                  \end{math}
 
-                $s_{s} \in {\cal E}_{ss}$,
-                $s_{g} \in {\cal E}_{sg}$,
-                $a \in {\cal E}_{a}$,
-                $o \in {\cal E}_{o}$,
-                $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                  where
 
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{holds}(s_{s}, a, o, \sigma) \leftarrow &
-                    \hat{holds}(s_{g}, a, o, \sigma), \\
-                    & \hat{memb}(s_{s}, s_{g}, \sigma), \\
-                    & not \lnot \hat{holds}(s_{s}, a, o, \sigma) \\
-                    \lnot \hat{holds}(s_{s}, a, o, \sigma) \leftarrow &
-                    \lnot \hat{holds}(s_{g}, a, o, \sigma), \\
-                    & \hat{memb}(s_{s}, s_{g}, \sigma)
-                  \end{aligned}
-                \end{math}
+                  $s_{s} \in {\cal E}_{ss}$,
+                  $s_{g} \in {\cal E}_{sg}$,
+                  $a \in {\cal E}_{a}$,
+                  $o \in {\cal E}_{o}$,
+                  $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+ 
+                \item
+                  Access Right Group Membership Inheritance
+ 
+                  $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$)
 
-              \item
-                Access Right Group Membership Inheritance
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{holds}&(s, a_{s}, o, \sigma) \leftarrow \\
+                      & \hat{holds}(s, a_{g}, o, \sigma), \\
+                      & \hat{memb}(a_{s}, a_{g}, \sigma), \\
+                      & not \lnot \hat{holds}(s, a_{s}, o, \sigma) \\
+                      \lnot \hat{holds}&(s, a_{s}, o, \sigma) \leftarrow \\
+                      & \lnot \hat{holds}(s, a_{g}, o, \sigma), \\
+                      & \hat{memb}(a_{s}, a_{g}, \sigma)
+                    \end{aligned}
+                  \end{math}
 
-                $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$), where
+                  where
+ 
+                  $s \in {\cal E}_{s}$,
+                  $a_{s} \in {\cal E}_{as}$,
+                  $a_{g} \in {\cal E}_{ag}$,
+                  $o \in {\cal E}_{o}$,
+                  $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+ 
+                \item
+                  Object Group Membership Inheritance
+ 
+                  $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$)
 
-                $s \in {\cal E}_{s}$,
-                $a_{s} \in {\cal E}_{as}$,
-                $a_{g} \in {\cal E}_{ag}$,
-                $o \in {\cal E}_{o}$,
-                $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{holds}&(s, a, o_{s}, \sigma) \leftarrow \\
+                      & \hat{holds}(s, a, o_{g}, \sigma), \\
+                      & \hat{memb}(o_{s}, o_{g}, \sigma), \\
+                      & not \lnot \hat{holds}(s, a, o_{s}, \sigma) \\
+                      \lnot \hat{holds}&(s, a, o_{s}, \sigma) \leftarrow \\
+                      & \lnot \hat{holds}(s, a, o_{g}, \sigma), \\
+                      & \hat{memb}(o_{s}, o_{g}, \sigma)
+                    \end{aligned}
+                  \end{math}
 
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{holds}(s, a_{s}, o, \sigma) \leftarrow &
-                    \hat{holds}(s, a_{g}, o, \sigma), \\
-                    & \hat{memb}(a_{s}, a_{g}, \sigma), \\
-                    & not \lnot \hat{holds}(s, a_{s}, o, \sigma) \\
-                    \lnot \hat{holds}(s, a_{s}, o, \sigma) \leftarrow &
-                    \lnot \hat{holds}(s, a_{g}, o, \sigma), \\
-                    & \hat{memb}(a_{s}, a_{g}, \sigma)
-                  \end{aligned}
-                \end{math}
+                  where
+ 
+                  $s \in {\cal E}_{s}$,
+                  $a \in {\cal E}_{a}$,
+                  $o_{s} \in {\cal E}_{os}$,
+                  $o_{g} \in {\cal E}_{og}$,
+                  $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+ 
+                \item
+                  Subject Group Subset Inheritance
+ 
+                  $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$)
 
-              \item
-                Object Group Membership Inheritance
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{holds}&(s_{g1}, a, o, \sigma) \leftarrow \\
+                      & \hat{holds}(s_{g2}, a, o, \sigma), \\
+                      & \hat{subst}(s_{g1}, s_{g2}, \sigma), \\
+                      & not \lnot \hat{holds}(s_{g1}, a, o, \sigma) \\
+                      \lnot \hat{holds}&(s_{g1}, a, o, \sigma) \leftarrow \\
+                      & \lnot \hat{holds}(s_{g2}, a, o, \sigma), \\
+                      & \hat{subst}(s_{g1}, s_{g2}, \sigma)
+                    \end{aligned}
+                  \end{math}
+ 
+                  where
+ 
+                  $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
+                  $a \in {\cal E}_{a}$,
+                  $o \in {\cal E}_{o}$,
+                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+ 
+                \item
+                  Access Right Group Subset Inheritance
+ 
+                  $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$)
 
-                $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$) where
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{holds}&(s, a_{g1}, o, \sigma) \leftarrow \\
+                      & \hat{holds}(s, a_{g2}, o, \sigma), \\
+                      & \hat{subst}(a_{g1}, a_{g2}, \sigma), \\
+                      & not \lnot \hat{holds}(s, a_{g1}, o, \sigma) \\
+                      \lnot \hat{holds}&(s, a_{g1}, o, \sigma) \leftarrow \\
+                      & \lnot \hat{holds}(s, a_{g2}, o, \sigma), \\
+                      & \hat{subst}(a_{g1}, a_{g2}, \sigma)
+                    \end{aligned}
+                  \end{math}
 
-                $s \in {\cal E}_{s}$,
-                $a \in {\cal E}_{a}$,
-                $o_{s} \in {\cal E}_{os}$,
-                $o_{g} \in {\cal E}_{og}$,
-                $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                  where
+ 
+                  $s \in {\cal E}_{s}$,
+                  $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
+                  $o \in {\cal E}_{o}$,
+                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+ 
+                \item
+                  Object Group Subset Inheritance
+ 
+                  $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$)
 
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{holds}(s, a, o_{s}, \sigma) \leftarrow &
-                    \hat{holds}(s, a, o_{g}, \sigma), \\
-                    & \hat{memb}(o_{s}, o_{g}, \sigma), \\
-                    & not \lnot \hat{holds}(s, a, o_{s}, \sigma) \\
-                    \lnot \hat{holds}(s, a, o_{s}, \sigma) \leftarrow &
-                    \lnot \hat{holds}(s, a, o_{g}, \sigma), \\
-                    & \hat{memb}(o_{s}, o_{g}, \sigma)
-                  \end{aligned}
-                \end{math}
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{holds}&(s, a, o_{g1}, \sigma) \leftarrow \\
+                      & \hat{holds}(s, a, o_{g2}, \sigma), \\
+                      & \hat{subst}(o_{g1}, o_{g2}, \sigma), \\
+                      & not \lnot \hat{holds}(s, a, o_{g1}, \sigma) \\
+                      \lnot \hat{holds}&(s, a, o_{g1}, \sigma) \leftarrow \\
+                      & \lnot \hat{holds}(s, a, o_{g2}, \sigma), \\
+                      & \hat{subst}(o_{g1}, o_{g2}, \sigma)
+                    \end{aligned}
+                  \end{math}
 
-              \item
-                Subject Group Subset Inheritance
+                  where
+ 
+                  $s \in {\cal E}_{s}$,
+                  $a \in {\cal E}_{a}$,
+                  $o_{g1}, o_{g2} \in {\cal E}_{og}$,
+                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+              \end{enumerate}
 
-                $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$), where
+            \item
+              {\em Transitivity rules.}
+              Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of
+              $G'$ and $G'$ is a subset of $G''$, then $G$ must also be a
+              subset of $G''$. The following rules ensure that the transitive
+              property of subject, access right and object groups hold:
 
-                $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
-                $a \in {\cal E}_{a}$,
-                $o \in {\cal E}_{o}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
+              \begin{enumerate}
+                \item
+                  Subject Group Transitivity
+ 
+                  $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$)
 
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{holds}(s_{g1}, a, o, \sigma) \leftarrow &
-                    \hat{holds}(s_{g2}, a, o, \sigma), \\
-                    & \hat{subst}(s_{g1}, s_{g2}, \sigma), \\
-                    & not \lnot \hat{holds}(s_{g1}, a, o, \sigma) \\
-                    \lnot \hat{holds}(s_{g1}, a, o, \sigma) \leftarrow &
-                    \lnot \hat{holds}(s_{g2}, a, o, \sigma), \\
-                    & \hat{subst}(s_{g1}, s_{g2}, \sigma)
-                  \end{aligned}
-                \end{math}
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{subst}&(sg_{1}, sg_{3}, \sigma) \leftarrow \\
+                      & \hat{subst}(sg_{1}, sg_{2}, \sigma), \\
+                      & \hat{subst}(sg_{2}, sg_{3}, \sigma)
+                    \end{aligned}
+                  \end{math}
 
-              \item
-                Access Right Group Subset Inheritance
+                  where
+ 
+                  $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
+                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+ 
+                \item
+                  Access Right Group Transitivity
+ 
+                  $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$) 
 
-                $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$), where
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{subst}&(ag_{1}, ag_{3}, \sigma) \leftarrow \\
+                      & \hat{subst}(ag_{1}, ag_{2}, \sigma), \\
+                      & \hat{subst}(ag_{2}, ag_{3}, \sigma)
+                    \end{aligned}
+                  \end{math}
 
-                $s \in {\cal E}_{s}$,
-                $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
-                $o \in {\cal E}_{o}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  where
+ 
+                  $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
+                  $S_{0} \leq \sigma \leq S_{|\psi|}$
 
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{holds}(s, a_{g1}, o, \sigma) \leftarrow &
-                    \hat{holds}(s, a_{g2}, o, \sigma), \\
-                    & \hat{subst}(a_{g1}, a_{g2}, \sigma), \\
-                    & not \lnot \hat{holds}(s, a_{g1}, o, \sigma) \\
-                    \lnot \hat{holds}(s, a_{g1}, o, \sigma) \leftarrow &
-                    \lnot \hat{holds}(s, a_{g2}, o, \sigma), \\
-                    & \hat{subst}(a_{g1}, a_{g2}, \sigma)
-                  \end{aligned}
-                \end{math}
+                \item
+                  Object Group Transitivity
+ 
+                  $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$) 
 
-              \item
-                Object Group Subset Inheritance
+                  \begin{math}
+                    \begin{aligned}[t]
+                      \hat{subst}&(og_{1}, og_{3}, \sigma) \leftarrow \\
+                      & \hat{subst}(og_{1}, og_{2}, \sigma), \\
+                      & \hat{subst}(og_{2}, og_{3}, \sigma)
+                    \end{aligned}
+                  \end{math}
 
-                $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$), where
+                  where
+ 
+                  $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
+                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+              \end{enumerate}
 
-                $s \in {\cal E}_{s}$,
-                $a \in {\cal E}_{a}$,
-                $o_{g1}, o_{g2} \in {\cal E}_{og}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{holds}(s, a, o_{g1}, \sigma) \leftarrow &
-                    \hat{holds}(s, a, o_{g2}, \sigma), \\
-                    & \hat{subst}(o_{g1}, o_{g2}, \sigma), \\
-                    & not \lnot \hat{holds}(s, a, o_{g1}, \sigma) \\
-                    \lnot \hat{holds}(s, a, o_{g1}, \sigma) \leftarrow &
-                    \lnot \hat{holds}(s, a, o_{g2}, \sigma), \\
-                    & \hat{subst}(o_{g1}, o_{g2}, \sigma)
-                  \end{aligned}
-                \end{math}
-            \end{enumerate}
-
-          \subparagraph{Transitivity rules.}
-            Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of $G'$
-            and $G'$ is a subset of $G''$, then $G$ must also be a subset of
-            $G''$. The following rules ensure that the transitive property of
-            subject, access right and object groups hold:
-
-            \begin{enumerate}
-              \item
-                Subject Group Transitivity
-
-                $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$), where
-
-                $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{subst}(sg_{1}, sg_{3}, \sigma) \leftarrow &
-                    \hat{subst}(sg_{1}, sg_{2}, \sigma), \\
-                    & \hat{subst}(sg_{2}, sg_{3}, \sigma)
-                  \end{aligned}
-                \end{math}
-
-              \item
-                Access Right Group Transitivity
-
-                $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$), where
-
-                $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{subst}(ag_{1}, ag_{3}, \sigma) \leftarrow &
-                    \hat{subst}(ag_{1}, ag_{2}, \sigma), \\
-                    & \hat{subst}(ag_{2}, ag_{3}, \sigma)
-                  \end{aligned}
-                \end{math}
-
-              \item
-                Object Group Transitivity
-
-                $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$), where
-
-                $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
-                $S_{0} \leq \sigma \leq S_{|\psi|}$
-
-                \begin{math}
-                  \begin{aligned}[t]
-                    \hat{subst}(og_{1}, og_{3}, \sigma) \leftarrow &
-                    \hat{subst}(og_{1}, og_{2}, \sigma), \\
-                    & \hat{subst}(og_{2}, og_{3}, \sigma)
-                  \end{aligned}
-                \end{math}
-            \end{enumerate}
-
-          \subparagraph{Inertial rules.}
-            Intuitively, all facts in the current state that are not affected
-            by a policy update should be carried over to the next state after
-            the update. In language ${\cal L}^{*}$, this rule must be
-            explicitly stated as a constraint. Formally, the inertial rules
-            are expressed as follows:
-
-            \begin{vquote}
-              $\hat{\alpha}'$ $\leftarrow$ $\hat{\alpha}$, $not$ $\lnot$ $\hat{\alpha}'$
-
-              $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
-
-              $\forall$($\hat{\alpha}$,$u$), where
-              $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
-              $u$ $\in$ $\psi$,
-
-              $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
-            \end{vquote}
+            \item
+              {\em Inertial rules.}
+              Intuitively, all facts in the current state that are not affected
+              by a policy update should be carried over to the next state after
+              the update. In language ${\cal L}^{*}$, this rule must be
+              explicitly stated as a constraint. Formally, the inertial rules
+              are expressed as follows:
+ 
+              \begin{vquote}
+                $\hat{\alpha}'$ $\leftarrow$ $\hat{\alpha}$, $not$ $\lnot$ $\hat{\alpha}'$
+ 
+                $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
+ 
+                $\forall$($\hat{\alpha}$,$u$), where
+                $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
+                $u$ $\in$ $\psi$,
+ 
+                $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
+              \end{vquote}
+          \end{itemize}
 
         \begin{vdefinition}
           Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, its
@@ -1877,43 +1898,50 @@
           into normal logic program form is achieved by performing the
           following steps:
 
-          \subparagraph{Enumerate all possible atoms.}
-            By using all the entities in the symbol table, all possible
-            language ${\cal L}$ atoms may be enumerated by grouping together
-            2 to 3 entities together. All possible atoms of type $holds$ are
-            generated by enumerating all possible combinations of subject,
-            access right and object entities. The set of $member$ atoms is
-            generated from all the different combinations of singular and
-            group entities of types subject, access right and object.
-            Similarly, the set of $subset$ atoms is derived from different
-            subject, access right and object group pair combinations.
+          \begin{itemize}
 
-          \subparagraph{Arrange the atoms in a predefined order.}
-            This procedure relies on the assumption that the list of all
-            possible atoms derived from the step above is arranged in a
-            predefined order. In this step we ensure that the atoms are
-            enumerated in the following order (from first to last): $holds$,
-            $subject$ $member$, $access$ $right$ $member$, $object$ $member$,
-            $subject$ $subset$, $access$ $right$ $subset$ and $object$
-            $subset$. In addition to the ordering of atom types, atoms of each
-            type are themselves sorted according to the order in which their
-            entities appear in the symbol table.
+            \item
+              {\em Enumerate all possible atoms.}
+              By using all the entities in the symbol table, all possible
+              language ${\cal L}$ atoms may be enumerated by grouping together
+              2 to 3 entities together. All possible atoms of type $holds$ are
+              generated by enumerating all possible combinations of subject,
+              access right and object entities. The set of $member$ atoms is
+              generated from all the different combinations of singular and
+              group entities of types subject, access right and object.
+              Similarly, the set of $subset$ atoms is derived from different
+              subject, access right and object group pair combinations.
 
-          \subparagraph{Assign an ordinal index for each enumerated atom.}
-            Since the enumerated list of atoms are ordered, consecutive
-            positive integers may be assigned to each atom as an ordinal
-            index $i$, where $0$ $\leq$ $i$ $<$ $n$ ($n$ is the total
-            number of atoms enumerated).
+            \item
+              {\em Arrange the atoms in a predefined order.}
+              This procedure relies on the assumption that the list of all
+              possible atoms derived from the step above is arranged in a
+              predefined order. In this step we ensure that the atoms are
+              enumerated in the following order: $holds$, $subject$ $member$,
+              $access$ $right$ $member$, $object$ $member$, $subject$
+              $subset$, $access$ $right$ $subset$ and $object$ $subset$. In
+              addition to the ordering of atom types, atoms of each type are
+              themselves sorted according to the order in which their entities
+              appear in the symbol table.
 
-          \subparagraph{Extend indexing procedure to represent facts.} Since
-            negative facts are just mirror images of their positive
-            counterparts, their indices are calculated by adding $n$ to the
-            indices of the corresponding positive facts. Thus, indices $i$
-            ($n$ $\leq$ $i$ $<$ $2n$) are negative facts. Furthermore, this
-            procedure is again extended to represent the states of the facts.
-            The process is similar: indices $i$ ($0$ $\leq$ $i$ $<$ $2n$)
-            represent facts of state $S_{0}$, indices $i$ ($2n$ $\leq$ $i$ $<$
-            $4n$) represent facts of state $S_{1}$, and so on.
+            \item
+              {\em Assign an ordinal index for each enumerated atom.}
+              Since the enumerated list of atoms are ordered, consecutive
+              positive integers may be assigned to each atom as an ordinal
+              index $i$, where $0$ $\leq$ $i$ $<$ $n$ ($n$ is the total
+              number of atoms enumerated).
+
+            \item
+              {\em Extend indexing procedure to represent facts.} Since
+              negative facts are just mirror images of their positive
+              counterparts, their indices are calculated by adding $n$ to the
+              indices of the corresponding positive facts. Thus, indices $i$
+              ($n$ $\leq$ $i$ $<$ $2n$) are negative facts. Furthermore, this
+              procedure is again extended to represent the states of the
+              facts. The process is similar: indices $i$ ($0$ $\leq$ $i$ $<$
+              $2n$) represent facts of state $S_{0}$, indices $i$ ($2n$ $\leq$
+              $i$ $<$ $4n$) represent facts of state $S_{1}$, and so on.
+          \end{itemize}
 
           The steps outlined above may be summarised by the function below:
 
@@ -2008,15 +2036,15 @@
 
       \begin{itemize}
         \item
-          {\bf Subjects} of the access control policies are the users. Since
+          {\em Subjects} of the access control policies are the users. Since
           all users must first be authenticated, the password table used
           in authentication may also be used to extract the list of subjects.
         \item
-          {\bf Access Rights} are built in: they are the HTTP request methods
+          {\em Access Rights} are built in: they are the HTTP request methods
           as defined by the HTTP 1.1 standard \cite{HTTP1} (i.e. OPTIONS, GET,
           HEAD, POST, PUT, DELETE, TRACE and CONNECT).
         \item
-          {\bf Objects} are the resources available in the server themselves.
+          {\em Objects} are the resources available in the server themselves.
           Assuming that the document root is a hierarchy of directories and
           files, each of these are mapped as a unique object of language
           ${\cal L'}$.
@@ -2034,20 +2062,20 @@
 
       \begin{itemize}
         \item
-          {\bf Generating entity identifier definitions}. Subject entities are
+          {\em Generating entity identifier definitions}. Subject entities are
           taken from the authentication (password) table; access rights are
           hard-coded built-ins; and the list of objects are generated by
           traversing the document root for files and directories.
         \item
-          {\bf Generating additional constraints}. The module generates
-          additional constraints to preserve the relationship between groups
-          and elements. This is useful to model the assertion that unless
-          explicitly stated, users holding particular access rights to a
-          directory automatically hold those access rights to every file in
-          that directory (recursively, if with subdirectories). The module
-          makes this assertion by generating non-conditional constraint rules
-          that state that each file (object) is a member of the directory
-          (object group) in which it is contained.
+          {\em Generating additional constraints}. Additional constraints are
+          generated to preserve the relationship between groups and elements.
+          This is useful to model the assertion that unless explicitly stated,
+          users holding particular access rights to a directory automatically
+          hold those access rights to every file in that directory
+          (recursively, if with subdirectories). The module makes this
+          assertion by generating non-conditional constraint rules that state
+          that each file (object) is a member of the directory (object group)
+          in which it is contained.
       \end{itemize}
 
       All other language ${\cal L'}$ statements (initial state definitions,
@@ -2178,7 +2206,7 @@
       initial state facts, constraint rules, policy update definitions and
       the policy update sequence.
 
-      \subsubsection{Atoms}
+      \subsubsection{Atoms.}
 
         The three types of atoms (subject, access right and object) are
         represented as structures of 2 to 3 strings, with each string
@@ -2208,14 +2236,14 @@
           \end{tabular}
         \end{vquote}
 
-      \subsubsection{Facts}
+      \subsubsection{Facts.}
 
-        Facts are represented as a three-element structure composed of the
+        Facts are stored in a three-element structure composed of the
         following: polymorphic type which can be any of the three atom
         structures above; a type indicator to specify whether the fact is
-        holds, member or subset; and a truth flag, to indicate whether the
-        atom is classically negated or not ({\em true} if the fact holds
-        and {\em false} if the classical negation of the fact holds.
+        $holds$, $member$ or $subset$; and a truth flag, to indicate whether the
+        atom is classically negated or not ($true$ if the fact holds
+        and $false$ if the classical negation of the fact holds).
 
         \begin{vquote}
           \begin{tabular}[t]{|l|l|l|}
@@ -2231,18 +2259,18 @@
           \end{tabular}
         \end{vquote}
 
-      \subsubsection{Expressions}
+      \subsubsection{Expressions.}
 
         Since expressions are simply conjunctions of facts, they are
         represented as a list of fact structures.
 
-      \subsubsection{Initial State Facts Table}
+      \subsubsection{Initial State Facts Table.}
 
         The initial state facts table is represented as a single list of
         fact structures, or an expression. Each fact in all {\em initially}
         statements are added into the initial state facts table.
 
-      \subsubsection{Constraint Table}
+      \subsubsection{Constraint Table.}
 
         The constraint table is represented as a list of constraint
         structures, with each structure composed of the following:
@@ -2261,7 +2289,7 @@
           \end{tabular}
         \end{vquote}
 
-      \subsubsection{Policy Update Definition Table}
+      \subsubsection{Policy Update Definition Table.}
 
         Another list of structures is the policy update table. Each element
         structure of this table is composed of the following 4 fields:
@@ -2303,7 +2331,7 @@
     \bibitem{AP}
       Apache Software Foundation,
       Authentication, Authorization and Access Control.
-      {\em Apache HTTP Server 2.1 Documentation}, \\
+      {\em Apache HTTP Server 2.1 Documentation},
       {\tt \scriptsize http://httpd.apache.org/docs-2.1/}, 2004.
 
     \bibitem{BA1}
@@ -2372,14 +2400,14 @@
     \bibitem{HTTP1}
       Network Working Group,
       {\em HTTP 1.1 (RFC 2616)}.
-      The Internet Society, \\
+      The Internet Society,
       {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2616.txt},
       1999.
 
     \bibitem{HTTP2}
       Network Working Group,
       {\em HTTP Authentication (RFC 2617)}.
-      The Internet Society, \\
+      The Internet Society,
       {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2617.txt},
       1999.
 
