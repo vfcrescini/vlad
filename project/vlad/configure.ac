@@ -4,6 +4,12 @@ AC_INIT(vlad,0.3.1,jcrescin@cit.uws.edu.au)
 
 AC_CONFIG_HEADERS(config.h)
 
+CFLAGS="$CFLAGS"
+CXXFLAGS="$CXXFLAGS"
+VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
+VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
+VLAD_LDFLAGS="-L\$(DISTDIR)/lib/vlad"
+
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LEX
@@ -15,11 +21,11 @@ AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & c
 if test "$enable_debug" != "" && test "$enable_debug" != "no"; then
   AC_DEFINE(DEBUG,1)
   AC_SUBST(DEBUG,1)
-  CFLAGS="$VLAD_CFLAGS -g"
-  CXXFLAGS="$VLAD_CXXFLAGS -g"
+  VLAD_CFLAGS="-g $VLAD_CFLAGS"
+  VLAD_CXXFLAGS="-g $VLAD_CXXFLAGS"
 else
-  CFLAGS="$VLAD_CFLAGS -O2"
-  CXXFLAGS="$VLAD_CXXFLAGS -O2"
+  VLAD_CFLAGS="-O2 $VLAD_CFLAGS"
+  VLAD_CXXFLAGS="-O2 $VLAD_CXXFLAGS"
 fi
 
 AC_ARG_ENABLE(strip,AC_HELP_STRING([--enable-strip],[run strip program (default is disabled)]))
@@ -43,9 +49,9 @@ if test "$with_smodels_src" != "" && test "$with_smodels_src" != "no"; then
   fi
 fi
 
-CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
-CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
-LDFLAGS="-L\$(DISTDIR)/lib/vlad $LDFLAGS"
+CFLAGS="$VLAD_CFLAGS $CFLAGS"
+CXXFLAGS="$VLAD_CXXFLAGS $CXXFLAGS"
+LDFLAGS="$VLAD_LDFLAGS $LDFLAGS"
 
 AC_DEFINE_UNQUOTED(VERSION,"$PACKAGE_VERSION")
 
