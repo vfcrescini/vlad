@@ -11,4 +11,4 @@ list.o : list.c list.h
 	$(CC) $(CFLAGS) -c -o $(@) list.c
 
 test : test.c $(OBJS)
-	$(CC) $(CFLAGS) test.c $(OBJS)
+	$(CC) $(CFLAGS) -o test test.c $(OBJS)
