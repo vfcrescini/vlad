@@ -41,6 +41,11 @@ int prgoram_parse();
 
 /* convenience functions */
 int add_identifier(const char *n, unsigned char t);
+
+#ifdef YYBYACC
+int programparse();
+#endif
+
 %}
 
 %union {

@@ -37,6 +37,10 @@ int operationlex();
 /* available functions */
 int operation_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m);
 int operation_parse();
+
+#ifdef YYBYACC
+int operationparse();
+#endif
 %}
 
 %union {
