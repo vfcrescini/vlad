@@ -12,7 +12,7 @@ int cmp(void *p1, void *p2);
 int fr(void *p1);
 char *str_dup(const char *);
 
-int main()
+int main(int argc, char *argv[])
 {
   simplelist_type slist;
   char *data;
