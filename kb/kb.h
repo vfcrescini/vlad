@@ -11,6 +11,7 @@
 #include <atom.h>
 #include <expression.h>
 #include <stringlist.h>
+#include <numberlist.h>
 #include <sequence.h>
 #include <symtab.h>
 #include <consttab.h>
@@ -97,6 +98,31 @@ class kb {
     int encode_atom(atom *a, unsigned int s, unsigned int *n);
     /* returns the atom details given the id */
     int decode_atom(atom **a, unsigned int *s, unsigned int n);
-} ;
+    /* gives a list of encoded atom id's that represent inheritance rules */
+    int generate_inheritance(unsigned int state_tot,
+                             numberlist **l1,
+                             numberlist **l2,
+                             numberlist **l3);
+    /* gives a list of encoded atom id's that represent transitivity rules */
+    int generate_transitivity(unsigned int state_tot,
+                              numberlist **l1,
+                              numberlist **l2,
+                              numberlist **l3);
+    /* gives a list of encoded atom id's that represent complementary rules */
+    int generate_complementary(unsigned int state_tot,
+                               numberlist **l1,
+                               numberlist **l2);
+    /* gives a list of encoded atom id's that represent initial state atoms */
+    int generate_initialstate(numberlist **l1);
 
+    /* gives a list of encoded atom id's that represent constraint rules */
+    int generate_constraints(unsigned int state_tot,
+                             numberlistlist **l1,
+                             numberlistlist **l2,
+                             numberlistlist **l3);
+    /* gives a list of encoded atom id's that represent transformation rules */
+    int generate_transformation(sequence *seq,
+                                numberlistlist **l1,
+                                numberlistlist **l2);
+} ;
 #endif
