@@ -1,6 +1,6 @@
 # Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
-AC_INIT(vlad,1.1.0,jcrescin@cit.uws.edu.au)
+AC_INIT(vlad,1.1.1,jcrescin@cit.uws.edu.au)
 
 AC_CONFIG_HEADERS(lib/config.h)
 
