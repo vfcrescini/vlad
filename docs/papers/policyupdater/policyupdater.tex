@@ -101,47 +101,48 @@
               place-holers, and as such, are subject to the entity identifier
               types. Variable identifiers are prefixed with 1 or 2 upper-case
               characters to distinguish them from entity identifiers, followed
-              by a number composed of 1 to 6 digits. The upper-case characters
-              determines the type of the variable identifier. The following is
-              a list of regular expressions for each variable identifier type:
+              by any combination of 0 to 126 alphanumeric and underscore
+              characters. The upper-case characters determines the type of the
+              variable identifier. The following is a list of regular
+              expressions for each variable identifier type:
 
               \begin{itemize}
                 \item
                   Subject variables (singular and group)
 
-                  \begin{verbatim}S([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}S([a-zA-Z0-9_]){0,127}\end{verbatim}
                 \item
                   Subject variables (singular)
 
-                  \begin{verbatim}SS([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}SS([a-zA-Z0-9_]){0,126}\end{verbatim}
                 \item
                   Subject variables (group)
 
-                  \begin{verbatim}SG([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}SG([a-zA-Z0-9_]){0,126}\end{verbatim}
                 \item
                   Access Right variables (singular and group)
 
-                  \begin{verbatim}A([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}A([a-zA-Z0-9_]){0,127}\end{verbatim}
                 \item
                   Access Right variables (singular)
 
-                  \begin{verbatim}AS([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}AS([a-zA-Z0-9_]){0,126}\end{verbatim}
                 \item
                   Access Right variables (group)
 
-                  \begin{verbatim}AG([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}AG([a-zA-Z0-9_]){0,126}\end{verbatim}
                 \item
                   Object variables (singular and group)
 
-                  \begin{verbatim}O([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}O([a-zA-Z0-9_]){0,127}\end{verbatim}
                 \item
                   Object variables (singluar)
 
-                  \begin{verbatim}OS([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}OS([a-zA-Z0-9_]){0,126}\end{verbatim}
                 \item
                   Object variables (group)
 
-                  \begin{verbatim}OG([0-9]){1,6}\end{verbatim}
+                  \begin{verbatim}OG([a-zA-Z0-9_]){0,126}\end{verbatim}
               \end{itemize}
           \end{itemize}
 
