@@ -1,5 +1,30 @@
 2003-03-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Added another class to encapsulate all kb operations.
+
+	* common/list.h :
+	* common/list.cpp :
+	* kb/symtab.h :
+	* kb/symtab.cpp :
+
+	  - Added a get() function to return the index of a particular data
+	    item.
+
+	  - symtab::length() now returns the length, not error codes.
+
+	* kb/identifier.h :
+
+	  - Added macro for checking basetypes.
+
+	* parser/parser.y :
+
+	  - Now uses kb instead of symtab.
+
+	  - Added debug code for atoms.
+
 	* common/list.cpp :
 	* common/list.h :
 	* kb/symtab.cpp :
