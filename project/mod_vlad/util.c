@@ -266,7 +266,7 @@ const char *modvlad_docroot(apr_pool_t *a_p, server_rec *a_s)
 /* generates a random id between 0 and MODVLAD_MAXID */
 unsigned int modvlad_idgen()
 {
-  return (unsigned int) 1.0 + (MODVLAD_MAXID * rand() / (RAND_MAX + 1.0));
+  return (unsigned int) (1 + (MODVLAD_MAXID * (rand() / (RAND_MAX + 1.0))));
 }
 
 /* register the users into the kb */
