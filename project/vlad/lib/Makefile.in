@@ -21,39 +21,39 @@ VERSION = @VERSION@
 BINS =
 STATIC_LIBS = libvlad.a
 SHARED_LIBS = libvlad.so.$(VERSION)
-INCLUDES =            \
-  config.h            \
-  vlad.h              \
-  list.h              \
-  stringlist.h        \
-  numberlist.h        \
-  atom.h              \
-  expression.h        \
-  seqtab.h            \
-  symtab.h            \
-  consttab.h          \
-  transtab.h          \
-  $(SMINCLUDES)       \
-  $(WRAPINCLUDES)     \
-  kb.h                \
+INCLUDES = \
+  config.h \
+  vlad.h \
+  list.h \
+  stringlist.h \
+  numberlist.h \
+  atom.h \
+  expression.h \
+  seqtab.h \
+  symtab.h \
+  consttab.h \
+  transtab.h \
+  $(SMINCLUDES) \
+  $(WRAPINCLUDES) \
+  kb.h \
   $(NULL)
-OBJECTS =             \
-  list.o              \
-  stringlist.o        \
-  numberlist.o        \
-  atom.o              \
-  expression.o        \
-  seqtab.o            \
-  symtab.o            \
-  consttab.o          \
-  transtab.o          \
-  $(SMOBJECTS)        \
-  $(WRAPOBJECTS)      \
-  kb.o                \
+OBJECTS = \
+  list.o \
+  stringlist.o \
+  numberlist.o \
+  atom.o \
+  expression.o \
+  seqtab.o \
+  symtab.o \
+  consttab.o \
+  transtab.o \
+  $(SMOBJECTS) \
+  $(WRAPOBJECTS) \
+  kb.o \
   $(NULL)
 TEMPS1 =
-TEMPS2 =              \
-  config.h            \
+TEMPS2 = \
+  config.h \
   $(NULL)
 
 ifdef SMODELS

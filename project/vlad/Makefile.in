@@ -6,26 +6,26 @@ DISTDIR = @DISTDIR@
 
 all :
 	@set -e && for i in $(DIRS); do \
-	$(MAKE) -C $$i all;             \
+	$(MAKE) -C $$i all; \
 	done
 
 install :
 	@set -e && for i in $(DIRS); do \
-        $(MAKE) -C $$i install;         \
+        $(MAKE) -C $$i install; \
         done
 
 uninstall :
 	@set -e && for i in $(DIRS); do \
-        $(MAKE) -C $$i uninstall;       \
+        $(MAKE) -C $$i uninstall; \
         done
 
 clean :
 	@set -e && for i in $(DIRS); do \
-	$(MAKE) -C $$i clean;           \
+	$(MAKE) -C $$i clean; \
 	done
 
 distclean :
 	@set -e && for i in $(DIRS); do \
-	$(MAKE) -C $$i distclean;       \
+	$(MAKE) -C $$i distclean; \
 	done
 	$(RM) -r $(DISTDIR) Makefile config.status config.log autom4te.cache

@@ -22,18 +22,18 @@ BINS = vlad
 STATIC_LIBS =
 SHARED_LIBS =
 INCLUDES =
-OBJECTS =             \
-  vlad.o              \
-  program_parser.o    \
-  program_scanner.o   \
-  operation_parser.o  \
+OBJECTS = \
+  vlad.o \
+  program_parser.o \
+  program_scanner.o \
+  operation_parser.o \
   operation_scanner.o \
   $(NULL)
 
-TEMPS1 =              \
-  lex.*.cpp           \
-  *.tab.cpp           \
-  *.tab.h             \
+TEMPS1 = \
+  lex.*.cpp \
+  *.tab.cpp \
+  *.tab.h \
   $(NULL)
 TEMPS2 =
 
