@@ -44,7 +44,7 @@ if test "x$enable_strip" != "x" && test "x$enable_strip" != "xno"; then
 fi
 
 # --with-smodels
-AC_ARG_WITH(smodels, AC_HELP_STRING([--with-smodels],[enable smodels support: yes or path so smodels source tree (default is no)]))
+AC_ARG_WITH(smodels, AC_HELP_STRING([--with-smodels],[enable smodels support: yes or path to smodels source tree (default is no)]))
 
 if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
   AC_DEFINE(SMODELS,1)
