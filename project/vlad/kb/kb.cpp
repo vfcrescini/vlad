@@ -719,8 +719,31 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   /* state loop */
   for (i = 0; i <= ((s == NULL) ? 0 : s->length()); i++) {
     for (j = 0; j < pos_tot; j++) {
-      fprintf(f, "%6d <- %d AND %d\n", pos_tot + (i * pos_tot * 2), j + pos_tot + (i * pos_tot * 2), j + (i * pos_tot * 2));
+      fprintf(f,
+              "%6d <- %d AND %d\n", 
+              pos_tot + (i * pos_tot * 2), 
+              j + pos_tot + (i * pos_tot * 2), 
+              j + (i * pos_tot * 2));
     }
+  }
+
+  /* inertial rules */
+  fprintf(f, "Inertial Rules\n");
+
+  /* state loop */
+  for (i = 0; i < ((s == NULL) ? 0 : s->length()); i++) {
+    for (j = 0; j < pos_tot; j++) {
+      fprintf(f, 
+              "%6d <- %d AND NOT %d\n", 
+              j + pos_tot + ((i + 1) * pos_tot * 2),
+              j + pos_tot + (i * pos_tot * 2),
+              j + ((i + 1) * pos_tot * 2));
+      fprintf(f, 
+              "%6d <- %d AND NOT %d\n", 
+              j + ((i + 1) * pos_tot * 2),
+              j + (i * pos_tot * 2),
+              j + pos_tot + ((i + 1) * pos_tot * 2));
+    } 
   }
 
   return VLAD_OK;
