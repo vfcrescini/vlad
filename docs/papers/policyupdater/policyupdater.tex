@@ -478,10 +478,6 @@ query holds(alice, read, file);
               ${\cal A}^{\sigma}_{so} = \{\forall (g1, g2 \in {\cal E}_{og}), \hat{subst}(g1, g2, \sigma)\}$
           \end{enumerate}
 
-          The function $Base$ accepts an atom $\alpha$ as an input argument and
-          returns a set that contains the entity identifiers that make up the
-          atom.
-
         \paragraph{Facts.}
        
           A fact is a logical statement that makes a claim that an atom either
@@ -538,19 +534,21 @@ query holds(alice, read, file);
 
         \paragraph{}
 
-          The $Base$ function takes an atom $\hat{\alpha}$ of language
-          ${\cal L}^{*}$ in some state $\sigma$ and returns a set of
-          entities that make up the atom.
+          Another function, the $CopyAtom$ function, takes two arguments:
+          an atom $\hat{\alpha}$ of language ${\cal L}^{*}$ in some state
+          $\sigma$ and another state $\sigma'$. The function returns an
+          equivalent atom of the same type and with the same entities,
+          but in the new state specified.
 
           \begin{quote}
-            $Base$($\hat{\alpha}$)
+            $CopyAtom$($\hat{\alpha}$, $\sigma'$)
  
             = 
             \begin{math}
               \begin{cases}
-                \mbox{\{$s$, $a$, $o$\}, if $\hat{\alpha}$ = $\hat{holds}$($s$, $a$, $o$, $\sigma$)} \\
-                \mbox{\{$e$, $g$\}, if $\hat{\alpha}$ = $\hat{memb}$($e$, $g$, $\sigma$)} \\
-                \mbox{\{$g_{1}$, $g_{2}$\}, if $\hat{\alpha}$ = $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)}
+                \mbox{$\hat{holds}$($s$, $a$, $o$, $\sigma'$), if $\hat{\alpha}$ = $\hat{holds}$($s$, $a$, $o$, $\sigma$)} \\
+                \mbox{$\hat{memb}$($e$, $g$, $\sigma'$), if $\hat{\alpha}$ = $\hat{memb}$($e$, $g$, $\sigma$)} \\
+                \mbox{$\hat{subst}$($g_{1}$, $g_{2}$, $\sigma'$), if $\hat{\alpha}$ = $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)}
               \end{cases}
             \end{math}
           \end{quote}
@@ -974,13 +972,9 @@ query holds(alice, read, file);
                 \item
                   $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$
                 \item
-                  $\hat{\alpha}'$ $\in$ ${\cal A}^{\sigma'}$
-                \item
                   $u$ $\in$ $\psi$
                 \item
-                  $\sigma'$ = $Result$($u$, $\sigma$)
-                \item
-                  $Base$($\hat{\alpha}$) = $Base$($\hat{\alpha}'$)
+                  $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Result$($u$, $\sigma$))
               \end{itemize}
             \end{quote}
 
