@@ -2,7 +2,7 @@
 
 TOPSRCDIR = ..
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
-LDFLAGS = -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
+LDFLAGS = -L$(TOPSRCDIR)/lib
 TARGETS = datastruct_test
 
 ifdef DEBUG
