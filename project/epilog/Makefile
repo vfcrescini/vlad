@@ -1,6 +1,6 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-DIRS = datastruct symtab parser main
+DIRS = datastruct symtab kb parser main
 
 all :
 	@for i in $(DIRS); do \
