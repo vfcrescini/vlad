@@ -42,7 +42,7 @@
             {\bf Entity Identifiers} represent constant entities that make
             up an atom. They are divided further into three types, with each
             type again divided into the {\em singular} and {\em group} entity
-            catogories:
+            categories:
  
             \begin{itemize}
               \item
@@ -60,7 +60,7 @@
  
           \vspace{1mm}
           \item
-            {\bf Variable Identifiers} are used as placeholders to represent
+            {\bf Variable Identifiers} are used as place holders to represent
             defined entity identifiers.
         \end{itemize}
  
@@ -69,7 +69,7 @@
  
         \begin{verbatim}[a-z]([a-zA-Z0-9_/]){0,127}\end{verbatim}
  
-        Variable Identifiers in consrast, are prefixed with an upper-case
+        Variable Identifiers in contrast, are prefixed with an upper-case
         character:
  
         \begin{verbatim}[A-Z]([a-zA-Z0-9_]){0,127}\end{verbatim}
@@ -307,7 +307,7 @@
       a relationship in a particular state. This is achieved by adding a state
       parameter on every atom. The initial state, or the state before any
       policy update is applied, is assigned state $S_{0}$. States after $S_{0}$
-      is defined by the following funcion:
+      is defined by the following function:
 
       \begin{quote}
         $S'$ = $update$($S$, $U$)
@@ -346,9 +346,9 @@
     provided by its {\em mod\_auth} and {\em mod\_access} modules
     \cite{AP,LAU}. With this built-in access control system, Apache provides
     the standard HTTP {\em Basic} and {\em Digest} authentication schemes
-    \cite{HTTP2}, as well as an authorization system to enforce
+    \cite{HTTP2}, as well as an authorisation system to enforce
     administrator-defined policies. Such policies may be defined as per-request
-    rules with HTTP request methods ({\em Get}, {\em Post}, etc.) \cite{HTTP1}
+    rules with HTTP request methods ({\em GET}, {\em POST}, etc.) \cite{HTTP1}
     as access rights; users and hosts as subjects and the resources in the
     server's document root as objects.
 
@@ -416,7 +416,7 @@
         directories and files, each of these are mapped as a unique object of
         language ${\cal L'}$.
 
-      \paragraph{\bf Mapping the Policies to Lanugage ${\cal L}$.}
+      \paragraph{\bf Mapping the Policies to Language ${\cal L}$.}
 
         As mentioned above, one task of the PolicyUpdater module is to generate
         a language ${\cal L}$ policy to be evaluated by the core PolicyUpdater
