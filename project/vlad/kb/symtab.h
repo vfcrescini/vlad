@@ -24,7 +24,7 @@
 #define VLAD_IDENT_IS_ACCESS(X)  (((X) & 3) == VLAD_IDENT_ACCESS)
 #define VLAD_IDENT_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
 #define VLAD_IDENT_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
-#define VLAD_IDENT_IS_VALID(X)   ((X) >= 0 && (X) <= 7)
+#define VLAD_IDENT_IS_VALID(X)   ((X) <= 7)
 
 /* the constants true and false are automatically added to the table */
 #define VLAD_CONST_TRUE          "true"

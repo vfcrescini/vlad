@@ -21,8 +21,11 @@ kb kbase;
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
 
+int add_identifier(const char *n, unsigned char t);
+
 #ifdef DEBUG
 int print_atom(unsigned int a, char *s);
+int print_exp(numberlist l, char *s);
 #endif
 
 int yylex(void);
@@ -122,7 +125,7 @@ ident_section : {
 
 initial_section : {
     int retval;
-    /* after the initial section, we must close the  table */
+    /* after the initial section, we must close the init table */
     if ((retval = kbase.close_inittab()) != VLAD_OK) {
       fprintf(stderr, "internal error: %d\n", retval);
       return retval;
@@ -130,7 +133,7 @@ initial_section : {
   }
   | initial_stmt_list {
     int retval;
-    /* after the initial section, we must close the  table */
+    /* after the initial section, we must close the init table */
     if ((retval = kbase.close_inittab()) != VLAD_OK) {
       fprintf(stderr, "internal error: %d\n", retval);
       return retval;
@@ -221,235 +224,79 @@ acc_grp_ident_decl :
 
 sub_ident_list :
   VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_symtab($1, VLAD_IDENT_SUBJECT)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared subject identifier %s\n", $1);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $1);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($1, VLAD_IDENT_SUBJECT)) != VLAD_OK)
+      return retval;
   }
   | sub_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_symtab($3, VLAD_IDENT_SUBJECT)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared subject identifier %s\n", $3);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $3);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($3, VLAD_IDENT_SUBJECT)) != VLAD_OK)
+      return retval;
   }
   ;
 
 obj_ident_list :
   VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_symtab($1, VLAD_IDENT_OBJECT)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared object identifier %s\n", $1);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $1);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($1, VLAD_IDENT_OBJECT)) != VLAD_OK)
+      return retval;
   }
   | obj_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_symtab($3, VLAD_IDENT_OBJECT)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared object identifier %s\n", $3);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $3);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($3, VLAD_IDENT_OBJECT)) != VLAD_OK)
+      return retval;
   }
   ;
 
 acc_ident_list :
   VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_symtab($1, VLAD_IDENT_ACCESS)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared access identifier %s\n", $1);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $1);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($1, VLAD_IDENT_ACCESS)) != VLAD_OK)
+      return retval;
   }
   | acc_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_symtab($3, VLAD_IDENT_ACCESS)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared access identifier %s\n", $3);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $3);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($3, VLAD_IDENT_ACCESS)) != VLAD_OK)
+      return retval;
   }
   ;
 
 sub_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_symtab($1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared subject-group identifier %s\n", $1);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $1);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) != VLAD_OK)
+      return retval;
   }
   | sub_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_symtab($3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared subject-group identifier %s\n", $3);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $3);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) != VLAD_OK)
+      return retval;
   }
   ;
 
 obj_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_symtab($1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared object-group identifier %s\n", $1);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $1);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) != VLAD_OK)
+      return retval;
   }
   | obj_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_symtab($3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared object-group identifier %s\n", $3);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $3);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) != VLAD_OK)
+      return retval;
   }
   ;
 
 acc_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_symtab($1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared access-group identifier %s\n", $1);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $1);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) != VLAD_OK)
+      return retval;
   }
   | acc_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_symtab($3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) {
-    case VLAD_OK :
-#ifdef DEBUG
-      fprintf(yyerr, "declared access-group identifier %s\n", $3);
-#endif
-      break;
-    case VLAD_DUPLICATE :
-      fprintf(yyerr, "identifier %s already declared\n", $3);
-      return VLAD_DUPLICATE;
-    case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    default :
-      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
-      return VLAD_FAILURE;
-    }
+    int retval;
+    if ((retval = add_identifier($3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) != VLAD_OK)
+      return retval;
   }
   ;
 
@@ -502,66 +349,27 @@ implies_stmt :
   ground_exp VLAD_SYM_IMPLIES ground_exp with_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
-    char s[128];
-    unsigned int i;
-    unsigned int tmp;
+    char e[1024];
+    char c[1024];
+    char n[1024];
 #endif
 
     if ((retval = kbase.add_consttab($3, $1, $4)) != VLAD_OK)
       return retval;
 
 #ifdef DEBUG
-    fprintf(stderr, "added constraint: ");
+    if ((retval = print_exp(*$3, e)) != VLAD_OK)
+      return retval;
+    if ((retval = print_exp(*$1, c)) != VLAD_OK)
+      return retval;
+    if ((retval = print_exp(*$4, n)) != VLAD_OK)
+      return retval;
 
-    for (i = 0; i < $1->length(); i++) {
-
-      if ((retval = $1->getn(i, &tmp)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
-        return retval;
-      }
-
-      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
-        return retval;
-      }
-      fprintf(stderr, "%s ", s);
-    }
-
-    fprintf(stderr, "implies ");
-
-    for (i = 0; i < $3->length(); i++) {
-
-      if ((retval = $3->getn(i, &tmp)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
-        return retval;
-      }
-
-      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
-        return retval;
-      }
-
-      fprintf(stderr, "%s ", s);
-    }
-
-    fprintf(stderr, "with abscence ");
-
-    for (i = 0; i < $4->length(); i++) {
-
-      if ((retval = $4->getn(i, &tmp)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
-        return retval;
-      }
-
-      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
-        return retval;
-      }
-
-      fprintf(stderr, "%s ", s);
-    }
-
-    fprintf(stderr, "\n"); 
+    fprintf(stderr, "added constraint:\n");
+    fprintf(stderr, "  expression: %s\n", e);
+    fprintf(stderr, "  condition: %s\n", c);
+    fprintf(stderr, "  absence: %s\n", n);
+    
 #endif
   }
   ;
@@ -569,7 +377,7 @@ implies_stmt :
 with_clause : {
     /* make an empty list */
     if (($$ = VLAD_NEW(numberlist(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow\n");
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
   }
@@ -584,18 +392,16 @@ always_stmt :
     numberlist *ncond;
     int retval;
 #ifdef DEBUG
-    char s[128];
-    unsigned int i;
-    unsigned int tmp;
+    char s[1024];
 #endif
 
     if ((cond = VLAD_NEW(numberlist(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow\n");
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
 
     if ((ncond = VLAD_NEW(numberlist(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow\n");
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
 
@@ -605,23 +411,13 @@ always_stmt :
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "added constaint: always ");
-    for (i = 0; i < $2->length(); i++) {
+    if ((retval = print_exp(*$2, s)) != VLAD_OK)
+      return retval;
 
-      if ((retval = $2->getn(i, &tmp)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
-        return retval;
-      }
-
-      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
-        return retval;
-      }
-
-      fprintf(stderr, "%s ", s);
-    }
-
-    fprintf(stderr, "\n");
+    fprintf(stderr, "added constraint:\n");
+    fprintf(stderr, "  expression: %s\n", s);
+    fprintf(stderr, "  condition:\n");
+    fprintf(stderr, "  absence:\n");
 #endif
   }
   ;
@@ -694,7 +490,7 @@ ground_exp :
   ground_boolean_atom { 
     int retval;
     if (($$ = VLAD_NEW(numberlist(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow\n");
+      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
     if ((retval = $$->add($1)) != VLAD_OK)
@@ -829,6 +625,52 @@ logical_atom :
   ;
 %%
 
+int add_identifier(const char *n, unsigned char t)
+{
+  if (!VLAD_IDENT_IS_VALID(t) || t == 0) {
+    fprintf(stderr, "internal error: %d\n", VLAD_INVALIDINPUT);
+    return VLAD_INVALIDINPUT;
+  }
+
+  switch (kbase.add_symtab(n, t)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      switch (t) {
+        case VLAD_IDENT_SUBJECT :
+          fprintf(yyerr, "declared subject identifier %s\n", n);
+          break;
+        case VLAD_IDENT_ACCESS :
+          fprintf(yyerr, "declared access identifier %s\n", n);
+          break;
+        case VLAD_IDENT_OBJECT :
+          fprintf(yyerr, "declared object identifier %s\n", n);
+          break;
+        case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
+           fprintf(yyerr, "declared subject-group identifier %s\n", n);
+          break;
+        case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP :
+           fprintf(yyerr, "declared access-group identifier %s\n", n);
+          break;
+        case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
+           fprintf(yyerr, "declared object-group identifier %s\n", n);
+          break;
+      }
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", n);
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      return VLAD_MALLOCFAILED;
+    default :
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
+      return VLAD_FAILURE;
+  }
+
+  return VLAD_OK;
+}
+
 #ifdef DEBUG
 int print_atom(unsigned int a, char *s)
 {
@@ -858,6 +700,32 @@ int print_atom(unsigned int a, char *s)
       sprintf(s, "%ssubst(%s,%s)", tr ? "" : "!", n1, n2);
       break;
   }
+  return VLAD_OK;
+}
+
+int print_exp(numberlist l, char *s)
+{
+  unsigned int i;
+  unsigned int n;
+  char tmps[128];
+  int retval;
+
+  strcpy(s, "");
+
+  for (i = 0; i < l.length(); i++) {
+    if ((retval = l.getn(i, &n)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+
+    if ((retval = print_atom(n, tmps)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+
+    sprintf(s, "%s %s", s, tmps);
+  }
+
   return VLAD_OK;
 }
 #endif
