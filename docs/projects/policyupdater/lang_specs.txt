@@ -176,7 +176,7 @@ Language LT
       starts(<int1>, <int2>) |
       finishes(<int1>, <int2>);
 
-    - "intx" can be either an interval literal or an interval variable.
+    where "intx" can be either an interval literal or an interval variable.
 
   2.3. Initial Expression Definition
 
@@ -192,12 +192,12 @@ Language LT
       implied by <expression2>
       with absence <expression3>;
 
+    Note that the expressions that make up constraints may be non-ground. This
+    means that an entity variable may occur within them.
+
     The scope of the entity variables that may occur in the expressions in a
     constraint definition statement is limited to that definition statement
     only.
-
-    Note that the expressions that make up constraints may be non-ground. This
-    means that an entity variable may occur within them.
 
   2.5. Policy Update Definition
 
@@ -285,15 +285,25 @@ Language LT
 
       seq list;
 
-4. Translation
+4. Evaluation
 
   4.1. Data Structures
 
-  4.2. Translation of Statements to Rules
+    The evaluation process needs some data structures defined. 
+
+    4.1.1. Entity Table
+
+      This table holds all the defined literal entities.
+
+    4.1.2. Temporal Interval Relations Table
+
+  4.2. Translation of Statements to Normal Logic Rules
 
     4.2.1. Initial Expression Rules
 
     4.2.2. Constraint Rules
+
+      4.2.2.1. Grounding of Variables
 
     4.2.3. Policy Update Rules
 
@@ -308,5 +318,3 @@ Language LT
       4.2.4.2. Transitivity Rules
 
       4.2.4.3. Inertial Rules
-
-5. Evaluation
