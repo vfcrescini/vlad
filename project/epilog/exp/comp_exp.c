@@ -91,20 +91,28 @@ int comp_exp_replace(comp_exp_type comp,
                      identlist_type identlist)
 {
   unsigned int i;
-  unsigned int len;
+  unsigned int len_exp;
+  unsigned int len_vlist;
+  unsigned int len_ilist;
   gnd_atom_type *tmp_gnd_atom = NULL;
   comp_atom_type *tmp_comp_atom = NULL;
 
   if (ground == NULL)
     return -1;
 
+  /* first we ensure that the varlist and the identlist are of equal length */
+  if (stringlist_length(varlist, &len_vlist) != 0 ||
+      identlist_length(identlist, &len_ilist) != 0 ||
+      len_vlist != len_ilist)
+    return -1;
+  
   if (gnd_exp_init(ground) != 0)
     return -1;
 
-  if (comp_exp_length(comp, &len) != 0)
+  if (comp_exp_length(comp, &len_exp) != 0)
     return -1;
 
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < len_exp; i++) {
     if (comp_exp_get(comp, i, &tmp_comp_atom) != 0)
       return -1;
 

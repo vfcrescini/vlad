@@ -1,3 +1,10 @@
+2002-09-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/comp_exp.c :
+
+	  - Added check in replace function to ensure that the
+	    varlist and the identlist are of equal length.
+
 2002-09-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/gnd_exp.c :
