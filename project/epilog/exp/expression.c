@@ -38,11 +38,11 @@ int expression_get(expression_type exp, unsigned int index, atom_type **atom)
 int expression_add(expression_type *exp, atom_type atom)
 {
   atom_type *new_atom = NULL;
-
+  
   if (exp == NULL)
     return -1;
-
-  if (atom_copy(&new_atom, atom))
+  
+  if (atom_copy(&new_atom, atom) != 0)
     return -1;
 
   return simplelist_add(exp, (void *) new_atom);

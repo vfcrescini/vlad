@@ -31,9 +31,9 @@ int atom_create_holds(atom_type **atom,
   if (atom == NULL || sub == NULL || acc == NULL || obj == NULL)
     return -1;
 
-  if (!EPI_IDENT_IS_SUBJECT(sub->type) ||
-      !EPI_IDENT_IS_ACCESS(acc->type) ||
-      !EPI_IDENT_IS_OBJECT(obj->type))
+  if (!(EPI_IDENT_IS_SUBJECT(sub->type) || EPI_IDENT_IS_VAR(sub->type)) ||
+      !(EPI_IDENT_IS_ACCESS(acc->type) || EPI_IDENT_IS_VAR(acc->type)) ||
+      !(EPI_IDENT_IS_OBJECT(obj->type) || EPI_IDENT_IS_VAR(obj->type)))
     return -1;
 
   if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
@@ -59,9 +59,10 @@ int atom_create_memb(atom_type **atom,
 
   /* the assumption is that only subjects can be elements of subject-groups,
    * etc. */
-  if (EPI_IDENT_IS_GROUP(element->type) || 
-      !EPI_IDENT_IS_GROUP(group->type) ||
-      EPI_IDENT_BASETYPE(element->type) != EPI_IDENT_BASETYPE(group->type))
+  if ((EPI_IDENT_IS_GROUP(element->type) && !EPI_IDENT_IS_VAR(element->type)) ||
+      (!EPI_IDENT_IS_GROUP(group->type) && !EPI_IDENT_IS_VAR(group->type)) ||
+      (!EPI_IDENT_IS_VAR(element->type) && !EPI_IDENT_IS_VAR(group->type) &&
+      EPI_IDENT_BASETYPE(element->type) != EPI_IDENT_BASETYPE(group->type)))
     return -1;
 
   if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
@@ -85,8 +86,10 @@ int atom_create_subst(atom_type **atom,
     return -1;
 
   /* the groups must be of the same type */
-  if (!EPI_IDENT_IS_GROUP(group1->type) || 
-      group1->type != group2->type)
+  if ((!EPI_IDENT_IS_GROUP(group1->type) && !EPI_IDENT_IS_VAR(group1->type)) ||
+      (!EPI_IDENT_IS_GROUP(group2->type) && !EPI_IDENT_IS_VAR(group2->type)) ||
+      (!EPI_IDENT_IS_VAR(group1->type) && !EPI_IDENT_IS_VAR(group2->type) &&
+       group1->type != group2->type))
     return -1;
 
   if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
@@ -109,6 +112,53 @@ int atom_destroy(atom_type *atom)
   free(atom);
   atom = NULL;
 
+  return 0;
+}
+
+/* return 0 if the atom is valid */
+int atom_check(atom_type atom)
+{
+  if (EPI_ATOM_IS_CONST(atom.type))
+    return 0;
+
+  if (EPI_ATOM_IS_HOLDS(atom.type)) {
+    /* subject field must be subject or variable */
+    if (!EPI_IDENT_IS_SUBJECT(atom.atom.holds.subject->type) && !EPI_IDENT_IS_VAR(atom.atom.holds.subject->type))
+      return -1;
+    /* access field must be access or variable */
+    if (!EPI_IDENT_IS_ACCESS(atom.atom.holds.access->type) && !EPI_IDENT_IS_VAR(atom.atom.holds.access->type))
+      return -1;
+    /* object field must be access or variable */
+    if (!EPI_IDENT_IS_OBJECT(atom.atom.holds.object->type) && !EPI_IDENT_IS_VAR(atom.atom.holds.object->type))
+      return -1;
+  }
+  else if (EPI_ATOM_IS_MEMB(atom.type)) {
+    /* first field must not be a group or a variable */
+    if (EPI_IDENT_IS_GROUP(atom.atom.memb.element->type) && !EPI_IDENT_IS_VAR(atom.atom.memb.element->type))
+      return -1;
+    /* second field must be a group or a variable */
+    if (!EPI_IDENT_IS_GROUP(atom.atom.memb.group->type) && !EPI_IDENT_IS_VAR(atom.atom.memb.group->type))
+      return -1;
+    /* if both non-variables, base type must be the same */
+    if (!EPI_IDENT_IS_VAR(atom.atom.memb.element->type) && !EPI_IDENT_IS_VAR(atom.atom.memb.group->type) &&
+        EPI_IDENT_BASETYPE(atom.atom.memb.element->type) != EPI_IDENT_BASETYPE(atom.atom.memb.group->type))
+      return -1;
+  }
+  else if (EPI_ATOM_IS_SUBST(atom.type)) {
+    /* first field must be a group or a variable */
+    if (!EPI_IDENT_IS_GROUP(atom.atom.subst.group1->type) && !EPI_IDENT_IS_VAR(atom.atom.subst.group1->type))
+      return -1;
+    /* second field must be a group or a variable */
+    if (!EPI_IDENT_IS_GROUP(atom.atom.subst.group2->type) && !EPI_IDENT_IS_VAR(atom.atom.subst.group2->type))
+      return -1;
+    /* if both non-variables, base type must be the same */
+    if (!EPI_IDENT_IS_VAR(atom.atom.subst.group1->type) && !EPI_IDENT_IS_VAR(atom.atom.subst.group2->type) &&
+        EPI_IDENT_BASETYPE(atom.atom.subst.group1->type) != EPI_IDENT_BASETYPE(atom.atom.subst.group2->type))
+      return -1;
+  }
+  else
+    return -1;
+ 
   return 0;
 }
 

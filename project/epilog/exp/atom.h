@@ -66,6 +66,9 @@ int atom_create_subst(atom_type **atom,
                       ident_type *group2,
                       truth_type truth);
 
+/* return 0 if the atom is valid */
+int atom_check(atom_type atom);
+
 /* creates a copy of atom1 */
 int atom_copy(atom_type **atom2, atom_type atom1);
 

@@ -11,7 +11,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <atom.h>
+#include <stringlist.h>
 #include <expression.h>
+#include <compatom.h>
+#include <compexp.h>
 
 #include "y.tab.h"
 

@@ -21,6 +21,7 @@ int ident_destroy(ident_type *ident);
 int ident_compare(ident_type ident1, ident_type ident2);
 
 /* identifier type values indicated by the first 2 bits */
+#define EPI_IDENT_VAR            0
 #define EPI_IDENT_SUBJECT        1
 #define EPI_IDENT_ACCESS         2 
 #define EPI_IDENT_OBJECT         3
@@ -29,6 +30,7 @@ int ident_compare(ident_type ident1, ident_type ident2);
 #define EPI_IDENT_GROUP          4
 
 /* some convenience macros */
+#define EPI_IDENT_IS_VAR(X)      ((X) == EPI_IDENT_VAR)
 #define EPI_IDENT_IS_SUBJECT(X)  (((X) & 3) == EPI_IDENT_SUBJECT)
 #define EPI_IDENT_IS_ACCESS(X)   (((X) & 3) == EPI_IDENT_ACCESS)
 #define EPI_IDENT_IS_OBJECT(X)   (((X) & 3) == EPI_IDENT_OBJECT)

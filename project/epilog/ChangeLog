@@ -1,5 +1,26 @@
 2002-08-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/atom.c:
+	* exp/atom.h:
+
+	  - Modified atom checks to allow variables in identifiers.
+
+	* ident/ident.h:
+
+	  - Added variable type.
+
+	* parser/parser.y:
+	* parser/scanner.l:
+
+	  - Defined a function exit_error to be used instead of yyerror. 
+	    Makes a call to exit.
+
+	  - Uses stringlist to store variable definitions at the beginning of
+	    a transformation definition.
+
+	  - Uses compexp/compatom to store expressions with variables for
+	    complex (non-ground) atoms and expressions.
+
 	* datastruct/stringlist.c :
 	* datastruct/stringlist.h :
 
