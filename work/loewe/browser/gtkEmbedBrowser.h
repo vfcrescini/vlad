@@ -27,6 +27,7 @@
 #include <gdk/gdk.h>
 #include "nsCOMPtr.h"
 #include "nsIInterfaceRequestor.h"
+#include "nsIServiceManager.h"
 #include "nsICacheService.h"
 #include "nsNetCID.h"
 #include "nsIWebBrowser.h"
