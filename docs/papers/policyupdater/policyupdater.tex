@@ -695,6 +695,10 @@
             $0$ $\leq$ $i$ $\leq$ $n$
           \end{vquote}
 
+          As shown above, the number of initial fact rules generated from the
+          translation is the number of facts $n$ in the given language
+          ${\cal L}$ initial fact expression.
+          
           The following code shows an example of a language ${\cal L}$
           $initially$ statement:
 
@@ -791,6 +795,13 @@
             $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
           \end{vquote}
 
+          For a given language ${\cal L}$ constraint rule, the number of
+          constraint rules generated in the translation is:
+
+          \begin{quote}
+            $m$ $|\psi|$
+          \end{quote}
+
           The example below shows how the following language ${\cal L}$ code
           fragment is translated to language ${\cal L}^{*}$:
 
@@ -878,6 +889,11 @@
             $\hat{b}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
             $0$ $\leq$ $j$ $\leq$ $n$
           \end{vquote}
+
+          Intuitively, the number of language ${\cal L}^{*}$ rules generated
+          in the translation is $m$, which is the number of facts in the
+          postcondition expression of a given language ${\cal L}$ policy update
+          rule.
 
           For example, given the following 2 language ${\cal L}$ policy update
           definitions:
@@ -1549,23 +1565,27 @@
           Given a domain description ${\cal D_{L}}$; the sets ${\cal S}_{i}$,
           ${\cal S}_{c}$ and ${\cal S}_{u}$ containing the initially,
           constraint and policy update statements in ${\cal D_{L}}$,
-          respectively; the set of all entities ${\cal E}$ in ${\cal D_{L}}$,
-          including its subsets ${\cal E}_{s}$, ${\cal E}_{a}$, ${\cal E}_{s}$,
-          ${\cal E}_{ss}$, ${\cal E}_{as}$, ${\cal E}_{os}$, ${\cal E}_{sg}$,
-          ${\cal E}_{ag}$, ${\cal E}_{og}$; the set ${\cal A}$ containing all
-          the atoms in ${\cal D_{L}}$; the maximum number of atoms $M_{c}$ in
-          the $always$ clause of all statements in ${\cal S}_{c}$; the
-          maximum number of atoms $M_{u}$ in the post condition of all
-          statements in ${\cal S}_{u}$; and finally the sequence list $\psi$.
+          respectively; the set ${\cal E}$ containing all the entities in
+          ${\cal D_{L}}$, including its subsets ${\cal E}_{s}$, ${\cal E}_{a}$,
+          ${\cal E}_{s}$, ${\cal E}_{ss}$, ${\cal E}_{as}$, ${\cal E}_{os}$,
+          ${\cal E}_{sg}$, ${\cal E}_{ag}$, ${\cal E}_{og}$; the set ${\cal A}$
+          containing all the atoms in ${\cal D_{L}}$; the maximum number
+          of facts $M_{i}$ in the expression of any $initially$ statement in
+          ${\cal S}_{i}$; the maximum number of facts $M_{c}$ in the $always$
+          clause expression of any constraint statement in ${\cal S}_{c}$;
+          the maximum number of facts $M_{u}$ in the postcondition expression
+          of any policy update statement in ${\cal S}_{u}$; and finally the
+          policy update sequence list $\psi$, then the maximum size of the
+          translation $Trans$(${\cal D_{L}}$) is:
 
          \begin{vquote}
-            $|$$Trans$(${\cal D_{L}}$)$|$ =
+            $|$$Trans$(${\cal D_{L}}$)$|$ $\leq$
 
             \hspace{1em}
             % initially
-            $|{\cal S}_{i}|$ +
+            $M_{i}$ $|{\cal S}_{i}|$ +
             % constraints
-            $M_{c}$ $|\psi|$ +
+            $M_{c}$ $|{\cal S}_{c}|$ $|\psi|$ +
             % policy updates
             $M_{u}$ $|\psi|$ +
 
@@ -1623,34 +1643,37 @@
           inheritance rules, transitivity rules and inertial rules,
           respectively.
 
-          Assuming that each statement in ${\cal S}_{i}$ contains a single
-          fact, the number of initial fact rules is:
+          As no $initially$ statement in ${\cal S}_{i}$ contain an expression
+          with more than $M_{i}$ facts, the maximum number of initial fact
+          rules generated in the translation is:
 
           \begin{vquote}
-            $|$${\cal R}_{ini}$$|$ = $|$${\cal S}_{i}$$|$
+            $|$${\cal R}_{ini}$$|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
           \end{vquote}
 
-          Each language ${\cal L}$ constraint statement corresponds to $n$
-          rules in language ${\cal L}^{*}$, where $n$ is the number of policy
-          update states times the number of facts in the {\em always} clause of
-          the statement. With $M_{c}$ as the maximal number of facts in the
-          {\em always} clause of any constraint statement, we have:
+          Each language ${\cal L}$ constraint statement in ${\cal S}_{c}$
+          corresponds to $n$ rules in language ${\cal L}^{*}$, where $n$ is
+          the number of policy update states times the number of facts in the
+          {\em always} clause of the statement. With $M_{c}$ as the maximal
+          number of facts in the {\em always} clause of any constraint
+          statement, we have:
 
           \begin{vquote}
-            $|$${\cal R}_{con}$$|$ = $|$${\cal S}_{c}$$|$ $|\psi|$ $M_{c}$
+            $|$${\cal R}_{con}$$|$ $\leq$ $M_{c}$ $|$${\cal S}_{c}$$|$ $|\psi|$
           \end{vquote}
 
           For policy update statements, only those that are applied are
           actually translated to language ${\cal L}^{*}$. With $M_{u}$ as the
-          maximal number of facts in the post condition of any applied policy
-          update statement, we have:
+          maximal number of facts in the postcondition expression of any
+          applied policy update statement, we have:
 
           \begin{vquote}
-            $|$${\cal R}_{con}$$|$ = $|\psi|$ $M_{u}$
+            $|$${\cal R}_{con}$$|$ $\leq$ $M_{u}$ $|\psi|$
           \end{vquote}
 
-          The number of inheritance rules is the sum of the number of member
-          inheritance rules and the number of subset inheritance rules:
+          The total number of inheritance rules generated in the translation is
+          the sum of the number of member inheritance rules and the number of
+          subset inheritance rules:
 
           \begin{vquote}
             $|$${\cal R}_{inh}$$|$ =
