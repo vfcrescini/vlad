@@ -389,7 +389,7 @@ void atom::print(char *s)
         sprintf(s,
                 "%s%s(%s,%s)",
                 truth ? "" : "!",
-                VLAD_STR_MEMB,
+                VLAD_STR_MEMBER,
                 member.element,
                 member.group);
         break;
