@@ -78,12 +78,21 @@ if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
                    #include <api.h>],
                   [Smodels s;
                    Api a(&s.program);],
-                  AC_MSG_RESULT([yes])
-                  AC_SUBST(SMODELS_PATH,[$with_smodels]),
+                  AC_MSG_RESULT([yes]),
                   AC_MSG_RESULT([no])
                   AC_MSG_ERROR([*** smodels test program failed to compile ***]))
       CXXFLAGS="$OLD_CXXFLAGS"
       LDFLAGS="$OLD_LDFLAGS"
+
+      # adjust relative paths
+      case "$with_smodels" in
+        /*)
+          AC_SUBST(SMODELS_PATH,[$with_smodels])
+          ;;
+        *)
+          AC_SUBST(SMODELS_PATH,[`pwd`/$with_smodels])
+          ;;
+      esac
     fi
   fi
 fi
