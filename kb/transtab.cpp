@@ -14,6 +14,10 @@
 
 transdef::transdef()
 {
+  name = NULL;
+  vlist = NULL;
+  precond = NULL;
+  postcond = NULL;
   initialised = false;
 }
 

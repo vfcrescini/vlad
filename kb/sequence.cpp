@@ -14,6 +14,8 @@
 
 transref::transref()
 {
+  name = NULL;
+  ilist = NULL;
   initialised = false;	
 }
 
