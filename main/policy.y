@@ -1,5 +1,5 @@
 /*
- * program.y
+ * policy.y
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -10,39 +10,39 @@
 #include <new>
 
 #include <vlad/vlad.h>
-#include <vlad/kb.h>
+#include <vlad/polbase.h>
 
 /* vars defined from the scanner */
-extern int programlineno;
+extern int policylineno;
 
 /* local vars */
 static FILE *fin = NULL;
 static FILE *fout = NULL;
 static FILE *ferr = NULL;
-static kb *kbase = NULL;
+static polbase *pbase = NULL;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
 
 #ifdef VLAD_DEBUG
 static unsigned int cnt_init = 0;
 static unsigned int cnt_const = 0;
-static unsigned int cnt_trans = 0;
+static unsigned int cnt_update = 0;
 #endif
 
 /* functions from scanner */
-int programinit(FILE *a_in, FILE *a_out);
-int programerror(char *error);
-int programlex();
+int policyinit(FILE *a_in, FILE *a_out);
+int policyerror(char *a_error);
+int policylex();
 
 /* available functions */
-int program_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb);
-int prgoram_parse();
+int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, polbase *a_pbase);
+int policy_parse();
 
 /* convenience functions */
-int add_identifier(const char *n, unsigned char t);
+int add_identifier(const char *a_name, unsigned char a_type);
 
 #ifdef YYBYACC
-int programparse();
+int policyparse();
 #endif
 
 %}
@@ -50,7 +50,7 @@ int programparse();
 %union {
   unsigned int terminal;
   char identifier[VLAD_MAXLEN_IDENT];
-  atom *atm;
+  fact *fct;
   expression *exp;
   stringlist *vlist;
 }
@@ -75,25 +75,25 @@ int programparse();
 %token <terminal> VLAD_SYM_CAUSES
 %token <terminal> VLAD_SYM_IF
 %token <terminal> VLAD_SYM_AFTER
-%token <terminal> VLAD_SYM_SUBTYPE
-%token <terminal> VLAD_SYM_OBJTYPE
-%token <terminal> VLAD_SYM_ACCTYPE
+%token <terminal> VLAD_SYM_SUBSINTYPE
+%token <terminal> VLAD_SYM_OBJSINTYPE
+%token <terminal> VLAD_SYM_ACCSINTYPE
 %token <terminal> VLAD_SYM_SUBGRPTYPE
 %token <terminal> VLAD_SYM_OBJGRPTYPE
 %token <terminal> VLAD_SYM_ACCGRPTYPE
 %token <terminal> VLAD_SYM_IDENT
 %token <identifier> VLAD_SYM_IDENTIFIER
-%type <atm> atom
-%type <atm> boolean_atom
-%type <atm> holds_atom
-%type <atm> subst_atom
-%type <atm> memb_atom
+%type <fct> fact
+%type <fct> boolean_fact
+%type <fct> holds_fact
+%type <fct> subst_fact
+%type <fct> memb_fact
 %type <exp> expression
 %type <exp> implied_clause
 %type <exp> with_clause
 %type <exp> if_clause
-%type <vlist> trans_var_list
-%type <vlist> trans_var_def
+%type <vlist> update_var_list
+%type <vlist> update_var_def
 
 %start program
 
@@ -109,12 +109,12 @@ init :
   ;
 
 body :
-  ident_section initial_section constraint_section trans_section {
+  ident_section initial_section constraint_section update_section {
     int retval;
-    /* after the body, we must close the kb */
-    if ((retval = kbase->close_kb()) != VLAD_OK) {
+    /* after the body, we must close the polbase */
+    if ((retval = pbase->close_polbase()) != VLAD_OK) {
       errorcode = retval;
-      programerror("unable to close kb");
+      policyerror("unable to close policy base");
       return retval;
     }
   }
@@ -128,18 +128,18 @@ destroy :
 ident_section : {
     int retval;
     /* after the ident section, we must close the symbol table */
-    if ((retval = kbase->close_symtab()) != VLAD_OK) {
+    if ((retval = pbase->close_symtab()) != VLAD_OK) {
       errorcode = retval;
-      programerror("unable to close symtab");
+      policyerror("unable to close symtab");
       return retval;
     }
   }
   | ident_stmt_list {
     int retval;
     /* after the ident section, we must close the symbol table */
-    if ((retval = kbase->close_symtab()) != VLAD_OK) {
+    if ((retval = pbase->close_symtab()) != VLAD_OK) {
       errorcode = retval;
-      programerror("unable to close symtab");
+      policyerror("unable to close symtab");
       return retval;
     }
   }
@@ -157,9 +157,9 @@ constraint_section : {
   }
   ;
 
-trans_section : {
+update_section : {
   }
-  | trans_stmt_list {
+  | update_stmt_list {
   }
   ;
 
@@ -178,9 +178,9 @@ constraint_stmt_list :
   | constraint_stmt_list constraint_stmt
   ;
 
-trans_stmt_list :
-  trans_stmt
-  | trans_stmt_list trans_stmt
+update_stmt_list :
+  update_stmt
+  | update_stmt_list update_stmt
   ;
 
 ident_stmt :
@@ -189,26 +189,26 @@ ident_stmt :
   ;
 
 ident_declaration :
-  sub_ident_decl
-  | obj_ident_decl
-  | acc_ident_decl
+  sub_sin_ident_decl
+  | obj_sin_ident_decl
+  | acc_sin_ident_decl
   | sub_grp_ident_decl
   | obj_grp_ident_decl
   | acc_grp_ident_decl
   ;
 
-sub_ident_decl :
-  VLAD_SYM_SUBTYPE sub_ident_list {
+sub_sin_ident_decl :
+  VLAD_SYM_SUBSINTYPE sub_sin_ident_list {
   }
   ;
 
-obj_ident_decl :
-  VLAD_SYM_OBJTYPE obj_ident_list {
+obj_sin_ident_decl :
+  VLAD_SYM_OBJSINTYPE obj_sin_ident_list {
   }
   ;
 
-acc_ident_decl :
-  VLAD_SYM_ACCTYPE acc_ident_list {
+acc_sin_ident_decl :
+  VLAD_SYM_ACCSINTYPE acc_sin_ident_list {
   }
   ;
 
@@ -227,41 +227,41 @@ acc_grp_ident_decl :
   }
   ;
 
-sub_ident_list :
+sub_sin_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_SUBJECT)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_SUB_SIN)) != VLAD_OK)
       return retval;
   }
-  | sub_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | sub_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_SUBJECT)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_SUB_SIN)) != VLAD_OK)
       return retval;
   }
   ;
 
-obj_ident_list :
+obj_sin_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_OBJECT)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_OBJ_SIN)) != VLAD_OK)
       return retval;
   }
-  | obj_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | obj_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_OBJECT)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_OBJ_SIN)) != VLAD_OK)
       return retval;
   }
   ;
 
-acc_ident_list :
+acc_sin_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ACCESS)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_ACC_SIN)) != VLAD_OK)
       return retval;
   }
-  | acc_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | acc_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ACCESS)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_ACC_SIN)) != VLAD_OK)
       return retval;
   }
   ;
@@ -269,12 +269,12 @@ acc_ident_list :
 sub_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_SUB_GRP)) != VLAD_OK)
       return retval;
   }
   | sub_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_SUB_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -282,12 +282,12 @@ sub_grp_ident_list :
 obj_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_OBJ_GRP)) != VLAD_OK)
       return retval;
   }
   | obj_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_OBJ_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -295,12 +295,12 @@ obj_grp_ident_list :
 acc_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_ACC_GRP)) != VLAD_OK)
       return retval;
   }
   | acc_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_ACC_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -309,7 +309,7 @@ initial_stmt :
   VLAD_SYM_INITIALLY expression VLAD_SYM_SEMICOLON {
     int retval;
     unsigned int i;
-    atom *a;
+    fact *f;
 #ifdef VLAD_DEBUG
     char s[VLAD_MAXLEN_STR];
 #endif
@@ -320,15 +320,15 @@ initial_stmt :
      */
 
     for (i = 0; i < VLAD_LIST_LENGTH($2); i++) {
-      if ((retval = $2->get(i, &a)) != VLAD_OK) {
+      if ((retval = $2->get(i, &f)) != VLAD_OK) {
         errorcode = retval;
-        programerror("invalid atom");
+        policyerror("invalid fact");
         return retval;
       }
 
-      if ((retval = kbase->add_inittab(a)) != VLAD_OK) {
+      if ((retval = pbase->add_inittab(f)) != VLAD_OK) {
         errorcode = retval;
-        programerror("could not add atom into initial state table");
+        policyerror("could not add fact into initial state table");
         return retval;
       }
 
@@ -339,7 +339,7 @@ initial_stmt :
 
     }
 
-    /* when everything's been registered into the kb, delete the expression */
+    /* when everything's been registered into the polbase, delete the expression */
     delete $2;
   }
   ;
@@ -351,9 +351,9 @@ constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause VLAD_SYM
     char c[VLAD_MAXLEN_STR];
     char n[VLAD_MAXLEN_STR];
 #endif
-    if ((retval = kbase->add_consttab($2, $3, $4)) != VLAD_OK) {
+    if ((retval = pbase->add_consttab($2, $3, $4)) != VLAD_OK) {
       errorcode = retval;
-      programerror("could not add constraint into constraint table");
+      policyerror("could not add constraint into constraint table");
       return retval;
     }
 
@@ -399,8 +399,8 @@ with_clause : {
   }
   ;
 
-trans_stmt :
-  VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES expression if_clause VLAD_SYM_SEMICOLON {
+update_stmt :
+  VLAD_SYM_IDENTIFIER update_var_def VLAD_SYM_CAUSES expression if_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef VLAD_DEBUG
     char v[VLAD_MAXLEN_STR];
@@ -408,9 +408,9 @@ trans_stmt :
     char po[VLAD_MAXLEN_STR];
 #endif
 
-    if ((retval = kbase->add_transtab($1, $2, $5, $4)) != VLAD_OK) {
+    if ((retval = pbase->add_updatetab($1, $2, $5, $4)) != VLAD_OK) {
       errorcode = retval;
-      programerror("could not add transformation into trans table");
+      policyerror("could not add update into update table");
       return retval;
     }
 
@@ -427,7 +427,7 @@ trans_stmt :
 
     $4->print(po);
 
-    fprintf(ferr, "transformation[%d]:\n", cnt_trans++);
+    fprintf(ferr, "update[%d]:\n", cnt_update++);
     fprintf(ferr, "  name:        %s\n", $1);
     fprintf(ferr, "  varlist:    %s\n", v);
     fprintf(ferr, "  precond:    %s\n", pr);
@@ -451,37 +451,37 @@ if_clause : {
   }
   ;
 
-trans_var_def :
+update_var_def :
   VLAD_SYM_OPEN_PARENT VLAD_SYM_CLOSE_PARENT {
     $$ = NULL;
   }
-  | VLAD_SYM_OPEN_PARENT trans_var_list VLAD_SYM_CLOSE_PARENT {
+  | VLAD_SYM_OPEN_PARENT update_var_list VLAD_SYM_CLOSE_PARENT {
     $$ = $2;
   }
   ;
 
-trans_var_list :
+update_var_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
     if (($$ = VLAD_NEW(stringlist())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      programerror("memory overflow");
+      policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
       errorcode = retval;
-      programerror("could not add variable into var list");
+      policyerror("could not add variable into var list");
       return retval;
     }
   }
-  | trans_var_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | update_var_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
       errorcode = retval;
-      programerror("could not add variable into var list");
+      policyerror("could not add variable into var list");
       return retval;
     }
   }
@@ -493,22 +493,22 @@ logical_op :
   ;
 
 expression :
-  boolean_atom {
+  boolean_fact {
     int retval;
 
     if (($$ = VLAD_NEW(expression())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      programerror("memory overflow");
+      policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
       errorcode = retval;
-      programerror("could not add atom into expression");
+      policyerror("could not add fact into expression");
       return retval;
     }
   }
-  | expression logical_op boolean_atom {
+  | expression logical_op boolean_fact {
     int retval;
     switch ((retval = $$->add($3))) {
       case VLAD_OK :
@@ -517,83 +517,83 @@ expression :
         break;
       default :
         errorcode = retval;
-        programerror("invalid atom");
+        policyerror("invalid fact");
         return retval;
     }
   }
   ;
 
-boolean_atom :
-  atom {
+boolean_fact :
+  fact {
     $$ = $1;
   }
-  | VLAD_SYM_NOT atom {
+  | VLAD_SYM_NOT fact {
     $$ = $2;
     $$->negate();
   }
   ;
 
-atom :
-  holds_atom {
+fact :
+  holds_fact {
     $$ = $1;
   }
-  | subst_atom {
+  | subst_fact {
     $$ = $1;
   }
-  | memb_atom {
+  | memb_fact {
     $$ = $1;
   }
   ;
 
-holds_atom :
+holds_fact :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(atom())) == NULL) {
+    if (($$ = VLAD_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      programerror("memory overflow");
+      policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_holds($3, $5, $7, true)) != VLAD_OK) {
       errorcode = retval;
-      programerror("could not initialise holds atom");
+      policyerror("could not initialise holds fact");
       return retval;
     }
   }
   ;
 
-subst_atom :
+subst_fact :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(atom())) == NULL) {
+    if (($$ = VLAD_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      programerror("memory overflow");
+      policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_subset($3, $5, true)) != VLAD_OK) {
       errorcode = retval;
-      programerror("could not initialise subset atom");
+      policyerror("could not initialise subset fact");
       return retval;
     }
   }
   ;
 
-memb_atom :
+memb_fact :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(atom())) == NULL) {
+    if (($$ = VLAD_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      programerror("memory overflow");
+      policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_member($3, $5, true)) != VLAD_OK) {
       errorcode = retval;
-      programerror("could not initialise member atom");
+      policyerror("could not initialise member fact");
       return retval;
     }
   }
@@ -601,86 +601,86 @@ memb_atom :
 
 %%
 
-int add_identifier(const char *n, unsigned char t)
+int add_identifier(const char *a_name, unsigned char a_type)
 {
-  if (!VLAD_IDENT_IS_VALID(t) || t == 0) {
+  if (a_type > VLAD_IDENT_LAST) {
     errorcode = VLAD_INVALIDINPUT;
-    programerror("invalid identifier");
+    policyerror("invalid identifier");
     return VLAD_INVALIDINPUT;
   }
 
-  switch (kbase->add_symtab(n, t)) {
+  switch (pbase->add_symtab(a_name, a_type)) {
     case VLAD_OK :
 #ifdef VLAD_DEBUG
-      switch (t) {
-        case VLAD_IDENT_SUBJECT :
-          fprintf(ferr, "declared identifier subject: %s\n", n);
+      switch (a_type) {
+        case VLAD_IDENT_SUB_SIN :
+          fprintf(ferr, "declared identifier subject: %s\n", a_name);
           break;
-        case VLAD_IDENT_ACCESS :
-          fprintf(ferr, "declared identifier access: %s\n", n);
+        case VLAD_IDENT_ACC_SIN :
+          fprintf(ferr, "declared identifier access: %s\n", a_name);
           break;
-        case VLAD_IDENT_OBJECT :
-          fprintf(ferr, "declared identifier object: %s\n", n);
+        case VLAD_IDENT_OBJ_SIN :
+          fprintf(ferr, "declared identifier object: %s\n", a_name);
           break;
-        case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
-           fprintf(ferr, "declared identifier subject-group: %s\n", n);
+        case VLAD_IDENT_SUB_GRP :
+           fprintf(ferr, "declared identifier subject-group: %s\n", a_name);
           break;
-        case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP :
-           fprintf(ferr, "declared identifier access-group: %s\n", n);
+        case VLAD_IDENT_ACC_GRP :
+           fprintf(ferr, "declared identifier access-group: %s\n", a_name);
           break;
-        case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
-           fprintf(ferr, "declared identiifer object-group: %s\n", n);
+        case VLAD_IDENT_OBJ_GRP :
+           fprintf(ferr, "declared identiifer object-group: %s\n", a_name);
           break;
       }
 #endif
       break;
     case VLAD_DUPLICATE :
       errorcode = VLAD_DUPLICATE;
-      programerror("identifier already declared");
+      policyerror("identifier already declared");
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
       errorcode = VLAD_MALLOCFAILED;
-      programerror("memory overflow");
+      policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
     default :
       errorcode = VLAD_FAILURE;
-      programerror("cannot add identifier to symtab: unexpected error");
+      policyerror("cannot add identifier to symtab: unexpected error");
       return VLAD_FAILURE;
   }
 
   return VLAD_OK;
 }
 
-int programerror(char *error)
+int policyerror(char *a_error)
 {
-  fprintf(ferr, "line %d (error %d) %s\n", programlineno, errorcode, error);
+  fprintf(ferr, "line %d (error %d) %s\n", policylineno, errorcode, a_error);
 
   return 0;
 }
 
-int program_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb)
+int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, polbase *a_pbase)
 {
   int retval;
 
-  if (a_in == NULL || a_out == NULL || a_err == NULL || a_kb == NULL)
+  if (a_in == NULL || a_out == NULL || a_err == NULL || a_pbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = programinit(a_in, a_out)) != VLAD_OK)
+  if ((retval = policyinit(a_in, a_out)) != VLAD_OK)
     return retval;
 
   fin = a_in;
   fout = a_out;
   ferr = a_err;
-  kbase = a_kb;
+  pbase = a_pbase;
   initialised = true;
 
   return VLAD_OK;
 }
 
-int program_parse()
+int policy_parse()
 {
   if (!initialised)
     return VLAD_UNINITIALISED;
 
-  return programparse();
+  return policyparse();
 }

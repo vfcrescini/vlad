@@ -1,5 +1,5 @@
 /*
- * program.l
+ * agent.l
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -13,12 +13,12 @@
 #include <cstring>
 
 #include <vlad/vlad.h>
-#include <vlad/kb.h>
-#include "program.tab.h"
+#include <vlad/polbase.h>
+#include "agent.tab.h"
 
-unsigned int programlineno = 1;
+unsigned int agentlineno = 1;
 
-int programinit(FILE *a_in, FILE *a_out);
+int agentinit(FILE *a_in, FILE *a_out);
 %}
 
 begin_comment      \/\*
@@ -33,22 +33,14 @@ not                !
 holds              holds
 member             memb
 subset             subst
-initially          initially
-implied            implied
-by                 by
-with               with
-absence            absence
-always             always
-causes             causes
-if                 if
-ident              ident
-sub_grp_type       sub-grp
-obj_grp_type       obj-grp
-acc_grp_type       acc-grp
-sub_type           sub
-obj_type           obj
-acc_type           acc
+query              query
+compute            compute
+sequence           seq
+add                add
+delete             del
+list               list
 digit              [0-9]
+number             ({digit})+
 alpha              [a-zA-Z]
 alphanum           {alpha}|{digit}|{underscore}
 identifier         {alpha}({alphanum}){0,127}
@@ -76,43 +68,36 @@ everything         .
 
 <INITIAL>{subset} return VLAD_SYM_SUBST;
 
-<INITIAL>{initially} return VLAD_SYM_INITIALLY;
+<INITIAL>{query} return VLAD_SYM_QUERY;
 
-<INITIAL>{implied} return VLAD_SYM_IMPLIED;
+<INITIAL>{compute} return VLAD_SYM_COMPUTE;
 
-<INITIAL>{by} return VLAD_SYM_BY;
+<INITIAL>{sequence} return VLAD_SYM_SEQUENCE;
 
-<INITIAL>{with} return VLAD_SYM_WITH;
+<INITIAL>{add} return VLAD_SYM_ADD;
 
-<INITIAL>{absence} return VLAD_SYM_ABSENCE;
+<INITIAL>{delete} return VLAD_SYM_DELETE;
 
-<INITIAL>{always} return VLAD_SYM_ALWAYS;
+<INITIAL>{list} return VLAD_SYM_LIST;
 
-<INITIAL>{causes} return VLAD_SYM_CAUSES;
-
-<INITIAL>{if} return VLAD_SYM_IF;
-
-<INITIAL>{ident} return VLAD_SYM_IDENT;
-
-<INITIAL>{sub_grp_type} return VLAD_SYM_SUBGRPTYPE;
-
-<INITIAL>{obj_grp_type} return VLAD_SYM_OBJGRPTYPE;
-
-<INITIAL>{acc_grp_type} return VLAD_SYM_ACCGRPTYPE;
-
-<INITIAL>{sub_type} return VLAD_SYM_SUBTYPE;
-
-<INITIAL>{obj_type} return VLAD_SYM_OBJTYPE;
-
-<INITIAL>{acc_type} return VLAD_SYM_ACCTYPE;
-
-<INITIAL>{identifier} {
-  if (programtext == NULL) {
-    strcpy(programlval.identifier, "");
+<INITIAL>{number} {
+  if (agenttext == NULL) {
+    agentlval.number = 0;
     return VLAD_SYM_ERROR;
   }
 
-  strcpy(programlval.identifier, programtext);
+  agentlval.number = atoi(agenttext);
+
+  return VLAD_SYM_NUMBER;
+}
+
+<INITIAL>{identifier} {
+  if (agenttext == NULL) {
+    strcpy(agentlval.identifier, "");
+    return VLAD_SYM_ERROR;
+  }
+
+  strcpy(agentlval.identifier, agenttext);
 
   return VLAD_SYM_IDENTIFIER;
 }
@@ -136,7 +121,7 @@ everything         .
 {whitespace} ;
 
 {newline} {
-  programlineno++;
+  agentlineno++;
 }
 
 <COMMENT>{everything} ;
@@ -147,13 +132,13 @@ everything         .
 
 %%
 
-int programinit(FILE *a_in, FILE *a_out)
+int agentinit(FILE *a_in, FILE *a_out)
 {
   if (a_in == NULL || a_out == NULL)
     return VLAD_NULLPTR;
 
-  programin = a_in;
-  programout = a_out;
+  agentin = a_in;
+  agentout = a_out;
 
   yyrestart(a_in);
   BEGIN INITIAL;

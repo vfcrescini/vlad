@@ -18,15 +18,15 @@ int main(int argc, char *argv[])
   int retval;
 #ifdef VLAD_SMODELS
   char *arglist = "vhe";
-  char *helpstring = "-v|-h|[-e] program-filename [operation-filename]";
+  char *helpstring = "-v|-h|[-e] policy-filename [agent-filename]";
 #else
   char *arglist = "vh";
-  char *helpstring = "-v|-h|program-filename [operation-filename]";
+  char *helpstring = "-v|-h|policy-filename [agent-filename]";
 #endif
   int curr_opt;
-  FILE *programin = NULL;
-  FILE *operationin = NULL;
-  kb *kbase = NULL;
+  FILE *policyin = NULL;
+  FILE *agentin = NULL;
+  polbase *pbase = NULL;
   unsigned char mode = VLAD_MODE_GENERATE;
 
   opterr = 0;
@@ -50,50 +50,50 @@ int main(int argc, char *argv[])
     }
   }
 
-  /* get program file details */
+  /* get policy file details */
   if (argv[optind] == NULL || !strcmp(argv[optind], "-")) {
     fprintf(stderr, "usage: %s %s\n", argv[0], helpstring);
     return VLAD_FAILURE;
   }
 
-  if ((programin = fopen(argv[optind], "r")) == NULL) {
+  if ((policyin = fopen(argv[optind], "r")) == NULL) {
     fprintf(stderr, "Unable to open for reading: %s\n", argv[optind]);
     return VLAD_OPENFAILED;
   }
 
-  /* now get operation file details */
+  /* now get agent file details */
   if (optind + 1 >= argc || argv[optind + 1] == NULL || !strcmp(argv[optind + 1], "-"))
-    operationin = stdin;
-  else if ((operationin = fopen(argv[optind + 1], "r")) == NULL) {
+    agentin = stdin;
+  else if ((agentin = fopen(argv[optind + 1], "r")) == NULL) {
     fprintf(stderr, "unable to open for reading: %s\n", argv[optind + 1]);
     return VLAD_OPENFAILED;
   }
 
-  /* create an instance of the kb and initialise it */
-  if ((kbase = VLAD_NEW(kb)) == NULL)
+  /* create an instance of the policy base and initialise it */
+  if ((pbase = VLAD_NEW(polbase)) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = kbase->init()) != VLAD_OK) {
-    fprintf(stderr, "cannot initialise kbase: %d\n", retval);
+  if ((retval = pbase->init()) != VLAD_OK) {
+    fprintf(stderr, "cannot initialise policy base: %d\n", retval);
     return retval;
   }
 
   /* first initialise the parsers */
-  if ((retval = program_init(programin, stdout, stderr, kbase)) != VLAD_OK)
+  if ((retval = policy_init(policyin, stdout, stderr, pbase)) != VLAD_OK)
     return retval;
-  if ((retval = operation_init(operationin, stdout, stderr, kbase, mode)) != VLAD_OK)
+  if ((retval = agent_init(agentin, stdout, stderr, pbase, mode)) != VLAD_OK)
     return retval;
 
   /* then parse */
-  if ((retval = program_parse()) != VLAD_OK)
+  if ((retval = policy_parse()) != VLAD_OK)
     return retval;
-  if ((retval = operation_parse()) != VLAD_OK)
+  if ((retval = agent_parse()) != VLAD_OK)
     return retval;
 
   /* cleanup */
-  fclose(programin);
-  fclose(operationin);
-  delete kbase;
+  fclose(policyin);
+  fclose(agentin);
+  delete pbase;
 
   return VLAD_OK;
 }

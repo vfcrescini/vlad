@@ -1,5 +1,5 @@
 /*
- * operation.y
+ * agent.y
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -10,35 +10,39 @@
 #include <new>
 
 #include <vlad/vlad.h>
-#include <vlad/kb.h>
+#include <vlad/polbase.h>
 
 /* vars defined from the scanner */
-extern int operationlineno;
+extern int agentlineno;
 
 /* local vars */
 static FILE *fin = NULL;
 static FILE *fout = NULL;
 static FILE *ferr = NULL;
-static kb *kbase = NULL;
+static polbase *pbase = NULL;
 static unsigned char mode = VLAD_MODE_GENERATE;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
 
 #ifdef VLAD_DEBUG
-static unsigned int cnt_operation = 0;
+static unsigned int cnt_agent = 0;
 #endif
 
 /* functions from scanner */
-int operationinit(FILE *a_in, FILE *a_out);
-int operationerror(char *error);
-int operationlex();
+int agentinit(FILE *a_in, FILE *a_out);
+int agenterror(char *a_error);
+int agentlex();
 
 /* available functions */
-int operation_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m);
-int operation_parse();
+int agent_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   polbase *a_pbase,
+                   unsigned char a_m);
+int agent_parse();
 
 #ifdef YYBYACC
-int operationparse();
+int agentparse();
 #endif
 %}
 
@@ -46,10 +50,10 @@ int operationparse();
   unsigned int terminal;
   char identifier[VLAD_MAXLEN_IDENT];
   unsigned int number;
-  atom *atm;
+  fact *fct;
   expression *exp;
   stringlist *vlist;
-  transref *tref;
+  updateref *uref;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -71,15 +75,15 @@ int operationparse();
 %token <terminal> VLAD_SYM_LIST
 %token <number> VLAD_SYM_NUMBER
 %token <identifier> VLAD_SYM_IDENTIFIER
-%type <atm> atom
-%type <atm> boolean_atom
-%type <atm> holds_atom
-%type <atm> subst_atom
-%type <atm> memb_atom
+%type <fct> fact
+%type <fct> boolean_fact
+%type <fct> holds_fact
+%type <fct> subst_fact
+%type <fct> memb_fact
 %type <exp> expression
-%type <vlist> trans_ref_ident_args
-%type <vlist> trans_ref_ident_list
-%type <tref> trans_ref_def
+%type <vlist> update_ref_ident_args
+%type <vlist> update_ref_ident_list
+%type <uref> update_ref_def
 
 %start program
 
@@ -122,33 +126,33 @@ query_stmt :
 
   switch(mode) {
     case VLAD_MODE_GENERATE : {
-      switch(retval = kbase->query_generate($2, fout)) {
+      switch(retval = pbase->query_generate($2, fout)) {
         case VLAD_OK :
           break;
         case VLAD_INVALIDOP :
           errorcode = retval;
-          operationerror("must use compute before query");
+          agenterror("must use compute before query");
           return retval;
         default :
           errorcode = retval;
-          operationerror("could not evaluate query: unexpected error");
+          agenterror("could not evaluate query: unexpected error");
           return retval;
       }
       break;
     }
 #ifdef VLAD_SMODELS
     case VLAD_MODE_EVALUATE : {
-      switch(retval = kbase->query_evaluate($2, &res)) {
+      switch(retval = pbase->query_evaluate($2, &res)) {
         case VLAD_OK :
           fprintf(fout, "%s\n", VLAD_RESULT_STRING(res));
           break;
         case VLAD_INVALIDOP :
           errorcode = retval;
-          operationerror("must use compute before query");
+          agenterror("must use compute before query");
           return retval;
         default :
           errorcode = retval;
-          operationerror("could not evaluate query: unexpected error");
+          agenterror("could not evaluate query: unexpected error");
           return retval;
       }
       break;
@@ -156,14 +160,14 @@ query_stmt :
 #endif
     default :
       errorcode = VLAD_FAILURE;
-      operationerror("invalid mode");
+      agenterror("invalid mode");
       return VLAD_FAILURE;
   }
 
 #ifdef VLAD_DEBUG
     $2->print(q);
 
-    fprintf(ferr, "query[%d]:\n", cnt_operation++);
+    fprintf(ferr, "query[%d]:\n", cnt_agent++);
     fprintf(ferr, "  expression: %s\n", q);
 #endif
 
@@ -177,34 +181,34 @@ compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
 
     switch(mode) {
       case VLAD_MODE_GENERATE :
-        switch(retval = kbase->compute_generate(fout)) {
+        switch(retval = pbase->compute_generate(fout)) {
           case VLAD_OK :
             break;
           default :
             errorcode = retval;
-            operationerror("could not compute: unexpected error");
+            agenterror("could not compute: unexpected error");
             return retval;
         }
         break;
 #ifdef VLAD_SMODELS
       case VLAD_MODE_EVALUATE :
-        switch(retval = kbase->compute_evaluate()) {
+        switch(retval = pbase->compute_evaluate()) {
           case VLAD_OK :
             break;
           case VLAD_NOMODEL :
             errorcode = retval;
-            operationerror("could not compute: conflict encountered");
+            agenterror("could not compute: conflict encountered");
             return VLAD_NOMODEL;
           default :
             errorcode = retval;
-            operationerror("could not compute: unexpected error");
+            agenterror("could not compute: unexpected error");
             return retval;
         }
         break;
 #endif
       default :
         errorcode = VLAD_FAILURE;
-        operationerror("invalid mode");
+        agenterror("invalid mode");
         return VLAD_FAILURE;
     }
   }
@@ -222,12 +226,12 @@ sequence_cmd_clause :
   ;
 
 sequence_add_clause :
-  VLAD_SYM_ADD trans_ref_def {
+  VLAD_SYM_ADD update_ref_def {
     int retval;
 
-    if ((retval = kbase->add_seqtab($2)) != VLAD_OK) {
+    if ((retval = pbase->add_seqtab($2)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not add sequence to sequence table");
+      agenterror("could not add sequence to sequence table");
       return retval;
     }
   }
@@ -237,9 +241,9 @@ sequence_delete_clause :
   VLAD_SYM_DELETE VLAD_SYM_NUMBER {
     int retval;
 
-    if ((retval = kbase->del_seqtab($2)) != VLAD_OK) {
+    if ((retval = pbase->del_seqtab($2)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not delete sequence from sequence table");
+      agenterror("could not delete sequence from sequence table");
       return retval;
     }
   }
@@ -249,73 +253,73 @@ sequence_list_clause :
   VLAD_SYM_LIST {
     int retval;
 
-    if ((retval = kbase->list_seqtab(fout)) != VLAD_OK) {
+    if ((retval = pbase->list_seqtab(fout)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not list sequence from sequence table");
+      agenterror("could not list sequence from sequence table");
       return retval;
     }
   }
   ;
 
-trans_ref_def :
-  VLAD_SYM_IDENTIFIER VLAD_SYM_OPEN_PARENT trans_ref_ident_args VLAD_SYM_CLOSE_PARENT {
+update_ref_def :
+  VLAD_SYM_IDENTIFIER VLAD_SYM_OPEN_PARENT update_ref_ident_args VLAD_SYM_CLOSE_PARENT {
     int retval;
     char *name;
 
     /* first allocate memory for the name */
     if ((name = VLAD_STRING_MALLOC($1)) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      operationerror("memory overflow");
+      agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     strcpy(name, $1);
 
-    /* then add the entire thing into a transref */
-    if (($$ = VLAD_NEW(transref())) == NULL) {
+    /* then add the entire thing into a updateref */
+    if (($$ = VLAD_NEW(updateref())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      operationerror("memory overflow");
+      agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init(name, $3)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not initialise transformation reference");
+      agenterror("could not initialise update reference");
       return retval;
     }
   }
   ;
 
-trans_ref_ident_args : {
+update_ref_ident_args : {
     $$ = NULL;
   }
-  | trans_ref_ident_list {
+  | update_ref_ident_list {
     $$ = $1;
   }
   ;
 
-trans_ref_ident_list :
+update_ref_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
     if (($$ = VLAD_NEW(stringlist())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      operationerror("memory overflow");
+      agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not add identifier to transformation reference");
+      agenterror("could not add identifier to update reference");
       return retval;
     }
   }
-  | trans_ref_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | update_ref_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not add identifier to transformation reference");
+      agenterror("could not add identifier to update reference");
       return retval;
     }
   }
@@ -327,22 +331,22 @@ logical_op :
   ;
 
 expression :
-  boolean_atom {
+  boolean_fact {
     int retval;
 
     if (($$ = VLAD_NEW(expression())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      operationerror("memory overflow");
+      agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not add atom to expression");
+      agenterror("could not add fact to expression");
       return retval;
     }
   }
-  | expression logical_op boolean_atom {
+  | expression logical_op boolean_fact {
     int retval;
     switch ((retval = $$->add($3))) {
       case VLAD_OK :
@@ -351,83 +355,83 @@ expression :
         break;
       default :
         errorcode = retval;
-        operationerror("could not add atom to expression");
+        agenterror("could not add fact to expression");
         return retval;
     }
   }
   ;
 
-boolean_atom :
-  atom {
+boolean_fact :
+  fact {
     $$ = $1;
   }
-  | VLAD_SYM_NOT atom {
+  | VLAD_SYM_NOT fact {
     $$ = $2;
     $$->negate();
   }
   ;
 
-atom :
-  holds_atom {
+fact :
+  holds_fact {
     $$ = $1;
   }
-  | subst_atom {
+  | subst_fact {
     $$ = $1;
   }
-  | memb_atom {
+  | memb_fact {
     $$ = $1;
   }
   ;
 
-holds_atom :
+holds_fact :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(atom())) == NULL) {
+    if (($$ = VLAD_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      operationerror("memory overflow");
+      agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_holds($3, $5, $7, true)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not initialise holds atom");
+      agenterror("could not initialise holds fact");
       return retval;
     }
   }
   ;
 
-subst_atom :
+subst_fact :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(atom())) == NULL) {
+    if (($$ = VLAD_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      operationerror("memory overflow");
+      agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_subset($3, $5, true)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not initialise subset atom");
+      agenterror("could not initialise subset fact");
       return retval;
     }
   }
   ;
 
-memb_atom :
+memb_fact :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(atom())) == NULL) {
+    if (($$ = VLAD_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
-      operationerror("memory overflow");
+      agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_member($3, $5, true)) != VLAD_OK) {
       errorcode = retval;
-      operationerror("could not initialise member atom");
+      agenterror("could not initialise member fact");
       return retval;
     }
   }
@@ -435,40 +439,44 @@ memb_atom :
 
 %%
 
-int operationerror(char *error)
+int agenterror(char *a_error)
 {
-  fprintf(ferr, "line %d (error %d) %s\n", operationlineno, errorcode, error);
+  fprintf(ferr, "line %d (error %d) %s\n", agentlineno, errorcode, a_error);
 
   return 0;
 }
 
-int operation_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m)
+int agent_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   polbase *a_pbase,
+                   unsigned char a_m)
 {
   int retval;
 
-  if (a_in == NULL || a_out == NULL || a_err == NULL || a_kb == NULL)
+  if (a_in == NULL || a_out == NULL || a_err == NULL || a_pbase == NULL)
     return VLAD_NULLPTR;
 
   if (a_m != VLAD_MODE_GENERATE && a_m != VLAD_MODE_EVALUATE)
     return VLAD_INVALIDINPUT;
 
-  if ((retval = operationinit(a_in, a_out)) != VLAD_OK)
+  if ((retval = agentinit(a_in, a_out)) != VLAD_OK)
     return retval;
 
   fin = a_in;
   fout = a_out;
   ferr = a_err;
-  kbase = a_kb;
+  pbase = a_pbase;
   mode = a_m;
   initialised = true;
 
   return VLAD_OK;
 }
 
-int operation_parse()
+int agent_parse()
 {
   if (!initialised)
     return VLAD_UNINITIALISED;
 
-  return operationparse();
+  return agentparse();
 }

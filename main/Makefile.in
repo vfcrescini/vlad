@@ -24,10 +24,10 @@ SHARED_LIBS =
 INCLUDES =
 OBJECTS = \
   vlad.o \
-  program_parser.o \
-  program_scanner.o \
-  operation_parser.o \
-  operation_scanner.o \
+  policy_parser.o \
+  policy_scanner.o \
+  agent_parser.o \
+  agent_scanner.o \
   $(NULL)
 
 TEMPS1 = \
@@ -64,32 +64,32 @@ endif
 vlad.o : parser.h vlad.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
 
-operation_scanner.o : operation.tab.h lex.operation.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c lex.operation.cpp
+agent_scanner.o : agent.tab.h lex.agent.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.agent.cpp
 
-operation_parser.o : operation.tab.h operation.tab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c operation.tab.cpp
+agent_parser.o : agent.tab.h agent.tab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c agent.tab.cpp
 
-program_scanner.o : program.tab.h lex.program.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c lex.program.cpp
+policy_scanner.o : policy.tab.h lex.policy.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.policy.cpp
 
-program_parser.o : program.tab.h program.tab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c program.tab.cpp
+policy_parser.o : policy.tab.h policy.tab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c policy.tab.cpp
 
-lex.operation.cpp : operation.l
-	$(LEX) -Poperation operation.l && mv -f lex.operation.c $(@)
+lex.agent.cpp : agent.l
+	$(LEX) -Pagent agent.l && mv -f lex.agent.c $(@)
 
-lex.program.cpp : program.l
-	$(LEX) -Pprogram program.l && mv -f lex.program.c $(@)
+lex.policy.cpp : policy.l
+	$(LEX) -Ppolicy policy.l && mv -f lex.policy.c $(@)
 
-operation.tab.cpp : operation.y
-	$(YACC) -b operation -p operation operation.y && mv -f operation.tab.c $(@)
+agent.tab.cpp : agent.y
+	$(YACC) -b agent -p agent agent.y && mv -f agent.tab.c $(@)
 
-operation.tab.h : operation.y
-	$(YACC) -b operation -p operation -d operation.y
+agent.tab.h : agent.y
+	$(YACC) -b agent -p agent -d agent.y
 
-program.tab.cpp : program.y
-	$(YACC) -b program -p program program.y && mv -f program.tab.c $(@)
+policy.tab.cpp : policy.y
+	$(YACC) -b policy -p policy policy.y && mv -f policy.tab.c $(@)
 
-program.tab.h : program.y
-	$(YACC) -b program -p program -d program.y
+policy.tab.h : policy.y
+	$(YACC) -b policy -p policy -d policy.y
