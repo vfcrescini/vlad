@@ -8,15 +8,16 @@ YACC = @YACC@
 LEXLIB = @LEXLIB@
 DEBUG = @enable_debug@
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
+CXXFLAGS = $(CFLAGS)
 LDFLAGS = -L$(TOPSRCDIR)/lib
 TARGETS = vlad
 
 ifeq "$(DEBUG)" "yes"
 CFLAGS += -g -DDEBUG
-CXXFLAGS += -g -DDEBUG
+CXXFLAGS += $(CFLAGS)
 else
 CFLAGS += -O2
-CXXFLAGS += -g -DDEBUG
+CXXFLAGS += $(CFLAGS)
 endif
 
 all : $(TARGETS)
@@ -31,7 +32,7 @@ ifneq "$(DEBUG)" "yes"
 endif
 
 vlad.o : vlad.cpp
-	$(CXX) $(CFLAGS) -o $(@) -c vlad.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
 
 clean :
 	$(RM) *.o
