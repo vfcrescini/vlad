@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <getopt.h>
 #include <netdb.h>
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
   int min_port = PS_DEFAULT_MIN;
   int i;
 
-  // first, evaluate the options
+  /* first, evaluate the options */
   opterr = 0;
 
   while ((option = getopt(argc, argv, "vhs:e:")) != -1) {
@@ -76,52 +77,52 @@ int main(int argc, char *argv[])
     }
   }
 
-  // check port range
+  /* check port range */
   if (min_port < PS_MIN_PORT || max_port > PS_MAX_PORT || max_port < min_port) {
     fprintf(stderr, "%d <= minport <= maxport <= %d\n", PS_MIN_PORT, PS_MAX_PORT);
     return -1;
   }
 
-  // if address is null, exit
+  /* if address is null, exit */
   if (!argv[optind]) {
     fprintf(stderr, "usage: %s [-v] ip-addr\n", argv[0]);
     fprintf(stderr, "       %s -h\n", argv[0]);
     return -1;
   }
 
-  // get address
+  /* get address */
   if ((server_ip = get_ip(argv[optind])) == INADDR_NONE) {
     fprintf(stderr, "invalid ip address: %s\n", argv[optind]);
     return -1;
   }
 
   for (i = min_port; i <= max_port; i++) {
-    // create socket
+    /* create socket */
     if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
       fprintf(stderr, "socket creation error: %d\n", errno);
       return -1;
     }
 
-    // compose address
+    /* compose address */
     memset(&server_address, 0, sizeof(server_address));
     server_address.sin_family = AF_INET;;
     server_address.sin_port = htons(i);
     server_address.sin_addr.s_addr = server_ip;
 
-    // try to connect
+    /* try to connect */
     server_fd = connect(socket_fd, 
                         (struct sockaddr *)&server_address, 
                         sizeof(server_address));
 
     if (server_fd < 0) {
-      // unable to connect so port is closed
+      /* unable to connect so port is closed */
       close(socket_fd);
       continue; 
     }
     else {
-      // connected
+      /* connected */
 
-      // get servicename
+      /* get servicename */
       if (verbose) {
         port_service = getservbyport(htons(i), "tcp");
         printf("%d:%s\n", 
@@ -131,7 +132,7 @@ int main(int argc, char *argv[])
       else
         printf("%d\n", i);
 
-      // cleanup
+      /* cleanup */
       close(server_fd);
       close(socket_fd);
     }

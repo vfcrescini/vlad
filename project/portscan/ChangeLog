@@ -1,3 +1,9 @@
+2002-06-11 Vino Crescini <jvcrescini@yahoo.com>
+
+	* portscan.c :
+
+	  - Some cleanup to get rid of C89 warnings.
+ 
 2002-03-13 Vino Crescini <jvcrescini@yahoo.com>
 
 	* portscan.c :
