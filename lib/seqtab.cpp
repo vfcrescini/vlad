@@ -11,14 +11,14 @@
 #include <vlad/vlad.h>
 #include <vlad/seqtab.h>
 
-transref::transref()
+updateref::updateref()
 {
   m_name = NULL;
   m_list = NULL;
   m_init = false;	
 }
 
-transref::~transref()
+updateref::~updateref()
 {
   if (m_name != NULL)
     free(m_name);
@@ -26,14 +26,14 @@ transref::~transref()
     delete m_list;
 }
 
-bool transref::cmp(list_item *a_item)
+bool updateref::cmp(list_item *a_item)
 {
-  transref *tmp = NULL;
+  updateref *tmp = NULL;
 
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<transref *>(a_item)) == NULL)
+  if ((tmp = dynamic_cast<updateref *>(a_item)) == NULL)
     return false;
 
   /* if both are uninit return true. if only one -- false */
@@ -50,7 +50,7 @@ bool transref::cmp(list_item *a_item)
   return VLAD_LIST_ITEMCMP(m_list, tmp->m_list);
 }
 
-int transref::init(const char *a_name, stringlist *a_list)
+int updateref::init(const char *a_name, stringlist *a_list)
 {
   if (a_name == NULL)
     return VLAD_NULLPTR;
@@ -62,7 +62,7 @@ int transref::init(const char *a_name, stringlist *a_list)
   return VLAD_OK;
 }
 
-int transref::get(char **a_name, stringlist **a_list)
+int updateref::get(char **a_name, stringlist **a_list)
 {
   if (a_name == NULL || a_list == NULL)
     return VLAD_NULLPTR;
@@ -77,7 +77,7 @@ int transref::get(char **a_name, stringlist **a_list)
 }
 
 #ifdef VLAD_DEBUG
-void transref::print(char *a_str)
+void updateref::print(char *a_str)
 {
   char tmp_str[VLAD_MAXLEN_STR];
 
@@ -101,22 +101,22 @@ seqtab::~seqtab()
   purge(true);
 }
 
-/* add pre-malloc'ed transref */
-int seqtab::add(transref *a_tref)
+/* add pre-malloc'ed updateref */
+int seqtab::add(updateref *a_uref)
 {
-  if (a_tref == NULL)
+  if (a_uref == NULL)
     return VLAD_NULLPTR;
 
-  return list::add((list_item *) a_tref);
+  return list::add((list_item *) a_uref);
 }
 
 /* add pre-malloc'ed m_name and ilist */
 int seqtab::add(const char *a_name, stringlist *a_list)
 {
   int retval;
-  transref *tmp_ref;
+  updateref *tmp_ref;
 
-  if ((tmp_ref = VLAD_NEW(transref())) == NULL)
+  if ((tmp_ref = VLAD_NEW(updateref())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp_ref->init(a_name, a_list)) != VLAD_OK)
@@ -135,7 +135,7 @@ int seqtab::del(unsigned int a_index)
 int seqtab::get(unsigned int a_index, char **a_name, stringlist **a_list)
 {
   int retval;
-  transref *tmp_ref;
+  updateref *tmp_ref;
 
   if (a_name == NULL || a_list == NULL)
     return VLAD_NULLPTR;
@@ -151,7 +151,7 @@ void seqtab::print(char *a_str)
 {
   unsigned int i;
   char tmp_str[VLAD_MAXLEN_STR];
-  transref *tmp_obj;
+  updateref *tmp_obj;
 
   strcpy(a_str, "");
 
