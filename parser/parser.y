@@ -103,7 +103,7 @@ init : {
     int retval;
 
     if ((retval = kbase.init()) != VLAD_OK) {
-      fprintf(stderr, "failed to initialise knowledge base: %d\n", retval);
+      fprintf(yyerr, "failed to initialise knowledge base: %d\n", retval);
       return retval;
     }
   }
@@ -122,7 +122,7 @@ ident_section : {
     int retval;
     /* after the ident section, we must close the symbol table */
     if ((retval = kbase.close_symtab()) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -130,7 +130,7 @@ ident_section : {
     int retval;
     /* after the ident section, we must close the symbol table */
     if ((retval = kbase.close_symtab()) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -140,7 +140,7 @@ initial_section : {
     int retval;
     /* after the initial section, we must close the init table */
     if ((retval = kbase.close_inittab()) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -148,7 +148,7 @@ initial_section : {
     int retval;
     /* after the initial section, we must close the init table */
     if ((retval = kbase.close_inittab()) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -158,7 +158,7 @@ constraint_section : {
     int retval;
     /* after the constraint section, we must close the constraint table */
     if ((retval = kbase.close_consttab()) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -166,7 +166,7 @@ constraint_section : {
     int retval;
     /* after the constraint section, we must close the constraint table */
     if ((retval = kbase.close_consttab()) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -176,7 +176,7 @@ trans_section : {
      int retval;
     /* after the transformation section, we must close the trans table */
     if ((retval = kbase.close_transtab()) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     } 
   }
@@ -184,7 +184,7 @@ trans_section : {
     int retval;
     /* after the transformation section, we must close the trans table */
     if ((retval = kbase.close_transtab()) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -357,18 +357,18 @@ initial_stmt :
 
     for (i = 0; i < $2->length(); i++) {
       if ((retval = $2->get(i, &a)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
+        fprintf(yyerr, "internal error: %d\n", retval);
         return retval;
       }
 
       if ((retval = kbase.add_inittab(a)) != VLAD_OK) {
-        fprintf(stderr, "internal error: %d\n", retval);
+        fprintf(yyerr, "internal error: %d\n", retval);
         return retval;
       }
 
 #ifdef DEBUG
       a->print(s);
-      fprintf(stderr, "initial state[%d]: %s\n", cnt_init++, s);
+      fprintf(yyerr, "initial state[%d]: %s\n", cnt_init++, s);
 #endif
 
     }
@@ -392,7 +392,7 @@ implies_stmt :
     char n[1024];
 #endif
     if ((retval = kbase.add_consttab($3, $1, $4)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
 
@@ -404,10 +404,10 @@ implies_stmt :
     else
       strcpy(n, "none");
 
-    fprintf(stderr, "constraint[%d]:\n", cnt_const++);
-    fprintf(stderr, "  expression: %s\n", e);
-    fprintf(stderr, "  condition:   %s\n", c);
-    fprintf(stderr, "  absence:     %s\n", n);
+    fprintf(yyerr, "constraint[%d]:\n", cnt_const++);
+    fprintf(yyerr, "  expression: %s\n", e);
+    fprintf(yyerr, "  condition:   %s\n", c);
+    fprintf(yyerr, "  absence:     %s\n", n);
 #endif
 
     /* cleanup */
@@ -434,17 +434,17 @@ always_stmt :
 #endif
 
     if ((retval = kbase.add_consttab($2, NULL, NULL)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
 
 #ifdef DEBUG
     $2->print(e);
 
-    fprintf(stderr, "constraint[%d]:\n", cnt_const++);
-    fprintf(stderr, "  expression: %s\n", e);
-    fprintf(stderr, "  condition:   none\n");
-    fprintf(stderr, "  absence:     none\n");
+    fprintf(yyerr, "constraint[%d]:\n", cnt_const++);
+    fprintf(yyerr, "  expression: %s\n", e);
+    fprintf(yyerr, "  condition:   none\n");
+    fprintf(yyerr, "  absence:     none\n");
 #endif
     delete $2;
   }
@@ -460,7 +460,7 @@ trans_stmt :
 #endif
 
     if ((retval = kbase.add_transtab($1, $2, $5, $4)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
 
@@ -477,11 +477,11 @@ trans_stmt :
 
     $4->print(po);
 
-    fprintf(stderr, "transformation[%d]:\n", cnt_trans++);
-    fprintf(stderr, "  name:        %s\n", $1);
-    fprintf(stderr, "  varlist:    %s\n", v);
-    fprintf(stderr, "  precond:    %s\n", pr);
-    fprintf(stderr, "  postcond:   %s\n", po);
+    fprintf(yyerr, "transformation[%d]:\n", cnt_trans++);
+    fprintf(yyerr, "  name:        %s\n", $1);
+    fprintf(yyerr, "  varlist:    %s\n", v);
+    fprintf(yyerr, "  precond:    %s\n", pr);
+    fprintf(yyerr, "  postcond:   %s\n", po);
 #endif
 
     /* cleanup */
@@ -515,12 +515,12 @@ trans_var_list :
     int retval;
 
     if (($$ = VLAD_NEW(stringlist(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      fprintf(stderr, "interal error: %d\n", retval);
+      fprintf(yyerr, "interal error: %d\n", retval);
       return retval;
     }
   }
@@ -528,7 +528,7 @@ trans_var_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      fprintf(stderr, "interal error: %d\n", retval);
+      fprintf(yyerr, "interal error: %d\n", retval);
       return retval;
     }
   }
@@ -543,7 +543,7 @@ query_stmt :
 #endif
 
     if ((retval = kbase.add_querytab($2, $3)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d\n", retval);
+      fprintf(yyerr, "internal error: %d\n", retval);
       return retval;
     }
 
@@ -554,9 +554,9 @@ query_stmt :
     else
       strcpy(r, "none");
 
-    fprintf(stderr, "query[%d]:\n", cnt_query++);
-    fprintf(stderr, "  expression: %s\n", q);
-    fprintf(stderr, "  trans seq:  %s\n", r);
+    fprintf(yyerr, "query[%d]:\n", cnt_query++);
+    fprintf(yyerr, "  expression: %s\n", q);
+    fprintf(yyerr, "  trans seq:  %s\n", r);
 #endif
 
     /* cleanup */
@@ -579,12 +579,12 @@ trans_ref_list :
     int retval;
 
     if (($$ = VLAD_NEW(transreflist(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      fprintf(stderr, "interal error: %d\n", retval);
+      fprintf(yyerr, "interal error: %d\n", retval);
       return retval;
     }
   }
@@ -592,7 +592,7 @@ trans_ref_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      fprintf(stderr, "interal error: %d\n", retval);
+      fprintf(yyerr, "interal error: %d\n", retval);
       return retval;
     }
   }
@@ -603,14 +603,14 @@ trans_ref_def :
     char *name;
 
     if ((name = VLAD_STRING_MALLOC($1)) == NULL) {
-      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
 
     strcpy(name, $1);
  
     if (($$ = VLAD_NEW(transref(name, $3))) == NULL) {
-      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }   
   }
@@ -629,12 +629,12 @@ trans_ref_ident_list :
     int retval;
 
     if (($$ = VLAD_NEW(stringlist(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      fprintf(stderr, "interal error: %d\n", retval);
+      fprintf(yyerr, "interal error: %d\n", retval);
       return retval;
     }
   }
@@ -642,7 +642,7 @@ trans_ref_ident_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      fprintf(stderr, "interal error: %d\n", retval);
+      fprintf(yyerr, "interal error: %d\n", retval);
       return retval;
     }
   }
@@ -658,7 +658,7 @@ expression :
     int retval;
 
     if (($$ = VLAD_NEW(expression(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
 
@@ -774,7 +774,7 @@ logical_atom :
 int add_identifier(const char *n, unsigned char t)
 {
   if (!VLAD_IDENT_IS_VALID(t) || t == 0) {
-    fprintf(stderr, "internal error: %d\n", VLAD_INVALIDINPUT);
+    fprintf(yyerr, "internal error: %d\n", VLAD_INVALIDINPUT);
     return VLAD_INVALIDINPUT;
   }
 
