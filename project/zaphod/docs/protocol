@@ -1,0 +1,24 @@
+ZAPHOD DAEMON PROTOCOL
+2002 July 20
+
+Vino Crescini
+jvcrescini@yahoo.com
+
+- Protocol
+
+  Message               Reply
+  -----------------------------------------------------------------------
+  count                 n (where n is the number of messages)
+  get(n)                message (nth message)
+  del(n)                m (where m is the number of messages after message
+                           n is deleted)
+  put(message)          n (where n is the number of messages after message
+                           is added)
+
+- Messages
+
+  The message text itself must have certain characters escaped.
+
+  - Backslash (\) must be escaped to double backslash (\\)
+  - Open Parenthesis ( must be escaped to \(
+  - Close Parenthesis ) must be escaped to \)
