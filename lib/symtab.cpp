@@ -289,7 +289,7 @@ unsigned int symtab::length(unsigned char t)
   return 0;
 }
 
-/* return true if symbol is in the table */
+/* return 0 if symbol is in the table */
 int symtab::find(const char *s)
 {
   int retval;
@@ -317,6 +317,35 @@ int symtab::find(const char *s)
     return retval;
 
   return obj_grp_list->find(s);
+}
+
+/* return 0 if symbol of type t is in the table */
+int symtab::find(const char *s, unsigned char t)
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (s == NULL)
+    return VLAD_NULLPTR;
+
+  switch(t) {
+    case VLAD_IDENT_SUBJECT :
+      return sub_list->find(s);
+    case VLAD_IDENT_ACCESS :
+      return acc_list->find(s);
+    case VLAD_IDENT_OBJECT :
+      return obj_list->find(s);
+    case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP:
+      return sub_grp_list->find(s);
+    case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP:
+      return acc_grp_list->find(s);
+    case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP:
+      return obj_grp_list->find(s);
+    default :
+      return VLAD_INVALIDINPUT;
+  }
+
+  return VLAD_FAILURE;
 }
 
 /* give the type of the given identifier */

@@ -90,6 +90,22 @@ VLAD_EXTERN int vlad_kb_close_kb(void *a_kb)
   return tmp_kb->close_kb();
 }
 
+/* check if the identifier of the given type is in the symtab */
+VLAD_EXTERN int vlad_kb_check_symtab(void *a_kb,
+                                     const char *a_n,
+                                     unsigned char a_t)
+{
+  kb *tmp_kb = NULL;
+
+  if (a_kb == NULL)
+    return VLAD_NULLPTR;
+
+  if ((tmp_kb = VLAD_VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
+    return VLAD_INVALIDINPUT;
+
+  return tmp_kb->check_symtab(a_n, a_t);
+}
+
 /* register an identifier in the kb */
 VLAD_EXTERN int vlad_kb_add_symtab(void *a_kb,
                                    const char *a_n,

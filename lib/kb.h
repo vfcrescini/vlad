@@ -31,6 +31,8 @@ class kb {
     /* after this is called, no further calls to add_inittab(), add_consttab()
      * or add_transtab() is allowed */
     int close_kb();
+    /* checks whether n of type t is in symtab */
+    int check_symtab(const char *n, unsigned char t);
     /* register an identifier in the kb */
     int add_symtab(const char *n, unsigned char t);
     /* add an atom into the initial state table */
