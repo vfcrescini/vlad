@@ -1,5 +1,7 @@
 2003-12-31  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/seqtab.cpp:
+	* lib/seqtab.h:
 	* lib/consttab.cpp:
 	* lib/consttab.h:
 	* lib/expression.cpp :
