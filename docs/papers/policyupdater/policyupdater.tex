@@ -216,7 +216,7 @@
 
           The constraint syntax below shows that for any state of the policy
           base, expression $exp1$ holds if expression $exp2$ is true and there
-          is no evidence that $exp3$ is true. The {\em with absence} clause
+          is no evidence that $exp3$ is true. The $with$ $absence$ clause
           allows constraints to behave like default propositions, where the
           absence of proof that an expression holds implies that the default
           expression holds.
@@ -321,10 +321,9 @@ always <exp1>
           A ground query expression may be issued against the current state of
           the policy base. This current state is derived after all the updates
           in the update sequence has been applied, one at a time, upon the
-          initial state. Query expressions are answered with a \emph{true},
-          \emph{false} or an \emph{unknown}, depending on whether the queried
-          expression holds, its negation holds, or neither, respectively.
-          Syntax is as follows:
+          initial state. Query expressions are answered with a $true$, $false$
+          or an $unknown$, depending on whether the queried expression holds,
+          its negation holds, or neither, respectively. Syntax is as follows:
 
           \begin{verbatim}query <ground-exp>;\end{verbatim} 
 
@@ -545,9 +544,9 @@ query holds(alice, read, file);
           the extended logic program ${\cal L}^{*}$ translation of language
           ${\cal L}$.
 
-          The domain description ${\cal D}_{\cal L}$ is said to be $consistent$
-          if $trans$(${\cal D}_{\cal L}$) has at least one consistent answer
-          set. 
+          The domain description ${\cal D}_{\cal L}$ is said to be
+          {\em consistent} if $trans$(${\cal D}_{\cal L}$) has at least one
+          consistent answer set. 
         \end{definition}
 
         \paragraph{Initial Fact Expression.}
