@@ -2,6 +2,9 @@
 
 	* exp/gnd_exp.c :
 
+	  - Fixed the error that causes the check of whether the
+	    negation of an atom is already present to fail.
+
 	  - Fixed bug that adds an atom even though its negation is
 	    already there.
 

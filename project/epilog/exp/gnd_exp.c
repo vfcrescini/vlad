@@ -147,12 +147,12 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
 
   /* now we check if the atom is a logical consequence of the other
    * atoms in the expression */
-  if (gnd_exp_eval_atom(atom, *exp, &tmp_res) != 0)
+  if (gnd_exp_eval_atom(negated_atom, *exp, &tmp_res) != 0)
     return -1;
 
   /* the negation of the atom is implied by the other atoms in the
    * expression. this is a conflict */
-  if (tmp_res == epi_res_false)
+  if (tmp_res == epi_res_true)
     return -1;
 
   /* if the negation of the atom is already in, but is not implied by
