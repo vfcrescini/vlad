@@ -1,6 +1,6 @@
 /*
  * expression.h
- * Vino Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #ifndef __VLAD_EXPRESSION_H

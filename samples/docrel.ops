@@ -1,6 +1,6 @@
 /*
  * Document Release Example
- * Vino Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 seq add Request(Sci, Doc, Pat_Off);

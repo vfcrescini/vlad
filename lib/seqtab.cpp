@@ -1,6 +1,6 @@
 /*
  * seqtab.cpp
- * Vino Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #include <cstdlib>
