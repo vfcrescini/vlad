@@ -3,3 +3,10 @@
 	* ChangeLog :
 
 	  - Changelog started.
+
+	* docs/bnf.txt :
+
+	  - Added constraint statements.
+
+	  - Improvements over old design. First/last parts and other stmt
+	    rules no longer needed.

@@ -15,21 +15,33 @@ Started 2002 Dec 08
 
 <destroy>               :
 
-<body>                  : <first-part> | <last-part> |
+<body>                  : <ident-section> <initial-section> 
+                          <constraint-section> <trans-section> 
+                          <query-section>
 
-<first-part>            : <ident-stmt-list> | 
-                          <ident-stmt-list> <last-part>
+<ident-section>         : <nil> | <ident-stmt-list>
 
-<last-part>             : <other-stmt-list>
+<initial-section>       : <nil> | <inital-stmt-list>
+
+<constraint-section>    : <nil> | <constraint-stmt-list>
+
+<trans-section>         : <nil> | <trans-stmt-list>
+
+<query-section>         : <nil> | <query-stmt-list>
 
 <ident-stmt-list>       : <ident-stmt> | <ident-stmt-list> <ident-stmt> 
-                        
-<other-stmt-list>       : <other-stmt> | <other-stmt-list> <other-stmt>
-                        
-<other-stmt>            : <initial-stmt> | <trans-stmt> | <policy-stmt>
 
+<initial-stmt-list>     : <initial-stmt> | <initial-stmt-list> <initial-stmt>
+
+<constraint-stmt-list>  : <constraint-stmt> | <constraint-stmt-list>
+                          <constraint-stmt>
+
+<trans-stmt-list>       : <trans-stmt> | <trans-stmt-list> <trans-stmt>
+
+<query-stmt-list>       : <query-stmt> | <query-stmt-list> <query-stmt>
+                        
 <ident-stmt>            : <ident> <ident-declaration> <semicolon>
-
+                       
 <ident-declaration>     : <sub-ident-decl> | <obj-ident-decl> | acc-ident-decl> |
                           <sub-grp-ident-decl> | <obj-grp-ident-decl> |
                           <acc-grp-ident-decl>
@@ -59,17 +71,25 @@ Started 2002 Dec 08
 <acc-grp-ident-list>    : <identifier> | <acc-grp-ident-list> <comma> <identifier>
 
 <initial-stmt>          : <initially> <ground-exp> <semicolon>
+
+<constraint-stmt>       : <implies-stmt> | <always-stmt>
                         
+<implies-stmt>          : <ground-exp> <implies> <ground-exp> <with-clause> 
+                          <semicolon>
+
+<with-clause>           : <nil> | <with> <absence> <ground-exp>
+
+<always-stmt>           : <always> <ground-exp> <semicolon>
+
 <trans-stmt>            : <trans> <identifier> <trans-var-def>
                           <causes> <comp-exp> <if> <comp-exp> <semicolon>
-                        
+
 <trans-var-def>         : <open-parent> <close-parent> |
                           <open-parent> <trans-var-list> <close-parent> 
                         
 <trans-var-list>        : <identifier> | <trans-var-list> <comma> <identifier>
-                          
-                        
-<policy-stmt>           : <is-clause> <after-clause> <semicolon> |
+
+<query-stmt>            : <is-clause> <after-clause> <semicolon> |
                           <is-clause> <semicolon>
                         
 <is-clause>             : <is> <ground-exp>
@@ -144,6 +164,14 @@ Started 2002 Dec 08
 <initially>             : initially
                         
 <causes>                : causes
+
+<implies>               : implies
+
+<with>                  : with
+
+<absence>               : absence
+
+<always>                : always
                         
 <if>                    : if
                         
