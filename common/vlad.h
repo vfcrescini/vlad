@@ -12,8 +12,8 @@
 #define VLAD_RESULT_UNKNOWN  2
 
 /* modes */
-#define VLAD_MODE_NLP        0
-#define VLAD_MODE_SMODELS    1
+#define VLAD_MODE_GENERATE   0
+#define VLAD_MODE_EVALUATE   1
 
 /* string constants */
 #define VLAD_STR_TRUE        "TRUE"

@@ -540,7 +540,7 @@ query_stmt :
 #endif
 
   switch(mode) {
-    case VLAD_MODE_NLP : {
+    case VLAD_MODE_GENERATE : {
       if ((retval = kbase.generate_nlp($2, $3, yyout)) != VLAD_OK) {
         fprintf(yyerr, "internal error: %d\n", retval);
         return retval;
@@ -548,7 +548,7 @@ query_stmt :
       break;
     }
 #ifdef SMODELS
-    case VLAD_MODE_SMODELS : {
+    case VLAD_MODE_EVALUATE : {
       unsigned char res;
       if ((retval = kbase.evaluate_query($2, $3, &res)) != VLAD_OK) {
         fprintf(yyerr, "internal error: %d\n", retval);
