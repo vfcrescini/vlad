@@ -6,8 +6,8 @@
 #ifndef __VLAD_EXPRESSION_H
 #define __VLAD_EXPRESSION_H
 
-#include <list.h>
-#include <atom.h>
+#include <vlad/list.h>
+#include <vlad/atom.h>
 
 /* a list of atoms. no checking. */
 

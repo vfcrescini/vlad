@@ -2,9 +2,6 @@
 
 TOPSRCDIR = @top_srcdir@
 DISTDIR = @DISTDIR@
-BINDIR = @BINDIR@
-INCLUDEDIR = @INCLUDEDIR@
-LIBDIR = @LIBDIR@
 CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
@@ -18,12 +15,12 @@ STRIP = @STRIP@
 TARGETS = vlad
 
 all : $(TARGETS)
-	@mkdir -p $(BINDIR)
+	@mkdir -p $(DISTDIR)/bin
 	@for i in $(TARGETS); do \
-	ln -sf ../../main/$$i $(BINDIR); \
+	ln -sf ../../main/$$i $(DISTDIR)/bin; \
 	done
 
-vlad : vlad.o $(LIBDIR)/*
+vlad : vlad.o $(DISTDIR)/lib/vlad/*
 	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lparser -lkb -lcommon $(LEXLIB)
 ifndef DEBUG
   ifdef STRIP
@@ -40,5 +37,5 @@ clean :
 distclean : clean
 	$(RM) $(TARGETS) Makefile
 	@for i in $(TARGETS); do \
-	$(RM) $(BINDIR)/$$i; \
+	$(RM) $(DISTDIR)/bin/$$i; \
 	done

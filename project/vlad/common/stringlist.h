@@ -3,7 +3,7 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#include <list.h>
+#include <vlad/list.h>
 
 #ifndef __VLAD_STRINGLIST_H
 #define __VLAD_STRINGLIST_H

@@ -9,8 +9,8 @@
 #include <new>
 
 #include <config.h>
-#include <vlad.h>
-#include <stringlist.h>
+#include <vlad/vlad.h>
+#include <vlad/stringlist.h>
 
 string::string()
 {

@@ -4,9 +4,9 @@ AC_INIT(vlad,0.3.1,jcrescin@cit.uws.edu.au)
 
 AC_CONFIG_HEADERS(config.h)
 
-VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(INCLUDEDIR) -L\$(LIBDIR)"
-VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(INCLUDEDIR) -L\$(LIBDIR)"
-VLAD_LDFLAGS="-L\$(LIBDIR) $LDFLAGS"
+VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
+VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
+VLAD_LDFLAGS="-L\$(DISTDIR)/lib/vlad $LDFLAGS"
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -54,9 +54,6 @@ LDFLAGS="$VLAD_LDFLAGS $LDFLAGS"
 AC_DEFINE_UNQUOTED(VERSION,"$PACKAGE_VERSION")
 
 AC_SUBST(DISTDIR,"\$(TOPSRCDIR)/dist")
-AC_SUBST(BINDIR, "\$(DISTDIR)/bin")
-AC_SUBST(INCLUDEDIR, "\$(DISTDIR)/include/vlad")
-AC_SUBST(LIBDIR, "\$(DISTDIR)/lib/vlad")
 
 AC_CONFIG_FILES(  \
   Makefile        \

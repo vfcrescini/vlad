@@ -2,9 +2,6 @@
 
 TOPSRCDIR = @top_srcdir@
 DISTDIR = @DISTDIR@
-BINDIR = @BINDIR@
-INCLUDEDIR = @INCLUDEDIR@
-LIBDIR = @LIBDIR@
 CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
@@ -17,15 +14,15 @@ INCLUDES = vlad.h list.h stringlist.h numberlist.h
 all : copy-includes copy-targets
 
 copy-includes : $(INCLUDES)
-	@mkdir -p $(INCLUDEDIR)
+	@mkdir -p $(DISTDIR)/include/vlad
 	@for i in $(INCLUDES); do \
-	ln -sf ../../../common/$$i $(INCLUDEDIR); \
+	ln -sf ../../../common/$$i $(DISTDIR)/include/vlad; \
 	done
 
 copy-targets : $(TARGETS)
-	@mkdir -p $(LIBDIR)
+	@mkdir -p $(DISTDIR)/lib/vlad
 	@for i in $(TARGETS); do \
-	ln -sf ../../../common/$$i $(LIBDIR); \
+	ln -sf ../../../common/$$i $(DISTDIR)/lib/vlad; \
 	done
 
 libcommon.a : list.o stringlist.o numberlist.o
@@ -46,8 +43,8 @@ clean :
 distclean : clean
 	$(RM) $(TARGETS) Makefile
 	@for i in $(INCLUDES); do \
-	$(RM) $(INCLUDEDIR)/$$i; \
+	$(RM) $(DISTDIR)/include/vlad/$$i; \
 	done
 	@for i in $(TARGETS); do \
-	$(RM) $(LIBDIR)/$$i; \
+	$(RM) $(DISTDIR)/lib/vlad/$$i; \
 	done

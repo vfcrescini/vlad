@@ -9,8 +9,8 @@
 #include <new>
 
 #include <config.h>
-#include <vlad.h>
-#include <sequence.h>
+#include <vlad/vlad.h>
+#include <vlad/sequence.h>
 
 transref::transref()
 {

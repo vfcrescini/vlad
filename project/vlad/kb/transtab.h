@@ -6,9 +6,9 @@
 #ifndef __VLAD_TRANSTAB_H
 #define __VLAD_TRANSTAB_H
 
-#include <list.h>
-#include <expression.h>
-#include <stringlist.h>
+#include <vlad/list.h>
+#include <vlad/expression.h>
+#include <vlad/stringlist.h>
 
 class transdef : public list_item
 {

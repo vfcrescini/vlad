@@ -6,7 +6,7 @@
 #ifndef __VLAD_NUMBERLIST_H
 #define __VLAD_NUMBERLIST_H
 
-#include <list.h>
+#include <vlad/list.h>
 
 /* a number */
 class number : public list_item

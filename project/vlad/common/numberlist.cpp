@@ -8,8 +8,8 @@
 #include <new>
 
 #include <config.h>
-#include <vlad.h>
-#include <numberlist.h>
+#include <vlad/vlad.h>
+#include <vlad/numberlist.h>
 
 number::number()
 {

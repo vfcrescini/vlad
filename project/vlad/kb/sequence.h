@@ -6,9 +6,9 @@
 #ifndef __VLAD_SEQUENCE_H
 #define __VLAD_SEQUENCE_H
 
-#include <list.h>
-#include <expression.h>
-#include <stringlist.h>
+#include <vlad/list.h>
+#include <vlad/expression.h>
+#include <vlad/stringlist.h>
 
 class transref : public list_item
 {
