@@ -39,14 +39,14 @@ class kb {
                     const char *n2,
                     const char *n3,
                     unsigned char ty,
-                    bool tr,
+		    bool tr,
                     unsigned int *a);
     /* returns the atom details given the id */
     int decode_atom(char **n1,
                     char **n2,
                     char **n3,
                     unsigned char *ty,
-                    bool *tr,
+		    bool *tr,
                     unsigned int a);
     /* returns the negation of the given atom */
     int negate_atom(unsigned int in, unsigned int *out);
@@ -62,13 +62,18 @@ class kb {
     unsigned int h_tot;
     unsigned int m_tot;
     unsigned int s_tot;
-    unsigned int h_index;
-    unsigned int m_index;
-    unsigned int s_index;
     unsigned int pos_tot;
-    unsigned int neg_tot;
     bool initialised;
     bool closed;
+
+    int encode_const(const char *c, unsigned int *n);
+    int encode_holds(const char *s, const char *a, const char *o, unsigned int *n);
+    int encode_member(const char *e, const char *g, unsigned int *n);
+    int encode_subset(const char *g1, const char *g2, unsigned int *n);
+    int decode_const(char **c, unsigned int n);
+    int decode_holds(char **s, char **a, char **o, unsigned int n);
+    int decode_member(char **e, char **g, unsigned int n);
+    int decode_subset(char **g1, char **g2, unsigned int n);
 } ;
 
 #endif
