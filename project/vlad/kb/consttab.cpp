@@ -11,7 +11,7 @@
 #include <vlad.h>
 #include <consttab.h>
 
-constraint::constraint(numberlist *e, numberlist *c, numberlist *n)
+constraint::constraint(expression *e, expression *c, expression *n)
 {
   exp = e;
   cond = c;
@@ -62,7 +62,11 @@ bool constraint::cmp(list_item *item)
   return true;
 }
 
-consttab::consttab() : list("consttab", true)
+consttab::consttab() : list(true)
+{
+}
+
+consttab::consttab(const char *n) : list(n, true)
 {
 }
 
@@ -71,7 +75,7 @@ consttab::~consttab()
   purge(true);
 }
 
-int consttab::add(numberlist *e, numberlist *c, numberlist *n)
+int consttab::add(expression *e, expression *c, expression *n)
 {
   constraint *tmp;
 

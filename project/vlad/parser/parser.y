@@ -136,8 +136,22 @@ initial_section : {
   }
   ;
 
-constraint_section :
-  | constraint_stmt_list
+constraint_section : {
+    int retval;
+    /* after the constraint section, we must close the constraint table */
+    if ((retval = kbase.close_consttab()) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+  }
+  | constraint_stmt_list {
+    int retval;
+    /* after the constraint section, we must close the constraint table */
+    if ((retval = kbase.close_consttab()) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+  }
   ;
 
 trans_section :
@@ -339,20 +353,67 @@ constraint_stmt :
 
 implies_stmt :
   ground_exp VLAD_SYM_IMPLIES ground_exp with_clause VLAD_SYM_SEMICOLON {
+    int retval;
+#ifdef DEBUG
+    char e[1024];
+    char c[1024];
+    char n[1024];
+#endif
+    if ((retval = kbase.add_consttab($3, $1, $4)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+
+#ifdef DEBUG
+    $3->print(e);
+    $1->print(c);
+    if ($4 != NULL)
+      $4->print(n);
+    else
+      strcpy(n, "none");
+
+    fprintf(stderr, "constraint:\n");
+    fprintf(stderr, "  expression: %s\n", e);
+    fprintf(stderr, "  condition:   %s\n", c);
+    fprintf(stderr, "  absence:     %s\n", n);
+#endif
+
+    /* cleanup */
     delete $1;
     delete $3;
+    if ($4 != NULL)
+      delete $4;
   }
   ;
 
 with_clause : {
+    $$ = NULL;
   }
   | VLAD_SYM_WITH VLAD_SYM_ABSENCE ground_exp {
-    delete $3;
+    $$ = $3;
   }
   ;
 
 always_stmt :
   VLAD_SYM_ALWAYS ground_exp VLAD_SYM_SEMICOLON {
+    int retval;
+#ifdef DEBUG
+    char e[1024];
+#endif
+
+    if ((retval = kbase.add_consttab($2, NULL, NULL)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+
+#ifdef DEBUG
+    $2->print(e);
+
+    fprintf(stderr, "constraint:\n");
+    fprintf(stderr, "  expression: %s\n", e);
+    fprintf(stderr, "  condition:   none\n");
+    fprintf(stderr, "  absence:     none\n");
+#endif
     delete $2;
   }
   ;

@@ -15,9 +15,9 @@
 kb::kb()
 {
   stable = NULL;
-  initialised = false;
-  stage1 = false;
-  stage2 = false;
+  itable = NULL;
+  ctable = NULL;
+  stage = 0;
 }
 
 kb::~kb()
@@ -27,6 +27,9 @@ kb::~kb()
 
   if (itable != NULL)
     delete itable;
+
+  if (ctable != NULL)
+    delete ctable; 
 }
 
 /* (re)init kb */
@@ -51,9 +54,14 @@ int kb::init()
   if ((itable = VLAD_NEW(expression("initial state table"))) == NULL)
     return VLAD_MALLOCFAILED;
 
-  initialised = true;
-  stage1 = false;
-  stage2 = false;
+  /* constraints table */
+  if (ctable != NULL)
+    delete ctable;
+
+  if ((ctable = VLAD_NEW(consttab("constraint table"))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  stage = 1;
 
   return VLAD_OK;
 }
@@ -61,35 +69,39 @@ int kb::init()
 /* after this is called, no further calls to add_inittab() is allowed */
 int kb::close_symtab()
 {
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 1)
+    return VLAD_FAILURE;
 
-  stage1 = true;
-
+  stage = 2;
+  
   return VLAD_OK;
 }
 
 /* after this is called, no further calls to add_inittab() is allowed */
 int kb::close_inittab()
 {
-  if (!initialised)
-    return VLAD_UNINITIALISED;
-
-  if (!stage1)
+  if (stage != 2)
     return VLAD_FAILURE;
 
-  stage2 = true;
+  stage = 3;
 
+  return VLAD_OK;
+}
+
+/* after this is called, no further calls to add_consttab() is allowed */
+int kb::close_consttab()
+{
+  if (stage != 3)
+    return VLAD_FAILURE;
+
+  stage = 4;
   return VLAD_OK;
 }
 
 /* register an identifier in the kb */
 int kb::add_symtab(const char *n, unsigned char t)
 {
-  if (!initialised)
-    return VLAD_UNINITIALISED;
-
-  if (stage1)
+  if (stage != 1)
     return VLAD_FAILURE;
 
   return stable->add(n, t);
@@ -100,6 +112,12 @@ int kb::add_inittab(atom *a)
 {
   int retval;
   atom *tmp;
+
+  if (stage != 2)
+    return VLAD_FAILURE;
+
+  if (a == NULL)
+    return VLAD_NULLPTR;
 
   /* first check if the atom is valid */
   if ((retval = verify_atom(a)) != VLAD_OK)
@@ -115,6 +133,88 @@ int kb::add_inittab(atom *a)
   return itable->add(tmp);
 }
 
+/* add an expression into the constraints table */
+int kb::add_consttab(expression *e, expression *c, expression *n)
+{
+  int retval;
+  unsigned int i;
+  expression *exp;
+  expression *cond;
+  expression *ncond;
+  atom *tmp1;
+  atom *tmp2;
+
+  if (stage != 3)
+    return VLAD_FAILURE;
+
+  /* only e is required to be non-null */
+  if (e == NULL)
+    return VLAD_NULLPTR;
+
+  /* create new expressions */
+  if ((exp = VLAD_NEW(expression(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((cond = VLAD_NEW(expression(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((ncond = VLAD_NEW(expression(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* 
+   * now, we must go through every atom of every exression to ensure
+   * their validity. while we are going through them, we might as well
+   * make a copy.
+   */
+
+  /* exression */
+  for (i = 0; i < e->length(); i++) {
+    if ((retval = e->get(i, &tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = verify_atom(tmp1)) != VLAD_OK)
+      return retval;
+    if ((tmp2 = VLAD_NEW(atom())) == NULL)
+      return VLAD_MALLOCFAILED;
+    if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = exp->add(tmp2)) != VLAD_OK)
+      return retval;
+  }
+
+  /* condition: if there is no condition, simply use an empty expression */
+  if (c != NULL) {
+    for (i = 0; i < c->length(); i++) {
+      if ((retval = c->get(i, &tmp1)) != VLAD_OK)
+        return retval;
+      if ((retval = verify_atom(tmp1)) != VLAD_OK)
+        return retval;
+      if ((tmp2 = VLAD_NEW(atom())) == NULL)
+        return VLAD_MALLOCFAILED;
+      if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+        return retval;
+      if ((retval = cond->add(tmp2)) != VLAD_OK)
+        return retval;
+    }
+  }
+
+  /* negative condition: if there is no negative cond, use empty expression */
+  if (n != NULL) {
+    for (i = 0; i < n->length(); i++) {
+      if ((retval = n->get(i, &tmp1)) != VLAD_OK)
+        return retval;
+      if ((retval = verify_atom(tmp1)) != VLAD_OK)
+        return retval;
+      if ((tmp2 = VLAD_NEW(atom())) == NULL)
+        return VLAD_MALLOCFAILED;
+      if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+        return retval;
+      if ((retval = ncond->add(tmp2)) != VLAD_OK)
+        return retval;
+    } 
+  }
+
+  /* finally, we add the expressions into the cosntraints table */
+  return ctable->add(exp, cond, ncond);
+}
+
 /* make sure atom a is valid */
 int kb::verify_atom(atom *a)
 {
@@ -126,7 +226,8 @@ int kb::verify_atom(atom *a)
   unsigned char type2;
   unsigned char type3;
 
-  if (!stage1)
+  /* this function is only valid after the symtab is closed */
+  if (stage < 2)
     return VLAD_FAILURE;
 
   switch(a->get_type()) {
