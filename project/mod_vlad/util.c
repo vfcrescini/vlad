@@ -66,7 +66,7 @@ int modvlad_add_subject(void *a_kb, const char *a_fname, apr_pool_t *a_p)
                   APLOG_ERR,
                   status,
                   a_p,
-                  "could not open authentication/user file: %s",
+                  "mod_vlad: could not open user file: %s",
                   a_fname);
 
     return -1;
@@ -98,7 +98,7 @@ int modvlad_add_subject(void *a_kb, const char *a_fname, apr_pool_t *a_p)
                     APLOG_ERR,
                     0,
                     a_p,
-                    "vlad error: kb_add_symtab(%s) returned %d",
+                    "mod_vlad: could not add user \"%s\" to kb: error %d",
                     user,
                     retval);
       return -1;
@@ -136,7 +136,7 @@ int modvlad_add_access(void *a_kb, apr_pool_t *a_p)
                     APLOG_ERR,
                     0,
                     a_p,
-                    "vlad error: kb_add_symtab(%s) returned %d",
+                    "mod_vlad: could not add access \"%s\" to kb: error %d",
                     access,
                     retval);
       return -1;

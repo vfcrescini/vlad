@@ -108,7 +108,7 @@ static char *modvlad_get_passwd(request_rec *a_r,
                   APLOG_ERR,
                   status,
                   a_r,
-                  "could not open aunthentication/user file: %s",
+                  "mod_vlad: could not open user file %s",
                   a_passwd_file);
 
     return NULL;
@@ -152,14 +152,19 @@ static int modvlad_authenticate(request_rec *a_r)
   conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
                                                      &modvlad_module);
 
+  /* first we make sure we are activated */
+  if (!conf->user_file || !conf->policy_file || !conf->kb) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_NOTICE,
+                  0,
+                  a_r,
+                  "mod_vlad: declining authentication request");                  
+    return DECLINED;
+  }
+
   /* get password from browser */
   if ((retval = ap_get_basic_auth_pw(a_r, &sent_passwd))) {
     return retval;
-  }
-
-  /* hmm... no authentication file. what do we do? */
-  if (!conf->user_file) {
-    return DECLINED;
   }
 
   /* get the password from the file */
@@ -171,7 +176,7 @@ static int modvlad_authenticate(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "user %s not found: %s",
+                  "mod_vlad: invalid user: user=\"%s\" uri=\"%s\"",
                   a_r->user,
                   a_r->uri);
 
@@ -189,8 +194,7 @@ static int modvlad_authenticate(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "user %s: authentication failure for \"%s\": %s",
-                  "Password Mismatch",
+                  "mod_vlad: password mismatch: user=\"%s\" uri=\"%s\"",
                   a_r->user,
                   a_r->uri);
 
@@ -208,6 +212,16 @@ static int modvlad_authorize(request_rec *a_r)
 
   conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
                                                      &modvlad_module);
+
+  /* first we make sure we are activated */
+  if (!conf->user_file || !conf->policy_file || !conf->kb) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_NOTICE,
+                  0,
+                  a_r,
+                  "mod_vlad: declining authorization request");
+    return DECLINED;
+  }
 
 #ifdef DEBUG
   ap_log_rerror(APLOG_MARK,
@@ -251,7 +265,7 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                                     const char *a_uname,
                                     const char *a_pname)
 {
-  modvlad_config_rec *conf = NULL;
+  modvlad_config_rec *conf;
   apr_file_t *polfile;
 
 #ifdef DEBUG
@@ -262,7 +276,14 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                 "modvlad_set_init");
 #endif
 
-  conf = (modvlad_config_rec *) a_config;
+  if (!(conf = (modvlad_config_rec *) a_config)) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_cmd->pool,
+                  "mod_vlad: NULL per-dir config pointer");
+    return NULL;
+  }
 
   /* set up filenames */
   conf->user_file = ap_server_root_relative(a_cmd->pool, a_uname);
