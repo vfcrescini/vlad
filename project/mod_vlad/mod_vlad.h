@@ -75,16 +75,25 @@
 #define MODVLAD_OUTOFSEQ        -6
 
 /* convenience marcos */
-#define MODVLAD_LASTCHAR(X)     (X[strlen(X) > 0 ? strlen(X) - 1 : 0])
-#define MODVLAD_FIRSTCHAR(X)    (X[0])
+#define MODVLAD_LASTCHAR(X)     ((X)[strlen(X) > 0 ? strlen(X) - 1 : 0])
+#define MODVLAD_FIRSTCHAR(X)    ((X)[0])
+#define MODVLAD_IPC_SCHECK(X)   ((X).pipe_svr[0] == NULL || \
+                                (X).pipe_svr[1] == NULL)
+#define MODVLAD_IPC_CCHECK(X)   ((X).pipe_cli[0] == NULL || \
+                                (X).pipe_cli[1] == NULL || \
+                                (X).mutex == NULL)
+
+typedef struct {
+  apr_file_t *pipe_svr[2];
+  apr_file_t *pipe_cli[2];
+  apr_proc_mutex_t *mutex;
+} modvlad_ipc;
 
 typedef struct {
   char *user_file;
   char *policy_file;
   int enabled;
-  apr_file_t *pipe_svr[2];
-  apr_file_t *pipe_cli[2];
-  apr_proc_mutex_t *mutex;
+  modvlad_ipc ipc;
 } modvlad_config_rec;
 
 #endif

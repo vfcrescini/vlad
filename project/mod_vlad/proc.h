@@ -19,79 +19,56 @@
 
 /* functions to send a request (and get reply) to/from the kb process */
 
-int modvlad_check(apr_pool_t *a_p,
-                  apr_file_t *a_fdin,
-                  apr_file_t *a_fdout,
-                  apr_proc_mutex_t *a_mx);
+int modvlad_check(apr_pool_t *a_p, modvlad_ipc a_ipc);
 
 int modvlad_client_query(apr_pool_t *a_p,
-                         apr_file_t *a_fdin,
-                         apr_file_t *a_fdout,
-                         apr_proc_mutex_t *a_mx,
+                         modvlad_ipc a_ipc,
                          const char *a_sub,
                          const char *a_acc,
                          const char *a_obj,
                          unsigned char *a_res);
 
 int modvlad_client_trans_total(apr_pool_t *a_p,
-                               apr_file_t *a_fdin,
-                               apr_file_t *a_fdout,
-                               apr_proc_mutex_t *a_mx,
+                               modvlad_ipc a_ipc,
                                unsigned int *a_tot);
 
 int modvlad_client_trans_get(apr_pool_t *a_p,
-                             apr_file_t *a_fdin,
-                             apr_file_t *a_fdout,
-                             apr_proc_mutex_t *a_mx,
+                             modvlad_ipc a_ipc,
                              unsigned int a_index,
                              const char **a_name,
                              apr_array_header_t *a_parm);
 
 int modvlad_client_ident_total(apr_pool_t *a_p,
-                               apr_file_t *a_fdin,
-                               apr_file_t *a_fdout,
-                               apr_proc_mutex_t *a_mx,
+                               modvlad_ipc a_ipc,
                                unsigned int *a_tot);
 
 int modvlad_client_ident_get(apr_pool_t *a_p,
-                             apr_file_t *a_fdin,
-                             apr_file_t *a_fdout,
-                             apr_proc_mutex_t *a_mx,
+                             modvlad_ipc a_ipc,
                              unsigned char a_type,
                              apr_array_header_t *a_arr);
 
 int modvlad_client_ident_check(apr_pool_t *a_p,
-                               apr_file_t *a_fdin,
-                               apr_file_t *a_fdout,
-                               apr_proc_mutex_t *a_mx,
+                               modvlad_ipc a_ipc,
                                const char *a_name,
                                unsigned char a_type);
 
 int modvlad_client_seq_total(apr_pool_t *a_p,
-                             apr_file_t *a_fdin,
-                             apr_file_t *a_fdout,
-                             apr_proc_mutex_t *a_mx,
+                             modvlad_ipc a_ipc,
                              unsigned int *a_tot);
 
 int modvlad_client_seq_get(apr_pool_t *a_p,
-                           apr_file_t *a_fdin,
-                           apr_file_t *a_fdout,
-                           apr_proc_mutex_t *a_mx,
+                           modvlad_ipc a_ipc,
                            unsigned int a_index,
                            const char **a_name,
                            apr_array_header_t *a_parm);
 
 int modvlad_client_seq_add(apr_pool_t *a_p,
-                           apr_file_t *a_fdin,
-                           apr_file_t *a_fdout,
-                           apr_proc_mutex_t *a_mx,
+                           modvlad_ipc a_ipc,
                            const char *a_name,
                            apr_array_header_t *a_parms);
 
 int modvlad_client_seq_del(apr_pool_t *a_p,
-                           apr_file_t *a_fdin,
-                           apr_file_t *a_fdout,
-                           apr_proc_mutex_t *a_mx,
+                           modvlad_ipc a_ipc,
                            unsigned int a_index);
 
 /* server init: create and init kb */
@@ -102,9 +79,6 @@ int modvlad_server_init(apr_pool_t *a_p,
                         const char *a_pfile);
 
 /* start listening on the fd */
-void modvlad_server_listen(apr_pool_t *a_p,
-                           void *a_kb,
-                           apr_file_t *a_fdin,
-                           apr_file_t *a_fdout);
+void modvlad_server_listen(apr_pool_t *a_p, void *a_kb, modvlad_ipc a_ipc);
 
 #endif

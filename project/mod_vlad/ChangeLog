@@ -1,5 +1,17 @@
 2003-07-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* admin.c :
+	* admin.h :
+	* mod_vlad.c :
+	* mod_vlad.h :
+	* proc.c :
+	* proc.h :
+
+	  - Created new structure to hold pipe fds and mutex. Functions in
+	    proc now uses this new structure to pass ipc info around.
+
+	  - Some cleanup.
+
 	* configure.ac :
 	* configure :
 	* Makefile.in :

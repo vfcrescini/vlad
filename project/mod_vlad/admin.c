@@ -17,11 +17,11 @@
 #include "proc.h"
 
 static void generate_ident_cell(request_rec *a_r,
-                                modvlad_config_rec *a_conf,
+                                modvlad_ipc a_ipc,
                                 unsigned char a_type);
 
 static void generate_ident_cell(request_rec *a_r,
-                                modvlad_config_rec *a_conf,
+                                modvlad_ipc a_ipc,
                                 unsigned char a_type)
 {
   apr_pool_t *pool = NULL;
@@ -32,9 +32,7 @@ static void generate_ident_cell(request_rec *a_r,
   array = apr_array_make(pool, 1, sizeof(char *));
 
   modvlad_client_ident_get(pool,
-                           a_conf->pipe_cli[0],
-                           a_conf->pipe_cli[1],
-                           a_conf->mutex,
+                           a_ipc,
                            a_type,
                            array);
 
@@ -71,14 +69,14 @@ void modvlad_generate_footer(request_rec *a_r)
   ap_rprintf(a_r, "  </body>\n</html>\n");
 }
 
-void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
+void modvlad_generate_form(request_rec *a_r, modvlad_ipc a_ipc)
 {
   unsigned int i;
   unsigned int slen = 0;
   unsigned int tlen = 0;
   const char *uri = NULL;
 
-  if (!a_r || !a_conf)
+  if (!a_r || MODVLAD_IPC_CCHECK(a_ipc))
     return;
 
   if (!(uri = ap_construct_url(a_r->pool, a_r->uri, a_r)))
@@ -92,9 +90,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   ap_rprintf(a_r, "      <table cols=\"3\" border=\"1\">\n");
 
   modvlad_client_seq_total(a_r->pool,
-                           a_conf->pipe_cli[0],
-                           a_conf->pipe_cli[1],
-                           a_conf->mutex,
+                           a_ipc,
                            &slen);
 
   for (i = 0; i < slen; i++) {
@@ -105,9 +101,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     st_list = apr_array_make(a_r->pool, 1, sizeof(char *));
 
     modvlad_client_seq_get(a_r->pool,
-                           a_conf->pipe_cli[0],
-                           a_conf->pipe_cli[1],
-                           a_conf->mutex,
+                           a_ipc,
                            i,
                            &st_name,
                            st_list);
@@ -136,9 +130,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   ap_rprintf(a_r, "    <h3>Available Transformations</h3>\n");
 
   modvlad_client_trans_total(a_r->pool,
-                             a_conf->pipe_cli[0],
-                             a_conf->pipe_cli[1],
-                             a_conf->mutex,
+                             a_ipc,
                              &tlen);
 
   for (i = 0; i <  tlen; i++) {
@@ -149,9 +141,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     tt_list = apr_array_make(a_r->pool, 1, sizeof(char *));
 
     modvlad_client_trans_get(a_r->pool,
-                             a_conf->pipe_cli[0],
-                             a_conf->pipe_cli[1],
-                             a_conf->mutex,
+                             a_ipc,
                              i,
                              &tt_name,
                              tt_list);
@@ -192,13 +182,13 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   ap_rprintf(a_r, "        <tr valign=\"top\">\n");
 
   ap_rprintf(a_r, "          <td>\n");
-  generate_ident_cell(a_r, a_conf, VLAD_IDENT_SUBJECT);
+  generate_ident_cell(a_r, a_ipc, VLAD_IDENT_SUBJECT);
   ap_rprintf(a_r, "          </td>\n");
   ap_rprintf(a_r, "          <td>\n");
-  generate_ident_cell(a_r, a_conf, VLAD_IDENT_ACCESS);
+  generate_ident_cell(a_r, a_ipc, VLAD_IDENT_ACCESS);
   ap_rprintf(a_r, "          </td>\n");
   ap_rprintf(a_r, "          <td>\n");
-  generate_ident_cell(a_r, a_conf, VLAD_IDENT_OBJECT);
+  generate_ident_cell(a_r, a_ipc, VLAD_IDENT_OBJECT);
   ap_rprintf(a_r, "          </td>\n");
 
   ap_rprintf(a_r, "        </tr>\n");
@@ -206,7 +196,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   ap_rprintf(a_r, "    </form>\n");
 }
 
-void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
+void modvlad_handle_form(request_rec *a_r, modvlad_ipc a_ipc)
 {
   char buffer[MODVLAD_MAXSTR_LEN];
   const char *cmd = NULL;
@@ -240,9 +230,7 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
     }
 
     if (modvlad_client_seq_add(a_r->pool,
-                               a_conf->pipe_cli[0],
-                               a_conf->pipe_cli[1],
-                               a_conf->mutex,
+                               a_ipc,
                                name,
                                parms) != MODVLAD_OK)
       ap_rprintf(a_r, "    <blink>add error</blink>\n    <br/>\n");
@@ -255,9 +243,7 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
     args = atoi(apr_table_get(tab, "index"));
 
     if (modvlad_client_seq_del(a_r->pool,
-                               a_conf->pipe_cli[0],
-                               a_conf->pipe_cli[1],
-                               a_conf->mutex,
+                               a_ipc,
                                args) != MODVLAD_OK)
       ap_rprintf(a_r, "    <blink>delete error</blink>\n    <br/>\n");
     else

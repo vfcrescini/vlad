@@ -12,7 +12,7 @@
 
 void modvlad_generate_header(request_rec *a_r);
 void modvlad_generate_footer(request_rec *a_r);
-void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf);
-void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf);
+void modvlad_generate_form(request_rec *a_r, modvlad_ipc a_ipc);
+void modvlad_handle_form(request_rec *a_r, modvlad_ipc a_ipc);
 
 #endif

@@ -103,11 +103,11 @@ static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
     conf->user_file = NULL;
     conf->policy_file = NULL;
     conf->enabled = 0;
-    conf->pipe_svr[0] = NULL;
-    conf->pipe_svr[1] = NULL;
-    conf->pipe_cli[0] = NULL;
-    conf->pipe_cli[1] = NULL;
-    conf->mutex = NULL;
+
+    memset(conf->ipc.pipe_svr, 0, sizeof(apr_file_t *) * 2);
+    memset(conf->ipc.pipe_cli, 0, sizeof(apr_file_t *) * 2);
+
+    conf->ipc.mutex = NULL;
   }
 
   return conf;
@@ -240,7 +240,7 @@ static int modvlad_access(request_rec *a_r)
   }
 
   /* check if the server process is ok */
-  if (modvlad_check(a_r->pool, conf->pipe_cli[0], conf->pipe_cli[1], conf->mutex) != MODVLAD_OK)
+  if (modvlad_check(a_r->pool, conf->ipc) != MODVLAD_OK)
     return HTTP_INTERNAL_SERVER_ERROR;
 
   /* first check if we are enabled */
@@ -287,23 +287,17 @@ static int modvlad_access(request_rec *a_r)
 
   /* before going further, make sure the object is in the kb */
   if (modvlad_client_ident_check(a_r->pool,
-                                 conf->pipe_cli[0],
-                                 conf->pipe_cli[1],
-                                 conf->mutex,
+                                 conf->ipc,
                                  realuri,
                                  VLAD_IDENT_OBJECT) != MODVLAD_OK &&
       modvlad_client_ident_check(a_r->pool,
-                                 conf->pipe_cli[0],
-                                 conf->pipe_cli[1],
-                                 conf->mutex,
+                                 conf->ipc,
                                  realuri,
                                  VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != MODVLAD_OK)
     return HTTP_NOT_FOUND;
 
   if (modvlad_client_query(a_r->pool,
-                           conf->pipe_cli[0],
-                           conf->pipe_cli[1],
-                           conf->mutex,
+                           conf->ipc,
                            a_r->user,
                            a_r->method,
                            realuri,
@@ -384,7 +378,7 @@ static int modvlad_handler(request_rec *a_r)
     return DECLINED;
 
   /* check if the server process is ok */
-  if (modvlad_check(a_r->pool, conf->pipe_cli[0], conf->pipe_cli[1], conf->mutex) != MODVLAD_OK)
+  if (modvlad_check(a_r->pool, conf->ipc) != MODVLAD_OK)
     return HTTP_INTERNAL_SERVER_ERROR;
 
   filepath = apr_pstrdup(a_r->pool, modvlad_strip_url(a_r->pool, a_r->uri));
@@ -397,7 +391,7 @@ static int modvlad_handler(request_rec *a_r)
     if (!strcmp(a_r->method, MODVLAD_ACCESS_GET)) {
       ap_set_content_type(a_r, MODVLAD_CONTENT_HEADER);
       modvlad_generate_header(a_r);
-      modvlad_generate_form(a_r, conf);
+      modvlad_generate_form(a_r, conf->ipc);
       modvlad_generate_footer(a_r);
       return OK;
     }
@@ -405,8 +399,8 @@ static int modvlad_handler(request_rec *a_r)
       ap_set_content_type(a_r, MODVLAD_CONTENT_HEADER);
       ap_setup_client_block(a_r, REQUEST_CHUNKED_DECHUNK);
       modvlad_generate_header(a_r);
-      modvlad_handle_form(a_r, conf);
-      modvlad_generate_form(a_r, conf);
+      modvlad_handle_form(a_r, conf->ipc);
+      modvlad_generate_form(a_r, conf->ipc);
       modvlad_generate_footer(a_r);
       return OK;
     }
@@ -454,13 +448,16 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
     return OK;
 
   /* create pipes */
-  apr_file_pipe_create(&(conf->pipe_cli[0]), &(conf->pipe_svr[1]), a_pconf);
-  apr_file_pipe_create(&(conf->pipe_svr[0]), &(conf->pipe_cli[1]), a_pconf);
+  apr_file_pipe_create(&(conf->ipc.pipe_cli[0]),
+                       &(conf->ipc.pipe_svr[1]),
+                       a_pconf);
+  apr_file_pipe_create(&(conf->ipc.pipe_svr[0]),
+                       &(conf->ipc.pipe_cli[1]),
+                       a_pconf);
 
   /* create mutex */
-  if (apr_proc_mutex_create(&(conf->mutex),
-                            apr_pstrdup(a_pconf,
-                                         MODVLAD_MUTEX_PATH),
+  if (apr_proc_mutex_create(&(conf->ipc.mutex),
+                            apr_pstrdup(a_pconf, MODVLAD_MUTEX_PATH),
                             APR_LOCK_DEFAULT,
                             a_pconf) != APR_SUCCESS) {
     ap_log_perror(APLOG_MARK,
@@ -499,7 +496,7 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
     }
 
     /* this should never return */
-    modvlad_server_listen(childpool, kbase, conf->pipe_svr[0], conf->pipe_svr[1]);
+    modvlad_server_listen(childpool, kbase, conf->ipc);
   }
   else if (status == APR_INPARENT) {
     /* register the child to die with this pool */
@@ -542,7 +539,7 @@ static void modvlad_childinit(apr_pool_t *a_p, server_rec *a_s)
     return;
 
   /* reinit the mutex for this process */
-  if (apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_p) != APR_SUCCESS) {
+  if (apr_proc_mutex_child_init(&(conf->ipc.mutex), MODVLAD_MUTEX_PATH, a_p) != APR_SUCCESS) {
     ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
