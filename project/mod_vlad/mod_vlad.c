@@ -33,37 +33,18 @@ static char *modvlad_get_passwd(request_rec *a_r,
 static int modvlad_authenticate(request_rec *a_r);
 static int modvlad_authorize(request_rec *a_r);
 static void modvlad_register_hooks (apr_pool_t *a_p);
-static const char *modvlad_set_enable(cmd_parms *a_cmd,
-                                      void *a_config,
-                                      int a_arg);
-static const char *modvlad_set_user_file(cmd_parms *a_cmd,
-                                         void *a_config,
-                                         const char *a_fname);
-
-static const char *modvlad_set_policy_file(cmd_parms *a_cmd,
-                                           void *a_config,
-                                           const char *a_fname);
+static const char *modvlad_set_init(cmd_parms *a_cmd,
+                                    void *a_config,
+                                    const char *a_uname,
+                                    const char *a_pname);
 
 static const command_rec modvlad_auth_cmds[] =
 {
-  AP_INIT_FLAG("VladEnable",
-                modvlad_set_enable,
+  AP_INIT_TAKE2("VladFiles",
+                modvlad_set_init,
                 NULL,
                 OR_AUTHCFG,
-               "on/off to enable/disable mod_vlad"),
-
-  AP_INIT_TAKE1("VladUserFile",
-                 modvlad_set_user_file,
-                 (void *)APR_OFFSETOF(modvlad_config_rec, user_file),
-                 OR_AUTHCFG,
-                "authentication/user file (htpasswd)"),
-
-  AP_INIT_TAKE1("VladPolicyFile",
-                modvlad_set_policy_file,
-                (void *)APR_OFFSETOF(modvlad_config_rec, policy_file),
-                OR_AUTHCFG,
-                "authorization/policy file"),
-
+                "\"user-file\" \"policy-file\""),
   {NULL},
 };
 
@@ -90,9 +71,6 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
                 "modvlad_create_dir_config: %s",
                 a_d);
 #endif
-
-  if (a_d == NULL)
-    return NULL;
 
   if ((conf = (modvlad_config_rec *) apr_palloc(a_p, sizeof(*conf)))) {
     conf->user_file = NULL;
@@ -257,23 +235,28 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
   ap_hook_auth_checker(modvlad_authorize, NULL, NULL, APR_HOOK_FIRST);
 }
 
-static const char *modvlad_set_enable(cmd_parms *a_cmd,
-                                      void *a_config,
-                                      int a_arg)
+static const char *modvlad_set_init(cmd_parms *a_cmd,
+                                    void *a_config,
+                                    const char *a_uname,
+                                    const char *a_pname)
 {
-  modvlad_config_rec *conf;
+  modvlad_config_rec *conf = NULL;
 
 #ifdef DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
                 0,
                 a_cmd->pool,
-                "modvlad_set_enable: %d",
-                a_arg);
+                "modvlad_set_init");
 #endif
 
   conf = (modvlad_config_rec *) a_config;
 
+  /* set up filenames */
+  conf->user_file = ap_server_root_relative(a_cmd->pool, a_uname);
+  conf->policy_file = ap_server_root_relative(a_cmd->pool, a_pname);
+
+  /* set up kb */
   kb_create(&(conf->kb));
   kb_init(conf->kb);
 
@@ -283,45 +266,5 @@ static const char *modvlad_set_enable(cmd_parms *a_cmd,
                             kb_destroy,
                             apr_pool_cleanup_null);
 
-#ifdef DEBUG
-  ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
-                0,
-                a_cmd->pool,
-                "create kb\n\tconf_rec: %x\n\tkb: %x",
-                (unsigned int) conf,
-                (unsigned int) conf->kb);
-#endif
-
   return NULL;
-}
-
-static const char *modvlad_set_user_file(cmd_parms *a_cmd,
-                                         void *a_config,
-                                         const char *a_fname)
-{
-#ifdef DEBUG
-  ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
-                0,
-                a_cmd->pool,
-                "modvlad_set_user_file");
-#endif
-
-  return ap_set_file_slot(a_cmd, a_config, a_fname);
-}
-
-static const char *modvlad_set_policy_file(cmd_parms *a_cmd,
-                                           void *a_config,
-                                           const char *a_fname)
-{
-#ifdef DEBUG
-  ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
-                0,
-                a_cmd->pool,
-                "modvlad_set_policy_file");
-#endif
-
-  return ap_set_file_slot(a_cmd, a_config, a_fname);
 }
