@@ -333,7 +333,7 @@ initial_stmt :
       }
 
 #ifdef VLAD_DEBUG
-      a->print(s);
+      f->print(s);
       fprintf(ferr, "initial state[%d]: %s\n", cnt_init++, s);
 #endif
 
