@@ -12,6 +12,7 @@ XFIG_SRCS=figure-01 figure-02 figure-03
 
 CLASS=svjour.cls
 STYLE=
+MISC=svglobal.clo
 
 .PHONY :    \
   all       \
@@ -55,10 +56,10 @@ $(foreach f,$(XFIG_SRCS),$(f).pdf) : $(patsubst %.pdf,%.eps,$(@))
 $(foreach f,$(XFIG_SRCS),$(f).eps) : $(patsubst %.eps,%.fig,$(@))
 	$(FIG2DEV) -L eps $(patsubst %.eps,%.fig,$(@)) $(@)
 
-policyupdater.dvi : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).eps) $(CLASS) $(STYLE)
+policyupdater.dvi : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).eps) $(CLASS) $(STYLE) $(MISC)
 	$(LATEX) policyupdater.tex
 	$(LATEX) policyupdater.tex
 
-policyupdater.pdf : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).pdf) $(CLASS) $(STYLE)
+policyupdater.pdf : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).pdf) $(CLASS) $(STYLE) $(MISC)
 	$(PDFLATEX) policyupdater.tex
 	$(PDFLATEX) policyupdater.tex
