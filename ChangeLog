@@ -1,5 +1,13 @@
 2003-03-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+	* kb/kb.h :
+
+	  - Cleanup.
+
+	  - Separated the encode and decode functions into const, holds,
+	    subst and memb.
+
 	* parser/parser.y :
 
 	  - Changed printf() to fprintf(stderr).
