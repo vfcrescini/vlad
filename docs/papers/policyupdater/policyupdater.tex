@@ -120,7 +120,7 @@
     a whole, its internal and external components, and most importantly, an
     outline of the underlying mechanisms responsible for processing of language
     ${\cal L}$ policies for query evaluation and dynamic updates. In Section
-    \ref{sec-conclusion}, the concluding remarks addresses some possible 
+    \ref{sec-conclusion}, the concluding remarks addresses some possible
     extensions to this system. The case study presented in Appendix
     \ref{app-case} shows a typical application of the PolicyUpdater system: an
     access control system for web servers. Appendix \ref{app-store} shows
@@ -1487,16 +1487,47 @@
     facts in set ${\cal F}$, i.e. $\overline{{\cal F}}$ =
     \{$\lnot\rho$ $\mid$ $\rho$ $\in$ ${\cal F}$\}.
 
-    Let $\gamma$ be an initial, constraint or update definition statement of
-    language ${\cal L}$. We then define $Eff$($\gamma$) to be the set
-    \{$a_{0}$,\ldots,$a_{n}$,$b_{0}$,\ldots,$b_{m}$\},
-    \{$c_{0}$,\ldots,$c_{o}$,$d_{0}$,\ldots,$d_{p}$\} or
-    \{$i_{0}$,\ldots,$i_{u}$,$j_{0}$,\ldots,$j_{v}$\}, respectively;
-    $Def$($\gamma$) to be the set $\emptyset$,
-    \{$g_{0}$,\ldots,$g_{s}$,$h_{0}$,\ldots,$h_{t}$\} or
-    $\emptyset$, respectively; and $Pre$($\gamma$) to be the set
-    $\emptyset$, \{$e_{0}$,\ldots,$e_{q}$,$f_{0}$,\ldots,$f_{r}$\} or
-    \{$k_{0}$,\ldots,$k_{w}$,$l_{0}$,\ldots,$l_{x}$\}, respectively.
+    Let $\gamma$ be an initial, constraint or policy update definition
+    statement of language ${\cal L}$. We then define the following functions:
+
+    \begin{vquote}
+      $Eff$($\gamma$)
+
+      =
+      \begin{math}
+        \begin{cases}
+          \mbox{\{$a_{0}$, \ldots, $a_{n}$, $b_{0}$, \ldots, $b_{m}$\}, if $\gamma$ is initially} \\
+          \mbox{\{$c_{0}$, \ldots, $c_{o}$, $d_{0}$, \ldots, $d_{p}$\}, if $\gamma$ is constraint} \\
+          \mbox{\{$i_{0}$, \ldots, $i_{u}$, $j_{0}$, \ldots, $j_{v}$\}, if $\gamma$ is update}
+        \end{cases}
+      \end{math}
+    \end{vquote}
+
+    \begin{vquote}
+      $Def$($\gamma$)
+
+      =
+      \begin{math}
+        \begin{cases}
+          \mbox{$\emptyset$, if $\gamma$ is initially} \\
+          \mbox{\{$g_{0}$, \ldots, $g_{s}$, $h_{0}$, \ldots, $h_{t}$\}, if $\gamma$ is constraint} \\
+          \mbox{$\emptyset$, if $\gamma$ is update}
+        \end{cases}
+      \end{math}
+    \end{vquote}
+
+    \begin{vquote}
+      $Pre$($\gamma$)
+
+      =
+      \begin{math}
+        \begin{cases}
+          \mbox{$\emptyset$, if $\gamma$ is initially} \\
+          \mbox{\{$e_{0}$, \ldots, $e_{q}$, $f_{0}$, \ldots, $f_{r}$\}, if $\gamma$ is constraint} \\
+          \mbox{\{$k_{0}$, \ldots, $k_{w}$, $l_{0}$, \ldots, $l_{x}$\}, if $\gamma$ is update}
+        \end{cases}
+      \end{math}
+    \end{vquote}
 
     \begin{vdefinition}
       \label{def-mutex}
@@ -1569,7 +1600,7 @@
     \end{vtheorem}
 
     \footnotetext{
-      The proof of this theorem is referred to the full version of this paper
+      The proof of this theorem is presented in the full version of this paper
       \cite{CRE}.
     }
 
@@ -1579,7 +1610,7 @@
 
     \begin{vdefinition}
       \label{def-eval}
-      Given a consistent domain description ${\cal D}_{\cal L}$, ground
+      Given a {\bf consistent} domain description ${\cal D}_{\cal L}$, ground
       query expression $\phi$ and a finite sequence list $\psi$, we say
       {\em query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
       in sequence list $\psi$ have been applied}, denoted as
