@@ -1693,6 +1693,8 @@ query holds(alice, read, file);
         and $n_i$ ($0$ $\leq$ $i$ $\leq$ $m$) is the number of entity
         identifiers of the same type as variable $i$.
 
+        [little more detail here]
+
         \begin{example}
           Given the symbol table below:
 
@@ -1701,7 +1703,7 @@ query holds(alice, read, file);
               \hline
               \textbf{ss} & \textbf{sa} & \textbf{so} & \textbf{sg} & \textbf{ag} & \textbf{og} \\
               \hline
-              alice & read & file1 & students & & \\
+              alice & read & file & students & & \\
               bob & write & & & & \\
               charlie & & & & & \\
               \hline
@@ -1710,35 +1712,75 @@ query holds(alice, read, file);
 
           grounding the following constraint:
 
+          \begin{verbatim}
+  always holds(SS0, write, file)
+    implied by
+      holds(SS0, read, file),
+      memb(SS0, write, file)
+    with absence
+      !holds(SS0, write, file)
+          \end{verbatim}
+
+          produces the following constraints table:
+
           \begin{quote}
-            \begin{math}
-              \begin{aligned}[t]
-                holds&(SS0, write, file1) \leftarrow \\
-                & holds(SS0, read, file1), \\
-                & memb(SS0, students)
-              \end{aligned}
-            \end{math}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              % line 1
+              \multirow{4}{*}{0} &
+              \textbf{exp} &
+              $holds$($alice$, $write$, $file$) \\
+              \cline{2-3}
+              % line 2
+              & 
+              \multirow{2}{*}{\textbf{pcond}} &
+              $holds$($alice$, $read$, $file$), \\
+              % line 3
+              &
+              &
+              $memb$($alice$, $students$) \\
+              \cline{2-3}
+              % line 4
+              & \textbf{ncond} & $!holds$($alice$, $write$, $file$) \\
+              \hline
+              \hline
+              % line 1
+              \multirow{4}{*}{1} &
+              \textbf{exp} &
+              $holds$($bob$, $write$, $file$) \\
+              \cline{2-3}
+              % line 2
+              & 
+              \multirow{2}{*}{\textbf{pcond}} &
+              $holds$($bob$, $read$, $file$), \\
+              % line 3
+              &
+              &
+              $memb$($bob$, $students$) \\
+              \cline{2-3}
+              % line 4
+              & \textbf{ncond} & $!holds$($bob$, $write$, $file$) \\
+              \hline
+              \hline
+              % line 1
+              \multirow{4}{*}{2} &
+              \textbf{exp} &
+              $holds$($charlie$, $write$, $file$) \\
+              \cline{2-3}
+              % line 2
+              & 
+              \multirow{2}{*}{\textbf{pcond}} &
+              $holds$($charlie$, $read$, $file$), \\
+              % line 3
+              &
+              &
+              $memb$($charlie$, $students$) \\
+              \cline{2-3}
+              % line 4
+              & \textbf{ncond} & $!holds$($charlie$, $write$, $file$) \\
+              \hline
+            \end{tabular}
           \end{quote}
-
-          yields the following 3 constraints:
-
-          \begin{quote}
-            \begin{math}
-              \begin{aligned}[t]
-                holds&(alice, write, file1) \leftarrow \\
-                & holds(alice, read, file1), \\
-                & memb(alice, students) \\
-                holds&(bob, write, file1) \leftarrow \\
-                & holds(bob, read, file1), \\
-                & memb(bob, students) \\
-                holds&(charlie, write, file1) \leftarrow \\
-                & holds(charlie, read, file1), \\
-                & memb(charlie, students)
-              \end{aligned}
-            \end{math}
-          \end{quote}
-
-
         \end{example}
 
       \subsubsection{Policy Updates}
