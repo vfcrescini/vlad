@@ -37,8 +37,6 @@ static int add_object(apr_pool_t *a_p,
                       void *a_exp,
                       const char *a_basepath,
                       const char *a_relpath);
-/* gets the document root without request_rec */
-static const char *get_docroot(apr_pool_t *a_p, server_rec *a_s);
 /* returns the parent of the given filepath */
 static const char *get_parent(apr_pool_t *a_p, const char *a_path);
 /* strips out everything after ? */
@@ -50,36 +48,37 @@ static int apache_yyinput(void *a_stream, char *a_buf, int a_max);
 
 /* initialze kb */
 int modvlad_init_kb(apr_pool_t *a_p,
-                    server_rec *a_s,
-                    modvlad_config_rec *a_conf,
+                    const char *a_userfile,
+                    const char *a_docroot,
+                    void **a_kb,
                     void **a_exp)
 {
-  if (!a_p || !a_s || !a_exp || !a_conf)
+  if (!a_p || !a_exp || !a_kb || !a_userfile || !a_docroot)
     return -1;
 
   /* create and init kb */
-  if (vlad_kb_create(&(a_conf->kb)) != VLAD_OK)
-    return -1;
-    
-  if (vlad_kb_init(a_conf->kb) != VLAD_OK)
-    return -1;
+  if (vlad_kb_create(a_kb) != VLAD_OK)
+    return -2;
+
+  if (vlad_kb_init(*a_kb) != VLAD_OK)
+    return -3;
 
   /* create an expression for those extra constraints */
   if (vlad_exp_create(a_exp) != VLAD_OK)
-    return -1;
+    return -4;
 
   /* register the kb to be destroyed with this pool */
   apr_pool_cleanup_register(a_p,
-                            a_conf->kb,
+                            *a_kb,
 			    vlad_kb_destroy,
 			    vlad_kb_destroy);
 
-  if (add_subject(a_p, a_conf->kb, a_conf->user_file))
-    return -1;
-  if (add_access(a_p, a_conf->kb))
-    return -1;
-  if (add_object(a_p, a_conf->kb, *a_exp, get_docroot(a_p, a_s), NULL))
-    return -1;
+  if (add_subject(a_p, *a_kb, a_userfile))
+    return -5;
+  if (add_access(a_p, *a_kb))
+    return -6;
+  if (add_object(a_p, *a_kb, *a_exp, a_docroot, NULL))
+    return -7;
 
   return 0;
 }
@@ -107,7 +106,7 @@ int modvlad_load_kb(apr_pool_t *a_p,
 }
 
 /* composes an expression to query */
-void *modvlad_create_query(request_rec *a_r,
+void *modvlad_create_query(apr_pool_t *a_p,
                            const char *a_subject,
                            const char *a_access,
                            const char *a_object)
@@ -115,51 +114,51 @@ void *modvlad_create_query(request_rec *a_r,
   int retval;
   void *atom = NULL;
   void *exp = NULL;
-                                                                                                                           
-  if (!a_r || !a_subject  || !a_access || !a_object)
+
+  if (!a_p || !a_subject  || !a_access || !a_object)
     return NULL;
-                                                                                                                           
+
   if ((retval = vlad_atom_create(&atom)) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
+    ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
-                  a_r,
+                  a_p,
                   "mod_vlad: could not create atom: %d",
                   retval);
     return NULL;
   }
-                                                                                                                           
+
   if ((retval = vlad_exp_create(&exp)) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
+    ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
-                  a_r,
+                  a_p,
                   "mod_vlad: could not create expression: %d",
                   retval);
     return NULL;
   }
-                                                                                                                           
+
   retval = vlad_atom_init_holds(atom, a_subject, a_access, a_object, 1);
   if (retval != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
+    ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
-                  a_r,
+                  a_p,
                   "mod_vlad: could not initialize atom: %d",
                   retval);
     return NULL;
   }
-                                                                                                                           
+
   if ((retval = vlad_exp_add(exp, atom)) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
+    ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
-                  a_r,
+                  a_p,
                   "mod_vlad: could not add atom into expression: %d",
                   retval);
     return NULL;
   }
-                                                                                                                           
+
   return exp;
 }
 
@@ -209,7 +208,7 @@ int modvlad_parse_args(apr_pool_t *a_p,
       }
       ptr++;
     }
-    
+
     if (!found)
       break;
 
@@ -238,6 +237,20 @@ int modvlad_parse_args(apr_pool_t *a_p,
   }
 
   return 0;
+}
+
+/* gets the document root without request_rec */
+const char *modvlad_docroot(apr_pool_t *a_p, server_rec *a_s)
+{
+  core_server_config *conf = NULL;
+
+  conf = (core_server_config *) ap_get_module_config(a_s->module_config,
+                                                     &core_module);
+
+  if (!conf)
+    return NULL;
+
+  return apr_pstrdup(a_p, conf->ap_document_root);
 }
 
 /* register the users into the kb */
@@ -420,7 +433,7 @@ static int add_object(apr_pool_t *a_p,
     const char *tmppath = NULL;
 
     /* ignore ".", ".." and the admin trigger */
-    if (!strcmp(".", dinfo.name) || 
+    if (!strcmp(".", dinfo.name) ||
         !strcmp("..", dinfo.name) ||
         !strcmp(MODVLAD_ADMIN_DIRNAME, dinfo.name))
       continue;
@@ -428,7 +441,7 @@ static int add_object(apr_pool_t *a_p,
     /* append the current dir with the relative path */
     tmppath = apr_pstrcat(a_p,
                           realrelpath,
-                          (MODVLAD_LASTCHAR(realrelpath) == '/' ? "" : "/"), 
+                          (MODVLAD_LASTCHAR(realrelpath) == '/' ? "" : "/"),
                           dinfo.name,
                           NULL);
 
@@ -467,20 +480,6 @@ static int add_object(apr_pool_t *a_p,
   apr_dir_close(pdir);
 
   return 0;
-}
-
-/* gets the document root without request_rec */
-static const char *get_docroot(apr_pool_t *a_p, server_rec *a_s)
-{
-  core_server_config *conf = NULL;
-
-  conf = (core_server_config *) ap_get_module_config(a_s->module_config,
-                                                     &core_module);
-
-  if (!conf)
-    return NULL;
-
-  return apr_pstrdup(a_p, conf->ap_document_root);
 }
 
 /* returns the parent of the given filepath */

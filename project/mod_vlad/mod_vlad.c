@@ -20,6 +20,7 @@
 #include "mod_vlad.h"
 #include "util.h"
 #include "admin.h"
+#include "proc.h"
 
 /* including unistd.h causes compiler warnings so we explicitly declare here */
 #ifndef _UNISTD_H
@@ -98,8 +99,12 @@ static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
   if ((conf = (modvlad_config_rec *) apr_palloc(a_p, sizeof(*conf)))) {
     conf->user_file = NULL;
     conf->policy_file = NULL;
-    conf->kb = NULL;
     conf->enabled = 0;
+    conf->pipe_svr[0] = NULL;
+    conf->pipe_svr[1] = NULL;
+    conf->pipe_cli[0] = NULL;
+    conf->pipe_cli[1] = NULL;
+    conf->mutex = NULL;
   }
 
   return conf;
@@ -195,7 +200,6 @@ static int modvlad_check_passwd(request_rec *a_r,
 
 static int modvlad_access(request_rec *a_r)
 {
-  int retval;
   unsigned char qres;
   const char *authline = NULL;
   const char *passwd = NULL;
@@ -203,7 +207,6 @@ static int modvlad_access(request_rec *a_r)
   const char *filepath = NULL;
   const char *rootpath = NULL;
   modvlad_config_rec *conf = NULL;
-  void *exp;
 
   ap_log_rerror(APLOG_MARK,
                 APLOG_INFO,
@@ -236,6 +239,9 @@ static int modvlad_access(request_rec *a_r)
   if (!conf->enabled)
     return DECLINED;
 
+  /* mutex stuff */
+  apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_r->pool);
+
   /* parse the incoming header to get the authorization line */
   if ((authline = apr_table_get(a_r->headers_in, "Authorization"))) {
     ap_getword(a_r->pool, &authline, ' ');
@@ -257,7 +263,8 @@ static int modvlad_access(request_rec *a_r)
                   apr_pstrcat(a_r->pool,
                               "Basic realm=\"",
                               MODVLAD_REALM,
-                              "\""));
+                              "\"",
+                              NULL));
     return HTTP_UNAUTHORIZED;
   }
 
@@ -273,28 +280,22 @@ static int modvlad_access(request_rec *a_r)
   if (!strcmp(a_r->user, MODVLAD_ADMIN_USERNAME))
     return OK;
 
+#if 0
   /* before going further, make sure the object is in the kb */
   if (vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT) != VLAD_OK &&
       vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != VLAD_OK) {
     return HTTP_NOT_FOUND;
   }
+#endif
 
-  /* compose query expression */
-  exp = modvlad_create_query(a_r, a_r->user, a_r->method, realuri);
-  if (!exp)
-    return HTTP_INTERNAL_SERVER_ERROR;
-
-  /* finally, make the query */
-#ifndef MODVLAD_DEBUG
-  if ((retval = vlad_kb_query_evaluate(conf->kb, exp, &qres)) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_r,
-                  "mod_vlad: could not evaluate query: %d",
-                  retval);
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
+  modvlad_client_query(a_r->pool,
+                       conf->pipe_cli[0],
+                       conf->pipe_cli[1],
+                       conf->mutex,
+                       a_r->user,
+                       a_r->method,
+                       realuri,
+                       &qres);
 
   switch(qres) {
     case VLAD_RESULT_TRUE :
@@ -328,28 +329,6 @@ static int modvlad_access(request_rec *a_r)
                     realuri);
       return MODVLAD_DEFAULTACTION;
   }
-#else
-  if ((retval = vlad_kb_query_generate(conf->kb, exp, stderr)) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_r,
-                  "mod_vlad: could not evaluate query: %d",
-                  retval);
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
-
-  fflush(stderr);
-
-  ap_log_rerror(APLOG_MARK,
-                APLOG_NOTICE,
-                0,
-                a_r,
-                "mod_vlad: using default action on request subject=%s access=%s object=%s",
-                a_r->user,
-                a_r->method,
-                realuri);
-#endif
 
   return MODVLAD_DEFAULTACTION;
 }
@@ -385,6 +364,9 @@ static int modvlad_handler(request_rec *a_r)
   if (!conf->enabled)
     return DECLINED;
 
+  /* mutex stuff */
+  apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_r->pool);
+
   filepath = apr_pstrdup(a_r->pool, modvlad_strip_url(a_r->pool, a_r->uri));
   apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
 
@@ -418,11 +400,10 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
                               apr_pool_t *a_ptmp,
                               server_rec *a_s)
 {
-  int retval;
   apr_status_t status;
+  const char *docroot = NULL;
   modvlad_config_rec *conf = NULL;
-  void *const_exp = NULL;
-  apr_file_t *polfile = NULL;
+  apr_proc_t *proc = NULL;
 
   /* it seems that this function is called twice, once on 2 processes.
    * since the first one seems to die anyway, we only initialize the
@@ -446,80 +427,48 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
   if (!conf->enabled)
     return DECLINED;
 
-  /* initialize the kb */
-  retval = modvlad_init_kb(a_pconf,
-                           a_s,
-                           conf,
-                           &const_exp);
+  /* create pipes */
+  apr_file_pipe_create(&(conf->pipe_svr[1]), &(conf->pipe_cli[0]), a_pconf);
+  apr_file_pipe_create(&(conf->pipe_cli[1]), &(conf->pipe_svr[0]), a_pconf);
 
-  if (retval) {
-    ap_log_perror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_plog,
-                  "mod_vlad: error occurred while initializing kb");
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
-
-  /* open the policy file */
-  status = apr_file_open(&polfile,
-                        conf->policy_file,
-                        APR_READ,
-                        APR_OS_DEFAULT,
+  /* create mutex */
+  apr_proc_mutex_create(&(conf->mutex),
+                        apr_pstrdup(a_pconf,
+                                    MODVLAD_MUTEX_PATH),
+                        APR_LOCK_DEFAULT,
                         a_pconf);
 
-  if (status != APR_SUCCESS) {
-    ap_log_perror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_plog,
-                  "mod_vlad: error occurred while opening policy file");
+  /* get document root */
+  docroot = modvlad_docroot(a_pconf, a_s);
+
+  /* now f**k (fork?) off */
+  proc = apr_palloc(a_pconf, sizeof(apr_proc_t *));
+  status = apr_proc_fork(proc, a_pconf);
+
+  if (status == APR_INCHILD) {
+    apr_pool_t *childpool = NULL;
+    void *kbase = NULL;
+
+    apr_pool_create(&childpool, NULL);
+
+    modvlad_server_init(childpool,
+                        &kbase,
+                        docroot,
+                        conf->user_file,
+                        conf->policy_file);
+
+    modvlad_server_listen(childpool, kbase, conf->pipe_svr[0], conf->pipe_svr[1]);
+
+    apr_pool_destroy(childpool);
+  }
+  else if (status == APR_INPARENT) {
+    /* register the child to die with this process */
+    apr_pool_note_subprocess(a_pconf, proc, APR_KILL_AFTER_TIMEOUT);
+    return OK;
+  }
+  else {
     return HTTP_INTERNAL_SERVER_ERROR;
   }
-
-  /* now load the kb with the contents of the policy file */
-  retval = modvlad_load_kb(a_pconf,
-                           polfile,
-                           conf->kb,
-                           const_exp);
-
-  if (retval) {
-    ap_log_perror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_plog,
-                  "mod_vlad: error occurred while parsing the policy file");
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
-
-  /* cleanup */
-  apr_file_close(polfile);
-
- /* finally, compute */
-#ifdef MODVLAD_DEBUG
-  retval = vlad_kb_compute_generate(conf->kb, stderr);
-  fflush(stderr);
-  if (retval != VLAD_OK) {
-    ap_log_perror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_plog,
-                  "mod_vlad: could not compute kb (%d)",
-                  retval);
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
-#else
-  retval = vlad_kb_compute_evaluate(conf->kb);
-  if (retval != VLAD_OK) {
-    ap_log_perror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_plog,
-                  "mod_vlad: could not compute kb (%d)",
-                  retval);
-    return HTTP_INTERNAL_SERVER_ERROR;
-  }
-#endif
 
   return OK;
 }

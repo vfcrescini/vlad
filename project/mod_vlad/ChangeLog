@@ -1,3 +1,16 @@
+2003-07-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* admin.c :
+	* mod_vlad.c :
+	* mod_vlad.h :
+	* proc.c :
+	* proc.h :
+	* util.c :
+	* util.h :
+
+	  - Added pipes, forks, mutex's, polls and other trickery to allow
+	    the module to work in a multi-process environment. VERY messy.
+
 2003-07-03  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Makefile.in :

@@ -15,11 +15,12 @@
 #define MODVLAD_MAXMSG_LEN  2048
 
 #define MODVLAD_DELIMITER  '\004'
-#define MODVLAD_TERMINATOR '\000'
+#define MODVLAD_TERMINATOR '\002'
 
 /* functions to send a request (and get reply) to/from the kb process */
 
-int modvlad_client_query(apr_file_t *a_fdin,
+int modvlad_client_query(apr_pool_t *a_p,
+                         apr_file_t *a_fdin,
                          apr_file_t *a_fdout,
                          apr_proc_mutex_t *a_mx,
                          const char *a_sub,
@@ -27,48 +28,55 @@ int modvlad_client_query(apr_file_t *a_fdin,
                          const char *a_obj,
                          unsigned char *a_res);
 
-int modvlad_client_trans_total(apr_file_t *a_fdin,
+int modvlad_client_trans_total(apr_pool_t *a_p,
+                               apr_file_t *a_fdin,
                                apr_file_t *a_fdout,
                                apr_proc_mutex_t *a_mx,
                                unsigned int *a_tot);
 
-int modvlad_client_trans_get(apr_file_t *a_fdin,
+int modvlad_client_trans_get(apr_pool_t *a_p,
+                             apr_file_t *a_fdin,
                              apr_file_t *a_fdout,
                              apr_proc_mutex_t *a_mx,
                              unsigned int a_index,
                              const char **a_name,
-                             apr_array_header_t *a_parms);
+                             unsigned int *a_tot);
 
-int modvlad_client_ident_total(apr_file_t *a_fdin,
+int modvlad_client_ident_total(apr_pool_t *a_p,
+                               apr_file_t *a_fdin,
                                apr_file_t *a_fdout,
                                apr_proc_mutex_t *a_mx,
                                unsigned int *a_tot);
 
-int modvlad_client_ident_get(apr_file_t *a_fdin,
+int modvlad_client_ident_get(apr_pool_t *a_p,
+                             apr_file_t *a_fdin,
                              apr_file_t *a_fdout,
                              apr_proc_mutex_t *a_mx,
                              unsigned int a_index,
                              const char **a_name);
 
-int modvlad_client_seq_total(apr_file_t *a_fdin,
+int modvlad_client_seq_total(apr_pool_t *a_p,
+                             apr_file_t *a_fdin,
                              apr_file_t *a_fdout,
                              apr_proc_mutex_t *a_mx,
                              unsigned int *a_tot);
 
-int modvlad_client_seq_get(apr_file_t *a_fdin,
+int modvlad_client_seq_get(apr_pool_t *a_p,
+                           apr_file_t *a_fdin,
                            apr_file_t *a_fdout,
                            apr_proc_mutex_t *a_mx,
                            unsigned int a_index,
-                           const char *a_name,
-                           apr_array_header_t *a_parms);
+                           const char **a_name);
 
-int modvlad_client_seq_add(apr_file_t *a_fdin,
+int modvlad_client_seq_add(apr_pool_t *a_p,
+                           apr_file_t *a_fdin,
                            apr_file_t *a_fdout,
                            apr_proc_mutex_t *a_mx,
                            const char *a_name,
                            apr_array_header_t *a_parms);
 
-int modvlad_client_seq_del(apr_file_t *a_fdin,
+int modvlad_client_seq_del(apr_pool_t *a_p,
+                           apr_file_t *a_fdin,
                            apr_file_t *a_fdout,
                            apr_proc_mutex_t *a_mx,
                            unsigned int a_index);

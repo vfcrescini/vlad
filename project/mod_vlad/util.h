@@ -14,8 +14,9 @@
 
 /* initialze kb */
 int modvlad_init_kb(apr_pool_t *a_p,
-                    server_rec *a_s,
-                    modvlad_config_rec *a_conf,
+                    const char *a_userfile,
+                    const char *a_docroot,
+                    void **a_kb,
                     void **a_exp);
 
 /* read the policy file into kb */
@@ -25,11 +26,11 @@ int modvlad_load_kb(apr_pool_t *a_p,
                     void *a_exp);
 
 /* composes an expression to query */
-void *modvlad_create_query(request_rec *a_r,
+void *modvlad_create_query(apr_pool_t *a_p,
                            const char *a_subject,
                            const char *a_access,
                            const char *a_object);
- 
+
 /* strips out trailing slashes and/or everything after a ? */
 const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url);
 
@@ -37,4 +38,8 @@ const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url);
 int modvlad_parse_args(apr_pool_t *a_p,
                        const char *a_str,
                        apr_table_t **a_tab);
+
+/* gets the document root without request_rec */
+const char *modvlad_docroot(apr_pool_t *a_p, server_rec *a_s);
+
 #endif
