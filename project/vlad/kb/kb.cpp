@@ -18,7 +18,6 @@ kb::kb()
   itable = NULL;
   ctable = NULL;
   ttable = NULL;
-  qtable = NULL;
   stage = 0;
 }
 
@@ -35,9 +34,6 @@ kb::~kb()
 
   if (ttable != NULL)
     delete ttable;
-
-  if (qtable != NULL)
-    delete qtable;
 }
 
 /* (re)init kb */
@@ -74,14 +70,6 @@ int kb::init()
     delete ttable;
 
   if ((ttable = VLAD_NEW(transtab())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* query table */
-
-  if (qtable != NULL)
-    delete qtable;
-
-  if ((qtable = VLAD_NEW(querytab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   stage = 1;
@@ -333,63 +321,6 @@ int kb::add_transtab(const char *n,
 
   /* if all went  well, add to the trans table */
   return ttable->add(name, vlist, precond, postcond);
-}
-
-/* add a query in the query table */
-int kb::add_querytab(expression *e, transreflist *r)
-{
-  int retval;
-  unsigned int i;
-  expression *exp;
-  transreflist *rlist;
-
-  /* we only allow this function after transtab is closed */
-  if (stage != 5)
-    return VLAD_FAILURE;
-
-  if (e == NULL)
-    return VLAD_NULLPTR;
-
-  /* verify and copy query expression */
-  if ((exp = VLAD_NEW(expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  for (i = 0; i < e->length(); i++) {
-    atom *tmp1;
-    atom *tmp2;
-    if ((retval = e->get(i, &tmp1)) != VLAD_OK)
-      return retval;
-    if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
-      return retval;
-    if ((tmp2 = VLAD_NEW(atom())) == NULL)
-      return VLAD_MALLOCFAILED;
-    if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
-      return retval;
-    if ((retval = exp->add(tmp2)) != VLAD_OK)
-      return retval;
-  }
-
-  /* now verify and copy transref */
-  if ((rlist = VLAD_NEW(transreflist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  if (r != NULL) {
-    for (i = 0; i < r->length(); i++) {
-      transref *tmp1;
-      transref *tmp2;
-      if ((retval = r->get(i, &tmp1)) != VLAD_OK)
-        return retval;
-      if ((retval = verify_transref(tmp1)) != VLAD_OK)
-        return retval;
-      if ((tmp2 = VLAD_NEW(transref(tmp1->get_name(), tmp1->get_ilist()))) == NULL)
-        return VLAD_MALLOCFAILED;
-      if ((retval = rlist->add(tmp2)) != VLAD_OK)
-        return retval;
-    }
-  }
-
-  /* if all went well, add to querytab */
-  return qtable->add(exp, rlist);
 }
 
 /* make sure atom a is valid */

@@ -1,5 +1,20 @@
 2003-04-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/Makefile.in :
+	* kb/sequence.h :
+	* kb/sequence.cpp :
+
+	  - New class to store transformation sequences that was previously
+	    present in the querytab.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* kb/querytab.cpp :
+	* parser/parser.y :
+
+	  - Took out querytab. Apparently, there is no reason to store
+	    the queries. They can be evaluated as they are parsed.
+
 	* common/list.cpp :
 	* common/list.h :
 	* common/numberlist.cpp :

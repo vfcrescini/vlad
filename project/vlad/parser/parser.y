@@ -41,7 +41,7 @@ int yylex(void);
   expression *exp;
   stringlist *vlist;
   transref *tref;
-  transreflist *treflist;
+  sequence *tseq;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -88,8 +88,8 @@ int yylex(void);
 %type <vlist> trans_ref_ident_args
 %type <vlist> trans_ref_ident_list
 %type <tref> trans_ref_def
-%type <treflist> trans_ref_list
-%type <treflist> after_clause
+%type <tseq> trans_ref_list
+%type <tseq> after_clause
 
 %start program
 
@@ -542,11 +542,6 @@ query_stmt :
     char r[10240];
 #endif
 
-    if ((retval = kbase.add_querytab($2, $3)) != VLAD_OK) {
-      fprintf(yyerr, "internal error: %d\n", retval);
-      return retval;
-    }
-
 #ifdef DEBUG
     $2->print(q);
     if ($3 != NULL)
@@ -578,7 +573,7 @@ trans_ref_list :
   trans_ref_def {
     int retval;
 
-    if (($$ = VLAD_NEW(transreflist())) == NULL) {
+    if (($$ = VLAD_NEW(sequence())) == NULL) {
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     }
@@ -602,6 +597,7 @@ trans_ref_def :
   VLAD_SYM_IDENTIFIER VLAD_SYM_OPEN_PARENT trans_ref_ident_args VLAD_SYM_CLOSE_PARENT {
     char *name;
 
+    /* first allocate memory for the name */
     if ((name = VLAD_STRING_MALLOC($1)) == NULL) {
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
@@ -609,6 +605,7 @@ trans_ref_def :
 
     strcpy(name, $1);
  
+    /* then add the entire thing into a transref */
     if (($$ = VLAD_NEW(transref(name, $3))) == NULL) {
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;

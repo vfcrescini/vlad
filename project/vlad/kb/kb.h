@@ -9,10 +9,10 @@
 #include <atom.h>
 #include <expression.h>
 #include <stringlist.h>
+#include <sequence.h>
 #include <symtab.h>
 #include <consttab.h>
 #include <transtab.h>
-#include <querytab.h>
 
 class kb {
   public :
@@ -39,14 +39,11 @@ class kb {
                      stringlist *v,
                      expression *pr,
                      expression *po);
-    /* add a query in the query table */
-    int add_querytab(expression *e, transreflist *r);
   private :
     symtab *stable;
     expression *itable;
     consttab *ctable;
     transtab *ttable;
-    querytab *qtable;
     unsigned char stage;
     /* make sure atom a is valid */
     int kb::verify_atom(atom *a, stringlist *v);
