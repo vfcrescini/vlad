@@ -1536,6 +1536,18 @@ query holds(alice, read, file);
           starting at index 0, and the group list elements offset by the
           length of the single list.
 
+          In addition to the data structure, the symbol table also provides
+          the following functions:
+
+          \begin{itemize}
+            \item
+              $find(identifier, type)$ returns true if $identifier$ of type
+              $type$ is stored in the symbol table.
+            \item
+              $type(identifier)$ returns the identifier type (one of
+              $\{ss|as|os|sg|ag|og\}$).
+          \end{itemize}
+
         \paragraph{Policy Base.}
 
           When a language ${\cal L}$ program is parsed, each of the facts,
@@ -2051,6 +2063,24 @@ query holds(alice, read, file);
               \end{aligned}
             \end{math}
           \end{quote}
+
+          This procedure can also be extended to assign indices to facts in
+          states after $S_{0}$. The indices of facts in state $S_{n}$ is offset
+          by the total number of facts in $S_{n - 1}$. Generally, we define
+          the $encode$ function:
+
+          \begin{alltt}
+FUNCTION \(encode\)(\(fact\))
+  CASE \(fact.type\) OF
+    \(holds\) : 
+      \(fact\).\(holds\).\(sub\)
+      \(fact\).\(holds\).\(acc\)
+      \(fact\).\(holds\).\(memb\)
+    \(memb\) :
+    \(subset\) :
+  ENDCASE
+ENDFUNCTION
+          \end{alltt}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
