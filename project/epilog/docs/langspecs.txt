@@ -200,5 +200,9 @@ Language Specifications
       is <policy-expression> 
       after <trans-identifier-1>, <trans-identifier-2>, ...
 
+    Or, to query the initial state:
+
+      is <policy-expression> 
+
     The statement will return one of the following: true, false or ?
 
