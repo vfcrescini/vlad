@@ -310,6 +310,7 @@ static int modvlad_access(request_rec *a_r)
                   0,
                   a_r,
                   "mod_vlad: unable to query kb");
+    return HTTP_INTERNAL_SERVER_ERROR;
   }
 
   switch(qres) {
