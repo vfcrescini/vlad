@@ -8,11 +8,12 @@
 
 #include <identifier.h>
 
-#define VLAD_ATOM_NULL   0
+/* atom type */
 #define VLAD_ATOM_HOLDS  1
 #define VLAD_ATOM_MEMBER 2
 #define VLAD_ATOM_SUBSET 3
 
+/* convenience macros */
 #define VLAD_ATOM_IS_TYPE_VALID(X) (((X) > 0) && ((X) < 4))
 #define VLAD_ATOM_IS_HOLDS(X)      ((X).get_type() == VLAD_ATOM_HOLDS)
 #define VLAD_ATOM_IS_MEMBER(X)     ((X).get_type() == VLAD_ATOM_MEMBER)
@@ -21,25 +22,25 @@
 class atom : public list_item
 {
   public :
-    atom();
     atom(unsigned char ty, bool tr);
     ~atom();
-    virtual bool verify() = 0;
+    virtual bool verify(bool ground) = 0;
     virtual bool cmp(list_item *item) = 0;
     unsigned char get_type();
     bool get_truth();
-  private :
+  protected :
+    /* one of the following: holds = 1, member = 2 or subset = 3 */
     unsigned char type;
+    /* whether the atom or its negation is true */
     bool truth;
 } ;
 
 class holds_atom : public atom
 {
   public :
-    holds_atom();
     holds_atom(identifier *s, identifier *a, identifier *o, bool t);
     ~holds_atom();
-    bool verify();
+    bool verify(bool ground);
     void get(identifier **s, identifier **a, identifier **o);
     bool cmp(list_item *item);
   private :
@@ -51,10 +52,9 @@ class holds_atom : public atom
 class member_atom : public atom
 {
   public :
-    member_atom();
     member_atom(identifier *e, identifier *g, bool t);
     ~member_atom();
-    bool verify();
+    bool verify(bool ground);
     void get(identifier **e, identifier **g);
     bool cmp(list_item *item);
   private :
@@ -65,10 +65,9 @@ class member_atom : public atom
 class subset_atom : public atom
 {
   public :
-    subset_atom();
     subset_atom(identifier *g1, identifier *g2, bool t);
     ~subset_atom();
-    bool verify();
+    bool verify(bool ground);
     void get(identifier **g1, identifier **g2);
     bool cmp(list_item *item);
   private :
