@@ -8,7 +8,7 @@
 
 /* version */
 
-#define EPI_VERSION "0.9.5"
+#define EPI_VERSION         "0.9.5"
 
 /* query result codes */
 
@@ -41,5 +41,9 @@
 #define EPI_NEGIMPLIED     -7
 /* there is something wrong with the input parameters */
 #define EPI_INVALIDINPUT   -8
+
+/* convenience macro(s) */
+#define EPI_ADT_MALLOC(X)    ((X *) malloc(sizeof(X)))
+#define EPI_STRING_MALLOC(X) ((char *) malloc(sizeof(char) * (strlen(X) + 1)))
 
 #endif
