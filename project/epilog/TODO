@@ -1,11 +1,9 @@
 EPILOG TODO
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+- Add error codes in libs instead of just 0 and -1.
+
 - Clean up ground expressions.
-
-- Enable policy proposition statements.
-
-- Add a query/search function in expression. 
 
 - Check malloc/free.
 
