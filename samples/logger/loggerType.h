@@ -12,7 +12,8 @@
 #define LOGGERTYPE_LOGNULL  0
 #define LOGGERTYPE_LOGINFO  1
 #define LOGGERTYPE_LOGTRACE 2
-#define LOGGERTYPE_LOGERROR 3
+#define LOGGERTYPE_LOGWARN  3
+#define LOGGERTYPE_LOGERROR 4
 
 class loggerType
 {
@@ -25,6 +26,7 @@ class loggerType
     
     void logInfo(char *, ...);
     void logTrace(char *, ...);
+    void logWarn(char *, ...);
     void logError(char *, ...);
 
   private:

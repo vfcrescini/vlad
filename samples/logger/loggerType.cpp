@@ -10,6 +10,7 @@
 
 #define LOGGERTYPE_STRINGINFO    "Logger Info  :"
 #define LOGGERTYPE_STRINGTRACE   "Logger Trace :"
+#define LOGGERTYPE_STRINGWARN    "Logger Warn  :"
 #define LOGGERTYPE_STRINGERROR   "Logger Error :"
 #define LOGGERTYPE_STRINGHEADER  "---------------------------------------"
 #define LOGGERTYPE_STRINGTRAILER "---------------------------------------"
@@ -73,6 +74,23 @@ void loggerType::logTrace(char *aFormat, ...)
     va_start(argPointer, aFormat);
     fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGHEADER);
     fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRACE);
+    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRAILER);
+    vfprintf(mLogFileStream, aFormat, argPointer);
+    va_end(argPointer);    
+  }
+}
+
+void loggerType::logWarn(char *aFormat, ...)
+{
+  va_list argPointer;
+  
+  if (aFormat &&
+      mLogLevel >= LOGGERTYPE_LOGWARN &&
+      mLogFileStream) {
+      
+    va_start(argPointer, aFormat);
+    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGHEADER);
+    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGWARN);
     fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRAILER);
     vfprintf(mLogFileStream, aFormat, argPointer);
     va_end(argPointer);    
