@@ -8,6 +8,11 @@
 	  - Renamed "elt" or "element" to "memb" or "member" ;
 	    "cont" or "containment" to "subst" or "subset".
 
+	* docs/bnf :
+	* parser/parser.y :
+
+	  - Took out association/parentheses from the language and parser.
+
 2002-07-25  Vino Crescini  <vfcrescini@froggy.com>
 
 	* ChangeLog :

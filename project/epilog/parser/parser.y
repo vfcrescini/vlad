@@ -116,18 +116,13 @@ logical_op :
   ;
 
 comp_exp :
-  comp_exp logical_op comp_boolean_exp
+  comp_boolean_exp logical_op comp_exp 
   | comp_boolean_exp
   ;
 
 comp_boolean_exp :
-  EPI_SYM_NOT comp_logical_exp
-  | comp_logical_exp
-  ;
-
-comp_logical_exp :
-  comp_atom
-  | EPI_SYM_OPEN_PARENT comp_exp EPI_SYM_CLOSE_PARENT
+  EPI_SYM_NOT comp_atom
+  | comp_atom
   ;
 
 comp_atom :
@@ -150,18 +145,13 @@ comp_memb :
   ;
 
 ground_exp : 
-  ground_exp logical_op ground_boolean_exp 
+  ground_boolean_exp logical_op ground_exp
   | ground_boolean_exp
   ;
 
 ground_boolean_exp :
-  EPI_SYM_NOT ground_logical_exp 
-  | ground_logical_exp
-  ;
-
-ground_logical_exp :
-  ground_atom 
-  | EPI_SYM_OPEN_PARENT ground_exp EPI_SYM_CLOSE_PARENT
+  EPI_SYM_NOT ground_atom
+  | ground_atom
   ;
 
 ground_atom :

@@ -102,12 +102,10 @@ BNF
                         
 <logical-op>            : <and>
                         
-<comp-exp>              : <comp-exp> <logical-op> <comp-boolean-exp> |
+<comp-exp>              : <comp-boolean-exp> <logical-op> <comp-exp> |
                           <comp-boolean-exp>
                         
-<comp-boolean-exp>      : <not> <comp-logical-exp> | <comp-boolean-exp>
-                        
-<comp-logical-exp>      : <open-parent> <comp-exp> <close-parent> | <comp-atom>
+<comp-boolean-exp>      : <not> <comp-atom> | <comp-atom>
                         
 <comp-atom>             : <comp-holds> | <comp-subst> | <comp-memb> | 
                           <logical-const>
@@ -122,13 +120,10 @@ BNF
 <comp-memb>             : <member> <open-parent> <comp-single-var-ident>
                           <comma> <comp-group-var-ident> <close-parent>
                         
-<ground-exp>            : <ground-exp> <logical-op> <ground-boolean-exp> |
+<ground-exp>            : <ground-boolean-exp> <logical-op> <ground-exp> |
                           <ground-boolean-exp>
                         
-<ground-boolean-exp>    : <not> <ground-logical-exp> | <ground-logical-exp>
-                        
-<ground-logical-exp>    : <open-parent> <ground-exp> <close-parent> | 
-                          <ground-atom>
+<ground-boolean-exp>    : <not> <ground-atom> | <ground-atom>
                         
 <ground-atom>           : <ground-holds> | <ground-subst> | ground-memb> | 
                           <logical-const>
