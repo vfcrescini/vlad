@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
+#include <cstdarg>
 #include <new>
 
 #include <config.h>
@@ -17,7 +18,7 @@ wrapper::wrapper()
 {
   pr_smod = NULL;
   pr_api = NULL;
-  stage = 0;
+  pr_stage = 0;
 }
 
 wrapper::~wrapper()
@@ -32,7 +33,7 @@ int wrapper::init()
 {
   Atom *tmp_atom;
 
-  if (stage > 0) {
+  if (pr_stage > 0) {
     if (pr_smod != NULL)
       delete pr_smod;
     if (pr_api != NULL)
@@ -58,7 +59,7 @@ int wrapper::init()
 
   pr_api->set_name(tmp_atom, VLAD_STR_FALSE);
 
-  stage = 1;
+  pr_stage = 1;
 
   return VLAD_OK;
 }
@@ -66,7 +67,7 @@ int wrapper::init()
 /* after this no more calls to add_atom() are allowed */
 int wrapper::close_atom()
 {
-  if (stage != 1)
+  if (pr_stage != 1)
     return VLAD_FAILURE;
 
   /* now we add the rule that the atom "true" is always true */
@@ -75,7 +76,7 @@ int wrapper::close_atom()
   pr_api->add_head(pr_api->get_atom(VLAD_STR_TRUE));
   pr_api->end_rule();
 
-  stage = 2;
+  pr_stage = 2;
 
   return VLAD_OK;
 }
@@ -83,7 +84,7 @@ int wrapper::close_atom()
 /* after this no more calls to add_rule_*() are allowed */
 int wrapper::close_rule()
 {
-  if (stage != 2)
+  if (pr_stage != 2)
     return VLAD_FAILURE;
 
   pr_api->done();
@@ -101,92 +102,71 @@ int wrapper::close_rule()
     pr_smod->printAnswer();
 #endif
 
-  stage = 3;
+  pr_stage = 3;
 
   return VLAD_OK;
 }
 
 /* register an atom */
-int wrapper::add_atom(unsigned int a)
+int wrapper::add_atom(unsigned int a_atom)
 {
   Atom *tmp_atom;
   char tmp_name[VLAD_MAXLEN_NUM];
 
-  if (stage != 1)
+  if (pr_stage != 1)
     return VLAD_FAILURE;
 
   if ((tmp_atom = pr_api->new_atom()) == NULL)
     return VLAD_MALLOCFAILED;
 
-  sprintf(tmp_name, "%d", a);
+  sprintf(tmp_name, "%d", a_atom);
   pr_api->set_name(tmp_atom, tmp_name);
 
   return VLAD_OK;
 }
-/* add a single axiom (always true or always false) */
-int wrapper::add_axiom(unsigned int a, bool t)
+
+/* add an axiom (always true or always false) */
+int wrapper::add_axiom(bool a_tr, unsigned int a_count, ...)
 {
-  char tmp_name[VLAD_MAXLEN_NUM];
-
-  if (stage != 2)
-    return VLAD_FAILURE;
-
-  sprintf(tmp_name, "%d", a);
-
-  pr_api->begin_rule(BASICRULE);
-
-  if (t) {
-    /* body is TRUE */
-    pr_api->add_head(pr_api->get_atom(tmp_name));
-    pr_api->add_body(pr_api->get_atom(VLAD_STR_TRUE), true);
-  }
-  else {
-    /* head is FALSE */
-    pr_api->add_head(pr_api->get_atom(VLAD_STR_FALSE));
-    pr_api->add_body(pr_api->get_atom(tmp_name), true);
-  }
-
-  pr_api->end_rule();
-
-  return VLAD_OK;
-}
-
-/* add multiple axiom (always true or always false) */
-int wrapper::add_axiom(numberlist *a, bool t)
-{
-  int retval;
   unsigned int i;
-  unsigned int tmp_num;
   char tmp_name[VLAD_MAXLEN_NUM];
+  va_list tmp_ap;
 
-  if (stage != 2)
+  if (pr_stage != 2)
     return VLAD_FAILURE;
 
   /* of course if the list is empty, we do nothing */
-  if (VLAD_LIST_LENGTH(a) == 0)
+  if (a_count == 0)
     return VLAD_OK;
 
-  if (t) {
+  if (a_tr) {
+    va_start(tmp_ap, a_count);
+
     /* if positive, we simply add each axiom */
-    for (i = 0; i < VLAD_LIST_LENGTH(a); i++) {
-      if ((retval = a->get(i, &tmp_num)) != VLAD_OK)
-        return retval;
-      if ((retval = add_axiom(tmp_num, true)) != VLAD_OK)
-        return retval;
+    for (i = 0; i < a_count; i++) {
+      sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
+
+      pr_api->begin_rule(BASICRULE);
+      pr_api->add_head(pr_api->get_atom(tmp_name));
+      pr_api->add_body(pr_api->get_atom(VLAD_STR_TRUE), true);
+      pr_api->end_rule();
     }
+
+    va_end(tmp_ap);
   }
   else {
     /* false, meaning each atom in the list cannot all be true */
     pr_api->begin_rule(BASICRULE);
-
     pr_api->add_head(pr_api->get_atom(VLAD_STR_FALSE));
 
-    for (i = 0; i < VLAD_LIST_LENGTH(a); i++) {
-      if ((retval = a->get(i, &tmp_num)) != VLAD_OK)
-        return retval;
-      sprintf(tmp_name, "%d", tmp_num);
+    va_start(tmp_ap, a_count);
+
+    for (i = 0; i < a_count; i++) {
+      sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
       pr_api->add_body(pr_api->get_atom(tmp_name), true);
-    }  
+    }
+
+    va_end(tmp_ap);
 
     pr_api->end_rule();
   }
@@ -194,57 +174,71 @@ int wrapper::add_axiom(numberlist *a, bool t)
   return VLAD_OK;
 }
 
-/* add single rule (single head, pos body and neg body */
-int wrapper::add_rule(unsigned int h, unsigned int pb, unsigned int nb)
+/* add rule: variable argument list */
+int wrapper::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int a_head, ...)
 {
+  unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
+  va_list tmp_ap;
 
-  if (stage != 2)
+  if (pr_stage != 2)
     return VLAD_FAILURE;
+
+  /* the special case when there is no body: head becomes an axiom */
+  if (a_pcount == 0 && a_ncount == 0)
+    return add_axiom(true, 1, a_head);
 
   pr_api->begin_rule(BASICRULE);
 
   /* add head */
-  sprintf(tmp_name, "%d", h);
+  sprintf(tmp_name, "%d", a_head);
   pr_api->add_head(pr_api->get_atom(tmp_name));
 
+  va_start(tmp_ap, a_head);
+
   /* now for the positive body */
-  sprintf(tmp_name, "%d", pb);
-  pr_api->add_body(pr_api->get_atom(tmp_name), true);
+  for (i = 0; i < a_pcount; i++) {
+    sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
+    pr_api->add_body(pr_api->get_atom(tmp_name), true);
+  }
 
   /* then the negative body */
-  sprintf(tmp_name, "%d", nb);
-  pr_api->add_body(pr_api->get_atom(tmp_name), false);
+  for (i = 0; i < a_ncount; i++) {
+    sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
+    pr_api->add_body(pr_api->get_atom(tmp_name), false);
+  }
+
+  va_end(tmp_ap);
 
   pr_api->end_rule();
 
   return VLAD_OK;
 }
 
-/* add multiple rule (single head, pos body list and neg body list */
-int wrapper::add_rule(unsigned int h, numberlist *pb, numberlist *nb)
+/* add rule: numberlist */
+int wrapper::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbody)
 {
   int retval;
   unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
   unsigned int tmp_num;
 
-  if (stage != 2)
+  if (pr_stage != 2)
     return VLAD_FAILURE;
 
-  /* the special case when pb and nb are NULL: h becomes an axiom */
-  if (VLAD_LIST_LENGTH(pb) == 0 && VLAD_LIST_LENGTH(nb) == 0)
-    return add_axiom(h, true);
+  /* the special case when there is no body: head becomes an axiom */
+  if (VLAD_LIST_LENGTH(a_pbody) == 0 && VLAD_LIST_LENGTH(a_nbody) == 0)
+    return add_axiom(true, 1, a_head);
 
   pr_api->begin_rule(BASICRULE);
 
   /* add head */
-  sprintf(tmp_name, "%d", h);
+  sprintf(tmp_name, "%d", a_head);
   pr_api->add_head(pr_api->get_atom(tmp_name));
 
   /* now for the positive body */
-  for (i = 0; i < VLAD_LIST_LENGTH(pb); i++) {
-    if ((retval = pb->get(i, &tmp_num)) != VLAD_OK)
+  for (i = 0; i < VLAD_LIST_LENGTH(a_pbody); i++) {
+    if ((retval = a_pbody->get(i, &tmp_num)) != VLAD_OK)
       return retval;
 
     sprintf(tmp_name, "%d", tmp_num);
@@ -252,8 +246,8 @@ int wrapper::add_rule(unsigned int h, numberlist *pb, numberlist *nb)
   }
 
   /* then the negative body */
-  for (i = 0; i < VLAD_LIST_LENGTH(nb); i++) {
-    if ((retval = nb->get(i, &tmp_num)) != VLAD_OK)
+  for (i = 0; i < VLAD_LIST_LENGTH(a_nbody); i++) {
+    if ((retval = a_nbody->get(i, &tmp_num)) != VLAD_OK)
       return retval;
 
     sprintf(tmp_name, "%d", tmp_num);
@@ -266,24 +260,24 @@ int wrapper::add_rule(unsigned int h, numberlist *pb, numberlist *nb)
 }
 
 /* return true, false or unknown */
-int wrapper::ask(unsigned int a, char *r)
+int wrapper::ask(unsigned int a_atom, char *a_result)
 {
   char tmp_name[VLAD_MAXLEN_NUM];
 
-  if (stage != 3)
+  if (pr_stage != 3)
     return VLAD_FAILURE;
 
-  if (r == NULL)
+  if (a_result == NULL)
     return VLAD_NULLPTR;
 
-  sprintf(tmp_name, "%d", a);
+  sprintf(tmp_name, "%d", a_atom);
 
   if ((pr_api->get_atom(tmp_name)->Bpos))
-    *r = VLAD_RESULT_TRUE;
+    *a_result = VLAD_RESULT_TRUE;
   else if ((pr_api->get_atom(tmp_name)->Bneg))
-    *r = VLAD_RESULT_FALSE;
+    *a_result = VLAD_RESULT_FALSE;
   else
-    *r = VLAD_RESULT_UNKNOWN;
+    *a_result = VLAD_RESULT_UNKNOWN;
 
   return VLAD_OK;
 }
