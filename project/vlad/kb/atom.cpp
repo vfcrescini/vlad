@@ -271,7 +271,7 @@ int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
     return VLAD_NULLPTR;
 
   /* if both lists are null or if the lengths are zero, return the atom */
-  if ((vlist == NULL && ilist == NULL) || vlist->length() == ilist->length() == 0)
+  if ((vlist == NULL && ilist == NULL) || VLAD_LIST_LENGTH(vlist) == VLAD_LIST_LENGTH(ilist) == 0)
     return copy(a);
 
   /* make sure lists are non-NULL and their lengths are equal */
@@ -378,23 +378,26 @@ void atom::print(char *s)
     switch(type) {
       case VLAD_ATOM_HOLDS :
         sprintf(s,
-                "%sholds(%s,%s,%s)",
+                "%s%s(%s,%s,%s)",
                 truth ? "" : "!",
+                VLAD_STR_HOLDS,
                 holds.subject,
                 holds.access,
                 holds.object);
         break;
       case VLAD_ATOM_MEMBER :
         sprintf(s,
-                "%smemb(%s,%s)",
+                "%s%s(%s,%s)",
                 truth ? "" : "!",
+                VLAD_STR_MEMB,
                 member.element,
                 member.group);
         break;
       case VLAD_ATOM_SUBSET :
         sprintf(s,
-                "%ssubst(%s,%s)",
+                "%s%s(%s,%s)",
                 truth ? "" : "!",
+                VLAD_STR_SUBSET,
                 subset.group1,
                 subset.group2);
         break;

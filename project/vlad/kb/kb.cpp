@@ -98,25 +98,25 @@ int kb::close_symtab()
     return VLAD_FAILURE;
 
   /* first get some needed values */
-  
+
   /* get list lengths */
   s_len = stable->length(VLAD_IDENT_SUBJECT);
   a_len = stable->length(VLAD_IDENT_ACCESS);
-  o_len = stable->length(VLAD_IDENT_OBJECT); 
+  o_len = stable->length(VLAD_IDENT_OBJECT);
   sg_len = stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
   ag_len = stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
   og_len = stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
-  
+
   /* total atoms (only +ve) */
   h_tot = (s_len + sg_len) * (a_len + ag_len) * (o_len + og_len);
   m_tot = (s_len * sg_len) + (a_len * ag_len) + (o_len * og_len);
   s_tot = (sg_len * sg_len) + (ag_len * ag_len) + (og_len * og_len);
-  
+
   /* total +ve atoms */
   pos_tot = h_tot + m_tot + s_tot;
 
   stage = 2;
-  
+
   return VLAD_OK;
 }
 
@@ -201,7 +201,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
   if (e == NULL)
     return VLAD_NULLPTR;
 
-  /* 
+  /*
    * now, we must go through every atom of every exression to ensure
    * their validity. while we are going through them, we might as well
    * make a copy.
@@ -253,7 +253,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
         return retval;
       if ((retval = ncond->add(tmp2)) != VLAD_OK)
         return retval;
-    } 
+    }
   }
 
   /* finally, we add the expressions into the cosntraints table */
@@ -349,7 +349,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 {
   int retval;
   unsigned int i;
-  
+
   /* we only allow this function after transtab is closed */
   if (stage != 5)
     return VLAD_FAILURE;
@@ -386,13 +386,37 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
     switch(tmp_ty) {
       case VLAD_ATOM_HOLDS :
-        fprintf(f, "  %d = holds(S%d, %c, holds, %s, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp_param1, tmp_param2, tmp_param3);
+        fprintf(f,
+                "  %d = %s(S%d, %c, %s, %s, %s, %s)\n",
+                i,
+                VLAD_STR_HOLDS,
+                tmp_s,
+                tmp_tr ? 'T' : 'F',
+                VLAD_STR_HOLDS,
+                tmp_param1,
+                tmp_param2,
+                tmp_param3);
         break;
       case VLAD_ATOM_MEMBER :
-          fprintf(f, "  %d = holds(S%d, %c, member, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp_param1, tmp_param2);
+          fprintf(f,
+                  "  %d = %s(S%d, %c, %s, %s, %s)\n",
+                  i, VLAD_STR_HOLDS,
+                  tmp_s,
+                  tmp_tr ? 'T' : 'F',
+                  VLAD_STR_MEMBER,
+                  tmp_param1,
+                  tmp_param2);
         break;
       case VLAD_ATOM_SUBSET :
-          fprintf(f, "  %d = holds(S%d, %c, subset, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp_param1, tmp_param2);
+          fprintf(f,
+                  "  %d = %s(S%d, %c, %s, %s, %s)\n",
+                  i,
+                  VLAD_STR_HOLDS,
+                  tmp_s,
+                  tmp_tr ? 'T' : 'F',
+                  VLAD_STR_SUBSET,
+                  tmp_param1,
+                  tmp_param2);
         break;
     }
 
@@ -416,7 +440,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         for (i_sub = 0; i_sub < s_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              fprintf(f, 
+              fprintf(f,
                       "  %d %s %d %s %d\n",
                       (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
                       VLAD_STR_ARROW,
@@ -432,7 +456,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              fprintf(f, 
+              fprintf(f,
                       "  %d %s %d %s %d\n",
                       (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
                       VLAD_STR_ARROW,
@@ -448,7 +472,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len; i_obj++) {
-              fprintf(f, 
+              fprintf(f,
                       "  %d %s %d %s %d\n",
                       (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj,
                       VLAD_STR_ARROW,
@@ -531,7 +555,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   for (i = 0; i <= VLAD_LIST_LENGTH(s); i++) {
     unsigned int i_atom;
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
-      fprintf(f, 
+      fprintf(f,
               "  %s %s %d %s %d\n",
               VLAD_STR_FALSE,
               VLAD_STR_ARROW,
@@ -656,7 +680,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
     if ((retval = ttable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
       return retval;
-    
+
     fprintf(f, " ");
 
     /* postcondition loop */
@@ -932,13 +956,13 @@ int kb::verify_sequence(sequence *s)
   return VLAD_OK;
 }
 
-/* 
- * verifies that s, a and o are in the symtab and that they are of the right 
+/*
+ * verifies that s, a and o are in the symtab and that they are of the right
  * type, or listed in v if v is non-null
  */
-int kb::verify_atom_holds(const char *s, 
-                         const char *a, 
-                         const char *o, 
+int kb::verify_atom_holds(const char *s,
+                         const char *a,
+                         const char *o,
                          stringlist *v)
 {
   int retval;
@@ -1003,12 +1027,12 @@ int kb::verify_atom_holds(const char *s,
     default :
       return retval;
   }
-  
+
   return VLAD_OK;
 }
 
-/* 
- * verifies that e and g are in the symtab and that they are of the right 
+/*
+ * verifies that e and g are in the symtab and that they are of the right
  * type, or listed in v if v is non-null
  */
 int kb::verify_atom_member(const char *e, const char *g, stringlist *v)
@@ -1062,12 +1086,12 @@ int kb::verify_atom_member(const char *e, const char *g, stringlist *v)
     default :
       return retval;
   }
-  
+
   return VLAD_OK;
 }
 
-/* 
- * verifies that g1 and g2 are in the symtab and that they are of the right 
+/*
+ * verifies that g1 and g2 are in the symtab and that they are of the right
  * type, or listed in v if v is non-null
  */
 int kb::verify_atom_subset(const char *g1, const char *g2, stringlist *v)
@@ -1121,7 +1145,7 @@ int kb::verify_atom_subset(const char *g1, const char *g2, stringlist *v)
     default :
       return retval;
   }
-  
+
   return VLAD_OK;
 }
 
@@ -1348,7 +1372,7 @@ int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
 
   /* consider the truth value */
   num = num + (tr ? pos_tot : 0);
-   
+
   /* now the state */
   *n = num + (s * (pos_tot * 2));
 

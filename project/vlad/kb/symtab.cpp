@@ -199,8 +199,8 @@ int symtab::get(unsigned char t, char ***a, unsigned int *s)
     unsigned int s_len;
     unsigned int sg_len;
 
-    s_len = sub_list->length();
-    sg_len = sub_grp_list->length();
+    s_len = VLAD_LIST_LENGTH(sub_list);
+    sg_len = VLAD_LIST_LENGTH(sub_grp_list);
     *s = s_len + sg_len;
 
     if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
@@ -222,8 +222,8 @@ int symtab::get(unsigned char t, char ***a, unsigned int *s)
     unsigned int a_len;
     unsigned int ag_len;
 
-    a_len = acc_list->length();
-    ag_len = acc_grp_list->length();
+    a_len = VLAD_LIST_LENGTH(acc_list);
+    ag_len = VLAD_LIST_LENGTH(acc_grp_list);
     *s = a_len + ag_len;
 
     if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
@@ -245,8 +245,8 @@ int symtab::get(unsigned char t, char ***a, unsigned int *s)
     unsigned int o_len;
     unsigned int og_len;
 
-    o_len = obj_list->length();
-    og_len = obj_grp_list->length();
+    o_len = VLAD_LIST_LENGTH(obj_list);
+    og_len = VLAD_LIST_LENGTH(obj_grp_list);
     *s = o_len + og_len;
 
     if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
@@ -275,17 +275,17 @@ unsigned int symtab::length(unsigned char t)
 
   switch(t) { 
     case VLAD_IDENT_SUBJECT :
-      return sub_list->length();
+      return VLAD_LIST_LENGTH(sub_list);
     case VLAD_IDENT_ACCESS :
-      return acc_list->length();
+      return VLAD_LIST_LENGTH(acc_list);
     case VLAD_IDENT_OBJECT :
-      return obj_list->length();
+      return VLAD_LIST_LENGTH(obj_list);
     case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
-      return sub_grp_list->length();
+      return VLAD_LIST_LENGTH(sub_grp_list);
     case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP :
-      return acc_grp_list->length();
+      return VLAD_LIST_LENGTH(acc_grp_list);
     case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
-      return obj_grp_list->length();
+      return VLAD_LIST_LENGTH(obj_grp_list);
   }
   return 0;
 }
