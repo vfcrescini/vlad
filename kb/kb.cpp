@@ -86,20 +86,20 @@ int kb::close()
   ag_len = stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
   og_len = stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
 
-  /* total atoms (only +) */
+  /* total atoms (only +ve) */
   h_tot = (s_len + sg_len) * (a_len + ag_len) * (o_len + og_len);
   m_tot = (s_len * sg_len) + (a_len * ag_len) + (o_len * og_len);
   s_tot = (sg_len * sg_len) + (ag_len * ag_len) + (og_len * og_len);
 
-  /* the indices at which + atoms start */
+  /* the indices at which +ve atoms start */
   h_index = 2;
   m_index = 2 + h_tot;
   s_index = 2 + h_tot + m_tot;
 
-  /* total + atoms, the 2 is for the constant true and false */
+  /* total +ve atoms, the 2 is for the constant true and false */
   pos_tot = h_tot + m_tot + s_tot + 2;
 
-  /* of course we have an equal number of + and - atoms */
+  /* of course we have an equal number of +ve and -ve atoms */
   neg_tot = pos_tot;
 
   closed = true;
@@ -167,16 +167,19 @@ int kb::encode_atom(const char *n1,
 
   switch(ty) {
     case VLAD_ATOM_CONST : {
-      if (n1 != NULL) {
-        if (!strcmp(VLAD_STRING_FALSE, n1))
-          *a = (tr) ? 0 : 1;
-        else if (!strcmp(VLAD_STRING_TRUE, n1))
-          *a = (tr) ? 1 : 0;
-        else
-          return VLAD_NOTFOUND;
-      }
-      else
+      unsigned int c_index;
+      unsigned char c_type;
+
+      if (n1 == NULL)
         return VLAD_NULLPTR;
+
+      if ((retval = stable->get(n1, &c_index, &c_type)) != VLAD_OK)
+        return retval;
+
+      if (!VLAD_IDENT_IS_CONST(c_type))
+        return VLAD_INVALIDINPUT;
+
+      *a = c_index + ((tr) ? 0 : pos_tot);
 
       break;
     } 
@@ -329,16 +332,8 @@ int kb::decode_atom(char **n1,
     if (n1 == NULL)
       return VLAD_NULLPTR;
 
-    if (tmp == 0) {
-      if ((*n1 = VLAD_STRING_MALLOC(VLAD_STRING_FALSE)) == NULL)
-        return VLAD_MALLOCFAILED;
-      return (strcpy(*n1, VLAD_STRING_FALSE) ? VLAD_OK : VLAD_FAILURE);
-    }
-    else {
-      if ((*n1 = VLAD_STRING_MALLOC(VLAD_STRING_TRUE)) == NULL)
-        return VLAD_MALLOCFAILED;
-      return (strcpy(*n1, VLAD_STRING_TRUE) ? VLAD_OK : VLAD_FAILURE);
-    }
+    if ((retval = stable->get(tmp, VLAD_IDENT_CONST, n1)) != VLAD_OK)
+      return retval;
   }
   else if (tmp < m_index) {
     /* holds atom */
