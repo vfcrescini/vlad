@@ -36,7 +36,7 @@
     {\em Stable Model} semantics.
   \end{abstract}
 
-  \footnotetext{PolicyUpdater homepage at \\
+  \footnotetext{PolicyUpdater home page at \\
                 \tt http://www.cit.uws.edu.au/\~{}jcrescin/PolicyUpdater}
 
   \section{Introduction}
@@ -60,7 +60,7 @@
     characteristic is the ability to dynamically update the otherwise static
     policy base. These systems, effective as they are, lack the details
     necessary to address the issues involved in the implementation of such a
-    system. 
+    system.
 
     The {\em Policy Description Language}, or {\cal PDL}, developed by Lobo,
     et. al. \cite{LOB}, is a language for representing event and action
@@ -73,10 +73,10 @@
     will not have the ability to dynamically update the policies.
 
     To overcome these limitations, we propose the PolicyUpdater access control
-    system, which, with its own access control language, provides: a formal
+    system, which, with its own access control language, provides a formal
     logic-based representation of policies, with variable resolution and
-    default propositions; a mechanism to conditionally and dynamically
-    perform a sequence of policy updates; and a means to evaluate queries
+    default propositions, a mechanism to conditionally and dynamically
+    perform a sequence of policy updates, and a means to evaluate queries
     against a policy or updated policies.
 
     In Section \ref{sec-langl}, the paper introduces language ${\cal L}$, with
@@ -1410,8 +1410,8 @@ query holds(alice, read, file);
 
     \begin{example}
       \label{ex-3}
-      Given the language ${\cal L}$ code listing in example \ref{ex-1} and its
-      semantic translation in example \ref{ex-2}, the following shows the
+      Given the language ${\cal L}$ code listing in Example \ref{ex-1} and its
+      semantic translation in Example \ref{ex-2}, the following shows the
       results of the query evaluations:
 
       \begin{quote}
@@ -1439,7 +1439,7 @@ query holds(alice, read, file);
       \end{center}
     \end{figure}
 
-      As shown in figure \ref{fig-1}, the PolicyUpdater system works in
+      As shown in Figure \ref{fig-1}, the PolicyUpdater system works in
       collaboration with an authorisation agent program that queries the
       policy base to determine whether to allow users access to resources.
       Through an authorisation agent program, the PolicyUpdater system also
@@ -1471,7 +1471,7 @@ query holds(alice, read, file);
         As a program of language ${\cal L}$ is parsed, each statement
         containing entity declarations, facts, constraint rules and policy
         updates must be stored into a structure before the translation process
-        is started. As shown in appendix \ref{app-store}, the structure is composed
+        is started. As shown in Appendix \ref{app-store}, the structure is composed
         of the symbol table, the policy base and the policy update sequence
         table.
 
@@ -1485,7 +1485,7 @@ query holds(alice, read, file);
       The processes presented in this section shows how the language
       ${\cal L}$ policy stored in the data structures is translated into a
       normal logic program, how it can be updated dynamically and how it can
-      be manipulated to evaluate queries. The flowchart in figure \ref{fig-2}
+      be manipulated to evaluate queries. The flowchart in Figure \ref{fig-2}
       gives an overview of the system processes.
 
       \begin{figure}[ht]
@@ -1652,7 +1652,7 @@ query holds(alice, read, file);
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
           With the language ${\cal L}$ policy elements stored into the storage
-          structure (see appendix \ref{app-store}), a normal logic program can
+          structure (see Appendix \ref{app-store}), a normal logic program can
           then be generated for evaluation. Using the translation methods
           described in the semantics section and the method for eliminating
           classical negation, each initial state expression, constraint rule
@@ -1688,45 +1688,39 @@ query holds(alice, read, file);
     \bibitem{BAI}
       Bai, Y., Varadharajan, V.,
       On Formal Languages for Sequences of Authorization Transformations.
-      In \emph{Proceedings of Safety, Reliability and Security of Computer
+      in \emph{Proceedings of Safety, Reliability and Security of Computer
       Systems}. Also in {\em Lecture Notes in Computer Science},
-      Vol. 1698, pp 375-384. Springer-Verlag, 1999
-                                                                                
+      Vol. 1698, pp. 375-384. Springer-Verlag, 1999
+
     \bibitem{BE1}
       Bertino, E., Buccafurri, F., Ferrari, E., Rullo, P.,
       A Logic-based Approach for Enforcing Access Control.
-      {\em Journal of Computer Security},
-      Vol. 8, No. 2-3,
-      pp 109-140.
-      IOS Press, 2000
+      in {\em Journal of Computer Security},
+      Vol. 8, No. 2-3, pp. 109-140, IOS Press, 2000
 
     \bibitem{BE2}
-      Bertino, E., Mileo A., Provetti, A. [XXX]
+      Bertino, E., Mileo A., Provetti, A.
+      Policy Monitoring with User-Preferences in PDL.
+      in [XXX], pp. 37-44
 
     \bibitem{CHO}
       Chomicki, J., Lobo, J., Naqvi S.,
       A Logic Programming Approach to Conflict Resolution in Policy Management.
-      In {\em Proceedings of KR2000, 7th International conferece on Principles
+      in {\em Proceedings of KR2000, 7th International conference on Principles
               of Knowledge Representation and Reasoning},
+      pp. 121-132, Kaufmann, 2000.
 
-      pp. 121 - 1332
-      Kaufmann, 2000.
-                                                                                
     \bibitem{JAJ}
       Jajodia, S., Samarati, P., Sapino, M. L., Subrahmanian, V. S.,
       Flexible Support for Multiple Access Control Policies.
-      In {\em ACM Transactions on Database Systems},
-      Vol. 29, No. 2,
-      pp 214-260.
-      ACM, 2001
+      in {\em ACM Transactions on Database Systems},
+      Vol. 29, No. 2, pp. 214-260, ACM, 2001
 
     \bibitem{LOB}
       Lobo J., Bhatia R., Naqvi S.,
       A Policy Description Language.
-      In {\em American Association for Artificial Intelligence},
-      AAAI-99.
-      pp 291-298
-      1999
+      in {\em AAAI/IA AI},
+      pp. 291-298, 1999
   \end{thebibliography}
 
   \appendix
