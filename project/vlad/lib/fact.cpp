@@ -11,6 +11,24 @@
 #include <vlad/vlad.h>
 #include <vlad/fact.h>
 
+/* some extra functions */
+static int verify_holds(const char *a_sub,
+                        const char *a_acc,
+                        const char *a_obj,
+                        symtab *a_stab,
+                        stringlist *a_vlist,
+                        bool a_gndflag);
+static int verify_memb(const char *a_elt,
+                       const char *a_grp,
+                       symtab *a_stab,
+                       stringlist *a_vlist,
+                       bool a_gndflag);
+static int verify_subst(const char *a_grp1,
+                        const char *a_grp2,
+                        symtab *a_stab,
+                        stringlist *a_vlist,
+                        bool a_gndflag);
+
 fact::fact()
 {
   /* choose holds as a default type */
@@ -470,7 +488,7 @@ int fact::varlist(stringlist **a_list)
           if (retval != VLAD_DUPLICATE)
             return retval;
 
-      return VLAD_OK; 
+      return VLAD_OK;
     case VLAD_ATOM_MEMBER :
       if (VLAD_IDENT_IS_VAR(m_member.element))
         if ((retval = (*a_list)->add(m_member.element)) != VLAD_OK)
@@ -496,6 +514,45 @@ int fact::varlist(stringlist **a_list)
   }
 
   return VLAD_FAILURE;
+}
+
+/*
+ * verify if fact is valid, if vlist is non-null, check if variables
+ * occur within this list. if gnd_flag is true, ensure that the fact
+ * is ground.
+ */
+int fact::verify(symtab *a_stab, stringlist *a_vlist, bool a_gndflag)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_stab == NULL)
+    return VLAD_NULLPTR;
+
+  switch(m_type) {
+    case VLAD_ATOM_HOLDS :
+      return verify_holds(m_holds.subject,
+                          m_holds.access,
+                          m_holds.object,
+                          a_stab,
+                          a_vlist,
+                          a_gndflag);
+    case VLAD_ATOM_MEMBER :
+      return verify_memb(m_member.element,
+                         m_member.group,
+                         a_stab,
+                         a_vlist,
+                         a_gndflag);
+
+    case VLAD_ATOM_SUBSET :
+      return verify_subst(m_subset.group1,
+                          m_subset.group2,
+                          a_stab,
+                          a_vlist,
+                          a_gndflag);
+  }
+
+  return VLAD_INVALIDINPUT;
 }
 
 #ifdef VLAD_DEBUG
@@ -560,6 +617,167 @@ int fact::reset()
         break;
     }
   }
+
+  return VLAD_OK;
+}
+
+/* some extra functions */
+static int verify_holds(const char *a_sub,
+                        const char *a_acc,
+                        const char *a_obj,
+                        symtab *a_stab,
+                        stringlist *a_vlist,
+                        bool a_gndflag)
+{
+  int retval;
+  unsigned char type;
+
+  /* check subject */
+  if (VLAD_IDENT_IS_IDENT(a_sub)) {
+    if ((retval = a_stab->type(a_sub, &type)) != VLAD_OK)
+      return retval;
+    if (type != VLAD_IDENT_SUB_SIN && type != VLAD_IDENT_SUB_GRP)
+      return VLAD_INVALIDINPUT;
+  }
+  else if (VLAD_IDENT_IS_VAR(a_sub)) {
+    if (a_gndflag)
+      return VLAD_INVALIDINPUT;
+    if (a_vlist != NULL)
+      if ((retval = a_vlist->find(a_sub)) != VLAD_OK)
+        return VLAD_INVALIDINPUT;
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  /* check access */
+  if (VLAD_IDENT_IS_IDENT(a_acc)) {
+    if ((retval = a_stab->type(a_acc, &type)) != VLAD_OK)
+      return retval;
+    if (type != VLAD_IDENT_ACC_SIN && type != VLAD_IDENT_ACC_GRP)
+      return VLAD_INVALIDINPUT;
+  }
+  else if (VLAD_IDENT_IS_VAR(a_acc)) {
+    if (a_gndflag)
+      return VLAD_INVALIDINPUT;
+    if (a_vlist != NULL)
+      if ((retval = a_vlist->find(a_acc)) != VLAD_OK)
+        return VLAD_INVALIDINPUT;
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  /* check object */
+  if (VLAD_IDENT_IS_IDENT(a_obj)) {
+    if ((retval = a_stab->type(a_obj, &type)) != VLAD_OK)
+      return retval;
+    if (type != VLAD_IDENT_OBJ_SIN && type != VLAD_IDENT_OBJ_GRP)
+      return VLAD_INVALIDINPUT;
+  }
+  else if (VLAD_IDENT_IS_VAR(a_obj)) {
+    if (a_gndflag)
+      return VLAD_INVALIDINPUT;
+    if (a_vlist != NULL)
+      if ((retval = a_vlist->find(a_obj)) != VLAD_OK)
+        return VLAD_INVALIDINPUT;
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  return VLAD_OK;
+}
+
+static int verify_memb(const char *a_elt,
+                       const char *a_grp,
+                       symtab *a_stab,
+                       stringlist *a_vlist,
+                       bool a_gndflag)
+{
+  int retval;
+  unsigned char type[2];
+
+  /* check element */
+  if (VLAD_IDENT_IS_IDENT(a_elt)) {
+    if ((retval = a_stab->type(a_elt, &(type[0]))) != VLAD_OK)
+      return retval;
+    if (VLAD_IDENT_IS_GROUP(type[0]))
+      return VLAD_INVALIDINPUT;
+  }
+  else if (VLAD_IDENT_IS_VAR(a_elt)) {
+    if (a_gndflag)
+      return VLAD_INVALIDINPUT;
+    if (a_vlist != NULL)
+      if ((retval = a_vlist->find(a_elt)) != VLAD_OK)
+         return VLAD_INVALIDINPUT;
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  /* check group */
+  if (VLAD_IDENT_IS_IDENT(a_grp)) {
+    if ((retval = a_stab->type(a_grp, &(type[1]))) != VLAD_OK)
+      return retval;
+    if (!VLAD_IDENT_IS_GROUP(type[1]))
+      return VLAD_INVALIDINPUT;
+  }
+  else if (VLAD_IDENT_IS_VAR(a_grp)) {
+    if (a_gndflag)
+      return VLAD_INVALIDINPUT;
+    if (a_vlist != NULL)
+      if ((retval = a_vlist->find(a_grp)) != VLAD_OK)
+        return VLAD_INVALIDINPUT;
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  /* check types */
+  if (type[0] != VLAD_IDENT_BASETYPE(type[1]))
+    return VLAD_INVALIDINPUT;
+
+  return VLAD_OK;
+}
+
+static int verify_subst(const char *a_grp1,
+                        const char *a_grp2,
+                        symtab *a_stab,
+                        stringlist *a_vlist,
+                        bool a_gndflag)
+{
+  int retval;
+  unsigned char type[2];
+
+  /* check group1 */
+  if (VLAD_IDENT_IS_IDENT(a_grp1)) {
+    if ((retval = a_stab->type(a_grp2, &(type[0]))) != VLAD_OK)
+      return retval;
+    if (!VLAD_IDENT_IS_GROUP(type[0]))
+      return VLAD_INVALIDINPUT;
+  }
+  else if (VLAD_IDENT_IS_VAR(a_grp1)) {
+    if (a_vlist != NULL)
+      if ((retval = a_vlist->find(a_grp1)) != VLAD_OK)
+         return VLAD_INVALIDINPUT;
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  /* check group2 */
+  if (VLAD_IDENT_IS_IDENT(a_grp2)) {
+    if ((retval = a_stab->type(a_grp2, &(type[1]))) != VLAD_OK)
+      return retval;
+    if (!VLAD_IDENT_IS_GROUP(type[1]))
+      return VLAD_INVALIDINPUT;
+  }
+  else if (VLAD_IDENT_IS_VAR(a_grp2)) {
+    if (a_vlist != NULL)
+      if ((retval = a_vlist->find(a_grp2)) != VLAD_OK)
+        return VLAD_INVALIDINPUT;
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  /* check types */
+  if (type[0] != type[1])
+    return VLAD_INVALIDINPUT;
 
   return VLAD_OK;
 }

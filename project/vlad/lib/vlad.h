@@ -108,14 +108,15 @@
 #define VLAD_IDENT_IS_ACCESS(X)  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_ACC_SIN)
 #define VLAD_IDENT_IS_OBJECT(X)  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_OBJ_SIN)
 #define VLAD_IDENT_IS_GROUP(X)   ((X) >= VLAD_IDENT_MID)
-#define VLAD_IDENT_IS_VALID(X)   ((X) >= VLAD_IDENT_FIRST && (X) <= VLAD_IDENT_LAST)
 #define VLAD_ATOM_TYPE_VALID(X)  (((X) >= VLAD_ATOM_FIRST && (X) <= VLAD_ATOM_LAST)
 #define VLAD_ATOM_IS_HOLDS(X)    ((X) == VLAD_ATOM_HOLDS)
 #define VLAD_ATOM_IS_MEMBER(X)   ((X) == VLAD_ATOM_MEMBER)
 #define VLAD_ATOM_IS_SUBSET(X)   ((X) == VLAD_ATOM_SUBSET)
 
-/* anything that starts with S | A | O is a variable */
-#define VLAD_IDENT_IS_VAR(X)     ((X) ? ((strlen(X) > 1) ? (((X)[0] == 'S' || (X)[0] == 'A' || (X)[0] == '0') ? true : false) : false) : false)
+/* anything that starts with a small letter is an entity identifier */
+#define VLAD_IDENT_IS_IDENT(X)   ((X) ? (((X)[0] >= 'a' && (X)[0] <= 'z') ? true : false) : false)
+/* anything that starts with a capital letter is a variable */
+#define VLAD_IDENT_IS_VAR(X)     ((X) ? (((X)[0] >= 'A' && (X)[0] <= 'Z') ? true : false) : false)
 
 /* malloc/new macros */
 #define VLAD_ADT_MALLOC(X,Y)     ((X *) malloc(sizeof(X) * Y))
