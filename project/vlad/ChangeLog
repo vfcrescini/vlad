@@ -1,3 +1,12 @@
+2003-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/identifier.cpp :
+	* kb/identifier.h :
+	* kb/symtab.cpp :
+
+	  - Renamed the enum identifier type names with an _ident
+	    suffix to avoid name clashes with access() in unistd.h.
+
 2003-01-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/list.cpp :
@@ -182,4 +191,5 @@
 	* ChangeLog :
 
 	  - Changelog started.
+
 

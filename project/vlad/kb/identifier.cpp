@@ -11,7 +11,7 @@
 identifier::identifier()
 {
   name = NULL;
-  type = subject;
+  type = subject_ident;
   group = false;
 }
 
@@ -21,7 +21,7 @@ identifier::~identifier()
     free(name);
 
   name = NULL;
-  type = subject;
+  type = subject_ident;
   group = false;
 }
 
