@@ -3,6 +3,9 @@
 	* kb/kb.h :
 	* kb/kb.cpp :
 
+	  - Combined the generate_*() functions into generate_nlp() for
+	    efficiency.
+
 	  - Cleanup.
 
 	* common/list.cpp :

@@ -61,9 +61,9 @@ class kb {
     unsigned int pos_tot;
     unsigned char stage;
     /* make sure atom a is valid */
-    int kb::verify_atom(atom *a, stringlist *v);
+    int verify_atom(atom *a, stringlist *v);
     /* make sure expression e is valid */
-    int kb::verify_expression(expression *e);
+    int verify_expression(expression *e);
     /* make sure transref is valid */
     int verify_transref(char *n, stringlist *il);
     /* make sure sequence s is valid */
@@ -98,37 +98,5 @@ class kb {
     int encode_atom(atom *a, unsigned int s, unsigned int *n);
     /* returns the atom details given the id */
     int decode_atom(atom **a, unsigned int *s, unsigned int n);
-    /* gives a list of encoded atom id's that represent inheritance rules */
-    int generate_inheritance(unsigned int state_tot,
-                             numberlist **l1,
-                             numberlist **l2,
-                             numberlist **l3);
-    /* gives a list of encoded atom id's that represent transitivity rules */
-    int generate_transitivity(unsigned int state_tot,
-                              numberlist **l1,
-                              numberlist **l2,
-                              numberlist **l3);
-    /* gives a list of encoded atom id's that represent complementary rules */
-    int generate_complementary(unsigned int state_tot,
-                               numberlist **l1,
-                               numberlist **l2);
-    /* gives a list of encoded atom id's that represent intertial rules */
-    int generate_inertial(unsigned int state_tot,
-                          numberlist **l1,
-                          numberlist **l2,
-                          numberlist **l3);
-
-    /* gives a list of encoded atom id's that represent initial state atoms */
-    int generate_initialstate(numberlist **l1);
-
-    /* gives a list of encoded atom id's that represent constraint rules */
-    int generate_constraints(unsigned int state_tot,
-                             numberlistlist **l1,
-                             numberlistlist **l2,
-                             numberlistlist **l3);
-    /* gives a list of encoded atom id's that represent transformation rules */
-    int generate_transformation(sequence *seq,
-                                numberlistlist **l1,
-                                numberlistlist **l2);
 } ;
 #endif
