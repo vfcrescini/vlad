@@ -1,5 +1,10 @@
 2003-04-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Now generate_nlp() generates a list of possible atoms.
+
 	* kb/symab.h :
 	* kb/symtab.cpp :
 
