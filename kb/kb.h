@@ -23,6 +23,8 @@ class kb {
     int close_inittab();
     /* after this is called, no further calls to add_consttab() is allowed */
     int close_consttab();
+    /* after this is called, no further calls to add_transtab() is allowed */
+    int close_transtab();
     /* register an identifier in the kb */
     int add_symtab(const char *n, unsigned char t);
     /* add an atom into the initial state table */

@@ -5,6 +5,7 @@
 
 #include <cstdlib>
 #include <cstddef>
+#include <cstring>
 #include <new>
 
 #include <config.h>
@@ -39,6 +40,13 @@ bool transdef::cmp(list_item *item)
     return false;
 
   if ((tmp = dynamic_cast<transdef *> (item)) == NULL)
+    return false;
+
+  if (tmp->name == NULL && name != NULL)
+    return false;
+  else if (tmp->name != NULL && name == NULL)
+    return false;
+  else if (tmp->name != NULL && name != NULL && strcmp(name, tmp->name))
     return false;
   
   if (tmp->vtable == NULL && vtable != NULL)
