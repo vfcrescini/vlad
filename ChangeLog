@@ -1,5 +1,13 @@
 2003-02-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* README :
+	* configure :
+	* configure.ac :
+	* main/Makefile.in :
+
+	  - Added --enable-strip configure option to allow final main binary
+	    to be stripped with --strip-all after building.
+
 	* kb/atom.cpp :
 
 	  - Sanity checks to ensure that the identifiers given the 

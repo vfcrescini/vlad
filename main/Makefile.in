@@ -9,12 +9,19 @@ LEXLIB = @LEXLIB@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 LDFLAGS = @LDFLAGS@
+DEBUG = @DEBUG@
+STRIP = @STRIP@
 TARGETS = vlad
 
 all : $(TARGETS)
 
 vlad : vlad.o $(TOPSRCDIR)/lib/*
 	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lparser -lkb -lcommon $(LEXLIB)
+ifndef DEBUG
+ifdef STRIP
+	strip --strip-all $(@)
+endif
+endif
 	@for i in $(TARGETS); do      \
 	ln -sf main/$$i $(TOPSRCDIR); \
 	done

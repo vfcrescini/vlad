@@ -792,7 +792,9 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-debug          default is disabled
+  --enable-debug          enable debugging output & compile with -g (default
+                          is disabled)
+  --enable-strip          run strip program (default is disabled)
 
 Some influential environment variables:
   CC          C compiler command
@@ -2562,11 +2564,23 @@ if test "$enable_debug" != "" && test "$enable_debug" != "no"; then
 #define DEBUG 1
 _ACEOF
 
+  DEBUG=1
+
   CFLAGS="$CFLAGS -g"
   CXXFLAGS="$CXXFLAGS -g"
 else
   CFLAGS="$CFLAGS -O2"
   CXXFLAGS="$CXXFLAGS -O2"
+fi
+
+# Check whether --enable-strip or --disable-strip was given.
+if test "${enable_strip+set}" = set; then
+  enableval="$enable_strip"
+
+fi;
+if test "$enable_strip" != "" && test "$enable_strip" != "no"; then
+  STRIP=1
+
 fi
 
 cat >>confdefs.h <<_ACEOF
@@ -3149,6 +3163,8 @@ s,@LEXLIB@,$LEXLIB,;t t
 s,@LEX_OUTPUT_ROOT@,$LEX_OUTPUT_ROOT,;t t
 s,@YACC@,$YACC,;t t
 s,@LN_S@,$LN_S,;t t
+s,@DEBUG@,$DEBUG,;t t
+s,@STRIP@,$STRIP,;t t
 CEOF
 
 _ACEOF
