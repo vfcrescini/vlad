@@ -10,7 +10,7 @@ CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 TARGETS = libparser.a
 INCLUDES = parser.h
-OBJECTS = parser.o scanner.o
+OBJECTS = program_parser.o program_scanner.o query_parser.o query_scanner.o
 
 all : copy-includes copy-targets
 
@@ -29,23 +29,38 @@ copy-targets : $(TARGETS)
 libparser.a : $(OBJECTS)
 	$(AR) -rcs $(@) $(OBJECTS)
 
-scanner.o : y.tab.h lex.yy.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c lex.yy.cpp
+query_scanner.o : query.tab.h lex.query.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.query.cpp
 
-parser.o : y.tab.h y.tab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c y.tab.cpp
+query_parser.o : query.tab.h query.tab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c query.tab.cpp
 
-lex.yy.cpp : scanner.l
-	$(LEX) scanner.l && mv -f lex.yy.c $(@)
+program_scanner.o : program.tab.h lex.program.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.program.cpp
 
-y.tab.cpp : parser.y
-	$(YACC) parser.y && mv -f y.tab.c $(@)
+program_parser.o : program.tab.h program.tab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c program.tab.cpp
 
-y.tab.h : parser.y
-	$(YACC) -d parser.y
+lex.query.cpp : query.l
+	$(LEX) -Pquery query.l && mv -f lex.query.c $(@)
+
+lex.program.cpp : program.l
+	$(LEX) -Pprogram program.l && mv -f lex.program.c $(@)
+
+query.tab.cpp : query.y
+	$(YACC) -b query -p query query.y && mv -f query.tab.c $(@)
+
+query.tab.h : query.y
+	$(YACC) -b query -p query -d query.y
+
+program.tab.cpp : program.y
+	$(YACC) -b program -p program program.y && mv -f program.tab.c $(@)
+
+program.tab.h : program.y
+	$(YACC) -b program -p program -d program.y
 
 clean :
-	$(RM) $(OBJECTS) lex.yy.cpp y.tab.cpp y.tab.h
+	$(RM) $(OBJECTS) lex.*.cpp *.tab.cpp *.tab.h
 
 distclean : clean
 	$(RM) $(TARGETS) Makefile

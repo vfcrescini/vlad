@@ -1,9 +1,10 @@
 /*
- * scanner.l
+ * query.l
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 %option nounput
+%option noyywrap
 %option always-interactive
 %s COMMENT
 
@@ -14,10 +15,10 @@
 #include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
-#include "y.tab.h"
+#include "query.tab.h"
 
-extern YYSTYPE yylval;
-unsigned int line_no = 1;
+extern YYSTYPE querylval;
+unsigned int querylineno = 1;
 %}
 
 begin_comment      \/\*
@@ -32,23 +33,8 @@ not                !
 holds              holds
 member             memb
 subset             subst
-initially          initially
-implied            implied
-by                 by
-with               with
-absence            absence
-always             always
-causes             causes
-if                 if
 query              query
 after              after
-ident              ident
-sub_grp_type       sub-grp
-obj_grp_type       obj-grp
-acc_grp_type       acc-grp
-sub_type           sub
-obj_type           obj
-acc_type           acc
 identifier         [a-zA-Z]([a-zA-Z0-9_]){0,127}
 whitespace         ([\t ])+
 newline            \n
@@ -74,47 +60,17 @@ everything         .
 
 <INITIAL>{subset} return VLAD_SYM_SUBST;
 
-<INITIAL>{initially} return VLAD_SYM_INITIALLY;
-
-<INITIAL>{implied} return VLAD_SYM_IMPLIED;
-
-<INITIAL>{by} return VLAD_SYM_BY;
-
-<INITIAL>{with} return VLAD_SYM_WITH;
-
-<INITIAL>{absence} return VLAD_SYM_ABSENCE;
-
-<INITIAL>{always} return VLAD_SYM_ALWAYS;
-
-<INITIAL>{causes} return VLAD_SYM_CAUSES;
-
-<INITIAL>{if} return VLAD_SYM_IF;
-
 <INITIAL>{query} return VLAD_SYM_QUERY;
 
 <INITIAL>{after} return VLAD_SYM_AFTER;
 
-<INITIAL>{ident} return VLAD_SYM_IDENT;
-
-<INITIAL>{sub_grp_type} return VLAD_SYM_SUBGRPTYPE;
-
-<INITIAL>{obj_grp_type} return VLAD_SYM_OBJGRPTYPE;
-
-<INITIAL>{acc_grp_type} return VLAD_SYM_ACCGRPTYPE;
-
-<INITIAL>{sub_type} return VLAD_SYM_SUBTYPE;
-
-<INITIAL>{obj_type} return VLAD_SYM_OBJTYPE;
-
-<INITIAL>{acc_type} return VLAD_SYM_ACCTYPE;
-
 <INITIAL>{identifier} {
-  if (yytext == NULL) {
-    strcpy(yylval.identifier, "");
+  if (querytext == NULL) {
+    strcpy(querylval.identifier, "");
     return VLAD_SYM_ERROR;
   }
 
-  strcpy(yylval.identifier, yytext);
+  strcpy(querylval.identifier, querytext);
 
   return VLAD_SYM_IDENTIFIER;
 }
@@ -138,7 +94,7 @@ everything         .
 {whitespace} ;
 
 {newline} {
-  line_no++;
+  querylineno++;
 }
 
 <COMMENT>{everything} ;

@@ -1,3 +1,27 @@
+2003-04-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/vlad.h	:
+
+	  - Added error code for the case where files cannot be opened for
+	    reading.
+
+	* main/vlad.cpp :
+
+	  - Modified code to allow input from 2 files instead of one.
+
+	* parser/Makefile.in :
+	* parser/parser.h :
+	* parser/program.y :
+	* parser/program.l :
+	* parser/query.y :
+	* parser/query.l :
+
+	  - Separated parser.y and scanner.l into program.{y,l} and query.{y,l}
+	    to separate the program part from the queries.
+
+	  - What used to go to yyout and yyerr now goes to stdout and stderr,
+	    respectively.
+
 2003-04-24  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* docs/bnf.txt :
