@@ -16,54 +16,49 @@
 int main(int argc, char *argv[])
 {
   int option;
+#ifdef SMODELS
+  char *arglist = "vhs";
+  char *helpstring = "[-v|-h|[-s] filename]";
+#else
+  char *arglist = "vh";
+  char *helpstring = "[-v|-h|filename]";
+#endif
 
+  mode = VLAD_MODE_NLP;
   opterr = 0;
 
-  while ((option = getopt(argc, argv, "vh")) != -1) {
+  while ((option = getopt(argc, argv, arglist)) != -1) {
     switch(option) {
       case 'v' :
         fprintf(stdout, "vLad %s\n", VERSION);
         return 0;
       case 'h' :
-        fprintf(stdout, "Usage: %s [-v|-h|filename]\n", argv[0]);
+        fprintf(stdout, "Usage: %s %s\n", argv[0], helpstring);
         return 0;
+#ifdef SMODELS
+      case 's' :
+	mode = VLAD_MODE_SMODELS;
+	break;
+#endif
       default :
-        fprintf(stderr, "Usage: %s [-v|-h|filename]\n", argv[0]);
+        fprintf(stderr, "Usage: %s %s\n", argv[0], helpstring);
         return -1;
     }
   }
 
-  if (argc == 1 || (argc == 2 && !strcmp(argv[1], "-")))
+  if (argv[optind] == NULL || !strcmp(argv[optind], "-"))
     yyin = stdin;
-  else if (argc >= 2) {
-    if ((yyin = fopen(argv[1], "r")) == NULL) {
-      fprintf(stderr, "Cannot open %s for reading\n", argv[1]);
+  else {
+    if ((yyin = fopen(argv[optind], "r")) == NULL) {
+      fprintf(stderr, "Cannot open %s for reading\n", argv[optind]);
       return -1;
     }
-  }
-  else {
-    fprintf(stderr, "Usage: %s [-v|-h|filename]\n", argv[0]);
-    return -1;
   }
 
   yyout = stdout;
   yyerr = stderr;
 
   yyparse();
-
-  return 0;
-}
-
-int yyerror(char *error)
-{
-  fprintf(yyerr, "line %d: ERROR: %s\n", line_no, error);
-
-  return 0;
-}
-
-int yywarn(char *warn)
-{
-  fprintf(yyerr, "line %d: WARNING: %s\n", line_no, warn);
 
   return 0;
 }
