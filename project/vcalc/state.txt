@@ -1,4 +1,3 @@
-
 VCalc
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 
@@ -7,18 +6,33 @@ State Transition Table
 ------------------------------------------------------------------------------------------
 State  Description        Action                           Input Text           Next State
 ------------------------------------------------------------------------------------------
-0      numeric input 1    display += num                   0|1|2|3|4|5|6|7|8|9  0
+0      numeric input 1    display = (display * 10) + num   0|1|2|3|4|5|6|7|8|9  0
 
-                          op_buf = operator                +|-|*|/              1
+                          dec_cnt = 0                      .                    1
+
+                          op_buf = operator                +|-|*|/              2
 
                                                            =                    0
 ------------------------------------------------------------------------------------------
-1      op correction      op_buf = operator                +|-|*|/              1
+1      decimal 1          dec_cnt += 1                     0|1|2|3|4|5|6|7|8|9  1
+                          display += (num/(10^dec_cnt))
 
-                          buffer1 = display                0|1|2|3|4|5|6|7|8|9  2
+                                                           .                    1
+
+                          op_buf = operator                +|-|*|/              2
+
+                                                           =                    1
+------------------------------------------------------------------------------------------
+2      op correction      buffer1 = display                0|1|2|3|4|5|6|7|8|9  3
                           display = num
 
-                          if (op == *) {                   =                    3
+                          buffer1 = display                .                    4
+                          display = 0
+                          dec_cnt = 0
+
+                          op_buf = operator                +|-|*|/              2
+
+                          if (op == *) {                   =                    5
                             buffer1 = display
                             buffer2 = display
                           }
@@ -33,28 +47,52 @@ State  Description        Action                           Input Text           
                           res = op_buf(buffer1, buffer2)
                           display = res
                           buffer1 = res
-
 ------------------------------------------------------------------------------------------
-2      numeric input 2    display += num                   0|1|2|3|4|5|6|7|8|9  2
+3      numeric input 2    display = (display * 10) + num   0|1|2|3|4|5|6|7|8|9  3
 
-                          buffer2 = display                +|-|*|/              1
+                          dec_cnt = 0                      .                    4
+
+                          buffer2 = display                +|-|*|/              2
                           res = op_buf(buffer1, buffer2)
                           display = res
                           buffer1 = res
                           op_buf = op
                                 
-                          buffer2 = display                =                    3
+                          buffer2 = display                =                    5
                           res = op_buf(buffer1, buffer2)
                           display = res
                           buffer1 = res
 ------------------------------------------------------------------------------------------
-3      repeat op          res = op_buf(buffer1, buffer2)   =                    3
+4      decimal 2          dec_cnt += 1                     0|1|2|3|4|5|6|7|8|9  4
+                          display += (num/(10^dec_cnt))
+ 
+                                                           .                    4
+
+                          buffer2 = display                +|-|*|/              2
+                          res = op_buf(buffer1, buffer2)
                           display = res
                           buffer1 = res
-
-                          buffer1 = 0                      0|1|2|3|4|5|6|7|8|9  0
+                          op_buf = op
+                                
+                          buffer2 = display                =                    5
+                          res = op_buf(buffer1, buffer2)
+                          display = res
+                          buffer1 = res
+------------------------------------------------------------------------------------------
+5      repeat op          buffer1 = 0                      0|1|2|3|4|5|6|7|8|9  0
                           buffer2 = 0
                           op_buf = none
                           display = num
 
-                          op_buf = operator                +|-|*|/              1
+                          dec_cnt = 0                      .                    1
+                          buffer1 = 0
+                          buffer2 = 0
+                          op_buf = none
+                          display = 0 
+
+                          op_buf = operator                +|-|*|/              2
+
+                          res = op_buf(buffer1, buffer2)   =                    5
+                          display = res
+                          buffer1 = res
+------------------------------------------------------------------------------------------

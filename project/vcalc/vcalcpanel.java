@@ -120,6 +120,9 @@ public class vcalcpanel extends Panel implements ActionListener {
       case 'C' :
         cdisplay.pressed_c();
         break;
+      case '.' :
+        cdisplay.pressed_dot();
+        break;
     }
   }
 }
