@@ -1,5 +1,24 @@
 2004-11-03  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Makefile.in :
+	* admin.c :
+	* admin.h :
+	* config.h.in :
+	* configure :
+	* configure.ac :
+	* mod_vlad.c :
+	* mod_vlad.h :
+	* policy.l :
+	* policy.y :
+	* proc.c :
+	* proc.h :
+	* util.c :
+	* util.h :
+
+	  - Added copyright and license notice.
+
+2004-11-03  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
 	* README :
 
 	  - Fixed typos.
