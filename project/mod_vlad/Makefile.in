@@ -11,7 +11,7 @@ STRIP = @STRIP@
 PICFLAG = @PICFLAG@
 VERSION = @VERSION@
 LIBS = mod_vlad.so
-OBJECTS = mod_vlad.o policy_p.o policy_s.o util.o admin.o
+OBJECTS = mod_vlad.o policy_p.o policy_s.o util.o admin.o proc.o
 TEMP = lex.*.c *.tab.c *.tab.h
 
 .PHONY :    \
@@ -38,6 +38,9 @@ util.o : mod_vlad.h util.h util.c
 
 admin.o : mod_vlad.h admin.h admin.c
 	$(CC) $(CFLAGS) -o $(@) -c admin.c
+
+proc.o : mod_vlad.h proc.h proc.c
+	$(CC) $(CFLAGS) -o $(@) -c proc.c
 
 policy_p.o : policy.tab.h policy.tab.c
 	$(CC) $(CFLAGS) -o $(@) -c policy.tab.c

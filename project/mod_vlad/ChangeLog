@@ -1,3 +1,11 @@
+2003-07-03  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Makefile.in :
+	* proc.c :
+	* proc.h :
+
+	  - Added file that will handle ipc's.
+
 2003-07-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* mod_vlad.c :
