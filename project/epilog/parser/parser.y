@@ -41,6 +41,8 @@ int yylex();
 %token EPI_SYM_VAR_IDENT
 %token EPI_SYM_TRANS_IDENT
 
+%start program
+
 %%
 
 program : 
@@ -63,13 +65,7 @@ initial_stmt :
   ;
 
 trans_stmt : 
-  EPI_SYM_TRANS EPI_SYM_TRANS_IDENT trans_var_def EPI_SYM_CAUSES ground_exp EPI_SYM_IF ground_exp EPI_SYM_SEMICOLON
-  {
-    char *tmp_str = NULL;
-    symtab_get(&tmp_str, $2);
-    printf("trans = %d = %s\n", $2, tmp_str);
-    free(tmp_str);
-  }
+  EPI_SYM_TRANS EPI_SYM_TRANS_IDENT trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON
   ;
 
 policy_stmt : 
@@ -84,19 +80,7 @@ trans_var_def :
 
 trans_var_list : 
   EPI_SYM_VAR_IDENT 
-  {
-    char *tmp_str = NULL;
-    symtab_get(&tmp_str, $1);
-    printf("var = %d = %s\n", $1, tmp_str);
-    free(tmp_str);
-  }
   | EPI_SYM_VAR_IDENT EPI_SYM_COMMA trans_var_list
-  {
-    char *tmp_str = NULL;
-    symtab_get(&tmp_str, $1);
-    printf("var = %d = %s\n", $1, tmp_str);
-    free(tmp_str);
-  }
   ;
 
 is_clause : 
@@ -122,18 +106,52 @@ sub_acc_obj_list :
   ;
 
 sub_acc_obj_ident : 
-  subject_identifier 
-  | access_identifier 
-  | object_identifier
+  ground_sub_ident 
+  | ground_acc_ident 
+  | ground_obj_ident
+  ;
+
+logical_op :
+  EPI_SYM_AND
+  ;
+
+comp_exp :
+  comp_exp logical_op comp_boolean_exp
+  | comp_boolean_exp
+  ;
+
+comp_boolean_exp :
+  EPI_SYM_NOT comp_logical_exp
+  | comp_logical_exp
+  ;
+
+comp_logical_exp :
+  comp_atom
+  | EPI_SYM_OPEN_PARENT comp_exp EPI_SYM_CLOSE_PARENT
+  ;
+
+comp_atom :
+  comp_holds
+  | comp_cont
+  | comp_elt
+  | logical_const
+  ;
+
+comp_holds :
+  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT comp_sub_ident EPI_SYM_COMMA comp_acc_ident EPI_SYM_COMMA comp_obj_ident EPI_SYM_CLOSE_PARENT
+  ;
+
+comp_cont :
+  EPI_SYM_CONT EPI_SYM_OPEN_PARENT comp_group_var_ident EPI_SYM_COMMA comp_group_var_ident EPI_SYM_CLOSE_PARENT
+  ;
+
+comp_elt :
+  EPI_SYM_ELT EPI_SYM_OPEN_PARENT comp_single_var_ident EPI_SYM_COMMA comp_group_var_ident EPI_SYM_CLOSE_PARENT
   ;
 
 ground_exp : 
   ground_exp logical_op ground_boolean_exp 
   | ground_boolean_exp
-  ;
-
-logical_op :
-  EPI_SYM_AND
   ;
 
 ground_boolean_exp :
@@ -154,7 +172,7 @@ ground_atom :
   ;
 
 ground_holds :
-  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT subject_identifier EPI_SYM_COMMA access_identifier EPI_SYM_COMMA object_identifier EPI_SYM_CLOSE_PARENT
+  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT ground_sub_ident EPI_SYM_COMMA ground_acc_ident EPI_SYM_COMMA ground_obj_ident EPI_SYM_CLOSE_PARENT
   ;
 
 ground_cont :
@@ -193,7 +211,36 @@ ground_object_elt :
   EPI_SYM_ELT EPI_SYM_OPEN_PARENT EPI_SYM_S_OBJ_IDENT EPI_SYM_COMMA EPI_SYM_G_OBJ_IDENT EPI_SYM_CLOSE_PARENT
   ;
 
-subject_identifier : 
+comp_sub_ident :
+  ground_sub_ident
+  | EPI_SYM_VAR_IDENT
+  ;
+
+comp_acc_ident :
+  ground_acc_ident
+  | EPI_SYM_VAR_IDENT
+  ;
+
+comp_obj_ident :
+  ground_obj_ident
+  | EPI_SYM_VAR_IDENT
+  ;
+
+comp_single_var_ident :
+  EPI_SYM_S_SUB_IDENT
+  | EPI_SYM_S_ACC_IDENT
+  | EPI_SYM_S_OBJ_IDENT
+  | EPI_SYM_VAR_IDENT
+  ;
+
+comp_group_var_ident :
+  EPI_SYM_G_SUB_IDENT
+  | EPI_SYM_G_ACC_IDENT
+  | EPI_SYM_G_OBJ_IDENT
+  | EPI_SYM_VAR_IDENT
+  ;
+
+ground_sub_ident : 
   EPI_SYM_S_SUB_IDENT  
   {
     char *tmp_str = NULL;
@@ -210,7 +257,7 @@ subject_identifier :
   }
   ;
 
-access_identifier :
+ground_acc_ident :
   EPI_SYM_S_ACC_IDENT 
   {
     char *tmp_str = NULL;
@@ -227,7 +274,7 @@ access_identifier :
   }
   ;
 
-object_identifier : 
+ground_obj_ident : 
   EPI_SYM_S_OBJ_IDENT 
   {
     char *tmp_str = NULL;

@@ -3,156 +3,193 @@ Vino Crescini
 
 BNF
 
-<alpha>                : <small-caps> | <large-caps>
-
-<small-caps>           : a | b | c | d | e | f | g | h | i | j | k | l | m | n |
-                         o | p | q | r | s | t | u | v | w | x | y | z
-
-<large-caps>           : A | B | C | D | E | F | G | H | I | J | K | L | M | N |
-                         O | P | Q | R | S | T | U | V | W | X | Y | Z
-
-<digit>                : 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-
-<alpha-num>            : <alpha> | <digit>
-
-<alpha-num-uscr>       : <alpha-num> | <underscore>
-
-<alpha-num-uscr-str>   : <alpha-num-uscr> | <alpha-num-uscr> <alpha-num-uscr-str>
-
-<s-subject-ident>      : s | s <alpha-num-uscr-str>
-
-<s-access-ident>       : a | a <alpha-num-uscr-str>
-
-<s-object-ident >      : o | o <alpha-num-uscr-str>
-
-<g-subject-ident>      : S | S <alpha-num-uscr-str>
-
-<g-access-ident>       : A | A <alpha-num-uscr-str>
-
-<g-object-ident >      : O | O <alpha-num-uscr-str>
-
-<subject-identifier>   : <s-subject-ident> | <S-subject-ident>
-
-<access-identifier>    : <a-access-ident> | <A-subject-ident>
-
-<object-identifier>    : <o-access-ident> | <O-access-ident>
-
-<var-identifier>       : v | v <alpha-num-uscr-str> | V | V <alpha-num-usrc-str>
-
-<trans-identifier>     : t | t <alpha-num-uscr-str> | T | T <alpha-num-usrc-str>
-
-<sub-acc-obj-ident>    : <subject-identifier> |
-                         <access-identifier> |
-                         <object-identifier>
-
-<true>                 : true
-
-<false>                : false
-
-<and>                  : &&
-
-<not>                  : !
-
-<holds>                : holds
-
-<element>              : elt
-
-<containment>          : cont
-
-<transform>            : trans
-
-<initially>            : initially
-
-<causes>               : causes
-
-<if>                   : if
-
-<is>                   : is
-
-<after>                : after
-
-<underscore>           : _
-
-<open-parent>         : (
-
-<close-parent>        : )
-
-<comma>                : ,
-
-<semicolon>            : ;
-
-<logical-const>        : <true> | <false>
-
-<ground-exp>           : <ground-exp> <logical-op> <ground-boolean-exp> |
-                         <ground-boolean-exp>
-
-<logical-op>           : <and>
-
-<ground-boolean-exp>   : <not> <ground-logical-exp> | <ground-logical-exp>
-
-<ground-logical-exp>   : <open-parent> <ground-exp> <close-parent> | 
-                         <ground-atom>
-
-<ground-atom>          : <ground-holds> | <ground-cont> | ground-elt> | 
-                         <logical-const>
-
-<ground-holds>         : <holds> <open-parent> <subject-identifier> <comma>
-                         <access-identifier> <comma> <object-identifier>
-                         <close-parent>
-
-<ground-cont>          : <ground-subject-cont> | <ground-access-cont> |
-                         <ground-object-cont>
-
-<ground-subject-cont>  : <containment> <open-parent> <g-subject-ident>
-                         <comma> <g-subject-ident> <close-parent>
-
-<ground-object-cont>   : <containment> <open-parent> g-object-ident>
-                         <comma> <g-object-ident> <close-parent>
-
-<ground-access-cont>   : <containment> <open-parent> <g-access-ident>
-                         <comma> <g-access-ident> <close-parent>
-
-<ground-elt>           : <ground-subject-elt> | <ground-access-elt> |
-                         <ground-object-elt>
-
-<ground-subject-elt>   : <element> <open-parent> <s-subject-ident>
-                         <comma> <g-subject-ident> <close-parent>
-
-<ground-access-elt>    : <element> <open-parent> <s-access-ident>
-                         <comma> <g-access-ident> <close-parent>
-
-<ground-object-elt>    : <element> <open-parent> <s-object-ident>
-                         <comma> <g-object-ident> <close-parent>
-
-<initial-stmt>         : <initially> <ground-exp> <semicolon>
-
-<trans-stmt>           : <trans> <trans-identifier> <trans-var-def>
-                         <causes> <ground-exp> <if> <ground-exp> <semicolon>
-
-<trans-var-def>        : <open-parent> <close-parent> |
-                         <open-parent> <trans-var-list> <close-parent> 
-
-<trans-var-list>       : <var-identifier> | <var-identifier> <comma>
-                         <trans-var-list>
-
-<policy-stmt>          : <is-clause> <after-clause> <semicolon> |
-                         <is-clause> <semicolon>
-
-<is-clause>            : <is> <ground-exp>
-
-<after-clause>         : <after> <trans-ref-list>
-
-<trans-ref-list>       : <trans-ref-def> | <trans-ref-def> <comma> 
-                         <trans-ref-list>
-
-<trans-ref-def>        : <trans-identifier> <open-parent>
-                         <sub-acc-obj-list> <close-parent>
-
-<sub-acc-obj-list>     : <sub-acc-obj-ident> | <sub-acc-obj-ident> <comma>
-                         <sub-acc-obj-list>
-
-<program>              : <statement-list>
-
-<statement-list>       : <statement> | <statement> <statement-list>
-
-<statement>            : <initial-stmt> | <trans-stmt> | <policy-stmt>
+<alpha>                 : <small-caps> | <large-caps>
+                        
+<small-caps>            : a | b | c | d | e | f | g | h | i | j | k | l | m | n |
+                          o | p | q | r | s | t | u | v | w | x | y | z
+                        
+<large-caps>            : A | B | C | D | E | F | G | H | I | J | K | L | M | N |
+                          O | P | Q | R | S | T | U | V | W | X | Y | Z
+                        
+<digit>                 : 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+                        
+<alpha-num>             : <alpha> | <digit>
+                        
+<alpha-num-uscr>        : <alpha-num> | <underscore>
+                        
+<alpha-num-uscr-str>    : <alpha-num-uscr> | <alpha-num-uscr> <alpha-num-uscr-str>
+                        
+<s-subject-ident>       : s | s <alpha-num-uscr-str>
+                        
+<s-access-ident>        : a | a <alpha-num-uscr-str>
+                        
+<s-object-ident >       : o | o <alpha-num-uscr-str>
+                        
+<g-subject-ident>       : S | S <alpha-num-uscr-str>
+                        
+<g-access-ident>        : A | A <alpha-num-uscr-str>
+                        
+<g-object-ident >       : O | O <alpha-num-uscr-str>
+                        
+<ground-sub-ident>      : <s-subject-ident> | <g-subject-ident>
+                        
+<ground-acc-ident>      : <s-access-ident> | <g-access-ident>
+                        
+<ground-obj-ident>      : <s-object-ident> | <g-object-ident>
+                        
+<var-identifier>        : v | V | v <alpha-num-uscr-str> | 
+                          V <alpha-num-usrc-str>
+                        
+<trans-identifier>      : t | T | t <alpha-num-uscr-str> | 
+                          T <alpha-num-usrc-str>
+                        
+<sub-acc-obj-ident>     : <ground-sub-ident> |
+                          <ground-acc-ident> |
+                          <ground-obj-ident>
+                        
+<comp-sub-ident>        : <s-subject-ident> | <g-subject-ident> |
+                          <var-identifier>
+                        
+<comp-acc-ident>        : <s-access-ident> | <g-access-ident>
+                          <var-identifier>
+                        
+<comp-obj-ident>        : <s-object-ident> | <g-object-ident>
+                          <var-identifier>
+
+<comp-single-var-ident> : <s-subject-ident> | <s-access-ident> |
+                          <s-object-ident> | <var-identifier>
+
+<comp-group-var-ident>  : <g-subject-ident> | <g-access-ident> |
+                          <g-object-ident> | <var-identifier>
+
+<true>                  : true
+                        
+<false>                 : false
+                        
+<and>                   : &&
+                        
+<not>                   : !
+                        
+<holds>                 : holds
+                        
+<element>               : elt
+                        
+<containment>           : cont
+                        
+<transform>             : trans
+                        
+<initially>             : initially
+                        
+<causes>                : causes
+                        
+<if>                    : if
+                        
+<is>                    : is
+                        
+<after>                 : after
+                        
+<underscore>            : _
+
+<open-parent>           : (
+
+<close-parent>          : )
+
+<comma>                 : ,
+                        
+<semicolon>             : ;
+                        
+<logical-const>         : <true> | <false>
+                        
+<logical-op>            : <and>
+                        
+<comp-exp>              : <comp-exp> <logical-op> <comp-boolean-exp> |
+                          <comp-boolean-exp>
+                        
+<comp-boolean-exp>      : <not> <comp-logical-exp> | <comp-boolean-exp>
+                        
+<comp-logical-exp>      : <open-parent> <comp-exp> <close-parent> | <comp-atom>
+                        
+<comp-atom>             : <comp-holds> | <comp-cont> | <comp-elt> | 
+                          <logical-const>
+                        
+<comp-holds>            : <holds> <open-parent> <comp-sub-ident> <comma>
+                          <comp-acc-ident> <comma> <comp-obj-ident>
+                          <close-parent>
+                        
+<comp-cont>             : <containment> <open-parent> <comp-grp-var-ident>
+                          <comma> <comp-group-var-ident> <close-parent>
+                        
+<comp-elt>              : <element> <open-parent> <comp-single-var-ident>
+                          <comma> <comp-group-var-ident> <close-parent>
+                        
+<ground-exp>            : <ground-exp> <logical-op> <ground-boolean-exp> |
+                          <ground-boolean-exp>
+                        
+<ground-boolean-exp>    : <not> <ground-logical-exp> | <ground-logical-exp>
+                        
+<ground-logical-exp>    : <open-parent> <ground-exp> <close-parent> | 
+                          <ground-atom>
+                        
+<ground-atom>           : <ground-holds> | <ground-cont> | ground-elt> | 
+                          <logical-const>
+                        
+<ground-holds>          : <holds> <open-parent> <ground-sub-ident> <comma>
+                          <ground-acc-ident> <comma> <ground-obj-ident>
+                          <close-parent>
+                        
+<ground-cont>           : <ground-subject-cont> | <ground-access-cont> |
+                          <ground-object-cont>
+                        
+<ground-elt>            : <ground-subject-elt> | <ground-access-elt> |
+                          <ground-object-elt>
+                        
+<ground-subject-cont>   : <containment> <open-parent> <g-subject-ident>
+                          <comma> <g-subject-ident> <close-parent>
+                        
+<ground-object-cont>    : <containment> <open-parent> <g-object-ident>
+                          <comma> <g-object-ident> <close-parent>
+                        
+<ground-access-cont>    : <containment> <open-parent> <g-access-ident>
+                          <comma> <g-access-ident> <close-parent>
+                        
+<ground-subject-elt>    : <element> <open-parent> <s-subject-ident>
+                          <comma> <g-subject-ident> <close-parent>
+                        
+<ground-access-elt>     : <element> <open-parent> <s-access-ident>
+                          <comma> <g-access-ident> <close-parent>
+                        
+<ground-object-elt>     : <element> <open-parent> <s-object-ident>
+                          <comma> <g-object-ident> <close-parent>
+                        
+<initial-stmt>          : <initially> <ground-exp> <semicolon>
+                        
+<trans-stmt>            : <trans> <trans-identifier> <trans-var-def>
+                          <causes> <ground-exp> <if> <ground-exp> <semicolon>
+                        
+<trans-var-def>         : <open-parent> <close-parent> |
+                          <open-parent> <trans-var-list> <close-parent> 
+                        
+<trans-var-list>        : <var-identifier> | <var-identifier> <comma>
+                          <trans-var-list>
+                        
+<policy-stmt>           : <is-clause> <after-clause> <semicolon> |
+                          <is-clause> <semicolon>
+                        
+<is-clause>             : <is> <ground-exp>
+                        
+<after-clause>          : <after> <trans-ref-list>
+                        
+<trans-ref-list>        : <trans-ref-def> | <trans-ref-def> <comma> 
+                          <trans-ref-list>
+                        
+<trans-ref-def>         : <trans-identifier> <open-parent>
+                          <sub-acc-obj-list> <close-parent>
+                        
+<sub-acc-obj-list>      : <sub-acc-obj-ident> | <sub-acc-obj-ident> <comma>
+                          <sub-acc-obj-list>
+                        
+<program>               : <statement-list>
+                        
+<statement-list>        : <statement> | <statement> <statement-list>
+                        
+<statement>             : <initial-stmt> | <trans-stmt> | <policy-stmt>
