@@ -1,5 +1,13 @@
 2003-06-09  vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* config.h.in :
+	* configure :
+	* configure.ac :
+
+	  - Added --enable-wrapper to enable the c-style library wrapper.
+
+	  - Added additional compiler warning checks.
+
 	* lib/wrapper.h :
 	* lib/wrapper.cpp :
 	* lib/smwrap.h :

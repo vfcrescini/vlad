@@ -5,7 +5,7 @@ Build/Use Instructions
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2003 May 15
+Updated: 2003 Jun 09
 -------------------------------------------------------------------------------
 
 1. From the toplevel source directory, run ./configure :
@@ -37,6 +37,10 @@ Updated: 2003 May 15
 
        Enable building of statically-linked binaries as opposed to the default
        dynamic linking. Only available in systems that support dynamic linking.
+
+     --enable-wrapper
+
+       Enable C-style library wrapper for non-C++ linking.
 
      --prefix=<path-to-install>
 

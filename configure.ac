@@ -12,8 +12,10 @@ CFLAGS="$CFLAGS"
 CXXFLAGS="$CXXFLAGS"
 
 # set flags
-VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
-VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
+VLAD_C_WFLG="-Wall -Wshadow -Wcast-align -Wnested-externs -Wstrict-prototypes"
+VLAD_C_OFLG="-ansi -pedantic"
+VLAD_CFLAGS="$VLAD_C_OFLG $VLAD_C_WFLG -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
+VLAD_CXXFLAGS="$VLAD_C_OFLG $VLAD_C_WFLG -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
 VLAD_LDFLAGS="-L\$(DISTDIR)/lib"
 
 # some tests
@@ -95,6 +97,14 @@ AC_ARG_ENABLE(strip,AC_HELP_STRING([--enable-strip],[run strip program (default 
 
 if test "x$enable_strip" != "x" && test "x$enable_strip" != "xno"; then
   AC_CHECK_PROG(STRIP,strip,[yes])
+fi
+
+# --enable-wrapper
+AC_ARG_ENABLE(wrapper,AC_HELP_STRING([--enable-wrapper],[enable C-interface wrapper (default is disabled)]))
+
+if test "X$enable_wrapper" != "x" && test "x$enable_wrapper" != "xno"; then
+  AC_DEFINE(WRAPPER,[yes])
+  AC_SUBST(WRAPPER,[yes])
 fi
 
 # --with-smodels

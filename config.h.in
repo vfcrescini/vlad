@@ -8,6 +8,7 @@
 #define VERSION "0.0.0"
 #undef DEBUG
 #undef SMODELS
+#undef WRAPPER
 
 #ifdef DEBUG
   #include <cstdio>
