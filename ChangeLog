@@ -1,3 +1,11 @@
+2003-03-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* docs/bnf.txt :
+	* parser/parser.y :
+
+	  - Renamed ground-atom-exp and comp-atom-exp to ground-atom
+	    and comp-atom, respectively, for clarity.
+
 2003-02-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/atom.cpp :

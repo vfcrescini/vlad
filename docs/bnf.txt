@@ -109,9 +109,9 @@ Started 2002 Dec 08
 <ground-exp>            : <ground-exp> <logical-op> <ground-boolean-atom> |
                           <ground-boolean-atom>
                         
-<ground-boolean-atom>   : <not> <ground-atom-exp> | <ground-atom-exp>
+<ground-boolean-atom>   : <not> <ground-atom> | <ground-atom>
                         
-<ground-atom-exp>       : <ground-holds-atom> | <ground-subst-atom> | 
+<ground-atom>           : <ground-holds-atom> | <ground-subst-atom> | 
                           <ground-memb-atom> | <logical-atom>
                         
 <ground-holds-atom>     : <holds> <open-parent> <identfier> <comma>
@@ -126,9 +126,9 @@ Started 2002 Dec 08
 <comp-exp>              : <comp-exp> <logical-op> <comp-boolean-atom> |
                           <comp-boolean-atom>
 
-<comp-boolean-atom>     : <not> <comp-atom-exp> | <comp-atom-exp>
+<comp-boolean-atom>     : <not> <comp-atom> | <comp-atom>
 
-<comp-atom-exp>         : <comp-holds-atom> | <comp-subst-atom> |
+<comp-atom>             : <comp-holds-atom> | <comp-subst-atom> |
                           <comp-memb-atom> | <logical-atom>
 
 <comp-holds-atom>       : <holds> <open-parent> <identfier> <comma>
