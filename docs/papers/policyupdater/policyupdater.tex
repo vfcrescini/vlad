@@ -133,7 +133,7 @@
 
               \begin{verbatim}memb(<elt>, <grp>)\end{verbatim}
             \item
-              {\em $Subset$.} The subset atom states that the group identifiers
+              {\em Subset.} The subset atom states that the group identifiers
               $grp1$ and $grp2$ are of the same types and that group $grp1$ is
               a subset of the group $grp2$.
 
@@ -318,37 +318,32 @@ always <exp1>
           access for $file$.
 
           \begin{verbatim}
-/* entity identifier definitions */
+/* policy definitions */
 ident sub alice;
 ident sub-grp grp1, grp2, grp3;
 ident acc read, write;
 ident obj file;
 
-/* initial fact definitions */
 initially
   memb(alice, grp2) &&
   holds(grp1, read, file) &&
   subst(grp3, grp2) &&
   subst(grp2, grp1);
 
-/* constraint definitions */
 always holds(grp1, write, file)
   implied by
     holds(grp1, read, file)
   with absence
     !holds(grp1, write, file);
 
-/* policy update definitions */
 delete_read(SG0, OS0)
   causes !holds(SG0, read, OS0);
 
-/* sequence manipulation directive */
+/* directives */
 seq add delete_read(grp1, file);
 
-/* compute directive */
 compute;
 
-/* query directives */
 query holds(grp1, write, file);
 query holds(grp1, read, file);
 query holds(alice, write, file);
@@ -1713,19 +1708,19 @@ query holds(alice, read, file);
               \hline
               \textbf{Field} & \textbf{Type} & \textbf{Description} & \\
               \hline
-              $sub$ & string & subject entity & {\multirow{3}{*}{\begin{sideways}hol\end{sideways}}} \\
+              $sub$ & string & subject entity & {\multirow{3}{*}{hol}} \\
               \cline{1-3}
               $acc$ & string & access right entity & \\
               \cline{1-3}
               $obj$ & string & object entity & \\
               \hline
               \hline
-              $elt$ & string & single entity & {\multirow{2}{*}{\begin{sideways}mem\end{sideways}}} \\
+              $elt$ & string & single entity & {\multirow{2}{*}{mem}} \\
               \cline{1-3}
               $grp$ & string & group entity & \\
               \hline
               \hline
-              $grp1$ & string & subgroup entity & {\multirow{2}{*}{\begin{sideways}sub\end{sideways}}} \\
+              $grp1$ & string & subgroup entity & {\multirow{2}{*}{sub}} \\
               \cline{1-3}
               $grp2$ & string & supergroup entity & \\
               \hline
