@@ -10,7 +10,7 @@
 #include <vlad.h>
 #include <symtab.h>
 
-symtab::symtab() : list::list(true)
+symtab::symtab() : list(true)
 {
 }
 
@@ -60,8 +60,6 @@ int symtab::del(const char *n)
     return retval;
 
   return list::del_d(&ident, true);
-
-  return VLAD_OK;
 }
 
 /* get the identifier object associated with the given name */
