@@ -3,7 +3,7 @@
 TOPSRCDIR = ..
 CFLAGS = -O2 -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libtrans.a
-INCLUDES = varlist.h
+INCLUDES =
 
 ifdef DEBUG
 CFLAGS += -g -DDEBUG
@@ -23,11 +23,8 @@ public : $(TARGETS)
 	ln -sf ../trans/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libtrans.a : varlist.o
-	$(AR) -rcs $(@) varlist.o
-
-varlist.o : varlist.h varlist.c
-	$(CC) $(CFLAGS) -o $(@) -c varlist.c
+libtrans.a :
+	$(AR) -rcs $(@)
 
 clean :
 	$(RM) $(TARGETS) *.o
