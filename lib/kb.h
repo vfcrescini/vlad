@@ -15,7 +15,7 @@
 #include <vlad/symtab.h>
 #include <vlad/consttab.h>
 #include <vlad/transtab.h>
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
   #include <vlad/smwrap.h>
 #endif
 
@@ -51,7 +51,7 @@ class kb {
     int compute_generate(FILE *f);
     /* generate the query */
     int query_generate(expression *e, FILE *f);
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
     /* prepares the kb for queries */
     int compute_evaluate();
     /* use smwrap class to evaluate a query */
@@ -63,7 +63,7 @@ class kb {
     consttab *ctable;
     transtab *ttable;
     seqtab *setable;
-#ifdef SMODELS
+#ifdef VLAD_SMODELS
     smwrap *smobject;
 #endif
     unsigned int s_len;

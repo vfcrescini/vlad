@@ -5,12 +5,12 @@
 #ifndef __VLAD_CONFIG_H
 #define __VLAD_CONFIG_H
 
-#define VERSION "0.0.0"
-#undef DEBUG
-#undef SMODELS
-#undef WRAPPER
+#define VLAD_VERSION "0.0.0"
+#undef VLAD_DEBUG
+#undef VLAD_SMODELS
+#undef VLAD_WRAPPER
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
   #include <cstdio>
 #endif
 

@@ -17,7 +17,7 @@ class string : public list_item
     bool cmp(list_item *item);
     int init(const char *s);
     char *get();
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     /* assuming s has enough memory allocation */
     void print(char *s);
 #endif
@@ -39,7 +39,7 @@ class stringlist : public list
     int get(unsigned int i, char **s);
     /* return true if string is in the list */
     int find(const char *s);
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *s);
 #endif

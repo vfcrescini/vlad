@@ -30,11 +30,12 @@ OBJECTS =             \
   operation_scanner.o \
   $(NULL)
 
-TEMP =                \
+TEMPS1 =              \
   lex.*.cpp           \
   *.tab.cpp           \
   *.tab.h             \
   $(NULL)
+TEMPS2 =
 
 ifdef SMODELS
 SMLIBS = -lsmodels

@@ -9,7 +9,6 @@
 #include <cstdio>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
 
@@ -24,7 +23,7 @@ static kb *kbase = NULL;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
 static unsigned int cnt_init = 0;
 static unsigned int cnt_const = 0;
 static unsigned int cnt_trans = 0;
@@ -311,7 +310,7 @@ initial_stmt :
     int retval;
     unsigned int i;
     atom *a;
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     char s[VLAD_MAXLEN_STR];
 #endif
 
@@ -333,7 +332,7 @@ initial_stmt :
         return retval;
       }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
       a->print(s);
       fprintf(ferr, "initial state[%d]: %s\n", cnt_init++, s);
 #endif
@@ -347,7 +346,7 @@ initial_stmt :
 
 constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause VLAD_SYM_SEMICOLON {
     int retval;
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     char e[VLAD_MAXLEN_STR];
     char c[VLAD_MAXLEN_STR];
     char n[VLAD_MAXLEN_STR];
@@ -358,7 +357,7 @@ constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause VLAD_SYM
       return retval;
     }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     $2->print(e);
     if ($3 != NULL)
       $3->print(c);
@@ -403,7 +402,7 @@ with_clause : {
 trans_stmt :
   VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES expression if_clause VLAD_SYM_SEMICOLON {
     int retval;
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     char v[VLAD_MAXLEN_STR];
     char pr[VLAD_MAXLEN_STR];
     char po[VLAD_MAXLEN_STR];
@@ -415,7 +414,7 @@ trans_stmt :
       return retval;
     }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     if ($2 != NULL)
       $2->print(v);
     else
@@ -612,7 +611,7 @@ int add_identifier(const char *n, unsigned char t)
 
   switch (kbase->add_symtab(n, t)) {
     case VLAD_OK :
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
       switch (t) {
         case VLAD_IDENT_SUBJECT :
           fprintf(ferr, "declared identifier subject: %s\n", n);

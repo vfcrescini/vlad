@@ -8,7 +8,6 @@
 #include <cstring>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/expression.h>
 
@@ -73,7 +72,7 @@ int expression::replace(stringlist *vlist, stringlist *ilist, expression **e)
   return VLAD_OK;
 }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
 void expression::print(char *s)
 {

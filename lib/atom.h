@@ -51,7 +51,7 @@ class atom : public list_item
     /* replaces vars in vlist with idents in ilist. new atom a */
     int replace(stringlist *vlist, stringlist *ilist, atom **a);
     void negate();
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
     /* assuming s has enough memory allocation */
     void print(char *s);
 #endif

@@ -8,7 +8,6 @@
 #include <cstring>
 #include <new>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/stringlist.h>
 
@@ -61,7 +60,7 @@ char *string::get()
   return str;
 }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
 /* assuming s has enough memory allocation */
 void string::print(char *s)
 {
@@ -156,7 +155,7 @@ int stringlist::find(const char *s)
   return list::find(&tmp);
 }
 
-#ifdef DEBUG
+#ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
 void stringlist::print(char *s)
 {

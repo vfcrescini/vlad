@@ -6,7 +6,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <config.h>
 #include <vlad/vlad.h>
 #include <vlad/list.h>
 

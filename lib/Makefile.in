@@ -22,6 +22,7 @@ BINS =
 STATIC_LIBS = libvlad.a
 SHARED_LIBS = libvlad.so.$(VERSION)
 INCLUDES =            \
+  config.h            \
   vlad.h              \
   list.h              \
   stringlist.h        \
@@ -50,7 +51,10 @@ OBJECTS =             \
   $(WRAPOBJECTS)      \
   kb.o                \
   $(NULL)
-TEMP =
+TEMPS1 =
+TEMPS2 =              \
+  config.h            \
+  $(NULL)
 
 ifdef SMODELS
 SMINCLUDES = smwrap.h
