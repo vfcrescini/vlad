@@ -4,17 +4,22 @@
 #include <errno.h>
 #include <signal.h>
 #include <netdb.h>
+#include <sys/select.h>
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "handler.h"
 
-#define ZAPHODD_TCPPORT    4321
+#define ZAPHODD_TCPPORT    54321
 #define ZAPHODD_MAXCLIENTS 32
-#define ZAPHODD_TIMEOUT    5
+#define ZAPHODD_TIMEOUT    30
+#define ZAPHODD_MAXLENGTH  1024
 
 int init_socket();
 int wait_connect(int server_fd);
 int serve_connect(int client_fd);
+int read_from_fd(int fd, char string[]);
+int write_to_fd(int fd, char string[]);
 
 void drop_connection(int sig);
 void wait_child(int sig);
@@ -40,10 +45,11 @@ int main()
 
     setsid();
     chdir("/");
+/*
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
- 
+*/
     if ((server_fd = init_socket()) < 0)
       return -1;
 
@@ -127,6 +133,7 @@ int wait_connect(int server_fd)
   else if (pid > 0) {
     /* parent */
     close(client_fd);
+
     return 0;
   }
   else {
@@ -146,6 +153,11 @@ int wait_connect(int server_fd)
 
 int serve_connect(int client_fd)
 {
+  char *reply = NULL;
+  char request[ZAPHODD_MAXLENGTH];
+
+  memset(request, 0, ZAPHODD_MAXLENGTH);
+
   /* check client fd */
   if (client_fd < 0)
     return -1;
@@ -153,8 +165,20 @@ int serve_connect(int client_fd)
   /* begin timer */
   alarm(ZAPHODD_TIMEOUT);
 
-  /* send a string */
-  write(client_fd, (void *) "test successful\n", 17);
+  /* process message */
+  if (read_from_fd(client_fd, request) < 0) {
+    printf("error\n");
+    write_to_fd(client_fd, "error");
+  }
+  else if (accept_command(request, &reply) == 0) {
+    printf("reply: (%s)\n", reply);
+    write_to_fd(client_fd, reply);
+    free(reply);
+  }
+  else {
+    printf("error replying\n");
+    write_to_fd(client_fd, "error");
+  }
 
   /* clear alarm */
   alarm(0);
@@ -162,5 +186,35 @@ int serve_connect(int client_fd)
   /* close socket */
   close(client_fd);
 
+  return 0;
+}
+
+int read_from_fd(int fd, char string[])
+{
+  int i = 0;
+  fd_set tmp_set;
+
+  while (1) {
+    FD_ZERO(&tmp_set);
+    FD_SET(fd, &tmp_set);
+    
+    /* block until there's something to read */
+    select(fd + 1, &tmp_set, NULL, NULL, NULL);
+   
+    if (FD_ISSET(fd, &tmp_set)) {
+      if (read(fd, &(string[i]), 1) <= 0)
+        break;
+      if (string[i] == '\n' || string[i] == '\0')
+        break;
+      if (++i >= ZAPHODD_MAXLENGTH)
+        break;
+    }
+  }
+  return 0;
+}
+
+int write_to_fd(int fd, char string[])
+{
+  write(fd, string, strlen(string));
   return 0;
 }

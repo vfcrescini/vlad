@@ -1,5 +1,5 @@
-#ifndef ZAPHOD_LIST
-#define ZAPHOD_LIST
+#ifndef __ZAPHOD_LIST
+#define __ZAPHOD_LIST
 
 int init();
 int insert(const char *message);
