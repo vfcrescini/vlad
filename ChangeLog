@@ -1,5 +1,9 @@
 2003-10-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* parser/parser.y :
+
+	  - Identifiers are now stored in symtab.
+
 	* common/vlad.h :
 	* common/list.cpp :
 
