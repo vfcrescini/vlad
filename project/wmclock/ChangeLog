@@ -9,6 +9,10 @@
 
 	* wmclock.c :
 
+	 - Modified blinking to mimic the behaviour of most digital watches:
+	   a full blink cycle lasts for a whole second (2/5th second on, 3/5th-
+	   second off).
+
 	  - Year is now properly displayed with the -year option.
 
 	  - When for some reason the options -year and -12 are both present,

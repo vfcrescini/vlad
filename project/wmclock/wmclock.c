@@ -801,6 +801,7 @@ int main(int argc, char **argv)
    XTextProperty wmName;
    XClassHint    classHint;
    Pixmap        shapeMask;
+   unsigned int  interval = 0;
    
    /* Parse command line options */
    progName = extractProgName(argv[0]);
@@ -941,26 +942,11 @@ int main(int argc, char **argv)
 		  redrawWindow(&visible);
 		}
 	    }
-	  if (enableBlinking && (!enableYearDisplay))
-	    {  
-	       if (actualTime % 2)
-		{
-		   /* Sekunden Doppelpunkt ein */
-		   XCopyArea(dpy, led.pixmap, visible.pixmap, normalGC,
-			     COLON_X_OFFSET, COLON_Y_OFFSET,
-			     COLON_WIDTH, COLON_HEIGHT,
-			     xPos[COLON_X_POS], yPos[COLON_Y_POS]);
-		}
-	       else
-		{
-		   /* Sekunden Doppelpunkt aus */
-		   XCopyArea(dpy, led.pixmap, visible.pixmap, normalGC,
-			     BLANK_X_OFFSET, BLANK_Y_OFFSET,
-			     COLON_WIDTH, COLON_HEIGHT,
-			     xPos[COLON_X_POS], yPos[COLON_Y_POS]);
-		}
-	       redrawWindow(&visible);
-	    }
+           if (enableBlinking && (!enableYearDisplay))
+            {
+              /* reset the interval at every new second */
+              interval = 0;
+            }
 	   if (0 == (actualTime % 2))
 	    {
 	       /* Clean up zombie processes */
@@ -974,7 +960,36 @@ int main(int argc, char **argv)
 		}
 	    }
 	}
-       
+       else
+        {
+          if (enableBlinking && (!enableYearDisplay))
+           {
+             /* increment this counter at every 1/20th second interval */
+             interval++;
+           }
+        }
+       if (enableBlinking && (!enableYearDisplay))
+        {
+          /* stay lit for 8/20th (2/5th) of a second */
+          if (interval < 8)
+           {
+             /* Sekunden Doppelpunkt ein */
+             XCopyArea(dpy, led.pixmap, visible.pixmap, normalGC,
+                       COLON_X_OFFSET, COLON_Y_OFFSET,
+                       COLON_WIDTH, COLON_HEIGHT,
+                       xPos[COLON_X_POS], yPos[COLON_Y_POS]);
+           }
+          else
+           {
+             /* Sekunden Doppelpunkt aus */
+             XCopyArea(dpy, led.pixmap, visible.pixmap, normalGC,
+                       BLANK_X_OFFSET, BLANK_Y_OFFSET,
+                       COLON_WIDTH, COLON_HEIGHT,
+                      xPos[COLON_X_POS], yPos[COLON_Y_POS]);
+           }
+          redrawWindow(&visible);
+        }
+
        /* read a packet */
        while (XPending(dpy))
 	{
