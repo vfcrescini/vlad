@@ -144,28 +144,30 @@ int list::get_i(unsigned int index, list_item **data)
   return VLAD_OK;
 }
 
-/* gives a reference to the data that matches item */
-int list::get_d(list_item *item, list_item **data)
+/* gives a reference to all the nodes that matches item. array + size */
+int list::get_d(list_item *item, list_item ***data, unsigned int *s)
 {
   list_node *curr;
 
-  if (data == NULL || item == NULL)
+  if (s == NULL || data == NULL || item == NULL)
     return VLAD_NULLPTR;
 
   curr = head;
+  *s = 0;
+  *data = NULL;
   
   while (curr != NULL) {
     if (curr->data->cmp(item)) {
-      /* here we only find the first match any other matching
-       * items are (wrongly) ignored. */
-      *data = curr->data;
 
-      return VLAD_OK;
+      if ((*data = (list_item **) realloc(*data, sizeof(**data) * (*s + 1))) == NULL)
+        return VLAD_MALLOCFAILED;
+
+      (*data)[*s] = curr->data;
+      (*s)++;
     }
     curr = curr->next;
   }
-
-  return VLAD_NOTFOUND;
+  return (*s > 0) ? VLAD_OK : VLAD_NOTFOUND;
 }
 
 /* returns 0 if data is in the list */
