@@ -3,6 +3,7 @@
 \usepackage{times}
 \usepackage{amsmath}
 \usepackage{alltt}
+\usepackage{epsfig}
 
 \newtheorem{definition}{Definition}
 \newtheorem{examp}{Example}
@@ -528,7 +529,7 @@ query holds(alice, read, file);
           \end{quote}
 
           Expressions are conjunctions of facts represented in language
-          ${\cal L}_{*}$ as follows:
+          ${\cal L}^{*}$ as follows:
 
           \begin{quote}
             $f_{0}$, ..., $f_{n}$
@@ -661,7 +662,7 @@ query holds(alice, read, file);
         \paragraph{Constraint Rules.}
 
           Each constraint rule in language ${\cal L}$ is expressed as a series
-          of logical rules in language ${\cal L}_{*}$. Given that all variable
+          of logical rules in language ${\cal L}^{*}$. Given that all variable
           occurences have been grounded to entity identifiers, a constraint in
           language ${\cal L}$, with $m$, $n$, $o$ $\geq$ $0$ may be represented
           as:
@@ -1326,6 +1327,14 @@ query holds(alice, read, file);
   \section{Semantic Properties}
 
   \section{Implementation}
+
+    \begin{figure}[ht]
+      \begin{center}
+        \epsfig{file=system.eps}
+        \caption{System Structure}
+        \label{fig-1}
+      \end{center}
+    \end{figure}
 
     Although the semantics of language ${\cal L}$ shows that any program $P$
     of language ${\cal L}$ can be translated into an extended logic program

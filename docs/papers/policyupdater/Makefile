@@ -6,7 +6,7 @@ PSPDF=ps2pdf
 FIG2DEV=fig2dev
 
 LATEX_SRCS=policyupdater
-XFIG_SRCS=
+XFIG_SRCS=system
 
 CLASS=
 STYLE=latex8.sty
@@ -40,12 +40,15 @@ ps : $(patsubst %,%.ps,$(LATEX_SRCS))
 
 pdf : $(patsubst %,%.pdf,$(LATEX_SRCS))
 
-policyupdater.dvi : policyupdater.tex $(CLASS) $(STYLE)
+policyupdater.dvi : policyupdater.tex system.fig $(CLASS) $(STYLE) 
 	$(LATEX) policyupdater.tex
 	$(LATEX) policyupdater.tex
 
-policyupdater.ps : policyupdater.dvi
-	$(DVIPS) -o $(@) policyupdater.dvi
+%.ps : %.dvi
+	$(DVIPS) -o $(@) $(<)
 
-policyupdater.pdf : policyupdater.ps
-	$(PSPDF) policyupdater.ps $(@)
+%.pdf : %.ps
+	$(PSPDF) $(<) $(@)
+
+%.eps : %.fig
+	$(FIG2DEV) -L eps $(<) $(@) || $(FIG2DEV) -L ps $(@) $(@)
