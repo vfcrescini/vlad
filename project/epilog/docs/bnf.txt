@@ -79,24 +79,24 @@ Updated 2002 Aug 13
 <trans-ref-ident-list>  : <identifier> | <identifier> <comma>
                           <trans-ref-ident-list>
 
-<expression>            : <boolean-exp> <logical-op> <expression> |
-                          <boolean-exp>
+<expression>            : <boolean-atom> <logical-op> <expression> |
+                          <boolean-atom>
                         
-<boolean-exp>           : <not> <atom-exp> | <atom-exp>
+<boolean-atom>          : <not> <atom-exp> | <atom-exp>
                         
-<atom-exp>              : <holds-exp> | <subst-exp> | <memb-exp> | 
-                          <logical-const>
+<atom-exp>              : <holds-atom> | <subst-atom> | <memb-atom> | 
+                          <logical-atom>
                         
-<holds-exp>             : <holds> <open-parent> <identfier> <comma>
+<holds-atom>            : <holds> <open-parent> <identfier> <comma>
                           <identifier> <comma> <identifier> <close-parent>
  
-<subst-exp>             : <subset> <open-parent> <identifier>
+<subst-atom>            : <subset> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
                         
-<memb-exp>              : <member> <open-parent> <identifier>
+<memb-atom>             : <member> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
 
-<logical-const>         : <true> | <false>
+<logical-atom>          : <true> | <false>
                         
 <logical-op>            : <and>
                         
