@@ -13,19 +13,30 @@
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
 
-extern kb *kbase;
-extern unsigned char mode;
+/* vars defined from the scanner */
 extern int querylineno;
 
-int queryerrcode = VLAD_FAILURE;
+/* local vars */
+static FILE *fin = NULL;
+static FILE *fout = NULL;
+static FILE *ferr = NULL;
+static kb *kbase = NULL;
+static unsigned char mode = VLAD_MODE_GENERATE;
+static int errorcode = VLAD_FAILURE;
+static bool initialised = false;
 
 #ifdef DEBUG
-unsigned int cnt_query = 0;
+static unsigned int cnt_query = 0;
 #endif
 
-/* functions to be overridden */
+/* functions from scanner */
+int queryinit(FILE *a_in, FILE *a_out);
 int queryerror(char *error);
 int querylex();
+
+/* available functions */
+int query_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m);
+int query_parse();
 %}
 
 %union {
@@ -52,11 +63,11 @@ int querylex();
 %token <terminal> VLAD_SYM_QUERY
 %token <terminal> VLAD_SYM_AFTER
 %token <identifier> VLAD_SYM_IDENTIFIER
-%type <atm> atom 
-%type <atm> boolean_atom 
-%type <atm> holds_atom 
-%type <atm> subst_atom 
-%type <atm> memb_atom 
+%type <atm> atom
+%type <atm> boolean_atom
+%type <atm> holds_atom
+%type <atm> subst_atom
+%type <atm> memb_atom
 %type <exp> expression
 %type <vlist> trans_ref_ident_args
 %type <vlist> trans_ref_ident_list
@@ -95,7 +106,7 @@ query_stmt_list :
   | query_stmt_list query_stmt
   ;
 
-query_stmt : 
+query_stmt :
   VLAD_SYM_QUERY expression after_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
@@ -105,8 +116,8 @@ query_stmt :
 
   switch(mode) {
     case VLAD_MODE_GENERATE : {
-      if ((retval = kbase->generate_nlp($2, $3, stdout)) != VLAD_OK) {
-        queryerrcode = retval;
+      if ((retval = kbase->generate_nlp($2, $3, fout)) != VLAD_OK) {
+        errorcode = retval;
         queryerror("could not generate nlp");
         return retval;
       }
@@ -117,22 +128,22 @@ query_stmt :
       unsigned char res;
       switch(retval = kbase->evaluate_query($2, $3, &res)) {
         case VLAD_OK :
-          fprintf(stdout, "%s\n", VLAD_RESULT_STRING(res));
+          fprintf(fout, "%s\n", VLAD_RESULT_STRING(res));
           break;
         case VLAD_NOMODEL :
-          queryerrcode = retval;
+          errorcode = retval;
           queryerror("could not evaluate query: conflict encountered");
           return VLAD_NOMODEL;
         default :
-          queryerrcode = retval;
-          queryerror("could not evaluate query: unexpected error"); 
+          errorcode = retval;
+          queryerror("could not evaluate query: unexpected error");
           return retval;
       }
       break;
     }
 #endif
     default :
-      queryerrcode = VLAD_FAILURE;
+      errorcode = VLAD_FAILURE;
       queryerror("invalid mode");
       return VLAD_FAILURE;
   }
@@ -144,9 +155,9 @@ query_stmt :
     else
       strcpy(r, "none");
 
-    fprintf(stderr, "query[%d]:\n", cnt_query++);
-    fprintf(stderr, "  expression: %s\n", q);
-    fprintf(stderr, "  trans seq:  %s\n", r);
+    fprintf(ferr, "query[%d]:\n", cnt_query++);
+    fprintf(ferr, "  expression: %s\n", q);
+    fprintf(ferr, "  trans seq:  %s\n", r);
 #endif
 
     /* cleanup */
@@ -164,18 +175,18 @@ after_clause : {
   }
   ;
 
-trans_ref_list : 
+trans_ref_list :
   trans_ref_def {
     int retval;
 
     if (($$ = VLAD_NEW(sequence())) == NULL) {
-      queryerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       queryerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not add transformation reference");
       return retval;
     }
@@ -184,36 +195,36 @@ trans_ref_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not add transformation reference");
       return retval;
     }
   }
   ;
 
-trans_ref_def : 
+trans_ref_def :
   VLAD_SYM_IDENTIFIER VLAD_SYM_OPEN_PARENT trans_ref_ident_args VLAD_SYM_CLOSE_PARENT {
     int retval;
     char *name;
 
     /* first allocate memory for the name */
     if ((name = VLAD_STRING_MALLOC($1)) == NULL) {
-      queryerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       queryerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     strcpy(name, $1);
- 
+
     /* then add the entire thing into a transref */
     if (($$ = VLAD_NEW(transref())) == NULL) {
-      queryerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       queryerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init(name, $3)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not initialise transformation reference");
       return retval;
     }
@@ -228,18 +239,18 @@ trans_ref_ident_args : {
   }
   ;
 
-trans_ref_ident_list : 
+trans_ref_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
     if (($$ = VLAD_NEW(stringlist())) == NULL) {
-      queryerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       queryerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not add identifier to transformation reference");
       return retval;
     }
@@ -248,7 +259,7 @@ trans_ref_ident_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not add identifier to transformation reference");
       return retval;
     }
@@ -260,18 +271,18 @@ logical_op :
   }
   ;
 
-expression : 
-  boolean_atom { 
+expression :
+  boolean_atom {
     int retval;
 
     if (($$ = VLAD_NEW(expression())) == NULL) {
-      queryerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       queryerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not add atom to expression");
       return retval;
     }
@@ -284,7 +295,7 @@ expression :
         /* we simply ignore duplicates */
         break;
       default :
-        queryerrcode = retval;
+        errorcode = retval;
         queryerror("could not add atom to expression");
         return retval;
     }
@@ -318,13 +329,13 @@ holds_atom :
     int retval;
 
     if (($$ = VLAD_NEW(atom())) == NULL) {
-      queryerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       queryerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_holds($3, $5, $7, true)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not initialise holds atom");
       return retval;
     }
@@ -336,13 +347,13 @@ subst_atom :
     int retval;
 
     if (($$ = VLAD_NEW(atom())) == NULL) {
-      queryerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       queryerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_subset($3, $5, true)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not initialise subset atom");
       return retval;
     }
@@ -354,13 +365,13 @@ memb_atom :
     int retval;
 
     if (($$ = VLAD_NEW(atom())) == NULL) {
-      queryerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       queryerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_member($3, $5, true)) != VLAD_OK) {
-      queryerrcode = retval;
+      errorcode = retval;
       queryerror("could not initialise member atom");
       return retval;
     }
@@ -370,8 +381,39 @@ memb_atom :
 %%
 
 int queryerror(char *error)
-{ 
-  fprintf(stderr, "line %d (error %d) %s\n", querylineno, queryerrcode, error);
+{
+  fprintf(ferr, "line %d (error %d) %s\n", querylineno, errorcode, error);
 
   return 0;
+}
+
+int query_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m)
+{
+  int retval;
+
+  if (a_in == NULL || a_out == NULL || a_err == NULL || a_kb == NULL)
+    return VLAD_NULLPTR;
+
+  if (a_m != VLAD_MODE_GENERATE && a_m != VLAD_MODE_EVALUATE)
+    return VLAD_INVALIDINPUT;
+
+  if ((retval = queryinit(a_in, a_out)) != VLAD_OK)
+    return retval;
+
+  fin = a_in;
+  fout = a_out;
+  ferr = a_err;
+  kbase = a_kb;
+  mode = a_m;
+  initialised = true;
+
+  return VLAD_OK;
+}
+
+int query_parse()
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  return queryparse();
 }

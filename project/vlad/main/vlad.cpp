@@ -25,9 +25,12 @@ int main(int argc, char *argv[])
   char *helpstring = "-v|-h|program-filename [query-filename]";
 #endif
   int option;
+  FILE *programin = NULL;
+  FILE *queryin = NULL;
+  kb *kbase = NULL;
+  unsigned char mode = VLAD_MODE_GENERATE;
 
   opterr = 0;
-  mode = VLAD_MODE_GENERATE;
 
   while ((option = getopt(argc, argv, arglist)) != -1) {
     switch(option) {
@@ -76,16 +79,16 @@ int main(int argc, char *argv[])
     return retval;
   }
 
-  /* set both out streams to stdout */
-  programout = stdout;
-  queryout = stdout;
-
-  /* first parse the program */
-  if ((retval = programparse()) != VLAD_OK)
+  /* first initialise the parsers */
+  if ((retval = program_init(programin, stdout, stderr, kbase)) != VLAD_OK)
+    return retval;
+  if ((retval = query_init(queryin, stdout, stderr, kbase, mode)) != VLAD_OK)
     return retval;
 
-  /* then the queries */
-  if ((retval = queryparse()) != VLAD_OK)
+  /* then parse */
+  if ((retval = program_parse()) != VLAD_OK)
+    return retval;
+  if ((retval = query_parse()) != VLAD_OK)
     return retval;
 
   /* cleanup */
