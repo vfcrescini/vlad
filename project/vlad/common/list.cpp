@@ -89,7 +89,7 @@ int list::add(list_item *data)
       return retval;
   }
   
-  if ((new_node = VLAD_ADT_MALLOC(list_node)) == NULL)
+  if ((new_node = VLAD_ADT_MALLOC(list_node, 1)) == NULL)
     return VLAD_MALLOCFAILED;
 
   if (tail == NULL)
