@@ -7,14 +7,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <vlad.h>
+#include <symtab.h>
+
+extern FILE *yyout;
+FILE *yyerr;
+
+symtab symtable;
 
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
 
 int yylex(void);
 
-extern FILE *yyout;
-FILE *yyerr;
+void add_identifier(const char ident[], unsigned char type);
 %}
 
 %union {
@@ -166,43 +172,55 @@ acc_grp_ident_decl :
 
 sub_ident_list :
   VLAD_SYM_IDENTIFIER {
+    add_identifier($1, VLAD_IDENT_SUBJECT);
   }
   | sub_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+    add_identifier($3, VLAD_IDENT_SUBJECT);
   }
   ;
 
 obj_ident_list :
   VLAD_SYM_IDENTIFIER {
+    add_identifier($1, VLAD_IDENT_OBJECT);
   }
   | obj_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+    add_identifier($3, VLAD_IDENT_OBJECT);
   }
   ;
 
 acc_ident_list :
   VLAD_SYM_IDENTIFIER {
+    add_identifier($1, VLAD_IDENT_ACCESS);
   }
   | acc_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+    add_identifier($3, VLAD_IDENT_ACCESS);
   }
   ;
 
 sub_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
+    add_identifier($1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
   }
   | sub_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+    add_identifier($3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
   }
   ;
 
 obj_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
+    add_identifier($1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
   }
   | obj_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+    add_identifier($3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
   }
   ;
 
 acc_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
+    add_identifier($1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
   }
   | acc_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+    add_identifier($3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
   }
   ;
 
@@ -381,3 +399,34 @@ logical_atom :
   ;
 
 %%
+
+void add_identifier(const char ident[], unsigned char type)
+{
+  switch (symtable.add(ident, type)) {
+    case VLAD_OK :
+#ifdef DEBUG
+      if (VLAD_IDENT_TYPE_IS_SUBJECT(type) && ! VLAD_IDENT_TYPE_IS_GROUP(type))
+        fprintf(yyerr, "declared subject identifier %s\n", ident);
+      else if (VLAD_IDENT_TYPE_IS_OBJECT(type) && ! VLAD_IDENT_TYPE_IS_GROUP(type))
+        fprintf(yyerr, "declared object identifier %s\n", ident);
+      else if (VLAD_IDENT_TYPE_IS_ACCESS(type) && ! VLAD_IDENT_TYPE_IS_GROUP(type))
+        fprintf(yyerr, "declared access identifier %s\n", ident); 
+      if (VLAD_IDENT_TYPE_IS_SUBJECT(type) && VLAD_IDENT_TYPE_IS_GROUP(type))
+        fprintf(yyerr, "declared subject-group identifier %s\n", ident);
+      else if (VLAD_IDENT_TYPE_IS_OBJECT(type) && VLAD_IDENT_TYPE_IS_GROUP(type))
+        fprintf(yyerr, "declared object-group identifier %s\n", ident);
+      else if (VLAD_IDENT_TYPE_IS_ACCESS(type) && VLAD_IDENT_TYPE_IS_GROUP(type))
+        fprintf(yyerr, "declared access-group identifier %s\n", ident); 
+#endif
+      break;
+    case VLAD_DUPLICATE :
+      fprintf(yyerr, "identifier %s already declared\n", ident);
+      exit(VLAD_DUPLICATE);
+    case VLAD_MALLOCFAILED :
+      fprintf(yyerr, "memory overflow\n");
+      exit(VLAD_MALLOCFAILED);
+    default :
+      fprintf(yyerr, "internal error\n");
+      exit(VLAD_FAILURE);
+  }
+}
