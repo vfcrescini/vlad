@@ -1,5 +1,10 @@
 2002-09-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/gnd_exp.c :
+	* exp/gnd_exp.h :
+
+	  - Added a copy function to copy a ground expression.
+
 	* datastruct/simplelist.c :
 	* datastruct/simplelist.h :
 

@@ -7,6 +7,7 @@
 #include <identlist.h>
 #include "gnd_exp.h"
 
+int gnd_exp_cpy(void *p1, void **p2);
 int gnd_exp_cmp_subst(void *p1, void *p2);
 int gnd_exp_cmp_memb(void *p1, void *p2);
 int gnd_exp_group(ident_type ident,
@@ -134,6 +135,12 @@ int gnd_exp_del(gnd_exp_type *exp, gnd_atom_type atom)
                              gnd_exp_destroy);
 }
 
+/* copies exp1 to exp2 */
+int gnd_exp_copy(gnd_exp_type exp1, gnd_exp_type *exp2)
+{
+  return simplelist_copy(exp1, exp2, gnd_exp_cpy);
+}
+
 /* delete all atoms from this gnd_exp */
 int gnd_exp_purge(gnd_exp_type *exp)
 {
@@ -151,6 +158,15 @@ int gnd_exp_purge(gnd_exp_type *exp)
       return -1;
 
   return 0;
+}
+
+/* makes a duplicate (with malloc) of the atom pointed by p1 to p2 */
+int gnd_exp_cpy(void *p1, void **p2)
+{
+  if (p1 == NULL || p2 == NULL)
+    return -1;
+
+  return gnd_atom_copy((gnd_atom_type **) p2, * (gnd_atom_type *) p1);
 }
 
 /* returns 0 if the atoms pointed to by p1 and p2 are both subst and that

@@ -33,6 +33,9 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom);
 /* delete an atom from the gnd_exp */
 int gnd_exp_del(gnd_exp_type *exp, gnd_atom_type atom);
 
+/* copies exp1 to exp2 */
+int gnd_exp_copy(gnd_exp_type exp1, gnd_exp_type *exp2);
+
 /* delete all atoms from this gnd_exp */
 int gnd_exp_purge(gnd_exp_type *exp);
 
