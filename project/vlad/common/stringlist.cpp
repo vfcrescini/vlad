@@ -61,6 +61,15 @@ char *string::get()
   return str;
 }
 
+#ifdef DEBUG
+/* assuming s has enough memory allocation */
+void string::print(char *s)
+{
+  strcpy(s, (str ? str : ""));
+}
+#endif
+
+
 /* n is the optional tmp for the list */
 stringlist::stringlist(const char *n) : list(n, true)
 {
@@ -148,3 +157,24 @@ int stringlist::find(const char *s)
 
   return list::find(&tmp);
 }
+
+#ifdef DEBUG
+/* assumimg s has enough memory allocation */
+void stringlist::print(char *s)
+{
+  unsigned int i;
+  char tmps[128];
+  string *tmpa;
+
+  strcpy(s, "");
+
+  for (i = 0; i < list::length(); i++) {
+    if (list::get(i, (list_item **) &tmpa) != VLAD_OK)
+      break;
+
+    tmpa->print(tmps);
+    sprintf(s, "%s %s", s, tmps);
+  }
+}
+#endif
+
