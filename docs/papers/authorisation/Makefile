@@ -7,3 +7,4 @@ clean :
 
 authorisation.dvi : authorisation.tex
 	latex authorisation.tex
+	latex authorisation.tex
