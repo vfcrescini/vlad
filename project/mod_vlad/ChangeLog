@@ -1,5 +1,10 @@
 2003-07-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* mod_vlad.c :
+
+	  - Module now forces a WWW-Authenticate header even without the
+	    per-dir "AuthName" and "AuthType" directives.
+
 	* ChangeLog :
 
 	  - Changelog stated.
