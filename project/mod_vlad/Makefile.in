@@ -2,6 +2,8 @@
 
 TOPSRCDIR = @top_srcdir@
 CC = @CC@
+LEX = @LEX@
+YACC = @YACC@
 CFLAGS = @CFLAGS@
 LDFLAGS = @LDFLAGS@
 LN_S = @LN_S@
@@ -9,20 +11,37 @@ STRIP = @STRIP@
 PICFLAG = @PICFLAG@
 VERSION = @VERSION@
 LIBS = mod_vlad.so
+OBJECTS = mod_vlad.o policy_p.o policy_s.o
+TEMP = lex.*.c *.tab.c *.tab.h
 
 all : $(LIBS)
 
-mod_vlad.so : mod_vlad.o
+mod_vlad.so : $(OBJECTS)
 	$(CC) $(CFLAGS) -shared -Wl,-soname,$(@).`echo $(VERSION) | cut -d. -f1` -o $(@) $(^)
 ifdef STRIP
 	strip $(@)
 endif
-                                                                                
+
 mod_vlad.o : mod_vlad.c
-	$(CC) $(CFLAGS) -DSHARED_MODULE -fPIC -c -o $(@) $(^)
+	$(CC) $(CFLAGS) -fPIC -c -o $(@) $(^)
+
+policy_p.o : policy.tab.h policy.tab.c
+	$(CC) $(CFLAGS) -o $(@) -c policy.tab.c
+
+policy_s.o : policy.tab.h lex.policy.c
+	$(CC) $(CFLAGS) -o $(@) -c lex.policy.c
+
+policy.tab.h : policy.y
+	$(YACC) -b policy -p policy -d policy.y
+
+policy.tab.cpp : policy.y
+	$(YACC) -b policy -p policy policy.y
+
+lex.policy.c : policy.l
+	$(LEX) -Ppolicy policy.l
 
 clean :
-	$(RM) mod_vlad.o
+	$(RM) $(OBJECTS) $(TEMP)
 
 distclean : clean
 	$(RM) -r $(LIBS) Makefile config.status config.log autom4te.cache

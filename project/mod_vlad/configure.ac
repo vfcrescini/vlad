@@ -7,13 +7,16 @@ AC_LANG(C)
 
 # set vars to itself to prevent the macros from setting default value
 CFLAGS="$CFLAGS"
+LDFLAGS="$LDFLAGS"
 
 # set flags
-MODVLAD_CFLAGS="-O2 -Wall"
+MODVLAD_CFLAGS="-O3 -Wall -Wshadow -Wcast-align -Wredundant-decls -Wnested-externs"
+MODVLAD_LDFLAGS=""
 
 # some tests
 AC_PROG_CC
-AC_PROG_LN_S
+AC_PROG_LEX
+AC_PROG_YACC
 
 # check compiler options
 cat >> $$.c << \EOF
@@ -61,7 +64,7 @@ rm -f $$ $$.c
 
 # --enable-strip
 AC_ARG_ENABLE(strip,AC_HELP_STRING([--enable-strip],[run strip program (default is disabled)]))
-                                                                                
+
 if test "x$enable_strip" != "x" && test "x$enable_strip" != "xno"; then
   AC_CHECK_PROG(STRIP,strip,[yes])
 fi
@@ -110,7 +113,7 @@ fi
 
 # --with-apache
 AC_ARG_WITH(apache, AC_HELP_STRING([--with-apache],[yes or path to apache (default is yes)]),,with_apache=[yes])
-                                                                              
+
 if test "x$with_apache" != "x" && test "x$with_apache" != "xno"; then
   if test "x$with_apache" = "xyes"; then
     AC_MSG_CHECKING([if apache is installed and usable])
