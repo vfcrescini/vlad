@@ -67,6 +67,10 @@ class fact : public list_item
     int replace(stringlist *a_vlist, stringlist *a_ilist, fact **a_fact);
     /* reverses the truth value */
     void negate();
+    /* gives the type of the fact */
+    int type(unsigned char *a_type);
+    /* gives the truth value of the fact */
+    int truth(bool *a_truth);
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */
     void print(char *a_str);

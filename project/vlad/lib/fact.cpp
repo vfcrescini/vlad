@@ -391,6 +391,34 @@ void fact::negate()
   m_truth = m_truth ? false : true;
 }
 
+/* gives the type of the fact */
+int fact::type(unsigned char *a_type)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_type == NULL)
+    return VLAD_NULLPTR;
+
+  *a_type = m_type;
+
+  return VLAD_OK;
+}
+
+/* gives the truth value of the fact */
+int fact::truth(bool *a_truth)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_truth == NULL)
+    return VLAD_NULLPTR;
+
+  *a_truth = m_truth;
+
+  return VLAD_OK;
+}
+
 #ifdef VLAD_DEBUG
 /* assuming s has enough memory allocation */
 void fact::print(char *a_str)
