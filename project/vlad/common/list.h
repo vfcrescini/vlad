@@ -38,6 +38,7 @@ class list
     unsigned int len;
     bool unique;
     list_node *head;
+    list_node *tail;
     char *name;
   protected :
     /* add pointer to list, assumes memory has been allocated to it */
