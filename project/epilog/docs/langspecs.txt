@@ -159,6 +159,12 @@ Language Specifications
     pre-conditions required for this transformation.
 
 
-  2.3. Policy Proposition
+  2.3. Policy Proposition Definition Statement
 
-    
+    This statement is used for queries.
+
+      is <policy-expression> 
+      after <trans-identifier-1>, <trans-identifier-2>, ...
+
+    The statement will return one of the following: true, false or ?
+
