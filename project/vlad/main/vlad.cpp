@@ -17,14 +17,14 @@ int main(int argc, char *argv[])
 {
   int option;
 #ifdef SMODELS
-  char *arglist = "vhs";
-  char *helpstring = "[-v|-h|[-s] filename]";
+  char *arglist = "vhe";
+  char *helpstring = "[-v|-h|[-e] filename]";
 #else
   char *arglist = "vh";
   char *helpstring = "[-v|-h|filename]";
 #endif
 
-  mode = VLAD_MODE_NLP;
+  mode = VLAD_MODE_GENERATE;
   opterr = 0;
 
   while ((option = getopt(argc, argv, arglist)) != -1) {
@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
         fprintf(stdout, "Usage: %s %s\n", argv[0], helpstring);
         return 0;
 #ifdef SMODELS
-      case 's' :
-	mode = VLAD_MODE_SMODELS;
+      case 'e' :
+	mode = VLAD_MODE_EVALUATE;
 	break;
 #endif
       default :

@@ -1,5 +1,14 @@
 2003-04-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/vlad.h :
+	* main/vlad.cpp :
+	* parser/parser.y :
+
+	  - Changed modes to GENERATE and EVALUATE.
+
+	  - Also changed the command line flag from -s to -e (from smodels to
+	    evaluate).
+
 	* common/list.h :
 
 	  - Added a length macro that returns the length of the list ptr, 0
