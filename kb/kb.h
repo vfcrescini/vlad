@@ -11,7 +11,7 @@
 #include <vlad/atom.h>
 #include <vlad/expression.h>
 #include <vlad/stringlist.h>
-#include <vlad/sequence.h>
+#include <vlad/seqtab.h>
 #include <vlad/symtab.h>
 #include <vlad/consttab.h>
 #include <vlad/transtab.h>
@@ -41,17 +41,24 @@ class kb {
                      stringlist *v,
                      expression *pr,
                      expression *po);
+    /* add a transformation reference to the sequence table */
+    int add_seqtab(transref *t);
+    /* delete a transformation reference from the sequence table */
+    int del_seqtab(unsigned int i);
+    /* enumerate the sequences in the sequence table, output to f */
+    int list_seqtab(FILE *f);
     /* generate a human-readable general logic program and dump output to f */
-    int generate_nlp(expression *e, sequence *s, FILE *f);
+    int generate_nlp(expression *e, FILE *f);
 #ifdef SMODELS
     /* use wrapper class to evaluate a query */
-    int evaluate_query(expression *e, sequence *s, unsigned char *r);
+    int evaluate_query(expression *e, unsigned char *r);
 #endif
   private :
     symtab *stable;
     expression *itable;
     consttab *ctable;
     transtab *ttable;
+    seqtab *setable;
     unsigned int s_len;
     unsigned int a_len;
     unsigned int o_len;
@@ -69,8 +76,6 @@ class kb {
     int verify_expression(expression *e);
     /* make sure transref is valid */
     int verify_transref(char *n, stringlist *il);
-    /* make sure sequence s is valid */
-    int verify_sequence(sequence *s);
     /* 
      * verifies that s, a and o are in the symtab and that
      * they are of the right  type, or listed in v if v is non-null 

@@ -1,3 +1,33 @@
+2003-05-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/sequence.cpp :
+	* kb/sequence.h :
+	* kb/seqtab.cpp :
+	* kb/seqtab.h :
+	* kb/Makefile.in :
+
+	  - Renamed sequence to seqtab.
+
+	  - Added a delete function.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+
+	  - Sequence table is now global to any query.
+
+	  - Added add, delete and list functions for sequence table.
+
+	* main/vlad.cpp :
+	* parser/Makefile.in :
+	* parser/parser.h :
+	* parser/query.l :
+	* parser/query.y :
+	* parser/operation.l :
+	* parser/operation.y :
+
+	  - Renamed query to operation because the parser/scanner is no longer
+	    restricted to queries.
+
 2003-05-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* main/vlad.cpp :
