@@ -75,7 +75,10 @@ class polbase {
     int query_evaluate(expression *a_exp, unsigned char *a_res);
 #endif
   private :
-    /* m_stage: 0 = uninit, 1 = init, 2 = symtab closed */
+    /*
+     * m_stage: 0 = uninit, 1 = init, 2 = symtab closed, 3 = polbase closed,
+     *          4 = after compute()
+     */
     unsigned char m_stage;
     /* m_tot_atoms: 0 = holds, 1 = access, 2 = object */
     unsigned int m_tot_atoms[VLAD_ATOM_LAST + 1];
