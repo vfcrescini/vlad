@@ -9,7 +9,6 @@
 
 #include <config.h>
 #include <vlad.h>
-#include <identifier.h>
 #include <kb.h>
 
 kb::kb()
@@ -120,17 +119,17 @@ int kb::get_atom(const char *n1,
         return retval;
 
       /* check validity */
-      if (!VLAD_IDENT_TYPE_IS_SUBJECT(s_type))
+      if (!VLAD_IDENT_IS_SUBJECT(s_type))
         return VLAD_INVALIDINPUT;
-      if (!VLAD_IDENT_TYPE_IS_ACCESS(a_type))
+      if (!VLAD_IDENT_IS_ACCESS(a_type))
         return VLAD_INVALIDINPUT;
-      if (!VLAD_IDENT_TYPE_IS_OBJECT(o_type))
+      if (!VLAD_IDENT_IS_OBJECT(o_type))
         return VLAD_INVALIDINPUT;
 
       /* now compute */
-      hs = VLAD_IDENT_TYPE_IS_GROUP(s_type) ? s_index + s_len : s_index;
-      ha = VLAD_IDENT_TYPE_IS_GROUP(a_type) ? a_index + a_len : a_index;
-      ho = VLAD_IDENT_TYPE_IS_GROUP(o_type) ? o_index + o_len : o_index;
+      hs = VLAD_IDENT_IS_GROUP(s_type) ? s_index + s_len : s_index;
+      ha = VLAD_IDENT_IS_GROUP(a_type) ? a_index + a_len : a_index;
+      ho = VLAD_IDENT_IS_GROUP(o_type) ? o_index + o_len : o_index;
       *a = (hs * (a_len + ag_len) * (o_len + og_len)) + (ha * (o_len + og_len)) + ho + 2;
 
       break;
@@ -148,12 +147,12 @@ int kb::get_atom(const char *n1,
         return retval;
 
       /* check validity */
-      if (VLAD_IDENT_TYPE_BASETYPE(e_type) != VLAD_IDENT_TYPE_BASETYPE(g_type) ||
-         VLAD_IDENT_TYPE_IS_GROUP(e_type) || !VLAD_IDENT_TYPE_IS_GROUP(g_type))
+      if (VLAD_IDENT_BASETYPE(e_type) != VLAD_IDENT_BASETYPE(g_type) ||
+         VLAD_IDENT_IS_GROUP(e_type) || !VLAD_IDENT_IS_GROUP(g_type))
         return VLAD_INVALIDINPUT;
 
       /* now compute */
-      switch(VLAD_IDENT_TYPE_BASETYPE(e_type)) {
+      switch(VLAD_IDENT_BASETYPE(e_type)) {
         case VLAD_IDENT_SUBJECT :
           *a = holds_len + (e_index * sg_len) + g_index + 2;
           break;
@@ -182,12 +181,12 @@ int kb::get_atom(const char *n1,
         return retval;
 
       /* check validity */
-      if (VLAD_IDENT_TYPE_BASETYPE(g1_type) != VLAD_IDENT_TYPE_BASETYPE(g2_type) ||
-         !VLAD_IDENT_TYPE_IS_GROUP(g1_type) || !VLAD_IDENT_TYPE_IS_GROUP(g2_type))
+      if (VLAD_IDENT_BASETYPE(g1_type) != VLAD_IDENT_BASETYPE(g2_type) ||
+         !VLAD_IDENT_IS_GROUP(g1_type) || !VLAD_IDENT_IS_GROUP(g2_type))
         return VLAD_INVALIDINPUT;
 
       /* now we compute */
-      switch(VLAD_IDENT_TYPE_BASETYPE(g1_type)) {
+      switch(VLAD_IDENT_BASETYPE(g1_type)) {
         case VLAD_IDENT_SUBJECT :
           *a = holds_len + memb_len + (g1_index * sg_len) + g2_index + 2;
           break;
