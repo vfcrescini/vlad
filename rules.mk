@@ -154,7 +154,7 @@ ifdef TEMPS1
 endif
 
 distclean : clean
-	$(RM) $(STATIC_LIBS) $(SHARED_LIBS) $(BINS) Makefile
+	$(RM) Makefile
 ifdef INCLUDES
 	@for i in $(INCLUDES); do                                              \
 	$(RM) $(DISTDIR)/include/vlad/$$i;                                     \
@@ -162,17 +162,17 @@ ifdef INCLUDES
 endif
 ifdef STATIC_LIBS
 	@for i in $(STATIC_LIBS); do                                           \
-	$(RM) $(DISTDIR)/lib/$$i;                                              \
+	$(RM) $$i $(DISTDIR)/lib/$$i;                                          \
 	done
 endif
 ifdef SHARED_LIBS
 	@for i in $(SHARED_LIBS); do                                           \
-	$(RM) $(DISTDIR)/lib/$$i;                                              \
+	$(RM) $$i $(DISTDIR)/lib/$$i;                                          \
 	done
 endif
 ifdef BINS
 	@for i in $(BINS); do                                                  \
-	$(RM) $(DISTDIR)/bin/$$i;                                              \
+	$(RM) $$i $(DISTDIR)/bin/$$i;                                          \
 	done
 endif
 ifdef TEMPS2
