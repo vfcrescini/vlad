@@ -225,9 +225,25 @@ class calcdisplay extends Panel {
       case 0 :
         break;
       case 1 :
+        switch(op) {
+          case '+' :
+          case '-' :
+            buffer1 = 0;
+            buffer2 = fvalue;
+            break;
+          case '*' :
+            buffer1 = fvalue;
+            buffer2 = fvalue;
+            break;
+          case '/' :
+            buffer1 = 1;
+            buffer2 = fvalue;
+            break;
+        }
+        fvalue = calculate(op, buffer1, buffer2);
         buffer1 = fvalue;
-	buffer2 = fvalue;
         state = 3;
+        updatedisplay();
         break;
       case 2 :
         buffer2 = fvalue;
