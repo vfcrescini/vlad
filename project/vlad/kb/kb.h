@@ -39,6 +39,15 @@ class kb {
                  unsigned int *a);
   private :
     symtab *stable;
+    unsigned int s_len;
+    unsigned int a_len;
+    unsigned int o_len;
+    unsigned int sg_len;
+    unsigned int ag_len;
+    unsigned int og_len;
+    unsigned int h_tot;
+    unsigned int m_tot;
+    unsigned int s_tot;
     bool initialised;
     bool closed;
 } ;
