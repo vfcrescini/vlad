@@ -1,11 +1,11 @@
 -------------------------------------------------------------------------------
 VLAD: V Logic-based Access-control Database
-BNF for Operations
+BNF for Agent Manipulation Parser
 
 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started 2002 Dec 08
-Updated 2003 May 05
+Updated 2004 Jan 06
 -------------------------------------------------------------------------------
 
 <start>                  : <program>
@@ -29,34 +29,34 @@ Updated 2003 May 05
 <sequence-cmd-clause>    : <sequence-add-clause> | <sequence-delete-clause> |
                            <sequence-list-clause>
 
-<sequence-add-clause>    : <add> <trans-ref-def>
+<sequence-add-clause>    : <add> <update-ref-def>
 
 <sequence-delete-clause> : <delete> <number>
 
 <sequence-list-clause>   : <list>
 
-<trans-ref-def>          : <identifier> <open-parent>
-                           <trans-ref-ident-args> <close-parent>
+<update-ref-def>         : <identifier> <open-parent>
+                           <update-ref-ident-args> <close-parent>
 
-<trans-ref-ident-args>   : <nil> | <trans-ref-ident-list>
+<update-ref-ident-args>  : <nil> | <update-ref-ident-list>
 
-<trans-ref-ident-list>   : <identifier> | <trans-ref-ident-list> <comma>
+<update-ref-ident-list>  : <identifier> | <update-ref-ident-list> <comma>
                            <identifier>
 
-<expression>             : <expression> <logical-op> <boolean-atom> |
-                           <boolean-atom>
+<expression>             : <expression> <logical-op> <boolean-fact> |
+                           <boolean-fact>
 
-<boolean-atom>           : <not> <atom> | <atom>
+<boolean-fact>           : <not> <fact> | <fact>
 
-<atom>                   : <holds-atom> | <subst-atom> | <memb-atom>
+<fact>                   : <holds-fact> | <subst-fact> | <memb-fact>
 
-<holds-atom>             : <holds> <open-parent> <identfier> <comma>
+<holds-fact>             : <holds> <open-parent> <identfier> <comma>
                            <identifier> <comma> <identifier> <close-parent>
 
-<subst-atom>             : <subset> <open-parent> <identifier>
+<subst-fact>             : <subset> <open-parent> <identifier>
                            <comma> <identifier> <close-parent>
 
-<memb-atom>              : <member> <open-parent> <identifier>
+<memb-fact>              : <member> <open-parent> <identifier>
                            <comma> <identifier> <close-parent>
 
 <logical-op>             : <and>
