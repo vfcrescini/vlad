@@ -58,13 +58,21 @@ int add_identifier(char ident[], unsigned short type);
 %token <terminal> EPI_SYM_IDENT
 %token <identifier> EPI_SYM_IDENTIFIER
 
-%type <exp> expression
-%type <atm> atom_exp
-%type <atm> boolean_atom
+%type <exp> ground_exp
+%type <exp> comp_exp
 %type <atm> logical_atom
-%type <atm> holds_atom
-%type <atm> subst_atom
-%type <atm> memb_atom
+%type <atm> ground_atom_exp
+%type <atm> ground_boolean_atom
+%type <atm> ground_holds_atom
+%type <atm> ground_memb_atom
+%type <atm> ground_subst_atom
+%type <atm> comp_memb_atom
+%type <atm> comp_atom_exp
+%type <atm> comp_boolean_atom
+%type <atm> comp_holds_atom
+%type <atm> comp_memb_atom
+%type <atm> comp_subst_atom
+%type <atm> comp_memb_atom
 
 %start program
 
@@ -230,7 +238,7 @@ acc_grp_ident_list :
   ;
 
 initial_stmt : 
-  EPI_SYM_INITIALLY expression EPI_SYM_SEMICOLON
+  EPI_SYM_INITIALLY ground_exp EPI_SYM_SEMICOLON
   {
     unsigned int i;
     unsigned int len;
@@ -288,7 +296,7 @@ initial_stmt :
   ;
 
 trans_stmt : 
-  EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES expression EPI_SYM_IF expression EPI_SYM_SEMICOLON
+  EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON
   {
   }
   ;
@@ -317,7 +325,7 @@ trans_var_list :
   ;
 
 is_clause : 
-  EPI_SYM_IS expression
+  EPI_SYM_IS ground_exp 
   {
   }
   ;
@@ -358,8 +366,8 @@ logical_op :
   }
   ;
 
-expression : 
-  boolean_atom 
+ground_exp : 
+  ground_boolean_atom 
   { 
     if (expression_init(&$$) != 0) {
       yyerror("internal error");
@@ -370,7 +378,7 @@ expression :
       return -1;
     }
   }
-  | boolean_atom logical_op expression
+  | ground_boolean_atom logical_op ground_exp
   { 
     if (expression_add(&$3, $1) != 0) {
       yyerror("internal error");
@@ -380,28 +388,28 @@ expression :
   }
   ;
 
-boolean_atom :
-  atom_exp
+ground_boolean_atom :
+  ground_atom_exp
   {
     $$ = $1;
   }
-  | EPI_SYM_NOT atom_exp
+  | EPI_SYM_NOT ground_atom_exp
   {
     $$ = $2;
     $$.truth = epi_false;
   }
   ;
 
-atom_exp :
-  holds_atom
+ground_atom_exp :
+  ground_holds_atom
   {
     $$ = $1;
   }
-  | subst_atom
+  | ground_subst_atom
   {
     $$ = $1;
   }
-  | memb_atom
+  | ground_memb_atom
   {
     $$ = $1;
   }
@@ -411,7 +419,7 @@ atom_exp :
   }
   ;
 
-holds_atom :
+ground_holds_atom :
   EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
     ident_type *subject = NULL;
@@ -448,7 +456,7 @@ holds_atom :
   }
   ;
 
-subst_atom :
+ground_subst_atom :
   EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
     ident_type *group1 = NULL;
@@ -477,7 +485,7 @@ subst_atom :
   }
   ;
 
-memb_atom :
+ground_memb_atom :
   EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
     ident_type *element = NULL;
@@ -508,6 +516,57 @@ memb_atom :
     $$.truth = epi_true;
     $$.atom.memb.element = element;
     $$.atom.memb.group = group ;
+  }
+  ;
+
+comp_exp :
+  comp_boolean_atom
+  {
+  }
+  | comp_boolean_atom logical_op comp_exp
+  {
+  }
+  ;
+
+comp_boolean_atom :
+  comp_atom_exp
+  {
+  }
+  | EPI_SYM_NOT comp_atom_exp
+  {
+  }
+  ;
+
+comp_atom_exp :
+  comp_holds_atom
+  {
+  }
+  | comp_subst_atom
+  {
+  }
+  | comp_memb_atom
+  {
+  }
+  | logical_atom
+  {
+  }
+  ;
+
+comp_holds_atom :
+  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
+  {
+  }
+  ;
+
+comp_subst_atom :
+  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
+  {
+  }
+  ;
+
+comp_memb_atom :
+  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
+  {
   }
   ;
 

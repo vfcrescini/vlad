@@ -1,3 +1,16 @@
+2002-08-23  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* docs/bnf.txt :
+	* parser/parser.y :
+
+	  - Again separated expressions into ground_exp and comp_exp.
+	    This allows the parser to accept variables and have strict
+	    identifier checking.
+
+	* docs/sample :
+
+	  - Enabled transformation statements.
+
 2002-08-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* datastruct/simplelist.c :

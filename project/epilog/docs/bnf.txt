@@ -4,7 +4,7 @@ BNF
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 Started 2002 Jul 08
-Updated 2002 Aug 13
+Updated 2002 Aug 23
 
 
 <start>                 : <program>
@@ -52,10 +52,10 @@ Updated 2002 Aug 13
 
 <acc-grp-ident-list>    : <identifier> | <identifier> <comma> <acc-grp-ident-list>
 
-<initial-stmt>          : <initially> <expression> <semicolon>
+<initial-stmt>          : <initially> <ground-exp> <semicolon>
                         
 <trans-stmt>            : <trans> <identifier> <trans-var-def>
-                          <causes> <expression> <if> <expression> <semicolon>
+                          <causes> <comp-exp> <if> <comp-exp> <semicolon>
                         
 <trans-var-def>         : <open-parent> <close-parent> |
                           <open-parent> <trans-var-list> <close-parent> 
@@ -66,7 +66,7 @@ Updated 2002 Aug 13
 <policy-stmt>           : <is-clause> <after-clause> <semicolon> |
                           <is-clause> <semicolon>
                         
-<is-clause>             : <is> <expression>
+<is-clause>             : <is> <ground-exp>
                         
 <after-clause>          : <after> <trans-ref-list>
                         
@@ -79,21 +79,38 @@ Updated 2002 Aug 13
 <trans-ref-ident-list>  : <identifier> | <identifier> <comma>
                           <trans-ref-ident-list>
 
-<expression>            : <boolean-atom> <logical-op> <expression> |
-                          <boolean-atom>
+<ground-exp>            : <ground-boolean-atom> <logical-op> <ground-exp> |
+                          <ground-boolean-atom>
                         
-<boolean-atom>          : <not> <atom-exp> | <atom-exp>
+<ground-boolean-atom>   : <not> <ground-atom-exp> | <ground-atom-exp>
                         
-<atom-exp>              : <holds-atom> | <subst-atom> | <memb-atom> | 
-                          <logical-atom>
+<ground-atom-exp>       : <ground-holds-atom> | <ground-subst-atom> | 
+                          <ground-memb-atom> | <logical-atom>
                         
-<holds-atom>            : <holds> <open-parent> <identfier> <comma>
+<ground-holds-atom>     : <holds> <open-parent> <identfier> <comma>
                           <identifier> <comma> <identifier> <close-parent>
  
-<subst-atom>            : <subset> <open-parent> <identifier>
+<ground-subst-atom>     : <subset> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
                         
-<memb-atom>             : <member> <open-parent> <identifier>
+<ground-memb-atom>      : <member> <open-parent> <identifier>
+                          <comma> <identifier> <close-parent>
+
+<comp-exp>              : <comp-boolean-atom> <logical-op> <comp-exp> |
+                          <comp-boolean-atom>
+
+<comp-boolean-atom>     : <not> <comp-atom-exp> | <comp-atom-exp>
+
+<comp-atom-exp>         : <comp-holds-atom> | <comp-subst-atom> |
+                          <comp-memb-atom> | <logical-atom>
+
+<comp-holds-atom>       : <holds> <open-parent> <identfier> <comma>
+                          <identifier> <comma> <identifier> <close-parent>
+ 
+<comp-subst-atom>       : <subset> <open-parent> <identifier>
+                          <comma> <identifier> <close-parent>
+                        
+<comp-memb-atom>        : <member> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
 
 <logical-atom>          : <true> | <false>
