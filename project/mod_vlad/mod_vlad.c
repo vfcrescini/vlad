@@ -320,7 +320,7 @@ static int modvlad_authorize(request_rec *a_r)
     case VLAD_RESULT_TRUE :
       return OK;
     case VLAD_RESULT_FALSE :
-      return HTTP_UNAUTHORIZED;
+      return MODVLAD_DENYACTION;
     default :
       return MODVLAD_DEFAULTACTION;
   }

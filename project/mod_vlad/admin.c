@@ -200,6 +200,30 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
       return;
     }
 
+#ifdef MODVLAD_DEBUG 
+    retval = vlad_kb_compute_generate(a_conf->kb, stderr);
+    fflush(stderr);
+    if (retval != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: could not compute kb (%d)",
+                    retval);
+      return;
+    }
+#else
+    if ((retval = vlad_kb_compute_evaluate(a_conf->kb)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: could not compute kb (%d)",
+                    retval);
+      return;
+    }
+#endif
+
     ap_rprintf(a_r, "    <blink>add successful</blink>\n    <br/>\n");
   }
   else if (!strcmp(cmd, "delete")) {
@@ -218,6 +242,30 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
       ap_rprintf(a_r, "    <blink>delete error</blink>\n    <br/>\n");
       return;
     }
+
+#ifdef MODVLAD_DEBUG 
+    retval = vlad_kb_compute_generate(a_conf->kb, stderr);
+    fflush(stderr);
+    if (retval != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: could not compute kb (%d)",
+                    retval);
+      return;
+    }
+#else
+    if ((retval = vlad_kb_compute_evaluate(a_conf->kb)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: could not compute kb (%d)",
+                    retval);
+      return;
+    }
+#endif
 
     ap_rprintf(a_r, "    <blink>delete successful</blink>\n    <br/>\n");
   }

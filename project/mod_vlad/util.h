@@ -14,7 +14,8 @@
 #define MODVLAD_LOGLEVEL        APLOG_NOTICE
 #endif
 
-#define MODVLAD_DEFAULTACTION   HTTP_UNAUTHORIZED
+#define MODVLAD_DEFAULTACTION   HTTP_FORBIDDEN
+#define MODVLAD_DENYACTION      HTTP_FORBIDDEN
 
 #define MODVLAD_XML_HEADER      "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
 #define MODVLAD_CONTENT_HEADER  "text/html; charset=\"utf-8\""
