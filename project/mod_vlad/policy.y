@@ -133,14 +133,14 @@ initial_stmt :
   ;
 
 constraint_stmt :
-  MODVLAD_SYM_ALWAYS expression MODVLAD_SYM_IMPLIED MODVLAD_SYM_BY expression
-  MODVLAD_SYM_WITH MODVLAD_SYM_ABSENCE expression MODVLAD_SYM_SEMICOLON {
+  MODVLAD_SYM_ALWAYS expression impliedby_clause withabsence_clause 
+  MODVLAD_SYM_SEMICOLON {
   }
   ;
 
 trans_stmt :
   MODVLAD_SYM_IDENTIFIER trans_var_def MODVLAD_SYM_CAUSES expression
-  MODVLAD_SYM_IF expression MODVLAD_SYM_SEMICOLON {
+  if_clause MODVLAD_SYM_SEMICOLON {
   }
   ;
 
@@ -153,11 +153,29 @@ group_def_stmt :
   }
   ;
 
+impliedby_clause : {
+  }
+  | MODVLAD_SYM_IMPLIED MODVLAD_SYM_BY expression {
+  }
+  ;
+
+withabsence_clause : {
+  }
+  | MODVLAD_SYM_WITH MODVLAD_SYM_ABSENCE expression {
+  }
+  ;
+
 trans_var_def :
   MODVLAD_SYM_OPEN_PARENT MODVLAD_SYM_CLOSE_PARENT {
   }
   |
   MODVLAD_SYM_OPEN_PARENT trans_var_list MODVLAD_SYM_CLOSE_PARENT {
+  }
+  ;
+
+if_clause : {
+  }
+  | MODVLAD_SYM_IF expression {
   }
   ;
 
