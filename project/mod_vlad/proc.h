@@ -57,8 +57,8 @@ int modvlad_client_ident_get(apr_pool_t *a_p,
                              apr_file_t *a_fdin,
                              apr_file_t *a_fdout,
                              apr_proc_mutex_t *a_mx,
-                             unsigned int a_index,
-                             const char **a_name);
+                             unsigned char a_type,
+                             apr_array_header_t *a_arr);
 
 int modvlad_client_ident_check(apr_pool_t *a_p,
                                apr_file_t *a_fdin,

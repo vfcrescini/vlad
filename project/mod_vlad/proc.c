@@ -248,18 +248,26 @@ static int processreq(apr_pool_t *a_p,
   }
   else if (!strcmp(cmd, "IG")) {
     /* get identifier */
-    char *name = NULL;
-    char *idx = NULL;
+    char *type = NULL;
+    char **array = NULL;
+    unsigned int size;
+    unsigned int i;
 
-    idx = ((char **)a_req->elts)[2];
+    type = ((char **)a_req->elts)[2];
 
-    if (vlad_kb_get_symtab(a_kb, atoi(idx), &name) != VLAD_OK) {
+    if (vlad_kb_get_array_symtab(a_kb, atoi(type), &array, &size) != VLAD_OK) {
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
       return MODVLAD_FAILURE;
     }
 
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "IGR");
-    *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, name);
+    *(const char **) apr_array_push(a_rep) = apr_psprintf(a_rep->pool, "%d", size);
+
+    for (i = 0; i < size; i++)
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, array[i]);
+
+    if (array)
+      free(array);
   }
   else if (!strcmp(cmd, "IC")) {
     /* check identifier */
@@ -557,14 +565,16 @@ int modvlad_client_ident_get(apr_pool_t *a_p,
                              apr_file_t *a_fdin,
                              apr_file_t *a_fdout,
                              apr_proc_mutex_t *a_mx,
-                             unsigned int a_index,
-                             const char **a_name)
+                             unsigned char a_type,
+                             apr_array_header_t *a_arr)
 {
   apr_array_header_t *arr_out = NULL;
   apr_array_header_t *arr_in = NULL;
   unsigned int id = modvlad_idgen();
+  unsigned int size;
+  unsigned int i;
 
-  if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_name)
+  if (!a_p || !a_fdin || !a_fdout || !a_mx || !a_arr)
     return MODVLAD_NULLPTR;
 
   arr_out = apr_array_make(a_p, 1, sizeof(char *));
@@ -572,7 +582,7 @@ int modvlad_client_ident_get(apr_pool_t *a_p,
 
   *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", id);
   *(char **) apr_array_push(arr_out) = apr_pstrdup(a_p, "IG");
-  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", a_index);
+  *(char **) apr_array_push(arr_out) = apr_psprintf(a_p, "%d", a_type);
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
@@ -583,7 +593,10 @@ int modvlad_client_ident_get(apr_pool_t *a_p,
   if (strcmp(((char **)arr_in->elts)[1], "IGR"))
     return MODVLAD_FAILURE;
 
-  *a_name = apr_pstrdup(a_p, ((char **)arr_in->elts)[2]);
+  size = atoi(((char **)arr_in->elts)[2]);
+
+  for (i = 0; i < size; i++)
+    *(char **) apr_array_push(a_arr) = apr_pstrdup(a_p, ((char **)arr_in->elts)[3 + i]);
 
   return MODVLAD_OK;
 }

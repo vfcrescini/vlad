@@ -4,7 +4,10 @@
 	* proc.c :
 	* proc.h :
 
-	  - Now manipulator gui shows transformations with parameters.
+	  - Manupulator gui now shows a sorted table of identifiers.
+
+	  - Now manipulator gui shows sequences and transformations with
+	    parameters.
 
 	* mod_vlad.c :
 	* proc.c :

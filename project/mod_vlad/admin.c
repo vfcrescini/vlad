@@ -16,6 +16,40 @@
 #include "admin.h"
 #include "proc.h"
 
+static void generate_ident_cell(request_rec *a_r,
+                                modvlad_config_rec *a_conf,
+                                unsigned char a_type);
+
+static void generate_ident_cell(request_rec *a_r,
+                                modvlad_config_rec *a_conf,
+                                unsigned char a_type)
+{
+  apr_pool_t *pool = NULL;
+  apr_array_header_t *array = NULL;
+  unsigned int i;
+
+  apr_pool_create(&pool, a_r->pool);
+  array = apr_array_make(pool, 1, sizeof(char *));
+
+  modvlad_client_ident_get(pool,
+                           a_conf->pipe_cli[0],
+                           a_conf->pipe_cli[1],
+                           a_conf->mutex,
+                           a_type,
+                           array);
+
+  for (i = 0; i < array->nelts; i++) {
+    const char *name = ((char **)array->elts)[i];
+
+    ap_rprintf(a_r, "            <input name=\"id\" type=\"radio\" onclick=\"idform.ident.value='%s';\">\n", name);
+    ap_rprintf(a_r, "              %s\n", name);
+    ap_rprintf(a_r, "            </input>\n");
+    ap_rprintf(a_r, "            <br/>\n");
+  }
+
+  apr_pool_destroy(pool);
+}
+
 void modvlad_generate_header(request_rec *a_r)
 {
   if (!a_r)
@@ -42,7 +76,6 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   unsigned int i;
   unsigned int slen = 0;
   unsigned int tlen = 0;
-  unsigned int ilen = 0;
   const char *uri = NULL;
 
   if (!a_r || !a_conf)
@@ -150,32 +183,26 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   ap_rprintf(a_r, "    <h3>Available Identifiers</h3>\n");
   ap_rprintf(a_r, "    <form name=\"idform\">\n");
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"ident\" value=\"\"/>\n");
-  ap_rprintf(a_r, "      <ul>\n");
+  ap_rprintf(a_r, "      <table cols=\"3\" border=\"1\">\n");
+  ap_rprintf(a_r, "        <tr>\n");
+  ap_rprintf(a_r, "          <th>Subject</th>\n");
+  ap_rprintf(a_r, "          <th>Access</th>\n");
+  ap_rprintf(a_r, "          <th>Object</th>\n");
+  ap_rprintf(a_r, "        </tr>\n");
+  ap_rprintf(a_r, "        <tr valign=\"top\">\n");
 
-  modvlad_client_ident_total(a_r->pool,
-                             a_conf->pipe_cli[0],
-                             a_conf->pipe_cli[1],
-                             a_conf->mutex,
-                             &ilen);
+  ap_rprintf(a_r, "          <td>\n");
+  generate_ident_cell(a_r, a_conf, VLAD_IDENT_SUBJECT);
+  ap_rprintf(a_r, "          </td>\n");
+  ap_rprintf(a_r, "          <td>\n");
+  generate_ident_cell(a_r, a_conf, VLAD_IDENT_ACCESS);
+  ap_rprintf(a_r, "          </td>\n");
+  ap_rprintf(a_r, "          <td>\n");
+  generate_ident_cell(a_r, a_conf, VLAD_IDENT_OBJECT);
+  ap_rprintf(a_r, "          </td>\n");
 
-  for (i = 0; i < ilen; i++) {
-    const char *it_name = NULL;
-
-    modvlad_client_ident_get(a_r->pool,
-                             a_conf->pipe_cli[0],
-                             a_conf->pipe_cli[1],
-                             a_conf->mutex,
-                             i,
-                             &it_name);
-
-    ap_rprintf(a_r, "        <li>\n");
-    ap_rprintf(a_r, "          <input name=\"id\" type=\"radio\" onclick=\"idform.ident.value='%s';\">\n", it_name);
-    ap_rprintf(a_r, "            %s\n", it_name);
-    ap_rprintf(a_r, "          </input>\n");
-    ap_rprintf(a_r, "        </li>\n");
-  }
-
-  ap_rprintf(a_r, "      </ul>\n");
+  ap_rprintf(a_r, "        </tr>\n");
+  ap_rprintf(a_r, "      </table>\n");
   ap_rprintf(a_r, "    </form>\n");
 }
 
