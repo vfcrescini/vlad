@@ -2,6 +2,7 @@
 
 TOPSRCDIR = @top_srcdir@
 CC = @CC@
+CXX = @CXX@
 LEX = @LEX@
 YACC = @YACC@
 DEBUG = @enable_debug@
@@ -11,8 +12,10 @@ INCLUDES = parser.h
 
 ifeq "$(DEBUG)" "yes"
 CFLAGS += -g -DDEBUG
+CXXFLAGS += -g -DDEBUG
 else
 CFLAGS += -O2
+CXXFLAGS += -O2
 endif
 
 all : public
@@ -30,23 +33,23 @@ public : $(TARGETS)
 libparser.a : parser.o scanner.o 
 	$(AR) -rcs $(@) parser.o scanner.o
 
-scanner.o : y.tab.h lex.yy.c
-	$(CC) $(CFLAGS) -o $(@) -c lex.yy.c
+scanner.o : y.tab.h lex.yy.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.yy.cpp
 
-parser.o : y.tab.h y.tab.c
-	$(CC) $(CFLAGS) -o $(@) -c y.tab.c
+parser.o : y.tab.h y.tab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c y.tab.cpp
 
-lex.yy.c : scanner.l
-	$(LEX) scanner.l
+lex.yy.cpp : scanner.l
+	$(LEX) scanner.l && mv -f lex.yy.c $(@)
 
-y.tab.c : parser.y
-	$(YACC) parser.y
+y.tab.cpp : parser.y
+	$(YACC) parser.y && mv -f y.tab.c $(@)
 
 y.tab.h : parser.y
 	$(YACC) -d parser.y
 
 clean :
-	$(RM) *.o lex.yy.c y.tab.c y.tab.h
+	$(RM) *.o lex.yy.cpp y.tab.cpp y.tab.h
 
 distclean : clean
 	$(RM) $(TARGETS) Makefile

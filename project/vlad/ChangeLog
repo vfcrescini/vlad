@@ -1,3 +1,20 @@
+2003-01-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* configure.ac :
+
+	  - Took out silly lex/yacc testing. Let it fail in the build
+	    process.
+
+	* main/Makefile.in :
+	* parser/Makefile.in :
+
+	  - Converted build process to C++. Changed lex/yacc output src
+	    to end in .cpp instead of .c.
+
+	* main/vlad.c :
+
+	  - Renamed to vlad.cpp.
+
 2002-12-19  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Makefile :
@@ -67,5 +84,4 @@
 	* ChangeLog :
 
 	  - Changelog started.
-
 
