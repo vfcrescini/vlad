@@ -112,6 +112,10 @@ Language Specifications
          holds(sub2, acc2, obj2)) &&
          holds(sub3, acc3, obj3)
 
+    1.3.4. Parentheses
+
+      Parenthesis may be used to enclose atoms and expression.
+
   1.4. Constant Expressions
 
     The following symbols may be used:

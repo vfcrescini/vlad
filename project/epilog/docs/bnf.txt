@@ -73,9 +73,9 @@ BNF
 
 <underscore>           : _
 
-<open-bracket>         : (
+<open-parent>         : (
 
-<close-bracket>        : )
+<close-parent>        : )
 
 <comma>                : ,
 
@@ -90,46 +90,47 @@ BNF
 
 <ground-boolean-exp>   : <not> <ground-logical-exp> | <ground-logical-exp>
 
-<ground-logical-exp>   : <ground-exp> | <ground-atom>
+<ground-logical-exp>   : <open-parent> <ground-exp> <close-parent> | 
+                         <ground-atom>
 
 <ground-atom>          : <ground-holds> | <ground-cont> | ground-elt> | 
                          <logical-const>
 
-<ground-holds>         : <holds> <open-bracket> <subject-identifier> <comma>
+<ground-holds>         : <holds> <open-parent> <subject-identifier> <comma>
                          <access-identifier> <comma> <object-identifier>
-                         <close-bracket>
+                         <close-parent>
 
 <ground-cont>          : <ground-subject-cont> | <ground-access-cont> |
                          <ground-object-cont>
 
-<ground-subject-cont>  : <containment> <open-bracket> <g-subject-ident>
-                         <comma> <g-subject-ident> <close-bracket>
+<ground-subject-cont>  : <containment> <open-parent> <g-subject-ident>
+                         <comma> <g-subject-ident> <close-parent>
 
-<ground-object-cont>   : <containment> <open-bracket> g-object-ident>
-                         <comma> <g-object-ident> <close-bracket>
+<ground-object-cont>   : <containment> <open-parent> g-object-ident>
+                         <comma> <g-object-ident> <close-parent>
 
-<ground-access-cont>   : <containment> <open-bracket> <g-access-ident>
-                         <comma> <g-access-ident> <close-bracket>
+<ground-access-cont>   : <containment> <open-parent> <g-access-ident>
+                         <comma> <g-access-ident> <close-parent>
 
 <ground-elt>           : <ground-subject-elt> | <ground-access-elt> |
                          <ground-object-elt>
 
-<ground-subject-elt>   : <element> <open-bracket> <s-subject-ident>
-                         <comma> <g-subject-ident> <close-bracket>
+<ground-subject-elt>   : <element> <open-parent> <s-subject-ident>
+                         <comma> <g-subject-ident> <close-parent>
 
-<ground-access-elt>    : <element> <open-bracket> <s-access-ident>
-                         <comma> <g-access-ident> <close-bracket>
+<ground-access-elt>    : <element> <open-parent> <s-access-ident>
+                         <comma> <g-access-ident> <close-parent>
 
-<ground-object-elt>    : <element> <open-bracket> <s-object-ident>
-                         <comma> <g-object-ident> <close-bracket>
+<ground-object-elt>    : <element> <open-parent> <s-object-ident>
+                         <comma> <g-object-ident> <close-parent>
 
 <initial-stmt>         : <initially> <ground-exp> <semicolon>
 
 <trans-stmt>           : <trans> <trans-identifier> <trans-var-def>
                          <causes> <ground-exp> <if> <ground-exp> <semicolon>
 
-<trans-var-def>        : <open-bracket> <close-bracket> |
-                         <open-bracket> <trans-var-list> <close-bracket> 
+<trans-var-def>        : <open-parent> <close-parent> |
+                         <open-parent> <trans-var-list> <close-parent> 
 
 <trans-var-list>       : <var-identifier> | <var-identifier> <comma>
                          <trans-var-list>
@@ -144,8 +145,8 @@ BNF
 <trans-ref-list>       : <trans-ref-def> | <trans-ref-def> <comma> 
                          <trans-ref-list>
 
-<trans-ref-def>        : <trans-identifier> <open-bracket>
-                         <sub-acc-obj-list> <close-bracket>
+<trans-ref-def>        : <trans-identifier> <open-parent>
+                         <sub-acc-obj-list> <close-parent>
 
 <sub-acc-obj-list>     : <sub-acc-obj-ident> | <sub-acc-obj-ident> <comma>
                          <sub-acc-obj-list>
