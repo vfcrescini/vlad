@@ -1,5 +1,12 @@
 2003-04-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* samples/chinese_wall :
+	* samples/cwall_prog :
+	* samples/cwall_query :
+
+	  - Replaced chinese wall example with two that has the program part
+	    separated from the query part.
+
 	* common/vlad.h	:
 
 	  - Added error code for the case where files cannot be opened for
