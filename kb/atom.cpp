@@ -29,6 +29,22 @@ holds_atom::~holds_atom()
 {
 }
 
+bool holds_atom::verify()
+{
+  if (sub == NULL || acc == NULL || obj == NULL)
+    return false;
+
+  if (VLAD_IDENT_STRING(*sub) == NULL ||
+      VLAD_IDENT_STRING(*obj) == NULL ||
+      VLAD_IDENT_STRING(*acc) == NULL)
+    return false;
+
+  return 
+    VLAD_IDENT_IS_SUBJECT(*sub) && 
+    VLAD_IDENT_IS_ACCESS(*acc) && 
+    VLAD_IDENT_IS_OBJECT(*obj);
+}
+
 void holds_atom::get(identifier **s, identifier **a, identifier **o)
 {
   if (s != NULL)
@@ -55,6 +71,20 @@ member_atom::~member_atom()
 {
 }
 
+bool member_atom::verify()
+{
+  if (elt == NULL || grp == NULL)
+    return false;
+
+  if (VLAD_IDENT_STRING(*elt) == NULL || VLAD_IDENT_STRING(*grp) == NULL)
+    return false;
+
+  return 
+    VLAD_IDENT_BASETYPE(*elt) == VLAD_IDENT_BASETYPE(*grp) && 
+    !VLAD_IDENT_IS_GROUP(*elt) &&
+    VLAD_IDENT_IS_GROUP(*grp);
+}
+
 void member_atom::get(identifier **e, identifier **g)
 {
   if (e != NULL)
@@ -78,6 +108,20 @@ subset_atom::subset_atom(identifier *g1, identifier *g2)
 
 subset_atom::~subset_atom()
 {
+}
+
+bool subset_atom::verify()
+{
+  if (grp1 == NULL || grp2 == NULL)
+    return false;
+
+  if (VLAD_IDENT_STRING(*grp1) == NULL || VLAD_IDENT_STRING(*grp2) == NULL)
+    return false;
+
+  return 
+    VLAD_IDENT_BASETYPE(*grp1) == VLAD_IDENT_BASETYPE(*grp2) && 
+    VLAD_IDENT_IS_GROUP(*grp1) &&
+    VLAD_IDENT_IS_GROUP(*grp2);
 }
 
 void subset_atom::get(identifier **g1, identifier **g2)
@@ -201,7 +245,22 @@ int atom::get(identifier **i1, identifier **i2, identifier **i3, bool *tr, unsig
 
   return VLAD_OK;
 }
+/* verify the integrity of this atom */
+bool atom::verify()
+{
+  switch(type) {
+    case VLAD_ATOM_HOLDS :
+      return holds != NULL && holds->verify();
+    case VLAD_ATOM_MEMBER :
+      return member != NULL && member->verify();
+    case VLAD_ATOM_SUBSET :
+      return subset != NULL && subset->verify();
+    default :
+      return false;
+  }
+}
 
+/* implementation of cmp() in list_item class */
 bool atom::cmp(list_item *item)
 {
   atom *tmp = dynamic_cast<atom *> (item);
