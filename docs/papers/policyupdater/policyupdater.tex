@@ -500,7 +500,7 @@ query holds(alice, read, file);
           \begin{quote}
             $f_{0}$, ..., $f_{n}$
 
-            where $n$ $>$ $0$
+            where $n$ $\geq$ $0$
           \end{quote}
 
           Propositions are implications composed of a single fact $c$ as the
@@ -534,6 +534,25 @@ query holds(alice, read, file);
  
           \begin{quote}
             $\sigma'$ = $Result$($u$, $\sigma$)
+          \end{quote}
+
+        \paragraph{}
+
+          The $Base$ function takes an atom $\alpha$ of language ${\cal L}^{*}$
+          in some state $\sigma$ and returns a set of entities that make up
+          the atom.
+
+          \begin{quote}
+            $Base$($\alpha$)
+ 
+            = 
+            \begin{math}
+              \begin{cases}
+                \mbox{\{$s$, $a$, $o$\}, if $\alpha$ = $\hat{holds}$($s$, $a$, $o$, $\sigma$)} \\
+                \mbox{\{$e$, $g$\}, if $\alpha$ = $\hat{memb}$($e$, $g$, $\sigma$)} \\
+                \mbox{\{$g_{1}$, $g_{2}$\}, if $\alpha$ = $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)}
+              \end{cases}
+            \end{math}
           \end{quote}
 
         \paragraph{}
@@ -591,7 +610,7 @@ query holds(alice, read, file);
                 \item
                   $\hat{f_{i}}$ $=$ $TranslateFact$($f_{i}$, $S_{0}$)
                 \item
-                  $0$ $<$ $i$ $\leq$ $n$
+                  $0$ $\leq$ $i$ $\leq$ $n$
               \end{itemize}
           \end{quote}
 
@@ -600,8 +619,8 @@ query holds(alice, read, file);
           Each constraint rule in language ${\cal L}$ is expressed as a series
           of logical rules in language ${\cal L}_{*}$. Given that all variable
           occurences have been grounded to entity identifiers, a constraint in
-          language ${\cal L}$, with $m$ $>$ $0$ and $n$, $o$ $\geq$ $0$ may be
-          preresented as:
+          language ${\cal L}$, with $m$, $n$, $o$ $\geq$ $0$ may be preresented
+          as:
 
           \begin{quote}
             always $a_{0}$ \&\& ... \&\& $a_{m}$
@@ -667,11 +686,11 @@ query holds(alice, read, file);
               \item
                 $c^{\sigma}_{k}$ $=$ $TranslateFact$($c_{k}$, $\sigma$)
               \item
-                $0$ $<$ $i$ $\leq$ $m$
+                $0$ $\leq$ $i$ $\leq$ $m$
               \item
-                $0$ $<$ $j$ $\leq$ $n$
+                $0$ $\leq$ $j$ $\leq$ $n$
               \item
-                $0$ $<$ $k$ $\leq$ $o$
+                $0$ $\leq$ $k$ $\leq$ $o$
               \item
                 $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$
             \end{itemize}
@@ -688,34 +707,33 @@ query holds(alice, read, file);
             if $b_{0}$ \&\& ... \&\& $b_{n}$
           \end{quote}
 
-          In language ${\cal L}^{*}$, a distinction must be made between the
-          atoms before $u$ is applied and the atoms after $u$ has been applied.
-          Furthermore, such distinction is also needed to represent a rule that
-          states that all facts $a_{i}$ ($0$ $\leq$ $i$ $\leq$ $m$) hold in
-          the resulting state if all facts $b_{j}$ ($0$ $\leq$ $j$ $\leq$ $n$)
-          hold in the current state.
-
-          Formally, a policy update $u$ applied to the current state $\sigma$,
-          with a postcondition expression $a_{0}$ $\land$ ... $\land$ $a_{n}$
-          and a precondition expression $b_{0}$ $\land$ ... $\land$ $b_{m}$, 
-          is expressed in language ${\cal L}^{*}$ as follows:
+          In language ${\cal L}^{*}$, such policy updates may be represented as
+          a set of implications, with each fact $a$ in the postcondition
+          expression as the consequent and precondition expression $b$ as the
+          premise. However, the translation process must also take into account
+          that the premise of the implication holds in the state before the
+          policy update is applied and that the consequent holds in the state
+          after the application.
 
           \begin{quote}
-            $a_{0}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$
+            $\hat{a}_{0}$ $\leftarrow$ $\hat{b}_{0}$, ..., $\hat{b}_{n}$
 
             ...
 
-            $a_{m}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$
+            $\hat{a}_{m}$ $\leftarrow$ $\hat{b}_{0}$, ..., $\hat{b}_{n}$
 
             where:
 
             \begin{itemize}
               \item
-                $a_{i}$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{\sigma'}$, $0$ $\leq$ $i$ $\leq$ $m$
+                $\hat{a}_{i}$ $=$ $TranslateFact$($a_{i}$, $Result$($u$, $\sigma$))
               \item
-                $b_{j}$ = $[\lnot]$ $b$, $b$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $j$ $\leq$ $n$
+                $\hat{b}_{j}$ $=$ $TranslateFact$($b_{j}$, $\sigma$)
               \item
-                $\sigma'$ = $result$($u$, $\sigma$)
+                $0$ $\leq$ $i$ $\leq$ $m$
+              \item
+                $0$ $\leq$ $j$ $\leq$ $n$
+
             \end{itemize}
           \end{quote}
 
@@ -745,9 +763,9 @@ query holds(alice, read, file);
               \item
                 \begin{math}
                   \begin{aligned}[t]
-                    holds(s_{s}, a, o, \sigma) \leftarrow &
-                    holds(s_{g}, a, o, \sigma), \\
-                    & memb(s_{s}, s_{g}, \sigma)
+                    \hat{holds}(s_{s}, a, o, \sigma) \leftarrow &
+                    \hat{holds}(s_{g}, a, o, \sigma), \\
+                    & \hat{memb}(s_{s}, s_{g}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -755,22 +773,22 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $s_{s} \in {\cal A}^{\sigma}_{ss}$
+                    $s_{s} \in {\cal E}_{ss}$
                   \item
-                    $s_{g} \in {\cal A}^{\sigma}_{sg}$
+                    $s_{g} \in {\cal E}_{sg}$
                   \item
-                    $a \in {\cal A}^{\sigma}_{a}$
+                    $a \in {\cal E}_{a}$
                   \item
-                    $o \in {\cal A}^{\sigma}_{o}$
+                    $o \in {\cal E}_{o}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
-                    holds(s, a_{s}, o, \sigma) \leftarrow &
-                    holds(s, a_{g}, o, \sigma), \\
-                    & memb(a_{s}, a_{g}, \sigma)
+                    \hat{holds}(s, a_{s}, o, \sigma) \leftarrow &
+                    \hat{holds}(s, a_{g}, o, \sigma), \\
+                    & \hat{memb}(a_{s}, a_{g}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -778,22 +796,22 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $s \in {\cal A}^{\sigma}_{s}$
+                    $s \in {\cal E}_{s}$
                   \item
-                    $a_{s} \in {\cal A}^{\sigma}_{as}$
+                    $a_{s} \in {\cal E}_{as}$
                   \item
-                    $a_{g} \in {\cal A}^{\sigma}_{ag}$
+                    $a_{g} \in {\cal E}_{ag}$
                   \item
-                    $o \in {\cal A}^{\sigma}_{o}$
+                    $o \in {\cal E}_{o}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
-                    holds(s, a, o_{s}, \sigma) \leftarrow &
-                    holds(s, a, o_{g}, \sigma), \\
-                    & memb(o_{s}, o_{g}, \sigma)
+                    \hat{holds}(s, a, o_{s}, \sigma) \leftarrow &
+                    \hat{holds}(s, a, o_{g}, \sigma), \\
+                    & \hat{memb}(o_{s}, o_{g}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -801,22 +819,22 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $s \in {\cal A}^{\sigma}_{s}$
+                    $s \in {\cal E}_{s}$
                   \item
-                    $a \in {\cal A}^{\sigma}_{a}$
+                    $a \in {\cal E}_{a}$
                   \item
-                    $o_{s} \in {\cal A}^{\sigma}_{os}$
+                    $o_{s} \in {\cal E}_{os}$
                   \item
-                    $o_{g} \in {\cal A}^{\sigma}_{og}$
+                    $o_{g} \in {\cal E}_{og}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
-                    holds(s_{g1}, a, o, \sigma) \leftarrow &
-                    holds(s_{g2}, a, o, \sigma), \\
-                    & subst(s_{g1}, s_{g2}, \sigma)
+                    \hat{holds}(s_{g1}, a, o, \sigma) \leftarrow &
+                    \hat{holds}(s_{g2}, a, o, \sigma), \\
+                    & \hat{subst}(s_{g1}, s_{g2}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -824,20 +842,20 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $s_{g1}, s_{g2} \in {\cal A}^{\sigma}_{sg}$
+                    $s_{g1}, s_{g2} \in {\cal E}_{sg}$
                   \item
-                    $a \in {\cal A}^{\sigma}_{a}$
+                    $a \in {\cal E}_{a}$
                   \item
-                    $o \in {\cal A}^{\sigma}_{o}$
+                    $o \in {\cal E}_{o}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
-                    holds(s, a_{g1}, o, \sigma) \leftarrow &
-                    holds(s, a_{g2}, o, \sigma), \\
-                    & subst(a_{g1}, a_{g2}, \sigma)
+                    \hat{holds}(s, a_{g1}, o, \sigma) \leftarrow &
+                    \hat{holds}(s, a_{g2}, o, \sigma), \\
+                    & \hat{subst}(a_{g1}, a_{g2}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -845,20 +863,20 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $s \in {\cal A}^{\sigma}_{s}$
+                    $s \in {\cal E}_{s}$
                   \item
-                    $a_{g1}, a_{g2} \in {\cal A}^{\sigma}_{ag}$
+                    $a_{g1}, a_{g2} \in {\cal E}_{ag}$
                   \item
-                    $o \in {\cal A}^{\sigma}_{o}$
+                    $o \in {\cal E}_{o}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
                 \item
                 \begin{math}
                   \begin{aligned}[t]
-                    holds(s, a, o_{g1}, \sigma) \leftarrow &
-                    holds(s, a, o_{g2}, \sigma), \\
-                    & subst(o_{g1}, o_{g2}, \sigma)
+                    \hat{holds}(s, a, o_{g1}, \sigma) \leftarrow &
+                    \hat{holds}(s, a, o_{g2}, \sigma), \\
+                    & \hat{subst}(o_{g1}, o_{g2}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -866,11 +884,11 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $s \in {\cal A}^{\sigma}_{s}$
+                    $s \in {\cal E}_{s}$
                   \item
-                    $a \in {\cal A}^{\sigma}_{a}$
+                    $a \in {\cal E}_{a}$
                   \item
-                    $o_{g1}, o_{g2} \in {\cal A}^{\sigma}_{og}$
+                    $o_{g1}, o_{g2} \in {\cal E}_{og}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
@@ -887,9 +905,9 @@ query holds(alice, read, file);
               \item
                 \begin{math}
                   \begin{aligned}[t]
-                    subst(sg_{1}, sg_{3}, \sigma) \leftarrow &
-                    subst(sg_{1}, sg_{2}, \sigma), \\
-                    & subst(sg_{2}, sg_{3}, \sigma)
+                    \hat{subst}(sg_{1}, sg_{3}, \sigma) \leftarrow &
+                    \hat{subst}(sg_{1}, sg_{2}, \sigma), \\
+                    & \hat{subst}(sg_{2}, sg_{3}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -897,16 +915,16 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $sg_{1}, sg_{2}, sg_{3} \in {\cal A}^{\sigma}_{sg}$
+                    $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
-                    subst(ag_{1}, ag_{3}, \sigma) \leftarrow &
-                    subst(ag_{1}, ag_{2}, \sigma), \\
-                    & subst(ag_{2}, ag_{3}, \sigma)
+                    \hat{subst}(ag_{1}, ag_{3}, \sigma) \leftarrow &
+                    \hat{subst}(ag_{1}, ag_{2}, \sigma), \\
+                    & \hat{subst}(ag_{2}, ag_{3}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -914,16 +932,16 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $ag_{1}, ag_{2}, ag_{3} \in {\cal A}^{\sigma}_{ag}$
+                    $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
-                    subst(og_{1}, og_{3}, \sigma) \leftarrow &
-                    subst(og_{1}, og_{2}, \sigma), \\
-                    & subst(og_{2}, og_{3}, \sigma)
+                    \hat{subst}(og_{1}, og_{3}, \sigma) \leftarrow &
+                    \hat{subst}(og_{1}, og_{2}, \sigma), \\
+                    & \hat{subst}(og_{2}, og_{3}, \sigma)
                   \end{aligned}
                 \end{math}
 
@@ -931,7 +949,7 @@ query holds(alice, read, file);
 
                 \begin{itemize}
                   \item
-                    $og_{1}, og_{2}, og_{3} \in {\cal A}^{\sigma}_{og}$
+                    $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$
                   \item
                     $0 \leq \sigma \leq \Sigma$
                 \end{itemize}
@@ -942,9 +960,8 @@ query holds(alice, read, file);
             Intuitively, all facts in the current state that are not affected
             by a policy update should be carried over to the next state after
             the update. In language ${\cal L}^{*}$, this rule must be
-            explicitly stated as a constraint.
-
-            Formally, the intertial rules are expressed as follows:
+            explicitly stated as a constraint. Formally, the intertial rules
+            are expressed as follows:
 
             \begin{quote}
               $\alpha'$ $\leftarrow$ $\alpha$, $not$ $\lnot$ $\alpha'$
@@ -955,15 +972,15 @@ query holds(alice, read, file);
 
               \begin{itemize}
                 \item
-                  $u$ $\in$ $\psi$
-                \item
                   $\alpha$ $\in$ ${\cal A}^{\sigma}$
                 \item
                   $\alpha'$ $\in$ ${\cal A}^{\sigma'}$
                 \item
-                  $\sigma'$ = $result$($u$, $\sigma$)
+                  $u$ $\in$ $\psi$
                 \item
-                  $base$($\alpha$) = $base$($\alpha'$)
+                  $\sigma'$ = $Result$($u$, $\sigma$)
+                \item
+                  $Base$($\alpha$) = $Base$($\alpha'$)
               \end{itemize}
             \end{quote}
 
