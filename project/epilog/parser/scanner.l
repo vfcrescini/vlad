@@ -46,8 +46,7 @@ digit              [0-9]
 alpha              {lower_case}|{upper_case}
 alpha_num          {alpha}|{digit}
 alpha_num_uscr     {alpha_num}|{underscore}
-/* stupid non-POSIX compliant lex requires the parenthesis */
-alpha_num_uscr_str ({alpha_num_uscr})+
+alpha_num_uscr_str ({alpha_num_uscr})+ 
 s_subject_ident    s|s{alpha_num_uscr_str}
 s_access_ident     a|a{alpha_num_uscr_str}
 s_object_ident     o|o{alpha_num_uscr_str}
