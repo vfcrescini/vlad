@@ -1,3 +1,10 @@
+2002-08-18  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/atom.h :
+	* exp/atom.c :
+
+	  - Added a copy function.
+
 2002-08-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/Makefile :
