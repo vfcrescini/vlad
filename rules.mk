@@ -1,10 +1,10 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-.PHONY : copy-includes copy-libs copy-bins all clean distclean
+.PHONY : includes static-libs shared-libs bins all clean distclean
 
-all : copy-includes copy-libs copy-bins
+all : includes static-libs shared-libs bins
 
-copy-includes : $(INCLUDES)
+includes : $(INCLUDES)
 ifdef INCLUDES
 	@mkdir -p $(DISTDIR)/include/vlad
 	@for i in $(INCLUDES); do \
@@ -12,15 +12,27 @@ ifdef INCLUDES
 	done
 endif
 
-copy-libs : $(LIBS)
-ifdef LIBS
+static-libs : $(STATIC_LIBS)
+ifdef STATIC_LIBS
 	@mkdir -p $(DISTDIR)/lib
-	@for i in $(LIBS); do \
+	@for i in $(STATIC_LIBS); do \
 	(cd $(DISTDIR)/lib && $(LN_S) -f ../../$(CURDIR)/$$i $$i); \
 	done
 endif
 
-copy-bins : $(BINS)
+ifdef BUILDSHARED
+shared-libs : $(SHARED_LIBS)
+  ifdef SHARED_LIBS
+	@mkdir -p $(DISTDIR)/lib
+	@for i in $(SHARED_LIBS); do \
+	(cd $(DISTDIR)/lib && $(LN_S) -f ../../$(CURDIR)/$$i $$i); \
+        (cd $(DISTDIR)/lib && $(LN_S) -f $$i $${i%.*.*}); \
+	(cd $(DISTDIR)/lib && $(LN_S) -f $$i $${i%.*.*.*}); \
+	done
+  endif
+endif
+
+bins : $(BINS)
 ifdef BINS
 	@mkdir -p $(DISTDIR)/bin
 	@for i in $(BINS); do \
@@ -38,8 +50,13 @@ ifdef INCLUDES
 	$(RM) $(DISTDIR)/include/vlad/$$i; \
 	done
 endif
-ifdef LIBS
-	@for i in $(LIBS); do \
+ifdef STATIC_LIBS
+	@for i in $(STATIC_LIBS); do \
+	$(RM) $(DISTDIR)/lib/$$i; \
+	done
+endif
+ifdef SHARED_LIBS
+	@for i in $(SHARED_LIBS); do \
 	$(RM) $(DISTDIR)/lib/$$i; \
 	done
 endif

@@ -1,3 +1,23 @@
+2003-05-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* configure.ac :
+
+	  - Added checks for compiler -fPIC and -shared options.
+
+	  - Added an --enable-static option to link the executable statically.
+
+	* rules.mk :
+	* lib/Makefile.in :
+	* main/Makefile.in :
+
+	  - Renamed phony rules: took out the "copy-" prefix.
+
+	  - Now creates a shared library (where supported) libvlad.so.
+
+	  - By default, the executable will be linked againts the shared lib,
+	    unless --enable-static is specified, in which case, it will be
+	    linked against the static lib.
+
 2003-05-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* configure :

@@ -23,6 +23,51 @@ AC_PROG_LEX
 AC_PROG_YACC
 AC_PROG_LN_S
 
+# check compiler options
+cat >> $$.c << \EOF
+int main(void) {return 0;}
+EOF
+
+# check if -fPIC works
+AC_MSG_CHECKING([whether $CXX accepts -fPIC])
+if "${CXX}" -fPIC -o $$ $$.c > /dev/null 2>&1; then
+  VLAD_FPIC="yes"
+  AC_MSG_RESULT([yes])
+else
+  VLAD_FPIC="no"
+  AC_MSG_RESULT([no])
+fi
+
+# check if -shared works
+AC_MSG_CHECKING([whether $CXX compiler accepts -shared])
+if "${CXX}" -shared -o $$ $$.c > /dev/null 2>&1; then
+  VLAD_SHARED="yes"
+  AC_MSG_RESULT([yes])
+else
+  VLAD_SHARED="no"
+  AC_MSG_RESULT([no])
+fi
+
+# make sure they both are supported
+if test "x$VLAD_FPIC" = "xyes" && test "x$VLAD_SHARED" = "xyes"; then
+  AC_SUBST(BUILDSHARED,[yes])
+fi
+
+# cleanup
+rm -f $$ $$.c
+
+# --enable-static
+AC_ARG_ENABLE(static,AC_HELP_STRING([--enable-static],[generate a statically-linked executable (default is disabled)]))
+
+if test "x$enable_static" != "x" && test "x$enable_static" != "xno"; then
+  AC_SUBST(STATIC,[yes])
+else
+  if test "x$VLAD_FPIC" = "xno" || test "x$VLAD_SHARED" = "xno"; then
+    AC_MSG_WARN([cannot build shared libraries, will link statically])
+    AC_SUBST(STATIC,[yes])
+  fi
+fi
+
 # --enable-debug
 AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & compile with -g (default is disabled)]))
 
@@ -105,7 +150,7 @@ CXXFLAGS="$VLAD_CXXFLAGS $CXXFLAGS"
 LDFLAGS="$VLAD_LDFLAGS $LDFLAGS"
 
 AC_DEFINE_UNQUOTED(VERSION,"$PACKAGE_VERSION")
-
+AC_SUBST(VERSION,"$PACKAGE_VERSION")
 AC_SUBST(DISTDIR,"\$(TOPSRCDIR)/dist")
 
 AC_CONFIG_FILES(  \

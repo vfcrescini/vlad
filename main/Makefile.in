@@ -7,28 +7,35 @@ CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
 YACC = @YACC@
-LEXLIB = @LEXLIB@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 LDFLAGS = @LDFLAGS@
 LN_S = @LN_S@
 DEBUG = @DEBUG@
-SMODELS = @SMODELS@
 STRIP = @STRIP@
+BUILDSHARED = @BUILDSHARED@
+SMODELS = @SMODELS@
+STATIC = @STATIC@
+VERSION = @VERSION@
 BINS = vlad
-LIBS =
+STATIC_LIBS =
+SHARED_LIBS =
 INCLUDES =
 OBJECTS = vlad.o
 TEMP =
 
 ifdef SMODELS
-SMLIB = -lsmodels
+SMLIBS = -lsmodels
 endif
 
 include $(TOPSRCDIR)/rules.mk
 
-vlad : $(OBJECTS) $(DISTDIR)/lib/libvlad.a
-	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIB) -lvlad
+vlad : $(OBJECTS)
+ifdef STATIC
+	$(CXX) $(LDFLAGS) -static -o $(@) vlad.o $(SMLIBS) -lvlad
+else
+	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIBS) -lvlad
+endif
 ifndef DEBUG
   ifdef STRIP
 	strip $(@)
