@@ -717,7 +717,7 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
             Table of queries
         \end{itemize}
 
-      \subsubsection{Operation}
+      \subsubsection{Operations}
 
         The following is a brief outline of the programs execution cycle:
 
@@ -754,6 +754,40 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
 
     \subsection{Parser2: Vlad}
 
+      Unlike Epilog, this implementations accepts the full authorisation
+      language that was proposed. Because it must support default logic
+      constraints given in an authorisation logic program, the parser must
+      perform various translations first before handing over the contents
+      of the knowledge base to the logic engine.
+
+      The biggest difference between the Epilog implementation and this one
+      is the fact that this implementation's sole purpose is to translate
+      the authorisation language into a general logic program. Once translated,
+      another mechanism, most likely an external logic engine will perform
+      the logic operations.
+
+      \subsubsection{Data Structures}
+
+        The structures used to hold data for this implementation is somewhat
+        similar to that of Epilog, with the exception of the addition table
+        to store constraints that was not present in the Epilog implementation.
+
+        Another major, but subtle difference is the way atoms are stored. In 
+        the Epilog implmentation, atoms are stored in memory as records of
+        identfiers and a truth value. This implementations, however, offers
+        a more robust and efficient method of storing atoms: conceptually,
+        instead of in memory. Each atom is never actaully stored in physical
+        memory but is really just a number. This number corresponds to the
+        unique combination of the indices of the identifiers that it contains.
+
+      \subsubsection{Operations}
+
+        As stated above, the goal of this implementations is to translate
+        the authorisation language into a simple general logic program
+        so that its output could be passed to a logic engine. The actual
+        procedure that this implementation uses for conversion to general
+        logic program is outlined in the previous section.
+
     \subsection{Application Program}
 
       The application that will be developed for this project is a website 
@@ -774,17 +808,18 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
       helpful in situations where the administrator decides to change
       the policies.
 
-      The diagram below illustrates how the system will work. An administrator 
-      feeds the policy base with the authorisation rules and constraints 
-      using the new language. It is then up to the policy base to resolve 
-      any conflicts and inconsistencies that might arise when the administrator
-      changes a policy. The policy base will also work closely with the
-      enforcement agent, who will send a query to the policy base every time it
-      receives a request from a user. When this happens, the policy base will
-      then evaluate the query and return Granted or Denied depending on whether
-      there is a policy covering that specific query. If the enforcement agent
-      receives a granted reply, it will grant the user making the request
-      access the site. A denied reply would cause it to revoke the request.
+      The following description highlights the operations of the system. 
+      An administrator feeds the policy base with the authorisation rules
+      and constraints using the new language. It is then up to the policy
+      base to resolve any conflicts and inconsistencies that might arise
+      when the administrator changes a policy. The policy base will also
+      work closely with the enforcement agent, who will send a query to
+      the policy base every time it receives a request from a user. When
+      this happens, the policy base will then evaluate the query and return
+      Granted or Denied depending on whether there is a policy covering
+      that specific query. If the enforcement agent receives a granted 
+      reply, it will grant the user making the request access the site.
+      A denied reply would cause it to revoke the request.
 
     \pagebreak
 
