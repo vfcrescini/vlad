@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// VERSION_BASE must be a power of 2
+// VERSION_BASE_LEN is the number of bits required to represent VERSION_BASE
+
 #define VERSION_BASE     1024
 #define VERSION_BASE_LEN 10
 #define VERSION_BASE_1   (VERSION_BASE - 1)
@@ -63,7 +66,6 @@ int main(int aCount, char *aArray[])
            (base3 << (VERSION_BASE_LEN * 2)) +
            (base2 << VERSION_BASE_LEN) +
            base1); 
-
   } 
   else {
     help(aArray[0]);
