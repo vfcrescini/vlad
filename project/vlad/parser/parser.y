@@ -535,6 +535,8 @@ trans_var_list :
 
 query_stmt : 
   VLAD_SYM_IS expression after_clause VLAD_SYM_SEMICOLON {
+    /* cleanup */
+
     delete $2;
     if ($3 != NULL)
       delete $3;
