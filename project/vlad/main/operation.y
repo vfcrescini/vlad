@@ -110,8 +110,8 @@ statement :
 query_stmt :
   VLAD_SYM_QUERY expression VLAD_SYM_SEMICOLON {
     int retval;
-    unsigned char res;
 #ifdef DEBUG
+    unsigned char res;
     char q[VLAD_MAXLEN_STR];
 #endif
 
@@ -161,8 +161,8 @@ query_stmt :
   ;
 
 compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
-    int retval;
 #ifdef SMODELS
+    int retval;
     if (mode == VLAD_MODE_EVALUATE) {
       switch(retval = kbase->compute()) {
         case VLAD_OK :
