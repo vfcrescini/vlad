@@ -6,31 +6,22 @@
 #ifndef __VLAD_SYMTAB_H
 #define __VLAD_SYMTAB_H
 
-#include <identifier.h>
+#include <stringlist.h>
 
-class identlist : public list
-{
-  public :
-    identlist(const char *n, unsigned char t);
-    ~identlist();
-    /* add an identifier in the list */
-    int add(const char *n);
-    /* get the index of the identifier */
-    int get(const char *n, unsigned int *i);
-    /* get the identifier object associated with the given name */
-    int get(const char *n, identifier **i);
-    /* get the ith identifier of the list */
-    int get(unsigned int i, identifier **id);
-    /* return true if symbol is in the list */
-    int find(const char *n);
-  private :
-    unsigned char type;
-} ;
+/* identifier type values indicated by the first 2 bits */
+#define VLAD_IDENT_SUBJECT       1
+#define VLAD_IDENT_ACCESS        2
+#define VLAD_IDENT_OBJECT        3
 
-/* 
- * wrapper class to make it appear as if the identifiers are one list.
- * having identifiers on a separate list will ease search times.
- */
+/* identifier group bit indicated by the 3th bit */
+#define VLAD_IDENT_GROUP         4
+/* some convenience macros */
+#define VLAD_IDENT_BASETYPE(X)   ((X) & 3)
+#define VLAD_IDENT_IS_SUBJECT(X) (((X) & 3) == VLAD_IDENT_SUBJECT)
+#define VLAD_IDENT_IS_ACCESS(X)  (((X) & 3) == VLAD_IDENT_ACCESS)
+#define VLAD_IDENT_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
+#define VLAD_IDENT_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
+#define VLAD_IDENT_IS_VALID(X)   ((X) > 0 && (X) <= 7)
 
 class symtab
 {
@@ -39,24 +30,22 @@ class symtab
     ~symtab();
     int init();
     /* add symbol in symbol table */
-    int add(const char *n, unsigned char t);
-    /* get the index and type of the identifier based on name */
-    int get(const char *n, unsigned int *i, unsigned char *t);
-    /* get the identifier object associated with the given name */
-    int get(const char *n, identifier **i);
+    int add(const char *s, unsigned char t);
+    /* get the index and type of the identifier based on the name */
+    int get(const char *s, unsigned int *i, unsigned char *t);
     /* get the ith identifier of type t */
-    int get(unsigned int i, unsigned char t, identifier **id);
+    int get(unsigned int i, unsigned char t, char **s);
     /* return the number of identifiers that are of type t */
     unsigned int length(unsigned char t);
     /* return true if symbol is in the table */
-    int find(const char *n);
+    int find(const char *s);
   private :
-    identlist *sub_list;
-    identlist *acc_list;
-    identlist *obj_list;
-    identlist *sub_grp_list;
-    identlist *acc_grp_list;
-    identlist *obj_grp_list;
+    stringlist *sub_list;
+    stringlist *acc_list;
+    stringlist *obj_list;
+    stringlist *sub_grp_list;
+    stringlist *acc_grp_list;
+    stringlist *obj_grp_list;
     bool initialised;
 } ;
 
