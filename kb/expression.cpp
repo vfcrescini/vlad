@@ -87,6 +87,7 @@ void expression::print(char *s)
     if (list::get(i, (list_item **) &tmpa) != VLAD_OK)
       break;
 
+    strcpy(tmps, "");
     tmpa->print(tmps);
     sprintf(s, "%s %s", s, tmps);
   }
