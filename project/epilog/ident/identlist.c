@@ -57,45 +57,35 @@ int identlist_add(char *name, unsigned short type)
 /* get identifier structure based on name */
 int identlist_get(char *name, ident_type **ident)
 {
-  ident_type *temp_ident = NULL;
+  ident_type temp_ident;
 
   if (name == NULL || ident == NULL)
     return -1;
 
-  if (ident_create(&temp_ident, name, 0) != 0)
-    return -1;
+  temp_ident.name = name;
+  temp_ident.type = 0;
 
-  if (simplelist_get_data(list, 
-                          (void *) temp_ident,
-                          (void **) ident,
-                          identlist_compare)) {
-    ident_destroy(temp_ident);
-    return -1;
-  }
-
-  return ident_destroy(temp_ident);
+  return simplelist_get_data(list, 
+                             (void *) &temp_ident,
+                             (void **) ident,
+                             identlist_compare);
 }
 
 /* delete identifier entry based on name */
 int identlist_del(char *name)
 {
-  ident_type *temp_ident = NULL;
+  ident_type temp_ident;
 
   if (name == NULL)
     return -1;
 
-  if (ident_create(&temp_ident, name, 0) != 0)
-    return -1;
+  temp_ident.name = name;
+  temp_ident.type = 0;
 
-  if (simplelist_del_data(&list,
-                          (void *) temp_ident,
-                          identlist_compare,
-                          identlist_destroy)) {
-    ident_destroy(temp_ident);
-    return -1;
-  }
-
-  return ident_destroy(temp_ident);
+  return simplelist_del_data(&list,
+                             (void *) &temp_ident,
+                             identlist_compare,
+                             identlist_destroy);
 }
 
 /* delete all entries */
