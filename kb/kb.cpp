@@ -766,13 +766,22 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               unsigned int tmp_num1;
               unsigned int tmp_num2;
               unsigned int tmp_num3;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
 
               tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
               tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
               tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_group;
 
-              if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              tmp_list->add(tmp_num2);
+              tmp_list->add(tmp_num3);
+
+              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
                 return retval;
+
+              delete tmp_list;
             }
           }
         }
@@ -785,13 +794,22 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               unsigned int tmp_num1;
               unsigned int tmp_num2;
               unsigned int tmp_num3;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
 
               tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
               tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj;
               tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group;
 
-              if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              tmp_list->add(tmp_num2);
+              tmp_list->add(tmp_num3);
+
+              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
                 return retval;
+
+              delete tmp_list;
             }
           }
         }
@@ -804,13 +822,22 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
               unsigned int tmp_num1;
               unsigned int tmp_num2;
               unsigned int tmp_num3;
+              numberlist *tmp_list;
+
+              if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+                return VLAD_MALLOCFAILED;
 
               tmp_num1 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
               tmp_num2 = (i * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len;
               tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group;
 
-              if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+              tmp_list->add(tmp_num2);
+              tmp_list->add(tmp_num3);
+
+              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
                 return retval;
+
+              delete tmp_list;
             }
           }
         }
@@ -832,17 +859,26 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           unsigned int tmp_num1;
           unsigned int tmp_num2;
           unsigned int tmp_num3;
+          numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
+          if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+            return VLAD_MALLOCFAILED;
+
           tmp_num1 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp3;
           tmp_num2 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2;
           tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp2 * sg_len) + i_grp3;
 
-          if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+          tmp_list->add(tmp_num2);
+          tmp_list->add(tmp_num3);
+
+          if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
             return retval;
+
+          delete tmp_list;
         }
       }
     }
@@ -853,17 +889,26 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           unsigned int tmp_num1;
           unsigned int tmp_num2;
           unsigned int tmp_num3;
+          numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
+          if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+            return VLAD_MALLOCFAILED;
+
           tmp_num1 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp3,
           tmp_num2 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp2;
           tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp2 * sg_len) + i_grp3;
 
-          if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+          tmp_list->add(tmp_num2);
+          tmp_list->add(tmp_num3);
+
+          if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
             return retval;
+
+          delete tmp_list;
         }
       }
     }
@@ -874,17 +919,26 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           unsigned int tmp_num1;
           unsigned int tmp_num2;
           unsigned int tmp_num3;
+          numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
+          if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+            return VLAD_MALLOCFAILED;
+
           tmp_num1 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp3;
           tmp_num2 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp2;
           tmp_num3 = (i * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp2 * sg_len) + i_grp3;
 
-          if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+          tmp_list->add(tmp_num2);
+          tmp_list->add(tmp_num3);
+
+          if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
             return retval;
+
+          delete tmp_list;
         }
       }
     }
@@ -1057,9 +1111,53 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
     delete tmp_list1;
   }
 
-  wrap->close_rule();
+  /* this might not succeed as there might not exist a model for this query */
+  if ((retval = wrap->close_rule()) != VLAD_OK)
+    return retval;
 
-  *r = VLAD_RESULT_TRUE;
+  *r = VLAD_RESULT_UNKNOWN;
+
+  /* go through the atoms to test */
+  for (i = 0; i < VLAD_LIST_LENGTH(e); i++) {
+    atom *tmp_atom;
+    unsigned int tmp_num;
+    char tmp_res;
+
+    if ((retval = e->get(i, &tmp_atom)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(s), &tmp_num)) != VLAD_OK)
+      return retval;
+    if ((retval = wrap->ask(tmp_num, &tmp_res)) != VLAD_OK)
+      return retval;
+    if (tmp_res == VLAD_RESULT_TRUE) {
+      *r = VLAD_RESULT_TRUE;
+      continue;
+    }
+    else if (tmp_res == VLAD_RESULT_FALSE) {
+      /* if false, we try the negation of the atom */
+      tmp_atom->negate();
+
+      if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(s), &tmp_num)) != VLAD_OK)
+        return retval;
+      if ((retval = wrap->ask(tmp_num, &tmp_res)) != VLAD_OK)
+        return retval;
+      if (tmp_res == VLAD_RESULT_TRUE)
+        *r = VLAD_RESULT_FALSE;
+      else
+        *r = VLAD_RESULT_UNKNOWN;
+ 
+      /* of course, we have to change it back */
+      tmp_atom->negate();
+
+      /* no sense in continuing further: false or unknown we stop */
+      break;
+    }
+    else {
+      /* nothing we can do */
+      *r = VLAD_RESULT_UNKNOWN;
+      break;
+    }
+  }
 
   return VLAD_OK;
 }

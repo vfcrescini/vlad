@@ -33,6 +33,8 @@ class wrapper
     int add_rule(unsigned int h, unsigned int pb, unsigned int nb);
     /* add multiple rule (single head, pos body list and neg body list */
     int add_rule(unsigned int h, numberlist *pb, numberlist *nb);
+    /* return true, false or unknown */
+    int ask(unsigned int a, char *r);
   private :
     Smodels *pr_smod;
     Api *pr_api;

@@ -1,5 +1,20 @@
 2003-04-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/vlad.h :
+
+	  - Added new error code: no model.
+
+	* kb/kb.cpp :
+
+	  - Query now works properly.
+
+	  - Fixed bug with the generation of some rules.
+
+	* kb/wrapper.cpp :
+	* kb/wrapper.h :
+
+	  - added ask() function.
+
 	* kb/kb.cpp :
 	* kb/wrapper.cpp :
 	* kb/wrapper.h :

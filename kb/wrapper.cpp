@@ -94,11 +94,13 @@ int wrapper::close_rule()
 
   pr_smod->init();
 
+  if (!pr_smod->model())
+    return VLAD_NOMODEL;
+
 #ifdef DEBUG
-  while(pr_smod->model())
     pr_smod->printAnswer();
 #endif
-  
+
   stage = 3;
 
   return VLAD_OK;
@@ -259,6 +261,29 @@ int wrapper::add_rule(unsigned int h, numberlist *pb, numberlist *nb)
   }
 
   pr_api->end_rule();
+
+  return VLAD_OK;
+}
+
+/* return true, false or unknown */
+int wrapper::ask(unsigned int a, char *r)
+{
+  char tmp_name[VLAD_MAXLEN_NUM];
+
+  if (stage != 3)
+    return VLAD_FAILURE;
+
+  if (r == NULL)
+    return VLAD_NULLPTR;
+
+  sprintf(tmp_name, "%d", a);
+
+  if ((pr_api->get_atom(tmp_name)->Bpos))
+    *r = VLAD_RESULT_TRUE;
+  else if ((pr_api->get_atom(tmp_name)->Bneg))
+    *r = VLAD_RESULT_FALSE;
+  else
+    *r = VLAD_RESULT_UNKNOWN;
 
   return VLAD_OK;
 }
