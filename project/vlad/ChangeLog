@@ -1,5 +1,11 @@
 2003-04-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* docs/bnf.txt :
+	* docs/bnf_program.txt :
+	* docs/bnd_query.txt :
+
+	  - Again separated program from query.
+
 	* samples/chinese_wall :
 	* samples/cwall_prog :
 	* samples/cwall_query :
