@@ -554,9 +554,6 @@ int kb::query_generate(expression *e, FILE *f)
   if ((retval = verify_expression(e)) != VLAD_OK)
     return retval;
 
-  /* and now for the queries */
-  fprintf(f, "Query\n");
-
   for (i = 0; i < VLAD_LIST_LENGTH(e); i++) {
     atom *tmp_atom;
     unsigned int tmp_num;
@@ -566,17 +563,12 @@ int kb::query_generate(expression *e, FILE *f)
     if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(setable), &tmp_num)) != VLAD_OK)
       return retval;
 
-    if (i == 0)
-      fprintf(f, "  ");
+    print_atom(tmp_num, f);
 
-    if (i + 1 == VLAD_LIST_LENGTH(e)) {
-      print_atom(tmp_num, f);
+    if (i + 1 == VLAD_LIST_LENGTH(e))
       fprintf(f, " %s\n", VLAD_STR_QUERY);
-    }
-    else {
-      print_atom(tmp_num, f);
-      fprintf(f, " %s ", VLAD_STR_AND);
-    }
+    else
+      fprintf(f, "%s\n  ", VLAD_STR_AND);
   }
 
   return VLAD_OK;
@@ -597,7 +589,7 @@ int kb::compute_generate(FILE *f)
     return VLAD_NULLPTR;
 
   /* identity rules */
-  fprintf(f, "Identity  Rules\n");
+  fprintf(f, "Identity  Rules\n\n");
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
@@ -606,24 +598,24 @@ int kb::compute_generate(FILE *f)
     for (i_grp = 0; i_grp < sg_len; i_grp++) {
       fprintf(f, "  ");
       print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp, i_grp), f);
-      fprintf(f, " %s %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+      fprintf(f, " %s\n    %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
     }
     /* access groups */
     for (i_grp = 0; i_grp < ag_len; i_grp++) {
       fprintf(f, "  ");
       print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp, i_grp), f);
-      fprintf(f, " %s %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+      fprintf(f, " %s\n    %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
     }
     /* object groups */
     for (i_grp = 0; i_grp < og_len; i_grp++) {
       fprintf(f, "  ");
       print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp, i_grp), f);
-      fprintf(f, " %s %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+      fprintf(f, " %s\n    %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
     }
   }
 
   /* inheritance rules */
-  fprintf(f, "Inheritance Rules\n");
+  fprintf(f, "\nInheritance Rules\n\n");
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
@@ -643,19 +635,19 @@ int kb::compute_generate(FILE *f)
           for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
             fprintf(f, "  ");
             print_atom(compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, true, i_grp2 + s_len, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2), f);
-            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_atom(compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj), f); 
             fprintf(f, "\n");
 
             fprintf(f, "  ");
             print_atom(compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, false, i_grp2 + s_len, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2), f);
             fprintf(f, "\n");
           }
@@ -671,19 +663,19 @@ int kb::compute_generate(FILE *f)
           for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
             fprintf(f, "  ");
             print_atom(compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, true, i_sub, i_grp2 + a_len, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2), f);
-            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_atom(compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj), f); 
             fprintf(f, "\n");
 
             fprintf(f, "  ");
             print_atom(compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, false, i_sub, i_grp2 + a_len, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2), f);
             fprintf(f, "\n");
           }
@@ -699,19 +691,19 @@ int kb::compute_generate(FILE *f)
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             fprintf(f, "  ");
             print_atom(compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, true, i_sub, i_acc, i_grp2 + o_len), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2), f);
-            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_atom(compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len), f); 
             fprintf(f, "\n");
 
             fprintf(f, "  ");
             print_atom(compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, false, i_sub, i_acc, i_grp2 + o_len), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2), f);
             fprintf(f, "\n");
           }
@@ -728,19 +720,19 @@ int kb::compute_generate(FILE *f)
           for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
             fprintf(f, "  ");
             print_atom(compute_holds(i, true, i_sub, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1), f);
-            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f); 
             fprintf(f, "\n");
 
             fprintf(f, "  ");
             print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1), f);
             fprintf(f, "\n");
           }
@@ -754,19 +746,19 @@ int kb::compute_generate(FILE *f)
           for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
             fprintf(f, "  ");
             print_atom(compute_holds(i, true, i_sub, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1), f);
-            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f); 
             fprintf(f, "\n");
 
             fprintf(f, "  ");
             print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1), f);
             fprintf(f, "\n");
           }
@@ -780,19 +772,19 @@ int kb::compute_generate(FILE *f)
           for (i_obj = 0; i_obj < o_len; i_obj++) {
             fprintf(f, "  ");
             print_atom(compute_holds(i, true, i_sub, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1), f);
-            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f); 
             fprintf(f, "\n");
 
             fprintf(f, "  ");
             print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f);
-            fprintf(f, " %s ", VLAD_STR_ARROW);
+            fprintf(f, " %s\n    ", VLAD_STR_ARROW);
             print_atom(compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len), f);
-            fprintf(f, " %s ", VLAD_STR_AND);
+            fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1), f);
             fprintf(f, "\n");
           }
@@ -802,7 +794,7 @@ int kb::compute_generate(FILE *f)
   }
 
   /* transitivity */
-  fprintf(f, "Transitivity Rules\n");
+  fprintf(f, "\nTransitivity Rules\n\n");
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
@@ -818,9 +810,9 @@ int kb::compute_generate(FILE *f)
             continue;
           fprintf(f, "  ");
           print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp3), f);
-          fprintf(f, " %s ", VLAD_STR_ARROW);
+          fprintf(f, " %s\n    ", VLAD_STR_ARROW);
           print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2), f);
-          fprintf(f, " %s ", VLAD_STR_AND);
+          fprintf(f, " %s\n    ", VLAD_STR_AND);
           print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp2, i_grp3), f);
           fprintf(f, "\n");
         }
@@ -835,9 +827,9 @@ int kb::compute_generate(FILE *f)
             continue;
           fprintf(f, "  ");
           print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp3), f);
-          fprintf(f, " %s ", VLAD_STR_ARROW);
+          fprintf(f, " %s\n    ", VLAD_STR_ARROW);
           print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2), f);
-          fprintf(f, " %s ", VLAD_STR_AND);
+          fprintf(f, " %s\n    ", VLAD_STR_AND);
           print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp2, i_grp3), f);
           fprintf(f, "\n");
         }
@@ -852,9 +844,9 @@ int kb::compute_generate(FILE *f)
             continue;
           fprintf(f, "  ");
           print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp3), f);
-          fprintf(f, " %s ", VLAD_STR_ARROW);
+          fprintf(f, " %s\n    ", VLAD_STR_ARROW);
           print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2), f);
-          fprintf(f, " %s ", VLAD_STR_AND);
+          fprintf(f, " %s\n    ", VLAD_STR_AND);
           print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp2, i_grp3), f);
           fprintf(f, "\n");
         }
@@ -863,23 +855,23 @@ int kb::compute_generate(FILE *f)
   }
 
   /* complementary rules */
-  fprintf(f, "Complementary Rules\n");
+  fprintf(f, "\nComplementary Rules\n\n");
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
     unsigned int i_atom;
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
       fprintf(f, "  ");
-      fprintf(f, "%s %s ", VLAD_STR_FALSE, VLAD_STR_ARROW);
+      fprintf(f, "%s %s\n    ", VLAD_STR_FALSE, VLAD_STR_ARROW);
       print_atom(compute_atom(i, true, i_atom), f);
-      fprintf(f, " %s ", VLAD_STR_AND);
+      fprintf(f, " %s\n    ", VLAD_STR_AND);
       print_atom(compute_atom(i, false, i_atom), f);
       fprintf(f, "\n");
     }
   }
 
   /* inertial rules */
-  fprintf(f, "Inertial Rules\n");
+  fprintf(f, "\nInertial Rules\n\n");
 
   /* state loop */
   for (i = 0; i < VLAD_LIST_LENGTH(setable); i++) {
@@ -887,24 +879,24 @@ int kb::compute_generate(FILE *f)
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
       fprintf(f, "  ");
       print_atom(compute_atom(i + 1, true, i_atom), f);
-      fprintf(f, " %s ", VLAD_STR_ARROW);
+      fprintf(f, " %s\n    ", VLAD_STR_ARROW);
       print_atom(compute_atom(i, true, i_atom), f);
-      fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+      fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
       print_atom(compute_atom(i + 1, false, i_atom), f);
       fprintf(f, "\n");
 
       fprintf(f, "  ");
       print_atom(compute_atom(i + 1, false, i_atom), f);
-      fprintf(f, " %s ", VLAD_STR_ARROW);
+      fprintf(f, " %s\n    ", VLAD_STR_ARROW);
       print_atom(compute_atom(i, false, i_atom), f);
-      fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+      fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
       print_atom(compute_atom(i + 1, true, i_atom), f);
       fprintf(f, "\n");
     }
   }
 
   /* initial state */
-  fprintf(f, "Initial State Rules\n");
+  fprintf(f, "\nInitial State Rules\n\n");
 
   for (i = 0; i < VLAD_LIST_LENGTH(itable); i++) {
     atom *tmp_atom;
@@ -917,11 +909,11 @@ int kb::compute_generate(FILE *f)
 
     fprintf(f, "  ");
     print_atom(tmp_num, f);
-    fprintf(f, " %s %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+    fprintf(f, " %s\n    %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
   }
 
   /* constraints */
-  fprintf(f, "Constraint Rules\n");
+  fprintf(f, "\nConstraint Rules\n\n");
 
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
     unsigned int  i_const;
@@ -949,7 +941,7 @@ int kb::compute_generate(FILE *f)
         print_atom(tmp_num, f);
       }
 
-      fprintf(f, " %s ", VLAD_STR_ARROW);
+      fprintf(f, " %s\n    ", VLAD_STR_ARROW);
 
       /* constraint condition */
       for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_c); i_exp++) {
@@ -958,6 +950,8 @@ int kb::compute_generate(FILE *f)
         if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
           return retval;
         print_atom(tmp_num, f);
+        if (i_exp + 1 < VLAD_LIST_LENGTH(tmp_c) || tmp_n != NULL)
+          fprintf(f, " %s\n    ", VLAD_STR_AND);
       }
 
       /* constraint negative condition */
@@ -966,19 +960,21 @@ int kb::compute_generate(FILE *f)
           return retval;
         if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
           return retval;
-        fprintf(f, " %s ", VLAD_STR_NOT);
+        fprintf(f, "%s ", VLAD_STR_NOT);
         print_atom(tmp_num, f);
+        if (i_exp + 1 < VLAD_LIST_LENGTH(tmp_n))
+          fprintf(f, " %s\n    ", VLAD_STR_AND);
       }
 
       if (tmp_c == NULL && tmp_n == NULL)
-        fprintf(f, " %s\n", VLAD_STR_TRUE);
+        fprintf(f, "%s\n", VLAD_STR_TRUE);
       else
         fprintf(f, "\n");
     }
   }
 
   /* transformation rules */
-  fprintf(f, "Transformation Rules\n");
+  fprintf(f, "\nTransformation Rules\n\n");
 
   /* state loop */
   for (i = 0; i < VLAD_LIST_LENGTH(setable); i++) {
@@ -996,7 +992,7 @@ int kb::compute_generate(FILE *f)
     if ((retval = ttable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
       return retval;
 
-    fprintf(f, " ");
+    fprintf(f, "  ");
 
     /* postcondition loop */
     for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_post); i_exp++) {
@@ -1007,7 +1003,7 @@ int kb::compute_generate(FILE *f)
       print_atom(tmp_num, f);
     }
 
-    fprintf(f, " %s ", VLAD_STR_ARROW);
+    fprintf(f, " %s\n    ", VLAD_STR_ARROW);
 
     /* precondition loop */
     for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_pre); i_exp++) {
@@ -1016,13 +1012,17 @@ int kb::compute_generate(FILE *f)
       if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
         return retval;
       print_atom(tmp_num, f);
+      if (i_exp + 1 < VLAD_LIST_LENGTH(tmp_pre))
+        fprintf(f, " %s\n    ", VLAD_STR_AND);
     }
 
     if (tmp_pre == NULL)
-      fprintf(f, " %s\n", VLAD_STR_TRUE);
+      fprintf(f, "%s\n", VLAD_STR_TRUE);
     else
       fprintf(f, "\n");
   }
+
+  fprintf(f, "\n");
 
   return VLAD_OK;
 }
