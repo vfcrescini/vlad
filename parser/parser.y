@@ -75,13 +75,12 @@ program :
   init body destroy
   ;
 
-init :
-  {
+init : {
     int retval;
 
     if ((retval = kbase.init()) != VLAD_OK) {
       fprintf(stderr, "failed to initialise knowledge base\n");
-      exit(retval);
+      return retval;
     }
   }
   ;
@@ -95,8 +94,18 @@ body :
   ident_section initial_section constraint_section trans_section query_section
   ;
 
-ident_section : 
-  | ident_stmt_list
+ident_section : {
+    int retval;
+    /* after the ident section, we must close the symbol table */
+    if ((retval = kbase.close()) != VLAD_OK)
+      return retval;
+  }
+  | ident_stmt_list {
+    int retval;
+    /* after the ident section, we must close the symbol table */
+    if ((retval = kbase.close()) != VLAD_OK)
+      return retval;
+  }
   ;
 
 initial_section :
@@ -357,7 +366,10 @@ ground_atom :
 
 ground_holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
-    kbase.get_atom($3, $5, $7, VLAD_ATOM_HOLDS, &$$);
+    int retval;
+    if ((retval = kbase.get_atom($3, $5, $7, VLAD_ATOM_HOLDS, &$$)) != VLAD_OK) {
+      return retval;
+    }
 #ifdef DEBUG
     fprintf(stderr, "%5d = holds(%s, %s, %s)\n", $$, $3, $5, $7);
 #endif
@@ -366,7 +378,9 @@ ground_holds_atom :
 
 ground_subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
-    kbase.get_atom($3, $5, NULL, VLAD_ATOM_SUBSET, &$$);
+    int retval;
+    if ((retval = kbase.get_atom($3, $5, NULL, VLAD_ATOM_SUBSET, &$$)) != VLAD_OK)
+      return retval;
 #ifdef DEBUG
     fprintf(stderr, "%5d = subst(%s, %s)\n", $$, $3, $5);
 #endif
@@ -374,7 +388,9 @@ ground_subst_atom :
   ;
 ground_memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
-    kbase.get_atom($3, $5, NULL, VLAD_ATOM_MEMBER, &$$);
+    int retval;
+    if ((retval = kbase.get_atom($3, $5, NULL, VLAD_ATOM_MEMBER, &$$)) != VLAD_OK)
+      return retval;
 #ifdef DEBUG
     fprintf(stderr, "%5d = memb(%s, %s)\n", $$, $3, $5);
 #endif
@@ -423,13 +439,17 @@ comp_memb_atom :
 
 logical_atom : 
   VLAD_SYM_TRUE {
-    kbase.get_atom("true", NULL, NULL, VLAD_ATOM_CONST, &$$);
+    int retval;
+    if ((retval = kbase.get_atom("true", NULL, NULL, VLAD_ATOM_CONST, &$$)) != VLAD_OK)
+      return retval;
 #ifdef DEBUG
     fprintf(stderr, "%5d = true\n", $$);
 #endif
   }
   | VLAD_SYM_FALSE {
-    kbase.get_atom("false", NULL, NULL, VLAD_ATOM_CONST, &$$);
+    int retval;
+    if ((retval = kbase.get_atom("false", NULL, NULL, VLAD_ATOM_CONST, &$$)) != VLAD_OK)
+      return retval;
 #ifdef DEBUG
     fprintf(stderr, "%5d = false\n", $$);
 #endif

@@ -14,6 +14,8 @@
 kb::kb()
 {
   stable = NULL;
+  initialised = false;
+  closed = false;
 }
 
 kb::~kb()
@@ -25,20 +27,41 @@ kb::~kb()
 /* (re)init kb */
 int kb::init()
 {
+  int retval;
+
   if (stable != NULL)
     delete stable;
 
   if ((stable = VLAD_NEW(symtab())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  return stable->init();
+  if ((retval = stable->init()) != VLAD_OK)
+    return retval;
+
+  initialised = true;
+
+  return VLAD_OK;
+}
+
+/* after this is called, no further calls to add_ident() is allowed */
+int kb::close()
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  closed = true;
+
+  return VLAD_OK;
 }
 
 /* register an identifier in the kb */
 int kb::add_ident(const char *n, unsigned char t)
 {
-  if (stable == NULL)
+  if (!initialised)
     return VLAD_UNINITIALISED;
+
+  if (closed)
+    return VLAD_FAILURE;
 
   return stable->add(n, t);
 }
@@ -60,16 +83,12 @@ int kb::get_atom(const char *n1,
   unsigned int holds_len;
   unsigned int memb_len;
 
-  /* 
-   * XXX
-   *   the id's returned by this function will only remain consistent if no 
-   *   further identifiers are registered to the symtab. so care must be
-   *   taken to ensure that identifiers are registered first before calling
-   *   this function.
-   */
-
-  if (stable == NULL)
+  if (!initialised)
     return VLAD_UNINITIALISED;
+
+  /* of course, symtab must be closed first */
+  if (!closed)
+    return VLAD_FAILURE;
 
   if (a == NULL)
     return VLAD_NULLPTR;
