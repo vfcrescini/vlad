@@ -86,6 +86,7 @@ module AP_MODULE_DECLARE_DATA modvlad_module =
   modvlad_register_hooks,
 };
 
+/* initalize per-server config */
 static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
 {
   modvlad_config_rec *conf = NULL;
@@ -110,6 +111,7 @@ static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
   return conf;
 }
 
+/* gives password of a_user in a_file */
 static char *modvlad_get_passwd(request_rec *a_r,
                                 const char *a_user,
                                 const char *a_filename)
@@ -164,7 +166,7 @@ static int modvlad_check_passwd(request_rec *a_r,
   apr_status_t status;
 
   if (!a_r || !a_user  || !a_passwd || !a_filename)
-    return -1;
+    return MODVLAD_NULLPTR;
 
   /* try to get real password from file */
   real_passwd = modvlad_get_passwd(a_r, a_user, a_filename);
@@ -177,7 +179,7 @@ static int modvlad_check_passwd(request_rec *a_r,
                   "mod_vlad: invalid user: user=\"%s\" uri=\"%s\"",
                   a_r->user,
                   a_r->uri);
-    return -1;
+    return MODVLAD_FAILURE;
   }
 
   /* now validate the password */
@@ -191,11 +193,11 @@ static int modvlad_check_passwd(request_rec *a_r,
                   "mod_vlad: password mismatch: user=\"%s\" uri=\"%s\"",
                   a_r->user,
                   a_r->uri);
-    return -1;
+    return MODVLAD_FAILURE;
   }
 
   /* hey it checked out so return 0 */
-  return 0;
+  return MODVLAD_OK;
 }
 
 static int modvlad_access(request_rec *a_r)
@@ -240,7 +242,14 @@ static int modvlad_access(request_rec *a_r)
     return DECLINED;
 
   /* mutex stuff */
-  apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_r->pool);
+  if (apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_r->pool) != APR_SUCCESS) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: failed to reinit mutex in child");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
 
   /* parse the incoming header to get the authorization line */
   if ((authline = apr_table_get(a_r->headers_in, "Authorization"))) {
@@ -288,14 +297,20 @@ static int modvlad_access(request_rec *a_r)
   }
 #endif
 
-  modvlad_client_query(a_r->pool,
-                       conf->pipe_cli[0],
-                       conf->pipe_cli[1],
-                       conf->mutex,
-                       a_r->user,
-                       a_r->method,
-                       realuri,
-                       &qres);
+  if (modvlad_client_query(a_r->pool,
+                           conf->pipe_cli[0],
+                           conf->pipe_cli[1],
+                           conf->mutex,
+                           a_r->user,
+                           a_r->method,
+                           realuri,
+                           &qres) != MODVLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_NOTICE,
+                  0,
+                  a_r,
+                  "mod_vlad: unable to query kb");
+  }
 
   switch(qres) {
     case VLAD_RESULT_TRUE :
@@ -365,7 +380,14 @@ static int modvlad_handler(request_rec *a_r)
     return DECLINED;
 
   /* mutex stuff */
-  apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_r->pool);
+  if (apr_proc_mutex_child_init(&(conf->mutex), MODVLAD_MUTEX_PATH, a_r->pool) != APR_SUCCESS) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: failed to reinit mutex in child");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
 
   filepath = apr_pstrdup(a_r->pool, modvlad_strip_url(a_r->pool, a_r->uri));
   apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
@@ -432,11 +454,18 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
   apr_file_pipe_create(&(conf->pipe_cli[1]), &(conf->pipe_svr[0]), a_pconf);
 
   /* create mutex */
-  apr_proc_mutex_create(&(conf->mutex),
-                        apr_pstrdup(a_pconf,
-                                    MODVLAD_MUTEX_PATH),
-                        APR_LOCK_DEFAULT,
-                        a_pconf);
+  if (apr_proc_mutex_create(&(conf->mutex),
+                            apr_pstrdup(a_pconf,
+                                         MODVLAD_MUTEX_PATH),
+                            APR_LOCK_DEFAULT,
+                            a_pconf) != APR_SUCCESS) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_plog,
+                  "mod_vlad: failed to init mutex in parent");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
 
   /* get document root */
   docroot = modvlad_docroot(a_pconf, a_s);
@@ -449,14 +478,23 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
     apr_pool_t *childpool = NULL;
     void *kbase = NULL;
 
+    /* create a new pool for this process */
     apr_pool_create(&childpool, NULL);
 
-    modvlad_server_init(childpool,
-                        &kbase,
-                        docroot,
-                        conf->user_file,
-                        conf->policy_file);
+    if (modvlad_server_init(childpool,
+                            &kbase,
+                            docroot,
+                            conf->user_file,
+                            conf->policy_file) != MODVLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_plog,
+                    "mod_vlad: failed to init parent");
+      return HTTP_INTERNAL_SERVER_ERROR;
+    }
 
+    /* this should never return */
     modvlad_server_listen(childpool, kbase, conf->pipe_svr[0], conf->pipe_svr[1]);
 
     apr_pool_destroy(childpool);
