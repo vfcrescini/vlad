@@ -1,5 +1,11 @@
 2003-05-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* rules.mk :
+	* lib/Makefile.in :
+
+	  - Changed parameter expansions (${var%%pattern}) into a cut command.
+	    This should keep non-posix compiant shells happy.
+
 	* configure.ac :
 
 	  - Added checks for compiler -fPIC and -shared options.

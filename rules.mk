@@ -26,8 +26,8 @@ shared-libs : $(SHARED_LIBS)
 	@mkdir -p $(DISTDIR)/lib
 	@for i in $(SHARED_LIBS); do \
 	(cd $(DISTDIR)/lib && $(LN_S) -f ../../$(CURDIR)/$$i $$i); \
-        (cd $(DISTDIR)/lib && $(LN_S) -f $$i $${i%.*.*}); \
-	(cd $(DISTDIR)/lib && $(LN_S) -f $$i $${i%.*.*.*}); \
+        (cd $(DISTDIR)/lib && $(LN_S) -f $$i `echo $$i | cut -d. -f1,2`); \
+	(cd $(DISTDIR)/lib && $(LN_S) -f $$i `echo $$i | cut -d. -f1,2,3`); \
 	done
   endif
 endif
