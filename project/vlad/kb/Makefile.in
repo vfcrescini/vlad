@@ -28,7 +28,7 @@ libkb.a : identifier.o symtab.o
 identifier.o : identifier.h identifier.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c identifier.cpp
 
-symtab.o : symtab.h symtab.cpp
+symtab.o : symtab.h symtab.cpp identifier.o
 	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
 
 clean :
