@@ -1,3 +1,22 @@
+2002-10-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/comp_atom.c :
+	* exp/comp_atom.h :
+	* exp/comp_exp.c :
+	* exp/gnd_atom.c :
+	* exp/gnd_atom.h :
+	* exp/gnd_exp.c :
+
+	  - Changed create atom functions so that they do not malloc. They
+	    now assume that space is always available.
+
+	  - Added a macro to malloc.
+	
+	* parser/parser.y :
+
+	  - Some cleanups. Now uses the create atom functions instead of
+	    manually assigning values to each structure member.
+
 2002-10-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* datastruct/simplelist.c :

@@ -40,26 +40,26 @@ typedef struct
 } comp_atom_type;
 
 /* creates a pointer to an comp_atom of type const */
-int comp_atom_create_const(comp_atom_type **comp_atom, truth_type truth);
+int comp_atom_create_const(comp_atom_type *comp_atom, truth_type truth);
 
 /* creates a pointer to an comp_atom of type holds */
-int comp_atom_create_holds(comp_atom_type **comp_atom, 
-                      name_type sub, 
-                      name_type acc,
-                      name_type obj,
-                      truth_type truth);
+int comp_atom_create_holds(comp_atom_type *comp_atom, 
+                           name_type sub, 
+                           name_type acc,
+                           name_type obj,
+                           truth_type truth);
 
 /* creates a pointer to an comp_atom of type memb */
-int comp_atom_create_memb(comp_atom_type **comp_atom,
-                     name_type element,
-                     name_type group,
-                     truth_type truth);
+int comp_atom_create_memb(comp_atom_type *comp_atom,
+                          name_type element,
+                          name_type group,
+                          truth_type truth);
 
 /* creates a pointer to an comp_atom of type subst */
-int comp_atom_create_subst(comp_atom_type **comp_atom,
-                      name_type group1,
-                      name_type group2,
-                      truth_type truth);
+int comp_atom_create_subst(comp_atom_type *comp_atom,
+                           name_type group1,
+                           name_type group2,
+                           truth_type truth);
 
 /* return 0 if the comp_atom is valid */
 int comp_atom_check(comp_atom_type comp_atom);
@@ -72,5 +72,8 @@ void comp_atom_destroy(comp_atom_type *comp_atom);
 
 /* returns 0 if the contents of comp_atom1 and comp_atom2 are identical */
 int comp_atom_compare(comp_atom_type comp_atom1, comp_atom_type comp_atom2);
+
+/* some convenience macro(s) */
+#define EPI_COMPATOM_MALLOC ((comp_atom_type *) malloc(sizeof(comp_atom_type)))
 
 #endif

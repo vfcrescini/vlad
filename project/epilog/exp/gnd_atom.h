@@ -40,23 +40,23 @@ typedef struct
 } gnd_atom_type;
 
 /* creates a pointer to an gnd_atom of type const */
-int gnd_atom_create_const(gnd_atom_type **atom, truth_type truth);
+int gnd_atom_create_const(gnd_atom_type *atom, truth_type truth);
 
 /* creates a pointer to an gnd_atom of type holds */
-int gnd_atom_create_holds(gnd_atom_type **atom, 
+int gnd_atom_create_holds(gnd_atom_type *atom, 
                           ident_type *sub, 
                           ident_type *acc,
                           ident_type *obj,
                           truth_type truth);
 
 /* creates a pointer to an gnd_atom of type memb */
-int gnd_atom_create_memb(gnd_atom_type **atom,
+int gnd_atom_create_memb(gnd_atom_type *atom,
                          ident_type *element,
                          ident_type *group,
                          truth_type truth);
 
 /* creates a pointer to an gnd_atom of type subst */
-int gnd_atom_create_subst(gnd_atom_type **atom,
+int gnd_atom_create_subst(gnd_atom_type *atom,
                           ident_type *group1,
                           ident_type *group2,
                           truth_type truth);
@@ -72,5 +72,8 @@ void gnd_atom_destroy(gnd_atom_type *atom);
 
 /* returns 0 if the contents of gnd_atom1 and gnd_atom2 are identical */
 int gnd_atom_compare(gnd_atom_type atom1, gnd_atom_type atom2);
+
+/* some convenience macro(s) */
+#define EPI_GNDATOM_MALLOC ((gnd_atom_type *) malloc(sizeof(gnd_atom_type)))
 
 #endif

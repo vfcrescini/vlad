@@ -7,22 +7,19 @@
 #include "comp_atom.h"
 
 /* creates a pointer to an atom of type const */
-int comp_atom_create_const(comp_atom_type **atom, truth_type truth)
+int comp_atom_create_const(comp_atom_type *atom, truth_type truth)
 {
   if (atom == NULL)
     return -1;
 
-  if ((*atom = (comp_atom_type *) malloc(sizeof(comp_atom_type))) == NULL)
-    return -1;
-
-  (*atom)->type = EPI_ATOM_CONST;
-  (*atom)->truth = truth;
+  atom->type = EPI_ATOM_CONST;
+  atom->truth = truth;
 
   return 0;
 }
 
 /* creates a pointer to an atom of type holds */
-int comp_atom_create_holds(comp_atom_type **atom,
+int comp_atom_create_holds(comp_atom_type *atom,
                            name_type sub,
                            name_type acc,
                            name_type obj,
@@ -37,20 +34,17 @@ int comp_atom_create_holds(comp_atom_type **atom,
       (!EPI_NAME_IS_OBJECT(obj) && !EPI_NAME_IS_VAR(obj)))
     return -1;
 
-  if ((*atom = (comp_atom_type *) malloc(sizeof(comp_atom_type))) == NULL)
-    return -1;
-
-  (*atom)->type = EPI_ATOM_HOLDS;
-  (*atom)->truth = truth;
-  (*atom)->atom.holds.subject = sub; 
-  (*atom)->atom.holds.access = acc; 
-  (*atom)->atom.holds.object = obj; 
+  atom->type = EPI_ATOM_HOLDS;
+  atom->truth = truth;
+  atom->atom.holds.subject = sub; 
+  atom->atom.holds.access = acc; 
+  atom->atom.holds.object = obj; 
 
   return 0;
 }
 
 /* creates a pointer to an atom of type memb */
-int comp_atom_create_memb(comp_atom_type **atom,
+int comp_atom_create_memb(comp_atom_type *atom,
                           name_type element,
                           name_type group,
                           truth_type truth)
@@ -66,22 +60,19 @@ int comp_atom_create_memb(comp_atom_type **atom,
       EPI_NAME_BASETYPE(element) != EPI_NAME_BASETYPE(group)))
     return -1;
 
-  if ((*atom = (comp_atom_type *) malloc(sizeof(comp_atom_type))) == NULL)
-    return -1;
-
-  (*atom)->type = EPI_ATOM_MEMB;
-  (*atom)->truth = truth;
-  (*atom)->atom.memb.element = element;
-  (*atom)->atom.memb.group = group;
+  atom->type = EPI_ATOM_MEMB;
+  atom->truth = truth;
+  atom->atom.memb.element = element;
+  atom->atom.memb.group = group;
 
   return 0;
 }
 
 /* creates a pointer to an atom of type subst */
-int comp_atom_create_subst(comp_atom_type **atom,
-                      name_type group1,
-                      name_type group2,
-                      truth_type truth)
+int comp_atom_create_subst(comp_atom_type *atom,
+                           name_type group1,
+                           name_type group2,
+                           truth_type truth)
 {
   if (atom == NULL)
     return -1;
@@ -93,13 +84,10 @@ int comp_atom_create_subst(comp_atom_type **atom,
        group1.name.ident->type != group2.name.ident->type))
     return -1;
 
-  if ((*atom = (comp_atom_type *) malloc(sizeof(comp_atom_type))) == NULL)
-    return -1;
-
-  (*atom)->type = EPI_ATOM_SUBST;
-  (*atom)->truth = truth;
-  (*atom)->atom.subst.group1 = group1;
-  (*atom)->atom.subst.group2 = group2;
+  atom->type = EPI_ATOM_SUBST;
+  atom->truth = truth;
+  atom->atom.subst.group1 = group1;
+  atom->atom.subst.group2 = group2;
 
   return 0;
 }
@@ -190,21 +178,24 @@ int comp_atom_copy(comp_atom_type **atom2, comp_atom_type atom1)
   if (atom2 == NULL)
     return -1;
 
+  if ((*atom2 = EPI_COMPATOM_MALLOC) == NULL)
+    return -1;
+
   if (EPI_ATOM_IS_CONST(atom1))
-    return comp_atom_create_const(atom2, atom1.truth);
+    return comp_atom_create_const(*atom2, atom1.truth);
   else if (EPI_ATOM_IS_HOLDS(atom1))
-    return comp_atom_create_holds(atom2,
+    return comp_atom_create_holds(*atom2,
                                   atom1.atom.holds.subject,
                                   atom1.atom.holds.access,
                                   atom1.atom.holds.object,
                                   atom1.truth);
   else if (EPI_ATOM_IS_MEMB(atom1))
-    return comp_atom_create_memb(atom2,
+    return comp_atom_create_memb(*atom2,
                                  atom1.atom.memb.element,
                                  atom1.atom.memb.group,
                                  atom1.truth);
   else if (EPI_ATOM_IS_SUBST(atom1))
-    return comp_atom_create_subst(atom2,
+    return comp_atom_create_subst(*atom2,
                                   atom1.atom.subst.group1,
                                   atom1.atom.subst.group2,
                                   atom1.truth);

@@ -7,26 +7,23 @@
 #include "gnd_atom.h"
 
 /* creates a pointer to an atom of type const */
-int gnd_atom_create_const(gnd_atom_type **atom, truth_type truth)
+int gnd_atom_create_const(gnd_atom_type *atom, truth_type truth)
 {
   if (atom == NULL)
     return -1;
 
-  if ((*atom = (gnd_atom_type *) malloc(sizeof(gnd_atom_type))) == NULL)
-    return -1;
-
-  (*atom)->type = EPI_ATOM_CONST;
-  (*atom)->truth = truth;
+  atom->type = EPI_ATOM_CONST;
+  atom->truth = truth;
 
   return 0;
 }
 
 /* creates a pointer to an atom of type holds */
-int gnd_atom_create_holds(gnd_atom_type **atom,
-                      ident_type *sub,
-                      ident_type *acc,
-                      ident_type *obj,
-                      truth_type truth)
+int gnd_atom_create_holds(gnd_atom_type *atom,
+                          ident_type *sub,
+                          ident_type *acc,
+                          ident_type *obj,
+                          truth_type truth)
 {
   if (atom == NULL)
     return -1;
@@ -37,20 +34,17 @@ int gnd_atom_create_holds(gnd_atom_type **atom,
       !EPI_IDENT_IS_OBJECT(*obj))
     return -1;
 
-  if ((*atom = (gnd_atom_type *) malloc(sizeof(gnd_atom_type))) == NULL)
-    return -1;
-
-  (*atom)->type = EPI_ATOM_HOLDS;
-  (*atom)->truth = truth;
-  (*atom)->atom.holds.subject = sub; 
-  (*atom)->atom.holds.access = acc; 
-  (*atom)->atom.holds.object = obj; 
+  atom->type = EPI_ATOM_HOLDS;
+  atom->truth = truth;
+  atom->atom.holds.subject = sub; 
+  atom->atom.holds.access = acc; 
+  atom->atom.holds.object = obj; 
 
   return 0;
 }
 
 /* creates a pointer to an atom of type memb */
-int gnd_atom_create_memb(gnd_atom_type **atom,
+int gnd_atom_create_memb(gnd_atom_type *atom,
                          ident_type *element,
                          ident_type *group,
                          truth_type truth)
@@ -65,22 +59,19 @@ int gnd_atom_create_memb(gnd_atom_type **atom,
       EPI_IDENT_BASETYPE(*element) != EPI_IDENT_BASETYPE(*group))
     return -1;
 
-  if ((*atom = (gnd_atom_type *) malloc(sizeof(gnd_atom_type))) == NULL)
-    return -1;
-
-  (*atom)->type = EPI_ATOM_MEMB;
-  (*atom)->truth = truth;
-  (*atom)->atom.memb.element = element;
-  (*atom)->atom.memb.group = group;
+  atom->type = EPI_ATOM_MEMB;
+  atom->truth = truth;
+  atom->atom.memb.element = element;
+  atom->atom.memb.group = group;
 
   return 0;
 }
 
 /* creates a pointer to an atom of type subst */
-int gnd_atom_create_subst(gnd_atom_type **atom,
-                      ident_type *group1,
-                      ident_type *group2,
-                      truth_type truth)
+int gnd_atom_create_subst(gnd_atom_type *atom,
+                          ident_type *group1,
+                          ident_type *group2,
+                          truth_type truth)
 {
   if (atom == NULL)
     return -1;
@@ -91,13 +82,10 @@ int gnd_atom_create_subst(gnd_atom_type **atom,
       EPI_IDENT_BASETYPE(*group1) != EPI_IDENT_BASETYPE(*group2))
     return -1;
 
-  if ((*atom = (gnd_atom_type *) malloc(sizeof(gnd_atom_type))) == NULL)
-    return -1;
-
-  (*atom)->type = EPI_ATOM_SUBST;
-  (*atom)->truth = truth;
-  (*atom)->atom.subst.group1 = group1;
-  (*atom)->atom.subst.group2 = group2;
+  atom->type = EPI_ATOM_SUBST;
+  atom->truth = truth;
+  atom->atom.subst.group1 = group1;
+  atom->atom.subst.group2 = group2;
 
   return 0;
 }
@@ -162,21 +150,24 @@ int gnd_atom_copy(gnd_atom_type **atom2, gnd_atom_type atom1)
   if (atom2 == NULL)
     return -1;
 
+  if ((*atom2 = EPI_GNDATOM_MALLOC) == NULL)
+    return -1;
+
   if (EPI_ATOM_IS_CONST(atom1))
-    return gnd_atom_create_const(atom2, atom1.truth);
+    return gnd_atom_create_const(*atom2, atom1.truth);
   else if (EPI_ATOM_IS_HOLDS(atom1))
-    return gnd_atom_create_holds(atom2,
+    return gnd_atom_create_holds(*atom2,
                                  atom1.atom.holds.subject,
                                  atom1.atom.holds.access,
                                  atom1.atom.holds.object,
                                  atom1.truth);
   else if (EPI_ATOM_IS_MEMB(atom1))
-    return gnd_atom_create_memb(atom2,
+    return gnd_atom_create_memb(*atom2,
                                 atom1.atom.memb.element,
                                 atom1.atom.memb.group,
                                 atom1.truth);
   else if (EPI_ATOM_IS_SUBST(atom1))
-    return gnd_atom_create_subst(atom2,
+    return gnd_atom_create_subst(*atom2,
                                  atom1.atom.subst.group1,
                                  atom1.atom.subst.group2,
                                  atom1.truth);

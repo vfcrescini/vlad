@@ -548,11 +548,7 @@ ground_holds_atom :
     if (!EPI_IDENT_IS_OBJECT(*object))
       exit_error("third parameter of holds must be an object");
 
-    $$.type = EPI_ATOM_HOLDS;
-    $$.truth = epi_true;
-    $$.atom.holds.subject = subject;
-    $$.atom.holds.access = access;
-    $$.atom.holds.object = object;
+    gnd_atom_create_holds(&$$, subject, access, object, epi_true);
   }
   ;
 
@@ -571,10 +567,7 @@ ground_subst_atom :
     if (group1->type != group2->type)
       exit_error("parameters of subst are of different types");
 
-    $$.type = EPI_ATOM_SUBST;
-    $$.truth = epi_true;
-    $$.atom.subst.group1 = group1;
-    $$.atom.subst.group2 = group2;
+    gnd_atom_create_subst(&$$, group1, group2, epi_true);
   }
   ;
 ground_memb_atom :
@@ -595,10 +588,7 @@ ground_memb_atom :
     if (EPI_IDENT_BASETYPE(*element) != EPI_IDENT_BASETYPE(*group))
       exit_error("parameters of memb are of different types");
 
-    $$.type = EPI_ATOM_MEMB;
-    $$.truth = epi_true;
-    $$.atom.memb.element = element;
-    $$.atom.memb.group = group;
+    gnd_atom_create_memb(&$$, element, group, epi_true);
   }
   ;
 
@@ -642,8 +632,7 @@ comp_atom_exp :
     $$ = $1;
   }
   | logical_atom {
-    $$.truth = $1.truth;
-    $$.type = $1.type;
+    comp_atom_create_const(&$$, $1.truth);
   }
   ;
 
@@ -802,12 +791,10 @@ comp_memb_atom :
 
 logical_atom : 
   EPI_SYM_TRUE {
-    $$.truth = epi_true;
-    $$.type = EPI_ATOM_CONST;
+    gnd_atom_create_const(&$$, epi_true);
   }
   | EPI_SYM_FALSE {
-    $$.truth = epi_false;
-    $$.type = EPI_ATOM_CONST;
+    gnd_atom_create_const(&$$, epi_false);
   }
   ;
 

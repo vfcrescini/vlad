@@ -72,7 +72,10 @@ int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
     comp_exp_purge(exp);
     comp_exp_init(exp);
 
-    if (comp_atom_create_const(&new_atom, epi_false) != 0)
+    if ((new_atom = EPI_COMPATOM_MALLOC) == NULL)
+      return -1;
+
+    if (comp_atom_create_const(new_atom, epi_false) != 0)
       return -1;
   }
   else {

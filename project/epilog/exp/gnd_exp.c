@@ -108,7 +108,10 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
 
     gnd_exp_purge(exp);
 
-    if (gnd_atom_create_const(&new_atom, epi_false) != 0)
+    if ((new_atom = EPI_GNDATOM_MALLOC) == NULL)
+      return -1;
+
+    if (gnd_atom_create_const(new_atom, epi_false) != 0)
       return -1;
   }
   else {
