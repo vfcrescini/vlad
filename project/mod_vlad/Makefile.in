@@ -17,7 +17,7 @@ TEMP = lex.*.c *.tab.c *.tab.h
 all : $(LIBS)
 
 mod_vlad.so : $(OBJECTS)
-	$(CC) $(LDFLAGS) $(CFLAGS) -shared -Wl,-soname,$(@).`echo $(VERSION) | cut -d. -f1` -o $(@) $(^) -lvlad
+	$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,-soname,$(@).`echo $(VERSION) | cut -d. -f1` -o $(@) $(^) -lvlad
 ifndef DEBUG
   ifdef STRIP
 	strip $(@)

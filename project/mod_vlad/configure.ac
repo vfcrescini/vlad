@@ -86,7 +86,13 @@ if test "x$with_libvlad" != "x" && test "x$with_libvlad" != "xno"; then
   if test "x$with_libvlad" = "xyes"; then
     AC_MSG_CHECKING([if libvlad is installed and usable])
     AC_TRY_LINK([#include <vlad/vlad.h>],
-                [int i = VLAD_OK;],
+                [#ifndef VLAD_SMODELS
+                 * no smodels support *
+                 #endif
+                 #ifndef VLAD_WRAPPER
+                 * no c-wrapper support *
+                 #endif
+                 int test = VLAD_OK],
                 AC_MSG_RESULT([yes]),
                 AC_MSG_RESULT([no])
                 AC_MSG_ERROR([*** libvlad test program failed to compile ***]))
@@ -101,7 +107,13 @@ if test "x$with_libvlad" != "x" && test "x$with_libvlad" != "xno"; then
       OLD_CFLAGS="$CFLAGS"
       CFLAGS="$CFLAGS -I$with_libvlad/include"
       AC_TRY_LINK([#include <vlad/vlad.h>],
-                  [int i = VLAD_OK;],
+                  [#ifndef VLAD_SMODELS
+                   * no smodels support *
+                   #endif
+                   #ifndef VLAD_WRAPPER
+                   * no c-wrapper support *
+                   #endif
+                   int test = VLAD_OK],
                   AC_MSG_RESULT([yes]),
                   AC_MSG_RESULT([no])
                   AC_MSG_ERROR([*** libvlad test program failed to compile ***]))

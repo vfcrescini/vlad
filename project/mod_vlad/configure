@@ -2367,7 +2367,13 @@ echo $ECHO_N "checking if libvlad is installed and usable... $ECHO_C" >&6
 int
 main ()
 {
-int i = VLAD_OK;
+#ifndef VLAD_SMODELS
+                 * no smodels support *
+                 #endif
+                 #ifndef VLAD_WRAPPER
+                 * no c-wrapper support *
+                 #endif
+                 int test = VLAD_OK
   ;
   return 0;
 }
@@ -2425,7 +2431,13 @@ echo $ECHO_N "checking if libvlad in $with_libvlad can be used... $ECHO_C" >&6
 int
 main ()
 {
-int i = VLAD_OK;
+#ifndef VLAD_SMODELS
+                   * no smodels support *
+                   #endif
+                   #ifndef VLAD_WRAPPER
+                   * no c-wrapper support *
+                   #endif
+                   int test = VLAD_OK
   ;
   return 0;
 }
