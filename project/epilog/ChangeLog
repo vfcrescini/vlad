@@ -1,5 +1,10 @@
 2002-10-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/gnd_exp.c :
+
+	  - Separated eval atoms (holds, memb and subst) into
+	    separate functions.
+
 	* exp/comp_atom.c :
 	* exp/comp_atom.h :
 	* exp/comp_exp.c :

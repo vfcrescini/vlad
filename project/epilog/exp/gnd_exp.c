@@ -15,6 +15,19 @@ int gnd_exp_group(ident_type ident,
                   gnd_exp_type exp,
                   int flag);
 int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res);
+int gnd_exp_eval_holds_atom(ident_type sub,
+                            ident_type acc,
+                            ident_type obj, 
+                            gnd_exp_type exp,
+                            res_type *res);
+int gnd_exp_eval_memb_atom(ident_type element,
+                           ident_type group,
+                           gnd_exp_type exp,
+                           res_type *res);
+int gnd_exp_eval_subst_atom(ident_type group1,
+                            ident_type group2,
+                            gnd_exp_type exp,
+                            res_type *res);
 void gnd_exp_purge_list(gnd_exp_type *exp, int flag);
 int gnd_exp_compare(void *p1, void *p2);
 void gnd_exp_destroy(void *p);
@@ -110,7 +123,6 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
 
     if ((new_atom = EPI_GNDATOM_MALLOC) == NULL)
       return -1;
-
     if (gnd_atom_create_const(new_atom, epi_false) != 0)
       return -1;
   }
@@ -280,131 +292,212 @@ int gnd_exp_group(ident_type ident,
 
   return 0;
 }
-
-/* gives true, false or unknown depending on whether atom or its negation 
- * is in or can be derived from expression, or not. */
-int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
+/* gives true, false or unknown depending on whether holds(sub, acc, obj)
+ * can be derived from exp or not. */
+int gnd_exp_eval_holds_atom(ident_type sub,
+                            ident_type acc,
+                            ident_type obj, 
+                            gnd_exp_type exp,
+                            res_type *res)
 {
   unsigned int i;
   unsigned int j;
   unsigned int k;
   gnd_atom_type tmp_atom;
-  identlist_type tmp_identlist1;
-  identlist_type tmp_identlist2;
-  identlist_type tmp_identlist3;
+  identlist_type tmp_sub;
+  identlist_type tmp_acc;
+  identlist_type tmp_obj;
 
   if (res == NULL)
     return -1;
 
   *res = epi_res_unknown;
+  tmp_atom.truth = epi_true;
+  tmp_atom.type = EPI_ATOM_HOLDS;
 
+  identlist_init(&tmp_sub);
+  identlist_init(&tmp_acc);
+  identlist_init(&tmp_obj);
+
+  /* get supergroups of all three identifiers */
+  if (gnd_exp_group(sub, &tmp_sub, exp, 0) != 0)
+    return -1;
+  if (gnd_exp_group(acc, &tmp_acc, exp, 0) != 0)
+    return -1;
+  if (gnd_exp_group(obj, &tmp_obj, exp, 0) != 0)
+    return -1;
+
+  /* now go through all the possible combinations of all three lists to
+   * see if we find a match */
+  for (i = 0; i < identlist_length(tmp_sub); i++) {
+    if (identlist_get(tmp_sub, i, &(tmp_atom.atom.holds.subject)) != 0)
+      return -1;
+    for (j = 0; j < identlist_length(tmp_acc); j++) {
+      if (identlist_get(tmp_acc, j, &(tmp_atom.atom.holds.access)) != 0)
+        return -1;
+      for (k = 0; k < identlist_length(tmp_obj); k++) {
+        if (identlist_get(tmp_obj, k, &(tmp_atom.atom.holds.object)) != 0)
+          return -1;
+        if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == 0) { 
+          *res = epi_res_true;
+          identlist_purge(&tmp_sub);
+          identlist_purge(&tmp_acc);
+          identlist_purge(&tmp_obj);
+          return 0;
+        }
+        /* also try the negation while we're here */
+        EPI_ATOM_NEGATE(tmp_atom);
+        if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == 0) { 
+          *res = epi_res_false;
+          identlist_purge(&tmp_sub);
+          identlist_purge(&tmp_acc);
+          identlist_purge(&tmp_obj);
+          return 0;
+        }
+        EPI_ATOM_NEGATE(tmp_atom);
+      }
+    }
+  }
+  identlist_purge(&tmp_sub);
+  identlist_purge(&tmp_acc);
+  identlist_purge(&tmp_obj);
+
+  return 0;
+}
+
+/* check to see if we can derive the truth value of memb. */
+int gnd_exp_eval_memb_atom(ident_type element,
+                           ident_type group,
+                           gnd_exp_type exp,
+                           res_type *res)
+{
+  identlist_type tmp_grp;
+
+  if (res == NULL)
+    return -1;
+
+  *res = epi_res_unknown;
+  identlist_init(&tmp_grp); 
+
+  /* get all the supergroups of the element */
+  if (gnd_exp_group(element, &tmp_grp, exp, 0) != 0)
+    return -1;
+
+  /* check for truthfulness */
+  if (identlist_find(tmp_grp, group.name) == 0) {
+    *res = epi_res_true;
+    identlist_purge(&tmp_grp);
+    return 0;
+  }
+  identlist_purge(&tmp_grp);
+
+  /* check for falseness */
+  if (gnd_exp_group(element, &tmp_grp, exp, 1) != 0)
+    return -1;
+
+  if (identlist_find(tmp_grp, group.name) == 0) {
+    *res = epi_res_false;
+    identlist_purge(&tmp_grp);
+    return 0;
+  }
+
+  identlist_purge(&tmp_grp);
+  return 0;
+}
+
+int gnd_exp_eval_subst_atom(ident_type group1,
+                            ident_type group2,
+                            gnd_exp_type exp,
+			    res_type *res)
+{
+  identlist_type tmp_grp;
+
+  if (res == NULL)
+    return -1;
+
+  *res = epi_res_unknown;
+  identlist_init(&tmp_grp);
+
+  /* check for truthfulness */
+  if (gnd_exp_group(group1, &tmp_grp, exp, 0) != 0)
+    return -1;
+
+  if (identlist_find(tmp_grp, group2.name) == 0) {
+    *res = epi_res_true;
+    identlist_purge(&tmp_grp);
+    return 0;
+  }
+  
+  identlist_purge(&tmp_grp);
+
+  /* check for falseness */
+  if (gnd_exp_group(group1, &tmp_grp, exp, 1) != 0)
+      return -1;
+
+  if (identlist_find(tmp_grp, group2.name) == 0) {
+    *res = epi_res_false;
+    identlist_purge(&tmp_grp);
+    return 0;
+  }
+
+  identlist_purge(&tmp_grp);
+
+  return 0;
+}
+
+/* gives true, false or unknown depending on whether atom or its negation 
+ * is in or can be derived from expression, or not. */
+int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
+{
+  if (res == NULL)
+    return -1;
+
+  *res = epi_res_unknown;
+
+  /* check if this atom is explicitly in exp */
   if (simplelist_find_data(exp, (void *) &atom, gnd_exp_compare) == 0) {
     *res = epi_res_true;
     return 0;
   }
 
+  /* now check if the negation of this atom is explicitly in exp */
   EPI_ATOM_NEGATE(atom); 
-
   if (simplelist_find_data(exp, (void *) &atom, gnd_exp_compare) == 0) {
     *res = epi_res_false;
     return 0;
   }
-
   EPI_ATOM_NEGATE(atom); 
 
   if (EPI_ATOM_IS_HOLDS(atom)) {
-    identlist_init(&tmp_identlist1);
-    identlist_init(&tmp_identlist2);
-    identlist_init(&tmp_identlist3);
-
-    /* get supergroups of all three identifiers */
-    if (gnd_exp_group(*(atom.atom.holds.subject), &tmp_identlist1, exp, 0) != 0)
-      return -1;
-    if (gnd_exp_group(*(atom.atom.holds.access), &tmp_identlist2, exp, 0) != 0)
-      return -1;
-    if (gnd_exp_group(*(atom.atom.holds.object), &tmp_identlist3, exp, 0) != 0)
+    if (gnd_exp_eval_holds_atom(*(atom.atom.holds.subject),
+                                *(atom.atom.holds.access),
+                                *(atom.atom.holds.object),
+                                exp,
+                                res) != 0)
       return -1;
 
-    /* now go through all the possible combinations of all three lists to
-     * see if we find a match */
-    tmp_atom.truth = atom.truth;
-    tmp_atom.type = atom.type;
-
-    for (i = 0; i < identlist_length(tmp_identlist1); i++) {
-      if (identlist_get(tmp_identlist1, i, &(tmp_atom.atom.holds.subject)) != 0)
-        return -1;
-      for (j = 0; j < identlist_length(tmp_identlist2); j++) {
-        if (identlist_get(tmp_identlist2, j, &(tmp_atom.atom.holds.access)) != 0)
-          return -1;
-        for (k = 0; k < identlist_length(tmp_identlist3); k++) {
-          if (identlist_get(tmp_identlist3, k, &(tmp_atom.atom.holds.object)) != 0)
-            return -1;
-          if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == 0) { 
-            *res = epi_res_true;
-            identlist_purge(&tmp_identlist1);
-            identlist_purge(&tmp_identlist2);
-            identlist_purge(&tmp_identlist3);
-            return 0;
-          }
-          /* also try the negation while we're here */
-          EPI_ATOM_NEGATE(tmp_atom);
-          if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == 0) { 
-            *res = epi_res_false;
-            identlist_purge(&tmp_identlist1);
-            identlist_purge(&tmp_identlist2);
-            identlist_purge(&tmp_identlist3);
-            return 0;
-          }
-          EPI_ATOM_NEGATE(tmp_atom);
-        }
-      }
-    }
+    if (*res != epi_res_unknown)
+      *res = (*res == atom.truth) ? epi_res_true : epi_res_false;
   }
   else if (EPI_ATOM_IS_MEMB(atom)) {
-    identlist_init(&tmp_identlist1); 
-
-    /* check for truth */
-    if (gnd_exp_group(*(atom.atom.memb.element), &tmp_identlist1, exp, 0) != 0)
+    if (gnd_exp_eval_memb_atom(*(atom.atom.memb.element),
+                               *(atom.atom.memb.group),
+                               exp,
+                               res) != 0)
       return -1;
 
-    if (identlist_find(tmp_identlist1, atom.atom.memb.group->name) == 0) {
-      *res = epi_res_true;
-      identlist_purge(&tmp_identlist1);
-      return 0;
-    }
-
-    /* check for falseness */
-    if (gnd_exp_group(*(atom.atom.memb.element), &tmp_identlist1, exp, 1) != 0)
-      return -1;
-
-    if (identlist_find(tmp_identlist1, atom.atom.memb.group->name) == 0) {
-      *res = epi_res_false;
-      identlist_purge(&tmp_identlist1);
-      return 0;
-    }
+    if (*res != epi_res_unknown)
+      *res = (*res == atom.truth) ? epi_res_true : epi_res_false;
   }
   else if (EPI_ATOM_IS_SUBST(atom)) {
-    identlist_init(&tmp_identlist1);
-
-    /* check for truth */
-    if (gnd_exp_group(*(atom.atom.subst.group1), &tmp_identlist1, exp, 0) != 0)
+    if (gnd_exp_eval_memb_atom(*(atom.atom.subst.group1),
+                               *(atom.atom.subst.group2),
+                               exp,
+                               res) != 0)
       return -1;
 
-    if (identlist_find(tmp_identlist1, atom.atom.subst.group2->name) == 0) {
-      *res = epi_res_true;
-      identlist_purge(&tmp_identlist1);
-      return 0;
-    }
-
-    /* check for falseness */
-    if (gnd_exp_group(*(atom.atom.subst.group1), &tmp_identlist1, exp, 1) != 0)
-      return -1;
-
-    if (identlist_find(tmp_identlist1, atom.atom.subst.group2->name) == 0) {
-      *res = epi_res_false;
-      identlist_purge(&tmp_identlist1);
-      return 0;
-    }
+    if (*res != epi_res_unknown)
+      *res = (*res == atom.truth) ? epi_res_true : epi_res_false;
   }
   else if (EPI_ATOM_IS_CONST(atom)) {
     /* a false constant would have been captured in the negative find above, 
