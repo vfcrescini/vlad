@@ -756,7 +756,7 @@ logical_atom :
       return VLAD_MALLOCFAILED;
     }
 
-    if ((retval = $$->init_const(true, true)) != VLAD_OK)
+    if ((retval = $$->init_const(VLAD_ATOM_TRUE, true)) != VLAD_OK)
       return retval;
   }
   | VLAD_SYM_FALSE {
@@ -767,7 +767,7 @@ logical_atom :
       return VLAD_MALLOCFAILED;
     }
 
-    if ((retval = $$->init_const(false, true)) != VLAD_OK)
+    if ((retval = $$->init_const(VLAD_ATOM_FALSE, true)) != VLAD_OK)
       return retval;
   }
   ;

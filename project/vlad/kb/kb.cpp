@@ -175,10 +175,7 @@ int kb::add_inittab(atom *a)
     return retval;
 
   /* now copy and add to inittab */
-  if ((tmp = VLAD_NEW(atom())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  if ((retval = tmp->init_atom(a)) != VLAD_OK)
+  if ((retval = a->copy(&tmp)) != VLAD_OK)
     return retval;
 
   return itable->add(tmp);
@@ -222,9 +219,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
       return retval;
     if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
       return retval;
-    if ((tmp2 = VLAD_NEW(atom())) == NULL)
-      return VLAD_MALLOCFAILED;
-    if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+    if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
       return retval;
     if ((retval = exp->add(tmp2)) != VLAD_OK)
       return retval;
@@ -237,9 +232,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
         return retval;
       if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
         return retval;
-      if ((tmp2 = VLAD_NEW(atom())) == NULL)
-        return VLAD_MALLOCFAILED;
-      if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+      if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
         return retval;
       if ((retval = cond->add(tmp2)) != VLAD_OK)
         return retval;
@@ -253,9 +246,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
         return retval;
       if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
         return retval;
-      if ((tmp2 = VLAD_NEW(atom())) == NULL)
-        return VLAD_MALLOCFAILED;
-      if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+      if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
         return retval;
       if ((retval = ncond->add(tmp2)) != VLAD_OK)
         return retval;
@@ -321,9 +312,7 @@ int kb::add_transtab(const char *n,
         return retval;
       if ((retval = verify_atom(tmp1, v)) != VLAD_OK)
         return retval;
-      if ((tmp2 = VLAD_NEW(atom())) == NULL)
-        return VLAD_MALLOCFAILED;
-      if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+      if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
         return retval;
       if ((retval = precond->add(tmp2)) != VLAD_OK)
         return retval;
@@ -341,9 +330,7 @@ int kb::add_transtab(const char *n,
       return retval;
     if ((retval = verify_atom(tmp1, v)) != VLAD_OK)
       return retval;
-    if ((tmp2 = VLAD_NEW(atom())) == NULL)
-      return VLAD_MALLOCFAILED;
-    if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+    if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
       return retval;
     if ((retval = postcond->add(tmp2)) != VLAD_OK)
       return retval;
@@ -683,26 +670,25 @@ int kb::verify_atom(atom *a, stringlist *v)
   char *tmp1;
   char *tmp2;
   char *tmp3;
+  unsigned char ty;
+  bool tr;
 
   /* this function is only valid after the symtab is closed */
   if (stage < 2)
     return VLAD_FAILURE;
 
-  switch(a->get_type()) {
+  if ((retval = a->get(&tmp1, &tmp2, &tmp3, &ty, &tr)) != VLAD_OK)
+    return retval;
+
+  switch(ty) {
     case VLAD_ATOM_CONST :
       /* constants need not be checked */
       break;
     case VLAD_ATOM_HOLDS :
-      if ((retval = a->get_holds(&tmp1, &tmp2, &tmp3)) != VLAD_OK)
-        return retval;
       return verify_atom_holds(tmp1, tmp2, tmp3, v);
     case VLAD_ATOM_MEMBER :
-      if ((retval = a->get_member(&tmp1, &tmp2)) != VLAD_OK)
-        return retval;
       return verify_atom_member(tmp1, tmp2, v);
     case VLAD_ATOM_SUBSET :
-      if ((retval = a->get_subset(&tmp1, &tmp2)) != VLAD_OK)
-        return retval;
       return verify_atom_subset(tmp1, tmp2, v);
     default :
       return VLAD_INVALIDINPUT;
@@ -1199,7 +1185,12 @@ int kb::encode_atom(const char *n1,
 int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
 {
   int retval;
-  unsigned int tmp;
+  unsigned int num;
+  char *tmp1;
+  char *tmp2;
+  char *tmp3;
+  unsigned char ty;
+  bool tr;
 
   if (stage < 5)
     return VLAD_FAILURE;
@@ -1207,55 +1198,39 @@ int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
   if (a == NULL || n == NULL)
     return VLAD_NULLPTR;
 
+  if ((retval = a->get(&tmp1, &tmp2, &tmp3, &ty, &tr)) != VLAD_OK)
+    return retval;
+
   /* get the unsigned, unstated id of the atom */
-  switch(a->get_type()) {
+  switch(ty) {
     case VLAD_ATOM_CONST :
-      bool n1;
-      if ((retval = a->get_const(&n1)) != VLAD_OK)
-        return retval;
-      if ((retval = encode_const(n1 ? "true" : "false", &tmp)) != VLAD_OK)
+      if ((retval = encode_const(tmp1, &num)) != VLAD_OK)
         return retval;
       break;
-    case VLAD_ATOM_HOLDS : {
-      char *n1;
-      char *n2;
-      char *n3;
-      if ((retval = a->get_holds(&n1, &n2, &n3)) != VLAD_OK)
+    case VLAD_ATOM_HOLDS :
+      if ((retval = encode_holds(tmp1, tmp2, tmp3, &num)) != VLAD_OK)
         return retval;
-      if ((retval = encode_holds(n1, n2, n3, &tmp)) != VLAD_OK)
-        return retval;
-      tmp = tmp + c_len;
+      num = num + c_len;
       break;
-    }
-    case VLAD_ATOM_MEMBER : {
-      char *n1;
-      char *n2;
-      if ((retval = a->get_member(&n1, &n2)) != VLAD_OK)
+    case VLAD_ATOM_MEMBER :
+      if ((retval = encode_member(tmp1, tmp2, &num)) != VLAD_OK)
         return retval;
-      if ((retval = encode_member(n1, n2, &tmp)) != VLAD_OK)
-        return retval;
-      tmp = tmp + c_len + h_tot;
+      num = num + c_len + h_tot;
       break;
-    }
-    case VLAD_ATOM_SUBSET : {
-      char *n1;
-      char *n2;
-      if ((retval = a->get_subset(&n1, &n2)) != VLAD_OK)
+    case VLAD_ATOM_SUBSET :
+      if ((retval = encode_subset(tmp1, tmp2, &num)) != VLAD_OK)
         return retval;
-      if ((retval = encode_subset(n1, n2, &tmp)) != VLAD_OK)
-        return retval;
-      tmp = tmp + c_len + h_tot + m_tot;
+      num = num + c_len + h_tot + m_tot;
       break;
-    }
     default :
       return VLAD_INVALIDINPUT;
   }
 
   /* consider the truth value */
-  tmp = tmp + (a->get_truth() ? pos_tot : 0);
+  num = num + (tr ? pos_tot : 0);
    
   /* now the state */
-  *n = tmp + (s * (pos_tot * 2));
+  *n = num + (s * (pos_tot * 2));
 
   return VLAD_OK;
 }
