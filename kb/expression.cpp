@@ -44,6 +44,7 @@ int expression::get(unsigned int i, atom **a)
   return list::get(i, (list_item **) a);
 }
 
+/* replace vars in vlist to ident in ilist. create a new expression */
 int expression::replace(stringlist *vlist, stringlist *ilist, expression **e)
 {
   int retval;
