@@ -500,12 +500,10 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
     \subsection{Conversion to Extended Logic Program: Flattening the States}
 
       Extended logic programs are \emph{flat} or stateless. The proposed
-      language, however, is composed of logic facts that have states as
-      a result of the transformation property. Formally, a state represents
-      a transition of facts as a result of the application of a transformation.
-      As a consequence, the number of states is equal to the number of
-      transformations plus 1 (the initial state, before any transformations
-      are applied).
+      language, on the other hand, is composed of logic facts that have
+      states as a result of the transformation property. Formally, a state
+      represents a transition of facts as a result of the application of a
+      transformation. 
 
       Translating the proposed language into an extended logic program requires
       a stateless set of axioms and propositions. The first step involved in
@@ -524,6 +522,13 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
         the initial state S$_0$ can be represented as holds(A, S$_0$),
         likewise, the same atom A in state S$_1$ will be represented as
         holds(A, S$_1$).
+
+        With the exception of the initial state, all other states are defined 
+        only after it is known what transformations will be applied and in 
+        what sequence will they be applied. Since the proposed language
+        allows the sequence of transformations to be defined only within a
+        query statement, the new state parameter will remain a variable until 
+        the tranformation sequence is resolved.
 
       \subsubsection{Handling States in Transformations}
 
@@ -546,8 +551,8 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
           \item S$^{''}$ = Res(T, S$^{'}$)
         \end{list}
   
-        Disregarding the place holder variables and a conjunction of atoms, 
-        a transformation T in its simplest form:
+        Disregarding the place holder variables and conjunctions within
+        expressions, a transformation T in its simplest form is:
   
         \begin{list}{}{}
           \item T causes A if B
@@ -566,7 +571,8 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
 
         Converting constraints into an extended logic program is somewhat
         simpler than converting transformations. Since constraints must hold
-        for all states in the domain, the following constraints:
+        for all states in any sequence of transformations, the following
+        constraints:
 
       \begin{list}{}{}
         \item A implies B with absence C
@@ -585,7 +591,7 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
             holds(A, S) $\leftarrow$
         \end{list}
 
-        for all states S in the domain.
+        for all states S in a transformation sequence.
 
       \subsubsection{Inertial Rules}
 
@@ -609,8 +615,8 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
         where: 
 
         \begin{itemize}
-          \item $\sigma$ = set of all states in the domain
-          \item $\theta$ = set of all transformations in the domain
+          \item $\sigma$ = set of all states in the sequence
+          \item $\theta$ = set of all transformations in the sequence
           \item $\alpha$ = set of all atoms in the domain
         \end{itemize}
 
@@ -663,239 +669,670 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
       The following lists a small program written in the proposed language:
 
       \begin{verbatim}
-/* declarations */
-ident sub s;
-ident acc a;
-ident obj o1, o2, o3;
-ident sub-grp sg;
+/* identifier declarations */
+ident sub S;
+ident acc Access, Accessible;
+ident obj Object1, Object2;
+ident obj-grp Company1, Company2;
 
-/* initial state */
-initially holds(sg, a, o1) && memb(s, sg);
-initially !holds(s, a, o2) && !holds(s, a, o3);
+/* initial facts */
+initially
+  holds(S, Accessible, Company1) &&
+  holds(S, Accessible, Company2);
 
-/* constraint */
-holds(s, a, o2) implies holds(s, a, o3);
+/* constraints */
+always memb(Object1, Company1);
+always memb(Object2, Company2);
 
-/* transformation */
-trans causes holds(s, a, o3) if !holds(s, a, o2);
+/* transformations */
+Request_Access_Company1(X, Y)
+  causes
+    holds(X, Access, Y) &&
+    !holds(X, Accessible, Company2)
+  if
+    memb(Y, Company1) &&
+    holds(X, Accessible, Company1);
+
+Request_Access_Company2(X, Y)
+  causes
+    holds(X, Access, Y) &&
+    !holds(X, Accessible, Company1)
+  if
+    memb(Y, Company2) &&
+    holds(X, Accessible, Company2);
+
+/* queries */
+is holds(S, Accessible, Object2) after Request_Access_Company1(S, Object1);
+is holds(S, Accessible, Object1) after Request_Access_Company2(S, Object2);
       \end{verbatim}
 
-      First we represent the atoms with simple propositions:
 
-      \begin{list}{}{}
-        \item A = holds(s, a, o$_{1}$)
-        \item B = holds(s, a, o$_{2}$)
-        \item C = holds(s, a, o$_{3}$)
-        \item D = holds(sg, a, o$_{1}$)
-        \item E = holds(sg, a, o$_{2}$)
-        \item F = holds(sg, a, o$_{3}$)
-        \item G = memb(s, sg)
-      \end{list}
+      \subsubsection{Simplifying the Atoms}
+
+        First we represent the atoms with simple propositions:
+
+        \begin{list}{}{}
+          \item A = holds(S, Access, Object1)
+          \item B = holds(S, Access, Object2)
+          \item C = holds(S, Access, Company1)
+          \item D = holds(S, Access, Company2)
+          \item E = holds(S, Accessible, Object1)
+          \item F = holds(S, Accessible, Object2)
+          \item G = holds(S, Accessible, Company1)
+          \item H = holds(S, Accessible, Company2)
+          \item I = memb(Object1, Company1)
+          \item J = memb(Object1, Company2)
+          \item K = memb(Object2, Company1)
+          \item L = memb(Object2, Company2)
+        \end{list}
 
       \subsubsection{Extended Logic Program}
 
-        \begin{list}{}{Initial State}
-          \item $\lnot$ holds(B, S$_{0}$)
-          \item $\lnot$ holds(C, S$_{0}$)
-          \item holds(D, S$_{0}$)
-          \item holds(G, S$_{0}$)
-        \end{list}
+        \begin{itemize}
+          \item
+            Query 1
 
-        \begin{list}{}{Inheritance Rules}
-          \item 
-            holds(A, S$_{0}$) $\leftarrow$ holds(D, S$_{0}$) $\land$ 
-            holds(G, S$_{0}$)
-          \item
-            holds(A, S$_{1}$) $\leftarrow$ holds(D, S$_{1}$) $\land$ 
-            holds(G, S$_{1}$)
-        \end{list}
+            \begin{list}{}{Initial State}
+              \item holds(G, S$_{0}$)
+              \item holds(H, S$_{0}$)
+            \end{list}
 
-        \begin{list}{}{Constraint}
-          \item holds(C, S$_{0}$) $\leftarrow$ holds(B, S$_{0}$)
-          \item holds(C, S$_{1}$) $\leftarrow$ holds(B, S$_{1}$)
-        \end{list}
+            \begin{list}{}{Inheritance Rules}
+              \item 
+                 holds(A, S$_{0}$) $\leftarrow$ holds(C, S$_{0}$) $\land$ 
+                 holds(I, S$_{0}$)
+              \item
+                 holds(B, S$_{0}$) $\leftarrow$ holds(D, S$_{0}$) $\land$ 
+                 holds(J, S$_{0}$)
+              \item
+                 holds(E, S$_{0}$) $\leftarrow$ holds(G, S$_{0}$) $\land$ 
+                 holds(K, S$_{0}$)
+              \item
+                 holds(F, S$_{0}$) $\leftarrow$ holds(H, S$_{0}$) $\land$ 
+                 holds(L, S$_{0}$)
+              \item 
+                 holds(A, S$_{1}$) $\leftarrow$ holds(C, S$_{1}$) $\land$ 
+                 holds(I, S$_{1}$)
+              \item
+                 holds(B, S$_{1}$) $\leftarrow$ holds(D, S$_{1}$) $\land$ 
+                 holds(J, S$_{1}$)
+              \item
+                 holds(E, S$_{1}$) $\leftarrow$ holds(G, S$_{1}$) $\land$ 
+                 holds(K, S$_{1}$)
+              \item
+                 holds(F, S$_{1}$) $\leftarrow$ holds(H, S$_{1}$) $\land$ 
+                 holds(L, S$_{1}$)
+            \end{list}
 
-        \begin{list}{}{Transformation}
-          \item holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$)
-        \end{list}
+            \begin{list}{}{Constraint Rules}
+              \item holds(I, S$_{0}$) $\leftarrow$
+              \item holds(L, S$_{0}$) $\leftarrow$
+              \item holds(I, S$_{1}$) $\leftarrow$
+              \item holds(L, S$_{1}$) $\leftarrow$
+            \end{list}
 
-        \begin{list}{}{Inertial Rules}
-          \item
-            holds(A, S$_{1}$) $\leftarrow$ holds(A, S$_{0}$) $\land$ not
-            $\lnot$ holds(A, S$_{1}$)
-          \item
-            $\lnot$ holds(A, S$_{1}$) $\leftarrow$ $\lnot$ holds(A, S$_{0}$) 
-            $\land$ not holds(A, S$_{1}$)
-          \item
-            holds(B, S$_{1}$) $\leftarrow$ holds(B, S$_{0}$) $\land$ not
-            $\lnot$ holds(B, S$_{1}$)
-          \item
-            $\lnot$ holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$) 
-            $\land$ not holds(B, S$_{1}$)
-          \item
-            holds(C, S$_{1}$) $\leftarrow$ holds(C, S$_{0}$) $\land$ not
-            $\lnot$ holds(C, S$_{1}$)
-          \item
-            $\lnot$ holds(C, S$_{1}$) $\leftarrow$ $\lnot$ holds(C, S$_{0}$)
-            $\land$ not holds(C, S$_{1}$)
-          \item
-            holds(D, S$_{1}$) $\leftarrow$ holds(D, S$_{0}$) $\land$ not
-            $\lnot$ holds(D, S$_{1}$)
-          \item
-            $\lnot$ holds(D, S$_{1}$) $\leftarrow$ $\lnot$ holds(D, S$_{0}$)
-            $\land$ not holds(D, S$_{1}$)
-          \item
-            holds(E, S$_{1}$) $\leftarrow$ holds(E, S$_{0}$) $\land$ not
-            $\lnot$ holds(E, S$_{1}$)
-          \item
-            $\lnot$ holds(E, S$_{1}$) $\leftarrow$ $\lnot$ holds(E, S$_{0}$)
-            $\land$ not holds(E, S$_{1}$)
-          \item
-            holds(F, S$_{1}$) $\leftarrow$ holds(F, S$_{0}$) $\land$ not
-            $\lnot$ holds(F, S$_{1}$)
-          \item
-            $\lnot$ holds(F, S$_{1}$) $\leftarrow$ $\lnot$ holds(F, S$_{0}$)
-            $\land$ not holds(F, S$_{1}$)
-          \item
-            holds(G, S$_{1}$) $\leftarrow$ holds(G, S$_{0}$) $\land$ not
-            $\lnot$ holds(G, S$_{1}$)
-          \item
-            $\lnot$ holds(G, S$_{1}$) $\leftarrow$ $\lnot$ holds(G, S$_{0}$)
-            $\land$ not holds(G, S$_{1}$)
+            \begin{list}{}{Transformation Rules}
+              \item 
+                holds(A, S$_{1}$) $\land$ $\lnot$ holds(H, S$_{1}$) $\leftarrow$
+                holds(I, S$_{0}$) $\land$ holds(G, S$_{0}$)
+            \end{list}
 
-        \end{list}
+            \begin{list}{}{Inertial Rules}
+              \item
+                holds(A, S$_{1}$) $\leftarrow$ holds(A, S$_{0}$) $\land$ not
+                $\lnot$ holds(A, S$_{1}$)
+              \item
+                $\lnot$ holds(A, S$_{1}$) $\leftarrow$ $\lnot$ holds(A, S$_{0}$) 
+                $\land$ not holds(A, S$_{1}$)
+              \item
+                holds(B, S$_{1}$) $\leftarrow$ holds(B, S$_{0}$) $\land$ not
+                $\lnot$ holds(B, S$_{1}$)
+              \item
+                $\lnot$ holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$) 
+                $\land$ not holds(B, S$_{1}$)
+              \item
+                holds(C, S$_{1}$) $\leftarrow$ holds(C, S$_{0}$) $\land$ not
+                $\lnot$ holds(C, S$_{1}$)
+              \item
+                $\lnot$ holds(C, S$_{1}$) $\leftarrow$ $\lnot$ holds(C, S$_{0}$)
+                $\land$ not holds(C, S$_{1}$)
+              \item
+                holds(D, S$_{1}$) $\leftarrow$ holds(D, S$_{0}$) $\land$ not
+                $\lnot$ holds(D, S$_{1}$)
+              \item
+                $\lnot$ holds(D, S$_{1}$) $\leftarrow$ $\lnot$ holds(D, S$_{0}$)
+                $\land$ not holds(D, S$_{1}$)
+              \item
+                holds(E, S$_{1}$) $\leftarrow$ holds(E, S$_{0}$) $\land$ not
+                $\lnot$ holds(E, S$_{1}$)
+              \item
+                $\lnot$ holds(E, S$_{1}$) $\leftarrow$ $\lnot$ holds(E, S$_{0}$)
+                $\land$ not holds(E, S$_{1}$)
+              \item
+                holds(F, S$_{1}$) $\leftarrow$ holds(F, S$_{0}$) $\land$ not
+                $\lnot$ holds(F, S$_{1}$)
+              \item
+                $\lnot$ holds(F, S$_{1}$) $\leftarrow$ $\lnot$ holds(F, S$_{0}$)
+                $\land$ not holds(F, S$_{1}$)
+              \item
+                holds(G, S$_{1}$) $\leftarrow$ holds(G, S$_{0}$) $\land$ not
+                $\lnot$ holds(G, S$_{1}$)
+              \item
+                $\lnot$ holds(G, S$_{1}$) $\leftarrow$ $\lnot$ holds(G, S$_{0}$)
+                $\land$ not holds(G, S$_{1}$)
+              \item
+                holds(H, S$_{1}$) $\leftarrow$ holds(H, S$_{0}$) $\land$ not
+                $\lnot$ holds(H, S$_{1}$)
+              \item
+                $\lnot$ holds(H, S$_{1}$) $\leftarrow$ $\lnot$ holds(H, S$_{0}$)
+                $\land$ not holds(H, S$_{1}$)
+              \item
+                holds(I, S$_{1}$) $\leftarrow$ holds(I, S$_{0}$) $\land$ not
+                $\lnot$ holds(I, S$_{1}$)
+              \item
+                $\lnot$ holds(I, S$_{1}$) $\leftarrow$ $\lnot$ holds(I, S$_{0}$)
+                $\land$ not holds(I, S$_{1}$)
+              \item
+                holds(J, S$_{1}$) $\leftarrow$ holds(J, S$_{0}$) $\land$ not
+                $\lnot$ holds(J, S$_{1}$)
+              \item
+                $\lnot$ holds(J, S$_{1}$) $\leftarrow$ $\lnot$ holds(J, S$_{0}$)
+                $\land$ not holds(J, S$_{1}$)
+              \item
+                holds(K, S$_{1}$) $\leftarrow$ holds(K, S$_{0}$) $\land$ not
+                $\lnot$ holds(K, S$_{1}$)
+              \item
+                $\lnot$ holds(K, S$_{1}$) $\leftarrow$ $\lnot$ holds(K, S$_{0}$)
+                $\land$ not holds(K, S$_{1}$)
+              \item
+                holds(L, S$_{1}$) $\leftarrow$ holds(L, S$_{0}$) $\land$ not
+                $\lnot$ holds(L, S$_{1}$)
+              \item
+                $\lnot$ holds(L, S$_{1}$) $\leftarrow$ $\lnot$ holds(L, S$_{0}$)
+                $\land$ not holds(L, S$_{1}$)
+            \end{list}
+
+          \item
+            Query 2
+
+            \begin{list}{}{Initial State}
+              \item holds(G, S$_{0}$)
+              \item holds(H, S$_{0}$)
+            \end{list}
+
+            \begin{list}{}{Inheritance Rules}
+              \item 
+                 holds(A, S$_{0}$) $\leftarrow$ holds(C, S$_{0}$) $\land$ 
+                 holds(I, S$_{0}$)
+              \item
+                 holds(B, S$_{0}$) $\leftarrow$ holds(D, S$_{0}$) $\land$ 
+                 holds(J, S$_{0}$)
+              \item
+                 holds(E, S$_{0}$) $\leftarrow$ holds(G, S$_{0}$) $\land$ 
+                 holds(K, S$_{0}$)
+              \item
+                 holds(F, S$_{0}$) $\leftarrow$ holds(H, S$_{0}$) $\land$ 
+                 holds(L, S$_{0}$)
+              \item 
+                 holds(A, S$_{1}$) $\leftarrow$ holds(C, S$_{1}$) $\land$ 
+                 holds(I, S$_{1}$)
+              \item
+                 holds(B, S$_{1}$) $\leftarrow$ holds(D, S$_{1}$) $\land$ 
+                 holds(J, S$_{1}$)
+              \item
+                 holds(E, S$_{1}$) $\leftarrow$ holds(G, S$_{1}$) $\land$ 
+                 holds(K, S$_{1}$)
+              \item
+                 holds(F, S$_{1}$) $\leftarrow$ holds(H, S$_{1}$) $\land$ 
+                 holds(L, S$_{1}$)
+            \end{list}
+
+            \begin{list}{}{Constraint Rules}
+              \item holds(I, S$_{0}$) $\leftarrow$
+              \item holds(L, S$_{0}$) $\leftarrow$
+              \item holds(I, S$_{1}$) $\leftarrow$
+              \item holds(L, S$_{1}$) $\leftarrow$
+            \end{list}
+
+            \begin{list}{}{Transformation Rules}
+              \item 
+                holds(B, S$_{1}$) $\land$ $\lnot$ holds(G, S$_{1}$) $\leftarrow$
+                holds(L, S$_{0}$) $\land$ holds(H, S$_{0}$)
+            \end{list}
+
+            \begin{list}{}{Inertial Rules}
+              \item
+                holds(A, S$_{1}$) $\leftarrow$ holds(A, S$_{0}$) $\land$ not
+                $\lnot$ holds(A, S$_{1}$)
+              \item
+                $\lnot$ holds(A, S$_{1}$) $\leftarrow$ $\lnot$ holds(A, S$_{0}$) 
+                $\land$ not holds(A, S$_{1}$)
+              \item
+                holds(B, S$_{1}$) $\leftarrow$ holds(B, S$_{0}$) $\land$ not
+                $\lnot$ holds(B, S$_{1}$)
+              \item
+                $\lnot$ holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$) 
+                $\land$ not holds(B, S$_{1}$)
+              \item
+                holds(C, S$_{1}$) $\leftarrow$ holds(C, S$_{0}$) $\land$ not
+                $\lnot$ holds(C, S$_{1}$)
+              \item
+                $\lnot$ holds(C, S$_{1}$) $\leftarrow$ $\lnot$ holds(C, S$_{0}$)
+                $\land$ not holds(C, S$_{1}$)
+              \item
+                holds(D, S$_{1}$) $\leftarrow$ holds(D, S$_{0}$) $\land$ not
+                $\lnot$ holds(D, S$_{1}$)
+              \item
+                $\lnot$ holds(D, S$_{1}$) $\leftarrow$ $\lnot$ holds(D, S$_{0}$)
+                $\land$ not holds(D, S$_{1}$)
+              \item
+                holds(E, S$_{1}$) $\leftarrow$ holds(E, S$_{0}$) $\land$ not
+                $\lnot$ holds(E, S$_{1}$)
+              \item
+                $\lnot$ holds(E, S$_{1}$) $\leftarrow$ $\lnot$ holds(E, S$_{0}$)
+                $\land$ not holds(E, S$_{1}$)
+              \item
+                holds(F, S$_{1}$) $\leftarrow$ holds(F, S$_{0}$) $\land$ not
+                $\lnot$ holds(F, S$_{1}$)
+              \item
+                $\lnot$ holds(F, S$_{1}$) $\leftarrow$ $\lnot$ holds(F, S$_{0}$)
+                $\land$ not holds(F, S$_{1}$)
+              \item
+                holds(G, S$_{1}$) $\leftarrow$ holds(G, S$_{0}$) $\land$ not
+                $\lnot$ holds(G, S$_{1}$)
+              \item
+                $\lnot$ holds(G, S$_{1}$) $\leftarrow$ $\lnot$ holds(G, S$_{0}$)
+                $\land$ not holds(G, S$_{1}$)
+              \item
+                holds(H, S$_{1}$) $\leftarrow$ holds(H, S$_{0}$) $\land$ not
+                $\lnot$ holds(H, S$_{1}$)
+              \item
+                $\lnot$ holds(H, S$_{1}$) $\leftarrow$ $\lnot$ holds(H, S$_{0}$)
+                $\land$ not holds(H, S$_{1}$)
+              \item
+                holds(I, S$_{1}$) $\leftarrow$ holds(I, S$_{0}$) $\land$ not
+                $\lnot$ holds(I, S$_{1}$)
+              \item
+                $\lnot$ holds(I, S$_{1}$) $\leftarrow$ $\lnot$ holds(I, S$_{0}$)
+                $\land$ not holds(I, S$_{1}$)
+              \item
+                holds(J, S$_{1}$) $\leftarrow$ holds(J, S$_{0}$) $\land$ not
+                $\lnot$ holds(J, S$_{1}$)
+              \item
+                $\lnot$ holds(J, S$_{1}$) $\leftarrow$ $\lnot$ holds(J, S$_{0}$)
+                $\land$ not holds(J, S$_{1}$)
+              \item
+                holds(K, S$_{1}$) $\leftarrow$ holds(K, S$_{0}$) $\land$ not
+                $\lnot$ holds(K, S$_{1}$)
+              \item
+                $\lnot$ holds(K, S$_{1}$) $\leftarrow$ $\lnot$ holds(K, S$_{0}$)
+                $\land$ not holds(K, S$_{1}$)
+              \item
+                holds(L, S$_{1}$) $\leftarrow$ holds(L, S$_{0}$) $\land$ not
+                $\lnot$ holds(L, S$_{1}$)
+              \item
+                $\lnot$ holds(L, S$_{1}$) $\leftarrow$ $\lnot$ holds(L, S$_{0}$)
+                $\land$ not holds(L, S$_{1}$)
+            \end{list}
+
+
+        \end{itemize}
 
       \subsubsection{General Logic Program}
 
-        \begin{list}{}{Initial State}
-          \item holds(B, S$_{0}$, f)
-          \item holds(C, S$_{0}$, f)
-          \item holds(D, S$_{0}$, t)
-          \item holds(G, S$_{0}$, t)
-        \end{list}
+        \begin{itemize}
+          \item
+            Query 1
 
-        \begin{list}{}{Inheritance Rules}
-          \item 
-            holds(A, S$_{0}$, t) $\leftarrow$ holds(D, S$_{0}$, t) $\land$ 
-            holds(G, S$_{0}$, t)
-          \item
-            holds(A, S$_{1}$, t) $\leftarrow$ holds(D, S$_{1}$, t) $\land$ 
-            holds(G, S$_{1}$, t)
-        \end{list}
+            \begin{list}{}{Initial State}
+              \item holds(G, S$_{0}$, t)
+              \item holds(H, S$_{0}$, t)
+            \end{list}
 
-        \begin{list}{}{Constraint}
-          \item holds(C, S$_{0}$, t) $\leftarrow$ holds(B, S$_{0}$, t)
-          \item holds(C, S$_{1}$, t) $\leftarrow$ holds(B, S$_{1}$, t)
-        \end{list}
+            \begin{list}{}{Inheritance Rules}
+              \item 
+                 holds(A, S$_{0}$, t) $\leftarrow$ holds(C, S$_{0}$, t) $\land$ 
+                 holds(I, S$_{0}$, t)
+              \item
+                 holds(B, S$_{0}$, t) $\leftarrow$ holds(D, S$_{0}$, t) $\land$ 
+                 holds(J, S$_{0}$, t)
+              \item
+                 holds(E, S$_{0}$, t) $\leftarrow$ holds(G, S$_{0}$, t) $\land$ 
+                 holds(K, S$_{0}$, t)
+              \item
+                 holds(F, S$_{0}$, t) $\leftarrow$ holds(H, S$_{0}$, t) $\land$ 
+                 holds(L, S$_{0}$, t)
+              \item 
+                 holds(A, S$_{1}$, t) $\leftarrow$ holds(C, S$_{1}$, t) $\land$ 
+                 holds(I, S$_{1}$, t)
+              \item
+                 holds(B, S$_{1}$, t) $\leftarrow$ holds(D, S$_{1}$, t) $\land$ 
+                 holds(J, S$_{1}$, t)
+              \item
+                 holds(E, S$_{1}$, t) $\leftarrow$ holds(G, S$_{1}$, t) $\land$ 
+                 holds(K, S$_{1}$, t)
+              \item
+                 holds(F, S$_{1}$, t) $\leftarrow$ holds(H, S$_{1}$, t) $\land$ 
+                 holds(L, S$_{1}$, t)
+            \end{list}
 
-        \begin{list}{}{Transformation}
-          \item holds(B, S$_{1}$, t) $\leftarrow$ holds(B, S$_{0}$, f)
-        \end{list}
+            \begin{list}{}{Constraint Rules}
+              \item holds(I, S$_{0}$, t) $\leftarrow$
+              \item holds(L, S$_{0}$, t) $\leftarrow$
+              \item holds(I, S$_{1}$, t) $\leftarrow$
+              \item holds(L, S$_{1}$, t) $\leftarrow$
+            \end{list}
 
-        \begin{list}{}{Inertial Rules}
-          \item
-            holds(A, S$_{1}$, t) $\leftarrow$ holds(A, S$_{0}$, t) $\land$ not
-            holds(A, S$_{1}$, f)
-          \item
-            holds(A, S$_{1}$, f) $\leftarrow$ holds(A, S$_{0}$, f) $\land$ not
-            holds(A, S$_{1}$, t)
-          \item
-            holds(B, S$_{1}$, t) $\leftarrow$ holds(B, S$_{0}$, t) $\land$ not
-            holds(B, S$_{1}$, f)
-          \item
-            holds(B, S$_{1}$, f) $\leftarrow$ holds(B, S$_{0}$, f) $\land$ not
-            holds(B, S$_{1}$, t)
-          \item
-            holds(C, S$_{1}$, t) $\leftarrow$ holds(C, S$_{0}$, t) $\land$ not
-            holds(C, S$_{1}$, f)
-          \item
-            holds(C, S$_{1}$, f) $\leftarrow$ holds(C, S$_{0}$, f) $\land$ not
-            holds(C, S$_{1}$, t)
-          \item
-            holds(D, S$_{1}$, t) $\leftarrow$ holds(D, S$_{0}$, t) $\land$ not
-            holds(D, S$_{1}$, f)
-          \item
-            holds(D, S$_{1}$, f) $\leftarrow$ holds(D, S$_{0}$, f) $\land$ not
-            holds(D, S$_{1}$, t)
-          \item
-            holds(E, S$_{1}$, t) $\leftarrow$ holds(E, S$_{0}$, t) $\land$ not
-            holds(E, S$_{1}$, f)
-          \item
-            holds(E, S$_{1}$, f) $\leftarrow$ holds(E, S$_{0}$, f) $\land$ not
-            holds(E, S$_{1}$, t)
-          \item
-            holds(F, S$_{1}$, t) $\leftarrow$ holds(F, S$_{0}$, t) $\land$ not
-            holds(F, S$_{1}$, f)
-          \item
-            holds(F, S$_{1}$, f) $\leftarrow$ holds(F, S$_{0}$, f) $\land$ not
-            holds(F, S$_{1}$, t)
-          \item
-            holds(G, S$_{1}$, t) $\leftarrow$ holds(G, S$_{0}$, t) $\land$ not
-            holds(G, S$_{1}$, f)
-          \item
-            holds(G, S$_{1}$, f) $\leftarrow$ holds(G, S$_{0}$, f) $\land$ not
-            holds(G, S$_{1}$, t)
-        \end{list}
+            \begin{list}{}{Transformation Rules}
+              \item 
+                holds(A, S$_{1}$, t) $\land$ holds(H, S$_{1}$, f) $\leftarrow$
+                holds(I, S$_{0}$, t) $\land$ holds(G, S$_{0}$, t)
+            \end{list}
 
-        \begin{list}{}{Complementary Rules}
-          \item
-            false $\leftarrow$ holds(A, S$_{0}$, t) $\land$ holds(A, S$_{0}$, f)
-          \item
-            false $\leftarrow$ holds(B, S$_{0}$, t) $\land$ holds(B, S$_{0}$, f)
-          \item
-            false $\leftarrow$ holds(C, S$_{0}$, t) $\land$ holds(C, S$_{0}$, f)
-          \item
-            false $\leftarrow$ holds(D, S$_{0}$, t) $\land$ holds(D, S$_{0}$, f)
-          \item
-            false $\leftarrow$ holds(E, S$_{0}$, t) $\land$ holds(E, S$_{0}$, f)
-          \item
-            false $\leftarrow$ holds(F, S$_{0}$, t) $\land$ holds(F, S$_{0}$, f)
-          \item
-            false $\leftarrow$ holds(G, S$_{0}$, t) $\land$ holds(G, S$_{0}$, f)
-          \item
-            false $\leftarrow$ holds(A, S$_{1}$, t) $\land$ holds(A, S$_{1}$, f)
-          \item
-            false $\leftarrow$ holds(B, S$_{1}$, t) $\land$ holds(B, S$_{1}$, f)
-          \item
-            false $\leftarrow$ holds(C, S$_{1}$, t) $\land$ holds(C, S$_{1}$, f)
-          \item
-            false $\leftarrow$ holds(D, S$_{1}$, t) $\land$ holds(D, S$_{1}$, f)
-          \item
-            false $\leftarrow$ holds(E, S$_{1}$, t) $\land$ holds(E, S$_{1}$, f)
-          \item
-            false $\leftarrow$ holds(F, S$_{1}$, t) $\land$ holds(F, S$_{1}$, f)
-          \item
-            false $\leftarrow$ holds(G, S$_{1}$, t) $\land$ holds(G, S$_{1}$, f)
-          \item
-            false $\leftarrow$ not holds(A, S$_{0}$, t) $\land$ not holds(A, S$_{0}$, f)
-          \item
-            false $\leftarrow$ not holds(B, S$_{0}$, t) $\land$ not holds(B, S$_{0}$, f)
-          \item
-            false $\leftarrow$ not holds(C, S$_{0}$, t) $\land$ not holds(C, S$_{0}$, f)
-          \item
-            false $\leftarrow$ not holds(D, S$_{0}$, t) $\land$ not holds(D, S$_{0}$, f)
-          \item
-            false $\leftarrow$ not holds(E, S$_{0}$, t) $\land$ not holds(E, S$_{0}$, f)
-          \item
-            false $\leftarrow$ not holds(F, S$_{0}$, t) $\land$ not holds(F, S$_{0}$, f)
-          \item
-            false $\leftarrow$ not holds(G, S$_{0}$, t) $\land$ not holds(G, S$_{0}$, f)
-          \item
-            false $\leftarrow$ not holds(A, S$_{1}$, t) $\land$ not holds(A, S$_{1}$, f)
-          \item
-            false $\leftarrow$ not holds(B, S$_{1}$, t) $\land$ not holds(B, S$_{1}$, f)
-          \item
-            false $\leftarrow$ not holds(C, S$_{1}$, t) $\land$ not holds(C, S$_{1}$, f)
-          \item
-            false $\leftarrow$ not holds(D, S$_{1}$, t) $\land$ not holds(D, S$_{1}$, f)
-          \item
-            false $\leftarrow$ not holds(E, S$_{1}$, t) $\land$ not holds(E, S$_{1}$, f)
-          \item
-            false $\leftarrow$ not holds(F, S$_{1}$, t) $\land$ not holds(F, S$_{1}$, f)
-          \item
-            false $\leftarrow$ not holds(G, S$_{1}$, t) $\land$ not holds(G, S$_{1}$, f)
+            \begin{list}{}{Inertial Rules}
+              \item
+                holds(A, S$_{1}$, t) $\leftarrow$ holds(A, S$_{0}$, t) $\land$ not
+                holds(A, S$_{1}$, f)
+              \item
+                holds(A, S$_{1}$, f) $\leftarrow$ holds(A, S$_{0}$, f)
+                $\land$ not holds(A, S$_{1}$, t)
+              \item
+                holds(B, S$_{1}$, t) $\leftarrow$ holds(B, S$_{0}$, t) $\land$ not
+                holds(B, S$_{1}$, f)
+              \item
+                holds(B, S$_{1}$, f) $\leftarrow$ holds(B, S$_{0}$, f)
+                $\land$ not holds(B, S$_{1}$, t)
+              \item
+                holds(C, S$_{1}$, t) $\leftarrow$ holds(C, S$_{0}$, t) $\land$ not
+                holds(C, S$_{1}$, f)
+              \item
+                holds(C, S$_{1}$, f) $\leftarrow$ holds(C, S$_{0}$, f)
+                $\land$ not holds(C, S$_{1}$, t)
+              \item
+                holds(D, S$_{1}$, t) $\leftarrow$ holds(D, S$_{0}$, t) $\land$ not
+                holds(D, S$_{1}$, f)
+              \item
+                holds(D, S$_{1}$, f) $\leftarrow$ holds(D, S$_{0}$, f)
+                $\land$ not holds(D, S$_{1}$, t)
+              \item
+                holds(E, S$_{1}$, t) $\leftarrow$ holds(E, S$_{0}$, t) $\land$ not
+                holds(E, S$_{1}$, f)
+              \item
+                holds(E, S$_{1}$, f) $\leftarrow$ holds(E, S$_{0}$, f)
+                $\land$ not holds(E, S$_{1}$, t)
+              \item
+                holds(F, S$_{1}$, t) $\leftarrow$ holds(F, S$_{0}$, t) $\land$ not
+                holds(F, S$_{1}$, f)
+              \item
+                holds(F, S$_{1}$, f) $\leftarrow$ holds(F, S$_{0}$, f)
+                $\land$ not holds(F, S$_{1}$, t)
+              \item
+                holds(G, S$_{1}$, t) $\leftarrow$ holds(G, S$_{0}$, t) $\land$ not
+                holds(G, S$_{1}$, f)
+              \item
+                holds(G, S$_{1}$, f) $\leftarrow$ holds(G, S$_{0}$, f)
+                $\land$ not holds(G, S$_{1}$, t)
+              \item
+                holds(H, S$_{1}$, t) $\leftarrow$ holds(H, S$_{0}$, t) $\land$ not
+                holds(H, S$_{1}$, f)
+              \item
+                holds(H, S$_{1}$, f) $\leftarrow$ holds(H, S$_{0}$, f)
+                $\land$ not holds(H, S$_{1}$, t)
+              \item
+                holds(I, S$_{1}$, t) $\leftarrow$ holds(I, S$_{0}$, t) $\land$ not
+                holds(I, S$_{1}$, f)
+              \item
+                holds(I, S$_{1}$, f) $\leftarrow$ holds(I, S$_{0}$, f)
+                $\land$ not holds(I, S$_{1}$, t)
+              \item
+                holds(J, S$_{1}$, t) $\leftarrow$ holds(J, S$_{0}$, t) $\land$ not
+                holds(J, S$_{1}$, f)
+              \item
+                holds(J, S$_{1}$, f) $\leftarrow$ holds(J, S$_{0}$, f)
+                $\land$ not holds(J, S$_{1}$, t)
+              \item
+                holds(K, S$_{1}$, t) $\leftarrow$ holds(K, S$_{0}$, t) $\land$ not
+                holds(K, S$_{1}$, f)
+              \item
+                holds(K, S$_{1}$, f) $\leftarrow$ holds(K, S$_{0}$, f)
+                $\land$ not holds(K, S$_{1}$, t)
+              \item
+                holds(L, S$_{1}$, t) $\leftarrow$ holds(L, S$_{0}$, t) $\land$ not
+                holds(L, S$_{1}$, f)
+              \item
+                holds(L, S$_{1}$, f) $\leftarrow$ holds(L, S$_{0}$, f)
+                $\land$ not holds(L, S$_{1}$, t)
+            \end{list}
 
-        \end{list}
+            \begin{list}{}{Complementary Rules}
+              \item
+                false $\leftarrow$ holds(A, S$_{0}$, t) $\land$ holds(A, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(B, S$_{0}$, t) $\land$ holds(B, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(C, S$_{0}$, t) $\land$ holds(C, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(D, S$_{0}$, t) $\land$ holds(D, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(E, S$_{0}$, t) $\land$ holds(E, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(F, S$_{0}$, t) $\land$ holds(F, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(G, S$_{0}$, t) $\land$ holds(G, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(H, S$_{0}$, t) $\land$ holds(H, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(I, S$_{0}$, t) $\land$ holds(I, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(J, S$_{0}$, t) $\land$ holds(J, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(K, S$_{0}$, t) $\land$ holds(K, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(L, S$_{0}$, t) $\land$ holds(L, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(A, S$_{1}$, t) $\land$ holds(A, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(B, S$_{1}$, t) $\land$ holds(B, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(C, S$_{1}$, t) $\land$ holds(C, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(D, S$_{1}$, t) $\land$ holds(D, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(E, S$_{1}$, t) $\land$ holds(E, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(F, S$_{1}$, t) $\land$ holds(F, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(G, S$_{1}$, t) $\land$ holds(G, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(H, S$_{1}$, t) $\land$ holds(H, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(I, S$_{1}$, t) $\land$ holds(I, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(J, S$_{1}$, t) $\land$ holds(J, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(K, S$_{1}$, t) $\land$ holds(K, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(L, S$_{1}$, t) $\land$ holds(L, S$_{1}$, f)
+            \end{list}
+
+          \item
+            Query 2
+
+            \begin{list}{}{Initial State}
+              \item holds(G, S$_{0}$, t)
+              \item holds(H, S$_{0}$, t)
+            \end{list}
+
+            \begin{list}{}{Inheritance Rules}
+              \item 
+                 holds(A, S$_{0}$, t) $\leftarrow$ holds(C, S$_{0}$, t) $\land$ 
+                 holds(I, S$_{0}$, t)
+              \item
+                 holds(B, S$_{0}$, t) $\leftarrow$ holds(D, S$_{0}$, t) $\land$ 
+                 holds(J, S$_{0}$, t)
+              \item
+                 holds(E, S$_{0}$, t) $\leftarrow$ holds(G, S$_{0}$, t) $\land$ 
+                 holds(K, S$_{0}$, t)
+              \item
+                 holds(F, S$_{0}$, t) $\leftarrow$ holds(H, S$_{0}$, t) $\land$ 
+                 holds(L, S$_{0}$, t)
+              \item 
+                 holds(A, S$_{1}$, t) $\leftarrow$ holds(C, S$_{1}$, t) $\land$ 
+                 holds(I, S$_{1}$, t)
+              \item
+                 holds(B, S$_{1}$, t) $\leftarrow$ holds(D, S$_{1}$, t) $\land$ 
+                 holds(J, S$_{1}$, t)
+              \item
+                 holds(E, S$_{1}$, t) $\leftarrow$ holds(G, S$_{1}$, t) $\land$ 
+                 holds(K, S$_{1}$, t)
+              \item
+                 holds(F, S$_{1}$, t) $\leftarrow$ holds(H, S$_{1}$, t) $\land$ 
+                 holds(L, S$_{1}$, t)
+            \end{list}
+
+            \begin{list}{}{Constraint Rules}
+              \item holds(I, S$_{0}$, t) $\leftarrow$
+              \item holds(L, S$_{0}$, t) $\leftarrow$
+              \item holds(I, S$_{1}$, t) $\leftarrow$
+              \item holds(L, S$_{1}$, t) $\leftarrow$
+            \end{list}
+
+            \begin{list}{}{Transformation Rules}
+              \item 
+                holds(B, S$_{1}$, t) $\land$ holds(G, S$_{1}$, f) $\leftarrow$
+                holds(L, S$_{0}$, t) $\land$ holds(H, S$_{0}$, t)
+            \end{list}
+
+            \begin{list}{}{Inertial Rules}
+              \item
+                holds(A, S$_{1}$, t) $\leftarrow$ holds(A, S$_{0}$, t) $\land$ not
+                holds(A, S$_{1}$, f)
+              \item
+                holds(A, S$_{1}$, f) $\leftarrow$ holds(A, S$_{0}$, f)
+                $\land$ not holds(A, S$_{1}$, t)
+              \item
+                holds(B, S$_{1}$, t) $\leftarrow$ holds(B, S$_{0}$, t) $\land$ not
+                holds(B, S$_{1}$, f)
+              \item
+                holds(B, S$_{1}$, f) $\leftarrow$ holds(B, S$_{0}$, f)
+                $\land$ not holds(B, S$_{1}$, t)
+              \item
+                holds(C, S$_{1}$, t) $\leftarrow$ holds(C, S$_{0}$, t) $\land$ not
+                holds(C, S$_{1}$, f)
+              \item
+                holds(C, S$_{1}$, f) $\leftarrow$ holds(C, S$_{0}$, f)
+                $\land$ not holds(C, S$_{1}$, t)
+              \item
+                holds(D, S$_{1}$, t) $\leftarrow$ holds(D, S$_{0}$, t) $\land$ not
+                holds(D, S$_{1}$, f)
+              \item
+                holds(D, S$_{1}$, f) $\leftarrow$ holds(D, S$_{0}$, f)
+                $\land$ not holds(D, S$_{1}$, t)
+              \item
+                holds(E, S$_{1}$, t) $\leftarrow$ holds(E, S$_{0}$, t) $\land$ not
+                holds(E, S$_{1}$, f)
+              \item
+                holds(E, S$_{1}$, f) $\leftarrow$ holds(E, S$_{0}$, f)
+                $\land$ not holds(E, S$_{1}$, t)
+              \item
+                holds(F, S$_{1}$, t) $\leftarrow$ holds(F, S$_{0}$, t) $\land$ not
+                holds(F, S$_{1}$, f)
+              \item
+                holds(F, S$_{1}$, f) $\leftarrow$ holds(F, S$_{0}$, f)
+                $\land$ not holds(F, S$_{1}$, t)
+              \item
+                holds(G, S$_{1}$, t) $\leftarrow$ holds(G, S$_{0}$, t) $\land$ not
+                holds(G, S$_{1}$, f)
+              \item
+                holds(G, S$_{1}$, f) $\leftarrow$ holds(G, S$_{0}$, f)
+                $\land$ not holds(G, S$_{1}$, t)
+              \item
+                holds(H, S$_{1}$, t) $\leftarrow$ holds(H, S$_{0}$, t) $\land$ not
+                holds(H, S$_{1}$, f)
+              \item
+                holds(H, S$_{1}$, f) $\leftarrow$ holds(H, S$_{0}$, f)
+                $\land$ not holds(H, S$_{1}$, t)
+              \item
+                holds(I, S$_{1}$, t) $\leftarrow$ holds(I, S$_{0}$, t) $\land$ not
+                holds(I, S$_{1}$, f)
+              \item
+                holds(I, S$_{1}$, f) $\leftarrow$ holds(I, S$_{0}$, f)
+                $\land$ not holds(I, S$_{1}$, t)
+              \item
+                holds(J, S$_{1}$, t) $\leftarrow$ holds(J, S$_{0}$, t) $\land$ not
+                holds(J, S$_{1}$, f)
+              \item
+                holds(J, S$_{1}$, f) $\leftarrow$ holds(J, S$_{0}$, f)
+                $\land$ not holds(J, S$_{1}$, t)
+              \item
+                holds(K, S$_{1}$, t) $\leftarrow$ holds(K, S$_{0}$, t) $\land$ not
+                holds(K, S$_{1}$, f)
+              \item
+                holds(K, S$_{1}$, f) $\leftarrow$ holds(K, S$_{0}$, f)
+                $\land$ not holds(K, S$_{1}$, t)
+              \item
+                holds(L, S$_{1}$, t) $\leftarrow$ holds(L, S$_{0}$, t) $\land$ not
+                holds(L, S$_{1}$, f)
+              \item
+                holds(L, S$_{1}$, f) $\leftarrow$ holds(L, S$_{0}$, f)
+                $\land$ not holds(L, S$_{1}$, t)
+            \end{list}
+
+            \begin{list}{}{Complementary Rules}
+              \item
+                false $\leftarrow$ holds(A, S$_{0}$, t) $\land$ holds(A, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(B, S$_{0}$, t) $\land$ holds(B, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(C, S$_{0}$, t) $\land$ holds(C, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(D, S$_{0}$, t) $\land$ holds(D, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(E, S$_{0}$, t) $\land$ holds(E, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(F, S$_{0}$, t) $\land$ holds(F, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(G, S$_{0}$, t) $\land$ holds(G, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(H, S$_{0}$, t) $\land$ holds(H, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(I, S$_{0}$, t) $\land$ holds(I, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(J, S$_{0}$, t) $\land$ holds(J, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(K, S$_{0}$, t) $\land$ holds(K, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(L, S$_{0}$, t) $\land$ holds(L, S$_{0}$, f)
+              \item
+                false $\leftarrow$ holds(A, S$_{1}$, t) $\land$ holds(A, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(B, S$_{1}$, t) $\land$ holds(B, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(C, S$_{1}$, t) $\land$ holds(C, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(D, S$_{1}$, t) $\land$ holds(D, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(E, S$_{1}$, t) $\land$ holds(E, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(F, S$_{1}$, t) $\land$ holds(F, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(G, S$_{1}$, t) $\land$ holds(G, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(H, S$_{1}$, t) $\land$ holds(H, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(I, S$_{1}$, t) $\land$ holds(I, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(J, S$_{1}$, t) $\land$ holds(J, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(K, S$_{1}$, t) $\land$ holds(K, S$_{1}$, f)
+              \item
+                false $\leftarrow$ holds(L, S$_{1}$, t) $\land$ holds(L, S$_{1}$, f)
+            \end{list}
+
+
+        \end{itemize}
+
+
 
   \section{System Structure}
 
