@@ -230,10 +230,10 @@ VLAD_EXTERN int vlad_kb_query_generate(void *a_kb, void *a_exp, FILE *a_fs)
   return tmp_kb->query_generate(VLAD_VLAD_WRAPPER_CAST(a_exp, expression *), a_fs);
 }
 
+#ifdef VLAD_SMODELS
 /* prepares the kb for queries */
 VLAD_EXTERN int vlad_kb_compute_evaluate(void *a_kb)
 {
-#ifdef VLAD_SMODELS
   kb *tmp_kb = NULL;
 
   if (a_kb == NULL)
@@ -243,9 +243,6 @@ VLAD_EXTERN int vlad_kb_compute_evaluate(void *a_kb)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->compute_evaluate();
-#else
-  return VLAD_FAILURE;
-#endif
 }
 
 /* use smwrap class to evaluate a query */
@@ -253,7 +250,6 @@ VLAD_EXTERN int vlad_kb_query_evaluate(void *a_kb,
                                        void *a_exp,
                                        unsigned char *a_res)
 {
-#ifdef VLAD_SMODELS
   kb *tmp_kb = NULL;
 
   if (a_kb == NULL)
@@ -263,10 +259,8 @@ VLAD_EXTERN int vlad_kb_query_evaluate(void *a_kb,
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->query_evaluate(VLAD_VLAD_WRAPPER_CAST(a_exp, expression *), a_res);
-#else
-  return VLAD_FAILURE;
-#endif
 }
+#endif
 
 /* create a stringlist */
 VLAD_EXTERN int vlad_strlist_create(void **a_slist)

@@ -6,6 +6,8 @@
 #ifndef __VLAD_VLAD_WRAPPER_H
 #define __VLAD_VLAD_WRAPPER_H
 
+#include <vlad/vlad.h>
+
 #ifdef __cplusplus
 #include <cstdio>
 #define VLAD_EXTERN extern "C"
@@ -51,12 +53,14 @@ VLAD_EXTERN int vlad_kb_list_seqtab(void *a_kb, FILE *a_fs);
 VLAD_EXTERN int vlad_kb_compute_generate(void *a_kb, FILE *a_fs);
 /* generate the query */
 VLAD_EXTERN int vlad_kb_query_generate(void *a_kb, void *a_exp, FILE *a_fs);
+#ifdef VLAD_SMODELS
 /* prepares the kb for queries */
 VLAD_EXTERN int vlad_kb_compute_evaluate(void *a_kb);
 /* use smwrap class to evaluate a query */
 VLAD_EXTERN int vlad_kb_query_evaluate(void *a_kb,
                                        void *a_exp,
                                        unsigned char *a_res);
+#endif
 
 /* create a stringlist */
 VLAD_EXTERN int vlad_strlist_create(void **a_slist);
