@@ -1,5 +1,9 @@
 2003-07-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* proc.c :
+
+	  - Added error pipe messages.
+
 	* mod_vlad.h :
 
 	  - Added basic error codes.
