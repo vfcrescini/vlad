@@ -1174,9 +1174,9 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers config.h"
 
 
-TMP_CFLAGS="-ansi -Wall -Wstrict-prototypes -I. -I\$(TOPSRCDIR) -I\$(TOPSRCDIR)/include -L\$(TOPSRCDIR)/lib"
-TMP_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I. -I\$(TOPSRCDIR) -I\$(TOPSRCDIR)/include -L\$(TOPSRCDIR)/lib"
-TMP_LDFLAGS="-L\$(TOPSRCDIR)/lib $LDFLAGS"
+VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(INCLUDEDIR) -L\$(LIBDIR)"
+VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(INCLUDEDIR) -L\$(LIBDIR)"
+VLAD_LDFLAGS="-L\$(LIBDIR) $LDFLAGS"
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -2571,11 +2571,11 @@ _ACEOF
 
   DEBUG=1
 
-  TMP_CFLAGS="$TMP_CFLAGS -g"
-  TMP_CXXFLAGS="$TMP_CXXFLAGS -g"
+  VLAD_CFLAGS="$VLAD_CFLAGS -g"
+  VLAD_CXXFLAGS="$VLAD_CXXFLAGS -g"
 else
-  TMP_CFLAGS="$TMP_CFLAGS -O2"
-  TMP_CXXFLAGS="$TMP_CXXFLAGS -O2"
+  VLAD_CFLAGS="$VLAD_CFLAGS -O2"
+  VLAD_CXXFLAGS="$VLAD_CXXFLAGS -O2"
 fi
 
 # Check whether --enable-strip or --disable-strip was given.
@@ -2617,14 +2617,23 @@ echo "$as_me: error: *** invalid path: $with_smodels_src ***" >&2;}
   fi
 fi
 
+CFLAGS="$VLAD_CFLAGS $CFLAGS"
+CXXFLAGS="$VLAD_CXXFLAGS $CXXFLAGS"
+LDFLAGS="$VLAD_LDFLAGS $LDFLAGS"
+
 cat >>confdefs.h <<_ACEOF
 #define VERSION "$PACKAGE_VERSION"
 _ACEOF
 
 
-CFLAGS="$TMP_CFLAGS $CFLAGS"
-CXXFLAGS="$TMP_CXXFLAGS $CXXFLAGS"
-LDFLAGS="$TMP_LDFLAGS $LDFLAGS"
+DISTDIR="\$(TOPSRCDIR)/dist"
+
+BINDIR="\$(DISTDIR)/bin"
+
+INCLUDEDIR="\$(DISTDIR)/include/vlad"
+
+LIBDIR="\$(DISTDIR)/lib/vlad"
+
 
 ac_config_files="$ac_config_files Makefile common/Makefile kb/Makefile parser/Makefile main/Makefile"
 
@@ -3205,6 +3214,10 @@ s,@DEBUG@,$DEBUG,;t t
 s,@STRIP@,$STRIP,;t t
 s,@SMODELS@,$SMODELS,;t t
 s,@SMODELS_PATH@,$SMODELS_PATH,;t t
+s,@DISTDIR@,$DISTDIR,;t t
+s,@BINDIR@,$BINDIR,;t t
+s,@INCLUDEDIR@,$INCLUDEDIR,;t t
+s,@LIBDIR@,$LIBDIR,;t t
 CEOF
 
 _ACEOF

@@ -4,9 +4,9 @@ AC_INIT(vlad,0.3.1,jcrescin@cit.uws.edu.au)
 
 AC_CONFIG_HEADERS(config.h)
 
-TMP_CFLAGS="-ansi -Wall -Wstrict-prototypes -I. -I\$(TOPSRCDIR) -I\$(TOPSRCDIR)/include -L\$(TOPSRCDIR)/lib"
-TMP_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I. -I\$(TOPSRCDIR) -I\$(TOPSRCDIR)/include -L\$(TOPSRCDIR)/lib"
-TMP_LDFLAGS="-L\$(TOPSRCDIR)/lib $LDFLAGS"
+VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(INCLUDEDIR) -L\$(LIBDIR)"
+VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(INCLUDEDIR) -L\$(LIBDIR)"
+VLAD_LDFLAGS="-L\$(LIBDIR) $LDFLAGS"
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -19,11 +19,11 @@ AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & c
 if test "$enable_debug" != "" && test "$enable_debug" != "no"; then
   AC_DEFINE(DEBUG,1)
   AC_SUBST(DEBUG,1)
-  TMP_CFLAGS="$TMP_CFLAGS -g"
-  TMP_CXXFLAGS="$TMP_CXXFLAGS -g"
+  VLAD_CFLAGS="$VLAD_CFLAGS -g"
+  VLAD_CXXFLAGS="$VLAD_CXXFLAGS -g"
 else
-  TMP_CFLAGS="$TMP_CFLAGS -O2"
-  TMP_CXXFLAGS="$TMP_CXXFLAGS -O2"
+  VLAD_CFLAGS="$VLAD_CFLAGS -O2"
+  VLAD_CXXFLAGS="$VLAD_CXXFLAGS -O2"
 fi
 
 AC_ARG_ENABLE(strip,AC_HELP_STRING([--enable-strip],[run strip program (default is disabled)]))
@@ -47,11 +47,16 @@ if test "$with_smodels_src" != "" && test "$with_smodels_src" != "no"; then
   fi
 fi
 
+CFLAGS="$VLAD_CFLAGS $CFLAGS"
+CXXFLAGS="$VLAD_CXXFLAGS $CXXFLAGS"
+LDFLAGS="$VLAD_LDFLAGS $LDFLAGS"
+
 AC_DEFINE_UNQUOTED(VERSION,"$PACKAGE_VERSION")
 
-CFLAGS="$TMP_CFLAGS $CFLAGS"
-CXXFLAGS="$TMP_CXXFLAGS $CXXFLAGS"
-LDFLAGS="$TMP_LDFLAGS $LDFLAGS"
+AC_SUBST(DISTDIR,"\$(TOPSRCDIR)/dist")
+AC_SUBST(BINDIR, "\$(DISTDIR)/bin")
+AC_SUBST(INCLUDEDIR, "\$(DISTDIR)/include/vlad")
+AC_SUBST(LIBDIR, "\$(DISTDIR)/lib/vlad")
 
 AC_CONFIG_FILES(  \
   Makefile        \
