@@ -241,17 +241,17 @@ ground_subst :
   ground_subject_subst
   {
     $$ = $1;
-    $$.type = atom_subst;
+    $$.type = EPI_ATOM_SUBST;
   }
   | ground_access_subst
   {
     $$ = $1;
-    $$.type = atom_subst;
+    $$.type = EPI_ATOM_SUBST;
   }
   | ground_object_subst
   {
     $$ = $1;
-    $$.type = atom_subst;
+    $$.type = EPI_ATOM_SUBST;
   }
   ;
 
@@ -259,17 +259,17 @@ ground_memb :
   ground_subject_memb
   {
     $$ = $1;
-    $$.type = atom_memb;
+    $$.type =  EPI_ATOM_MEMB;
   }
   | ground_access_memb
   {
     $$ = $1;
-    $$.type = atom_memb;
+    $$.type =  EPI_ATOM_MEMB;
   }
   | ground_object_memb
   {
     $$ = $1;
-    $$.type = atom_memb;
+    $$.type =  EPI_ATOM_MEMB;
   }
   ;
 

@@ -42,7 +42,7 @@ typedef union
 typedef struct
 {
   gnd_positive_atom_type atom;
-  atom_type_type type;
+  int type;
   int truth;
 } gnd_atom_type;
 

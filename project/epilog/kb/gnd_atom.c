@@ -37,11 +37,11 @@ int gnd_atom_cmp(gnd_atom_type atom1, gnd_atom_type atom2)
     return -1;
 
   switch (atom1.type) {
-    case atom_holds :
+    case EPI_ATOM_HOLDS :
       return gnd_atom_holds_cmp(atom1.atom.holds, atom2.atom.holds);
-    case atom_memb :
+    case EPI_ATOM_MEMB :
       return gnd_atom_memb_cmp(atom1.atom.memb, atom2.atom.memb);
-    case atom_subst :
+    case EPI_ATOM_SUBST :
       return gnd_atom_subst_cmp(atom1.atom.subst, atom2.atom.subst);
   }
 
