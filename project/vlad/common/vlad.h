@@ -7,7 +7,6 @@
 #define __VLAD_VLAD_H
 
 /* query result codes */
-
 #define VLAD_RESULT_TRUE     0
 #define VLAD_RESULT_FALSE    1
 #define VLAD_RESULT_UNKNOWN  2
@@ -43,5 +42,7 @@
 #define VLAD_ADT_MALLOC(X,Y)  ((X *) malloc(sizeof(X) * Y))
 #define VLAD_STRING_MALLOC(X) ((char *) malloc(sizeof(char) * (strlen(X) + 1)))
 #define VLAD_NEW(X)           (new(std::nothrow) X)
+
+#define VLAD_RESULT_STRING(X) (((X) == VLAD_RESULT_TRUE) ? "true" : (X) == VLAD_RESULT_FALSE ? "false" : "unknown")
 
 #endif

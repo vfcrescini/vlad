@@ -539,10 +539,29 @@ query_stmt :
     char r[10240];
 #endif
 
-    if ((retval = kbase.generate_nlp($2, $3, yyout)) != VLAD_OK) {
-      fprintf(yyerr, "internal error: %d\n", retval);
-      return retval;
+  switch(mode) {
+    case VLAD_MODE_NLP : {
+      if ((retval = kbase.generate_nlp($2, $3, yyout)) != VLAD_OK) {
+        fprintf(yyerr, "internal error: %d\n", retval);
+        return retval;
+      }
+      break;
     }
+#ifdef SMODELS
+    case VLAD_MODE_SMODELS : {
+      unsigned char res;
+      if ((retval = kbase.evaluate_query($2, $3, &res)) != VLAD_OK) {
+        fprintf(yyerr, "internal error: %d\n", retval);
+        return retval;
+      }
+      fprintf(yyout, "%s\n", VLAD_RESULT_STRING(res));
+      break;
+    }
+#endif
+    default :
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
+      return VLAD_FAILURE;
+  }
 
 #ifdef DEBUG
     $2->print(q);

@@ -12,6 +12,10 @@
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
 
+#ifdef SMODELS
+  #include <vlad/wrapper.h>
+#endif
+
 kb::kb()
 {
   stable = NULL;
@@ -664,6 +668,26 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
   return VLAD_OK;
 }
+
+#ifdef SMODELS
+/* use wrapper class to evaluate a query */
+int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
+{
+  int retval;
+  wrapper *wrap;
+
+  if ((wrap = VLAD_NEW(wrapper())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  if ((retval = wrap->init()) != VLAD_OK)
+    return retval;
+
+  *r = VLAD_RESULT_TRUE;
+
+  return VLAD_OK;
+}
+#endif
+
 /* make sure atom a is valid */
 int kb::verify_atom(atom *a, stringlist *v)
 {

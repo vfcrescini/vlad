@@ -1,6 +1,16 @@
 2003-04-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/vlad.h :
+
+	  - Added a result macro to convert numeric codes to string.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added a skeletal evaluate_query() function that calls on smodels.
+
+	* common/vlad.h :
 	* main/vlad.cpp :
 	* parser/parser.h :
 	* parser/parser.y :
