@@ -566,9 +566,9 @@
           $\sigma'$ = $Res$($u$, $\sigma$)
         \end{vquote}
 
-        Given an initial state $S_{0}$ and a sequence list $\psi$, each state
-        $\sigma_{i}$ ($0$ $\leq$ $i$ $\leq$ $|\psi|$) may be represented as
-        follows:
+        Given an initial state $S_{0}$ and a policy update sequence list
+        $\psi$, each state $\sigma_{i}$ ($0$ $\leq$ $i$ $\leq$ $|\psi|$)
+        may be represented as follows:
 
         \begin{vquote}
           $\sigma_{0}$ = $S_{0}$
@@ -597,13 +597,14 @@
           to the {\em entity identifiers} of language ${\cal L}$.
 
           \begin{vquote}
-            ${\cal E} = {\cal E}_{s} \cup {\cal E}_{a} \cup {\cal E}_{o}$
+            ${\cal E}$ =
+            ${\cal E}_{s}$ $\cup$ ${\cal E}_{a}$ $\cup$ ${\cal E}_{o}$
 
-            ${\cal E}_{s} = {\cal E}_{ss} \cup {\cal E}_{sg}$
+            ${\cal E}_{s}$ = ${\cal E}_{ss}$ $\cup$ ${\cal E}_{sg}$
 
-            ${\cal E}_{a} = {\cal E}_{as} \cup {\cal E}_{ag}$
+            ${\cal E}_{a}$ = ${\cal E}_{as}$ $\cup$ ${\cal E}_{ag}$
 
-            ${\cal E}_{o} = {\cal E}_{os} \cup {\cal E}_{og}$
+            ${\cal E}_{o}$ = ${\cal E}_{os}$ $\cup$ ${\cal E}_{og}$
           \end{vquote}
 
         \paragraph{Atoms.}
@@ -622,25 +623,45 @@
           $\sigma$.
 
           \begin{vquote}
-            ${\cal A}^{\sigma} = {\cal A}^{\sigma}_{h} \cup {\cal A}^{\sigma}_{m} \cup {\cal A}^{\sigma}_{s}$
+            ${\cal A}^{\sigma}$ =
+            ${\cal A}^{\sigma}_{h}$ $\cup$ ${\cal A}^{\sigma}_{m}$ $\cup$
+            ${\cal A}^{\sigma}_{s}$
 
-            ${\cal A}^{\sigma}_{h} = \{\hat{holds}(s, a, o, \sigma) \mid s \in {\cal E}_{s}, a \in {\cal E}_{a}, o \in {\cal E}_{o}\}$
+            ${\cal A}^{\sigma}_{h}$ =
+            $\{\hat{holds}$($s$, $a$, $o$, $\sigma$) $\mid$ $s$ $\in$
+            ${\cal E}_{s}$, $a$ $\in$ ${\cal E}_{a}$, $o$ $\in$
+            ${\cal E}_{o}\}$
 
-            ${\cal A}^{\sigma}_{m} = {\cal A}^{\sigma}_{ms} \cup {\cal A}^{\sigma}_{ma} \cup {\cal A}^{\sigma}_{mo}$
+            ${\cal A}^{\sigma}_{m}$ =
+            ${\cal A}^{\sigma}_{ms}$ $\cup$ ${\cal A}^{\sigma}_{ma}$ $\cup$
+            ${\cal A}^{\sigma}_{mo}$
 
-            ${\cal A}^{\sigma}_{s} = {\cal A}^{\sigma}_{ss} \cup {\cal A}^{\sigma}_{sa} \cup {\cal A}^{\sigma}_{so}$
+            ${\cal A}^{\sigma}_{s}$ =
+            ${\cal A}^{\sigma}_{ss}$ $\cup$ ${\cal A}^{\sigma}_{sa}$ $\cup$
+            ${\cal A}^{\sigma}_{so}$
 
-            ${\cal A}^{\sigma}_{ms} = \{\hat{memb}(e, g, \sigma) \mid e \in {\cal E}_{ss}, g \in {\cal E}_{sg}\}$
+            ${\cal A}^{\sigma}_{ms}$ =
+            $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$ $e$ $\in$
+            ${\cal E}_{ss}$, $g$ $\in$ ${\cal E}_{sg}\}$
 
-            ${\cal A}^{\sigma}_{ma} = \{\hat{memb}(e, g, \sigma) \mid e \in {\cal E}_{as}, g \in {\cal E}_{ag}\}$
+            ${\cal A}^{\sigma}_{ma}$ =
+            $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$ $e$ $\in$
+            ${\cal E}_{as}$, $g$ $\in$ ${\cal E}_{ag}\}$
 
-            ${\cal A}^{\sigma}_{mo} = \{\hat{memb}(e, g, \sigma) \mid e \in {\cal E}_{os}, g \in {\cal E}_{og}\}$
+            ${\cal A}^{\sigma}_{mo}$ =
+            $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$ $e$ $\in$
+            ${\cal E}_{os}$, $g$ $\in$ ${\cal E}_{og}\}$
 
-            ${\cal A}^{\sigma}_{ss} = \{\hat{subst}(g1, g2, \sigma) \mid g1, g2 \in {\cal E}_{sg}\}$
+            ${\cal A}^{\sigma}_{ss}$ = $\{\hat{subst}$($g_{1}$, $g_{2}$,
+            $\sigma$) $\mid$ $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{sg}\}$
 
-            ${\cal A}^{\sigma}_{sa} = \{\hat{subst}(g1, g2, \sigma) \mid g1, g2 \in {\cal E}_{ag}\}$
+            ${\cal A}^{\sigma}_{sa}$ =
+            $\{\hat{subst}(g_{1}, g_{2}, \sigma)$ $\mid$ $g_{1}$, $g_{2}$ $\in$
+            ${\cal E}_{ag}\}$
 
-            ${\cal A}^{\sigma}_{so} = \{\hat{subst}(g1, g2, \sigma) \mid g1, g2 \in {\cal E}_{og}\}$
+            ${\cal A}^{\sigma}_{so}$ =
+            $\{\hat{subst}(g_{1}, g_{2}, \sigma)$ $\mid$ $g_{1}$, $g_{2}$ $\in$
+            ${\cal E}_{og}\}$
           \end{vquote}
 
         \paragraph{Facts.}
@@ -712,16 +733,16 @@
           ${\cal L}$ to language ${\cal L}^{*}$ rules is trivial:
           translate each fact that make up the initial fact expression of
           language ${\cal L}$ with its corresponding equivalent initial state
-          atom of language ${\cal L}^{*}$.
-
-          Given an initial fact expression of language ${\cal L}$ that is
-          composed of $n$ facts:
+          atom of language ${\cal L}^{*}$. Given the following {\em initially}
+          statement in language ${\cal L}$:
 
           \begin{vverbatim}
-  \(\rho\sb{0}\) && \ldots && \(\rho\sb{n}\)
+  initially \(\rho\sb{0}\) && \ldots && \(\rho\sb{n}\);
           \end{vverbatim}
 
-          In language ${\cal L}^{*}$, the statement above is translated to:
+          \noindent
+          The language ${\cal L}^{*}$ translation of this statement is shown
+          below:
 
           \begin{vquote}
             $\hat{\rho}_{0}$ $\leftarrow$
@@ -734,7 +755,7 @@
           \begin{vquote}
             where
 
-            $\hat{\rho}_{i}$ $=$ $TransFact$($\rho_{i}$, $S_{0}$),
+            $\hat{\rho}_{i}$ = $TransFact$($\rho_{i}$, $S_{0}$),
 
             $0$ $\leq$ $i$ $\leq$ $n$
           \end{vquote}
@@ -743,16 +764,19 @@
           translation is the number of facts $n$ in the given language
           ${\cal L}$ initial fact expression.
 
-          The following code shows an example of a language ${\cal L}$
-          $initially$ statement:
+          The following code shows a more realistic example of language
+          ${\cal L}$ $initially$ statements:
 
           \begin{vverbatim}
   initially
     holds(admins, read, sys\_data) &&
-    memb(alice, admins) &&
+    memb(alice, admins);
+
+  initially
     memb(bob, admins);
           \end{vverbatim}
 
+        \noindent
         In language ${\cal L}^{*}$, the above statements are translated to:
 
         \begin{vquote}
@@ -827,13 +851,13 @@
           \begin{vquote}
             where
 
-            $\hat{a}^{\sigma}_{i}$ $=$ $TransFact$($a_{i}$, $\sigma$),
+            $\hat{a}^{\sigma}_{i}$ = $TransFact$($a_{i}$, $\sigma$),
             $0$ $\leq$ $i$ $\leq$ $m$,
 
-            $\hat{b}^{\sigma}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
+            $\hat{b}^{\sigma}_{j}$ = $TransFact$($b_{j}$, $\sigma$),
             $0$ $\leq$ $j$ $\leq$ $n$,
 
-            $\hat{c}^{\sigma}_{k}$ $=$ $TransFact$($c_{k}$, $\sigma$),
+            $\hat{c}^{\sigma}_{k}$ = $TransFact$($c_{k}$, $\sigma$),
             $0$ $\leq$ $k$ $\leq$ $o$,
 
             $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
@@ -868,7 +892,7 @@
           \end{vverbatim}
 
           Given a policy update reference in the sequence list $\psi$ (i.e.
-          $|\psi|$ $=$ $1$), the language ${\cal L}^{*}$ equivalent is as
+          $|\psi|$ = $1$), the language ${\cal L}^{*}$ equivalent is as
           follows:
 
           \begin{vquote}
@@ -887,7 +911,9 @@
 
             \hspace{1em}
             $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{0}$)
+          \end{vquote}
 
+          \begin{vquote}
             $\hat{holds}$($alice$, $read$, $data$, $S_{1}$) $\leftarrow$
 
             \hspace{1em}
@@ -935,10 +961,10 @@
           \begin{vquote}
             where
 
-            $\hat{a}_{i}$ $=$ $TransFact$($a_{i}$, $Res$($u$, $\sigma$)),
+            $\hat{a}_{i}$ = $TransFact$($a_{i}$, $Res$($u$, $\sigma$)),
             $0$ $\leq$ $i$ $\leq$ $m$,
 
-            $\hat{b}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
+            $\hat{b}_{j}$ = $TransFact$($b_{j}$, $\sigma$),
             $0$ $\leq$ $j$ $\leq$ $n$
           \end{vquote}
 
@@ -969,7 +995,9 @@
 
             \hspace{1em}
             $\hat{memb}$($alice$, $readers$, $S_{0}$)
+          \end{vquote}
 
+          \begin{vquote}
             $\hat{holds}$($alice$, $write$, $file$, $S_{2}$) $\leftarrow$
 
             \hspace{1em}
@@ -1017,32 +1045,32 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}(s_{s}, a, o, \sigma)$ $\leftarrow$
+                    $\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}(s_{g}, a, o, \sigma)$,
-                    $\hat{memb}(s_{s}, s_{g}, \sigma)$,
+                    $\hat{holds}$($s_{g}$, $a$, $o$, $\sigma$),
+                    $\hat{memb}$($s_{s}$, $s_{g}$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot\hat{holds}(s_{s}, a, o, \sigma)$
+                    $not$ $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}(s_{s}, a, o, \sigma)$ $\leftarrow$
+                    $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}(s_{g}, a, o, \sigma)$,
-                    $\hat{memb}(s_{s}, s_{g}, \sigma)$
+                    $\lnot\hat{holds}$($s_{g}$, $a$, $o$, $\sigma$),
+                    $\hat{memb}$($s_{s}$, $s_{g}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $s_{s} \in {\cal E}_{ss}$,
-                    $s_{g} \in {\cal E}_{sg}$,
-                    $a \in {\cal E}_{a}$,
-                    $o \in {\cal E}_{o}$,
-                    $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                    $s_{s}$ $\in$ ${\cal E}_{ss}$,
+                    $s_{g}$ $\in$ ${\cal E}_{sg}$,
+                    $a$ $\in$ ${\cal E}_{a}$,
+                    $o$ $\in$ ${\cal E}_{o}$,
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
 
                 \item
@@ -1053,32 +1081,33 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}(s, a_{s}, o, \sigma)$ $\leftarrow$
+                    $\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}(s, a_{g}, o, \sigma)$,
-                    $\hat{memb}(a_{s}, a_{g}, \sigma)$,
+                    $\hat{holds}$($s$, $a_{g}$, $o$, $\sigma$),
+                    $\hat{memb}$($a_{s}$, $a_{g}$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot\hat{holds}(s, a_{s}, o, \sigma)$
+                    $not$ $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}(s, a_{s}, o, \sigma)$ $\leftarrow$
+                    $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$)
+                    $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}(s, a_{g}, o, \sigma)$,
-                    $\hat{memb}(a_{s}, a_{g}, \sigma)$
+                    $\lnot\hat{holds}$($s$, $a_{g}$, $o$, $\sigma$),
+                    $\hat{memb}$($a_{s}$, $a_{g}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $s \in {\cal E}_{s}$,
-                    $a_{s} \in {\cal E}_{as}$,
-                    $a_{g} \in {\cal E}_{ag}$,
-                    $o \in {\cal E}_{o}$,
-                    $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                    $s$ $\in$ ${\cal E}_{s}$,
+                    $a_{s}$ $\in$ ${\cal E}_{as}$,
+                    $a_{g}$ $\in$ ${\cal E}_{ag}$,
+                    $o$ $\in$ ${\cal E}_{o}$,
+                    $S_{0}$ ${\leq}$ ${\sigma}$ ${\leq}$ $S_{|\psi|}$
                   \end{vquote}
 
                  \item
@@ -1089,32 +1118,33 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}(s, a, o_{s}, \sigma)$ $\leftarrow$
+                    $\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}(s, a, o_{g}, \sigma)$,
-                    $\hat{memb}(o_{s}, o_{g}, \sigma)$,
+                    $\hat{holds}$($s$, $a$, $o_{g}$, $\sigma$),
+                    $\hat{memb}$($o_{s}$, $o_{g}$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot\hat{holds}(s, a, o_{s}, \sigma)$
+                    $not$ $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}(s, a, o_{s}, \sigma)$ $\leftarrow$
+                    $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$)
+                    $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}(s, a, o_{g}, \sigma)$,
-                    $\hat{memb}(o_{s}, o_{g}, \sigma)$
+                    $\lnot\hat{holds}$($s$, $a$, $o_{g}$, $\sigma$),
+                    $\hat{memb}$($o_{s}$, $o_{g}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $s \in {\cal E}_{s}$,
-                    $a \in {\cal E}_{a}$,
-                    $o_{s} \in {\cal E}_{os}$,
-                    $o_{g} \in {\cal E}_{og}$,
-                    $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                    $s$ $\in$ ${\cal E}_{s}$,
+                    $a$ $\in$ ${\cal E}_{a}$,
+                    $o_{s}$ $\in$ ${\cal E}_{os}$,
+                    $o_{g}$ $\in$ ${\cal E}_{og}$,
+                    $S_{0}$ ${\leq}$ ${\sigma}$ ${\leq}$ $S_{|\psi|}$
                   \end{vquote}
 
                 \item
@@ -1125,31 +1155,32 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}(s_{g1}, a, o, \sigma)$ $\leftarrow$
+                    $\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}(s_{g2}, a, o, \sigma)$,
-                    $\hat{subst}(s_{g1}, s_{g2}, \sigma)$,
+                    $\hat{holds}$($s_{g2}$, $a$, $o$, $\sigma$),
+                    $\hat{subst}$($s_{g1}$, $s_{g2}$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot\hat{holds}(s_{g1}, a, o, \sigma)$
+                    $not$ $\lnot\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}(s_{g1}, a, o, \sigma)$ $\leftarrow$
+                    $\lnot\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$)
+                    $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}(s_{g2}, a, o, \sigma)$,
-                    $\hat{subst}(s_{g1}, s_{g2}, \sigma)$
+                    $\lnot\hat{holds}$($s_{g2}$, $a$, $o$, $\sigma$),
+                    $\hat{subst}$($s_{g1}$, $s_{g2}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
-                    $a \in {\cal E}_{a}$,
-                    $o \in {\cal E}_{o}$,
-                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                    $s_{g1}$, $s_{g2}$ $\in$ ${\cal E}_{sg}$,
+                    $a$ $\in$ ${\cal E}_{a}$,
+                    $o$ $\in$ ${\cal E}_{o}$,
+                    $S_{0}$ $\leq$ $\sigma$ $\leq S_{|\psi|}$
                   \end{vquote}
 
                 \item
@@ -1160,31 +1191,32 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}(s, a_{g1}, o, \sigma)$ $\leftarrow$
+                    $\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}(s, a_{g2}, o, \sigma)$,
-                    $\hat{subst}(a_{g1}, a_{g2}, \sigma)$,
+                    $\hat{holds}$($s$, $a_{g2}$, $o$, $\sigma$),
+                    $\hat{subst}$($a_{g1}$, $a_{g2}$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot \hat{holds}(s, a_{g1}, o, \sigma)$
+                    $not$ $\lnot$ $\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}(s, a_{g1}, o, \sigma)$ $\leftarrow$
+                    $\lnot\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$)
+                    $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}(s, a_{g2}, o, \sigma)$,
-                    $\hat{subst}(a_{g1}, a_{g2}, \sigma)$
+                    $\lnot\hat{holds}$($s$, $a_{g2}$, $o$, $\sigma$),
+                    $\hat{subst}$($a_{g1}$, $a_{g2}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $s \in {\cal E}_{s}$,
-                    $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
-                    $o \in {\cal E}_{o}$,
-                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                    $s$ $\in$ ${\cal E}_{s}$,
+                    $a_{g1}$, $a_{g2}$ $\in$ ${\cal E}_{ag}$,
+                    $o$ $\in$ ${\cal E}_{o}$,
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
 
                 \item
@@ -1195,31 +1227,32 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}(s, a, o_{g1}, \sigma)$ $\leftarrow$
+                    $\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}(s, a, o_{g2}, \sigma)$,
-                    $\hat{subst}(o_{g1}, o_{g2}, \sigma)$,
+                    $\hat{holds}$($s$, $a$, $o_{g2}$, $\sigma$),
+                    $\hat{subst}$($o_{g1}$, $o_{g2}$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot\hat{holds}(s, a, o_{g1}, \sigma)$
+                    $not$ $\lnot\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}(s, a, o_{g1}, \sigma)$ $\leftarrow$
+                    $\lnot\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$)
+                    $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}(s, a, o_{g2}, \sigma)$,
-                    $\hat{subst}(o_{g1}, o_{g2}, \sigma)$
+                    $\lnot\hat{holds}$($s$, $a$, $o_{g2}$, $\sigma$),
+                    $\hat{subst}$($o_{g1}$, $o_{g2}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $s \in {\cal E}_{s}$,
-                    $a \in {\cal E}_{a}$,
-                    $o_{g1}, o_{g2} \in {\cal E}_{og}$,
-                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                    $s$ $\in$ ${\cal E}_{s}$,
+                    $a$ $\in$ ${\cal E}_{a}$,
+                    $o_{g1}$, $o_{g2}$ $\in$ ${\cal E}_{og}$,
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
               \end{enumerate}
 
@@ -1239,20 +1272,20 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{subst}(sg_{1}, sg_{3}, \sigma)$ $\leftarrow$
+                    $\hat{subst}$($sg_{1}$, $sg_{3}$, $\sigma$) $\leftarrow$
                   \end{vquote}
 
                   \begin{vquote}
                     \hspace{1em}
-                    $\hat{subst}(sg_{1}, sg_{2}, \sigma)$,
-                    $\hat{subst}(sg_{2}, sg_{3}, \sigma)$
+                    $\hat{subst}$($sg_{1}$, $sg_{2}$, $\sigma$),
+                    $\hat{subst}$($sg_{2}$, $sg_{3}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
-                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                    $sg_{1}$, $sg_{2}$, $sg_{3}$ $\in$ ${\cal E}_{sg}$,
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
 
                 \item
@@ -1263,20 +1296,20 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{subst}(ag_{1}, ag_{3}, \sigma)$ $\leftarrow$
+                    $\hat{subst}$($ag_{1}$, $ag_{3}$, $\sigma$) $\leftarrow$
                   \end{vquote}
 
                   \begin{vquote}
                     \hspace{1em}
-                    $\hat{subst}(ag_{1}, ag_{2}, \sigma)$,
-                    $\hat{subst}(ag_{2}, ag_{3}, \sigma)$
+                    $\hat{subst}$($ag_{1}$, $ag_{2}$, $\sigma$),
+                    $\hat{subst}$($ag_{2}$, $ag_{3}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
-                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                    $ag_{1}$, $ag_{2}$, $ag_{3}$ $\in$ ${\cal E}_{ag}$,
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
 
                 \item
@@ -1287,20 +1320,20 @@
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{subst}(og_{1}, og_{3}, \sigma)$ $\leftarrow$
+                    $\hat{subst}$($og_{1}$, $og_{3}$, $\sigma$) $\leftarrow$
                   \end{vquote}
 
                   \begin{vquote}
                     \hspace{1em}
-                    $\hat{subst}(og_{1}, og_{2}, \sigma)$,
-                    $\hat{subst}(og_{2}, og_{3}, \sigma)$
+                    $\hat{subst}$($og_{1}$, $og_{2}$, $\sigma$),
+                    $\hat{subst}$($og_{2}$, $og_{3}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
-                    $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
-                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                    $og_{1}$, $og_{2}$, $og_{3}$ $\in$ ${\cal E}_{og}$,
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
                \end{enumerate}
 
@@ -1799,41 +1832,42 @@
 
             \hspace{1em}
             % initially
-            $M_{i}$ $|{\cal S}_{i}|$ +
+            $M_{i}$ $|{\cal S}_{i}|$ $+$
             % constraints
-            $M_{c}$ $|{\cal S}_{c}|$ $|\psi|$ +
+            $M_{c}$ $|{\cal S}_{c}|$ $|\psi|$ $+$
             % policy updates
-            $M_{u}$ $|\psi|$ +
+            $M_{u}$ $|\psi|$ $+$
 
             % membership inheritance
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
+            $2$ $|\psi|$ $|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ +
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
 
             % subset inheritance
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
+            $2$ $|\psi|$ $|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ +
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
 
             % transitivity rules
             \hspace{1em}
-            $|\psi|$ $($$|{\cal E}_{sg}|^{3}$ +
-            $|{\cal E}_{ag}|^{3}$ +
-            $|{\cal E}_{og}|^{3}$$)$ +
+            $|\psi|$
+            $($$|{\cal E}_{sg}|^{3}$ $+$
+            $|{\cal E}_{ag}|^{3}$ $+$
+            $|{\cal E}_{og}|^{3}$$)$ $+$
 
             % inertial rules
             \hspace{1em}
-            $2$ $|{\cal A}|$ $|\psi|$ +
+            $2$ $|{\cal A}|$ $|\psi|$ $+$
           \end{vquote}
         \end{vtheorem}
 
@@ -1845,12 +1879,12 @@
             $|$$Trans$(${\cal D_{L}}$)$|$ =
 
             \hspace{1em}
-            $|$${\cal F}_{int}$$|$ +
-            $|$${\cal F}_{con}$$|$ +
-            $|$${\cal F}_{upd}$$|$ +
-            $|$${\cal F}_{inh}$$|$ +
-            $|$${\cal F}_{tra}$$|$ +
-            $|$${\cal F}_{ine}$$|$
+            $|{\cal F}_{int}|$ $+$
+            $|{\cal F}_{con}|$ $+$
+            $|{\cal F}_{upd}|$ $+$
+            $|{\cal F}_{inh}|$ $+$
+            $|{\cal F}_{tra}|$ $+$
+            $|{\cal F}_{ine}|$
           \end{vquote}
 
           where ${\cal F}_{int}$, ${\cal F}_{con}$, ${\cal F}_{upd}$,
@@ -1864,7 +1898,7 @@
           rules generated in the translation is:
 
           \begin{vquote}
-            $|$${\cal F}_{int}$$|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
+            $|{\cal F}_{int}|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
           \end{vquote}
 
           Each language ${\cal L}$ constraint statement in ${\cal S}_{c}$
@@ -1875,7 +1909,7 @@
           statement, we have:
 
           \begin{vquote}
-            $|$${\cal F}_{con}$$|$ $\leq$ $M_{c}$ $|$${\cal S}_{c}$$|$ $|\psi|$
+            $|{\cal F}_{con}|$ $\leq$ $M_{c}$ $|$${\cal S}_{c}$$|$ $|\psi|$
           \end{vquote}
 
           For policy update statements, only those that are applied are
@@ -1884,7 +1918,7 @@
           applied policy update statement, we have:
 
           \begin{vquote}
-            $|$${\cal F}_{con}$$|$ $\leq$ $M_{u}$ $|\psi|$
+            $|{\cal F}_{con}|$ $\leq$ $M_{u}$ $|\psi|$
           \end{vquote}
 
           The total number of inheritance rules generated in the translation is
@@ -1892,9 +1926,9 @@
           subset inheritance rules:
 
           \begin{vquote}
-            $|$${\cal F}_{inh}$$|$ =
-            $|$${\cal F}_{inh_{m}}$$|$ +
-            $|$${\cal F}_{inh_{s}}$$|$
+            $|{\cal F}_{inh}|$ =
+            $|{\cal F}_{inh_{m}}|$ $+$
+            $|{\cal F}_{inh_{s}}|$
           \end{vquote}
 
           Since the membership inheritance rules show the relationships between
@@ -1902,32 +1936,32 @@
           number of states times 2 (for negative facts), we have:
 
           \begin{vquote}
-            $|$${\cal F}_{inh_{m}}$$|$ =
+            $|{\cal F}_{inh_{m}}|$ =
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
+            $2$ $|\psi|$ $|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ +
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
           \end{vquote}
 
           For subset inheritance rules, only the relationships between group
           entities are considered:
 
           \begin{vquote}
-            $|$${\cal F}_{inh_{s}}$$|$ =
+            $|{\cal F}_{inh_{s}}|$ =
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
+            $2$ $|\psi|$ $|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ +
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ $+$
 
             \hspace{1em}
-            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
+            $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
           \end{vquote}
 
           As transitivity rules enumerate every possible combinations of any
@@ -1936,14 +1970,17 @@
 
           \begin{vquote}
             $|$${\cal F}_{tra}$$|$ =
-            $|\psi|$ $($$|{\cal E}_{sg}|^{3}$ +
-            $|{\cal E}_{ag}|^{3}$ +
-            $|{\cal E}_{og}|^{3}$$)$
+            $|\psi|$ 
+            ($|{\cal E}_{sg}|^{3}$ $+$
+            $|{\cal E}_{ag}|^{3}$ $+$
+            $|{\cal E}_{og}|^{3}$)
           \end{vquote}
 
           Finally, a single atom in language ${\cal L}$ corresponds to $n$
-          inertial rules, where $n$ is the number of states times 2 (for
-          negative facts): $|$${\cal F}_{ine}$$|$ = $2$ $|{\cal A}|$ $|\psi|$.
+          inertial rules in language ${\cal L}^{*}$, where $n$ is the number of
+          states times 2 (for negative facts). This means the total number of
+          intertial rules generated is $|{\cal F}_{ine}|$ = $2$ $|{\cal A}|$
+          $|\psi|$.
         \end{vproof}
 
   \section{Domain Consistency Checking and Evaluation}
@@ -2419,13 +2456,14 @@
         \paragraph{Removal of Classical Negation.}
 
           In order to remove classical negation from facts of language
-          ${\cal L}$, each classically negated fact $\lnot$$f$ is replaced by
-          a new and unique positive fact $f'$ that represents the negation of
-          fact $f$. To preserve the consistency of the policy base for all
-          facts $f$ in the domain, the following constraint rule must be added:
+          ${\cal L}$, each classically negated fact $\lnot$$\rho$ is replaced
+          by a new and unique positive fact $\rho'$ that represents the
+          negation of fact $\rho$. To preserve the consistency of the policy
+          base for all facts $\rho$ in the domain, the following constraint
+          rule must be added:
 
           \begin{vquote}
-            $FALSE$ $\leftarrow$ $f$, $f'$
+            $FALSE$ $\leftarrow$ $\rho$, $\rho'$
           \end{vquote}
 
           The removal process involves adding a boolean parameter to each fact
@@ -2436,20 +2474,24 @@
             $\lnot$ $holds$($alice$, $exec$, $file$)
           \end{vquote}
 
+          \noindent
           To remove classical negation, it is replaced by:
 
           \begin{vquote}
             $holds$($alice$, $exec$, $file$, $false$)
           \end{vquote}
 
+          \noindent
           For consistency, the following constraint is added:
 
           \begin{vquote}
             $FALSE$ $\leftarrow$
 
             \hspace{1em}
-            holds(alice, exec, file, true),
-            holds(alice, exec, file, false)
+            $holds$($alice$, $exec$, $file$, $true$),
+
+            \hspace{1em}
+            $holds$($alice$, $exec$, $file$, $false$)
           \end{vquote}
 
         \paragraph{Representing Facts in Propositional Form.}
@@ -2457,11 +2499,22 @@
           A fact expressed in normal logic program form is composed of the
           atom relation, the state in which it holds and a boolean flag to
           indicate classical negation. For notational simplicity, this tuple
-          may be represented by a unique positive integer $i$, where $0$ $\leq$
-          $i$ $<$ $n$ ($n$ is the total number of possible facts in the
-          domain). The process of translating facts of language ${\cal L}$
-          into normal logic program form is achieved by performing the
-          following steps:
+          may be represented by a unique positive integer $i$, where
+          $0$ $\leq$ $i$ $<$ $|{\cal F}|$ ($|{\cal F}|$ is the total
+          number of facts in the domain). The process of translating facts of
+          language ${\cal L}$ into normal logic program form is summarised by
+          the following function:
+
+          \begin{vquote}
+            $i$ = $Encode$($\alpha$, $\sigma$, $\tau$)
+          \end{vquote}
+
+          As shown above, the $Encode$ function takes a language ${\cal L}$
+          atom $\alpha$, the state $\sigma$ in which $\alpha$ holds, and a
+          truth value $\tau$ that indicates whether $\alpha$ is classically
+          negated or not. $Encode$ returns a unique index $i$ for that
+          fact. The steps below outlines how the $Encode$ function computes
+          the index $i$.
 
           \begin{itemize}
 
@@ -2493,26 +2546,24 @@
               {\em Assign an ordinal index for each enumerated atom.}
               Since the enumerated list of atoms are ordered, consecutive
               positive integers may be assigned to each atom as an ordinal
-              index $i$, where $0$ $\leq$ $i$ $<$ $n$ ($n$ is the total
-              number of atoms enumerated).
+              index $i$, where $0$ $\leq$ $i$ $<$ $n$ ($n$ is the total number
+              of atoms enumerated).
 
             \item
-              {\em Extend indexing procedure to represent facts.} Since
-              negative facts are just mirror images of their positive
-              counterparts, their indices are calculated by adding $n$ to the
-              indices of the corresponding positive facts. Thus, indices $i$
-              ($n$ $\leq$ $i$ $<$ $2n$) are negative facts. Furthermore, this
+              {\em Extend indexing procedure to represent facts.} At the
+              implementation level, facts are just atoms with truth values.
+              As such, we can treat each atom as positive facts. Since negative
+              facts are just mirror images of their positive counterparts,
+              their indices are calculated by adding $n$ to the indices of the
+              corresponding positive facts. Thus, indices $i$, where $n$ $\leq$
+              $i$ $<$ $2n$ are negative facts while indices $i$, where $0$
+              $\leq$ $i$ $<$ $n$ are positive facts. Furthermore, this
               procedure is again extended to represent the states of the
-              facts. The process is similar: indices $i$ ($0$ $\leq$ $i$ $<$
-              $2n$) represent facts of state $S_{0}$, indices $i$ ($2n$ $\leq$
-              $i$ $<$ $4n$) represent facts of state $S_{1}$, and so on.
+              facts. The process is similar: indices $i$, where $0$ $\leq$ $i$
+              $<$ $2n$ represent facts of state $S_{0}$, indices $i$, where
+              $2n$ $\leq$ $i$ $<$ $4n$ represent facts of state $S_{1}$, and
+              so on.
           \end{itemize}
-
-          The steps outlined above may be summarised by the function below:
-
-          \begin{vquote}
-            $index$ = $encode$($ent1$, $ent2$, $ent3$, $state$, $truth$)
-          \end{vquote}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
@@ -2522,7 +2573,7 @@
           described in Section \ref{subsec-semantics} and the method for
           eliminating classical negation, each initial state expression,
           constraint rule and policy update becomes a set of simple logical
-          rules. By applying the $encode$ function above for each fact in each
+          rules. By applying the $Encode$ function above for each fact in each
           of these rules, a normal logic program is generated.
 
       \subsubsection{Query Evaluation}
