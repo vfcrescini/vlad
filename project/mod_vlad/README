@@ -9,7 +9,7 @@ REQUIREMENTS :
 
   - GNU build system (GCC, GNU Make, GNU Bison and GNU Flex)
   - libvlad 0.9.5 or newer headers + lib (must be compiled with --with-smodels 
-    and --enable-wrapper
+    and --enable-wrapper)
   - Apache 2.0.45 or newer (headers)
 
 BUILD INSTRUCTIONS :
@@ -119,7 +119,7 @@ FILES :
 
       <ident> = [a-zA-Z0-9_/]{1,128}
 
-ADMINISTRATOR PRIVILAGES:
+ADMINISTRATOR PRIVILEGES:
 
   The "administrator" user can access the transformation sequence manipulator
   interface by accessing the following URL in a browser :
