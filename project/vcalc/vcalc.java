@@ -107,7 +107,7 @@ class calcpanel extends Panel implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     System.out.println(e.getActionCommand().charAt(0));
-    switch (e.getActionCommand().charAt(0)) {
+    switch(e.getActionCommand().charAt(0)) {
       case '0' : 
       case '1' : 
       case '2' : 
@@ -165,7 +165,7 @@ class calcdisplay extends Panel {
 
   public void pressed_num(int n) {
     if (n >= 0 && n <= 9) {
-      switch (state) {
+      switch(state) {
         case 0 :
           fvalue *= 10;
           fvalue += n;
@@ -196,7 +196,7 @@ class calcdisplay extends Panel {
 
   public void pressed_op(char newop) {
     if (newop == '+' || newop == '-' || newop == '*' || newop == '/') {
-      switch (state) {
+      switch(state) {
         case 0 :
           op = newop;
           state = 1;
@@ -221,7 +221,7 @@ class calcdisplay extends Panel {
   }
 
   public void pressed_equals() {
-    switch (state) {
+    switch(state) {
       case 0 :
         break;
       case 1 :
