@@ -27,8 +27,9 @@
 #define VLAD_STR_SUBSET      "subset"
 
 /* string lengths */
-#define VLAD_MAXLEN_STR      1024
+#define VLAD_MAXLEN_STR      5120
 #define VLAD_MAXLEN_NUM      32
+#define VLAD_MAXLEN_IDENT    128
 
 /* error codes */
 

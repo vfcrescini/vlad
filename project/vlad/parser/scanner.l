@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <config.h>
+#include <vlad/vlad.h>
 #include <vlad/kb.h>
 #include "y.tab.h"
 

@@ -35,7 +35,7 @@ int yylex(void);
 %}
 
 %union {
-  char identifier[128];
+  char identifier[VLAD_MAXLEN_IDENT];
   unsigned int terminal;
   atom *atm;
   expression *exp;
@@ -344,7 +344,7 @@ initial_stmt :
     unsigned int i;
     atom *a;
 #ifdef DEBUG
-    char s[128];
+    char s[VLAD_MAXLEN_STR];
 #endif
 
     /*
@@ -384,9 +384,9 @@ implies_stmt :
   expression VLAD_SYM_IMPLIES expression with_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
-    char e[1024];
-    char c[1024];
-    char n[1024];
+    char e[VLAD_MAXLEN_STR];
+    char c[VLAD_MAXLEN_STR];
+    char n[VLAD_MAXLEN_STR];
 #endif
     if ((retval = kbase.add_consttab($3, $1, $4)) != VLAD_OK) {
       fprintf(yyerr, "internal error: %d\n", retval);
@@ -427,7 +427,7 @@ always_stmt :
   VLAD_SYM_ALWAYS expression VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
-    char e[1024];
+    char e[VLAD_MAXLEN_STR];
 #endif
 
     if ((retval = kbase.add_consttab($2, NULL, NULL)) != VLAD_OK) {
@@ -451,9 +451,9 @@ trans_stmt :
   VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES expression if_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
-    char v[1024];
-    char pr[1024];
-    char po[1024];
+    char v[VLAD_MAXLEN_STR];
+    char pr[VLAD_MAXLEN_STR];
+    char po[VLAD_MAXLEN_STR];
 #endif
 
     if ((retval = kbase.add_transtab($1, $2, $5, $4)) != VLAD_OK) {
@@ -535,8 +535,8 @@ query_stmt :
   VLAD_SYM_QUERY expression after_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
-    char q[1024];
-    char r[10240];
+    char q[VLAD_MAXLEN_STR];
+    char r[VLAD_MAXLEN_STR];
 #endif
 
   switch(mode) {

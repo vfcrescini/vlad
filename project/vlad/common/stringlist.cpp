@@ -161,7 +161,7 @@ int stringlist::find(const char *s)
 void stringlist::print(char *s)
 {
   unsigned int i;
-  char tmps[128];
+  char tmps[VLAD_MAXLEN_STR];
   string *tmpa;
 
   strcpy(s, "");
