@@ -21,7 +21,6 @@ int expression_length(expression_type exp, unsigned int *len)
   return simplelist_length(exp, len);
 }
 
-
 /* return 0 if the atom is in the expression */
 int expression_find(expression_type exp, atom_type atom)
 {

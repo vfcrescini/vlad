@@ -33,4 +33,3 @@ int expression_del(expression_type *exp, atom_type atom);
 int expression_purge(expression_type *exp);
 
 #endif
-

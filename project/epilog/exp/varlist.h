@@ -9,6 +9,10 @@
 #include <ident.h>
 #include <simplelist.h>
 
+/* a list structure to hold variables. holds the variable name plus
+ * an identifier placeholder (to be allocated externally) that can be
+ * referenced by non-ground exresssions. */
+
 typedef struct {
   char *name;
   ident_type *ident;

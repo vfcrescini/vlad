@@ -132,7 +132,6 @@ int varlist_purge(varlist_type *list)
   return 0;
 }
 
-
 /* returns 0 if the NAMES of the variables pointed to by p1 and p2 are equal */
 int varlist_compare(void *p1, void *p2)
 {

@@ -31,6 +31,7 @@ int atom_create_holds(atom_type **atom,
   if (atom == NULL || sub == NULL || acc == NULL || obj == NULL)
     return -1;
 
+  /* must be subject, access, object (in that order) or variables. */
   if (!(EPI_IDENT_IS_SUBJECT(sub->type) || EPI_IDENT_IS_VAR(sub->type)) ||
       !(EPI_IDENT_IS_ACCESS(acc->type) || EPI_IDENT_IS_VAR(acc->type)) ||
       !(EPI_IDENT_IS_OBJECT(obj->type) || EPI_IDENT_IS_VAR(obj->type)))
@@ -198,7 +199,7 @@ int atom_compare(atom_type atom1, atom_type atom2)
 
   if (atom1.truth != atom2.truth)
     return -1;
-
+  
   if (EPI_ATOM_IS_HOLDS(atom1.type)) {
     if (ident_compare(*(atom1.atom.holds.subject), *(atom2.atom.holds.subject)) != 0)
       return -1;

@@ -9,6 +9,9 @@
 #include "expression.h"
 #include "varlist.h"
 
+/* a structure to hold non-ground expressions. holds a ground-expression
+ * plus a list of variables */
+
 typedef struct
 {
   expression_type exp;

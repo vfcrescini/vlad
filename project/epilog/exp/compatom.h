@@ -9,6 +9,9 @@
 #include "atom.h"
 #include "varlist.h"
 
+/* a structure for a non-ground atom. holds a ground-atom plus
+ * a list of variables (if any) */
+
 typedef struct
 {
   atom_type atom;

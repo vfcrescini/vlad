@@ -259,7 +259,7 @@ initial_stmt :
     unsigned int len;
     atom_type *tmp_atom = NULL;
 
-    /* now we have to go thrugh these expressions and see if they're aleady
+    /* now we have to go through these expressions and see if they're aleady
      * in the initial state expression */
 
     if (expression_length($2, &len) != 0)
