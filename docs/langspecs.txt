@@ -153,8 +153,7 @@ Started 2002 Dec 08
 
     where:
 
-      <trans-identifier> is the identifier of this transformation. Must
-        start with a t or a T.
+      <trans-identifier> is the identifier of this transformation.
 
       <post-condition-expression> an expression that will be true in the
         resulting state after the transformation is the identifier of this
