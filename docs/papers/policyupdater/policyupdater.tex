@@ -4,6 +4,8 @@
 \usepackage{amsmath}
 \usepackage{alltt}
 \usepackage{epsfig}
+\usepackage{rotating}
+\usepackage{multirow}
 
 \newtheorem{definition}{Definition}
 \newtheorem{examp}{Example}
@@ -93,7 +95,7 @@
               identifiers share the same syntax with entity identifiers:
 
               \begin{verbatim}[a-z]([a-zA-Z0-9_]{0,127}\end{verbatim}
- 
+
             \item
               {\em Variable Identifiers} are used as entity identifier
               place-holers, and as such, are subject to the entity identifier
@@ -153,14 +155,14 @@
               {\em Holds.} An atom of this type states that the subject
               identifier $sub$ holds the access right identifier $acc$
               for the object identifier $obj$.
-         
+
               \begin{verbatim}holds(<sub>, <acc>, <obj>)\end{verbatim}
             \item
               {\em Membership.} This type of atom states that the singular
               identifier $elt$ is a member or element of the group identifier
               $grp$. It is important to note that identifiers $elt$ and $grp$
               must be of the same base type (e.g. subject and subject group).
-         
+
               \begin{verbatim}memb(<elt>, <grp>)\end{verbatim}
             \item
               {\em $Subset$.} The subset atom states that the group identifiers
@@ -178,13 +180,13 @@
           its negation holds in the current context. Facts are negated by the
           use of the negation operator ($!$). The following shows the formal
           syntax of a fact:
- 
+
           \begin{verbatim}[!]<holds_atm>|<memb_atm>|<subst_atm>\end{verbatim}
 
           Note that facts may be made up of atoms that contain variable
           identifiers. Facts with no variable occurences are called
           {\em ground facts}.
- 
+
         \paragraph{Expressions.}
           An expression is either a fact, or a logical conjunction of facts,
           separated by the double-ampersand characters $\&\&$.
@@ -270,7 +272,7 @@ always <exp1>
         defined policy updates in the domain. The policy updates in the
         sequence list are applied to the current state of the policy base one
         at a time to produce a policy base state upon which queries can be
-        evaluated. 
+        evaluated.
 
         The following four directives are the policy sequence manipulation
         features of language $\cal{L}$.
@@ -284,7 +286,7 @@ always <exp1>
           \noindent where $up\_id$ is the identifier of a defined policy
           update and the $e\_id$ list is a comma-separated list of entity
           identifiers that will replace the variable identifiers that occur in
-          the definition of the policy update. 
+          the definition of the policy update.
 
         \subparagraph{Listing the updates in the sequence.}
           The following directive may be used to list the current contents of
@@ -331,7 +333,7 @@ always <exp1>
           or an $unknown$, depending on whether the queried expression holds,
           its negation holds, or neither, respectively. Syntax is as follows:
 
-          \begin{verbatim}query <ground-exp>;\end{verbatim} 
+          \begin{verbatim}query <ground-exp>;\end{verbatim}
 
         \begin{example}
           The following language ${\cal L}$ program code listing shows a simple
@@ -354,7 +356,7 @@ ident obj file;
 
 /* initial fact definitions */
 
-initially 
+initially
   memb(alice, grp) &&
   holds(grp, read, file);
 
@@ -412,7 +414,7 @@ query holds(alice, read, file);
         particular instant. The state transition notation below shows that a
         new state $PB'$ is generated from the current state $PB$ after the
         policy update $u$ is applied.
-  
+
         \begin{quote}
           $PB$ $\overrightarrow{_{u}}$ $PB'$
         \end{quote}
@@ -434,7 +436,7 @@ query holds(alice, read, file);
         $\in$ $\psi$, and the current state $\sigma$ as input arguments and
         returns the resulting state $\sigma'$ after update $u$ has been applied
         to state $\sigma$.
- 
+
         \begin{quote}
           $\sigma'$ = $Result$($u$, $\sigma$)
         \end{quote}
@@ -444,13 +446,13 @@ query holds(alice, read, file);
         follows:
 
         \begin{quote}
-          $\sigma_{0}$ = $S_{0}$
+          $\sigma_{0} = S_{0}$
 
-          $\sigma_{1}$ = $Result$($u_{0}$, $\sigma_{0}$)
+          $\sigma_{1} = Result(u_{0}, \sigma_{0})$
+         
+          $\vdots$
 
-          ...
-
-          $\sigma_{|\psi|}$ = $Result$($u_{|\psi| - 1}$, $\sigma_{|\psi| - 1}$)
+          $\sigma_{|\psi|} = Result(u_{|\psi| - 1}, \sigma_{|\psi| - 1})$
         \end{quote}
 
         Substituting each state with a recursive call to the $Result$ function,
@@ -459,7 +461,7 @@ query holds(alice, read, file);
         \begin{quote}
           \begin{math}
             \begin{aligned}[t]
-              S_{|\psi|} = Result&(u_{|\psi| - 1}, Result(..., \\
+              S_{|\psi|} = Result&(u_{|\psi| - 1}, Result(\ldots, \\
               &Result(u_{0}, S_{0})))
             \end{aligned}
           \end{math}
@@ -498,7 +500,7 @@ query holds(alice, read, file);
           differentiate from the atoms of language ${\cal L}$.
 
           The atom set ${\cal A}^{\sigma}$ is the set of all atoms in state
-          $\sigma$. 
+          $\sigma$.
 
           \begin{enumerate}
             \item
@@ -524,7 +526,7 @@ query holds(alice, read, file);
           \end{enumerate}
 
         \paragraph{Facts.}
-       
+
           A fact is a logical statement that makes a claim that an atom either
           holds or does not hold at a particular state. The following is the
           formal definition of fact $f$ in state $\sigma$:
@@ -541,7 +543,7 @@ query holds(alice, read, file);
           extended logic program ${\cal L}^{*}$ translation of language
           ${\cal L}$. The domain description ${\cal D}_{\cal L}$ is said to be
           {\em consistent} if and only if $Trans$(${\cal D}_{\cal L}$) has
-          a consistent answer set. 
+          a consistent answer set.
         \end{definition}
 
         Before we can fully define the $Trans$(${\cal D}_{\cal L}$), we must
@@ -556,8 +558,8 @@ query holds(alice, read, file);
 
           \begin{quote}
             $CopyAtom$($\hat{\alpha}$, $\sigma'$)
- 
-            = 
+
+            =
             \begin{math}
               \begin{cases}
                 \mbox{$\hat{holds}$($s$, $a$, $o$, $\sigma'$), if $\hat{\alpha}$ = $\hat{holds}$($s$, $a$, $o$, $\sigma$)} \\
@@ -572,11 +574,11 @@ query holds(alice, read, file);
           Another function, $TransAtom$, takes an atom $\alpha$ of language
           ${\cal L}$ and an arbitrary state $\sigma$ and returns the equivalent
           atom of language ${\cal L}^{*}$.
- 
+
           \begin{quote}
             $TransAtom$($\alpha$, $\sigma$)
- 
-            = 
+
+            =
             \begin{math}
               \begin{cases}
                 \mbox{$\hat{holds}$($s$, $a$, $o$, $\sigma$), if $\alpha$ = $holds$($s$, $a$, $o$)} \\
@@ -599,13 +601,13 @@ query holds(alice, read, file);
           language ${\cal L}^{*}$ is a trivial procedure: translate each fact
           that make up the initial fact expression of language ${\cal L}$
           with its corresponding equivalent initial state atom of language
-          ${\cal L}^{*}$. 
+          ${\cal L}^{*}$.
 
           Given an initial fact expression of language ${\cal L}$ that is
           composed of $n$ facts:
 
           \begin{alltt}
-  initially \(f\sb{0}\) && ... && \(f\sb{n}\)
+  initially \(f\sb{0}\) && \ldots && \(f\sb{n}\)
           \end{alltt}
 
           In language ${\cal L}^{*}$, the statement above is represented as:
@@ -613,7 +615,7 @@ query holds(alice, read, file);
           \begin{quote}
             $\hat{f_{0}}$ $\leftarrow$
 
-            ...
+            $\vdots$
 
             $\hat{f_{n}}$ $\leftarrow$
 
@@ -655,11 +657,11 @@ query holds(alice, read, file);
           as:
 
           \begin{alltt}
-  always \(a\sb{0}\) && ... && \(a\sb{m}\)
-  implied by \(b\sb{0}\) && ... && \(b\sb{n}\)
-  with absence \(c\sb{0}\) && ... && \(c\sb{o}\)
+  always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
+  implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
+  with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
           \end{alltt}
-         
+
           Each fact in the $always$ clause of language ${\cal L}$ corresponds
           to a new rule, where it is the consequent. Each of these new rules
           will have expression $b$ in the $implied$ $by$ clause as the positive
@@ -668,14 +670,14 @@ query holds(alice, read, file);
 
           \begin{quote}
             $a_{0}$ $\leftarrow$
-            $b_{0}$, ..., $b_{n}$,
-            $not$ $c_{0}$, ..., $not$ $c_{o}$
+            $b_{0}$, \ldots, $b_{n}$,
+            $not$ $c_{0}$, \ldots, $not$ $c_{o}$
 
-            ...
+            $\vdots$
 
             $a_{m}$ $\leftarrow$
-            $b_{0}$, ..., $b_{n}$,
-            $not$ $c_{0}$, ..., $not$ $c_{o}$
+            $b_{0}$, \ldots, $b_{n}$,
+            $not$ $c_{0}$, \ldots, $not$ $c_{o}$
           \end{quote}
 
           Under the definition of constraints, each of the rules above must be
@@ -685,26 +687,26 @@ query holds(alice, read, file);
 
            \begin{quote}
             $\hat{a}^{S_{0}}_{0}$ $\leftarrow$
-            $\hat{b}^{S_{0}}_{0}$, ..., $\hat{b}^{S_{0}}_{n}$,
-            $not$ $\hat{c}^{S_{0}}_{0}$, ..., $not$ $\hat{c}^{S_{0}}_{o}$
+            $\hat{b}^{S_{0}}_{0}$, \ldots, $\hat{b}^{S_{0}}_{n}$,
+            $not$ $\hat{c}^{S_{0}}_{0}$, \ldots, $not$ $\hat{c}^{S_{0}}_{o}$
 
-            ...
+            $\vdots$
 
             $\hat{a}^{S_{|\psi|}}_{0}$ $\leftarrow$
-            $\hat{b}^{S_{|\psi|}}_{0}$, ..., $\hat{b}^{S_{|\psi|}}_{n}$,
-            $not$ $\hat{c}^{S_{|\psi|}}_{0}$, ..., $not$ $\hat{c}^{S_{|\psi|}}_{o}$
+            $\hat{b}^{S_{|\psi|}}_{0}$, \ldots, $\hat{b}^{S_{|\psi|}}_{n}$,
+            $not$ $\hat{c}^{S_{|\psi|}}_{0}$, \ldots, $not$ $\hat{c}^{S_{|\psi|}}_{o}$
 
-            ...
+            $\vdots$
 
             $\hat{a}^{S_{0}}_{m}$ $\leftarrow$
-            $\hat{b}^{S_{0}}_{0}$, ..., $\hat{b}^{S_{0}}_{n}$,
-            $not$ $\hat{c}^{S_{0}}_{0}$, ..., $not$ $\hat{c}^{S_{0}}_{o}$
+            $\hat{b}^{S_{0}}_{0}$, \ldots, $\hat{b}^{S_{0}}_{n}$,
+            $not$ $\hat{c}^{S_{0}}_{0}$, \ldots, $not$ $\hat{c}^{S_{0}}_{o}$
 
-            ...
+            $\vdots$
 
             $\hat{a}^{S_{|\psi|}}_{m}$ $\leftarrow$
-            $\hat{b}^{S_{|\psi|}}_{0}$, ..., $\hat{b}^{S_{|\psi|}}_{n}$,
-            $not$ $\hat{c}^{S_{|\psi|}}_{0}$, ..., $not$ $\hat{c}^{S_{|\psi|}}_{o}$
+            $\hat{b}^{S_{|\psi|}}_{0}$, \ldots, $\hat{b}^{S_{|\psi|}}_{n}$,
+            $not$ $\hat{c}^{S_{|\psi|}}_{0}$, \ldots, $not$ $\hat{c}^{S_{|\psi|}}_{o}$
 
             where
 
@@ -733,7 +735,7 @@ query holds(alice, read, file);
     !holds(alice, read, secret_data);
           \end{verbatim}
 
-          Given 3 policy update references in the sequence list $\psi$ 
+          Given 3 policy update references in the sequence list $\psi$
           (i.e. $|\psi|$ $=$ $3$), the language ${\cal L}^{*}$ equivalent is as
           follows:
 
@@ -811,8 +813,8 @@ query holds(alice, read, file);
           is in the form:
 
           \begin{quote}
-            $u$ causes $a_{0}$ \&\& ... \&\& $a_{m}$
-            if $b_{0}$ \&\& ... \&\& $b_{n}$
+            $u$ causes $a_{0}$ \&\& \ldots \&\& $a_{m}$
+            if $b_{0}$ \&\& \ldots \&\& $b_{n}$
           \end{quote}
 
           In language ${\cal L}^{*}$, such policy updates may be represented as
@@ -824,11 +826,11 @@ query holds(alice, read, file);
           after the application.
 
           \begin{quote}
-            $\hat{a}_{0}$ $\leftarrow$ $\hat{b}_{0}$, ..., $\hat{b}_{n}$
+            $\hat{a}_{0}$ $\leftarrow$ $\hat{b}_{0}$, \ldots, $\hat{b}_{n}$
 
-            ...
+            $\vdots$
 
-            $\hat{a}_{m}$ $\leftarrow$ $\hat{b}_{0}$, ..., $\hat{b}_{n}$
+            $\hat{a}_{m}$ $\leftarrow$ $\hat{b}_{0}$, \ldots, $\hat{b}_{n}$
 
             where
 
@@ -1113,7 +1115,7 @@ query holds(alice, read, file);
 
               $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
 
-              $\forall$($\hat{\alpha}$,$u$), where 
+              $\forall$($\hat{\alpha}$,$u$), where
               $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
               $u$ $\in$ $\psi$,
 
@@ -1277,11 +1279,11 @@ query holds(alice, read, file);
 
               \begin{math}
                 \begin{aligned}[t]
-                  % inertial rule memb(alice, grp) 
+                  % inertial rule memb(alice, grp)
                   \hat{memb}&(alice, grp, S_{1}) \leftarrow \\
                   & \hat{memb}(alice, grp, S_{0}), \\
                   & not \lnot \hat{memb}(alice, grp, S_{1}) \\
-                  % inertial rule !memb(alice, grp) 
+                  % inertial rule !memb(alice, grp)
                   \lnot \hat{memb}&(alice, grp, S_{1}) \leftarrow \\
                   & \lnot \hat{memb}(alice, grp, S_{0}), \\
                   & not \hat{memb}(alice, grp, S_{1})
@@ -1361,7 +1363,7 @@ query holds(alice, read, file);
 
         \begin{itemize}
           \item
-            $list.length()$
+            $list.len()$
             returns the number of elements in $list$.
           \item
             $list$.$find$($item$)
@@ -1373,13 +1375,13 @@ query holds(alice, read, file);
             $list$.$add$($item$)
             adds $item$ at the end of $list$.
           \item
-            $list$.$delete$($index$)
+            $list$.$del$($index$)
             deletes the $index$'th item from $list$.
         \end{itemize}
 
         \paragraph{Symbol Table.}
 
-          The symbol table is used to store the identifier entities defined in 
+          The symbol table is used to store the identifier entities defined in
           the entity identifier declaration section of language ${\cal L}$
           programs. The symbol table is composed of 6 separate string lists:
 
@@ -1402,10 +1404,10 @@ query holds(alice, read, file);
               \hline
             \end{tabular}
           \end{quote}
- 
+
           In addition to the above lists, the symbol table also defines 3
           pseudo-lists that are concatenations of the above lists:
- 
+
           \begin{quote}
             \begin{tabular}[t]{|l|l|l|}
               \hline
@@ -1499,13 +1501,13 @@ query holds(alice, read, file);
                 \hline
                 $atom$ & atom type & polymorphic structure \\
                 \hline
-                $type$ & \{h$|$m$|$s\} & holds, member or subset \\ 
+                $type$ & \{h$|$m$|$s\} & holds, member or subset \\
                 \hline
                 $truth$ & boolean & negation indicator \\
                 \hline
               \end{tabular}
             \end{quote}
- 
+
           \subparagraph{Expressions.}
 
             Since expressions are simply conjunctions of facts, they are
@@ -1516,7 +1518,7 @@ query holds(alice, read, file);
             The initial state facts table is represented as a single list of
             fact structures, or an expression. Each fact in all {\em initially}
             statements are added into the initial state facts table.
- 
+
           \subparagraph{Constraint table.}
 
             The constraint table is represented as a list of constraint
@@ -1529,13 +1531,13 @@ query holds(alice, read, file);
                 \hline
                 $exp$ & expression type & consequent \\
                 \hline
-                $pcond$ & expression type & positive premise \\ 
+                $pcond$ & expression type & positive premise \\
                 \hline
                 $ncond$ & expression type & negative premise \\
                 \hline
               \end{tabular}
             \end{quote}
- 
+
           \subparagraph{Policy update definition table.}
 
             Another list of structures is the policy update table. Each element
@@ -1556,18 +1558,18 @@ query holds(alice, read, file);
                 \hline
               \end{tabular}
             \end{quote}
- 
+
         \paragraph{Policy Update Sequence Table.}
- 
+
           The policy update sequence table is an ordered list of sequence
           structures, each with the following elements:
- 
+
           \begin{quote}
             \begin{tabular}[t]{|l|l|l|}
               \hline
               \textbf{Field} & \textbf{Type} & \textbf{Description} \\
               \hline
-              $name$ & string & update identifier \\ 
+              $name$ & string & update identifier \\
               \hline
               $ilist$ & ordered string list & identifiers \\
               \hline
@@ -1584,149 +1586,127 @@ query holds(alice, read, file);
 
         \paragraph{Representing Facts in Propositional Form.}
 
-          The next step in the translation of language ${\cal L}$ to a normal
+          The first step in the translation of language ${\cal L}$ to a normal
           logic program is to represent each fact in propositional form.
 
-          Given the symbol table $st$, we first enumerate all facts defined
-          in the policy base:
+          Given the symbol table $S$, we first enumerate all atoms derived
+          from the entity identifiers defined in the symbol table:
 
-          \begin{itemize}
-            \item 
-              Holds \\
-              \begin{tabular}[t]{|l|l|l|}
-                \hline
-                $st.s[0]$ & $st.a[0]$ & $st.o[0]$ \\
-                \hline
-                ... & ... & ... \\
-                \hline
-                $st.s[0]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
-                \hline
-                 ... & ... & ... \\
-                \hline
-                $st.s[0]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
-                \hline
-                ... & ... & ... \\
-                \hline
-                $st.s[0]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
-                \hline
-                ... & ... & ... \\
-                \hline
-                $st.s[len(st.s)]$ & $st.a[0]$ & $st.o[0]$ \\
-                \hline
-                ... & ... & ... \\
-                \hline
-                $st.s[len(st.s)]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
-                \hline
-                ... & ... & ... \\
-                \hline
-                $st.s[len(st.s)]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
-                \hline
-                ... & ... & ... \\
-                \hline
-                $st.s[len(st.s)]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
-                \hline
-              \end{tabular}
-            \item
-              Member \\
-              \begin{tabular}[t]{|l|l|}
-                \hline
-                % subject
-                $st.ss[0]$ & $st.sg[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.ss[0]$ & $st.sg[len(st.sg)]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.ss[len(st.ss)]$ & $st.sg[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.ss[len(st.ss)]$ & $st.sg[len(st.sg)]$ \\
-                \hline
-                % access right
-                $st.as[0]$ & $st.ag[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.as[0]$ & $st.ag[len(st.ag)]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.as[len(st.as)]$ & $st.ag[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.as[len(st.as)]$ & $st.ag[len(st.ag)]$ \\
-                \hline
-                % object
-                $st.os[0]$ & $st.og[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.os[0]$ & $st.og[len(st.og)]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.os[len(st.os)]$ & $st.og[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.os[len(st.os)]$ & $st.og[len(st.og)]$ \\
-                \hline
-              \end{tabular}
-            \item
-              Subset \\
-              \begin{tabular}[t]{|l|l|}
-                \hline
-                % subject
-                $st.sg[0]$ & $st.sg[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.sg[0]$ & $st.sg[len(st.sg)]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.sg[len(st.sg)]$ & $st.sg[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.sg[len(st.sg)]$ & $st.sg[len(st.sg)]$ \\
-                \hline
-                % access right
-                $st.ag[0]$ & $st.ag[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.ag[0]$ & $st.ag[len(st.ag)]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.ag[len(st.ag)]$ & $st.ag[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.ag[len(st.ag)]$ & $st.ag[len(st.ag)]$ \\
-                \hline
-                % object
-                $st.og[0]$ & $st.og[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.og[0]$ & $st.og[len(st.og)]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.og[len(st.og)]$ & $st.og[0]$ \\
-                \hline
-                ... & ... \\
-                \hline
-                $st.og[len(st.og)]$ & $st.og[len(st.og)]$ \\
-                \hline
-              \end{tabular}
-            \end{itemize}
+          \begin{tabular}[t]{|l|l|l|l|l|l|}
+            \hline
+            % head
+            \textbf{ID} &
+            \textbf{Entity 1} &
+            \textbf{Entity 2} &
+            \textbf{Entity 3} &
+            \multicolumn{2}{|l|}{\textbf{Type}} \\
+            \hline
+            % holds line 1
+            $0$ &
+            $S.s[0]$ &
+            $S.a[0]$ &
+            $S.o[0]$ &
+            \multicolumn{2}{|c|}{\multirow{3}{*}{\begin{sideways}Holds\end{sideways}}} \\
+            % holds line 2
+            \vdots & \vdots & \vdots & \vdots & \multicolumn{2}{|c|}{} \\
+            % holds line 3
+            $0$ &
+            $S.s[l_{s}]$ &
+            $S.a[l_{a}]$ &
+            $S.o[l_{o}]$ &
+            \multicolumn{2}{|c|}{} \\
+            \hline
+            % sub memb line 1
+            $0$ &
+            $S.ss[0]$ &
+            $S.sg[0]$ &
+            &
+            \multirow{3}{*}{\begin{sideways}sub\end{sideways}} &
+            \multirow{9}{*}{\begin{sideways}Member\end{sideways}} \\
+            % sub memb line 2
+            \vdots & \vdots & \vdots & & & \\
+            % sub memb line 3
+            $0$ & $S.ss[l_{ss}]$ & $S.sg[l_{sg}]$ & & & \\
+            \cline{1-5}
+            % acc memb line 1
+            $0$ &
+            $S.as[0]$ &
+            $S.ag[0]$ &
+            &
+            \multirow{3}{*}{\begin{sideways}acc\end{sideways}} & \\
+            % acc memb line 2
+            \vdots & \vdots & \vdots & & & \\
+            % acc memb line 3
+            $0$ & $S.as[l_{as}]$ & $S.ag[l_{ag}]$ & & & \\
+            \cline{1-5}
+            % obj memb line 1
+            $0$ &
+            $S.os[0]$ &
+            $S.og[0]$ &
+            &
+            \multirow{3}{*}{\begin{sideways}obj\end{sideways}} & \\
+            % obj memb line 2
+            \vdots & \vdots & \vdots & & & \\
+            % obj memb line 3
+            $0$ & $S.os[l_{os}]$ & $S.og[l_{og}]$ & & & \\
+            \hline
+            % sub subS line 1
+            $0$ &
+            $S.sg[0]$ &
+            $S.sg[0]$ &
+            &
+            \multirow{3}{*}{\begin{sideways}sub\end{sideways}} &
+            \multirow{9}{*}{\begin{sideways}Subset\end{sideways}} \\
+            % sub subS line 2
+            \vdots & \vdots & \vdots & & & \\
+            % sub subS line 3
+            $0$ & $S.sg[l_{sg}]$ & $S.sg[l_{sg}]$ & & & \\
+            \cline{1-5}
+            % acc subS line 1
+            $0$ &
+            $S.ag[0]$ &
+            $S.ag[0]$ &
+            &
+            \multirow{3}{*}{\begin{sideways}acc\end{sideways}} & \\
+            % acc subS line 2
+            \vdots & \vdots & \vdots & & & \\
+            % acc subS line 3
+            $0$ & $S.ag[l_{ag}]$ & $S.ag[l_{ag}]$ & & & \\
+            \cline{1-5}
+            % obj subS line 1
+            $0$ &
+            $S.og[0]$ &
+            $S.og[0]$ &
+            &
+            \multirow{3}{*}{\begin{sideways}obj\end{sideways}} & \\
+            % obj subS line 2
+            \vdots & \vdots & \vdots & & & \\
+            % obj subS line 3
+            $0$ & $S.og[l_{og}]$ & $S.og[l_{og}]$ & & & \\
+            \hline
+          \end{tabular}
+
+          \begin{quote}
+            where
+
+            $l_{s}$ = $S.s.len() - 1$
+
+            $l_{a}$ = $S.a.len() - 1$
+
+            $l_{o}$ = $S.o.len() - 1$
+
+            $l_{ss}$ = $S.ss.len() - 1$
+
+            $l_{as}$ = $S.as.len() - 1$
+
+            $l_{os}$ = $S.os.len() - 1$
+
+            $l_{sg}$ = $S.sg.len() - 1$
+
+            $l_{ag}$ = $S.ag.len() - 1$
+
+            $l_{og}$ = $S.og.len() - 1$
+          \end{quote}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
