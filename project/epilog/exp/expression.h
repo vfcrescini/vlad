@@ -7,7 +7,7 @@
 #define __EPI_EXPRESSION_H
 
 #include <simplelist.h>
-#include "ident.h"
+#include "atom.h"
 
 #define expression_type simplelist_type
 

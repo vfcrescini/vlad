@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <ident.h>
 #include <identlist.h>
+#include <expression.h>
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -19,6 +20,8 @@ int add_identifier(char ident[], unsigned short type);
 
 %union {
   char identifier[128];
+  expression_type exp;
+  atom_type atm;
   unsigned int terminal;
 }
 
@@ -49,6 +52,14 @@ int add_identifier(char ident[], unsigned short type);
 %token <terminal> EPI_SYM_ACCGRPTYPE
 %token <terminal> EPI_SYM_IDENT
 %token <identifier> EPI_SYM_IDENTIFIER
+
+%type <exp> expression
+%type <atm> atom_exp
+%type <atm> boolean_atom
+%type <atm> logical_atom
+%type <atm> holds_atom
+%type <atm> subst_atom
+%type <atm> memb_atom
 
 %start program
 
@@ -291,62 +302,158 @@ logical_op :
   ;
 
 expression : 
-  boolean_exp
-  {
+  boolean_atom 
+  { 
+    expression_init(&$$);
+    expression_add(&$$, $1);
   }
-  | boolean_exp logical_op expression
-  {
+  | boolean_atom logical_op expression
+  { 
+    expression_add(&$$, $1);
   }
   ;
 
-boolean_exp :
+boolean_atom :
   atom_exp
   {
+    $$ = $1;
   }
   | EPI_SYM_NOT atom_exp
   {
+    $$ = $2;
+    $$.truth = epi_false;
   }
   ;
 
 atom_exp :
-  holds_exp
+  holds_atom
   {
+    $$ = $1;
   }
-  | subst_exp
+  | subst_atom
   {
+    $$ = $1;
   }
-  | memb_expr
+  | memb_atom
   {
+    $$ = $1;
   }
-  | logical_const
+  | logical_atom
   {
+    $$ = $1;
   }
   ;
 
-holds_exp :
+holds_atom :
   EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
+    ident_type *subject = NULL;
+    ident_type *access = NULL;
+    ident_type *object = NULL;
+
+    if (identlist_get($3, &subject) != 0 || 
+        identlist_get($5, &access) != 0 ||
+        identlist_get($7, &object) != 0) {
+      yyerror("undeclared identifier");
+      return -1;
+    }
+
+    if (!EPI_IDENT_IS_SUBJECT(subject->type)) {
+      yyerror("first parameter of holds must be a subject");
+      return -1;
+    }
+ 
+    if (!EPI_IDENT_IS_ACCESS(access->type)) {
+      yyerror("second parameter of holds must be an access-right");
+      return -1;
+    }
+
+    if (!EPI_IDENT_IS_OBJECT(object->type)) {
+      yyerror("third parameter of holds must be an object");
+      return -1;
+    }
+
+    $$.type = EPI_ATOM_HOLDS;
+    $$.truth = epi_true;
+    $$.atom.holds.subject = subject;
+    $$.atom.holds.access = access;
+    $$.atom.holds.object = object;
   }
   ;
 
-subst_exp :
+subst_atom :
   EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
+    ident_type *group1 = NULL;
+    ident_type *group2 = NULL;
+
+    if (identlist_get($3, &group1) != 0 || 
+        identlist_get($5, &group2) != 0) {
+      yyerror("undeclared identifier");
+      return -1;
+    }
+
+    if (!EPI_IDENT_IS_GROUP(group1->type)) {
+      yyerror("parameters of subst must be groups");
+      return -1;
+    }
+ 
+    if (group1->type != group2->type) {
+      yyerror("parameters of subst are of different types");
+      return -1;
+    }
+
+    $$.type = EPI_ATOM_SUBST;
+    $$.truth = epi_true;
+    $$.atom.subst.group1 = group1;
+    $$.atom.subst.group2 = group2;
   }
   ;
 
-memb_expr :
+memb_atom :
   EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
   {
+    ident_type *element = NULL;
+    ident_type *group = NULL;
+
+    if (identlist_get($3, &element) != 0 || 
+        identlist_get($5, &group) != 0) {
+      yyerror("undeclared identifier");
+      return -1;
+    }
+
+    if (EPI_IDENT_IS_GROUP(element->type)) {
+      yyerror("first parameter of memb must not be a group");
+      return -1;
+    }
+ 
+    if (!EPI_IDENT_IS_GROUP(group->type)) {
+      yyerror("second parameter of memb must be a group");
+      return -1;
+    }
+
+    if (EPI_IDENT_BASETYPE(element->type) != EPI_IDENT_BASETYPE(group->type)) {
+      yyerror("parameters of memb are of different types");
+      return -1;
+    }
+
+    $$.type = EPI_ATOM_MEMB;
+    $$.truth = epi_true;
+    $$.atom.memb.element = element;
+    $$.atom.memb.group = group ;
   }
   ;
 
-logical_const : 
+logical_atom : 
   EPI_SYM_TRUE 
   {
+    $$.truth = epi_true;
+    $$.type = EPI_ATOM_CONST;
   }
   | EPI_SYM_FALSE
   {
+    $$.truth = epi_false;
+    $$.type = EPI_ATOM_CONST;
   }
   ;
 
@@ -373,7 +480,7 @@ int add_identifier(char ident[], unsigned short type) {
     printf("declared access-group identifier %s\n", ident);   
 #endif
 
-  if (identlist_add(ident, EPI_IDENT_SUBJECT) != 0) {
+  if (identlist_add(ident, type) != 0) {
     yyerror("memory overflow");
     return -1;
   }

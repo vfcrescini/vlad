@@ -18,7 +18,7 @@ int identlist_find(char *name);
 int identlist_add(char *name, unsigned short type);
 
 /* get identifier structure based on name */
-int identlist_get(char *name, ident_type *ident);
+int identlist_get(char *name, ident_type **ident);
 
 /* delete identifier entry based on name */
 int identlist_del(char *name);

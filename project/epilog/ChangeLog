@@ -1,3 +1,41 @@
+2002-08-19  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Makefile :
+
+	  - Added exp directory.
+
+	* exp/Makefile :
+
+	  - Added expression.
+
+	* ident/identlist.c :
+	* ident/identlist.h :
+
+	  - Changed identlist_get(char *name, ident_type *ident) to
+	    int identlist_get(char *name, ident_type **ident).
+
+
+	* main/Makefile :
+	* main/epilog.c :
+
+	  - Linked against libexp and initialise initial state list.
+
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Added code to properly store expressions.
+
+	  - Renamed some tokens for clarity.
+
+	* docs/bnf.txt :
+
+	  - Renamed some tokens for clarity.
+
+	* docs/sample :
+
+	  - Disabled tranformations for now until the parser can properly
+	    handle variables.
+
 2002-08-18  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/expression.h :

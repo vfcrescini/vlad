@@ -1,6 +1,6 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-DIRS = datastruct ident parser main
+DIRS = datastruct ident exp parser main
 ifdef DEBUG
 DIRS += test
 endif

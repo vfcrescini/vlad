@@ -55,7 +55,7 @@ int identlist_add(char *name, unsigned short type)
 }
 
 /* get identifier structure based on name */
-int identlist_get(char *name, ident_type *ident)
+int identlist_get(char *name, ident_type **ident)
 {
   ident_type *temp_ident = NULL;
 
@@ -67,7 +67,7 @@ int identlist_get(char *name, ident_type *ident)
 
   if (simplelist_get_data(list, 
                           (void *) temp_ident,
-                          (void **) &ident,
+                          (void **) ident,
                           identlist_compare)) {
     ident_destroy(temp_ident);
     return -1;

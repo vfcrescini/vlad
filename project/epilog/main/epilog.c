@@ -6,13 +6,17 @@
 #include <stdio.h>
 #include <parser.h>
 #include <identlist.h>
+#include <expression.h>
 
 int main()
 {
+  expression_type initial_exp;
+
   yyin = stdin;
   yyout = stdout;
 
   identlist_init();
+  expression_init(&initial_exp);
   
   yyparse();
 

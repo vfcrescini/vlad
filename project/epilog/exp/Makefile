@@ -3,7 +3,7 @@
 TOPSRCDIR = ..
 CFLAGS = -O2 -Wall -ansi -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libexp.a
-INCLUDES = atom.h
+INCLUDES = atom.h expression.h
 
 all : public
 
@@ -17,11 +17,14 @@ public : $(TARGETS)
 	ln -sf ../exp/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libexp.a : atom.o
-	$(AR) -rcs $(@) atom.o
+libexp.a : atom.o expression.o
+	$(AR) -rcs $(@) atom.o expression.o
 
 atom.o : atom.h atom.c
 	$(CC) $(CFLAGS) -o $(@) -c atom.c
+
+expression.o : expression.h expression.c
+	$(CC) $(CFLAGS) -o $(@) -c expression.c
 
 clean :
 	$(RM) $(TARGETS) *.o
