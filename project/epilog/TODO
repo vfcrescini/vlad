@@ -1,6 +1,8 @@
 EPILOG TODO
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+- Clean up ground expressions.
+
 - Enable policy proposition statements.
 
 - Add a query/search function in expression. 
