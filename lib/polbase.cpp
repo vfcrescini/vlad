@@ -1583,15 +1583,24 @@ unsigned int polbase::compute_memb(unsigned int a_state,
     case VLAD_IDENT_SUB_SIN :
       return compute_fact(a_state,
                           a_truth,
-                          m_tot_atoms[VLAD_ATOM_HOLDS] + (a_elt * sglen) + a_grp);
+                          m_tot_atoms[VLAD_ATOM_HOLDS] +
+                          (a_elt * sglen) +
+                          a_grp);
     case VLAD_IDENT_ACC_SIN :
       return compute_fact(a_state,
                           a_truth,
-                          m_tot_atoms[VLAD_ATOM_HOLDS] + (sslen * sglen) + (a_elt * aglen) + a_grp);
+                          m_tot_atoms[VLAD_ATOM_HOLDS] +
+                          (sslen * sglen) +
+                          (a_elt * aglen) +
+                          a_grp);
     case VLAD_IDENT_OBJ_SIN :
       return compute_fact(a_state,
                           a_truth,
-                          m_tot_atoms[VLAD_ATOM_HOLDS] + (sslen * sglen) + (aslen * aglen) + (a_elt * oglen) + a_grp);
+                          m_tot_atoms[VLAD_ATOM_HOLDS] +
+                          (sslen * sglen) +
+                          (aslen * aglen) +
+                          (a_elt * oglen) +
+                          a_grp);
   }
 
   return 0;
@@ -1607,15 +1616,27 @@ unsigned int polbase::compute_subst(unsigned a_state,
     case VLAD_IDENT_SUB_SIN :
       return compute_fact(a_state,
                           a_truth,
-                          m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER] + (a_grp1 * sglen) + a_grp2);
+                          m_tot_atoms[VLAD_ATOM_HOLDS] +
+                          m_tot_atoms[VLAD_ATOM_MEMBER] +
+                          (a_grp1 * sglen) +
+                          a_grp2);
     case VLAD_IDENT_ACC_SIN :
       return compute_fact(a_state,
                           a_truth,
-                          m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER] + (sglen * sglen) + (a_grp1 * aglen) + a_grp2);
+                          m_tot_atoms[VLAD_ATOM_HOLDS] +
+                          m_tot_atoms[VLAD_ATOM_MEMBER] +
+                          (sglen * sglen) +
+                          (a_grp1 * aglen) +
+                          a_grp2);
     case VLAD_IDENT_OBJ_SIN :
       return compute_fact(a_state,
                           a_truth,
-                          m_tot_atoms[VLAD_ATOM_HOLDS] + m_tot_atoms[VLAD_ATOM_MEMBER] + (sglen * sglen) + (aglen * aglen) + (a_grp1 * oglen) + a_grp2);
+                          m_tot_atoms[VLAD_ATOM_HOLDS] +
+                          m_tot_atoms[VLAD_ATOM_MEMBER] +
+                          (sglen * sglen) +
+                          (aglen * aglen) +
+                          (a_grp1 * oglen) +
+                          a_grp2);
   }
 
   return 0;
