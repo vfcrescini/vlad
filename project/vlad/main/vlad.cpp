@@ -51,6 +51,8 @@ int main(int argc, char *argv[])
     switch(curr_opt) {
       case 'v' :
         fprintf(stdout, "vLad %s\n", VLAD_VERSION);
+        fprintf(stdout, "Copyright (C) 2003, 2004 University of Western Sydney\n");
+        fprintf(stdout, "by Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>\n");
         return VLAD_OK;
       case 'h' :
         fprintf(stdout, "usage: %s %s\n", argv[0], helpstring);

@@ -1,5 +1,9 @@
 2004-12-17  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* main/vlad.cpp :
+
+	  - Display copyright notice when run with -v.
+
 	* Makefile.in :
 	* configure :
 	* configure.ac :
