@@ -5,7 +5,7 @@
 
 \begin{document}
   \title{Web Server Authorisation with PolicyUpdater:}
-  \subtitle{A Logic-Based Access-Control System}
+  \subtitle{A Logic Based Access Control System}
 
   \author{Vino Fernando Crescini \and Yan Zhang}
 
@@ -293,9 +293,9 @@
 
       The PolicyUpdater system evaluates queries by translating language
       ${\cal L}$ policy base into a {\em normal logic program}, which can be
-      evaluated using the {\em stable model semantics}. With the use of the
-      {\em smodels}\footnotemark library to generate a set of all the stable
-      models $S$ of the policy, PolicyUpdater can then perform query
+      evaluated using the {\em stable model semantics} \cite{SIM}. With the use
+      of the {\em smodels}\footnotemark library to generate a set of all the
+      stable models $S$ of the policy, PolicyUpdater can then perform query
       evaluations by checking to see if the query expression holds in set $S$.
 
       \footnotetext{Smodels from http://www.tcs.hut.fi/Software/smodels}
@@ -412,7 +412,7 @@
       the original request is sent to the other request handlers of the web
       server (4) where the request is eventually honoured; then finally (5),
       the resource (or acknowledgment for HTTP requests other than GET) is sent
-      back to the client. Optionally, client can be an administrator whom,
+      back to the client. Optionally, client can be an administrator who,
       after being authenticated, is presented with a special administrator
       interface by the module to allow the policy base to be updated.
 
@@ -457,14 +457,15 @@
           $<$$user$, $request\_method$, $requested\_resource$$>$
         \end{quote}
 
-        Intuitively, such a tuple may be expressed as a language {\cal L} atom:
+        \noindent Intuitively, such a tuple may be expressed as a language
+        {\cal L} atom:
 
         \begin{quote}
         \begin{verbatim}holds(user, request_method, requested_resource)\end{verbatim}
         \end{quote}
 
-        With language ${\cal L}$ atoms, a query can be generated then passed to
-        the core PolicyUpdater system for evaluation:
+        \noindent With language ${\cal L}$ atoms, a query can be generated
+        then passed to the core PolicyUpdater system for evaluation:
 
         \begin{quote}
           \begin{verbatim}query holds(user, request_method, requested_resource);\end{verbatim}
@@ -500,20 +501,29 @@
     \bibitem{AP}
       Apache Software Foundation,
       Authentication, Authorization and Access Control.
-      http://httpd.apache.org/docs/howto/auth.html.
+      In {\em Apache HTTP Server Version 2.1 Documentation}.
+      {\tt http://httpd.apache.org/docs-2.1}, 2004.
     \bibitem{LAU}
       Laurie, B., Laurie, P.,
-      Apache: The Definitive Guide (3rd Edition).
-      {\em O'Reilly \& Associates Inc.}, 2003.
+      {\em Apache: The Definitive Guide} (3rd Edition).
+      O'Reilly \& Associates Inc., 2003.
     \bibitem{HTTP1}
       Network Working Group,
-      Hypertext Transfer Protocol -- HTTP/1.1. (RFC 2616).
-      {\em The Internet Society},
-      ftp://ftp.isi.edu/in-notes/rfc2616.txt, 1999.
+      {\em Hypertext Transfer Protocol -- HTTP/1.1. (RFC 2616)}.
+      The Internet Society,
+      {\tt ftp://ftp.isi.edu/in-notes/rfc2616.txt}, 1999.
     \bibitem{HTTP2}
       Network Working Group,
-      HTTP Authentication (RFC 2617).
-      {\em The Internet Society},
-      ftp://ftp.isi.edu/in-notes/rfc2617.txt, 1999.
+      {\em HTTP Authentication (RFC 2617)}.
+      The Internet Society,
+      {\tt ftp://ftp.isi.edu/in-notes/rfc2617.txt}, 1999.
+    \bibitem{SIM}
+      Simons, P.,
+      Efficient Implementation of the Stable Model Semantics for Normal Logic
+      Programs.
+      {\em Research Report A35},
+      Helsinki University of Technology, Digital Systems Laboratory,
+      Finland, 1995.
+      
   \end{thebibliography}
 \end{document}
