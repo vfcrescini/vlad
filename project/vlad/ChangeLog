@@ -1,5 +1,10 @@
 2003-04-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/consttab.h :
+	* kb/consttab.cpp :
+
+	  - Cleanup.
+
 	* kb/atom.h :
 	* kb/atom.cpp :
 

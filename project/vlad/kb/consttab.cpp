@@ -11,11 +11,9 @@
 #include <vlad.h>
 #include <consttab.h>
 
-constraint::constraint(expression *e, expression *c, expression *n)
+constraint::constraint()
 {
-  exp = e;
-  cond = c;
-  ncond = n;
+  initialised = false;
 }
 
 constraint::~constraint()
@@ -36,30 +34,48 @@ bool constraint::cmp(list_item *item)
     return false;
 
   if ((tmp = dynamic_cast<constraint *> (item)) == NULL)
-    return false; 
-
-  if (tmp->exp == NULL && exp != NULL)
-    return false;
-  else if (tmp->exp != NULL && exp == NULL)
-    return false;
-  else if (tmp->exp != NULL && exp != NULL && !exp->cmp(tmp->exp))
     return false;
 
-  if (tmp->cond == NULL && cond != NULL)
-    return false;
-  else if (tmp->cond != NULL && cond == NULL)
-    return false;
-  else if (tmp->cond != NULL && cond != NULL && !cond->cmp(tmp->cond))
+  /* ensure both are initialised. return true if both are uninitialised */
+
+  if (!initialised)
+    return !tmp->initialised;
+
+  if (!tmp->initialised)
     return false;
 
-  if (tmp->ncond == NULL && ncond != NULL)
+  /* components can never be null */
+
+  if (!exp->cmp(tmp->exp))
     return false;
-  else if (tmp->ncond != NULL && ncond == NULL)
+
+  if (!cond->cmp(tmp->cond))
     return false;
-  else if (tmp->ncond != NULL && ncond != NULL && !ncond->cmp(tmp->ncond))
+
+  if (!ncond->cmp(tmp->ncond))
     return false;
 
   return true;
+}
+
+int constraint::init(expression *e, expression *c, expression *n)
+{
+  if (e == NULL || c == NULL || n == NULL)
+    return VLAD_NULLPTR;
+
+  if (exp != NULL)
+    delete exp;
+  if (cond != NULL)
+    delete cond;
+  if (ncond != NULL)
+    delete ncond;
+
+  exp = e;
+  cond = c;
+  ncond = n;
+  initialised = true;
+
+  return VLAD_OK;
 }
 
 int constraint::get(expression **e, expression **c, expression **n)
@@ -85,13 +101,16 @@ consttab::~consttab()
 
 int consttab::add(expression *e, expression *c, expression *n)
 {
+  int retval;
   constraint *tmp;
 
-  if (e == NULL || c == NULL || n == NULL)
-    return VLAD_NULLPTR;
-
-  if ((tmp = VLAD_NEW(constraint(e, c, n))) == NULL)
+  if ((tmp = VLAD_NEW(constraint())) == NULL)
     return VLAD_MALLOCFAILED;
+
+  if ((retval = tmp->init(e, c, n)) != VLAD_OK) {
+    delete tmp;
+    return retval;
+  }
 
   return list::add((list_item *) tmp);
 }
