@@ -113,7 +113,7 @@
           use of the negation operator ($!$). The following shows the formal
           syntax of a fact:
  
-          \begin{verbatim}[!]<holds-atm>|<memb-atm>|<subst-atm>\end{verbatim}
+          \begin{verbatim}[!]<holds_atm>|<memb_atm>|<subst_atm>\end{verbatim}
  
         \noindent \textbf{\emph{Expressions}}
 
@@ -164,15 +164,57 @@ always <exp1>
 
       \subsubsection{Policy Update Definition}
 
+        Before a policy update can be applied, it must first be defined by
+        by using the following syntax:
+
+\begin{verbatim}
+<up_ident>([<var_ident>[, ...]])
+  causes <exp1>
+  if <exp2>;
+\end{verbatim}
+
+        $up\_ident$ is the policy update identifier to be used in referencing
+        this identifier. The optional $var\_ident$ list are the variable
+        identifiers occuring the expressions and will eventually be replaced
+        by entity identifiers when the update is referenced. The postcondition
+        expression $exp1$ is an expression that will hold in the state after
+        this update is applied. The expression $exp2$ is a precondition
+        expression that must hold in the current state before this update is
+        applied.
+
+        It is important to note that a defined policy state has no effect
+        whatsoever on the policy base until it is applied by one of the
+        directives described in the next section.
+
       \subsubsection{Policy Update Directives}
 
         \noindent \emph{Adding an Update into the Sequence}
 
+          \begin{verbatim}seq add <up_ident>(<varlist>);\end{verbatim}
+
         \noindent \emph{Listing the Updates in the Sequence}
+
+          \begin{verbatim}seq list;\end{verbatim}
 
         \noindent \emph{Removing an Update from the Sequence}
 
+          \begin{verbatim}seq del <n>;\end{verbatim}
+
+        \noindent \emph{Computing after a PolcyUpdate}
+
+          \begin{verbatim}compute;\end{verbatim}
+
       \subsubsection{Query Directive}
+
+        A query expression may be issued against the current state of the
+        policy base. This current state is derived after all the updates in
+        the update sequence has been applied, one at a time, onto the initial
+        state. Query expressions are answered with a \emph{true}, \emph{false}
+        or an \emph{unknown}, depending on whether the queried expression
+        holds, its negation holds, or neither, respectively. Syntax is as
+        follows:
+
+        \begin{verbatim}query <exp>;\end{verbatim} 
 
     \subsection{Semantics}
 
