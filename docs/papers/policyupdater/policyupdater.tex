@@ -312,9 +312,9 @@ always <exp1>
           
         \end{definition}
 
-      \subsubsection{Translating Language ${\cal L}$ into ${\cal L}^{*}$}
+      \subsubsection{Language ${\cal L}^{*}$}
 
-        The Elements of Language ${\cal L}$ must first be expressed as a Normal
+        The elements of Language ${\cal L}$ must first be expressed as a Normal
         Logic Program before logical operations such as querying and updating
         can be performed. The Language ${\cal L}^{*}$ is a direct translation
         of Language ${\cal L}$, and as such, it contains the same elements and
@@ -363,7 +363,27 @@ always <exp1>
         \begin{definition}
           State is a property of atoms in the policy base used to differentiate
           atoms that hold before the application of a particular policy update,
-          from the atoms that hold after the application.
+          from the atoms that hold after the application. Consequently, this
+          implies that states are defined only after the sequence list $\psi$
+          has been defined.
+        \end{definition}
+
+        \begin{definition}
+          The total number of states $\Sigma$ is the number of policy updates
+          in the sequence list $\psi$ plus the initial state.
+          \begin{quote}
+            $\Sigma$ = $|\psi|$ + $1$
+          \end{quote}
+        \end{definition}
+
+        \begin{definition}
+          The result function $Res$ takes a polcy update reference $U$ and
+          the current state $S$ as input and returns the resulting state $S'$
+          after $U$ has been applied to $S$.
+
+          \begin{quote}
+            $S'$ = $Res$($U$, $S$)
+          \end{quote}
         \end{definition}
 
       \subsubsection{Atoms, Facts and Expressions}
@@ -423,23 +443,111 @@ always <exp1>
           \end{quote}
         \end{definition}
 
-      \subsubsection{Translating Language ${\cal L}$ into the Normal Logic Program ${\cal L^{*}}$}
+      \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
-        \noindent \emph{Initial State}
+        \noindent \textbf{\emph{Initial State Expression}}
 
-        \noindent \emph{Constraints}
+          To translate the initial state expressions of Language ${\cal L}$ to
+          Language ${\cal L}^{*}$, the state parameter $\sigma$ of every atom
+          in the expression is replaced by the initial state $S_{0}$.
 
-        \noindent \emph{Policy Updates}
+          \begin{definition}
+            An initial state expression is of the form:
 
-        \noindent \emph{Queries}
+            \begin{quote}
+              $f_{0}$ $\land$ .. $\land$ $f_{n}$, $n$ $\geq$ $0$
+
+              where $f_{i}$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{S_{0}}$, $0$ $\leq$ $i$ $\leq$ $n$
+            \end{quote}
+
+          \end{definition}
+
+        \noindent \textbf{\emph{Constraints}}
+
+          Constraints in ${\cal L}$ is in the form:
+
+          \begin{quote}
+            always $a_{0}$ $\land$ ... $\land$ $a_{m}$
+            implied by $b_{0}$ $\land$ ... $\land$ $b_{n}$
+            with absence $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
+
+            where $m$, $n$, $o$ $\geq$ $0$
+          \end{quote}
+
+          To translate a constraint from Language ${\cal L}$ to Language
+          ${\cal L}^{*}$, an instance of the constraint rule must be defined
+          for each state $S_{0}$ to $S_{\Sigma}$.
+
+          \begin{definition}
+            A constraint is of the form:
+
+            \begin{quote}
+              $a_{0}$ $\land$ ... $\land$ $a_{m}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$ $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
+
+              where:
+
+              \begin{itemize}
+                \item
+                  $a_{i}$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $i$ $\leq$ $m$
+                \item
+                  $b_{j}$ = $[\lnot]$ $b$, $b$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $j$ $\leq$ $n$
+                \item
+                  $c_{k}$ = $[\lnot]$ $c$, $c$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $k$ $\leq$ $o$
+                \item
+                  $\sigma$ = $S_{l}$, $0$ $\leq$ $l$ $\leq$ $\Sigma$
+              \end{itemize}
+
+            \end{quote}
+
+          \end{definition}
+
+        \noindent \textbf{\emph{Policy Updates}}
+
+          With all variable occurences grounded to entity identifiers, a
+          policy update $U$ is of the form:
+
+          \begin{quote}
+            $U$: $a_{0}$ $\land$ ... $\land$ $a_{m}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$
+
+            where $m$, $n$ $\geq$ $0$
+          \end{quote}
+
+          In Language ${\cal L}^{*}$, a distinction must be made between the
+          atoms before $U$ is applied and the atoms after $U$ has been applied.
+          Furthermore, such distinction is also needed in the above rule to
+          state that all facts $a_{i}$ ($0$ $\leq$ $i$ $\leq$ $m$) holds in
+          the resulting state if all facts $b_{j}$ ($0$ $\leq$ $j$ $\leq$ $n$)
+          hold in the current state.
+
+          \begin{definition}
+            A policy update rule $U$ applied to the current state $\sigma$ is
+            expressed as:
+
+            \begin{quote}
+              $a_{0}$ $\land$ ... $\land$ $a_{m}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$
+
+              where:
+
+              \begin{itemize}
+                \item
+                  $a_{i}$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{\sigma'}$, $0$ $\leq$ $i$ $\leq$ $m$
+                \item
+                  $b_{j}$ = $[\lnot]$ $b$, $b$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $j$ $\leq$ $n$
+                \item
+                  $\sigma'$ = $Res$($U$, $\sigma$)
+              \end{itemize}
+            \end{quote}
+          \end{definition}
+
+        \noindent \textbf{\emph{Queries}}
 
       \subsubsection{Additional Constraints}
 
-        \noindent \emph{Inheritance Rules}
+        \noindent \textbf{\emph{Inheritance Rules}}
 
-        \noindent \emph{Transitivity Rules}
+        \noindent \textbf{\emph{Transitivity Rules}}
 
-        \noindent \emph{Contradictory Rule}
+        \noindent \textbf{\emph{Contradictory Rules}}
 
           $false$ $\leftarrow$ $A$ $\land$ $\lnot$ $A$
 
