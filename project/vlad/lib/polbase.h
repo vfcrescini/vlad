@@ -6,6 +6,8 @@
 #ifndef __VLAD_POLBASE_H
 #define __VLAD_POLBASE_H
 
+#include <cstdio>
+
 #include <vlad/vlad.h>
 #include <vlad/symtab.h>
 #include <vlad/expression.h>
@@ -60,6 +62,12 @@ class polbase {
     unsigned int length_updatetab();
     /* checks whether name of the given type is in symtab */
     int check_symtab(const char *a_name, unsigned char a_type);
+    /* enumerate the sequences in the sequence table, output to file */
+    int list_seqtab(FILE *a_file);
+    /* generate the rules necessary to evaluate queries */
+    int compute_generate(FILE *a_file);
+    /* generate the query */
+    int query_generate(expression *a_exp, FILE *a_file);
 #ifdef VLAD_SMODELS
     /* prepares the kb for queries */
     int compute_evaluate();
@@ -112,11 +120,21 @@ class polbase {
     int encode_holds(const char *a_sub,
                      const char *a_acc,
                      const char *a_obj,
+                     bool a_truth,
+                     unsigned int a_state,
                      unsigned int *a_id);
     /* gives a unique id based on the member entities given */
-    int encode_memb(const char *a_elt, const char *a_grp, unsigned int *a_id);
+    int encode_memb(const char *a_elt,
+                    const char *a_grp,
+                    bool a_truth,
+                    unsigned int a_state,
+                    unsigned int *a_id);
     /* gives a unique id based on the subset entities given */
-    int encode_subst(const char *a_grp1, const char *a_grp2, unsigned int *a_id);
+    int encode_subst(const char *a_grp1,
+                     const char *a_grp2,
+                     bool a_truth,
+                     unsigned int a_state,
+                     unsigned int *a_id);
     /* gives a unique id based on the fact given */
     int encode_fact(fact *a_fact, unsigned int a_state, unsigned int *a_id);
     /* gives entities based on the holds id given */

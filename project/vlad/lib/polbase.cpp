@@ -451,6 +451,54 @@ int polbase::check_symtab(const char *a_name, unsigned char a_type)
   return m_stable->find(a_name, a_type);
 }
 
+/* enumerate the sequences in the sequence table, output to file */
+int polbase::list_seqtab(FILE *a_file)
+{
+  int retval;
+  unsigned int i;
+  unsigned int j;
+  char *tmp_name;
+  stringlist *tmp_ilist;
+                                                                                  /* we only allow this function after kb is closed */
+  if (m_stage < 3)
+    return VLAD_INVALIDOP;
+                                                                               
+  if (a_file == NULL)
+    return VLAD_NULLPTR;
+                                                                               
+  for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
+    /* get the update ref */
+    if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
+      return retval;
+    /* now print */
+    fprintf(a_file, "%d %s(", i, tmp_name);
+    /* also do the stringlist */
+    for (j = 0; j < VLAD_LIST_LENGTH(tmp_ilist); j++) {
+      char *tmp_arg;
+      if ((retval = tmp_ilist->get(j, &tmp_arg)) != VLAD_OK) {
+        fprintf(a_file, ")\n");
+        return retval;
+      }
+      fprintf(a_file, "%s%s", ((j == 0) ? "" : ","), tmp_arg);
+    }
+    fprintf(a_file, ")\n");
+  }
+                                                                               
+  return VLAD_OK;
+}
+
+/* generate the rules necessary to evaluate queries */
+int polbase::compute_generate(FILE *a_file)
+{
+  return VLAD_OK;
+}
+
+/* generate the query */
+int polbase::query_generate(expression *a_exp, FILE *a_file)
+{
+  return VLAD_OK;
+}
+
 #ifdef VLAD_SMODELS
 /* prepares the kb for queries */
 int polbase::compute_evaluate()
@@ -1046,7 +1094,12 @@ unsigned int polbase::compute_fact(unsigned int a_state,
 }
 
 /* gives a unique id based on the holds entities given */
-int polbase::encode_holds(const char *a_sub, const char *a_acc, const char *a_obj, unsigned int *a_id)
+int polbase::encode_holds(const char *a_sub,
+                          const char *a_acc,
+                          const char *a_obj,
+                          bool a_truth,
+                          unsigned int a_state,
+                          unsigned int *a_id)
 {
   int retval;
   unsigned int index[3];
@@ -1071,13 +1124,17 @@ int polbase::encode_holds(const char *a_sub, const char *a_acc, const char *a_ob
   index[1] += (VLAD_IDENT_IS_GROUP(type[1]) ? aslen : 0);
   index[2] += (VLAD_IDENT_IS_GROUP(type[2]) ? oslen : 0);
 
-  *a_id = compute_holds(0, false, index[0], index[1], index[2]);
+  *a_id = compute_holds(a_state, a_truth, index[0], index[1], index[2]);
 
   return VLAD_OK;
 }
 
 /* gives a unique id based on the member entities given */
-int polbase::encode_memb(const char *a_elt, const char *a_grp, unsigned int *a_id)
+int polbase::encode_memb(const char *a_elt,
+                         const char *a_grp,
+                         bool a_truth,
+                         unsigned int a_state,
+                         unsigned int *a_id)
 {
   int retval;
   unsigned int index[2];
@@ -1095,13 +1152,17 @@ int polbase::encode_memb(const char *a_elt, const char *a_grp, unsigned int *a_i
   if (type[0] != VLAD_IDENT_BASETYPE(type[1]))
     return VLAD_INVALIDINPUT;
 
-  *a_id = compute_memb(0, false, type[0], index[0], index[1]);
+  *a_id = compute_memb(a_state, a_truth, type[0], index[0], index[1]);
 
   return VLAD_OK;
 }
 
 /* gives a unique id based on the subset entities given */
-int polbase::encode_subst(const char *a_grp1, const char *a_grp2, unsigned int *a_id)
+int polbase::encode_subst(const char *a_grp1,
+                          const char *a_grp2,
+                          bool a_truth,
+                          unsigned int a_state,
+                          unsigned int *a_id)
 {
   int retval;
   unsigned int index[2];
@@ -1119,7 +1180,7 @@ int polbase::encode_subst(const char *a_grp1, const char *a_grp2, unsigned int *
   if (VLAD_IDENT_BASETYPE(type[0]) != VLAD_IDENT_BASETYPE(type[1]))
     return VLAD_INVALIDINPUT;
 
-  *a_id = compute_subst(0, false, type[0], index[0], index[1]);
+  *a_id = compute_subst(a_state, a_truth, type[0], index[0], index[1]);
 
   return VLAD_OK;
 }
@@ -1134,21 +1195,22 @@ int polbase::encode_fact(fact *a_fact,
   bool truth;
   char *tmp[3];
 
+  if (m_stage < 2)
+    return VLAD_INVALIDOP;
+
   if (a_fact == NULL || a_id == NULL)
     return VLAD_NULLPTR;
 
   if ((retval = a_fact->get(&tmp[0], &tmp[1], &tmp[2], &type, &truth)) != VLAD_OK)
     return retval;
 
-  *a_id = (a_state * m_tot_atom * 2) + (truth ? m_tot_atom : 0);
-
   switch(type) {
     case VLAD_ATOM_HOLDS :
-      return encode_holds(tmp[0], tmp[1], tmp[2], a_id);
+      return encode_holds(tmp[0], tmp[1], tmp[2], truth, a_state, a_id);
     case VLAD_ATOM_MEMBER :
-      return encode_memb(tmp[0], tmp[1], a_id);
+      return encode_memb(tmp[0], tmp[1], truth, a_state, a_id);
     case VLAD_ATOM_SUBSET :
-      return encode_subst(tmp[0], tmp[1], a_id);
+      return encode_subst(tmp[0], tmp[1], truth, a_state, a_id);
   }
 
   return VLAD_FAILURE;
@@ -1586,7 +1648,7 @@ unsigned int polbase::negate_fact(unsigned int a_fact)
   truth = ! (a_fact >= m_tot_atom);
   a_fact = a_fact % m_tot_atom;
 
-  return (state * m_tot_atom * 2) + (truth ? m_tot_atom : 0) + a_fact;
+  return compute_fact(state, truth, a_fact);
 }
 
 #ifdef VLAD_SMODELS
