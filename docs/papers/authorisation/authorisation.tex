@@ -68,10 +68,56 @@
 
   \section{A Formal Authorisation Language}
 
+    \subsection{Properties}
+
+      The proposed logic-based authorisation language has one main purpose:
+      to provide a simple but expressive interface between the enforcer
+      agent and the knowledge base. To achieve this purpose, the authorisation
+      language must possess the following properties:
+
+      \begin{itemize}
+        \item
+          Standardised Syntax
+
+          The language provides high-level semantics to allow logic-based
+          operations and at the same time syntactically concise to allow
+          parser-level implementation.
+
+        \item
+          Provision for Knowledge Base Initialisation
+
+          The language includes provisions for setting logical facts into
+          the knowledge base before any operation is performed.
+
+        \item
+          Mechanism for Transformations
+
+          The language has the means to modify the preset facts in the
+          knowledge base. Such operations or transformations may be to add 
+          new facts, or if the fact happens to be contrary to an existing
+          fact, to delete existing ones.
+
+        \item
+          Ability to Express Default Propositions
+
+          In addition to the ability to transform the knowledge base, the 
+          language also possess the ability to express constraints or default
+          propositions. Constraints are logical rules or facts that must hold 
+          even after transformations.
+
+        \item
+          Query Functionality
+
+          The language of course allows the knowledge base to be queried by
+          providing the ability to check whether a given proposition or fact
+          holds in the knowledge base.
+          
+      \end{itemize}
+
     \subsection{Defintions}
 
-      Before the language may be completely defined, a definition for the
-      following components must first be formalised:
+      Before the language may be completely defined, the following components 
+      must first be formalised:
  
       \subsubsection{Identifiers}
 
@@ -139,7 +185,7 @@
         \end{itemize}
 
         An atom may also be negated by the \emph{not} ! operator. (e.g.
-        !holds(S,A,O))
+        !holds(S, A, O))
 
         In addition to the three types of atoms, two special constant atom are
         also defined in this language: \emph{true} and \emph{false}.
@@ -148,15 +194,15 @@
 
         An expression is simply a conjuntion of atoms. In this language,
         disjunctions are not allowed. The conjunction \emph{and} is 
-        represented by the symbol \&\&. For example, holds(S,A,O) \&\& 
-        !memb(E,G) \&\& subst(G1,G2) is interpreted as holds(S,A,O) $\land$
+        represented by the symbol \&\&. For example, holds(S, A, O) \&\& 
+        !memb(E, G) \&\& subst(G1, G2) is interpreted as holds(S, A, O) $\land$
         (not E $\in$ G) $\land$ (G1 $\subseteq$ G2).
 
         Since negated expressions yield a disjunction of atoms, only
         atoms are allowed to be negated. To illustrate: De Morgan's Law
-        states that \emph{not} (holds(S1,A1,O1) $\land$ holds(S2,A2,O2)) is
-        equivalent to (\emph{not} holds(S1,A1,O1)) $\lor$ (\emph{not}
-        holds(S2,A2,O2)). As a consequence, parentheses are allowed only
+        states that \emph{not} (holds(S1, A1, O1) $\land$ holds(S2, A2, O2)) is
+        equivalent to (\emph{not} holds(S1, A1, O1)) $\lor$ (\emph{not}
+        holds(S2, A2, O2)). As a consequence, parentheses are allowed only
         to enclose literals within atoms but not to group atoms together. 
 
         Because the constants \emph{true} and \emph{false} are atoms, they may 
@@ -169,7 +215,7 @@
     \subsection{Syntax and Semantics}
 
       The language is structured into 5 different ordered sections where each
-      section is a set of statements native to that section. Each statement
+      section is a set of statements native to that section.  Each statement
       will be terminated by a semicolon ; to mark the end of that statement.
 
       \subsubsection{Identifier Declarations}
@@ -272,9 +318,9 @@ if <pre-condition-expression>
         Transformation statements may also contain variables:
 
 \begin{verbatim}
-delete_write(vSUBJECT, vOBJECT)
-causes !holds(vSUBJECT, a_write, vOBJECT)
-if holds(vSUBJECT, a_write, vOBJECT)
+delete_write(SUBJECT, OBJECT)
+causes !holds(SUBJECT, a_write, OBJECT)
+if holds(SUBJECT, a_write, vOBJECT)
 \end{verbatim}
         this means
 
@@ -361,7 +407,7 @@ is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
     \pagebreak
 
   \begin{thebibliography}{}
-    \bibitem{BV1}Y. Bai and V. Varadharajan,\emph{On Transformation of Authorization Policies}. School of Computing and Information Technology, University of Western Sydney, 1997.
+    \bibitem{BV1}Y. Bai and V. Varadharajan, \emph{On Transformation of Authorization Policies}. School of Computing and Information Technology, University of Western Sydney, 1997.
     \bibitem{BV2}Y. Bai and V. Varadharajan, \emph{On Sequence of Authorization Policy Transformations}. School of Computing and Information Technology, University of Western Sydney, 1997.
     \bibitem{RN}S. Russell and P. Norvig, \emph{Artificial Intelligence - A Modern Approach}. Prentice Hall, 1995.
     \bibitem{WL}.Y.C. Woo and S.S. Lam, \emph{Authorization in Distributed systems: A Formal Approach}. Proceedings of IEEE Symposium on Research in Security and Privacy, 1992.
