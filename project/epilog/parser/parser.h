@@ -9,6 +9,7 @@
 /* vars that can be re-assigned */
 extern FILE *yyin;
 extern FILE *yyout;
+extern FILE *yyerr;
 
 /* vars that can be referenced */
 extern unsigned int line_no;

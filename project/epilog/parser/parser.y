@@ -18,19 +18,18 @@
 #include <stdio.h>
 #endif
 
-extern expression_type initial_exp;
-
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
 
 int yylex(void);
 
 int add_identifier(char ident[], unsigned short type);
+void exit_error(char *message);
 int initialise(void);
 int destroy(void);
-void exit_error(char *message);
 
 expression_type initial_exp;
+FILE *yyerr;
 %}
 
 %union {
@@ -118,25 +117,24 @@ destroy :
       expression_get(initial_exp, i, &tmp_atom);
 
       if (EPI_ATOM_IS_CONST(*tmp_atom))
-        printf("initial state: constant %s\n", tmp_atom->truth == 0 ? "true" : "false");
+        fprintf(yyerr, "initial state: constant %s\n", tmp_atom->truth == 0 ? "true" : "false");
       else if (EPI_ATOM_IS_HOLDS(*tmp_atom))
-        printf("initial state: %sholds(%s, %s, %s)\n",
+        fprintf(yyerr, "initial state: %sholds(%s, %s, %s)\n",
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.holds.subject->name,
                tmp_atom->atom.holds.access->name,
                tmp_atom->atom.holds.object->name);
       else if (EPI_ATOM_IS_MEMB(*tmp_atom))
-        printf("initial state: %smemb(%s, %s)\n", 
+        fprintf(yyerr, "initial state: %smemb(%s, %s)\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.memb.element->name,
                tmp_atom->atom.memb.group->name);  
       else if (EPI_ATOM_IS_SUBST(*tmp_atom))
-        printf("initial state: %ssubst(%s, %s)\n", 
+        fprintf(yyerr, "initial state: %ssubst(%s, %s)\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.subst.group1->name,
                tmp_atom->atom.subst.group2->name);     
     }
-    
 #endif
 
     if (destroy() != 0) {
@@ -312,20 +310,20 @@ initial_stmt :
 
 #ifdef DEBUG
       if (EPI_ATOM_IS_CONST(*tmp_atom))
-        printf("adding constant %s into the initial state\n", tmp_atom->truth == 0 ? "true" : "false");
+        fprintf(yyerr, "adding constant %s into the initial state\n", tmp_atom->truth == 0 ? "true" : "false");
       else if (EPI_ATOM_IS_HOLDS(*tmp_atom))
-        printf("adding %sholds(%s, %s, %s) into the initial state\n", 
+        fprintf(yyerr, "adding %sholds(%s, %s, %s) into the initial state\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.holds.subject->name,
                tmp_atom->atom.holds.access->name,
                tmp_atom->atom.holds.object->name);
       else if (EPI_ATOM_IS_MEMB(*tmp_atom))
-        printf("adding %smemb(%s, %s) into the initial state\n", 
+        fprintf(yyerr, "adding %smemb(%s, %s) into the initial state\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.memb.element->name,
                tmp_atom->atom.memb.group->name);  
       else if (EPI_ATOM_IS_SUBST(*tmp_atom))
-        printf("adding %ssubst(%s, %s) into the initial state\n", 
+        fprintf(yyerr, "adding %ssubst(%s, %s) into the initial state\n", 
                tmp_atom->truth == 0 ? "" : "not ",
                tmp_atom->atom.subst.group1->name,
                tmp_atom->atom.subst.group2->name);  
@@ -347,7 +345,7 @@ trans_stmt :
       exit_error("internal error");
 
 #ifdef DEBUG
-    printf("transformation: %s\n", $2);
+    fprintf(yyerr, "transformation: %s\n", $2);
 #endif
 
     for (i = 0; i < len; i++) {
@@ -355,7 +353,7 @@ trans_stmt :
         exit_error("internal error");
 
 #ifdef DEBUG
-      printf("variable: %s\n", temp_string);
+      fprintf(yyerr, "variable: %s\n", temp_string);
 #endif
     }
 
@@ -839,17 +837,17 @@ int add_identifier(char ident[], unsigned short type)
   
 #ifdef DEBUG
   if (EPI_IDENT_TYPE_IS_SUBJECT(type) && ! EPI_IDENT_TYPE_IS_GROUP(type))
-    printf("declared subject identifier %s\n", ident);
+    fprintf(yyerr, "declared subject identifier %s\n", ident);
   else if (EPI_IDENT_TYPE_IS_OBJECT(type) && ! EPI_IDENT_TYPE_IS_GROUP(type))
-    printf("declared object identifier %s\n", ident);
+    fprintf(yyerr, "declared object identifier %s\n", ident);
   else if (EPI_IDENT_TYPE_IS_ACCESS(type) && ! EPI_IDENT_TYPE_IS_GROUP(type))
-    printf("declared access identifier %s\n", ident); 
+    fprintf(yyerr, "declared access identifier %s\n", ident); 
   if (EPI_IDENT_TYPE_IS_SUBJECT(type) && EPI_IDENT_TYPE_IS_GROUP(type))
-    printf("declared subject-group identifier %s\n", ident);
+    fprintf(yyerr, "declared subject-group identifier %s\n", ident);
   else if (EPI_IDENT_TYPE_IS_OBJECT(type) && EPI_IDENT_TYPE_IS_GROUP(type))
-    printf("declared object-group identifier %s\n", ident);
+    fprintf(yyerr, "declared object-group identifier %s\n", ident);
   else if (EPI_IDENT_TYPE_IS_ACCESS(type) && EPI_IDENT_TYPE_IS_GROUP(type))
-    printf("declared access-group identifier %s\n", ident); 
+    fprintf(yyerr, "declared access-group identifier %s\n", ident); 
 #endif
 
   if (identlist_add(ident, type) != 0) {
@@ -864,7 +862,7 @@ int add_identifier(char ident[], unsigned short type)
 int initialise(void)
 {
 #ifdef DEBUG
-  printf("initialising global lists\n");
+  fprintf(yyerr, "initialising global lists\n");
 #endif
 
   if (identlist_init() != 0)
@@ -880,7 +878,7 @@ int initialise(void)
 int destroy(void)
 {
 #ifdef DEBUG
-  printf("destroying global lists\n");
+  fprintf(yyerr, "destroying global lists\n");
 #endif
 
   if (identlist_purge() != 0)

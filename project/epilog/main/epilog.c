@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 {
   yyin = stdin;
   yyout = stdout;
+  yyerr = stderr;
 
   yyparse();
 
@@ -18,14 +19,14 @@ int main(int argc, char *argv[])
 
 int yyerror(char *error)
 {
-  fprintf(stderr, "line %d: ERROR: %s\n", line_no, error);
+  fprintf(yyerr, "line %d: ERROR: %s\n", line_no, error);
 
   return 0;
 }
 
 int yywarn(char *warn)
 {
-  fprintf(stderr, "line %d: WARNING: %s\n", line_no, warn);
+  fprintf(yyerr, "line %d: WARNING: %s\n", line_no, warn);
 
   return 0;
 }
