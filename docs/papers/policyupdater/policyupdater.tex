@@ -1,4 +1,4 @@
-\documentclass[10pt, twocolumn]{article}
+\documentclass[times, 10pt, twocolumn]{article}
 \usepackage{latex8}
 \usepackage{times}
 \usepackage{amsmath}
@@ -136,7 +136,7 @@
               underscore characters. The following regular expression shows the
               syntax of entity identifiers:
 
-              \begin{verbatim}[a-z]([a-zA-Z0-9_]{0,127}\end{verbatim}
+              \begin{verbatim}[a-z]([a-zA-Z0-9_]){0,127}\end{verbatim}
 
             \item
               {\em Policy Update Identifiers} are used for the sole purpose of
@@ -146,7 +146,7 @@
               from entity identifiers. For this reason, policy update
               identifiers share the same syntax with entity identifiers:
 
-              \begin{verbatim}[a-z]([a-zA-Z0-9_]{0,127}\end{verbatim}
+              \begin{verbatim}[a-z]([a-zA-Z0-9_]){0,127}\end{verbatim}
 
             \item
               {\em Variable Identifiers} are used as entity identifier
@@ -156,7 +156,7 @@
               characters. The following regular expression shows the syntax of
               variable identifiers:
 
-              \begin{verbatim}[A-Z]([a-zA-Z0-9_]{0,127}\end{verbatim}
+              \begin{verbatim}[A-Z]([a-zA-Z0-9_]){0,127}\end{verbatim}
           \end{itemize}
 
         \paragraph{Atoms.}
@@ -220,7 +220,7 @@
           syntax illustrates how to define one or more entity identifiers of a
           particular type.
 
-          \begin{verbatim}ident sub|acc|obj[-grp] <e_id>[, ...]];\end{verbatim}
+          \begin{verbatim}ident sub|acc|obj[-grp] <e_id>[, ...];\end{verbatim}
 
         \paragraph{Initial Fact Definition.}
 
@@ -266,7 +266,7 @@ always <exp1>
 
           $up\_id$ is the policy update identifier to be used in referencing
           this policy update. The optional $var\_id$ list are the variable
-          identifiers occurring the expressions $exp1$ and $exp2$ and will
+          identifiers occurring in the expressions $exp1$ and $exp2$ and will
           eventually be replaced by entity identifiers when the update is
           referenced. The postcondition expression $exp1$ is an expression that
           will hold in the state after this update is applied. The expression
@@ -369,7 +369,7 @@ ident acc read, write;
 ident obj file;
 
 initially
-  memb(alice, grp2) &&
+  memb(alice, grp3) &&
   holds(grp1, read, file) &&
   subst(grp3, grp2) &&
   subst(grp2, grp1);
@@ -1109,9 +1109,9 @@ query holds(alice, read, file);
 
               $\hat{holds}(grp1, read, file,S_{0}) \leftarrow$
 
-              $\hat{subst}(grp3, grp2) \leftarrow$
+              $\hat{subst}(grp3, grp2, S_{0}) \leftarrow$
 
-              $\hat{subst}(grp2, grp1) \leftarrow$
+              $\hat{subst}(grp2, grp1, S_{0}) \leftarrow$
 
             \item
               Constraints
