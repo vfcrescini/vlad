@@ -3,6 +3,9 @@
 	* datastruct/simplelist.c :
 	* datastruct/stringlist.c :
 	* ident/ident.c :
+	* exp/comp_atom.h :
+	* exp/gnd_atom.h :
+	* exp/name.c :
 
 	  - Used global malloc macro.
 

@@ -74,6 +74,6 @@ void comp_atom_destroy(comp_atom_type *comp_atom);
 int comp_atom_compare(comp_atom_type comp_atom1, comp_atom_type comp_atom2);
 
 /* some convenience macro(s) */
-#define EPI_COMPATOM_MALLOC ((comp_atom_type *) malloc(sizeof(comp_atom_type)))
+#define EPI_COMPATOM_MALLOC (EPI_ADT_MALLOC(comp_atom_type))
 
 #endif

@@ -77,6 +77,6 @@ void gnd_atom_destroy(gnd_atom_type *atom);
 int gnd_atom_compare(gnd_atom_type atom1, gnd_atom_type atom2);
 
 /* some convenience macro(s) */
-#define EPI_GNDATOM_MALLOC ((gnd_atom_type *) malloc(sizeof(gnd_atom_type)))
+#define EPI_GNDATOM_MALLOC (EPI_ADT_MALLOC(gnd_atom_type))
 
 #endif
