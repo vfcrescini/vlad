@@ -244,7 +244,7 @@ int modvlad_parse_args(apr_pool_t *a_p,
 static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
 {
   int retval;
-  char line[MAX_STRING_LEN];
+  char line[MODVLAD_MAXSTR_LEN];
   const char *user;
   const char *lineptr;
   ap_configfile_t *cfgfile = NULL;
@@ -266,8 +266,10 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
     return -1;
   }
 
+  memset(line, 0, MODVLAD_MAXSTR_LEN);
+
   /* read one line at a time */
-  while (!(ap_cfg_getline(line, MAX_STRING_LEN, cfgfile))) {
+  while (!(ap_cfg_getline(line, MODVLAD_MAXSTR_LEN, cfgfile))) {
 
     if (line[0] == '#' || !line[0])
       continue;
@@ -311,7 +313,7 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
 {
   const char *acc_array[] = MODVLAD_ACCESS_ARRAY;
   const char **array_ptr = acc_array;
-  const char *access;
+  const char *access = NULL;
   int retval;
 
   while((access = *(array_ptr++)) != NULL) {
@@ -348,8 +350,8 @@ static int add_object(apr_pool_t *a_p,
                       const char *a_relpath)
 {
   int retval;
-  apr_dir_t *pdir;
   apr_finfo_t dinfo;
+  apr_dir_t *pdir = NULL;
   const char *realrelpath = NULL;
   const char *realfullpath = NULL;
 
@@ -391,7 +393,7 @@ static int add_object(apr_pool_t *a_p,
   /* if this is not the root dir, then make it a subset of its parent dir */
   if (strcmp(realrelpath, "/")) {
     const char *parent = get_parent(a_p, realrelpath);
-    void *tmp_atom;
+    void *tmp_atom = NULL;
 
     if (vlad_atom_create(&tmp_atom) != VLAD_OK)
       return -1;
@@ -415,7 +417,7 @@ static int add_object(apr_pool_t *a_p,
   }
 
   while (apr_dir_read(&dinfo, APR_FINFO_NAME | APR_FINFO_TYPE, pdir) == APR_SUCCESS) {
-    const char *tmppath;
+    const char *tmppath = NULL;
 
     /* ignore ".", ".." and the admin trigger */
     if (!strcmp(".", dinfo.name) || 
@@ -431,7 +433,7 @@ static int add_object(apr_pool_t *a_p,
                           NULL);
 
     if (dinfo.filetype != APR_DIR) {
-      void *tmp_atom;
+      void *tmp_atom = NULL;
 
       /* if it is not a directory, add to kb */
       retval = vlad_kb_add_symtab(a_kb, tmppath, VLAD_IDENT_OBJECT);
@@ -470,7 +472,7 @@ static int add_object(apr_pool_t *a_p,
 /* gets the document root without request_rec */
 static const char *get_docroot(apr_pool_t *a_p, server_rec *a_s)
 {
-  core_server_config *conf;
+  core_server_config *conf = NULL;
 
   conf = (core_server_config *) ap_get_module_config(a_s->module_config,
                                                      &core_module);

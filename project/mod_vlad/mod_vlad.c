@@ -106,15 +106,16 @@ static char *modvlad_get_passwd(request_rec *a_r,
                                 const char *a_user,
                                 const char *a_filename)
 {
-  ap_configfile_t *f;
-  char l[MAX_STRING_LEN];
-  const char *rpw, *w;
+  char line[MODVLAD_MAXSTR_LEN];
+  const char *ptr = NULL;
+  const char *word = NULL;
+  ap_configfile_t *cfile = NULL;
   apr_status_t status;
 
   if (!a_r || !a_user || !a_filename)
     return NULL;
 
-  status = ap_pcfg_openfile(&f, a_r->pool, a_filename);
+  status = ap_pcfg_openfile(&cfile, a_r->pool, a_filename);
 
   if (status != APR_SUCCESS) {
     ap_log_rerror(APLOG_MARK,
@@ -126,20 +127,22 @@ static char *modvlad_get_passwd(request_rec *a_r,
     return NULL;
   }
 
-  while (!(ap_cfg_getline(l, MAX_STRING_LEN, f))) {
-    if ((l[0] == '#') || (!l[0]))
+  memset(line, 0, MODVLAD_MAXSTR_LEN);
+
+  while (!(ap_cfg_getline(line, MODVLAD_MAXSTR_LEN, cfile))) {
+    if ((line[0] == '#') || (!line[0]))
       continue;
 
-    rpw = l;
-    w = ap_getword(a_r->pool, &rpw, ':');
+    ptr = line;
+    word = ap_getword(a_r->pool, &ptr, ':');
 
-    if (!strcmp(a_user, w)) {
-      ap_cfg_closefile(f);
-      return ap_getword(a_r->pool, &rpw, ':');
+    if (!strcmp(a_user, word)) {
+      ap_cfg_closefile(cfile);
+      return ap_getword(a_r->pool, &ptr, ':');
     }
   }
 
-  ap_cfg_closefile(f);
+  ap_cfg_closefile(cfile);
 
   return NULL;
 }
@@ -149,7 +152,7 @@ static int modvlad_check_passwd(request_rec *a_r,
                                 const char *a_passwd,
                                 const char *a_filename)
 {
-  const char *real_passwd;
+  const char *real_passwd = NULL;
   apr_status_t status;
 
   if (!a_r || !a_user  || !a_passwd || !a_filename)
@@ -405,9 +408,6 @@ static int modvlad_handler(request_rec *a_r)
       modvlad_generate_footer(a_r);
       return OK;
     }
-
-    /* all other methods should fail */
-    return DECLINED;
   }
 
   return DECLINED;
