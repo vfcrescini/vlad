@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <errno.h>
 #include <signal.h>
 #include <netdb.h>
@@ -14,6 +15,8 @@
 #define ZAPHODD_MAXCLIENTS 32
 #define ZAPHODD_TIMEOUT    30
 #define ZAPHODD_MAXLENGTH  1024
+#define ZAPHODD_DELIMITER  124
+#define ZAPHODD_TERMINATOR 10
 
 int init_socket();
 int wait_connect(int server_fd);
@@ -153,7 +156,8 @@ int wait_connect(int server_fd)
 
 int serve_connect(int client_fd)
 {
-  char *reply = NULL;
+  char *temp = NULL;
+  char reply[ZAPHODD_MAXLENGTH];
   char request[ZAPHODD_MAXLENGTH];
 
   memset(request, 0, ZAPHODD_MAXLENGTH);
@@ -167,17 +171,17 @@ int serve_connect(int client_fd)
 
   /* process message */
   if (read_from_fd(client_fd, request) < 0) {
-    printf("error\n");
-    write_to_fd(client_fd, "error");
-  }
-  else if (accept_command(request, &reply) == 0) {
-    printf("reply: (%s)\n", reply);
+    sprintf(reply, "error%c", ZAPHODD_MAXLENGTH);
     write_to_fd(client_fd, reply);
-    free(reply);
+  }
+  else if (accept_command(request, &temp) == 0) {
+    strncpy(reply, temp, ZAPHODD_MAXLENGTH);
+    free(temp);
+    write_to_fd(client_fd, reply);
   }
   else {
-    printf("error replying\n");
-    write_to_fd(client_fd, "error");
+    sprintf(reply, "error%c", ZAPHODD_MAXLENGTH);
+    write_to_fd(client_fd, reply);
   }
 
   /* clear alarm */
@@ -204,7 +208,7 @@ int read_from_fd(int fd, char string[])
     if (FD_ISSET(fd, &tmp_set)) {
       if (read(fd, &(string[i]), 1) <= 0)
         break;
-      if (string[i] == '\n' || string[i] == '\0')
+      if (string[i] == ZAPHODD_TERMINATOR || string[i] == '\0')
         break;
       if (++i >= ZAPHODD_MAXLENGTH)
         break;

@@ -12,7 +12,5 @@ int accept_command(char *input, char **output)
   *output = (char *) malloc(sizeof(char) * (strlen(input) + 1));
   strcpy(*output, input);
 
-  printf("%s\n", input);
-
   return 0;
 }
