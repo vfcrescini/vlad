@@ -13,81 +13,81 @@
 
 transref::transref()
 {
-  name = NULL;
-  ilist = NULL;
-  initialised = false;	
+  m_name = NULL;
+  m_list = NULL;
+  m_init = false;	
 }
 
 transref::~transref()
 {
-  if (name != NULL)
-    free(name);
-  if (ilist != NULL)
-    delete ilist;
+  if (m_name != NULL)
+    free(m_name);
+  if (m_list != NULL)
+    delete m_list;
 }
 
-bool transref::cmp(list_item *item)
+bool transref::cmp(list_item *a_item)
 {
   transref *tmp = NULL;
 
-  if (item == NULL)
+  if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<transref *> (item)) == NULL)
+  if ((tmp = dynamic_cast<transref *>(a_item)) == NULL)
     return false;
 
-  /* if both are uninitialised return true. if only one -- false */
-  if (!initialised)
-    return !tmp->initialised;
+  /* if both are uninit return true. if only one -- false */
+  if (!m_init)
+    return !tmp->m_init;
 
-  if (!tmp->initialised)
+  if (!tmp->m_init)
     return false;
 
-  /* name cannot be NULL */
-  if (strcmp(name, tmp->name))
+  /* m_name cannot be NULL */
+  if (strcmp(m_name, tmp->m_name))
     return false;
 
-  return VLAD_LIST_ITEMCMP(ilist, tmp->ilist);
+  return VLAD_LIST_ITEMCMP(m_list, tmp->m_list);
 }
 
-int transref::init(const char *n, stringlist *il)
+int transref::init(const char *a_name, stringlist *a_list)
 {
-  if (n == NULL)
+  if (a_name == NULL)
     return VLAD_NULLPTR;
 
-  name = (char *) n;
-  ilist = il;
-  initialised = true;
+  m_name = (char *) a_name;
+  m_list = a_list;
+  m_init = true;
 
   return VLAD_OK;
 }
 
-int transref::get(char **n, stringlist **il)
+int transref::get(char **a_name, stringlist **a_list)
 {
-  if (n == NULL || il == NULL)
+  if (a_name == NULL || a_list == NULL)
     return VLAD_NULLPTR;
 
-  if (!initialised)
+  if (!m_init)
     return VLAD_UNINITIALISED;
 
-  *n = name;
-  *il = ilist;
+  *a_name = m_name;
+  *a_list = m_list;
 
   return VLAD_OK;
 }
 
 #ifdef VLAD_DEBUG
-void transref::print(char *s)
+void transref::print(char *a_str)
 {
-  char tmps[VLAD_MAXLEN_STR];
+  char tmp_str[VLAD_MAXLEN_STR];
 
-  if (initialised) {
-    memset(tmps, 0, VLAD_MAXLEN_STR);
+  if (m_init) {
+    memset(tmp_str, 0, VLAD_MAXLEN_STR);
 
-    if (ilist != NULL)
-      ilist->print(tmps);
+    if (m_list != NULL)
+      m_list->print(tmp_str);
 
-    sprintf(s, "%s(%s)", name, tmps);
+    sprintf(a_str, "%s(%s)", m_name, tmp_str);
   }
 }
 #endif
@@ -102,16 +102,16 @@ seqtab::~seqtab()
 }
 
 /* add pre-malloc'ed transref */
-int seqtab::add(transref *t)
+int seqtab::add(transref *a_tref)
 {
-  if (t == NULL)
+  if (a_tref == NULL)
     return VLAD_NULLPTR;
 
-  return list::add((list_item *) t);
+  return list::add((list_item *) a_tref);
 }
 
-/* add pre-malloc'ed name and ilist */
-int seqtab::add(const char *n, stringlist *il)
+/* add pre-malloc'ed m_name and ilist */
+int seqtab::add(const char *a_name, stringlist *a_list)
 {
   int retval;
   transref *tmp_ref;
@@ -119,50 +119,50 @@ int seqtab::add(const char *n, stringlist *il)
   if ((tmp_ref = VLAD_NEW(transref())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = tmp_ref->init(n, il)) != VLAD_OK)
+  if ((retval = tmp_ref->init(a_name, a_list)) != VLAD_OK)
     return retval;
 
   return list::add((list_item *) tmp_ref);
 }
 
 /* delete i'th item */
-int seqtab::del(unsigned int i)
+int seqtab::del(unsigned int a_index)
 {
-  return list::del(i, true);
+  return list::del(a_index, true);
 }
 
-/* get i'th name and ilist */
-int seqtab::get(unsigned int i, char **n, stringlist **il)
+/* get i'th m_name and ilist */
+int seqtab::get(unsigned int a_index, char **a_name, stringlist **a_list)
 {
   int retval;
   transref *tmp_ref;
 
-  if (n == NULL || il == NULL)
+  if (a_name == NULL || a_list == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = list::get(i, (list_item **) &tmp_ref)) != VLAD_OK)
+  if ((retval = list::get(a_index, (list_item **) &tmp_ref)) != VLAD_OK)
     return retval;
 
-  return tmp_ref->get(n, il);
+  return tmp_ref->get(a_name, a_list);
 }
 
 #ifdef VLAD_DEBUG
-void seqtab::print(char *s)
+void seqtab::print(char *a_str)
 {
   unsigned int i;
-  char tmps[VLAD_MAXLEN_STR];
-  transref *tmpr;
+  char tmp_str[VLAD_MAXLEN_STR];
+  transref *tmp_obj;
 
-  strcpy(s, "");
+  strcpy(a_str, "");
 
   for (i = 0; i < list::length(); i++) {
-    if (list::get(i, (list_item **) &tmpr) != VLAD_OK)
+    if (list::get(i, (list_item **) &tmp_obj) != VLAD_OK)
       break;
 
-    memset(tmps, 0, VLAD_MAXLEN_STR);
-    if (tmpr != NULL)
-      tmpr->print(tmps);
-    sprintf(s, "%s %s", s, tmps);
+    memset(tmp_str, 0, VLAD_MAXLEN_STR);
+    if (tmp_obj != NULL)
+      tmp_obj->print(tmp_str);
+    sprintf(a_str, "%s %s", a_str, tmp_str);
   }
 }
 #endif
