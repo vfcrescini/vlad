@@ -95,15 +95,15 @@
     effective as they are, lack the details necessary to address the issues
     involved in the implementation of such a system.
 
-    The {\em Policy Description Language}, or PDL, developed by Lobo,
+    The {\em Policy Description Language}, or {\em PDL}, developed by Lobo,
     et. al. \cite{LOB}, is a language for representing event and action
-    oriented generic policies. PDL is later extended by Chomicki, et. al.
+    oriented generic policies. {\em PDL} is later extended by Chomicki, et. al.
     \cite{CHO} to include {\em policy monitors} which, in effect, are policy
-    constraints. Bertino, et. al. \cite{BE2}, again took PDL a step further by
-    extending {\em policy monitors} to allow users to express preferred
-    constraints. While these generic languages are expressive enough to be used
-    for access control systems, systems built for such languages will not have
-    the ability to dynamically update the policies.
+    constraints. Bertino, et. al. \cite{BE2}, again took {\em PDL} a step
+    further by extending {\em policy monitors} to allow users to express
+    preferred constraints. While these generic languages are expressive enough
+    to be used for access control systems, systems built for such languages
+    will not have the ability to dynamically update the policies.
 
     To overcome these limitations, we propose the PolicyUpdater access control
     system, which, with its own access control language, provides a formal
@@ -720,7 +720,7 @@
           \begin{vverbatim}
   always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
     implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
-    with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
+    with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\);
           \end{vverbatim}
 
           Each fact in the $always$ clause of language ${\cal L}$ corresponds
@@ -836,14 +836,14 @@
 
         \paragraph{Policy Update Rules.}
 
-          With all occurrences of variable place-holders grounded to entity
-          identifiers, a policy update $u$, as defined by language ${\cal L}$
-          is in the form:
+          Given that $m$, $n$ $\geq$ $0$, all occurences of variable
+          place-holders grounded to entity identifiers, a policy update $u$ in
+          language ${\cal L}$ is in the form:
 
-          \begin{vquote}
-            $u$ causes $a_{0}$ \&\& \ldots \&\& $a_{m}$
-            if $b_{0}$ \&\& \ldots \&\& $b_{n}$
-          \end{vquote}
+          \begin{vverbatim}
+  \(u\) causes \(a\sb{0}\) && \ldots && \(a\sb{m}\)
+  if \(b\sb{0}\) && \ldots && \(b\sb{n}\);
+          \end{vverbatim}
 
           In language ${\cal L}^{*}$, such policy updates may be represented as
           a set of implications, with each fact $a$ in the postcondition
@@ -874,16 +874,12 @@
 
           \begin{vverbatim}
   grant\_read()
-    causes
-      holds(alice, read, file)
-    if
-      memb(alice, readers);
+    causes holds(alice, read, file)
+    if memb(alice, readers);
 
   grant\_write()
-    causes
-      holds(alice, write, file)
-    if
-      memb(alice, writers);
+    causes holds(alice, write, file)
+    if memb(alice, writers);
           \end{vverbatim}
 
           Given the update sequence list $\psi$ $=$
