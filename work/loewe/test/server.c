@@ -40,8 +40,8 @@
 #define SOCKET_SRV_ERR_BADFD           -7
 
 #define SOCKET_SRV_DELIMITER_UI        ' '
-#define SOCKET_SRV_DELIMITER_UI_FIELD  ','
-#define SOCKET_SRV_DELIMITER_UI_TUPPLE ';'
+#define SOCKET_SRV_DELIMITER_UI_FIELD  '|'
+#define SOCKET_SRV_DELIMITER_UI_TUPPLE '!'
 #define SOCKET_SRV_DELIMITER           '\004'
 #define SOCKET_SRV_DELIMITER_FIELD     '\002'
 #define SOCKET_SRV_DELIMITER_TUPPLE    '\003'
@@ -73,10 +73,13 @@ int main(int argc, char *argv[])
     return SOCKET_SRV_ERR_NOSOCKET;
 
   // wait for client connection
-  if ((clientFD = acceptConnection(serverFD)) < 0)
-    return SOCKET_SRV_ERR_NOSOCKET;
+  while(1) {
+    if ((clientFD = acceptConnection(serverFD)) < 0)
+      continue;
 
-  return transferData(clientFD);
+    if (transferData(clientFD) < 0)
+      continue;
+  }
 }
 
 int checkSocket(int aInputFD)

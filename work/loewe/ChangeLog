@@ -1,3 +1,66 @@
+2001-09-11  Tony Tsui  <tony.tsui@tuxia.com>
+
+	* browser/nanozilla-embed:
+	  - Fixed typo LD_LIBRARY_PATH to kaffe.
+
+	* GoannaInstall/package-loewe.sh:
+	  - Copy over nanozilla and nanozilla-embed from loewe directory.
+
+	* GoannaInstall/package-loewe.sh:
+	  - Remove goanna/dist/Embed and loewe-browser directory first.
+
+2001-09-11   <vino.crescini@tuxia.com>
+
+	* browser/gtkEmbedBrowser.cpp:
+	* browser/gtkEmbedBrowser.h:
+
+	  - Changed the function that generates the message id from 
+            rand() to time().
+	
+	  - Changed view management mechanism to prevent new windows from
+	    replacing the current view.
+
+	* browser/Makefile.in:
+	* browser/Makefile:
+	
+	  - Changed the program name from gtkEmbedBrowser to nanozilla
+
+	* browser/goanna-embed:
+	* browser/nanozilla-embed:
+
+	  - Changed goanna-embed to nanozilla-embed
+
+	* browser/gtkEmbedConst.h:
+
+	  - Changed the profile path from ~/.gtkEmbedBrowser to ~/.nanozilla
+
+2001-09-11  Tony Tsui  <tony.tsui@tuxia.com>
+
+	* browser/GoannaInstall/package-loewe.sh:
+	  - Add package-loewe.sh script.
+
+2001-09-10   <vino.crescini@tuxia.com>
+
+	* browser/goanna-embed:
+
+	  - Implemented wrapper script to shutdown the browser when
+	    a specified limit is exceeded (sends a SIGQUIT to the 
+            browser). 
+
+	* browser/gtkEmbedBrowser.cpp:
+	* browser/gtkEmbedBrowser.h:
+	* browser/gtkEmbedConst.h:
+
+	  - Shutdown is now "immune" to dialog block.
+
+	  - When the browser receives a SIGQUIT (-3), it will send
+	    a message and then terminate, regardless of its state.
+
+	  - Changed status messages so that it sends status codes 
+	    instead of english text.
+
+	  - Added tryLoading message.
+
 2001-09-07   <vino.crescini@tuxia.com>
 
 	* browser/gtkEmbedBrowser.cpp:
@@ -14,6 +77,10 @@
 
 	  - Modified GetBoolPref() to default to true if the
 	    pref string is not in the file.
+
+	* test/server.c:
+
+	  - Modified server so that it can recognise \002 and \003.
 
 2001-09-06   <vino.crescini@tuxia.com>
 

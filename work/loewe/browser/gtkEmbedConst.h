@@ -26,9 +26,12 @@
 // default url
 #define BROWSER_STARTUP_DEFAULTURL        "about:blank"
 
+#define BROWSER_MAXLEN                    1024
+#define BROWSER_PAGESIZE                  4
+
 // constants used by the socket listener
 #define BROWSER_LISTENER_MAXPARAMS        16
-#define BROWSER_LISTENER_MAXLEN           1024
+#define BROWSER_LISTENER_MAXLEN           BROWSER_MAXLEN
 #define BROWSER_LISTENER_DELIMITER        '\004'
 #define BROWSER_LISTENER_TERMINATOR       '\000'
 
@@ -59,13 +62,13 @@
 
 // profile constants
 #define BROWSER_PROF_NAME                 "default"
-#define BROWSER_PROF_PATH                 "gtkEmbedBrowser"
+#define BROWSER_PROF_PATH                 "nanozilla"
 
 // constants used by the dialog manager
-#define DIALOG_INTERNAL_MESSAGE           "__GTK_EMBED_INTERNAL_MESSAGE"
-#define DIALOG_SSL_ENTER_SECURE           "__GTK_EMBED_INTERNAL_SSL_ENTER_SECURE"
-#define DIALOG_SSL_ENTER_WEAK             "__GTK_EMBED_INTERNAL_SSL_ENTER_WEAK"
-#define DIALOG_SSL_LEAVE_SECURE           "__GTK_EMBED_INTERNAL_SSL_LEAVE_SECURE"
+#define DIALOG_INTERNAL_MESSAGE           "__NANOZILLA_INTERNAL_MESSAGE"
+#define DIALOG_SSL_ENTER_SECURE           "__NANOZILLA_INTERNAL_SSL_ENTER_SECURE"
+#define DIALOG_SSL_ENTER_WEAK             "__NANOZILLA_INTERNAL_SSL_ENTER_WEAK"
+#define DIALOG_SSL_LEAVE_SECURE           "__NANOZILLA_INTERNAL_SSL_LEAVE_SECURE"
 
 #define DIALOG_INTERNAL_TYPE              1
 #define DIALOG_ALERT_TYPE                 2
@@ -86,9 +89,23 @@
 
 // constants used by the helper app
 #define HELPERAPP_PREF_HANDLERMAX         255
-#define HELPERAPP_PREF_MAXLEN             1024
+#define HELPERAPP_PREF_MAXLEN             BROWSER_MAXLEN
 #define HELPERAPP_PREF_MIMEPREFIX         "browser.helperapp.mime"
 #define HELPERAPP_PREF_HANDLERPREFIX      "browser.helperapp.handler"
+
+// status codes sent by the browser
+#define BROWSER_STATUS_REDIRECT           1
+#define BROWSER_STATUS_TRANSFERRING       2
+#define BROWSER_STATUS_WAITING            3
+#define BROWSER_STATUS_NOTFOUND           4
+#define BROWSER_STATUS_FAILED             5
+#define BROWSER_STATUS_TIMEDOUT           6
+#define BROWSER_STATUS_CANCELLED          7
+#define BROWSER_STATUS_LOADING            8
+#define BROWSER_STATUS_DONE               9
+#define BROWSER_STATUS_PROGRESS           10
+#define BROWSER_STATUS_LINK               11
+#define BROWSER_STATUS_JS                 12
 
 // error codes sent by the browser
 #define BROWSER_ERROR_GENERAL             1
@@ -106,5 +123,6 @@
 #define BROWSER_ERROR_CANT_PRINT          13
 #define BROWSER_ERROR_CANT_REPLY          14
 #define BROWSER_ERROR_CANT_ACKNOWLEDGE    15
+#define BROWSER_ERROR_CANT_OPEN_WINDOW    16
 
 #endif

@@ -28,6 +28,7 @@
 #include "nsIPrompt.h"
 #include "nsString.h"
 
+#define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
 #endif
@@ -212,7 +213,15 @@ NS_IMETHODIMP gtkEmbedSSLDialog::CertExpired(nsITransportSecurityInfo *aSocketIn
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::CertExpired()\n");
 #endif
+  char *test;
 
+  test = (char *) malloc(sizeof(char) * 1024);  
+
+  aCert->GetWindowTitle(&test);
+  printf("title: %s\n", test);
+
+  aCert->View();
+  
   *aResult = true;
 
   return NS_OK;
@@ -228,7 +237,7 @@ NS_IMETHODIMP gtkEmbedSSLDialog::DownloadCACert(nsIInterfaceRequestor *aCTX,
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::DownloadCACert()\n");
 #endif
-
+  
   *aCancelled = true;
 
   return NS_OK;
@@ -265,6 +274,12 @@ NS_IMETHODIMP gtkEmbedSSLDialog::ViewCert(nsIX509Cert *aCert)
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedSSLDialog::ViewCert()\n");
 #endif
+  char *test;
+
+  test = (char *) malloc(sizeof(char) * 1024);  
+
+  aCert->GetWindowTitle(&test);
+  printf("title: %s\n", test);
 
   return NS_OK;
 }

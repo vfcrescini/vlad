@@ -40,7 +40,7 @@ CPPSRCS		= \
 		gtkEmbedParamList.cpp \
 		$(NULL) 
 
-PROGRAM		= gtkEmbedBrowser 
+PROGRAM		= nanozilla 
 
 LIBS		= \
 		$(MOZ_COMPONENT_LIBS) \

@@ -27,7 +27,6 @@
 #include <gdk/gdk.h>
 #include "nsCOMPtr.h"
 #include "nsIInterfaceRequestor.h"
-#include "nsIServiceManager.h"
 #include "nsICacheService.h"
 #include "nsNetCID.h"
 #include "nsIWebBrowser.h"
@@ -35,12 +34,15 @@
 #include "nsIWebBrowserSetup.h"
 #include "gtkmozembed.h"
 #include "gtkmozembed_internal.h"
+#include "nsISecureBrowserUI.h"
+#include "nsISSLStatus.h"
 
 typedef struct _gtkEmbedBrowser {
   int           browserID;
   bool          usedFlag;
   bool          loadingFlag;
   nsIWebBrowser *webBrowser;
+  nsCOMPtr<nsISecureBrowserUI> secureBrowser;
   GtkWidget     *topLevelWindow;
   GtkWidget     *topLevelVBox;
   GtkWidget     *mozEmbed;

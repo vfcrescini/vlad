@@ -22,11 +22,13 @@
 
 /*
  * based upon Chris Blizzard's TestGtkEmbed
- * 26 July 2001
+ * started: 26 July 2001
  */
 
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
+#include <time.h>
 
 #include "gtkEmbedIDManager.h"
 #include "gtkEmbedBrowser.h"
@@ -71,8 +73,8 @@ static int gOutgoingFD = -1;
 
 // dialog blocker stuff
 static int gBlockType = 0;
-static int gBlockID = 0;
-static int gAckID = 0;
+static long gBlockID = 0;
+static long int gAckID = 0;
 static int gResultInt = 0;
 static bool gResultBool = 0;
 static gtkEmbedParamList *gResultList;
@@ -84,10 +86,13 @@ static bool OpenDialog(nsIDOMWindow *,
                        gtkEmbedParamList *,
                        int *,
                        bool *);
-static void BlockDialog(int, int);
+static void BlockDialog(long int, int);
 
 // callback function for incoming messages from socket
 static void incomingMessageCB(gpointer, gint, GdkInputCondition);
+
+// callback function for sigquit
+static void quitCB(int);
 
 // callback functions from the embedded widget
 static void changeLocationCB(GtkMozEmbed *, gtkEmbedBrowser *);
@@ -128,12 +133,12 @@ static void findRequest(char *, int);
 static void purgeCacheRequest();
 static void printRequest(int, bool);
 static void enablePluginsRequest(int);
-static void confirmReplyRequest(int, char *);
-static void promptReplyRequest(int, char *, char *);
-static void selectReplyRequest(int, int, char *);
-static void confirmAckRequest(int);
-static void promptAckRequest(int);
-static void selectAckRequest(int);
+static void confirmReplyRequest(long int, char *);
+static void promptReplyRequest(long int, char *, char *);
+static void selectReplyRequest(long int, int, char *);
+static void confirmAckRequest(long int);
+static void promptAckRequest(long int);
+static void selectAckRequest(long int);
 static void requestCertificateRequest(int);
 static void cleanupRequest();
 static void memUsageRequest();
@@ -161,7 +166,9 @@ static void confirmSend(int, int, const char *);
 static void promptSend(int, int, const char *, gtkEmbedParamList *);
 static void selectSend(int, int, const char *, gtkEmbedParamList *);
 static void showCertificateSend(char *);
-static void memUsageReplySend(char *);
+static void memUsageReplySend(unsigned int);
+static void memoryExceededSend();
+static void tryLoadingSend(int, char *);
 
 // utility functions
 static int getWindowID(nsIDOMWindow *aWindow);
@@ -208,7 +215,7 @@ int main(int argc, char **argv)
     socketPath = g_strdup(optarg);
   else {
     fprintf(stderr, 
-            "usage %s -u <socket path> [-s] [-n <window num>] [url]\n", 
+            "usage: %s -u <socket path> [-s] [-n <window num>] [url]\n", 
             argv[0]);
     return -1;
   }
@@ -236,7 +243,7 @@ int main(int argc, char **argv)
         }
       default :
         fprintf(stderr, 
-                "usage %s -u <socket path> [-s] [-n <window num>] [url]\n", 
+                "usage: %s -u <socket path> [-s] [-n <window num>] [url]\n", 
                 argv[0]);
         return -1;
     }
@@ -312,8 +319,10 @@ int main(int argc, char **argv)
   else
     openURLRequest(BROWSER_STARTUP_DEFAULTURL, 1, NULL);
 
+  // register the handler for the sigquit signal
+  signal(SIGQUIT, &quitCB); 
+
   // main event loop
-  
   gtk_main();
 
   destroyAll();
@@ -505,7 +514,7 @@ static void readMessage()
     else if (!gDialogManager)
       errorMessageSend(-1, BROWSER_ERROR_GENERAL);
     else
-      confirmReplyRequest(atoi(tempArray[1]), tempArray[2]);
+      confirmReplyRequest(atol(tempArray[1]), tempArray[2]);
   }
   else if (!strcmp(tempArray[0], "promptReply")) {
     if (paramCount != 4)
@@ -513,7 +522,7 @@ static void readMessage()
     else if (!gDialogManager)
       errorMessageSend(-1, BROWSER_ERROR_GENERAL);
     else
-      promptReplyRequest(atoi(tempArray[1]), tempArray[2], tempArray[3]);
+      promptReplyRequest(atol(tempArray[1]), tempArray[2], tempArray[3]);
   }
   else if (!strcmp(tempArray[0], "selectReply")) {
     if (paramCount != 4)
@@ -521,25 +530,25 @@ static void readMessage()
     else if (!gDialogManager)
       errorMessageSend(-1, BROWSER_ERROR_GENERAL);
     else
-      selectReplyRequest(atoi(tempArray[1]), atoi(tempArray[2]), tempArray[3]);
+      selectReplyRequest(atol(tempArray[1]), atoi(tempArray[2]), tempArray[3]);
   }
   else if (!strcmp(tempArray[0], "yesNoDialogAck")) {
     if (paramCount != 2)
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
     else
-      confirmAckRequest(atoi(tempArray[1]));
+      confirmAckRequest(atol(tempArray[1]));
   }
   else if (!strcmp(tempArray[0], "promptAck")) {
     if (paramCount != 2)
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
     else
-      promptAckRequest(atoi(tempArray[1]));
+      promptAckRequest(atol(tempArray[1]));
   }
   else if (!strcmp(tempArray[0], "selectAck")) {
     if (paramCount != 2)
       errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
     else
-      selectAckRequest(atoi(tempArray[1]));
+      selectAckRequest(atol(tempArray[1]));
   }
   else if (!strcmp(tempArray[0], "cleanup")) {
     if (paramCount != 1)
@@ -562,6 +571,14 @@ static void readMessage()
 
   else
     errorMessageSend(-1, BROWSER_ERROR_INVALID_MESSAGE);
+}
+
+// callback function from sigquit
+
+static void quitCB(int aSignal)
+{
+  memoryExceededSend();
+  shutdownRequest();
 }
 
 // callback functions from the embedded widget
@@ -606,6 +623,7 @@ void loadStartCB(GtkMozEmbed *aEmbed, gtkEmbedBrowser *aBrowser)
   }
 
   loadStartSend(aBrowser->browserID, gtk_moz_embed_get_location(aEmbed));
+  tryLoadingSend(aBrowser->browserID, gtk_moz_embed_get_location(aEmbed));
   loadProgressSend(aBrowser->browserID, 0); 
   enableReloadSend(aBrowser->browserID, false);
   enableStopSend(aBrowser->browserID, true);
@@ -659,27 +677,36 @@ void changeNetStateAllCB(GtkMozEmbed *aEmbed,
 
   if (aFlags & GTK_MOZ_EMBED_FLAG_IS_REQUEST) {
     if (aFlags & GTK_MOZ_EMBED_FLAG_REDIRECTING)
-      statusSend(aBrowser->browserID, 0, "Redirecting to site...");
+      // redirecting to site
+      statusSend(aBrowser->browserID, BROWSER_STATUS_REDIRECT, aURI);
     else if (aFlags & GTK_MOZ_EMBED_FLAG_TRANSFERRING)
-      statusSend(aBrowser->browserID, 0, "Transferring data from site...");
+      // transferring data from site
+      statusSend(aBrowser->browserID, BROWSER_STATUS_TRANSFERRING, aURI);
     else if (aFlags & GTK_MOZ_EMBED_FLAG_NEGOTIATING)
-      statusSend(aBrowser->browserID, 0, "Waiting for authorisation...");
+      // waiting for authorization
+      statusSend(aBrowser->browserID, BROWSER_STATUS_WAITING, aURI);
   }
 
   if (aStatus == GTK_MOZ_EMBED_STATUS_FAILED_DNS)
-    statusSend(aBrowser->browserID, 0, "Site not found.");
+    // site not found
+    statusSend(aBrowser->browserID, BROWSER_STATUS_NOTFOUND, aURI);
   else if (aStatus == GTK_MOZ_EMBED_STATUS_FAILED_CONNECT)
-    statusSend(aBrowser->browserID, 0, "Connection failed.");
+    // connection failed
+    statusSend(aBrowser->browserID, BROWSER_STATUS_FAILED, aURI);
   else if (aStatus == GTK_MOZ_EMBED_STATUS_FAILED_TIMEOUT)
-    statusSend(aBrowser->browserID, 0, "Connection timed out.");
+    // connection timed out
+    statusSend(aBrowser->browserID, BROWSER_STATUS_TIMEDOUT, aURI);
   else if (aStatus == GTK_MOZ_EMBED_STATUS_FAILED_USERCANCELED)
-    statusSend(aBrowser->browserID, 0, "Connection cancelled.");
+    // connection cancelled
+    statusSend(aBrowser->browserID, BROWSER_STATUS_CANCELLED, aURI);
 
   if (aFlags & GTK_MOZ_EMBED_FLAG_IS_DOCUMENT) {
     if (aFlags & GTK_MOZ_EMBED_FLAG_START)
-      statusSend(aBrowser->browserID, 0, "Loading site...");
+      // loading site
+      statusSend(aBrowser->browserID, BROWSER_STATUS_LOADING, aURI);
     else if (aFlags & GTK_MOZ_EMBED_FLAG_STOP)
-      statusSend(aBrowser->browserID, 0, "Done.");
+      // done
+      statusSend(aBrowser->browserID, BROWSER_STATUS_DONE, aURI);
   }
 }
 
@@ -709,7 +736,7 @@ void changeProgressCB(GtkMozEmbed *aEmbed,
   }
 
   loadProgressSend(aBrowser->browserID, tempPercentage);
-  statusSend(aBrowser->browserID, 0, tempStatus);
+  statusSend(aBrowser->browserID, BROWSER_STATUS_PROGRESS, tempStatus);
 }
 
 void changeProgressAllCB(GtkMozEmbed *aEmbed, 
@@ -727,7 +754,9 @@ void messageLinkCB(GtkMozEmbed *aEmbed, gtkEmbedBrowser *aBrowser)
     return;
   }
 
-  statusSend(aBrowser->browserID, 0, gtk_moz_embed_get_link_message(aEmbed));
+  statusSend(aBrowser->browserID,
+             BROWSER_STATUS_LINK, 
+             gtk_moz_embed_get_link_message(aEmbed));
 }
 
 void changeStatusJSCB(GtkMozEmbed *aEmbed, gtkEmbedBrowser *aBrowser)
@@ -737,7 +766,9 @@ void changeStatusJSCB(GtkMozEmbed *aEmbed, gtkEmbedBrowser *aBrowser)
     return;
   }
 
-  statusSend(aBrowser->browserID, 0, gtk_moz_embed_get_js_status(aEmbed));
+  statusSend(aBrowser->browserID,
+             BROWSER_STATUS_JS, 
+             gtk_moz_embed_get_js_status(aEmbed));
 }
 
 void newWindowCB(GtkMozEmbed *aEmbed, 
@@ -759,6 +790,16 @@ void newWindowCB(GtkMozEmbed *aEmbed,
 
   // get the index of the new window to be opened
   tempIndex = gIDManager->GetNextIndex();
+
+  // if the next index is the current window, try the next one
+  if (tempIndex == gCurrentIndex) {
+    tempIndex = gIDManager->GetNextIndex();
+    // if it's still the current window, reject request
+    if (tempIndex == gCurrentIndex) {
+      errorMessageSend(gCurrentIndex + 1, BROWSER_ERROR_CANT_OPEN_WINDOW);
+      return;
+    }
+  }
 
   // give a reference to the embeded widget back
   *aRetval = GTK_MOZ_EMBED(gBrowserArray[tempIndex]->mozEmbed);
@@ -1249,18 +1290,45 @@ static void showCertificateSend(char *aFilename)
   g_free(tempString);
 }
 
-static void memUsageReplySend(char *aUsage)
+static void memUsageReplySend(unsigned int aUsage)
 {
   char *tempString;
 
-  tempString = g_strdup_printf("memUsageReply%c%s%c",
+  tempString = g_strdup_printf("memUsageReply%c%u%c",
                                BROWSER_LISTENER_DELIMITER,
-                               (aUsage ? aUsage : ""),
+                               aUsage,
                                BROWSER_LISTENER_TERMINATOR);
 
   sendMessage(tempString);
   g_free(tempString);
 }
+
+static void memoryExceededSend()
+{
+  char *tempString;
+
+  tempString = g_strdup_printf("memoryExceeded%c",
+                               BROWSER_LISTENER_TERMINATOR);
+
+  sendMessage(tempString);
+  g_free(tempString);
+}
+
+static void tryLoadingSend(int aID, char *aURL)
+{
+  char *tempString;
+
+  tempString = g_strdup_printf("tryLoading%c%d%c%s%c",
+                               BROWSER_LISTENER_DELIMITER,
+                               aID,
+                               BROWSER_LISTENER_DELIMITER,
+                               aURL ? aURL : "",
+                               BROWSER_LISTENER_TERMINATOR);
+
+  sendMessage(tempString);
+  g_free(tempString);
+}
+
 
 // incoming messages
 
@@ -1423,9 +1491,11 @@ static void pingRequest()
 
 static void shutdownRequest()
 {
-  if (gDialogManager && (gBlockID || gAckID))
-    return;
-
+  // if we want to shutdown, cancel all
+  // the block(s), if any
+  gBlockID = 0;
+  gAckID = 0;
+  
   gtk_main_quit();
   return;
 }
@@ -1683,7 +1753,7 @@ static void enablePluginsRequest(int aFlag)
     setPluginFlag(gBrowserArray[i], (aFlag == 0) ? false : true);
 }
 
-static void confirmReplyRequest(int aMesgID, char *aMessage)
+static void confirmReplyRequest(long int aMesgID, char *aMessage)
 {
   if (!gBlockID || gAckID) {
     errorMessageSend(-1, BROWSER_ERROR_CANT_REPLY);
@@ -1719,7 +1789,7 @@ static void confirmReplyRequest(int aMesgID, char *aMessage)
     errorMessageSend(-1, BROWSER_ERROR_INVALID_PARAMS);
 }
 
-static void promptReplyRequest(int aMesgID, char *aMessage, char *aResult)
+static void promptReplyRequest(long int aMesgID, char *aMessage, char *aResult)
 {
   char *tempMessage = aMessage;
   char tempField[BROWSER_LISTENER_MAXLEN];
@@ -1821,7 +1891,7 @@ static void promptReplyRequest(int aMesgID, char *aMessage, char *aResult)
   gBlockID    = 0;
 }
 
-static void selectReplyRequest(int aMesgID, int aSelection, char *aResult)
+static void selectReplyRequest(long int aMesgID, int aSelection, char *aResult)
 {
   if (!gBlockID || gAckID) {
     errorMessageSend(-1, BROWSER_ERROR_CANT_REPLY);
@@ -1862,7 +1932,7 @@ static void selectReplyRequest(int aMesgID, int aSelection, char *aResult)
   gBlockID    = 0;
 }
 
-static void confirmAckRequest(int aMessageID)
+static void confirmAckRequest(long int aMessageID)
 {
   if (!gAckID) {
     errorMessageSend(-1, BROWSER_ERROR_CANT_ACKNOWLEDGE);
@@ -1883,7 +1953,7 @@ static void confirmAckRequest(int aMessageID)
   gAckID = 0; 
 }
 
-static void promptAckRequest(int aMessageID)
+static void promptAckRequest(long int aMessageID)
 {
   if (!gAckID) {
     errorMessageSend(-1, BROWSER_ERROR_CANT_ACKNOWLEDGE);
@@ -1904,7 +1974,7 @@ static void promptAckRequest(int aMessageID)
   gAckID = 0; 
 }
 
-static void selectAckRequest(int aMessageID)
+static void selectAckRequest(long int aMessageID)
 {
   if (!gAckID) {
     errorMessageSend(-1, BROWSER_ERROR_CANT_ACKNOWLEDGE);
@@ -1927,12 +1997,69 @@ static void selectAckRequest(int aMessageID)
 
 static void requestCertificateRequest(int aID)
 {
+  nsCOMPtr<nsISSLStatusProvider> testProvider;
+  nsCOMPtr<nsISSLStatus> testStatus;
+  nsCOMPtr<nsIX509Cert> testCert;
+  nsresult rv = 0;
+  char *testTitle;
+
+
+  testTitle = (char *) malloc(sizeof(char) * 1024);
+
+printf("1\n");
+  testProvider = do_QueryInterface(gBrowserArray[aID - 1]->secureBrowser);
+printf("2\n");
+
+if (testProvider == nsnull) {
+  printf("still null\n");
+  return;
+}
+
+  rv = testProvider->GetSSLStatus(getter_AddRefs(testStatus));
+
+fprintf(stderr, "3 %d\n", rv);
+
+  if (testStatus == nsnull) {
+    printf("still null\n");
+    return;
+  }
+
+  rv = testStatus->GetServerCert(getter_AddRefs(testCert));
+
+
+fprintf(stderr, "4 %d\n", rv);
+  rv = testCert->GetWindowTitle(&testTitle);
+
+fprintf(stderr, "5 %d\n", rv);
+  printf("certificate title: %s\n", testTitle);
+
+
   showCertificateSend("");
 }
 
 static void memUsageRequest()
 {
-  memUsageReplySend("0");
+  FILE *tempFile;
+  char tempString[BROWSER_MAXLEN];
+  unsigned int tempRSS;
+
+  sprintf(tempString, "/proc/%u/stat", getpid());
+
+  tempFile = fopen(tempString, "r");
+
+  if (!tempFile) {
+    errorMessageSend(-1, BROWSER_ERROR_GENERAL);
+    return;
+  }
+
+  // read the RSS (24th) entry in the proc filesystem
+  fscanf(tempFile,
+         "%*d %*s %*c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %*d %*d %*d %*d %*d %*d %*u %*u %*d %*u %u %*u %*u %*u %*u %*u %*u %*d %*d %*d %*d %*u",
+         &tempRSS);
+
+  fclose(tempFile);
+
+  memUsageReplySend(tempRSS * BROWSER_PAGESIZE);
 }
 
 static void cleanupRequest()
@@ -2167,6 +2294,18 @@ static gtkEmbedBrowser *createNewBrowser(guint32 aChromeMask,
   gtk_moz_embed_get_nsIWebBrowser(GTK_MOZ_EMBED(newBrowser->mozEmbed),
                                   &(newBrowser->webBrowser));
 
+  
+  // XXX
+
+  nsCOMPtr<nsIDOMWindow> testDom;
+
+  newBrowser->webBrowser->GetContentDOMWindow(getter_AddRefs(testDom));
+  newBrowser->secureBrowser = do_CreateInstance(NS_SECURE_BROWSER_UI_CONTRACTID);
+  newBrowser->secureBrowser->Init(testDom, nsnull);
+
+  // XXX
+
+
   // set the plugin state
   setPluginFlag(newBrowser, aPluginState);
 
@@ -2342,7 +2481,7 @@ static bool OpenDialog(nsIDOMWindow *aWindow,
                        bool *aResultBool)
 {
   int windowID;
-  int messageID = rand();
+  long int messageID = time(NULL);
 
   // get the id of this window
   if (!(windowID = getWindowID(aWindow))) {
@@ -2412,7 +2551,7 @@ static bool OpenDialog(nsIDOMWindow *aWindow,
 }
 
 // blocks mouse, key and incoming messages
-void BlockDialog(int aBlockID, int aType)
+void BlockDialog(long int aBlockID, int aType)
 {
   GtkWidget *blockWidget;
 
