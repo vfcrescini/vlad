@@ -1853,13 +1853,13 @@ unsigned int kb::compute_holds(unsigned int a_st, bool a_tr, unsigned int a_sub,
 /* returns a member atom id based on the info given */
 unsigned int kb::compute_member(unsigned int a_st, bool a_tr, char a_ty, unsigned int a_elt, unsigned int a_grp)
 {
-  switch(a_ty) {
+  switch(VLAD_IDENT_BASETYPE(a_ty)) {
     case VLAD_IDENT_SUBJECT :
       return compute_atom(a_st, a_tr, h_tot + (a_elt * sg_len) + a_grp);
     case VLAD_IDENT_ACCESS :
-      return compute_atom(a_st, a_tr, h_tot + (sg_len * sg_len) + (a_elt * ag_len) + a_grp);
+      return compute_atom(a_st, a_tr, h_tot + (s_len * sg_len) + (a_elt * ag_len) + a_grp);
     case VLAD_IDENT_OBJECT :
-      return compute_atom(a_st, a_tr, h_tot + (sg_len * sg_len) + (ag_len + ag_len) + (a_elt * og_len) + a_grp);
+      return compute_atom(a_st, a_tr, h_tot + (s_len * sg_len) + (a_len * ag_len) + (a_elt * og_len) + a_grp);
   }
 
   return 0;
@@ -1868,7 +1868,7 @@ unsigned int kb::compute_member(unsigned int a_st, bool a_tr, char a_ty, unsigne
 /* returns a subset atom id based on the info given */
 unsigned int kb::compute_subset(unsigned int a_st, bool a_tr, char a_ty, unsigned int a_grp1, unsigned int a_grp2)
 {
-  switch(a_ty) {
+  switch(VLAD_IDENT_BASETYPE(a_ty)) {
     case VLAD_IDENT_SUBJECT :
       return compute_atom(a_st, a_tr, h_tot + m_tot + (a_grp1 * sg_len) + a_grp2);
     case VLAD_IDENT_ACCESS :
