@@ -68,7 +68,7 @@ int wrapper::init()
 int wrapper::close_atom()
 {
   if (pr_stage != 1)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* now we add the rule that the atom "true" is always true */
 
@@ -85,7 +85,7 @@ int wrapper::close_atom()
 int wrapper::close_rule()
 {
   if (pr_stage != 2)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   pr_api->done();
 
@@ -114,7 +114,7 @@ int wrapper::add_atom(unsigned int a_atom)
   char tmp_name[VLAD_MAXLEN_NUM];
 
   if (pr_stage != 1)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   if ((tmp_atom = pr_api->new_atom()) == NULL)
     return VLAD_MALLOCFAILED;
@@ -133,7 +133,7 @@ int wrapper::add_axiom(bool a_tr, unsigned int a_count, ...)
   va_list tmp_ap;
 
   if (pr_stage != 2)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* of course if the list is empty, we do nothing */
   if (a_count == 0)
@@ -182,7 +182,7 @@ int wrapper::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int
   va_list tmp_ap;
 
   if (pr_stage != 2)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* the special case when there is no body: head becomes an axiom */
   if (a_pcount == 0 && a_ncount == 0)
@@ -224,7 +224,7 @@ int wrapper::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nb
   unsigned int tmp_num;
 
   if (pr_stage != 2)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* the special case when there is no body: head becomes an axiom */
   if (VLAD_LIST_LENGTH(a_pbody) == 0 && VLAD_LIST_LENGTH(a_nbody) == 0)
@@ -265,7 +265,7 @@ int wrapper::ask(unsigned int a_atom, char *a_result)
   char tmp_name[VLAD_MAXLEN_NUM];
 
   if (pr_stage != 3)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   if (a_result == NULL)
     return VLAD_NULLPTR;

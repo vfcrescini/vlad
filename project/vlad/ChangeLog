@@ -2,6 +2,7 @@
 
 	* common/vlad.h :
 	* kb/kb.cpp :
+	* kb/wrapper.cpp :
 
 	  - Added an invalid op error code.
 
