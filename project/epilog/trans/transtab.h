@@ -12,7 +12,7 @@
 #include "transdef.h"
 
 /* initialise list */
-void transtab_init(void);
+int transtab_init(void);
 
 /* gives the length of the list */
 unsigned int transtab_length(void);
@@ -27,7 +27,7 @@ int transtab_get(char *name, transdef_type **trans);
 int transtab_find(char *name);
 
 /* gives the resulting expression after the transformation is performed */
-int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res);
+int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *ans);
 
 /* empty the list */
 void transtab_purge(void);

@@ -12,7 +12,7 @@
 #define translist_type simplelist_type
 
 /* initialise list */
-void translist_init(translist_type *list);
+int translist_init(translist_type *list);
 
 /* gives the length of the list */
 unsigned int translist_length(translist_type list);

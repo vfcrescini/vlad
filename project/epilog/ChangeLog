@@ -6,6 +6,8 @@
 	* exp/comp_atom.h :
 	* exp/gnd_atom.h :
 	* exp/name.c :
+	* trans/transdef.c :
+	* trans/transref.c :
 
 	  - Used global malloc macro.
 
@@ -13,6 +15,9 @@
 
 	  - Added malloc macros.
 
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+	* datastruct/stringlist.c :
 	* exp/comp_atom.c : 
 	* exp/comp_exp.c :
 	* exp/comp_exp.h :
@@ -21,25 +26,24 @@
 	* exp/gnd_exp.c :
 	* exp/gnd_exp.h :
 	* exp/name.c :
-
-	  - Used error codes.
-
 	* ident/ident.c :
 	* ident/ident.h :
 	* ident/identlist.c :
 	* ident/identlist.h :
 	* ident/symtab.c :
 	* ident/symtab.h :
-
-	  - Used error codes.
-
-	  - Some cleanup.
-
-	* datastruct/simplelist.c :
-	* datastruct/simplelist.h :
-	* datastruct/stringlist.c :
+	* trans/transdef.c :
+	* trans/transdef.h :
+	* trans/translist.c :
+	* trans/translist.h :
+	* trans/transref.c :
+	* trans/transref.h :
+	* trans/transtab.c :
+	* trans/transtab.h :
 
 	  - Now uses the globally-defined error codes.
+
+	  - Some cleanup.
 
 	* exp/comp_atom.c :
 	* exp/comp_atom.h :

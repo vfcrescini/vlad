@@ -6,6 +6,7 @@
 #ifndef __EPI_TRANSREF_H
 #define __EPI_TRANSREF_H
 
+#include <epilog.h>
 #include <stringlist.h>
 #include <identlist.h>
 

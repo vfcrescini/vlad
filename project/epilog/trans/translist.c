@@ -10,9 +10,9 @@
 void translist_destroy(void *p);
 
 /* initialise list */
-void translist_init(translist_type *list)
+int translist_init(translist_type *list)
 {
-  simplelist_init(list);
+  return simplelist_init(list);
 }
 
 /* gives the length of the list */
@@ -25,12 +25,13 @@ unsigned int translist_length(translist_type list)
 int translist_add(translist_type *list, transref_type trans)
 {
   transref_type *new_trans = NULL;
+  int tmp_res;
   
   if (list == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
-  if (transref_copy(&new_trans, trans) != 0)
-    return -1;
+  if ((tmp_res = transref_copy(&new_trans, trans)) != EPI_OK)
+    return tmp_res;
 
   return simplelist_add(list, (void *) new_trans);
 }

@@ -6,6 +6,7 @@
 #ifndef __EPI_TRANSDEF_H
 #define __EPI_TRANSDEF_H
 
+#include <epilog.h>
 #include <stringlist.h>
 #include <comp_exp.h>
 

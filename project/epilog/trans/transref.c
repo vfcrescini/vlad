@@ -14,19 +14,19 @@ int transref_create(transref_type **trans,
                     identlist_type identlist)
 {
   if (trans == NULL || name == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
-  if ((*trans = (transref_type *) malloc(sizeof(transref_type))) == NULL)
-    return -1;
+  if ((*trans = EPI_ADT_MALLOC(transref_type)) == NULL)
+    return EPI_MALLOCFAILED;
 
-  if (((*trans)->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) {
+  if (((*trans)->name = EPI_STRING_MALLOC(name)) == NULL) {
     free(*trans);
-    return -1;
+    return EPI_MALLOCFAILED;
   }
   strcpy((*trans)->name, name);
   (*trans)->identlist = identlist;
 
-  return 0;
+  return EPI_OK;
 }
 
 /* same as above, but does not allocate new mem for the transref_type struct */
@@ -35,22 +35,22 @@ int transref_compose(transref_type *trans,
                      identlist_type identlist)
 {
   if (trans == NULL || name == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
-  if ((trans->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) 
-    return -1;
+  if ((trans->name = EPI_STRING_MALLOC(name)) == NULL) 
+    return EPI_MALLOCFAILED;
 
   strcpy(trans->name, name);
   trans->identlist = identlist;
 
-  return 0;
+  return EPI_OK;
 }
 
 /* creates a copy of trans1 */
 int transref_copy(transref_type **trans2, transref_type trans1)
 {
   if (trans2 == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   return transref_create(trans2,
                       trans1.name,

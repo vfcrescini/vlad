@@ -16,21 +16,22 @@ int transdef_create(transdef_type **trans,
                     comp_exp_type postcond)
 {
   if (trans == NULL || name == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
-  if ((*trans = (transdef_type *) malloc(sizeof(transdef_type))) == NULL)
-    return -1;
+  if ((*trans = EPI_ADT_MALLOC(transdef_type)) == NULL)
+    return EPI_MALLOCFAILED;
 
-  if (((*trans)->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) {
+  if (((*trans)->name = EPI_STRING_MALLOC(name)) == NULL) {
     free(*trans);
-    return -1;
+    return EPI_MALLOCFAILED;
   }
+
   strcpy((*trans)->name, name);
   (*trans)->varlist = varlist;
   (*trans)->precond = precond;
   (*trans)->postcond = postcond;
 
-  return 0;
+  return EPI_OK;
 }
 
 /* same as above, but does not allocate new mem for the transdef_type struct */
@@ -41,24 +42,24 @@ int transdef_compose(transdef_type *trans,
                      comp_exp_type postcond)
 {
   if (trans == NULL || name == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
-  if ((trans->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) 
-    return -1;
+  if ((trans->name = EPI_STRING_MALLOC(name)) == NULL)
+    return EPI_MALLOCFAILED;
 
   strcpy(trans->name, name);
   trans->varlist = varlist;
   trans->precond = precond;
   trans->postcond = postcond;
 
-  return 0;
+  return EPI_OK;
 }
 
 /* creates a copy of trans1 */
 int transdef_copy(transdef_type **trans2, transdef_type trans1)
 {
   if (trans2 == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   return transdef_create(trans2,
                       trans1.name,
