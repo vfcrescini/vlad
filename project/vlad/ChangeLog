@@ -1,3 +1,10 @@
+2003-08-27  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* rules.mk :
+
+	  - Removed -Wnested-externs as some compilers do not accept such
+	    option.
+
 2003-08-22  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :
