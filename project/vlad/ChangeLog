@@ -1,5 +1,10 @@
 2004-01-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/kb.cpp :
+	* lib/kb.h :
+
+	  - Removed completely, replaced by polbase,
+
 	* main/Makefile.in :
 	* main/parser.h :
 	* main/vlad.cpp :
