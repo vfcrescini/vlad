@@ -127,7 +127,8 @@
       \subsubsection{Integration of Set Theory.}
 
         Since entities in language $\cal{L}$ may be singular or groups,
-        the following rules must hold to ensure that set theory holds.
+        the following constraints must be applied to ensure that set theory
+        holds.
 
         \emph{Inheritance Rules for Members of Groups.} The rule below must
         ensures that each member M inherits all the properties P of group G if
@@ -159,9 +160,7 @@
         translate the language into an extended logic program, the states need
         to be flattened to produce a stateless policy base. This flattening
         procedure can easily be achieved by treating the state as a property
-        of each atom. Unfortunately, the procedure itself is not as straight-
-        forward as one would expect. Each of the elements of language $\cal{L}$
-        will have a different procedure for flattening the states.
+        of each atom. 
 
         \emph{Initial State.} Initial state expressions are the easiest to
         translate since the additional state property is fixed to the initial
@@ -175,9 +174,9 @@
         \emph{Constraint Rules.} As with the initial state expressions, every
         atom in every constraint rule will be given a new state property.
         However, since constraint rules apply to all states in the policy
-        base, each constraint rule will be repeated for every state.
-        Constraints of the form "A implied by B with absence C" is translated
-        to:
+        base, an instance of each constraint rules must be copied for every
+        state. Constraints of the form "A implied by B with absence C" is
+        translated to:
 
         \begin{quote}
           $\forall$ S $\in$ \{all states\},
@@ -185,7 +184,7 @@
         \end{quote}
 
         \emph{Policy Updates.} Given the most basic form of a policy update,
-        "U causes A if B", an update U, a state S before update U is applied
+        "U causes A if B", an update U, a state S before update U is applied,
         and a function Res that returns the state after update U is applied
         to state S:
 
@@ -193,10 +192,9 @@
           holds(A, Res(U, S)) $\leftarrow$ holds(B, S)
         \end{quote}
  
-        In addition to the above rule, we also expect atoms that are not
-        affected by the update to be carried over to the next state. The 
-        following rules must be applied to ensure that this property is
-        held:
+        In addition to the above rule, a pair of rules are needed to preserve
+        the intertial property of policy updates that require all atoms that
+        are not affected by the update to be carried over to the next state.
 
         \begin{quote}
           holds(A, Res(U, S)) $\leftarrow$ holds(A, S) $\land$ not $\lnot$
@@ -207,11 +205,11 @@
           not holds(A, Res(U, S))
         \end{quote}
 
-        where U is the update, S is the state before update U is applied, A is 
-        all the atoms in the domain and Res is a function that returns the
-        state after update U is applied to state S.
+        where U is the update, S is the state before update U is applied, and 
+        Res is a function that returns the state after update U is applied to
+        state S, for all atoms A in the domain.
 
-    \subsection{Extended Logic Program to Normal Logic Program}
+    \subsection{Translating the Extended Logic Program to Normal Logic Program}
 
       \subsubsection{Removal of Classical Negation.}
 
@@ -219,24 +217,8 @@
         requires one additional step: to remove classical negation ($\lnot$).
         This can easily be achieved by replacing instances of atoms that are
         classically negated by a new and unique positive atom. To do this,
-        a \emph{truth} attribute (\emph{T} or \emph{F})can be added to atoms
-        to indicate whether an atom has classical negation or not. Table 1 shows
-        every possible atom configuration represented with the extra truth
-        attribute.
-
-        \begin{table}
-         \caption{adding a truth parameter to atoms}
-          \begin{tabular}{ll}
-            \hline \\
-            ELP & NLP \\
-            \hline \\
-            holds(A, S) & holds(A, S, T) \\
-            $\lnot$ holds(A, S) & holds(A, S, F) \\
-            not holds(A, S) & not holds(A, S, T) \\
-            not $\lnot$ holds(A, S) & not holds(A, S, F) \\
-            \hline
-          \end{tabular}
-        \end{table}
+        a \emph{truth} attribute (\emph{true} or \emph{false}) can be added to
+        atoms to indicate whether an atom is classically negated or not.
 
         It is not difficult to see that a conflict will occur when two atoms
         that differ only by their truth attributes are both true. To maintain
@@ -244,14 +226,14 @@
         for all atoms A in all states S:
 
         \begin{quote}
-          FALSE $\leftarrow$ holds(A, S, T) $\land$ holds(A, S, F)
+          FALSE $\leftarrow$ holds(A, S, true) $\land$ holds(A, S, false)
         \end{quote}
 
   \section{Conclusion}
 
   \begin{thebibliography}{5}
     \bibitem{BAI}
-      Bai Y., Varadharajan V.,
+      Bai, Y., Varadharajan, V.,
       On Formal Languages for Sequences of Authorization Transformations.
       In \emph{Lecture Notes in Computer Science},
       Vol. 1698,
@@ -259,7 +241,7 @@
       Springer-Verlag, 1999
 
     \bibitem{BER}
-      Bertino E., Buccafurri F., Ferrari E., Rullo P.,
+      Bertino, E., Buccafurri, F., Ferrari, E., Rullo, P.,
       A Logic-based Approach for Enforcing Access Control.
       \emph{Journal of Computer Security},
       Vol. 8, No. 2-3,
@@ -267,7 +249,7 @@
       IOS Press, 2000
 
     \bibitem{JAJ}
-      Jajodia S., Samarati P., Sapino, M. L., Subrahmanian, V. S.,
+      Jajodia, S., Samarati, P., Sapino, M. L., Subrahmanian, V. S.,
       Flexible Support for Multiple Access Control Policies.
       In \emph{ACM Transactions on Database Systems},
       Vol. 29, No. 2,
