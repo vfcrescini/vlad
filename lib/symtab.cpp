@@ -393,11 +393,9 @@ int symtab::find(const char *s, unsigned char t)
       return acc_grp_list->find(s);
     case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP:
       return obj_grp_list->find(s);
-    default :
-      return VLAD_INVALIDINPUT;
   }
 
-  return VLAD_FAILURE;
+  return VLAD_INVALIDINPUT;
 }
 
 /* give the type of the given identifier */
