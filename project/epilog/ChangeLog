@@ -13,6 +13,9 @@
 
 	* exp/gnd_exp.c :
 
+	  - Fixed a little typo in the eval_atom function that causes
+	    false to be returned even when true.
+
 	  - Added a purge function that will not delete the elements
 	    of the list, but the list itself. Used to free the list
 	    returned by simplelist_get_data.

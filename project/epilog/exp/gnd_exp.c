@@ -387,7 +387,7 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
       return -1;
 
     if (identlist_find(tmp_identlist1, atom.atom.memb.group->name) == 0) {
-      *res = epi_res_false;
+      *res = epi_res_true;
       return identlist_purge(&tmp_identlist1);
     }
 
