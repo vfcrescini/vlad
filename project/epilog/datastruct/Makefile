@@ -1,9 +1,15 @@
 # Vino Crescini <jcrescin@cit.uws.edu.au>
 
 TOPSRCDIR = ..
-CFLAGS = -O2 -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
+CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libdatastruct.a
 INCLUDES = index.h indexedlist.h simplelist.h
+
+ifdef DEBUG
+CFLAGS += -g -DDEBUG
+else
+CFLAGS += -O2
+endif
 
 all : public
 

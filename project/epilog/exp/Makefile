@@ -5,6 +5,12 @@ CFLAGS = -O2 -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDI
 TARGETS = libexp.a
 INCLUDES = atom.h expression.h
 
+ifdef DEBUG
+CFLAGS += -g -DDEBUG
+else
+CFLAGS += -O2
+endif
+
 all : public
 
 public : $(TARGETS)
