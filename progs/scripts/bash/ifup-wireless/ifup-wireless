@@ -41,7 +41,10 @@ if [ -n "${NICK[$2]}" ]; then
 elif [ -x /bin/hostname ]; then
   # if NICK is not given, use hostname
   hostname=`/bin/hostname`
-  [ -n "${hostname}" ] && iwconfig ${1} nick ${hostname} || exit ${?}
+  if [ -n "${hostname}" ]; then
+    echo "nick:    ${hostname}"
+    iwconfig ${1} nick ${hostname} || exit ${?}
+  fi
 fi
 if [ -n "${AP[$2]}" ]; then
   echo "ap/cell: ${AP[$2]}"
