@@ -96,7 +96,7 @@ static int receivefd(apr_file_t *a_fd,
   int size;
 
   if (!a_fd || !a_array)
-    return -1;
+    return MODVLAD_NULLPTR;
 
   /* init */
   memset(str, 0, MODVLAD_MAXMSG_LEN);

@@ -64,7 +64,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
                            a_conf->mutex,
                            &slen);
 
- for (i = 0; i < slen; i++) {
+  for (i = 0; i < slen; i++) {
     const char *st_name = NULL;
 
     modvlad_client_seq_get(a_r->pool,
@@ -191,30 +191,32 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
       *(char **) apr_array_push(parms) = apr_pstrdup(a_r->pool, apr_table_get(tab, apr_psprintf(a_r->pool, "arg%d", i)));
     }
 
-    modvlad_client_seq_add(a_r->pool,
-                           a_conf->pipe_cli[0],
-                           a_conf->pipe_cli[1],
-                           a_conf->mutex,
-                           name,
-                           parms);
-
-    ap_rprintf(a_r, "    <blink>add successful</blink>\n    <br/>\n");
+    if (modvlad_client_seq_add(a_r->pool,
+                               a_conf->pipe_cli[0],
+                               a_conf->pipe_cli[1],
+                               a_conf->mutex,
+                               name,
+                               parms) != MODVLAD_OK)
+      ap_rprintf(a_r, "    <blink>add error</blink>\n    <br/>\n");
+    else
+      ap_rprintf(a_r, "    <blink>add successful</blink>\n    <br/>\n");
   }
   else if (!strcmp(cmd, "delete")) {
     unsigned int args;
 
     args = atoi(apr_table_get(tab, "index"));
 
-    modvlad_client_seq_del(a_r->pool,
-                           a_conf->pipe_cli[0],
-                           a_conf->pipe_cli[1],
-                           a_conf->mutex,
-                           args);
-
-    ap_rprintf(a_r, "    <blink>delete successful</blink>\n    <br/>\n");
+    if (modvlad_client_seq_del(a_r->pool,
+                               a_conf->pipe_cli[0],
+                               a_conf->pipe_cli[1],
+                               a_conf->mutex,
+                               args) != MODVLAD_OK)
+      ap_rprintf(a_r, "    <blink>delete error</blink>\n    <br/>\n");
+    else
+      ap_rprintf(a_r, "    <blink>delete successful</blink>\n    <br/>\n");
   }
   else
-    ap_rprintf(a_r, "    <blink>error</blink>\n    <br/>\n");
+    ap_rprintf(a_r, "    <blink>form error</blink>\n    <br/>\n");
 
   return;
 }
