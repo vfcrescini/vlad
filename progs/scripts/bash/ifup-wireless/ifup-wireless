@@ -45,7 +45,7 @@ if [ -n "${CHANNEL[$2]}" ]; then
 fi
 
 # now for the interface params
-if [ ${USE_DHCP[$1]} = "yes" ]; then
+if [ ${USE_DHCP[$2]} = "yes" ]; then
   # if USE_DHCP is set, ignore everything else
   dhcpcd -d -t 30 ${1} || exit ${?}
 else
