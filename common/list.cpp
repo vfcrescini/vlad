@@ -25,9 +25,6 @@ list::list()
   head = NULL;
   tail = NULL;
   name = NULL;
-#ifdef DEBUG
-  fprintf(stderr, "list is unique\n");
-#endif
 }
 
 list::list(const char *n, bool u)
@@ -36,6 +33,7 @@ list::list(const char *n, bool u)
   len = 0;
   head = NULL;
   tail = NULL;
+  name = NULL;
 
   /* name is entirely optional */
   if (n != NULL) {
@@ -44,10 +42,8 @@ list::list(const char *n, bool u)
   }
 
 #ifdef DEBUG
-  fprintf(stderr, 
-          "list %s is %s\n",
-          (name == NULL) ? "" : name,
-          u ? "unique" : "not-unique");
+  if (name != NULL) 
+    fprintf(stderr, "list %s is %s\n", name, u ? "unique" : "not-unique");
 #endif
 }
 
@@ -57,13 +53,7 @@ list::list(bool u)
   len = 0;
   head = NULL;
   tail = NULL;
-
-#ifdef DEBUG
-  fprintf(stderr, 
-          "list %s is %s\n",
-          (name == NULL) ? "" : name,
-          u ? "unique" : "not-unique");
-#endif
+  name = NULL;
 }
 
 list::~list()
@@ -71,7 +61,8 @@ list::~list()
   purge(true);
 
 #ifdef DEBUG
-  fprintf(stderr, "list %s is destroyed\n", (name == NULL) ? "" : name);
+  if (name != NULL)
+    fprintf(stderr, "list %s is destroyed\n", name);
 #endif
 
   if (name != NULL)

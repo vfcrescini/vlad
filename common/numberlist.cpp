@@ -45,7 +45,7 @@ unsigned int number::get()
   return num;
 }
 
-/* n is the optional tmp for the list */
+/* n is the optional name for the list */
 numberlist::numberlist(const char *n) : list(n, true)
 {
 }
