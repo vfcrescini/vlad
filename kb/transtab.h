@@ -13,7 +13,7 @@
 class transdef : public list_item
 {
   public :
-    transdef(char *n, stringlist *v, expression *pr, expression *po);
+    transdef(const char *n, stringlist *v, expression *pr, expression *po);
     ~transdef();
     bool cmp(list_item *item);
   private :
@@ -28,7 +28,7 @@ class transtab : public list
   public :
     transtab(const char *n);
     ~transtab();
-    int add(char *n, stringlist *v, expression *pr, expression *po);
+    int add(const char *n, stringlist *v, expression *pr, expression *po);
 } ; 
 
 #endif

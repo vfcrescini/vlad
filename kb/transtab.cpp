@@ -12,9 +12,9 @@
 #include <vlad.h>
 #include <transtab.h>
 
-transdef::transdef(char *n, stringlist *v, expression *pr, expression *po)
+transdef::transdef(const char *n, stringlist *v, expression *pr, expression *po)
 {
-  name = n;
+  name = (char *) n;
   vtable = v;
   precond = pr;
   postcond = po;
@@ -82,7 +82,7 @@ transtab::~transtab()
   purge(true);
 }
 
-int transtab::add(char *n, stringlist *v, expression *pr, expression *po)
+int transtab::add(const char *n, stringlist *v, expression *pr, expression *po)
 {
   transdef *tmp;
 
