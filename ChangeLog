@@ -1,5 +1,17 @@
 2003-01-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/list.cpp :
+
+	  - Fixed default constructor.
+
+	  - Added debug code.
+
+	* kb/symtab.cpp :
+
+	  - Fixed default constructor to call the proper base constructor.
+
+2003-01-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
 	* sample/chinese_wall :
 
 	  - Added sample program.
