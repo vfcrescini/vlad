@@ -17,7 +17,7 @@ wrapper::wrapper()
 {
   pr_smod = NULL;
   pr_api = NULL;
-  initialised = false;
+  stage = 0;
 }
 
 wrapper::~wrapper()
@@ -32,7 +32,7 @@ int wrapper::init()
 {
   Atom *tmp_atom;
 
-  if (initialised) {
+  if (stage > 0) {
     if (pr_smod != NULL)
       delete pr_smod;
     if (pr_api != NULL)
@@ -58,18 +58,41 @@ int wrapper::init()
 
   pr_api->set_name(tmp_atom, VLAD_STR_FALSE);
 
-  initialised = true;
+  stage = 1;
 
   return VLAD_OK;
 }
 
+/* after this no more calls to add_atom() are allowed */
+int wrapper::close_atom()
+{
+  if (stage != 1)
+    return VLAD_FAILURE;
+
+  stage = 2;
+
+  return VLAD_OK;
+}
+
+/* after this no more calls to add_rule_*() are allowed */
+int wrapper::close_rule()
+{
+  if (stage != 2)
+    return VLAD_FAILURE;
+
+  stage = 3;
+
+  return VLAD_OK;
+}
+
+/* register an atom */
 int wrapper::add_atom(unsigned int a)
 {
   Atom *tmp_atom;
   char tmp_name[VLAD_MAXLEN_NUM];
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 1)
+    return VLAD_FAILURE;
 
   if ((tmp_atom = pr_api->new_atom()) == NULL)
     return VLAD_MALLOCFAILED;
@@ -85,8 +108,8 @@ int wrapper::add_rule_chead_sbody(bool h, unsigned int pb, unsigned int nb)
 {
   char tmp_name[VLAD_MAXLEN_NUM];
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 2)
+    return VLAD_FAILURE;
 
   pr_api->begin_rule(BASICRULE);
 
@@ -114,8 +137,8 @@ int wrapper::add_rule_chead_mbody(bool h, numberlist *pb, numberlist *nb)
   char tmp_name[VLAD_MAXLEN_NUM];
   unsigned int tmp_num;
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 2)
+    return VLAD_FAILURE;
 
   pr_api->begin_rule(BASICRULE);
 
@@ -150,8 +173,8 @@ int wrapper::add_rule_shead_cbody(unsigned int h, bool b)
 {
   char tmp_name[VLAD_MAXLEN_NUM];
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 2)
+    return VLAD_FAILURE;
 
   pr_api->begin_rule(BASICRULE);
 
@@ -172,8 +195,8 @@ int wrapper::add_rule_shead_sbody(unsigned int h, unsigned int pb, unsigned int 
 {
   char tmp_name[VLAD_MAXLEN_NUM];
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 2)
+    return VLAD_FAILURE;
 
   pr_api->begin_rule(BASICRULE);
 
@@ -202,8 +225,8 @@ int wrapper::add_rule_shead_mbody(unsigned int h, numberlist *pb, numberlist *nb
   char tmp_name[VLAD_MAXLEN_NUM];
   unsigned int tmp_num;
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 2)
+    return VLAD_FAILURE;
 
   pr_api->begin_rule(BASICRULE);
 
@@ -243,8 +266,8 @@ int wrapper::add_rule_mhead_cbody(numberlist *h, bool b)
   char tmp_name[VLAD_MAXLEN_NUM];
   unsigned int tmp_num;
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 2)
+    return VLAD_FAILURE;
 
   pr_api->begin_rule(CHOICERULE);
 
@@ -272,8 +295,8 @@ int wrapper::add_rule_mhead_sbody(numberlist *h, unsigned int pb, unsigned int n
   char tmp_name[VLAD_MAXLEN_NUM];
   unsigned int tmp_num;
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 2)
+    return VLAD_FAILURE;
 
   pr_api->begin_rule(CHOICERULE);
 
@@ -307,8 +330,8 @@ int wrapper::add_rule_mhead_mbody(numberlist *h, numberlist *pb, numberlist *nb)
   char tmp_name[VLAD_MAXLEN_NUM];
   unsigned int tmp_num;
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
+  if (stage != 2)
+    return VLAD_FAILURE;
 
   pr_api->begin_rule(CHOICERULE);
 

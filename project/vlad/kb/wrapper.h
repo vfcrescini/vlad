@@ -18,6 +18,10 @@ class wrapper
     wrapper();
     ~wrapper();
     int init();
+    /* after this no more calls to add_atom() are allowed */
+    int close_atom();
+    /* after this no more calls to add_rule_*() are allowed */
+    int close_rule();
     /* register an atom */
     int add_atom(unsigned int a);
     /* constant head & single body */
@@ -39,7 +43,7 @@ class wrapper
   private :
     Smodels *pr_smod;
     Api *pr_api;
-    bool initialised;
+    int stage;
 } ;
 
 #endif
