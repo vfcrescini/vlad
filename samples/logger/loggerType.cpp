@@ -15,6 +15,13 @@
 #define LOGGERTYPE_STRINGHEADER  "---------------------------------------"
 #define LOGGERTYPE_STRINGTRAILER "---------------------------------------"
 
+// default constructor
+loggerType::loggerType()
+{
+  mLogLevel = LOGGERTYPE_LOGNULL;
+  mLogFileStream = stderr;
+}
+
 // constructor that takes a filename as an argument
 loggerType::loggerType(const char *aFileName)
 {
@@ -55,10 +62,10 @@ void loggerType::logInfo(char *aFormat, ...)
       mLogFileStream) {
       
     va_start(argPointer, aFormat);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGHEADER);
+    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGHEADER);
     fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGINFO);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRAILER);
     vfprintf(mLogFileStream, aFormat, argPointer);
+    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGTRAILER);
     va_end(argPointer);    
   }
 }
@@ -72,10 +79,10 @@ void loggerType::logTrace(char *aFormat, ...)
       mLogFileStream) {
       
     va_start(argPointer, aFormat);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGHEADER);
+    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGHEADER);
     fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRACE);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRAILER);
     vfprintf(mLogFileStream, aFormat, argPointer);
+    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGTRAILER);
     va_end(argPointer);    
   }
 }
@@ -89,10 +96,10 @@ void loggerType::logWarn(char *aFormat, ...)
       mLogFileStream) {
       
     va_start(argPointer, aFormat);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGHEADER);
+    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGHEADER);
     fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGWARN);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRAILER);
     vfprintf(mLogFileStream, aFormat, argPointer);
+    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGTRAILER);
     va_end(argPointer);    
   }
 }
@@ -106,10 +113,10 @@ void loggerType::logError(char *aFormat, ...)
       mLogFileStream) {
       
     va_start(argPointer, aFormat);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGHEADER);
+    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGHEADER);
     fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGERROR);
-    fprintf(mLogFileStream, "%s\n", LOGGERTYPE_STRINGTRAILER);
     vfprintf(mLogFileStream, aFormat, argPointer);
+    fprintf(mLogFileStream, "\n%s\n", LOGGERTYPE_STRINGTRAILER);
     va_end(argPointer);    
   }
 }

@@ -18,6 +18,7 @@
 class loggerType
 {
   public:
+    loggerType();
     loggerType(const char *);
     loggerType(FILE *);
     ~loggerType();

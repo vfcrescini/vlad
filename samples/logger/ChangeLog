@@ -7,4 +7,4 @@
 	  - Reordered constants to reflect priority
 	  - Changed constructor to accept output file name
 	  - Added another constructor to accept filestream
-
+	  - Another constructor without any arguments
