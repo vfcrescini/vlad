@@ -20,18 +20,18 @@ int ident_destroy(ident_type *ident);
 /* return 0 if contents of ident1 and ident2 are identical */
 int ident_compare(ident_type ident1, ident_type ident2);
 
-/* identifier type values indicated by the first 3 bits */
+/* identifier type values indicated by the first 2 bits */
 #define EPI_IDENT_SUBJECT        1
 #define EPI_IDENT_ACCESS         2 
 #define EPI_IDENT_OBJECT         3
 
-/* identifier group bit indicated by the 4th bit */
-#define EPI_IDENT_GROUP          8
+/* identifier group bit indicated by the 3th bit */
+#define EPI_IDENT_GROUP          4
 
 /* some convenience macros */
-#define EPI_IDENT_IS_SUBJECT(X)  (((X) & 7) == EPI_IDENT_SUBJECT)
-#define EPI_IDENT_IS_ACCESS(X)   (((X) & 7) == EPI_IDENT_ACCESS)
-#define EPI_IDENT_IS_OBJECT(X)   (((X) & 7) == EPI_IDENT_OBJECT)
+#define EPI_IDENT_IS_SUBJECT(X)  (((X) & 3) == EPI_IDENT_SUBJECT)
+#define EPI_IDENT_IS_ACCESS(X)   (((X) & 3) == EPI_IDENT_ACCESS)
+#define EPI_IDENT_IS_OBJECT(X)   (((X) & 3) == EPI_IDENT_OBJECT)
 #define EPI_IDENT_IS_GROUP(X)    ((X) & EPI_IDENT_GROUP)
 
 #endif
