@@ -1,3 +1,46 @@
+2004-12-17  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Makefile.in :
+	* configure :
+	* configure.ac :
+	* rules.mk :
+	* lib/Makefile.in :
+	* lib/config.h.in :
+	* lib/consttab.cpp :
+	* lib/consttab.h :
+	* lib/expression.cpp :
+	* lib/expression.h :
+	* lib/fact.cpp :
+	* lib/fact.h :
+	* lib/list.cpp :
+	* lib/list.h :
+	* lib/numberlist.cpp :
+	* lib/numberlist.h :
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+	* lib/smwrap.cpp :
+	* lib/smwrap.h :
+	* lib/stringlist.cpp :
+	* lib/stringlist.h :
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+	* lib/updatetab.cpp :
+	* lib/updatetab.h :
+	* lib/vlad.h :
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+	* main/Makefile.in :
+	* main/agent.l :
+	* main/agent.y :
+	* main/parser.h :
+	* main/policy.l :
+	* main/policy.y :
+	* main/vlad.cpp :
+
+	  - Added copyright/license notice.
+
 2004-01-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/expression.cpp :
