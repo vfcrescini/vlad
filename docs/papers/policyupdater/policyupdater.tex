@@ -2012,7 +2012,7 @@
 
     \begin{vverbatim}
   initially
-    \(a\sb{0}\) && \ldots && \(a\sb{n}\) && !\(b\sb{0}\) && \ldots && !\(b\sb{m}\)
+    \(a\sb{0}\) && \ldots && \(a\sb{m}\) && !\(b\sb{0}\) && \ldots && !\(b\sb{n}\)
 
   always
     \(c\sb{0}\) && \ldots && \(c\sb{o}\) && !\(d\sb{0}\) && \ldots && !\(d\sb{p}\)
@@ -2035,9 +2035,9 @@
     functions:
 
     \begin{vquote}
-      ${\cal F}^{+}_{int}$($\gamma_{int}$) = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
+      ${\cal F}^{+}_{int}$($\gamma_{int}$) = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
 
-      ${\cal F}^{-}_{int}$($\gamma_{int}$) = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
+      ${\cal F}^{-}_{int}$($\gamma_{int}$) = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
 
       ${\cal F}^{+}_{con}$($\gamma_{upd}$) = \{$c_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $o$\}
 
@@ -2089,7 +2089,7 @@
       =
       \begin{math}
         \begin{cases}
-          \mbox{\{$a_{0}$, \ldots, $a_{n}$, $\lnot$$b_{0}$, \ldots, $\lnot$$b_{m}$\}, if $\gamma$ is initially} \\
+          \mbox{\{$a_{0}$, \ldots, $a_{m}$, $\lnot$$b_{0}$, \ldots, $\lnot$$b_{n}$\}, if $\gamma$ is initially} \\
           \mbox{\{$c_{0}$, \ldots, $c_{o}$, $\lnot$$d_{0}$, \ldots, $\lnot$$d_{p}$\}, if $\gamma$ is constraint} \\
           \mbox{\{$i_{0}$, \ldots, $i_{u}$, $\lnot$$j_{0}$, \ldots, $\lnot$$j_{v}$\}, if $\gamma$ is update}
         \end{cases}
