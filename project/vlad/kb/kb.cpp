@@ -253,7 +253,7 @@ int kb::add_transtab(const char *n,
   if (stage != 4)
     return VLAD_FAILURE;
 
-  if (n == NULL)
+  if (n == NULL || po == NULL)
     return VLAD_NULLPTR;
 
   /* copy name */
@@ -266,35 +266,38 @@ int kb::add_transtab(const char *n,
   if ((vlist = VLAD_NEW(stringlist(NULL))) == NULL)
     return VLAD_MALLOCFAILED;
 
-  for (i = 0; i < v->length(); i++) {
-    char *tmp;
-    if ((retval = v->get(i, &tmp)) != VLAD_OK)
-      return retval;
-    /* check if the variable is already used as an identifier */
-    if ((retval = stable->find(tmp)) != VLAD_NOTFOUND)
-      return (retval == VLAD_OK) ? VLAD_FAILURE : retval;
-      
-    if ((retval = vlist->add(tmp)) != VLAD_OK)
-      return retval;
+  if (v != NULL) {
+    for (i = 0; i < v->length(); i++) {
+      char *tmp;
+      if ((retval = v->get(i, &tmp)) != VLAD_OK)
+        return retval;
+      /* check if the variable is already used as an identifier */
+      if ((retval = stable->find(tmp)) != VLAD_NOTFOUND)
+        return (retval == VLAD_OK) ? VLAD_FAILURE : retval;
+      if ((retval = vlist->add(tmp)) != VLAD_OK)
+        return retval;
+    }
   }
 
   /* verify and copy precondition */
   if ((precond = VLAD_NEW(expression(NULL))) == NULL)
     return VLAD_MALLOCFAILED;
 
-  for (i = 0; i < pr->length(); i++) {
-    atom *tmp1;
-    atom *tmp2;
-    if ((retval = pr->get(i, &tmp1)) != VLAD_OK)
-      return retval;
-    if ((retval = verify_atom(tmp1, vlist)))
-      return retval;
-    if ((tmp2 = VLAD_NEW(atom())) == NULL)
-      return VLAD_MALLOCFAILED;
-    if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
-      return retval;
-    if ((retval = precond->add(tmp2)) != VLAD_OK)
-      return retval;
+  if (pr != NULL) {
+    for (i = 0; i < pr->length(); i++) {
+      atom *tmp1;
+      atom *tmp2;
+      if ((retval = pr->get(i, &tmp1)) != VLAD_OK)
+        return retval;
+      if ((retval = verify_atom(tmp1, v)) != VLAD_OK)
+        return retval;
+      if ((tmp2 = VLAD_NEW(atom())) == NULL)
+        return VLAD_MALLOCFAILED;
+      if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+        return retval;
+      if ((retval = precond->add(tmp2)) != VLAD_OK)
+        return retval;
+    }
   }
 
   /* verify and copy the postcondition */
@@ -306,7 +309,7 @@ int kb::add_transtab(const char *n,
     atom *tmp2;
     if ((retval = po->get(i, &tmp1)) != VLAD_OK)
       return retval;
-    if ((retval = verify_atom(tmp1, vlist)))
+    if ((retval = verify_atom(tmp1, v)) != VLAD_OK)
       return retval;
     if ((tmp2 = VLAD_NEW(atom())) == NULL)
       return VLAD_MALLOCFAILED;
@@ -442,6 +445,7 @@ int kb::verify_atom_member(const char *e, const char *g, stringlist *v)
   int retval;
   unsigned char type_e;
   unsigned char type_g;
+  bool var = false;
 
   if (e == NULL || g == NULL)
     return VLAD_NULLPTR;
@@ -460,6 +464,7 @@ int kb::verify_atom_member(const char *e, const char *g, stringlist *v)
       /* if this is a non-ground atom, check in the var list */
       if ((retval = v->find(e)) != VLAD_OK)
         return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      var = true;
       break;
     default :
       return retval;
@@ -471,8 +476,8 @@ int kb::verify_atom_member(const char *e, const char *g, stringlist *v)
       /* in symtab so check if it is a group */
       if (!VLAD_IDENT_IS_GROUP(type_g))
         return VLAD_INVALIDINPUT;
-      /* also check if it has the same base type as e */
-      if (VLAD_IDENT_BASETYPE(type_e) != VLAD_IDENT_BASETYPE(type_g))
+      /* also check if it has the same base type as e if e is not a var */
+      if (!var && VLAD_IDENT_BASETYPE(type_e) != VLAD_IDENT_BASETYPE(type_g))
         return VLAD_INVALIDINPUT;
       break;
     case VLAD_NOTFOUND :
@@ -499,6 +504,7 @@ int kb::verify_atom_subset(const char *g1, const char *g2, stringlist *v)
   int retval;
   unsigned char type_g1;
   unsigned char type_g2;
+  bool var = false;
 
   if (g1 == NULL || g2 == NULL)
     return VLAD_NULLPTR;
@@ -517,6 +523,7 @@ int kb::verify_atom_subset(const char *g1, const char *g2, stringlist *v)
       /* if this is a non-ground atom, check in the var list */
       if ((retval = v->find(g1)) != VLAD_OK)
         return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      var = true;
       break;
     default :
       return retval;
@@ -528,8 +535,8 @@ int kb::verify_atom_subset(const char *g1, const char *g2, stringlist *v)
       /* in symtab so check if it is a group */
       if (!VLAD_IDENT_IS_GROUP(type_g2))
         return VLAD_INVALIDINPUT;
-      /* also check if it has the same base type as g1 */
-      if (VLAD_IDENT_BASETYPE(type_g1) != VLAD_IDENT_BASETYPE(type_g2))
+      /* also check if it has the same base type as g1 if g1 is not a var */
+      if (!var && VLAD_IDENT_BASETYPE(type_g1) != VLAD_IDENT_BASETYPE(type_g2))
         return VLAD_INVALIDINPUT;
       break;
     case VLAD_NOTFOUND :
