@@ -1,5 +1,11 @@
 2002-10-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* parser/parser.y :
+
+	  - Added a more helpful message when a transformation fails
+	    due to the addition of an atom whose negation is already
+	    implied by other atoms in the expression.
+
 	* exp/gnd_exp.c :
 
 	  - Fixed the bug that causes the eval function to think that

@@ -363,8 +363,20 @@ policy_stmt :
     for (i = 0; i < translist_length($2); i++) {
       if (translist_get($2, i, &tmp_trans) != EPI_OK)
         exit_error("internal error: couldn't get a reference to the translist");
-      if (transtab_transform(prev, *tmp_trans, &curr) != EPI_OK)
-        exit_error("internal error: couldn't perform transformation");
+
+      switch (transtab_transform(prev, *tmp_trans, &curr)) {
+        case EPI_OK :
+          break;
+        case EPI_MALLOCFAILED :
+          exit_error("memroy overflow");
+          break;
+        case EPI_NEGIMPLIED :
+          exit_error("transformation error: tried to add an atom whose negation is already implied by other atoms");
+          break;
+        default :
+          exit_error("internal error: couldn't perform transformation");
+      }
+
       gnd_exp_purge(&prev);
 
       prev = curr;
