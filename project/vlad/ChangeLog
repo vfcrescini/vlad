@@ -1,3 +1,10 @@
+2005-04-06  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+
+	  - compute_generate() now dumps normal logic program in a
+	    more "human readable" form.
+
 2005-04-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* COPYING :
