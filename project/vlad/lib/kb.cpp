@@ -13,7 +13,7 @@
 #include <vlad/kb.h>
 #include <vlad/numberlist.h>
 #ifdef SMODELS
-  #include <vlad/wrapper.h>
+  #include <vlad/smwrap.h>
 #endif
 
 kb::kb()
@@ -106,7 +106,7 @@ int kb::init()
     return VLAD_MALLOCFAILED;
 
 #ifdef SMODELS
-  /* smodels wrapper */
+  /* smodels smwrap */
   if (smobject != NULL)
     delete smobject;
 
@@ -999,11 +999,11 @@ int kb::compute_evaluate()
   if (stage != 3 && stage != 4)
     return VLAD_INVALIDOP;
 
-  /* create a new instance of the smodels wrapper and init it */
+  /* create a new instance of the smodels smwrap and init it */
   if (smobject != NULL)
     delete smobject;
 
-  if ((smobject = VLAD_NEW(wrapper())) == NULL)
+  if ((smobject = VLAD_NEW(smwrap())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = smobject->init()) != VLAD_OK)
@@ -1462,7 +1462,7 @@ int kb::compute_evaluate()
 #endif
 
 #ifdef SMODELS
-/* use wrapper class to evaluate a query */
+/* use smwrap class to evaluate a query */
 int kb::query_evaluate(expression *e, unsigned char *r)
 {
   int retval;
