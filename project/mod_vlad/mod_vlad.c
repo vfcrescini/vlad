@@ -32,10 +32,6 @@ static int modvlad_check_passwd(request_rec *a_r,
                                 const char *a_user,
                                 const char *a_passwd,
                                 const char *a_filename);
-static void *modvlad_create_query(request_rec *a_r,
-                                  const char *a_subject,
-                                  const char *a_access,
-                                  const char *a_object);
 static int modvlad_access(request_rec *a_r);
 static int modvlad_handler(request_rec *a_r);
 static int modvlad_postconfig(apr_pool_t *a_pconf, 
@@ -189,62 +185,6 @@ static int modvlad_check_passwd(request_rec *a_r,
 
   /* hey it checked out so return 0 */
   return 0;
-}
-
-static void *modvlad_create_query(request_rec *a_r,
-                                  const char *a_subject,
-                                  const char *a_access,
-                                  const char *a_object)
-{
-  int retval;
-  void *atom = NULL;
-  void *exp = NULL;
-
-  if (!a_r || !a_subject  || !a_access || !a_object)
-    return NULL;
-
-  if ((retval = vlad_atom_create(&atom)) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_r,
-                  "mod_vlad: could not create atom: %d",
-                  retval);
-    return NULL;
-  }
-
-  if ((retval = vlad_exp_create(&exp)) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_r,
-                  "mod_vlad: could not create expression: %d",
-                  retval);
-    return NULL;
-  }
-
-  retval = vlad_atom_init_holds(atom, a_subject, a_access, a_object, 1);
-  if (retval != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_r,
-                  "mod_vlad: could not initialize atom: %d",
-                  retval);
-    return NULL;
-  }
-  
-  if ((retval = vlad_exp_add(exp, atom)) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
-                  0,
-                  a_r,
-                  "mod_vlad: could not add atom into expression: %d",
-                  retval);
-    return NULL;
-  }
-
-  return exp;
 }
 
 static int modvlad_access(request_rec *a_r)

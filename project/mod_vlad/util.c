@@ -46,7 +46,7 @@ static const char *strip_question(apr_pool_t *a_p, const char *a_str);
 /* strips out the trailing / from a_str */
 static const char *strip_slash(apr_pool_t *a_p, const char *a_str);
 /* a version of yyinput that uses apache apr */
-static int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max);
+static int apache_yyinput(void *a_stream, char *a_buf, int a_max);
 
 /* initialze kb */
 int modvlad_init_kb(apr_pool_t *a_p,
@@ -94,7 +94,7 @@ int modvlad_load_kb(apr_pool_t *a_p,
     return -1;
 
   /* give the lexer the proper yyinput function */
-  policy_set_yyinput(modvlad_apache_yyinput, (void *)a_polfile);
+  policy_set_yyinput(apache_yyinput, (void *)a_polfile);
   /* give the parser a kb handle */
   policy_set_kb(a_kb);
   /* give the parser a handle to the extra constraints expression */
@@ -104,6 +104,63 @@ int modvlad_load_kb(apr_pool_t *a_p,
   policyparse();
 
   return 0;
+}
+
+/* composes an expression to query */
+void *modvlad_create_query(request_rec *a_r,
+                           const char *a_subject,
+                           const char *a_access,
+                           const char *a_object)
+{
+  int retval;
+  void *atom = NULL;
+  void *exp = NULL;
+                                                                                                                           
+  if (!a_r || !a_subject  || !a_access || !a_object)
+    return NULL;
+                                                                                                                           
+  if ((retval = vlad_atom_create(&atom)) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: could not create atom: %d",
+                  retval);
+    return NULL;
+  }
+                                                                                                                           
+  if ((retval = vlad_exp_create(&exp)) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: could not create expression: %d",
+                  retval);
+    return NULL;
+  }
+                                                                                                                           
+  retval = vlad_atom_init_holds(atom, a_subject, a_access, a_object, 1);
+  if (retval != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: could not initialize atom: %d",
+                  retval);
+    return NULL;
+  }
+                                                                                                                           
+  if ((retval = vlad_exp_add(exp, atom)) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: could not add atom into expression: %d",
+                  retval);
+    return NULL;
+  }
+                                                                                                                           
+  return exp;
 }
 
 const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url)
@@ -499,7 +556,7 @@ static const char *strip_question(apr_pool_t *a_p, const char *a_str)
 }
 
 /* a version of yyinput that uses apache apr */
-static int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max)
+static int apache_yyinput(void *a_stream, char *a_buf, int a_max)
 {
   apr_size_t size = (apr_size_t) a_max;
   apr_file_t *file = (apr_file_t *) a_stream;

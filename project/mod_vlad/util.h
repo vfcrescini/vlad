@@ -23,6 +23,12 @@ int modvlad_load_kb(apr_pool_t *a_p,
                     apr_file_t *a_polfile,
                     void *a_kb,
                     void *a_exp);
+
+/* composes an expression to query */
+void *modvlad_create_query(request_rec *a_r,
+                           const char *a_subject,
+                           const char *a_access,
+                           const char *a_object);
  
 /* strips out trailing slashes and/or everything after a ? */
 const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url);
