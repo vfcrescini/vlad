@@ -1,3 +1,12 @@
+2003-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Makefile.in :
+	* rules.mk :
+	* lib/Makefile.in : 
+	* main/Makefile.in :
+
+	  - Overhauled build system.
+
 2003-08-27  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* rules.mk :
