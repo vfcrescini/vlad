@@ -17,8 +17,9 @@
 #include <vlad/kb.h>
 #include "program.tab.h"
 
-extern YYSTYPE programlval;
 unsigned int programlineno = 1;
+
+int programinit(FILE *a_in, FILE *a_out);
 %}
 
 begin_comment      \/\*
@@ -143,3 +144,17 @@ everything         .
 }
 
 %%
+
+int programinit(FILE *a_in, FILE *a_out)
+{
+  if (a_in == NULL || a_out == NULL)
+    return VLAD_NULLPTR;
+
+  programin = a_in;
+  programout = a_out;
+
+  yyrestart(a_in);
+  BEGIN INITIAL;
+
+  return VLAD_OK;
+}

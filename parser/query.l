@@ -17,8 +17,9 @@
 #include <vlad/kb.h>
 #include "query.tab.h"
 
-extern YYSTYPE querylval;
 unsigned int querylineno = 1;
+
+int queryinit(FILE *a_in, FILE *a_out);
 %}
 
 begin_comment      \/\*
@@ -104,3 +105,17 @@ everything         .
 }
 
 %%
+
+int queryinit(FILE *a_in, FILE *a_out)
+{
+  if (a_in == NULL || a_out == NULL)
+    return VLAD_NULLPTR;
+
+  queryin = a_in;
+  queryout = a_out;
+
+  yyrestart(a_in);
+  BEGIN INITIAL;
+
+  return VLAD_OK;
+}

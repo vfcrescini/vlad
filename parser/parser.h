@@ -9,18 +9,13 @@
 #include <cstdio>
 #include <vlad/kb.h>
 
-/* variables to be redefined */
-extern FILE *programin;
-extern FILE *programout;
-extern FILE *queryin;
-extern FILE *queryout;
+/* parsers must first be initialised to be used */
+int program_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb);
+int query_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m);
 
-/* variables to be defined */ 
-kb *kbase;
-unsigned char mode;
-
-/* available functions */
-int programparse();
-int queryparse();
+/* it is important that these functions are used instead of the externally
+ * available yyparse() functions */
+int program_parse();
+int query_parse();
 
 #endif

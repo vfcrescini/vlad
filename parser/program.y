@@ -13,20 +13,32 @@
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
 
-extern kb *kbase;
+/* vars defined from the scanner */
 extern int programlineno;
 
-int programerrcode = VLAD_FAILURE;
+/* local vars */
+static FILE *fin = NULL;
+static FILE *fout = NULL;
+static FILE *ferr = NULL;
+static kb *kbase = NULL;
+static unsigned char mode = VLAD_MODE_GENERATE;
+static int errorcode = VLAD_FAILURE;
+static bool initialised = false;
 
 #ifdef DEBUG
-unsigned int cnt_init = 0;
-unsigned int cnt_const = 0;
-unsigned int cnt_trans = 0;
+static unsigned int cnt_init = 0;
+static unsigned int cnt_const = 0;
+static unsigned int cnt_trans = 0;
 #endif
 
-/* functions to be overridden */
+/* functions from scanner */
+int programinit(FILE *a_in, FILE *a_out);
 int programerror(char *error);
 int programlex();
+
+/* available functions */
+int program_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb);
+int prgoram_parse();
 
 /* convenience functions */
 int add_identifier(const char *n, unsigned char t);
@@ -68,11 +80,11 @@ int add_identifier(const char *n, unsigned char t);
 %token <terminal> VLAD_SYM_ACCGRPTYPE
 %token <terminal> VLAD_SYM_IDENT
 %token <identifier> VLAD_SYM_IDENTIFIER
-%type <atm> atom 
-%type <atm> boolean_atom 
-%type <atm> holds_atom 
-%type <atm> subst_atom 
-%type <atm> memb_atom 
+%type <atm> atom
+%type <atm> boolean_atom
+%type <atm> holds_atom
+%type <atm> subst_atom
+%type <atm> memb_atom
 %type <exp> expression
 %type <exp> implied_clause
 %type <exp> with_clause
@@ -106,8 +118,8 @@ ident_section : {
     int retval;
     /* after the ident section, we must close the symbol table */
     if ((retval = kbase->close_symtab()) != VLAD_OK) {
-      programerrcode = retval;
-      fprintf(stderr, "internal error: %d\n", retval);
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -115,8 +127,8 @@ ident_section : {
     int retval;
     /* after the ident section, we must close the symbol table */
     if ((retval = kbase->close_symtab()) != VLAD_OK) {
-      programerrcode = retval;
-      fprintf(stderr, "internal error: %d\n", retval);
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -126,8 +138,8 @@ initial_section : {
     int retval;
     /* after the initial section, we must close the init table */
     if ((retval = kbase->close_inittab()) != VLAD_OK) {
-      programerrcode = retval;
-      fprintf(stderr, "internal error: %d\n", retval);
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -135,8 +147,8 @@ initial_section : {
     int retval;
     /* after the initial section, we must close the init table */
     if ((retval = kbase->close_inittab()) != VLAD_OK) {
-      programerrcode = retval;
-      fprintf(stderr, "internal error: %d\n", retval);
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -146,8 +158,8 @@ constraint_section : {
     int retval;
     /* after the constraint section, we must close the constraint table */
     if ((retval = kbase->close_consttab()) != VLAD_OK) {
-      programerrcode = retval;
-      fprintf(stderr, "internal error: %d\n", retval);
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -155,8 +167,8 @@ constraint_section : {
     int retval;
     /* after the constraint section, we must close the constraint table */
     if ((retval = kbase->close_consttab()) != VLAD_OK) {
-      programerrcode = retval;
-      fprintf(stderr, "internal error: %d\n", retval);
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -166,17 +178,17 @@ trans_section : {
      int retval;
     /* after the transformation section, we must close the trans table */
     if ((retval = kbase->close_transtab()) != VLAD_OK) {
-      programerrcode = retval;
-      fprintf(stderr, "internal error: %d\n", retval);
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
       return retval;
-    } 
+    }
   }
   | trans_stmt_list {
     int retval;
     /* after the transformation section, we must close the trans table */
     if ((retval = kbase->close_transtab()) != VLAD_OK) {
-      programerrcode = retval;
-      fprintf(stderr, "internal error: %d\n", retval);
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -324,7 +336,7 @@ acc_grp_ident_list :
   }
   ;
 
-initial_stmt : 
+initial_stmt :
   VLAD_SYM_INITIALLY expression VLAD_SYM_SEMICOLON {
     int retval;
     unsigned int i;
@@ -340,20 +352,20 @@ initial_stmt :
 
     for (i = 0; i < VLAD_LIST_LENGTH($2); i++) {
       if ((retval = $2->get(i, &a)) != VLAD_OK) {
-        programerrcode = retval;
+        errorcode = retval;
         programerror("invalid atom");
         return retval;
       }
 
       if ((retval = kbase->add_inittab(a)) != VLAD_OK) {
-        programerrcode = retval;
+        errorcode = retval;
         programerror("could not add atom into initial state table");
         return retval;
       }
 
 #ifdef DEBUG
       a->print(s);
-      fprintf(stderr, "initial state[%d]: %s\n", cnt_init++, s);
+      fprintf(ferr, "initial state[%d]: %s\n", cnt_init++, s);
 #endif
 
     }
@@ -371,7 +383,7 @@ constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause VLAD_SYM
     char n[VLAD_MAXLEN_STR];
 #endif
     if ((retval = kbase->add_consttab($2, $3, $4)) != VLAD_OK) {
-      programerrcode = retval;
+      errorcode = retval;
       programerror("could not add constraint into constraint table");
       return retval;
     }
@@ -387,10 +399,10 @@ constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause VLAD_SYM
     else
       strcpy(n, "none");
 
-    fprintf(stderr, "constraint[%d]:\n", cnt_const++);
-    fprintf(stderr, "  expression: %s\n", e);
-    fprintf(stderr, "  condition:   %s\n", c);
-    fprintf(stderr, "  absence:     %s\n", n);
+    fprintf(ferr, "constraint[%d]:\n", cnt_const++);
+    fprintf(ferr, "  expression: %s\n", e);
+    fprintf(ferr, "  condition:   %s\n", c);
+    fprintf(ferr, "  absence:     %s\n", n);
 #endif
 
     /* cleanup */
@@ -418,7 +430,7 @@ with_clause : {
   }
   ;
 
-trans_stmt : 
+trans_stmt :
   VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES expression if_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
@@ -428,7 +440,7 @@ trans_stmt :
 #endif
 
     if ((retval = kbase->add_transtab($1, $2, $5, $4)) != VLAD_OK) {
-      programerrcode = retval;
+      errorcode = retval;
       programerror("could not add transformation into trans table");
       return retval;
     }
@@ -446,11 +458,11 @@ trans_stmt :
 
     $4->print(po);
 
-    fprintf(stderr, "transformation[%d]:\n", cnt_trans++);
-    fprintf(stderr, "  name:        %s\n", $1);
-    fprintf(stderr, "  varlist:    %s\n", v);
-    fprintf(stderr, "  precond:    %s\n", pr);
-    fprintf(stderr, "  postcond:   %s\n", po);
+    fprintf(ferr, "transformation[%d]:\n", cnt_trans++);
+    fprintf(ferr, "  name:        %s\n", $1);
+    fprintf(ferr, "  varlist:    %s\n", v);
+    fprintf(ferr, "  precond:    %s\n", pr);
+    fprintf(ferr, "  postcond:   %s\n", po);
 #endif
 
     /* cleanup */
@@ -470,7 +482,7 @@ if_clause : {
   }
   ;
 
-trans_var_def : 
+trans_var_def :
   VLAD_SYM_OPEN_PARENT VLAD_SYM_CLOSE_PARENT {
     $$ = NULL;
   }
@@ -479,18 +491,18 @@ trans_var_def :
   }
   ;
 
-trans_var_list : 
+trans_var_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
     if (($$ = VLAD_NEW(stringlist())) == NULL) {
-      programerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       programerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      programerrcode = retval;
+      errorcode = retval;
       programerror("could not add variable into var list");
       return retval;
     }
@@ -499,7 +511,7 @@ trans_var_list :
     int retval;
 
     if ((retval = $$->add($3)) != VLAD_OK) {
-      programerrcode = retval;
+      errorcode = retval;
       programerror("could not add variable into var list");
       return retval;
     }
@@ -511,18 +523,18 @@ logical_op :
   }
   ;
 
-expression : 
-  boolean_atom { 
+expression :
+  boolean_atom {
     int retval;
 
     if (($$ = VLAD_NEW(expression())) == NULL) {
-      programerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       programerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
-      programerrcode = retval;
+      errorcode = retval;
       programerror("could not add atom into expression");
       return retval;
     }
@@ -535,7 +547,7 @@ expression :
         /* we simply ignore duplicates */
         break;
       default :
-        programerrcode = retval;
+        errorcode = retval;
         programerror("invalid atom");
         return retval;
     }
@@ -569,13 +581,13 @@ holds_atom :
     int retval;
 
     if (($$ = VLAD_NEW(atom())) == NULL) {
-      programerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       programerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_holds($3, $5, $7, true)) != VLAD_OK) {
-      programerrcode = retval;
+      errorcode = retval;
       programerror("could not initialise holds atom");
       return retval;
     }
@@ -587,13 +599,13 @@ subst_atom :
     int retval;
 
     if (($$ = VLAD_NEW(atom())) == NULL) {
-      programerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       programerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_subset($3, $5, true)) != VLAD_OK) {
-      programerrcode = retval;
+      errorcode = retval;
       programerror("could not initialise subset atom");
       return retval;
     }
@@ -605,13 +617,13 @@ memb_atom :
     int retval;
 
     if (($$ = VLAD_NEW(atom())) == NULL) {
-      programerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       programerror("memory overflow");
       return VLAD_MALLOCFAILED;
     }
 
     if ((retval = $$->init_member($3, $5, true)) != VLAD_OK) {
-      programerrcode = retval;
+      errorcode = retval;
       programerror("could not initialise member atom");
       return retval;
     }
@@ -623,7 +635,7 @@ memb_atom :
 int add_identifier(const char *n, unsigned char t)
 {
   if (!VLAD_IDENT_IS_VALID(t) || t == 0) {
-    programerrcode = VLAD_INVALIDINPUT;
+    errorcode = VLAD_INVALIDINPUT;
     programerror("invalid identifier");
     return VLAD_INVALIDINPUT;
   }
@@ -633,36 +645,36 @@ int add_identifier(const char *n, unsigned char t)
 #ifdef DEBUG
       switch (t) {
         case VLAD_IDENT_SUBJECT :
-          fprintf(stderr, "declared identifier subject: %s\n", n);
+          fprintf(ferr, "declared identifier subject: %s\n", n);
           break;
         case VLAD_IDENT_ACCESS :
-          fprintf(stderr, "declared identifier access: %s\n", n);
+          fprintf(ferr, "declared identifier access: %s\n", n);
           break;
         case VLAD_IDENT_OBJECT :
-          fprintf(stderr, "declared identifier object: %s\n", n);
+          fprintf(ferr, "declared identifier object: %s\n", n);
           break;
         case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
-           fprintf(stderr, "declared identifier subject-group: %s\n", n);
+           fprintf(ferr, "declared identifier subject-group: %s\n", n);
           break;
         case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP :
-           fprintf(stderr, "declared identifier access-group: %s\n", n);
+           fprintf(ferr, "declared identifier access-group: %s\n", n);
           break;
         case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
-           fprintf(stderr, "declared identiifer object-group: %s\n", n);
+           fprintf(ferr, "declared identiifer object-group: %s\n", n);
           break;
       }
 #endif
       break;
     case VLAD_DUPLICATE :
-      programerrcode = VLAD_DUPLICATE;
+      errorcode = VLAD_DUPLICATE;
       programerror("identifier already declared");
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      programerrcode = VLAD_MALLOCFAILED;
+      errorcode = VLAD_MALLOCFAILED;
       programerror("memory overflow");
       return VLAD_MALLOCFAILED;
     default :
-      programerrcode = VLAD_FAILURE;
+      errorcode = VLAD_FAILURE;
       programerror("cannot add identifier to symtab: unexpected error");
       return VLAD_FAILURE;
   }
@@ -671,8 +683,35 @@ int add_identifier(const char *n, unsigned char t)
 }
 
 int programerror(char *error)
-{ 
-  fprintf(stderr, "line %d (error %d) %s\n", programlineno, programerrcode, error);
+{
+  fprintf(ferr, "line %d (error %d) %s\n", programlineno, errorcode, error);
 
   return 0;
-}   
+}
+
+int program_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb)
+{
+  int retval;
+
+  if (a_in == NULL || a_out == NULL || a_err == NULL || a_kb == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = programinit(a_in, a_out)) != VLAD_OK)
+    return retval;
+
+  fin = a_in;
+  fout = a_out;
+  ferr = a_err;
+  kbase = a_kb;
+  initialised = true;
+
+  return VLAD_OK;
+}
+
+int program_parse()
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  return programparse();
+}
