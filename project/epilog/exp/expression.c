@@ -71,9 +71,9 @@ int expression_purge(expression_type *exp)
 
   if (simplelist_length(*exp, &len) != 0)
     return -1;
-
+  
   for (i = 0; i < len; i++)
-    if (simplelist_del_index(exp, i, expression_destroy) != 0)
+    if (simplelist_del_index(exp, 0, expression_destroy) != 0)
       return -1;
 
   return 0;

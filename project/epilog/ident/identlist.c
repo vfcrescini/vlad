@@ -108,7 +108,7 @@ int identlist_purge(void)
     return -1;
 
   for (i = 0; i < len; i++)
-    if (simplelist_del_index(&list, i, identlist_destroy) != 0)
+    if (simplelist_del_index(&list, 0, identlist_destroy) != 0)
       return -1;
 
   return 0;

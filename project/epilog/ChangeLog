@@ -1,3 +1,19 @@
+2002-08-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/simplelist.c :
+
+	  - Some cleanup.
+
+	* exp/expression.c :
+	* ident/identlist.c :
+
+	  - Fixed bug in purge functions. Purge will now always delete the
+	    first element until the list is empty.
+
+	* parser/parser.y :
+
+	  - Cleanups and simplifications.
+
 2002-08-19  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* datastruct/Makefile :

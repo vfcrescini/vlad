@@ -248,11 +248,11 @@ initial_stmt :
         yyerror("internal error");
         return -1;
       }
-      else if (expression_find(initial_exp, *tmp_atom) == 0) {
+      if (expression_find(initial_exp, *tmp_atom) == 0) {
         yywarn("atom already declared");
         continue;
       }
-      else if (expression_add(&initial_exp, *tmp_atom) != 0) {
+      if (expression_add(&initial_exp, *tmp_atom) != 0) {
         yyerror("internal error");
         return -1;
       }
@@ -280,8 +280,10 @@ initial_stmt :
 
     }
 
-    if (expression_purge(&$2))
+    if (expression_purge(&$2) != 0) {
+      yyerror("internal error");
       return -1;
+    }
   }
   ;
 
@@ -363,40 +365,18 @@ expression :
       yyerror("internal error");
       return -1;
     }
-    else if (expression_add(&$$, $1) != 0) {
+    if (expression_add(&$$, $1) != 0) {
       yyerror("internal error");
       return -1;
     }
   }
   | boolean_atom logical_op expression
   { 
-    unsigned int i;
-    unsigned int len;
-    atom_type *tmp_atom;
-
-    if (expression_length($3, &len) != 0) {
+    if (expression_add(&$3, $1) != 0) {
       yyerror("internal error");
       return -1;
     }
- 
-    for (i = 0; i < len; i++) {
-      if (expression_get($3, i, &tmp_atom) != 0) {
-        yyerror("internal error");
-        return -1;
-      }
-      else if (expression_add(&$$, *tmp_atom) != 0) {
-        yyerror("internal error");
-        return -1;
-      }
-    }
-    if (expression_add(&$$, $1) != 0) {
-        yyerror("internal error");
-        return -1;
-    }
-    else if (expression_purge(&$3) != 0) {
-        yyerror("internal error");
-        return -1;
-    }
+    $$ = $3;
   }
   ;
 

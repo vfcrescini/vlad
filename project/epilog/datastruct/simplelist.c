@@ -59,7 +59,7 @@ int simplelist_del_index(simplelist_type *list,
   unsigned int i;
 
   if (list == NULL || list->length <= 0 || index >= list->length)
-   return -1;
+    return -1;
 
   prev = NULL;
   curr = list->list;
