@@ -1,5 +1,9 @@
-mod_vlad TODO
+-------------------------------------------------------------------------------
+mod_vlad 
+TODO
+
 Vino Crescini  <jcrescin@cit.uws.edu.au>
+-------------------------------------------------------------------------------
 
 - Use per-server configuration. Currently, the configuration is per-directory
   because the core module insists that the auth directives (AuthName, AuthType,
