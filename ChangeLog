@@ -1,5 +1,7 @@
 2003-12-31  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/expression.cpp :
+	* lib/expression.h :
 	* lib/numberlist.cpp :
 	* lib/numberlist.h :
 	* lib/stringlist.cpp :

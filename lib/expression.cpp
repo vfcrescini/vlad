@@ -20,52 +20,52 @@ expression::~expression()
   purge(true);
 }
 
-/* add pre-malloc'ed atom */
-int expression::add(atom *a)
+/* add pre-malloc'ed fact */
+int expression::add(fact *a_fact)
 {
-  if (a == NULL)
+  if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  return list::add(a);
+  return list::add(a_fact);
 }
 
-/* return true if atom is in the expression */
-int expression::find(atom *a)
+/* return true if fact is in the expression */
+int expression::find(fact *a_fact)
 {
-  if (a == NULL)
+  if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  return list::find(a);
+  return list::find(a_fact);
 }
-/* give a reference to the i'th atom */
-int expression::get(unsigned int i, atom **a)
+/* give a reference to the i'th fact */
+int expression::get(unsigned int a_index, fact **a_fact)
 {
-  if (a == NULL)
+  if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  return list::get(i, (list_item **) a);
+  return list::get(a_index, (list_item **) a_fact);
 }
 
 /* replace vars in vlist to ident in ilist. create a new expression */
-int expression::replace(stringlist *vlist, stringlist *ilist, expression **e)
+int expression::replace(stringlist *a_vlist, stringlist *a_ilist, expression **a_exp)
 {
   int retval;
   unsigned int i;
-  atom *old_atom;
-  atom *new_atom;
+  fact *old_fact;
+  fact *new_fact;
 
-  if (e == NULL)
+  if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((*e = VLAD_NEW(expression())) == NULL)
+  if ((*a_exp = VLAD_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < list::length(); i++) {
-    if ((retval = get(i, &old_atom)) != VLAD_OK)
+    if ((retval = get(i, &old_fact)) != VLAD_OK)
       return retval;
-    if ((retval = old_atom->replace(vlist, ilist, &new_atom)) != VLAD_OK)
+    if ((retval = old_fact->replace(a_vlist, a_ilist, &new_fact)) != VLAD_OK)
       return retval;
-    if ((retval = (*e)->add(new_atom)) != VLAD_OK)
+    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
       return retval;
   }
 
@@ -74,19 +74,19 @@ int expression::replace(stringlist *vlist, stringlist *ilist, expression **e)
 
 #ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
-void expression::print(char *s)
+void expression::print(char *a_str)
 {
   unsigned int i;
-  char tmps[VLAD_MAXLEN_STR];
-  atom *tmpa;
+  char tmp_str[VLAD_MAXLEN_STR];
+  fact *tmp_obj;
 
   for (i = 0; i < list::length(); i++) {
-    if (list::get(i, (list_item **) &tmpa) != VLAD_OK)
+    if (list::get(i, (list_item **) &tmp_obj) != VLAD_OK)
       break;
 
-    memset(tmps, 0, VLAD_MAXLEN_STR);
-    tmpa->print(tmps);
-    sprintf(s, "%s %s", s, tmps);
+    memset(tmp_str, 0, VLAD_MAXLEN_STR);
+    tmp_obj->print(tmp_str);
+    sprintf(a_str, "%s %s", a_str, tmp_str);
   }
 }
 #endif

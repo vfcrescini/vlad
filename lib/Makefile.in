@@ -109,7 +109,7 @@ atom.o : atom.h atom.cpp
 fact.o : fact.h fact.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c fact.cpp
 
-expression.o : list.h atom.h expression.h expression.cpp
+expression.o : list.h fact.h expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
 
 symtab.o : stringlist.h symtab.h symtab.cpp
