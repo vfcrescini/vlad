@@ -127,7 +127,7 @@ Language LT
 
 2. Definitions
 
-  2.1. Entity Declarations
+  2.1. Entity Literal Declarations
 
     entity sub|acc|obj[-grp] <entity1> [, <entity2>, [, ...]]
 
@@ -146,9 +146,11 @@ Language LT
       starts(<int1>, <int2>) |
       ends(<int1>, <int2>);
 
+    - "intx" can be either an interval literal or an interval variable.
+
   2.3. Initial Expression Declaration
 
-    initially <expression>;
+    initially <ground expression>;
 
   2.4. Constraint Declaration
 
@@ -159,7 +161,7 @@ Language LT
     <update_id>([<var_id>[, ...]]) causes <vexp1> if <vexp2>;
 
     where <vexp1> and <vexp2> are expressions containing atoms that may
-    contain variables in place of identifiers.
+    contain variables.
 
 3. Directives
 
