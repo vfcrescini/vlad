@@ -58,20 +58,15 @@
   \maketitle
 
   \begin{abstract}
-    {\em PolicyUpdater}\footnotemark is a fully-implemented authorisation
-    system that provides policy evaluations as well as dynamic policy updates.
-    These functions are achieved by the use of a logic-based language
-    ${\cal L}$ to represent the underlying access control policies, constraints
-    and update propositions. The system performs access control query
-    evaluations and conditional policy updates by translating the language
-    $\cal{L}$ to a normal logic program in a form suitable for evaluation using
-    the {\em Stable Model} semantics.
+    {\em PolicyUpdater} is a fully-implemented authorisation system that
+    provides policy evaluations as well as dynamic policy updates. These
+    functions are achieved by the use of a logic-based language ${\cal L}$ to
+    represent the underlying access control policies, constraints and update
+    propositions. The system performs access control query evaluations and
+    conditional policy updates by translating the language $\cal{L}$ to a
+    normal logic program in a form suitable for evaluation using the
+    {\em Stable Model} semantics.
   \end{abstract}
-
-  \footnotetext{
-    The PolicyUpdater system project homepage can be found at:
-    {\tt \scriptsize http://www.cit.uws.edu.au/\~{}jcrescin/projects/PolicyUpdater}
-  }
 
   \section{Introduction}
 
@@ -1936,6 +1931,13 @@
 
     As mentioned earlier, {\em PolicyUpdater} is a fully implemented system.
     In this section, we describe the implementation details of this system.
+    Details of the application and the core system program may be found in
+    the project homepage at:
+
+    \begin{vquote}
+      {\tt\scriptsize http://www.cit.uws.edu.au/\~{}jcrescin/projects/} \\
+      {\tt\scriptsize PolicyUpdater/index.html}
+    \end{vquote}
 
     \subsection{System Structure}
 
@@ -2354,15 +2356,14 @@
     and querying of access control policies. As we have shown, language
     ${\cal L}$ is expressive enough to represent constraints and default rules.
 
-    The case study in Section \ref{sec-case} is a demonstration of how the
-    PolicyUpdater system can be adapted to be used in a real-world web server
-    authorisation application. As mentioned earlier, while other logic based
-    access control approaches have been proposed recently, most of these cannot
-    deal with dynamic policy updates. Furthermore, most of these other
-    approaches rarely address implementation issues. To the best of our
-    knowledge, the PolicyUpdater system is the first fully implemented logic
-    based access control system with a comprehensive web server security
-    application.
+    The case study in Section \ref{sec-case} demonstrates how the PolicyUpdater
+    system can be adapted to be used in a real-world web server authorisation
+    application. As mentioned earlier, while other logic based access control
+    approaches have been proposed recently, most of these cannot deal with
+    dynamic policy updates. Furthermore, most of these approaches rarely
+    address implementation issues. To the best of our knowledge, the
+    PolicyUpdater system is the first fully implemented logic based access
+    control system with a comprehensive web server security application.
 
     One possible future extension to this work is the integration of temporal
     logic to language ${\cal L}$ to allow time properties to be expressed in
