@@ -34,6 +34,7 @@ list::list(const char *n, bool u)
   unique = u;
   len = 0;
   head = NULL;
+  tail = NULL;
 
   /* name is entirely optional */
   if (n != NULL) {
@@ -54,6 +55,7 @@ list::list(bool u)
   unique = u;
   len = 0;
   head = NULL;
+  tail = NULL;
 
 #ifdef DEBUG
   fprintf(stderr, 
@@ -100,9 +102,14 @@ int list::add(list_item *data)
   if ((new_node = VLAD_ADT_MALLOC(list_node)) == NULL)
     return VLAD_MALLOCFAILED;
 
+  if (tail == NULL)
+    head = new_node;
+  else
+    tail->next = new_node;
+
   new_node->data = data;
-  new_node->next = head;
-  head = new_node;
+  new_node->next = NULL;
+  tail = new_node;
   len++;
  
   return VLAD_OK;
@@ -126,10 +133,16 @@ int list::del(unsigned int index, bool f)
     curr = curr->next;
   }
 
-  if (prev == NULL)
+  if (prev == NULL) {
+    if (curr == tail)
+      tail = NULL;
     head = head->next;
-  else
+  }
+  else {
+    if (curr == tail)
+      tail = prev;
     prev->next = curr->next;
+  }
 
   if (f)
     delete (curr->data);
@@ -165,10 +178,16 @@ int list::del(list_item *data, bool f)
 
       found = true;
 
-      if (prev == NULL)
+      if (prev == NULL) {
+        if (curr == tail)
+          tail = NULL;
         head = head->next;
-      else
+      }
+      else {
+        if (curr == tail)
+          tail = prev;
         prev->next = curr->next;
+      }
 
       if (f)
         delete (curr->data);
@@ -309,6 +328,7 @@ void list::purge(bool f)
     }
 
     head = NULL;
+    tail = NULL;
     len = 0;
   }
 }

@@ -1,3 +1,13 @@
+2003-03-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.h :
+	* common/list.cpp :
+
+	  - Added a tail pointer in the list to allow quick access to the
+	    other end. Also, items are now inserted at the end of the tail
+	    instead of the head. This allows retrieval of items in the right
+	    order.
+
 2003-03-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* parser/parser.y :
