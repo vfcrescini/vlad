@@ -112,6 +112,34 @@ int atom_destroy(atom_type *atom)
   return 0;
 }
 
+/* creates a copy of atom1 */
+int atom_copy(atom_type **atom2, atom_type atom1)
+{
+  if (atom2 == NULL)
+    return -1;
+
+  if (EPI_ATOM_IS_CONST(atom1.type))
+    return atom_create_const(atom2, atom1.truth);
+  else if (EPI_ATOM_IS_HOLDS(atom1.type))
+    return atom_create_holds(atom2,
+                             atom1.atom.holds.subject,
+                             atom1.atom.holds.access,
+                             atom1.atom.holds.object,
+                             atom1.truth);
+  else if (EPI_ATOM_IS_MEMB(atom1.type))
+    return atom_create_memb(atom2,
+                            atom1.atom.memb.element,
+                            atom1.atom.memb.group,
+                            atom1.truth);
+  else if (EPI_ATOM_IS_SUBST(atom1.type))
+    return atom_create_subst(atom2,
+                             atom1.atom.subst.group1,
+                             atom1.atom.subst.group2,
+                             atom1.truth);
+  else
+    return -1;
+}
+
 /* returns 0 if the contents of atom1 and atom2 are identical */
 int atom_compare(atom_type atom1, atom_type atom2)
 {

@@ -66,6 +66,9 @@ int atom_create_subst(atom_type **atom,
                       ident_type *group2,
                       truth_type truth);
 
+/* creates a copy of atom1 */
+int atom_copy(atom_type **atom2, atom_type atom1);
+
 /* destroys atom structure */
 int atom_destroy(atom_type *atom);
 
