@@ -10,7 +10,7 @@
 #include "y.tab.h"
 #include "symtab.h"
 
-extern int yylval;
+extern YYSTYPE yylval;
 %}
 
 underscore         _

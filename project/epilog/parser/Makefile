@@ -9,9 +9,6 @@ all : public
 public : $(TARGETS)
 	@mkdir -p $(TOPSRCDIR)/include
 	@mkdir -p $(TOPSRCDIR)/lib
-	@for i in $(INCLUDES); do \
-	ln -sf ../parser/$$i $(TOPSRCDIR)/include; \
-	done
 	@for i in $(TARGETS); do \
 	ln -sf ../parser/$$i $(TOPSRCDIR)/lib; \
 	done
