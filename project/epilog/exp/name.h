@@ -29,7 +29,7 @@ int name_copy(name_type source, name_type *dest);
 int name_compare(name_type one, name_type two);
 
 /* destroy name. only var name strings are freed */
-int name_destroy(name_type *name);
+int name_destroy(name_type name);
 
 /* types for the type field of name_type */
 #define EPI_NAME_VAR           1

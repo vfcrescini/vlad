@@ -1,3 +1,41 @@
+2002-09-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* trans/trans.c :
+	* trans/trans.h :
+
+	  - Created structure to hold tranformation definitions.
+
+	* Makefile :
+	* main/Makefile :
+	* trans/Makefile :
+	
+	  - Enabled the build of the trans library.
+
+	* datastruct/stringlist.c :
+	* datastruct/stringlist.h :
+	* exp/expression.c :
+	* exp/expression.h :
+
+	  - Added a cmp function that compares NOT the individual data but
+	    the list itself as a whole.
+
+	* ident/identlist.c :
+	* ident/identlist.h :
+	* parser/parser.y :
+
+	  - Changed the API of identlist to include an identlist variable
+	    instead of a statically-defined variable in the library. This
+	    will allow us to use the identlist for purposes other than
+	    that of the symbol table.
+
+	* docs/bnf.txt :
+	* parser/parser.y :
+
+	  - Changed all recursive rules from left-recursive to right-
+	    recursive. Less efficient, but at parsed in the right order.
+	    Now data in lists appear in the order in which they appear in
+	    the input file.
+
 2002-08-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/Makefile :
@@ -225,7 +263,6 @@
 
 	  - Changed identlist_get(char *name, ident_type *ident) to
 	    int identlist_get(char *name, ident_type **ident).
-
 
 	* main/Makefile :
 	* main/epilog.c :

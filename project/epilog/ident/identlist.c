@@ -5,22 +5,19 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <simplelist.h>
-#include "ident.h"
+#include "identlist.h"
 
 int identlist_compare(void *p1, void *p2);
 int identlist_destroy(void *p);
 
-static simplelist_type list;
-
 /* initialise list */
-int identlist_init(void)
+int identlist_init(identlist_type *list)
 {
-  return simplelist_init(&list);
+  return simplelist_init(list);
 }
 
 /* return 0 if name is already used */
-int identlist_find(char *name)
+int identlist_find(identlist_type list, char *name)
 {
   int found = -1;
   ident_type *temp_ident = NULL;
@@ -31,7 +28,7 @@ int identlist_find(char *name)
   if (ident_create(&temp_ident, name, 0) != 0)
     return -1;
 
-  found = simplelist_find_data(list, 
+  found = simplelist_find_data(list,
                                (void *) temp_ident,
                                identlist_compare);
 
@@ -41,21 +38,21 @@ int identlist_find(char *name)
 }
 
 /* add identifier */
-int identlist_add(char *name, unsigned short type)
+int identlist_add(identlist_type *list, char *name, unsigned short type)
 {
   ident_type *new_ident = NULL;
   
-  if (name == NULL)
+  if (list == NULL || name == NULL)
     return -1;
 
   if (ident_create(&new_ident, name, type) != 0)
     return -1;
 
-  return simplelist_add(&list, (void *) new_ident);
+  return simplelist_add(list, (void *) new_ident);
 }
 
 /* get identifier structure based on name */
-int identlist_get(char *name, ident_type **ident)
+int identlist_get(identlist_type list, char *name, ident_type **ident)
 {
   ident_type temp_ident;
 
@@ -72,33 +69,36 @@ int identlist_get(char *name, ident_type **ident)
 }
 
 /* delete identifier entry based on name */
-int identlist_del(char *name)
+int identlist_del(identlist_type *list, char *name)
 {
   ident_type temp_ident;
 
-  if (name == NULL)
+  if (list == NULL || name == NULL)
     return -1;
 
   temp_ident.name = name;
   temp_ident.type = 0;
 
-  return simplelist_del_data(&list,
+  return simplelist_del_data(list,
                              (void *) &temp_ident,
                              identlist_compare,
                              identlist_destroy);
 }
 
 /* delete all entries */
-int identlist_purge(void)
+int identlist_purge(identlist_type *list)
 {
   unsigned int len;
   unsigned int i;
 
-  if (simplelist_length(list, &len) != 0)
+  if (list == NULL)
+    return -1;
+
+  if (simplelist_length(*list, &len) != 0)
     return -1;
 
   for (i = 0; i < len; i++)
-    if (simplelist_del_index(&list, 0, identlist_destroy) != 0)
+    if (simplelist_del_index(list, 0, identlist_destroy) != 0)
       return -1;
 
   return 0;

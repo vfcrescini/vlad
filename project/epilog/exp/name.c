@@ -10,14 +10,16 @@
 /* composes a variable name_type, allocates space for the string */
 int name_create_var(char *string, name_type *name)
 {
+  char *tmp_string = NULL;
+  
   if (string == NULL || name == NULL)
     return -1;
 
-  name->type = EPI_NAME_VAR;
-  name->name.var = (char *) malloc(sizeof(char) * strlen(string));
-
-  if (name->name.var == NULL)
+  if ((tmp_string = (char *) malloc(sizeof(char) * strlen(string))) == NULL)
     return -1;
+
+  name->type = EPI_NAME_VAR;
+  name->name.var = tmp_string;
 
   strcpy(name->name.var, string);
 
@@ -67,17 +69,14 @@ int name_compare(name_type one, name_type two)
 }
 
 /* destroy name. only var name strings are freed */
-int name_destroy(name_type *name)
+int name_destroy(name_type name)
 {
-  if (name == NULL)
-    return -1;
-
-  if (EPI_NAME_IS_IDENT(*name))
+  if (EPI_NAME_IS_IDENT(name))
     return 0;
 
-  if (EPI_NAME_IS_VAR(*name)) {
-    if (name->name.var != NULL)
-      free(name->name.var);
+  if (EPI_NAME_IS_VAR(name)) {
+    if (name.name.var != NULL)
+      free(name.name.var);
     return 0;
   }
 

@@ -22,9 +22,9 @@ Updated 2002 Aug 23
 
 <last-part>             : <other-stmt-list>
 
-<ident-stmt-list>       : <ident-stmt> | <ident-stmt> <ident-stmt-list>
+<ident-stmt-list>       : <ident-stmt> | <ident-stmt-list> <ident-stmt> 
                         
-<other-stmt-list>       : <other-stmt> | <other-stmt> <other-stmt-list>
+<other-stmt-list>       : <other-stmt> | <other-stmt-list> <other-stmt>
                         
 <other-stmt>            : <initial-stmt> | <trans-stmt> | <policy-stmt>
 
@@ -46,17 +46,17 @@ Updated 2002 Aug 23
 
 <obj-grp-ident-decl>    : <obj-grp-type> <obj-grp-ident-list>
 
-<sub-ident-list>        : <identifier> | <identifier> <comma> <sub-ident-list>
+<sub-ident-list>        : <identifier> | <sub-ident-list> <comma> <identifier>
 
-<obj-ident-list>        : <identifier> | <identifier> <comma> <obj-ident-list>
+<obj-ident-list>        : <identifier> | <obj-ident-list> <comma> <identifier>
 
-<acc-ident-list>        : <identifier> | <identifier> <comma> <acc-ident-list>
+<acc-ident-list>        : <identifier> | <acc-ident-list> <comma> <identifier>
 
-<sub-grp-ident-list>    : <identifier> | <identifier> <comma> <sub-grp-ident-list>
+<sub-grp-ident-list>    : <identifier> | <sub-grp-ident-list> <comma> <identifier>
 
-<obj-grp-ident-list>    : <identifier> | <identifier> <comma> <obj-grp-ident-list>
+<obj-grp-ident-list>    : <identifier> | <obj-grp-ident-list> <comma> <identifier>
 
-<acc-grp-ident-list>    : <identifier> | <identifier> <comma> <acc-grp-ident-list>
+<acc-grp-ident-list>    : <identifier> | <acc-grp-ident-list> <comma> <identifier>
 
 <initial-stmt>          : <initially> <ground-exp> <semicolon>
                         
@@ -66,8 +66,8 @@ Updated 2002 Aug 23
 <trans-var-def>         : <open-parent> <close-parent> |
                           <open-parent> <trans-var-list> <close-parent> 
                         
-<trans-var-list>        : <identifier> | <identifier> <comma>
-                          <trans-var-list>
+<trans-var-list>        : <identifier> | <trans-var-list> <comma> <identifier>
+                          
                         
 <policy-stmt>           : <is-clause> <after-clause> <semicolon> |
                           <is-clause> <semicolon>
@@ -76,16 +76,16 @@ Updated 2002 Aug 23
                         
 <after-clause>          : <after> <trans-ref-list>
                         
-<trans-ref-list>        : <trans-ref-def> | <trans-ref-def> <comma> 
-                          <trans-ref-list>
+<trans-ref-list>        : <trans-ref-def> | <trans-ref-list> <comma>
+                          <trans-ref-def>
                         
 <trans-ref-def>         : <identifier> <open-parent>
                           <trans-ref-ident-list> <close-parent>
                         
-<trans-ref-ident-list>  : <identifier> | <identifier> <comma>
-                          <trans-ref-ident-list>
+<trans-ref-ident-list>  : <identifier> | <trans-ref-ident-list> <comma> 
+                          <identifier>
 
-<ground-exp>            : <ground-boolean-atom> <logical-op> <ground-exp> |
+<ground-exp>            : <ground-exp> <logical-op> <ground-boolean-atom> |
                           <ground-boolean-atom>
                         
 <ground-boolean-atom>   : <not> <ground-atom-exp> | <ground-atom-exp>
@@ -102,7 +102,7 @@ Updated 2002 Aug 23
 <ground-memb-atom>      : <member> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
 
-<comp-exp>              : <comp-boolean-atom> <logical-op> <comp-exp> |
+<comp-exp>              : <comp-exp> <logical-op> <comp-boolean-atom> |
                           <comp-boolean-atom>
 
 <comp-boolean-atom>     : <not> <comp-atom-exp> | <comp-atom-exp>

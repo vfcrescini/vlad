@@ -32,4 +32,7 @@ int expression_del(expression_type *exp, atom_type atom);
 /* delete all atoms from this expression */
 int expression_purge(expression_type *exp);
 
+/* return 0 if the lists are equivalent */
+int expression_cmp(expression_type e1, expression_type e2);
+
 #endif

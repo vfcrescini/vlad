@@ -23,8 +23,13 @@ int add_identifier(char ident[], unsigned short type);
 void exit_error(char *message);
 int initialise(void);
 int destroy(void);
+#ifdef DEBUG
+int dump_atom(atom_type atom);
+int dump_exp(expression_type exp);
+#endif
 
 expression_type initial_exp;
+identlist_type identifier_list;
 FILE *yyerr;
 %}
 
@@ -100,36 +105,9 @@ init :
 
 destroy :
   {
-
 #ifdef DEBUG
-    unsigned int i;
-    unsigned int len;
-    atom_type *tmp_atom = NULL;
-
-    expression_length(initial_exp, &len);
-
-    for (i = 0; i < len; i++) {
-      expression_get(initial_exp, i, &tmp_atom);
-
-      if (EPI_ATOM_IS_CONST(*tmp_atom))
-        fprintf(yyerr, "initial state: constant %s\n", tmp_atom->truth == 0 ? "true" : "false");
-      else if (EPI_ATOM_IS_HOLDS(*tmp_atom))
-        fprintf(yyerr, "initial state: %sholds(%s, %s, %s)\n",
-               tmp_atom->truth == 0 ? "" : "not ",
-               tmp_atom->atom.holds.subject.name.ident->name,
-               tmp_atom->atom.holds.access.name.ident->name,
-               tmp_atom->atom.holds.object.name.ident->name);
-      else if (EPI_ATOM_IS_MEMB(*tmp_atom))
-        fprintf(yyerr, "initial state: %smemb(%s, %s)\n", 
-               tmp_atom->truth == 0 ? "" : "not ",
-               tmp_atom->atom.memb.element.name.ident->name,
-               tmp_atom->atom.memb.group.name.ident->name);  
-      else if (EPI_ATOM_IS_SUBST(*tmp_atom))
-        fprintf(yyerr, "initial state: %ssubst(%s, %s)\n", 
-               tmp_atom->truth == 0 ? "" : "not ",
-               tmp_atom->atom.subst.group1.name.ident->name,
-               tmp_atom->atom.subst.group2.name.ident->name);     
-    }
+    fprintf(yyerr, "initial state:\n");
+    dump_exp(initial_exp);
 #endif
 
     if (destroy() != 0) {
@@ -155,12 +133,12 @@ last_part :
 
 ident_stmt_list :
   ident_stmt
-  | ident_stmt ident_stmt_list
+  | ident_stmt_list ident_stmt
   ;
 
 other_stmt_list :
   other_stmt
-  | other_stmt other_stmt_list
+  | other_stmt_list other_stmt
   ;
 
 ident_stmt :
@@ -218,8 +196,8 @@ sub_ident_list :
     if (add_identifier($1, EPI_IDENT_SUBJECT) != 0)
       exit_error("internal error");
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_ident_list {
-    if (add_identifier($1, EPI_IDENT_SUBJECT) != 0)
+  | sub_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
+    if (add_identifier($3, EPI_IDENT_SUBJECT) != 0)
       exit_error("internal error");
   }
   ;
@@ -229,8 +207,8 @@ obj_ident_list :
     if (add_identifier($1, EPI_IDENT_OBJECT) != 0)
       exit_error("internal error");
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_ident_list {
-    if (add_identifier($1, EPI_IDENT_OBJECT) != 0)
+  | obj_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
+    if (add_identifier($3, EPI_IDENT_OBJECT) != 0)
       exit_error("internal error");
   }
   ;
@@ -240,8 +218,8 @@ acc_ident_list :
     if (add_identifier($1, EPI_IDENT_ACCESS) != 0)
       exit_error("internal error");
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_ident_list {
-    if (add_identifier($1, EPI_IDENT_ACCESS) != 0)
+  | acc_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA {
+    if (add_identifier($3, EPI_IDENT_ACCESS) != 0)
       exit_error("internal error");
   }
   ;
@@ -251,8 +229,8 @@ sub_grp_ident_list :
     if (add_identifier($1, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0) 
       exit_error("internal error");
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_grp_ident_list {
-    if (add_identifier($1, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0) 
+  | sub_grp_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
+    if (add_identifier($3, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0) 
       exit_error("internal error");
   }
   ;
@@ -262,8 +240,8 @@ obj_grp_ident_list :
     if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
       exit_error("internal error");
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_grp_ident_list {
-    if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
+  | obj_grp_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA {
+    if (add_identifier($3, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
       exit_error("internal error");
   }
   ;
@@ -273,8 +251,8 @@ acc_grp_ident_list :
     if (add_identifier($1, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0)
       exit_error("internal error");
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_grp_ident_list {
-    if (add_identifier($1, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0)
+  | acc_grp_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
+    if (add_identifier($3, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0)
       exit_error("internal error");
   }
   ;
@@ -296,7 +274,7 @@ initial_stmt :
         exit_error("internal error");
 
       if (expression_find(initial_exp, *tmp_atom) == 0) {
-        yywarn("atom already declared");
+        yywarn("atom already in the initial state");
         continue;
       }
 
@@ -304,24 +282,8 @@ initial_stmt :
         exit_error("internal error");
 
 #ifdef DEBUG
-      if (EPI_ATOM_IS_CONST(*tmp_atom))
-        fprintf(yyerr, "adding constant %s into the initial state\n", tmp_atom->truth == 0 ? "true" : "false");
-      else if (EPI_ATOM_IS_HOLDS(*tmp_atom))
-        fprintf(yyerr, "adding %sholds(%s, %s, %s) into the initial state\n", 
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.holds.subject),
-               EPI_NAME_STRING(tmp_atom->atom.holds.access),
-               EPI_NAME_STRING(tmp_atom->atom.holds.object));
-      else if (EPI_ATOM_IS_MEMB(*tmp_atom))
-        fprintf(yyerr, "adding %smemb(%s, %s) into the initial state\n", 
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.memb.element),
-               EPI_NAME_STRING(tmp_atom->atom.memb.group));
-      else if (EPI_ATOM_IS_SUBST(*tmp_atom))
-        fprintf(yyerr, "adding %ssubst(%s, %s) into the initial state\n", 
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.subst.group1),
-               EPI_NAME_STRING(tmp_atom->atom.subst.group2));
+      fprintf(yyerr, "adding atom to initial state:\n");
+      dump_atom(*tmp_atom);
 #endif
     }
 
@@ -342,75 +304,38 @@ trans_stmt :
 
 #ifdef DEBUG
     fprintf(yyerr, "transformation declaration: %s\n", $2);
-    fprintf(yyerr, "  variables: ");
+    fprintf(yyerr, "  variables:\n");
 #endif
 
     for (i = 0; i < len; i++) {
       if (stringlist_get($3, i, &temp_string) != 0)
         exit_error("internal error");
 #ifdef DEBUG
-      fprintf(yyerr, " %s", temp_string);
+      fprintf(yyerr, "  %s\n", temp_string);
 #endif
     }
 #ifdef DEBUG
-      fprintf(yyerr, "\n  postconditions: ");
+      fprintf(yyerr, "  postconditions:\n");
 #endif
     expression_length($5, &len);
 
     for (i = 0; i < len; i++) {
       expression_get($5, i, &tmp_atom);
 #ifdef DEBUG
-      if (EPI_ATOM_IS_CONST(*tmp_atom))
-        fprintf(yyerr, "%s ", tmp_atom->truth == 0 ? "true" : "false");
-      else if (EPI_ATOM_IS_HOLDS(*tmp_atom))
-        fprintf(yyerr, "%sholds(%s, %s, %s) ",
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.holds.subject),
-               EPI_NAME_STRING(tmp_atom->atom.holds.access),
-               EPI_NAME_STRING(tmp_atom->atom.holds.object));
-      else if (EPI_ATOM_IS_MEMB(*tmp_atom))
-        fprintf(yyerr, "%smemb(%s, %s) ",
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.memb.element),
-               EPI_NAME_STRING(tmp_atom->atom.memb.group));
-      else if (EPI_ATOM_IS_SUBST(*tmp_atom))
-        fprintf(yyerr, "%ssubst(%s, %s) ",
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.subst.group1),
-               EPI_NAME_STRING(tmp_atom->atom.subst.group2));
+      dump_atom(*tmp_atom);
 #endif     
     }
 #ifdef DEBUG
-      fprintf(yyerr, "\n  preconditions: ");
+      fprintf(yyerr, "  preconditions:\n");
 #endif
     expression_length($7, &len);
 
     for (i = 0; i < len; i++) {
       expression_get($7, i, &tmp_atom);
 #ifdef DEBUG
-      if (EPI_ATOM_IS_CONST(*tmp_atom))
-        fprintf(yyerr, "%s ", tmp_atom->truth == 0 ? "true" : "false");
-      else if (EPI_ATOM_IS_HOLDS(*tmp_atom))
-        fprintf(yyerr, "%sholds(%s, %s, %s) ",
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.holds.subject),
-               EPI_NAME_STRING(tmp_atom->atom.holds.access),
-               EPI_NAME_STRING(tmp_atom->atom.holds.object));
-      else if (EPI_ATOM_IS_MEMB(*tmp_atom))
-        fprintf(yyerr, " %smemb(%s, %s) ",
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.memb.element),
-               EPI_NAME_STRING(tmp_atom->atom.memb.group));
-      else if (EPI_ATOM_IS_SUBST(*tmp_atom))
-        fprintf(yyerr, "%ssubst(%s, %s) ",
-               tmp_atom->truth == 0 ? "" : "not ",
-               EPI_NAME_STRING(tmp_atom->atom.subst.group1),
-               EPI_NAME_STRING(tmp_atom->atom.subst.group2));
+      dump_atom(*tmp_atom);
 #endif
     }
-#ifdef DEBUG
-      fprintf(yyerr, "\n");
-#endif
 
     if (stringlist_purge(&$3) != 0)
       exit_error("internal error");
@@ -434,8 +359,7 @@ trans_var_def :
 
 trans_var_list : 
   EPI_SYM_IDENTIFIER {
-
-    if (identlist_find($1) == 0) 
+    if (identlist_find(identifier_list, $1) == 0) 
       exit_error("variable name already declared as an identiifer");
 
     if (stringlist_init(&$$) != 0)
@@ -444,15 +368,14 @@ trans_var_list :
     if (stringlist_add(&$$, $1) != 0) 
       exit_error("internal error");
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA trans_var_list {
-
-    if (identlist_find($1) == 0)
+  | trans_var_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
+    if (identlist_find(identifier_list, $3) == 0)
       exit_error("variable name already declared as an identiifer");
 
-    if (stringlist_add(&$3, $1) != 0)
+    if (stringlist_add(&$1, $3) != 0)
       exit_error("internal error");
 
-    $$ = $3;
+    $$ = $1;
   }
   ;
 
@@ -469,7 +392,7 @@ after_clause :
 trans_ref_list : 
   trans_ref_def {
   }
-  | trans_ref_def EPI_SYM_COMMA trans_ref_list {
+  | trans_ref_list EPI_SYM_COMMA trans_ref_def {
   }
   ;
 
@@ -481,7 +404,7 @@ trans_ref_def :
 trans_ref_ident_list : 
   EPI_SYM_IDENTIFIER {
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA trans_ref_ident_list {
+  | trans_ref_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA {
   }
   ;
 
@@ -500,13 +423,13 @@ ground_exp :
     else if (expression_add(&$$, $1) != 0)
       exit_error("internal error");
   }
-  | ground_boolean_atom logical_op ground_exp {
-    if (expression_find($3, $1) == 0)
+  | ground_exp logical_op ground_boolean_atom {
+    if (expression_find($1, $3) == 0)
       yywarn("atom already declared");
-    else if (expression_add(&$3, $1) != 0) 
+    else if (expression_add(&$1, $3) != 0) 
       exit_error("internal error");
 
-    $$ = $3;
+    $$ = $1;
   }
   ;
 
@@ -541,9 +464,9 @@ ground_holds_atom :
     ident_type *access = NULL;
     ident_type *object = NULL;
 
-    if (identlist_get($3, &subject) != 0 || 
-        identlist_get($5, &access) != 0 ||
-        identlist_get($7, &object) != 0) 
+    if (identlist_get(identifier_list, $3, &subject) != 0 || 
+        identlist_get(identifier_list, $5, &access) != 0 ||
+        identlist_get(identifier_list, $7, &object) != 0) 
       exit_error("undeclared identifier");
 
     if (!EPI_IDENT_IS_SUBJECT(*subject)) 
@@ -558,9 +481,10 @@ ground_holds_atom :
     $$.type = EPI_ATOM_HOLDS;
     $$.truth = epi_true;
 
-    name_create_ident(subject, &($$.atom.holds.subject));
-    name_create_ident(access, &($$.atom.holds.access));
-    name_create_ident(object, &($$.atom.holds.object));
+    if (name_create_ident(subject, &($$.atom.holds.subject)) != 0 ||
+        name_create_ident(access, &($$.atom.holds.access)) != 0 ||
+        name_create_ident(object, &($$.atom.holds.object)) != 0)
+      exit_error("internal error");
   }
   ;
 
@@ -569,8 +493,8 @@ ground_subst_atom :
     ident_type *group1 = NULL;
     ident_type *group2 = NULL;
 
-    if (identlist_get($3, &group1) != 0 || 
-        identlist_get($5, &group2) != 0) 
+    if (identlist_get(identifier_list, $3, &group1) != 0 || 
+        identlist_get(identifier_list, $5, &group2) != 0) 
       exit_error("undeclared identifier");
 
     if (!EPI_IDENT_IS_GROUP(*group1)) 
@@ -582,8 +506,9 @@ ground_subst_atom :
     $$.type = EPI_ATOM_SUBST;
     $$.truth = epi_true;
 
-    name_create_ident(group1, &($$.atom.subst.group1));
-    name_create_ident(group2, &($$.atom.subst.group2));
+    if (name_create_ident(group1, &($$.atom.subst.group1)) != 0 ||
+        name_create_ident(group2, &($$.atom.subst.group2)) != 0)
+      exit_error("internal error");
   }
   ;
 
@@ -592,8 +517,8 @@ ground_memb_atom :
     ident_type *element = NULL;
     ident_type *group = NULL;
 
-    if (identlist_get($3, &element) != 0 || 
-        identlist_get($5, &group) != 0) 
+    if (identlist_get(identifier_list, $3, &element) != 0 || 
+        identlist_get(identifier_list, $5, &group) != 0) 
       exit_error("undeclared identifier");
 
     if (EPI_IDENT_IS_GROUP(*element)) 
@@ -608,8 +533,9 @@ ground_memb_atom :
     $$.type = EPI_ATOM_MEMB;
     $$.truth = epi_true;
 
-    name_create_ident(element, &($$.atom.memb.element));
-    name_create_ident(group, &($$.atom.memb.group));
+    if (name_create_ident(element, &($$.atom.memb.element)) != 0 ||
+        name_create_ident(group, &($$.atom.memb.group)) != 0)
+      exit_error("internal error");
   }
   ;
 
@@ -623,13 +549,13 @@ comp_exp :
     else if (expression_add(&$$, $1) != 0)
       exit_error("internal error");
   }
-  | comp_boolean_atom logical_op comp_exp {
-    if (expression_find($3, $1) == 0)
+  | comp_exp logical_op comp_boolean_atom {
+    if (expression_find($1, $3) == 0)
       yywarn("atom already declared");
-    else if (expression_add(&$3, $1) != 0) 
+    else if (expression_add(&$1, $3) != 0) 
       exit_error("internal error");
 
-    $$ = $3;
+    $$ = $1;
   }
   ;
 
@@ -667,46 +593,52 @@ comp_holds_atom :
     $$.type = EPI_ATOM_HOLDS;
     $$.truth = epi_true;
 
-    if (identlist_get($3, &subject) != 0)
+    if (identlist_get(identifier_list, $3, &subject) != 0)
       subject = NULL;
      
-    if (identlist_get($5, &access) != 0)
+    if (identlist_get(identifier_list, $5, &access) != 0)
       access = NULL;
 
-    if (identlist_get($7, &object) != 0)
+    if (identlist_get(identifier_list, $7, &object) != 0)
       object = NULL;
 
     if (subject != NULL) {
       /* subject is an identifier */
       if (!EPI_IDENT_IS_SUBJECT(*subject))
         exit_error("first parameter of holds must be a subject");
-      name_create_ident(subject, &($$.atom.holds.subject));
+      if (name_create_ident(subject, &($$.atom.holds.subject)) != 0)
+        exit_error("internal error");
     }
     else {
       /* subject is a variable */
-      name_create_var($3, &($$.atom.holds.subject));
+      if (name_create_var($3, &($$.atom.holds.subject)) != 0)
+        exit_error("internal error");
     }
 
     if (access != NULL) {
       /* access is an identifier */
       if (!EPI_IDENT_IS_ACCESS(*access))
         exit_error("second parameter of holds must be an access-right");
-      name_create_ident(access, &($$.atom.holds.access));
+      if (name_create_ident(access, &($$.atom.holds.access)) != 0)
+        exit_error("internal error");
     }
     else {
       /* access is a variable */
-      name_create_var($5, &($$.atom.holds.access));
+      if (name_create_var($5, &($$.atom.holds.access)) != 0)
+        exit_error("internal error");
     }
 
     if (object != NULL) {
       /* object is an identifier */
       if (!EPI_IDENT_IS_OBJECT(*object))
         exit_error("third parameter of holds must be an object");
-      name_create_ident(object, &($$.atom.holds.object));
+      if (name_create_ident(object, &($$.atom.holds.object)) != 0)
+        exit_error("internal error");
     }
     else {
       /* object is a variable */
-      name_create_var($7, &($$.atom.holds.object));
+      if (name_create_var($7, &($$.atom.holds.object)) != 0)
+        exit_error("internal error");
     }
   }
   ;
@@ -719,10 +651,10 @@ comp_subst_atom :
     $$.type = EPI_ATOM_SUBST;
     $$.truth = epi_true;
 
-    if (identlist_get($3, &group1) != 0)
+    if (identlist_get(identifier_list, $3, &group1) != 0)
       group1 = NULL;
      
-    if (identlist_get($5, &group2) != 0)
+    if (identlist_get(identifier_list, $5, &group2) != 0)
       group2 = NULL;
 
     if (group1 != NULL && group2 != NULL) {
@@ -734,22 +666,26 @@ comp_subst_atom :
       /* group1 is an identifier */
       if (!EPI_IDENT_IS_GROUP(*group1))
         exit_error("first parameter of subst must be a group");
-      name_create_ident(group1, &($$.atom.subst.group1));
+      if (name_create_ident(group1, &($$.atom.subst.group1)) != 0)
+        exit_error("internal error");
     }
     else {
       /* group1 is a variable */
-      name_create_var($3, &($$.atom.subst.group1));
+      if (name_create_var($3, &($$.atom.subst.group1)) != 0)
+        exit_error("internal error");
     }
 
     if (group2 != NULL) {
       /* group2 is an identifier */
       if (!EPI_IDENT_IS_GROUP(*group2))
         exit_error("first parameter of subst must be a group");
-      name_create_ident(group2, &($$.atom.subst.group2));
+      if (name_create_ident(group2, &($$.atom.subst.group2)) != 0)
+        exit_error("internal error");
     }
     else {
       /* group2 is a variable */
-      name_create_var($5, &($$.atom.subst.group2));
+      if (name_create_var($5, &($$.atom.subst.group2)) != 0)
+        exit_error("internal error");
     }
   }
   ;
@@ -762,10 +698,10 @@ comp_memb_atom :
     $$.type = EPI_ATOM_MEMB;
     $$.truth = epi_true;
 
-    if (identlist_get($3, &element) != 0)
+    if (identlist_get(identifier_list, $3, &element) != 0)
       element = NULL;
      
-    if (identlist_get($5, &group) != 0)
+    if (identlist_get(identifier_list, $5, &group) != 0)
       group = NULL;
 
     if (element != NULL && group != NULL) {
@@ -777,22 +713,26 @@ comp_memb_atom :
       /* element is an identifier */
       if (EPI_IDENT_IS_GROUP(*element))
         exit_error("first parameter of memb must not be a group");
-      name_create_ident(element, &($$.atom.memb.element));
+      if (name_create_ident(element, &($$.atom.memb.element)) != 0)
+        exit_error("internal error");
     }
     else {
       /* element is a variable */
-      name_create_var($3, &($$.atom.memb.element));
+      if (name_create_var($3, &($$.atom.memb.element)) != 0)
+        exit_error("internal error");
     }
 
     if (group != NULL) {
       /* group is an identifier */
       if (!EPI_IDENT_IS_GROUP(*group)) 
         exit_error("second parameter of memb must be a group");
-      name_create_ident(group, &($$.atom.memb.group));
+      if (name_create_ident(group, &($$.atom.memb.group)) != 0)
+        exit_error("internal error");
     }
     else {
       /* group is a variable */
-      name_create_var($5, &($$.atom.memb.group));
+      if (name_create_var($5, &($$.atom.memb.group)) != 0)
+        exit_error("internal error");
     }
   }
   ;
@@ -812,7 +752,7 @@ logical_atom :
 
 int add_identifier(char ident[], unsigned short type) 
 {
-  if (identlist_find(ident) == 0) {
+  if (identlist_find(identifier_list, ident) == 0) {
     yyerror("identifier declared more than once");
     return -1;
   }
@@ -832,7 +772,7 @@ int add_identifier(char ident[], unsigned short type)
     fprintf(yyerr, "declared access-group identifier %s\n", ident); 
 #endif
 
-  if (identlist_add(ident, type) != 0) {
+  if (identlist_add(&identifier_list, ident, type) != 0) {
     yyerror("internal error");
     return -1;
   }
@@ -847,7 +787,7 @@ int initialise(void)
   fprintf(yyerr, "initialising global lists\n");
 #endif
 
-  if (identlist_init() != 0)
+  if (identlist_init(&identifier_list) != 0)
     return -1;
 
   if (expression_init(&initial_exp))
@@ -863,7 +803,7 @@ int destroy(void)
   fprintf(yyerr, "destroying global lists\n");
 #endif
 
-  if (identlist_purge() != 0)
+  if (identlist_purge(&identifier_list) != 0)
     return -1;
 
   if (expression_purge(&initial_exp) != 0)
@@ -878,3 +818,43 @@ void exit_error(char *message)
   destroy();
   exit(-1);
 }
+
+#ifdef DEBUG
+int dump_atom(atom_type atom)
+{
+  if (EPI_ATOM_IS_CONST(atom))
+    fprintf(yyerr, "  constant %s\n", atom.truth == 0 ? "true" : "false");
+  else if (EPI_ATOM_IS_HOLDS(atom))
+    fprintf(yyerr, "  %sholds(%s, %s, %s)\n",
+           atom.truth == 0 ? "" : "not ",
+           EPI_NAME_STRING(atom.atom.holds.subject),
+           EPI_NAME_STRING(atom.atom.holds.access),
+           EPI_NAME_STRING(atom.atom.holds.object));
+  else if (EPI_ATOM_IS_MEMB(atom))
+    fprintf(yyerr, "  %smemb(%s, %s)\n", 
+           atom.truth == 0 ? "" : "not ",
+           EPI_NAME_STRING(atom.atom.memb.element),
+           EPI_NAME_STRING(atom.atom.memb.group));
+  else if (EPI_ATOM_IS_SUBST(atom))
+    fprintf(yyerr, "  %ssubst(%s, %s)\n", 
+           atom.truth == 0 ? "" : "not ",
+           EPI_NAME_STRING(atom.atom.subst.group1),
+           EPI_NAME_STRING(atom.atom.subst.group2));
+  return 0;
+}
+
+int dump_exp(expression_type exp)
+{
+  unsigned int i;
+  unsigned int len;
+  atom_type *tmp_atom = NULL;
+
+  expression_length(exp, &len);
+
+  for (i = 0; i < len; i++) {
+    expression_get(exp, i, &tmp_atom);
+    dump_atom(*tmp_atom);
+  }
+  return 0;
+}
+#endif

@@ -32,9 +32,9 @@ int atom_create_holds(atom_type **atom,
     return -1;
 
   /* must be subject, access, object (in that order) or variables. */
-  if (!(EPI_NAME_IS_SUBJECT(sub) || EPI_NAME_IS_VAR(sub)) ||
-      !(EPI_NAME_IS_ACCESS(acc) || EPI_NAME_IS_VAR(acc)) ||
-      !(EPI_NAME_IS_OBJECT(obj) || EPI_NAME_IS_VAR(obj)))
+  if ((!EPI_NAME_IS_SUBJECT(sub) && !EPI_NAME_IS_VAR(sub)) ||
+      (!EPI_NAME_IS_ACCESS(acc) && !EPI_NAME_IS_VAR(acc)) ||
+      (!EPI_NAME_IS_OBJECT(obj) && !EPI_NAME_IS_VAR(obj)))
     return -1;
 
   if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
@@ -110,6 +110,23 @@ int atom_destroy(atom_type *atom)
   if (atom == NULL)
     return -1;
 
+  if (EPI_ATOM_IS_HOLDS(*atom)) {
+    if (name_destroy(atom->atom.holds.subject) != 0 ||
+        name_destroy(atom->atom.holds.access) != 0 ||
+        name_destroy(atom->atom.holds.object))
+      return -1;
+  }
+  else if (EPI_ATOM_IS_MEMB(*atom)) {
+    if (name_destroy(atom->atom.memb.element) != 0 ||
+        name_destroy(atom->atom.memb.group))
+      return -1;
+  }
+  else if (EPI_ATOM_IS_SUBST(*atom)) {
+    if (name_destroy(atom->atom.subst.group1) != 0 ||
+        name_destroy(atom->atom.subst.group2))
+      return -1;
+  } 
+
   free(atom);
   atom = NULL;
 
@@ -124,37 +141,48 @@ int atom_check(atom_type atom)
 
   if (EPI_ATOM_IS_HOLDS(atom)) {
     /* subject field must be subject or variable */
-    if (!EPI_NAME_IS_SUBJECT(atom.atom.holds.subject) && !EPI_NAME_IS_VAR(atom.atom.holds.subject))
+    if (!EPI_NAME_IS_SUBJECT(atom.atom.holds.subject) &&
+        !EPI_NAME_IS_VAR(atom.atom.holds.subject))
       return -1;
     /* access field must be access or variable */
-    if (!EPI_NAME_IS_ACCESS(atom.atom.holds.access) && !EPI_NAME_IS_VAR(atom.atom.holds.access))
+    if (!EPI_NAME_IS_ACCESS(atom.atom.holds.access) && 
+        !EPI_NAME_IS_VAR(atom.atom.holds.access))
       return -1;
     /* object field must be access or variable */
-    if (!EPI_NAME_IS_OBJECT(atom.atom.holds.object) && !EPI_NAME_IS_VAR(atom.atom.holds.object))
+    if (!EPI_NAME_IS_OBJECT(atom.atom.holds.object) && 
+        !EPI_NAME_IS_VAR(atom.atom.holds.object))
       return -1;
   }
   else if (EPI_ATOM_IS_MEMB(atom)) {
     /* first field must not be a group or a variable */
-    if (EPI_NAME_IS_GROUP(atom.atom.memb.element) && !EPI_NAME_IS_VAR(atom.atom.memb.element))
+    if (EPI_NAME_IS_GROUP(atom.atom.memb.element) && 
+        !EPI_NAME_IS_VAR(atom.atom.memb.element))
       return -1;
     /* second field must be a group or a variable */
-    if (!EPI_NAME_IS_GROUP(atom.atom.memb.group) && !EPI_NAME_IS_VAR(atom.atom.memb.group))
+    if (!EPI_NAME_IS_GROUP(atom.atom.memb.group) && 
+        !EPI_NAME_IS_VAR(atom.atom.memb.group))
       return -1;
     /* if both non-variables, base type must be the same */
-    if (!EPI_NAME_IS_VAR(atom.atom.memb.element) && !EPI_NAME_IS_VAR(atom.atom.memb.group) &&
-        EPI_NAME_BASETYPE(atom.atom.memb.element) != EPI_NAME_BASETYPE(atom.atom.memb.group))
+    if (!EPI_NAME_IS_VAR(atom.atom.memb.element) && 
+        !EPI_NAME_IS_VAR(atom.atom.memb.group) &&
+        EPI_NAME_BASETYPE(atom.atom.memb.element) != 
+	EPI_NAME_BASETYPE(atom.atom.memb.group))
       return -1;
   }
   else if (EPI_ATOM_IS_SUBST(atom)) {
     /* first field must be a group or a variable */
-    if (!EPI_NAME_IS_GROUP(atom.atom.subst.group1) && !EPI_NAME_IS_VAR(atom.atom.subst.group1))
+    if (!EPI_NAME_IS_GROUP(atom.atom.subst.group1) && 
+        !EPI_NAME_IS_VAR(atom.atom.subst.group1))
       return -1;
     /* second field must be a group or a variable */
-    if (!EPI_NAME_IS_GROUP(atom.atom.subst.group2) && !EPI_NAME_IS_VAR(atom.atom.subst.group2))
+    if (!EPI_NAME_IS_GROUP(atom.atom.subst.group2) && 
+        !EPI_NAME_IS_VAR(atom.atom.subst.group2))
       return -1;
     /* if both non-variables, base type must be the same */
-    if (!EPI_NAME_IS_VAR(atom.atom.subst.group1) && !EPI_NAME_IS_VAR(atom.atom.subst.group2) &&
-        EPI_NAME_BASETYPE(atom.atom.subst.group1) != EPI_NAME_BASETYPE(atom.atom.subst.group2))
+    if (!EPI_NAME_IS_VAR(atom.atom.subst.group1) && 
+        !EPI_NAME_IS_VAR(atom.atom.subst.group2) &&
+        EPI_NAME_BASETYPE(atom.atom.subst.group1) != 
+	EPI_NAME_BASETYPE(atom.atom.subst.group2))
       return -1;
   }
   else
