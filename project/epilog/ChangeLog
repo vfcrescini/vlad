@@ -1,3 +1,12 @@
+2002-10-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/gnd_exp.c :
+
+	  - Fixed the bug that causes the eval function to think that
+	    explicitly defined atoms are automatically logical consequences
+	    of the other atoms. Now the eval_atom function only looks
+	    for logical consequences, not explicitly defined atoms.
+
 2002-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* parser/parser.y :
