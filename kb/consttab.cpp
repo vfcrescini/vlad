@@ -80,6 +80,9 @@ int constraint::init(expression *e, expression *c, expression *n)
 
 int constraint::get(expression **e, expression **c, expression **n)
 {
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
   if (e == NULL || c == NULL || n == NULL)
     return VLAD_NULLPTR;
 
