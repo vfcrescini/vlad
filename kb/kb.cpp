@@ -362,6 +362,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   unsigned int k;
   unsigned int l;
   unsigned int m;
+  unsigned int n;
 
   /* we only allow this function after transtab is closed */
   if (stage != 5)
@@ -414,7 +415,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         else
           stable->get(k - s_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp1);
 
-        for (l = 0; l < a_len; l++) {
+        for (l = 0; l < a_len + ag_len; l++) {
           char *tmp2;
 
           if (l < a_len)
@@ -422,7 +423,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           else
             stable->get(l - a_len, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
         
-          for (m = 0; m < o_len; m++) {
+          for (m = 0; m < o_len + og_len; m++) {
             char *tmp3;
             unsigned int tmp4;
 
@@ -437,10 +438,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         }
       }
       /* member */
-      for (k = 0; k < stable->length(VLAD_IDENT_SUBJECT); k++) {
+      for (k = 0; k < s_len; k++) {
         char *tmp1;
         stable->get(k, VLAD_IDENT_SUBJECT, &tmp1);
-        for (l = 0; l < stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP); l++) {
+        for (l = 0; l < sg_len; l++) {
           char *tmp2;
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp2);
@@ -448,10 +449,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           fprintf(f, "%6d = holds(S%d, %c, member, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
-      for (k = 0; k < stable->length(VLAD_IDENT_ACCESS); k++) {
+      for (k = 0; k < a_len; k++) {
         char *tmp1;
         stable->get(k, VLAD_IDENT_ACCESS, &tmp1);
-        for (l = 0; l < stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP); l++) {
+        for (l = 0; l < ag_len; l++) {
           char *tmp2;
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
@@ -459,10 +460,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           fprintf(f, "%6d = holds(S%d, %c, member, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
-      for (k = 0; k < stable->length(VLAD_IDENT_OBJECT); k++) {
+      for (k = 0; k < o_len; k++) {
         char *tmp1;
         stable->get(k, VLAD_IDENT_OBJECT, &tmp1);
-        for (l = 0; l < stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP); l++) {
+        for (l = 0; l < og_len; l++) {
           char *tmp2;
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp2);
@@ -471,10 +472,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         }
       }
       /* subset */
-      for (k = 0; k < stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP); k++) {
+      for (k = 0; k < sg_len; k++) {
         char *tmp1;
         stable->get(k, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp1);
-        for (l = 0; l < stable->length(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP); l++) {
+        for (l = 0; l < sg_len; l++) {
           char *tmp2;
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp2);
@@ -482,10 +483,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           fprintf(f, "%6d = holds(S%d, %c, subset, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
-      for (k = 0; k < stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP); k++) {
+      for (k = 0; k < ag_len; k++) {
         char *tmp1;
         stable->get(k, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp1);
-        for (l = 0; l < stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP); l++) {
+        for (l = 0; l < ag_len; l++) {
           char *tmp2;
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
@@ -493,10 +494,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           fprintf(f, "%6d = holds(S%d, %c, subset, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
-      for (k = 0; k < stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP); k++) {
+      for (k = 0; k < og_len; k++) {
         char *tmp1;
         stable->get(k, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp1);
-        for (l = 0; l < stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP); l++) {
+        for (l = 0; l < og_len; l++) {
           char *tmp2;
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp2);
