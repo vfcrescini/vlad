@@ -1,6 +1,6 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-DIRS = datastruct ident exp trans parser main
+DIRS = common datastruct ident exp trans parser main
 
 all :
 	@set -e && for i in $(DIRS); do \
