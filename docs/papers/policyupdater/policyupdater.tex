@@ -1472,6 +1472,9 @@ query holds(alice, read, file);
             $list$.$find$($item$)
             returns true if $item$ is in $list$.
           \item
+            $list$.$idx$($item$)
+            returns the index of $item$ in $list$.
+          \item
             $list$.$get$($index$)
             returns the $index$'th item in $list$.
           \item
@@ -1497,7 +1500,7 @@ query holds(alice, read, file);
               \hline
               $sg$ & string list & group subject \\
               \hline
-              $as$ & string list & single access \\
+              $as$ & string list & single access right \\
               \hline
               $ag$ & string list & group access right \\
               \hline
@@ -1827,7 +1830,7 @@ query holds(alice, read, file);
             \multicolumn{2}{|l|}{\textbf{}} \\
             \hline
             % holds line 1
-            $I_{h_{0}}$ &
+            $i_{h_{0}}$ &
             $st.s[0]$ &
             $st.a[0]$ &
             $st.o[0]$ &
@@ -1835,14 +1838,14 @@ query holds(alice, read, file);
             % holds line 2
             \vdots & \vdots & \vdots & \vdots & \multicolumn{2}{|c|}{} \\
             % holds line 3
-            $I_{h_{a}}$ &
-            $st.s[l_{s}-1]$ &
-            $st.a[l_{a}-1]$ &
-            $st.o[l_{o}-1]$ &
+            $i_{h_{a}}$ &
+            $st.s[l_{s}]$ &
+            $st.a[l_{a}]$ &
+            $st.o[l_{o}]$ &
             \multicolumn{2}{|c|}{} \\
             \hline
             % sub memb line 1
-            $I_{sm_{0}}$ &
+            $i_{sm_{0}}$ &
             $st.ss[0]$ &
             $st.sg[0]$ &
             &
@@ -1851,10 +1854,10 @@ query holds(alice, read, file);
             % sub memb line 2
             \vdots & \vdots & \vdots & & & \\
             % sub memb line 3
-            $I_{sm_{b}}$ & $st.ss[l_{ss}-1]$ & $st.sg[l_{sg}-1]$ & & & \\
+            $i_{sm_{b}}$ & $st.ss[l_{ss}]$ & $st.sg[l_{sg}]$ & & & \\
             \cline{1-5}
             % acc memb line 1
-            $I_{am_{0}}$ &
+            $i_{am_{0}}$ &
             $st.as[0]$ &
             $st.ag[0]$ &
             &
@@ -1862,10 +1865,10 @@ query holds(alice, read, file);
             % acc memb line 2
             \vdots & \vdots & \vdots & & & \\
             % acc memb line 3
-            $I_{am_{c}}$ & $st.as[l_{as}]$ & $st.ag[l_{ag}]$ & & & \\
+            $i_{am_{c}}$ & $st.as[l_{as}]$ & $st.ag[l_{ag}]$ & & & \\
             \cline{1-5}
             % obj memb line 1
-            $I_{om_{0}}$ &
+            $i_{om_{0}}$ &
             $st.os[0]$ &
             $st.og[0]$ &
             &
@@ -1873,10 +1876,10 @@ query holds(alice, read, file);
             % obj memb line 2
             \vdots & \vdots & \vdots & & & \\
             % obj memb line 3
-            $I_{om_{d}}$ & $st.os[l_{os}]$ & $st.og[l_{og}]$ & & & \\
+            $i_{om_{d}}$ & $st.os[l_{os}]$ & $st.og[l_{og}]$ & & & \\
             \hline
             % sub subs line 1
-            $I_{ss_{0}}$ &
+            $i_{ss_{0}}$ &
             $st.sg[0]$ &
             $st.sg[0]$ &
             &
@@ -1885,10 +1888,10 @@ query holds(alice, read, file);
             % sub subs line 2
             \vdots & \vdots & \vdots & & & \\
             % sub subs line 3
-            $I_{ss_{e}}$ & $st.sg[l_{sg}]$ & $st.sg[l_{sg}]$ & & & \\
+            $i_{ss_{e}}$ & $st.sg[l_{sg}]$ & $st.sg[l_{sg}]$ & & & \\
             \cline{1-5}
             % acc subs line 1
-            $I_{as_{0}}$ &
+            $i_{as_{0}}$ &
             $st.ag[0]$ &
             $st.ag[0]$ &
             &
@@ -1896,10 +1899,10 @@ query holds(alice, read, file);
             % acc subs line 2
             \vdots & \vdots & \vdots & & & \\
             % acc subs line 3
-            $I_{as_{f}}$ & $st.ag[l_{ag}]$ & $st.ag[l_{ag}]$ & & & \\
+            $i_{as_{f}}$ & $st.ag[l_{ag}]$ & $st.ag[l_{ag}]$ & & & \\
             \cline{1-5}
             % obj subs line 1
-            $I_{os_{0}}$ &
+            $i_{os_{0}}$ &
             $st.og[0]$ &
             $st.og[0]$ &
             &
@@ -1907,7 +1910,7 @@ query holds(alice, read, file);
             % obj subs line 2
             \vdots & \vdots & \vdots & & & \\
             % obj subs line 3
-            $I_{os_{g}}$ & $st.og[l_{og}]$ & $st.og[l_{og}]$ & & & \\
+            $i_{os_{g}}$ & $st.og[l_{og}]$ & $st.og[l_{og}]$ & & & \\
             \hline
           \end{tabular}
 
@@ -1932,6 +1935,75 @@ query holds(alice, read, file);
 
             $l_{og}$ = $st.og.len() - 1$
           \end{quote}
+
+          With all possible atom combinations enumerated sequentially, in the
+          manner shown in the above table, it is possible to uniquely identify
+          each atom with an integer index $i$. For example, the first $holds$
+          atom, with the first $subject$, first $access$ $right$ and first
+          $object$ in the symbol table $st$:
+
+          \begin{quote}
+            \begin{math}
+              holds(st.s[0], st.a[0], st.o[0])
+            \end{math}
+          \end{quote}
+
+          is identified by the index $i_{h_{0}}$ where:
+
+          \begin{quote}
+            \begin{math}
+              i_{h_{0}} = 0
+            \end{math}
+          \end{quote}
+
+          Similarly, the last $subject$ $member$ atom, with the last $single$
+          $subject$ and last $group$ $subject$ in the symbol table $st$:
+
+          \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+              memb(&st.ss[st.ss.len() - 1], \\
+              & st.sg[st.sg.len() - 1])
+              \end{aligned}
+            \end{math}
+          \end{quote}
+
+          is identified by the index $i_{sm_{b}}$, where:
+
+          \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+                i_{sm_{b}} =& (st.s.len() \times st.a.len() \times st.o.len()) + \\
+                & st.ss.len() + st.sg.len() - 1.
+              \end{aligned}
+            \end{math}
+          \end{quote}
+
+          As shown in the above examples, the indices of $member$ atoms are
+          offset  by the number of $holds$ atoms and similarly, the indices of
+          $subset$ atoms are offset by the number of $holds$ atoms plus the
+          number of $member$ atoms.
+
+          The following 2 functions show how to compute the index of an atom
+          and how to derive an atom given an index.
+
+          \begin{verbatim}
+FUNCTION encode(atom a)
+  CASE a.type OF
+    'h' : 
+    'm' :
+    's' :
+  ENDCASE
+  RETURN index
+ENDFUNCTION
+          \end{verbatim}
+
+          \begin{verbatim}
+FUNCTION decode(index)
+  RETURN atom
+ENDFUNCTION
+          \end{verbatim}
+
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
