@@ -1,5 +1,46 @@
 2005-04-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* COPYING :
+	* Makefile.in :
+	* configure.ac :
+	* rules.mk :
+	* lib/Makefile.in :
+	* lib/atom.cpp :
+	* lib/atom.h :
+	* lib/config.h.in :
+	* lib/consttab.cpp :
+	* lib/consttab.h :
+	* lib/expression.cpp :
+	* lib/expression.h :
+	* lib/kb.cpp :
+	* lib/kb.h :
+	* lib/list.cpp :
+	* lib/list.h :
+	* lib/numberlist.cpp :
+	* lib/numberlist.h :
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+	* lib/smwrap.cpp :
+	* lib/smwrap.h :
+	* lib/stringlist.cpp :
+	* lib/stringlist.h :
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+	* lib/transtab.cpp :
+	* lib/transtab.h :
+	* lib/vlad.h :
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+	* main/Makefile.in :
+	* main/operation.l :
+	* main/operation.y :
+	* main/parser.h :
+	* main/program.l :
+	* main/program.y :
+	* main/vlad.cpp :
+
+	  - Changed copyright notice to include 2005.
+
 	* VERSION :
 	* configure.ac :
 	* configure :
