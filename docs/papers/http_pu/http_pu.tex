@@ -22,6 +22,20 @@
 
   \section{Introduction}
 
+    In Section \ref{polupdate}, the paper introduces the PolicyUpdater system,
+    its internals, how it interacts with other components of access control
+    systems and how access control policies are stored, evaluated and updated.
+    The section also presents language ${\cal L}$, a logic based language used
+    by PolicyUpdater to represent the authorisation policies.
+
+    Section \ref{webserver} gives an overview of the standard access control
+    system built into existing web servers. More importantly, the section
+    discusses how the PolicyUpdater system is used as an authorisation module
+    to restrict access to resources provided by web server.
+
+    Finally, Section \ref{conclusion} has some concluding remarks that
+    addresses some possible extensions and improvements to the system.
+
   \section{PolicyUpdater System}
     \label{polupdate}
 
@@ -603,6 +617,7 @@ query holds(alice, read, file);\end{verbatim}
         \end{itemize}
 
   \section{Conclusion}
+     \label{conclusion}
 
     In this paper, we have presented a logic based approach for web server
     access control systems.
