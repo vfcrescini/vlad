@@ -6,7 +6,7 @@
 #ifndef __EPI_GND_ATOM_H
 #define __EPI_GND_ATOM_H
 
-#include "atom_identifier.h"
+#include "atom_type.h"
 
 /* positive holds structure */
 typedef struct
@@ -42,7 +42,7 @@ typedef union
 typedef struct
 {
   gnd_positive_atom_type atom;
-  atom_identifier_type type;
+  atom_type_type type;
   int truth;
 } gnd_atom_type;
 
