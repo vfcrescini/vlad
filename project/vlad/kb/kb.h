@@ -11,7 +11,6 @@
 #include <atom.h>
 #include <expression.h>
 #include <stringlist.h>
-#include <numberlist.h>
 #include <sequence.h>
 #include <symtab.h>
 #include <consttab.h>
