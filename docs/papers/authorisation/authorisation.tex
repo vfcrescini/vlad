@@ -13,7 +13,7 @@
     limits accesses to different resources within a system. Such policies may 
     be as simple as assigning read, write or execute permissions on specific 
     files, but some policies can be as high-level and abstract as to reflect 
-    the organizational hierarchy of the system. For example, high-level 
+    the organisational hierarchy of the system. For example, high-level 
     authorisation policies might include the following:
 
     \begin{itemize}
@@ -46,7 +46,7 @@
       access control matrix will get progressively slower and less efficient.
 
       A much better approach is the logic-based system where instead of
-      storing each individual rules into a database, a generalized set of
+      storing each individual rules into a database, a generalised set of
       facts and constraints are stored into the policy base. There have been
       quite a few developments in this field. In their paper, Woo and Lam
       \cite{WL} describes a logic-based specification for policy bases. Bai and
@@ -126,7 +126,7 @@
           
       \end{itemize}
 
-    \subsection{Defintions}
+    \subsection{Definitions}
 
       Before the language may be completely defined, the following components 
       must first be formalised:
@@ -161,7 +161,7 @@
 
       \subsubsection{Variables}
 
-        Variables are identifier placeholders that may be used to represent a
+        Variables are identifier place holders that may be used to represent a
         specific literal or all literals of a specific type. Like an identifier,
         the regular expression of a variable is:
 
@@ -204,7 +204,7 @@
 
       \subsubsection{Expressions}
 
-        An expression is simply a conjuntion of atoms. In this language,
+        An expression is simply a conjunction of atoms. In this language,
         disjunctions are not allowed. The conjunction \emph{and} is 
         represented by the symbol \&\&. For example, holds(S, A, O) \&\& 
         !memb(E, G) \&\& subst(G$_{1}$, G$_{2}$) is interpreted as
@@ -221,7 +221,7 @@
 
         Because the constants \emph{true} and \emph{false} are atoms, they may 
         appear within expressions as well. However, the constants are more
-        useful without any other atoms within the same exression, as an
+        useful without any other atoms within the same expression, as an
         expression added with the constant \emph{true} will have no effect
         and an expression added with the constant \emph{false} will set the
         entire expression to false.
@@ -259,7 +259,7 @@ ident obj file1, file2;
 
       \subsubsection{Initial State Definition}
 
-        Before transformatons or constraints can be applied or even defined,
+        Before transformations or constraints can be applied or even defined,
         the initial state must first be defined. This section will contain
         one or more definition statements of the form:
 
@@ -283,7 +283,7 @@ initially <expression>
         state, and that it cannot be proven that expression3 is true in
         the current state, then expression1 is inferred to be true.
 
-        If the "with absence" clause is ommitted, then expression2 is applied
+        If the "with absence" clause is omitted, then expression2 is applied
         if and only if expression1 is true:
 
 \begin{verbatim}
@@ -334,7 +334,7 @@ if <pre-condition-expression>
 \begin{verbatim}
 delete_write(SUBJECT, OBJECT)
 causes !holds(SUBJECT, a_write, OBJECT)
-if holds(SUBJECT, a_write, vOBJECT)
+if holds(SUBJECT, a_write, OBJECT)
 \end{verbatim}
         this means
 
@@ -383,7 +383,7 @@ if true
         The general form is:
 
 \begin{verbatim}
-is <polcly-exp> [after <trans-ident1>([ident1[,...]])[,...]]
+is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
 \end{verbatim}
 
         where:
@@ -396,7 +396,7 @@ is <polcly-exp> [after <trans-ident1>([ident1[,...]])[,...]]
             be applied in series before the query is performed.
           \item
             idents are the names of the literals that will be used in
-            place of the variables used in the tranformation declarations.
+            place of the variables used in the transformation declarations.
         \end{itemize}
 
     The statement will return one of the following: \emph{true}, \emph{false}
@@ -406,7 +406,7 @@ is <polcly-exp> [after <trans-ident1>([ident1[,...]])[,...]]
 
   \section{Translation into a Logic Program}
 
-    \subsection{Convertion to Extended Logic Program: Flattening the States}
+    \subsection{Conversion to Extended Logic Program: Flattening the States}
 
       Extended logic programs are \emph{flat} or stateless. The proposed
       language, however, is composed of logic facts that have a states as
@@ -426,7 +426,7 @@ is <polcly-exp> [after <trans-ident1>([ident1[,...]])[,...]]
 
       \subsubsection{Adding a State Parameter to the Atoms}
 
-        The next step is to add a state parameter into the definiton of an
+        The next step is to add a state parameter into the definition of an
         atom. This procedure will allow us to differentiate between atoms of
         the same value but on different states. For example, atom A in 
         the initial state S$_0$ can be represented as holds(A, S$_0$),
@@ -454,7 +454,7 @@ is <polcly-exp> [after <trans-ident1>([ident1[,...]])[,...]]
           \item S$^{''}$ = Res(T, S$^{'}$)
         \end{list}
   
-        Disregarding the placeholder variables and a conjunction of atoms, 
+        Disregarding the place holder variables and a conjunction of atoms, 
         a transformation T in its simplest form:
   
         \begin{list}{}{}
@@ -578,7 +578,7 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
             $\land$ not holds(C, S$_{1}$)
         \end{list}
 
-    \subsection{Convertion to Normal Logic Program: Removal of Classical Negation}
+    \subsection{Conversion to Normal Logic Program: Removal of Classical Negation}
 
       Translation to from extended logic program to normal logic program 
       requires one more additional step: to remove all instances of classical 
