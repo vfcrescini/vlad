@@ -2,6 +2,8 @@
 
 AC_INIT(mod_vlad,0.3.2,jcrescin@cit.uws.edu.au)
 
+AC_CONFIG_HEADERS(config.h)
+
 # set language
 AC_LANG(C)
 
@@ -66,8 +68,9 @@ rm -f $$ $$.c
 AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & compile with -g (default is disabled)]))
 
 if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
+  AC_DEFINE(MODVLAD_DEBUG,[yes])
   AC_SUBST(DEBUG,[yes])
-  MODVLAD_CFLAGS="-g -DMODVLAD_DEBUG $MODVLAD_CFLAGS"
+  MODVLAD_CFLAGS="-g $MODVLAD_CFLAGS"
 else
   MODVLAD_CFLAGS="-O3 $MODVLAD_CFLAGS"
 fi
@@ -180,7 +183,7 @@ fi
 CFLAGS="$MODVLAD_CFLAGS $CFLAGS"
 LDFLAGS="$MODVLAD_LDFLAGS $LDFLAGS"
 
-AC_DEFINE_UNQUOTED(VERSION,"$PACKAGE_VERSION")
+AC_DEFINE_UNQUOTED(MODVLAD_VERSION,"$PACKAGE_VERSION")
 AC_SUBST(VERSION,"$PACKAGE_VERSION")
 AC_CONFIG_FILES(Makefile)
 

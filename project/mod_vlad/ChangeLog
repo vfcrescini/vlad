@@ -1,3 +1,12 @@
+2003-07-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* config.h.in :
+	* configure :
+	* configure.ac :
+	* mod_vlad.h :
+
+	  - Added a config.h in for variables version and debug.
+
 2003-07-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* admin.c :

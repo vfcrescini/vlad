@@ -11,6 +11,8 @@
 #include "apr_file_io.h"
 #include "apr_proc_mutex.h"
 
+#include "config.h"
+
 #define MODVLAD_DEFAULTACTION   HTTP_FORBIDDEN
 #define MODVLAD_DENYACTION      HTTP_FORBIDDEN
 
