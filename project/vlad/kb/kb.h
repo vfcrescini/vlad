@@ -7,6 +7,7 @@
 #define __VLAD_KB_H
 
 #include <symtab.h>
+#include <consttab.h>
 #include <numberlist.h>
 
 /* atom type */
@@ -29,11 +30,15 @@ class kb {
     /* (re)init kb */
     int init();
     /* after this is called, no further calls to add_ident() is allowed */
-    int close();
+    int close_symtab();
+    /* after this is called, no further calls to add_inittab() is allowed */
+    int close_inittab();
     /* register an identifier in the kb */
-    int add_ident(const char *n, unsigned char t);
+    int add_symtab(const char *n, unsigned char t);
     /* add an atom into the initial state list */
-    int add_init_atom(unsigned int a);
+    int add_inittab(unsigned int a);
+    /* add a constraint into the constraint table */
+    int add_consttab(numberlist *e, numberlist *c, numberlist *n);
     /* gives an atom id based on the identifiers already given */
     int encode_atom(const char *n1,
                     const char *n2,
@@ -52,7 +57,8 @@ class kb {
     int negate_atom(unsigned int in, unsigned int *out);
   private :
     symtab *stable;
-    numberlist *istate;
+    numberlist *itable;
+    consttab *ctable;
     unsigned int s_len;
     unsigned int a_len;
     unsigned int o_len;
@@ -64,7 +70,8 @@ class kb {
     unsigned int s_tot;
     unsigned int pos_tot;
     bool initialised;
-    bool closed;
+    bool stage1;
+    bool stage2;
 
     int encode_const(const char *c, unsigned int *n);
     int encode_holds(const char *s, const char *a, const char *o, unsigned int *n);

@@ -69,6 +69,34 @@ list::~list()
     free(name);
 }
 
+bool list::cmp(list *l)
+{
+  unsigned int i;
+  list_item *item1;
+  list_item *item2;
+
+  if (l == NULL || l->length() != len)
+    return false;
+
+  for (i = 0; i < len; i++) {
+    /* 
+     * the following 2 statements will only fail if we give them
+     * out of bounds values or null ptrs none of which should occur
+     */
+    l->get(i, &item1);
+    get(i, &item2);
+
+    /* 
+     * if we are given a list of a different type, list_item::cmp() should
+     * detect it and return false.
+     */
+    if (!item1->cmp(item2))
+      return false;
+  }
+
+  return true;
+}
+
 unsigned int list::length()
 {
   return len;

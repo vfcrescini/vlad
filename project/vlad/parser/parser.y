@@ -21,6 +21,10 @@ kb kbase;
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
 
+#ifdef DEBUG
+int print_atom(unsigned int a, char *s);
+#endif
+
 int yylex(void);
 
 %}
@@ -101,7 +105,7 @@ body :
 ident_section : {
     int retval;
     /* after the ident section, we must close the symbol table */
-    if ((retval = kbase.close()) != VLAD_OK) {
+    if ((retval = kbase.close_symtab()) != VLAD_OK) {
       fprintf(stderr, "internal error: %d\n", retval);
       return retval;
     }
@@ -109,15 +113,29 @@ ident_section : {
   | ident_stmt_list {
     int retval;
     /* after the ident section, we must close the symbol table */
-    if ((retval = kbase.close()) != VLAD_OK) {
+    if ((retval = kbase.close_symtab()) != VLAD_OK) {
       fprintf(stderr, "internal error: %d\n", retval);
       return retval;
     }
   }
   ;
 
-initial_section :
-  | initial_stmt_list
+initial_section : {
+    int retval;
+    /* after the initial section, we must close the  table */
+    if ((retval = kbase.close_inittab()) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+  }
+  | initial_stmt_list {
+    int retval;
+    /* after the initial section, we must close the  table */
+    if ((retval = kbase.close_inittab()) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+  }
   ;
 
 constraint_section :
@@ -203,7 +221,7 @@ acc_grp_ident_decl :
 
 sub_ident_list :
   VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_ident($1, VLAD_IDENT_SUBJECT)) {
+    switch (kbase.add_symtab($1, VLAD_IDENT_SUBJECT)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared subject identifier %s\n", $1);
@@ -221,7 +239,7 @@ sub_ident_list :
     }
   }
   | sub_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_ident($3, VLAD_IDENT_SUBJECT)) {
+    switch (kbase.add_symtab($3, VLAD_IDENT_SUBJECT)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared subject identifier %s\n", $3);
@@ -242,7 +260,7 @@ sub_ident_list :
 
 obj_ident_list :
   VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_ident($1, VLAD_IDENT_OBJECT)) {
+    switch (kbase.add_symtab($1, VLAD_IDENT_OBJECT)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared object identifier %s\n", $1);
@@ -260,7 +278,7 @@ obj_ident_list :
     }
   }
   | obj_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_ident($3, VLAD_IDENT_OBJECT)) {
+    switch (kbase.add_symtab($3, VLAD_IDENT_OBJECT)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared object identifier %s\n", $3);
@@ -281,7 +299,7 @@ obj_ident_list :
 
 acc_ident_list :
   VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_ident($1, VLAD_IDENT_ACCESS)) {
+    switch (kbase.add_symtab($1, VLAD_IDENT_ACCESS)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared access identifier %s\n", $1);
@@ -299,7 +317,7 @@ acc_ident_list :
     }
   }
   | acc_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_ident($3, VLAD_IDENT_ACCESS)) {
+    switch (kbase.add_symtab($3, VLAD_IDENT_ACCESS)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared access identifier %s\n", $3);
@@ -320,7 +338,7 @@ acc_ident_list :
 
 sub_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-    switch (kbase.add_ident($1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) {
+    switch (kbase.add_symtab($1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared subject-group identifier %s\n", $1);
@@ -338,7 +356,7 @@ sub_grp_ident_list :
     }
   }
   | sub_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_ident($3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) {
+  switch (kbase.add_symtab($3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared subject-group identifier %s\n", $3);
@@ -359,7 +377,7 @@ sub_grp_ident_list :
 
 obj_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_ident($1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) {
+  switch (kbase.add_symtab($1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared object-group identifier %s\n", $1);
@@ -377,7 +395,7 @@ obj_grp_ident_list :
     }
   }
   | obj_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_ident($3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) {
+  switch (kbase.add_symtab($3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared object-group identifier %s\n", $3);
@@ -398,7 +416,7 @@ obj_grp_ident_list :
 
 acc_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_ident($1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) {
+  switch (kbase.add_symtab($1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared access-group identifier %s\n", $1);
@@ -416,7 +434,7 @@ acc_grp_ident_list :
     }
   }
   | acc_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
-  switch (kbase.add_ident($3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) {
+  switch (kbase.add_symtab($3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP)) {
     case VLAD_OK :
 #ifdef DEBUG
       fprintf(yyerr, "declared access-group identifier %s\n", $3);
@@ -441,13 +459,8 @@ initial_stmt :
     unsigned int tmp;
     int retval;
 #ifdef DEBUG
-    char *n1;
-    char *n2;
-    char *n3;
-    unsigned char ty;
-    bool tr;
+    char s[128];
 #endif
-
 
     /*
      * we must, unfortunetly, go through the expression and add them one
@@ -455,35 +468,25 @@ initial_stmt :
      */
 
     for (i = 0; i < $2->length(); i++) {
-      if ((retval = $2->getn(i, &tmp)) != VLAD_OK)
+      if ((retval = $2->getn(i, &tmp)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
         return retval;
+      }
 
-      if ((retval != kbase.add_init_atom(tmp)) != VLAD_OK)
+      if ((retval != kbase.add_inittab(tmp)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
         return retval;
+      }
 
 #ifdef DEBUG
-    if ((retval = kbase.decode_atom(&n1, &n2, &n3, &ty, &tr, tmp)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
-      return retval;
-    }
+      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
 
-    switch(ty) {
-      case VLAD_ATOM_CONST :
-        fprintf(stderr, "added [%d] %s%s to initial state\n", tmp, tr ? "" : "!", n1);
-        break;
-      case VLAD_ATOM_HOLDS :
-        fprintf(stderr, "added [%d] %sholds(%s,%s,%s) to initial state\n", tmp, tr ? "" : "!",  n1, n2, n3);
-        break;
-      case VLAD_ATOM_MEMBER :
-        fprintf(stderr, "added [%d] %smemb(%s,%s) to initial state\n", tmp, tr ? "" : "!", n1, n2);
-        break;
-      case VLAD_ATOM_SUBSET :
-        fprintf(stderr, "added [%d] %ssubst(%s,%s) to initial state\n", tmp, tr ? "" : "!", n1, n2);
-        break;
-    }
+      fprintf(stderr, "added [%d] %s to initial state\n", tmp, s);
 #endif
     }
-
 
     /* after adding, clean up */
     delete $2;
@@ -497,9 +500,69 @@ constraint_stmt :
 
 implies_stmt :
   ground_exp VLAD_SYM_IMPLIES ground_exp with_clause VLAD_SYM_SEMICOLON {
-    delete $1;
-    delete $3;
-    delete $4;
+    int retval;
+#ifdef DEBUG
+    char s[128];
+    unsigned int i;
+    unsigned int tmp;
+#endif
+
+    if ((retval = kbase.add_consttab($3, $1, $4)) != VLAD_OK)
+      return retval;
+
+#ifdef DEBUG
+    fprintf(stderr, "added constraint: ");
+
+    for (i = 0; i < $1->length(); i++) {
+
+      if ((retval = $1->getn(i, &tmp)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+      fprintf(stderr, "%s ", s);
+    }
+
+    fprintf(stderr, "implies ");
+
+    for (i = 0; i < $3->length(); i++) {
+
+      if ((retval = $3->getn(i, &tmp)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+      fprintf(stderr, "%s ", s);
+    }
+
+    fprintf(stderr, "with abscence ");
+
+    for (i = 0; i < $4->length(); i++) {
+
+      if ((retval = $4->getn(i, &tmp)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+      fprintf(stderr, "%s ", s);
+    }
+
+    fprintf(stderr, "\n"); 
+#endif
   }
   ;
 
@@ -517,7 +580,49 @@ with_clause : {
 
 always_stmt :
   VLAD_SYM_ALWAYS ground_exp VLAD_SYM_SEMICOLON {
-    delete $2;
+    numberlist *cond;
+    numberlist *ncond;
+    int retval;
+#ifdef DEBUG
+    char s[128];
+    unsigned int i;
+    unsigned int tmp;
+#endif
+
+    if ((cond = VLAD_NEW(numberlist(NULL))) == NULL) {
+      fprintf(stderr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((ncond = VLAD_NEW(numberlist(NULL))) == NULL) {
+      fprintf(stderr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    }
+
+    if ((retval = kbase.add_consttab($2, cond, ncond)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
+      return retval;
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "added constaint: always ");
+    for (i = 0; i < $2->length(); i++) {
+
+      if ((retval = $2->getn(i, &tmp)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+      if ((retval = print_atom(tmp, s)) != VLAD_OK) {
+        fprintf(stderr, "internal error: %d\n", retval);
+        return retval;
+      }
+
+      fprintf(stderr, "%s ", s);
+    }
+
+    fprintf(stderr, "\n");
+#endif
   }
   ;
 
@@ -616,7 +721,7 @@ ground_boolean_atom :
     int retval;
 
     if ((retval = kbase.negate_atom($2, &$$)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
+      fprintf(stderr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -641,7 +746,7 @@ ground_holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
     if ((retval = kbase.encode_atom($3, $5, $7, VLAD_ATOM_HOLDS, true, &$$)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
+      fprintf(stderr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -651,7 +756,7 @@ ground_subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
     if ((retval = kbase.encode_atom($3, $5, NULL, VLAD_ATOM_SUBSET, true, &$$)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
+      fprintf(stderr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -660,7 +765,7 @@ ground_memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
     if ((retval = kbase.encode_atom($3, $5, NULL, VLAD_ATOM_MEMBER, true, &$$)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
+      fprintf(stderr, "internal error: %d\n", retval);
       return retval;
     }
   }
@@ -710,16 +815,49 @@ logical_atom :
   VLAD_SYM_TRUE {
     int retval;
     if ((retval = kbase.encode_atom("true", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
+      fprintf(stderr, "internal error: %d\n", retval);
       return retval;
     }
   }
   | VLAD_SYM_FALSE {
     int retval;
     if ((retval = kbase.encode_atom("false", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
+      fprintf(stderr, "internal error: %d\n", retval);
       return retval;
     }
   }
   ;
 %%
+
+#ifdef DEBUG
+int print_atom(unsigned int a, char *s)
+{
+  unsigned char ty;
+  bool tr;
+  char *n1;
+  char *n2;
+  char *n3;
+  int retval;
+
+  /* assume we have enough space in s */
+
+  if ((retval = kbase.decode_atom(&n1, &n2, &n3, &ty, &tr, a)) != VLAD_OK)
+    return retval;
+  
+  switch(ty) {
+    case VLAD_ATOM_CONST :
+      sprintf(s, "%s%s", tr ? "" : "!", n1);
+      break;
+    case VLAD_ATOM_HOLDS :
+      sprintf(s, "%sholds(%s,%s,%s)", tr ? "" : "!",  n1, n2, n3);
+      break;
+    case VLAD_ATOM_MEMBER :
+      sprintf(s, "%smemb(%s,%s)", tr ? "" : "!", n1, n2);
+      break;
+    case VLAD_ATOM_SUBSET :
+      sprintf(s, "%ssubst(%s,%s)", tr ? "" : "!", n1, n2);
+      break;
+  }
+  return VLAD_OK;
+}
+#endif

@@ -15,9 +15,11 @@
 kb::kb()
 {
   stable = NULL;
-  istate = NULL;
+  ctable = NULL;
+  itable = NULL;
   initialised = false;
-  closed = false;
+  stage1 = false;
+  stage2 = false;
   s_len = 0;
   a_len = 0;
   o_len = 0;
@@ -34,8 +36,10 @@ kb::~kb()
 {
   if (stable != NULL)
     delete stable;
-  if (istate != NULL)
-    delete istate;
+  if (ctable != NULL)
+    delete ctable; 
+  if (itable != NULL)
+    delete itable;
 }
 
 /* (re)init kb */
@@ -53,21 +57,29 @@ int kb::init()
   if ((retval = stable->init()) != VLAD_OK)
     return retval;
 
-  /* initial state */
-  if (istate != NULL)
-    delete istate;
+  /* initial state table */
+  if (itable != NULL)
+    delete itable;
 
-  if ((istate = VLAD_NEW(numberlist("init_state"))) == NULL)
+  if ((itable = VLAD_NEW(numberlist("init_state"))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* constraint table */
+  if (ctable != NULL)
+    delete ctable;
+
+  if ((ctable = VLAD_NEW(consttab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   initialised = true;
-  closed = false;
+  stage1 = false;
+  stage2 = false;
 
   return VLAD_OK;
 }
 
 /* after this is called, no further calls to add_ident() is allowed */
-int kb::close()
+int kb::close_symtab()
 {
   if (!initialised)
     return VLAD_UNINITIALISED;
@@ -90,39 +102,52 @@ int kb::close()
   /* total +ve atoms, the 2 is for the constant true and false */
   pos_tot = h_tot + m_tot + s_tot + 2;
 
-  closed = true;
+  stage1 = true;
+
+  return VLAD_OK;
+}
+/* after this is called, no further calls to add_inittab() is allowed */
+int kb::close_inittab()
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (!stage1)
+    return VLAD_FAILURE;
+
+  stage2 = true;
 
   return VLAD_OK;
 }
 
 /* register an identifier in the kb */
-int kb::add_ident(const char *n, unsigned char t)
+int kb::add_symtab(const char *n, unsigned char t)
 {
   if (!initialised)
     return VLAD_UNINITIALISED;
 
-  if (closed)
+  if (stage1)
     return VLAD_FAILURE;
 
   return stable->add(n, t);
 }
 
 /* add an atom into the initial state list */
-int kb::add_init_atom(unsigned int a)
+int kb::add_inittab(unsigned int a)
 {
   int retval;
 
   if (!initialised)
     return VLAD_UNINITIALISED;
 
-  if (!closed)
+  if (!stage1)
     return VLAD_FAILURE;
 
   if (a >= pos_tot + pos_tot)
     return VLAD_INVALIDINPUT;
 
   /* ignore duplicates */
-  switch(retval = istate->add(a)) {
+  switch(retval = itable->add(a)) {
     case VLAD_OK :
     case VLAD_DUPLICATE :
       break;
@@ -131,6 +156,18 @@ int kb::add_init_atom(unsigned int a)
   }
 
   return VLAD_OK;
+}
+
+/* add a constraint into the constraint table */
+int kb::add_consttab(numberlist *e, numberlist *c, numberlist *n)
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (!stage1 || !stage2)
+    return VLAD_FAILURE;
+
+  return ctable->add(e, c, n);
 }
 
 /* gives an atom id based on the identifiers already given */
@@ -152,7 +189,7 @@ int kb::encode_atom(const char *n1,
     return VLAD_UNINITIALISED;
 
   /* of course, symtab must be closed first */
-  if (!closed)
+  if (!stage1)
     return VLAD_FAILURE;
 
   switch(ty) {
@@ -200,7 +237,7 @@ int kb::decode_atom(char **n1,
     return VLAD_UNINITIALISED;
 
   /* of course it has to be closed first */
-  if (!closed)
+  if (!stage1)
     return VLAD_FAILURE;
 
   /* check if it is within range */
@@ -262,7 +299,7 @@ int kb::negate_atom(unsigned int in, unsigned int *out)
     return VLAD_UNINITIALISED;
 
   /* of course it has to be closed first */
-  if (!closed)
+  if (!stage1)
     return VLAD_FAILURE; 
 
   /* check if it is within range */

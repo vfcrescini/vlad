@@ -1,3 +1,25 @@
+2003-03-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.h :
+	* common/list.cpp :
+
+	  - Added a list cmp() function.
+
+	* kb/Makefile.in :
+	* kb/consttab.h :
+	* kb/consttab.cpp :
+
+	  - Added a list class for constraints.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+	* parser/parser.h :
+
+	  - Some cleanup.
+
+	  - Added consttab.
+
+
 2003-03-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/numberlist.cpp :
