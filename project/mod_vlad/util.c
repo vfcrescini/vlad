@@ -106,6 +106,27 @@ int modvlad_init(apr_pool_t *a_p,
   return 0;
 }
 
+/* strips out the trailing / from a_str */
+const char *modvlad_strip_slash(apr_pool_t *a_p, const char *a_str)
+{
+  char tmpstring[5120];
+  int i;
+
+  if (a_str == NULL || a_p == NULL)
+    return NULL;
+
+  strcpy(tmpstring, a_str);
+
+  for (i = strlen(a_str) - 1; i >= 0; i--) {
+    if (tmpstring[i] == '/')
+      tmpstring[i] = '\0';
+    else
+      break;
+  }
+
+  return apr_pstrdup(a_p, (strcmp(tmpstring, "") ? tmpstring : "/"));
+}
+
 /* register the users into the kb */
 static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
 {

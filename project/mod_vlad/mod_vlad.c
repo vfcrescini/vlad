@@ -209,7 +209,7 @@ static int modvlad_authorize(request_rec *a_r)
   modvlad_config_rec *conf = NULL;
   void *atom = NULL;
   void *exp = NULL;
-  char *real_uri;
+  const char *real_uri;
 #ifndef MODVLAD_DEBUG
   unsigned char qres;
 #endif
@@ -228,7 +228,7 @@ static int modvlad_authorize(request_rec *a_r)
   }
 
   /* strip the trailing slash from the uri */
-  real_uri = a_r->unparsed_uri;
+  real_uri = modvlad_strip_slash(a_r->pool, a_r->unparsed_uri);
 
   ap_log_rerror(APLOG_MARK,
                 APLOG_NOTICE,
