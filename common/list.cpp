@@ -23,6 +23,7 @@ list::list()
   unique = true;
   len = 0;
   head = NULL;
+  tail = NULL;
   name = NULL;
 #ifdef DEBUG
   fprintf(stderr, "list is unique\n");
