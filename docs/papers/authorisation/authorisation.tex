@@ -432,6 +432,71 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
 
   \section{Translation into a Logic Program}
 
+    \subsection{Integration of Set Theory}
+
+      Since an integral part of the language deals with groups, or more
+      formally, sets, rules must be added to ensure that the groups and
+      elements are in accordance with set theory.
+
+      \subsubsection{Inheritance Rules}
+
+        Given an element E, a set S and some property P, if holds(S, P) and 
+        E $\in$ S then holds(E, P). In the proposed language, there are three
+        element-set pair types:
+
+        \begin{itemize}
+          \item
+            Subject
+
+            \begin{list}{}{}
+              \item
+                holds(S$_{E}$, A, O) $\leftarrow$ holds(S$_{G}$, A, O) $\land$
+                S$_{E}$ $\in$ S$_{G}$
+            \end{list}
+
+            For every non-group subject S$_{E}$ that is a member of a group
+            subject S$_{G}$, if S$_{G}$ holds any access A to any object O,
+            then S$_{E}$ also holds access A to object O.
+          \item
+            Access
+
+            \begin{list}{}{}
+              \item
+                holds(S, A$_{E}$, O) $\leftarrow$ holds(S, A$_{G}$, O) $\land$
+                A$_{E}$ $\in$ A$_{G}$
+            \end{list}
+
+            For every non-group access-right A$_{E}$ that is a member of group
+            access-right A$_{G}$, if some subject S holds the access-right
+            A$_{G}$ to some object O, then S also holds the access-right 
+            A$_{E}$ to object O.
+          \item
+            Object 
+
+            \begin{list}{}{}
+              \item
+                holds(S, A, O$_{E}$) $\leftarrow$ holds(S, A, O$_{G}$) $\land$
+                O$_{E}$ $\in$ O$_{G}$ 
+            \end{list}
+
+            For every non-group object O$_{E}$ that is a member of group
+            object O$_{G}$, if some subject S holds some access-right A to
+            group object O$_{G}$, then S also holds the access-right A to
+            non-group object O$_{E}$.
+        \end{itemize}
+
+      \subsubsection{Transitivity Rules}
+
+        Simply stated, if S$^{'}$ is a subset of S$^{''}$ and S$^{''}$ is a
+        subset of S$^{'''}$ then S$^{'}$ is also a subset of S$^{'''}$.
+
+        \begin{list}{}{}
+          \item
+            S$^{'}$ $\subseteq$ S$^{'''}$ $\leftarrow$
+            (S$^{'}$ $\subseteq$ S$^{''}$) $\land$ 
+            (S$^{''}$ $\subseteq$ S$^{'''}$)
+        \end{list}
+
     \subsection{Conversion to Extended Logic Program: Flattening the States}
 
       Extended logic programs are \emph{flat} or stateless. The proposed
@@ -576,12 +641,13 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
       where T and F are the parameters that indicate whether an atom is
       classically negated or not, respectively.
 
-      In addition to the extra parameter, a new implication must be added
+      In addition to the extra parameter, two new implications must be added
       to indicate that the atoms that differ only by their third parameter
       are complementary:
 
       \begin{list}{}{}
         \item false $\leftarrow$ holds(A, S, T) $\land$ holds(A, S, F)
+        \item false $\leftarrow$ not holds(A, S, T) $\land$ not holds(A, S, F)
       \end{list}
 
       $\forall$ (A, S $\mid$ A $\in$ $\alpha$, S $\in$ $\sigma$)
@@ -598,8 +664,20 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
       The following lists a small program written in the proposed language:
 
       \begin{verbatim}
-initially holds(s, a, o1), !holds(s, a, o2), !holds(s, a, o3);
+/* declarations */
+ident sub s;
+ident acc a;
+ident obj o1, o2, o3;
+ident sub-grp sg;
+
+/* initial state */
+initially holds(sg, a, o1) && memb(s, sg);
+initially !holds(s, a, o2) && !holds(s, a, o3);
+
+/* constraint */
 holds(s, a, o2) implies holds(s, a, o3);
+
+/* transformation */
 trans causes holds(s, a, o3) if !holds(s, a, o2);
       \end{verbatim}
 
@@ -609,14 +687,28 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
         \item A = holds(s, a, o$_{1}$)
         \item B = holds(s, a, o$_{2}$)
         \item C = holds(s, a, o$_{3}$)
+        \item D = holds(sg, a, o$_{1}$)
+        \item E = holds(sg, a, o$_{2}$)
+        \item F = holds(sg, a, o$_{3}$)
+        \item G = memb(s, sg)
       \end{list}
 
       \subsubsection{Extended Logic Program}
 
         \begin{list}{}{Initial State}
-          \item holds(A, S$_{0}$)
           \item $\lnot$ holds(B, S$_{0}$)
           \item $\lnot$ holds(C, S$_{0}$)
+          \item holds(D, S$_{0}$)
+          \item holds(G, S$_{0}$)
+        \end{list}
+
+        \begin{list}{}{Inheritance Rules}
+          \item 
+            holds(A, S$_{0}$) $\leftarrow$ holds(D, S$_{0}$) $\land$ 
+            holds(G, S$_{0}$)
+          \item
+            holds(A, S$_{1}$) $\leftarrow$ holds(D, S$_{1}$) $\land$ 
+            holds(G, S$_{1}$)
         \end{list}
 
         \begin{list}{}{Constraint}
@@ -647,15 +739,49 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
           \item
             $\lnot$ holds(C, S$_{1}$) $\leftarrow$ $\lnot$ holds(C, S$_{0}$)
             $\land$ not holds(C, S$_{1}$)
+          \item
+            holds(D, S$_{1}$) $\leftarrow$ holds(D, S$_{0}$) $\land$ not
+            $\lnot$ holds(D, S$_{1}$)
+          \item
+            $\lnot$ holds(D, S$_{1}$) $\leftarrow$ $\lnot$ holds(D, S$_{0}$)
+            $\land$ not holds(D, S$_{1}$)
+          \item
+            holds(E, S$_{1}$) $\leftarrow$ holds(E, S$_{0}$) $\land$ not
+            $\lnot$ holds(E, S$_{1}$)
+          \item
+            $\lnot$ holds(E, S$_{1}$) $\leftarrow$ $\lnot$ holds(E, S$_{0}$)
+            $\land$ not holds(E, S$_{1}$)
+          \item
+            holds(F, S$_{1}$) $\leftarrow$ holds(F, S$_{0}$) $\land$ not
+            $\lnot$ holds(F, S$_{1}$)
+          \item
+            $\lnot$ holds(F, S$_{1}$) $\leftarrow$ $\lnot$ holds(F, S$_{0}$)
+            $\land$ not holds(F, S$_{1}$)
+          \item
+            holds(G, S$_{1}$) $\leftarrow$ holds(G, S$_{0}$) $\land$ not
+            $\lnot$ holds(G, S$_{1}$)
+          \item
+            $\lnot$ holds(G, S$_{1}$) $\leftarrow$ $\lnot$ holds(G, S$_{0}$)
+            $\land$ not holds(G, S$_{1}$)
+
         \end{list}
 
       \subsubsection{General Logic Program}
 
-
         \begin{list}{}{Initial State}
-          \item holds(A, S$_{0}$, t)
           \item holds(B, S$_{0}$, f)
           \item holds(C, S$_{0}$, f)
+          \item holds(D, S$_{0}$, t)
+          \item holds(G, S$_{0}$, t)
+        \end{list}
+
+        \begin{list}{}{Inheritance Rules}
+          \item 
+            holds(A, S$_{0}$, t) $\leftarrow$ holds(D, S$_{0}$, t) $\land$ 
+            holds(G, S$_{0}$, t)
+          \item
+            holds(A, S$_{1}$, t) $\leftarrow$ holds(D, S$_{1}$, t) $\land$ 
+            holds(G, S$_{1}$, t)
         \end{list}
 
         \begin{list}{}{Constraint}
@@ -686,6 +812,30 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
           \item
             holds(C, S$_{1}$, f) $\leftarrow$ holds(C, S$_{0}$, f) $\land$ not
             holds(C, S$_{1}$, t)
+          \item
+            holds(D, S$_{1}$, t) $\leftarrow$ holds(D, S$_{0}$, t) $\land$ not
+            holds(D, S$_{1}$, f)
+          \item
+            holds(D, S$_{1}$, f) $\leftarrow$ holds(D, S$_{0}$, f) $\land$ not
+            holds(D, S$_{1}$, t)
+          \item
+            holds(E, S$_{1}$, t) $\leftarrow$ holds(E, S$_{0}$, t) $\land$ not
+            holds(E, S$_{1}$, f)
+          \item
+            holds(E, S$_{1}$, f) $\leftarrow$ holds(E, S$_{0}$, f) $\land$ not
+            holds(E, S$_{1}$, t)
+          \item
+            holds(F, S$_{1}$, t) $\leftarrow$ holds(F, S$_{0}$, t) $\land$ not
+            holds(F, S$_{1}$, f)
+          \item
+            holds(F, S$_{1}$, f) $\leftarrow$ holds(F, S$_{0}$, f) $\land$ not
+            holds(F, S$_{1}$, t)
+          \item
+            holds(G, S$_{1}$, t) $\leftarrow$ holds(G, S$_{0}$, t) $\land$ not
+            holds(G, S$_{1}$, f)
+          \item
+            holds(G, S$_{1}$, f) $\leftarrow$ holds(G, S$_{0}$, f) $\land$ not
+            holds(G, S$_{1}$, t)
         \end{list}
 
         \begin{list}{}{Complementary Rules}
@@ -696,11 +846,56 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
           \item
             false $\leftarrow$ holds(C, S$_{0}$, t) $\land$ holds(C, S$_{0}$, f)
           \item
+            false $\leftarrow$ holds(D, S$_{0}$, t) $\land$ holds(D, S$_{0}$, f)
+          \item
+            false $\leftarrow$ holds(E, S$_{0}$, t) $\land$ holds(E, S$_{0}$, f)
+          \item
+            false $\leftarrow$ holds(F, S$_{0}$, t) $\land$ holds(F, S$_{0}$, f)
+          \item
+            false $\leftarrow$ holds(G, S$_{0}$, t) $\land$ holds(G, S$_{0}$, f)
+          \item
             false $\leftarrow$ holds(A, S$_{1}$, t) $\land$ holds(A, S$_{1}$, f)
           \item
             false $\leftarrow$ holds(B, S$_{1}$, t) $\land$ holds(B, S$_{1}$, f)
           \item
             false $\leftarrow$ holds(C, S$_{1}$, t) $\land$ holds(C, S$_{1}$, f)
+          \item
+            false $\leftarrow$ holds(D, S$_{1}$, t) $\land$ holds(D, S$_{1}$, f)
+          \item
+            false $\leftarrow$ holds(E, S$_{1}$, t) $\land$ holds(E, S$_{1}$, f)
+          \item
+            false $\leftarrow$ holds(F, S$_{1}$, t) $\land$ holds(F, S$_{1}$, f)
+          \item
+            false $\leftarrow$ holds(G, S$_{1}$, t) $\land$ holds(G, S$_{1}$, f)
+          \item
+            false $\leftarrow$ not holds(A, S$_{0}$, t) $\land$ not holds(A, S$_{0}$, f)
+          \item
+            false $\leftarrow$ not holds(B, S$_{0}$, t) $\land$ not holds(B, S$_{0}$, f)
+          \item
+            false $\leftarrow$ not holds(C, S$_{0}$, t) $\land$ not holds(C, S$_{0}$, f)
+          \item
+            false $\leftarrow$ not holds(D, S$_{0}$, t) $\land$ not holds(D, S$_{0}$, f)
+          \item
+            false $\leftarrow$ not holds(E, S$_{0}$, t) $\land$ not holds(E, S$_{0}$, f)
+          \item
+            false $\leftarrow$ not holds(F, S$_{0}$, t) $\land$ not holds(F, S$_{0}$, f)
+          \item
+            false $\leftarrow$ not holds(G, S$_{0}$, t) $\land$ not holds(G, S$_{0}$, f)
+          \item
+            false $\leftarrow$ not holds(A, S$_{1}$, t) $\land$ not holds(A, S$_{1}$, f)
+          \item
+            false $\leftarrow$ not holds(B, S$_{1}$, t) $\land$ not holds(B, S$_{1}$, f)
+          \item
+            false $\leftarrow$ not holds(C, S$_{1}$, t) $\land$ not holds(C, S$_{1}$, f)
+          \item
+            false $\leftarrow$ not holds(D, S$_{1}$, t) $\land$ not holds(D, S$_{1}$, f)
+          \item
+            false $\leftarrow$ not holds(E, S$_{1}$, t) $\land$ not holds(E, S$_{1}$, f)
+          \item
+            false $\leftarrow$ not holds(F, S$_{1}$, t) $\land$ not holds(F, S$_{1}$, f)
+          \item
+            false $\leftarrow$ not holds(G, S$_{1}$, t) $\land$ not holds(G, S$_{1}$, f)
+
         \end{list}
 
   \section{System Structure}
