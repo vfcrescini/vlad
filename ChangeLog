@@ -1,13 +1,44 @@
+2004-01-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/updatetab.cpp :
+	* lib/updatetab.h :
+	* lib/transtab.cpp :
+	* lib/transtab.h :
+
+	  - Transtab now replaced by updatetab.
+
+	* lib/atom.cpp :
+	* lib/atom.h :
+
+	  - Removed and replaced by the new fact.cpp and fact.h.
+
+	* lib/fact.cpp :
+	* lib/fact.h :
+
+	  - Added type() and truth() functions.
+
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+
+	  - Renamed transformation to update (trasnref to updateref).
+
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+
+	  - Cleanup. Modified to keep up with all the name changes.
+
 2003-12-31  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
-	* lib/smwrap.cpp:
-	* lib/smwrap.h:
-	* lib/transtab.cpp:
-	* lib/transtab.h:
-	* lib/seqtab.cpp:
-	* lib/seqtab.h:
-	* lib/consttab.cpp:
-	* lib/consttab.h:
+	* lib/smwrap.cpp :
+	* lib/smwrap.h :
+	* lib/transtab.cpp :
+	* lib/transtab.h :
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+	* lib/consttab.cpp :
+	* lib/consttab.h :
 	* lib/expression.cpp :
 	* lib/expression.h :
 	* lib/numberlist.cpp :
