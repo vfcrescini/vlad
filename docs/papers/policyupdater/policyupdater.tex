@@ -1880,124 +1880,115 @@ query holds(alice, read, file);
 
           Consistent conversion of relational facts to and from this form
           requires a systematic representation of facts. Given the symbol table
-          $st$, we first enumerate all possible positive facts of state $S_{0}$
+          $s$, we first enumerate all possible positive facts of state $S_{0}$
           derived from the all possible combinations of all entity identifiers
-          defined in the $st$:
+          defined in the $s$:
 
-          \begin{tabular}[t]{|l|l|l|l|l|l|}
+          \begin{tabular}[t]{|l|l|l|l|l|}
             \hline
             % head
-            \textbf{ID} &
             \textbf{Entity 1} &
             \textbf{Entity 2} &
             \textbf{Entity 3} &
             \multicolumn{2}{|l|}{\textbf{}} \\
             \hline
             % holds line 1
-            $i_{h_{0}}$ &
-            $st.s[0]$ &
-            $st.a[0]$ &
-            $st.o[0]$ &
+            $s.s[0]$ &
+            $s.a[0]$ &
+            $s.o[0]$ &
             \multicolumn{2}{|c|}{\multirow{3}{*}{\begin{sideways}Holds\end{sideways}}} \\
             % holds line 2
-            \vdots & \vdots & \vdots & \vdots & \multicolumn{2}{|c|}{} \\
+            \vdots & \vdots & \vdots & \multicolumn{2}{|c|}{} \\
             % holds line 3
-            $i_{h_{a}}$ &
-            $st.s[l_{s}]$ &
-            $st.a[l_{a}]$ &
-            $st.o[l_{o}]$ &
+            $s.s[l_{s} - 1]$ &
+            $s.a[l_{a} - 1]$ &
+            $s.o[l_{o} - 1]$ &
             \multicolumn{2}{|c|}{} \\
             \hline
             % sub memb line 1
-            $i_{sm_{0}}$ &
-            $st.ss[0]$ &
-            $st.sg[0]$ &
+            $s.ss[0]$ &
+            $s.sg[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}sub\end{sideways}} &
             \multirow{9}{*}{\begin{sideways}Member\end{sideways}} \\
             % sub memb line 2
-            \vdots & \vdots & \vdots & & & \\
+            \vdots & \vdots & & & \\
             % sub memb line 3
-            $i_{sm_{b}}$ & $st.ss[l_{ss}]$ & $st.sg[l_{sg}]$ & & & \\
-            \cline{1-5}
+            $s.ss[l_{s_s} - 1]$ & $s.sg[l_{s_g} - 1]$ & & & \\
+            \cline{1-4}
             % acc memb line 1
-            $i_{am_{0}}$ &
-            $st.as[0]$ &
-            $st.ag[0]$ &
+            $s.as[0]$ &
+            $s.ag[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}acc\end{sideways}} & \\
             % acc memb line 2
-            \vdots & \vdots & \vdots & & & \\
+            \vdots & \vdots & & & \\
             % acc memb line 3
-            $i_{am_{c}}$ & $st.as[l_{as}]$ & $st.ag[l_{ag}]$ & & & \\
-            \cline{1-5}
+            $s.as[l_{a_s} - 1]$ & $s.ag[l_{a_g} - 1]$ & & & \\
+            \cline{1-4}
             % obj memb line 1
-            $i_{om_{0}}$ &
-            $st.os[0]$ &
-            $st.og[0]$ &
+            $s.os[0]$ &
+            $s.og[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}obj\end{sideways}} & \\
             % obj memb line 2
-            \vdots & \vdots & \vdots & & & \\
+            \vdots & \vdots & & & \\
             % obj memb line 3
-            $i_{om_{d}}$ & $st.os[l_{os}]$ & $st.og[l_{og}]$ & & & \\
+            $s.os[l_{o_s} - 1]$ & $s.og[l_{o_g} - 1]$ & & & \\
             \hline
             % sub subs line 1
-            $i_{ss_{0}}$ &
-            $st.sg[0]$ &
-            $st.sg[0]$ &
+            $s.sg[0]$ &
+            $s.sg[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}sub\end{sideways}} &
             \multirow{9}{*}{\begin{sideways}Subset\end{sideways}} \\
             % sub subs line 2
-            \vdots & \vdots & \vdots & & & \\
+            \vdots & \vdots & & & \\
             % sub subs line 3
-            $i_{ss_{e}}$ & $st.sg[l_{sg}]$ & $st.sg[l_{sg}]$ & & & \\
-            \cline{1-5}
+            $s.sg[l_{s_g} - 1]$ & $s.sg[l_{s_g} - 1]$ & & & \\
+            \cline{1-4}
             % acc subs line 1
-            $i_{as_{0}}$ &
-            $st.ag[0]$ &
-            $st.ag[0]$ &
+            $s.ag[0]$ &
+            $s.ag[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}acc\end{sideways}} & \\
             % acc subs line 2
-            \vdots & \vdots & \vdots & & & \\
+            \vdots & \vdots & & & \\
             % acc subs line 3
-            $i_{as_{f}}$ & $st.ag[l_{ag}]$ & $st.ag[l_{ag}]$ & & & \\
-            \cline{1-5}
+            $s.ag[l_{a_g} - 1]$ & $s.ag[l_{a_g} - 1]$ & & & \\
+            \cline{1-4}
             % obj subs line 1
-            $i_{os_{0}}$ &
-            $st.og[0]$ &
-            $st.og[0]$ &
+            $s.og[0]$ &
+            $s.og[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}obj\end{sideways}} & \\
             % obj subs line 2
-            \vdots & \vdots & \vdots & & & \\
+            \vdots & \vdots & & & \\
             % obj subs line 3
-            $i_{os_{g}}$ & $st.og[l_{og}]$ & $st.og[l_{og}]$ & & & \\
+            $s.og[l_{o_g} - 1]$ & $s.og[l_{o_g} - 1]$ & & & \\
             \hline
           \end{tabular}
 
           \begin{quote}
             where
 
-            $l_{s}$ = $st.s.len() - 1$
+            $l_{s}$ = $s.s.len()$
 
-            $l_{a}$ = $st.a.len() - 1$
+            $l_{a}$ = $s.a.len()$
 
-            $l_{o}$ = $st.o.len() - 1$
+            $l_{o}$ = $s.o.len()$
 
-            $l_{ss}$ = $st.ss.len() - 1$
+            $l_{s_{s}}$ = $s.ss.len()$
 
-            $l_{as}$ = $st.as.len() - 1$
+            $l_{a_{s}}$ = $s.as.len()$
 
-            $l_{os}$ = $st.os.len() - 1$
+            $l_{o_{s}}$ = $s.os.len()$
 
-            $l_{sg}$ = $st.sg.len() - 1$
+            $l_{s_{g}}$ = $s.sg.len()$
 
-            $l_{ag}$ = $st.ag.len() - 1$
+            $l_{a_{g}}$ = $s.ag.len()$
 
-            $l_{og}$ = $st.og.len() - 1$
+            $l_{o_{g}}$ = $s.og.len()$
           \end{quote}
 
           With all possible atom combinations enumerated sequentially in the
