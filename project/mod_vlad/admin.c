@@ -40,7 +40,6 @@ void modvlad_generate_footer(request_rec *a_r)
 void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 {
   unsigned int i;
-  unsigned int j;
   unsigned int slen = 0;
   unsigned int tlen = 0;
   unsigned int ilen = 0;
@@ -52,6 +51,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   if (!(uri = ap_construct_url(a_r->pool, a_r->uri, a_r)))
     return;
 
+  /* generate sequece list */
   ap_rprintf(a_r, "    <h3>Current Sequence</h3>\n");
   ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"%s\">\n", uri);
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"delete\"/>\n");
@@ -66,10 +66,10 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   for (i = 0; i < slen; i++) {
     const char *st_name = NULL;
-    apr_array_header_t *parm = NULL;
-    unsigned int pcnt;
+    apr_array_header_t *st_list = NULL;
+    unsigned int j;
 
-    parm = apr_array_make(a_r->pool, 1, sizeof(char *));
+    st_list = apr_array_make(a_r->pool, 1, sizeof(char *));
 
     modvlad_client_seq_get(a_r->pool,
                            a_conf->pipe_cli[0],
@@ -77,15 +77,16 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
                            a_conf->mutex,
                            i,
                            &st_name,
-                           parm);
+                           st_list);
 
     ap_rprintf(a_r, "         <tr>\n");
     ap_rprintf(a_r, "           <td align=\"center\">%d</th>\n", i);
     ap_rprintf(a_r, "           <th align=\"center\">\n");
     ap_rprintf(a_r, "             %s(", st_name);
 
-    for (pcnt = 0; pcnt < parm->nelts; pcnt++)
-      ap_rprintf(a_r, pcnt == 0 ? "%s" : ", %s", ((char **)parm->elts)[pcnt]);
+    /* parameters for this sequence */
+    for (j = 0; j < st_list->nelts; j++)
+      ap_rprintf(a_r, j == 0 ? "%s" : ", %s", ((char **)st_list->elts)[j]);
 
     ap_rprintf(a_r, ")\n");
     ap_rprintf(a_r, "           </th>\n");
@@ -98,6 +99,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   ap_rprintf(a_r, "      </table>\n");
   ap_rprintf(a_r, "    </form>\n");
 
+  /* available transformations list */
   ap_rprintf(a_r, "    <h3>Available Transformations</h3>\n");
 
   modvlad_client_trans_total(a_r->pool,
@@ -109,6 +111,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   for (i = 0; i <  tlen; i++) {
     const char *tt_name = NULL;
     unsigned int tt_listlen;
+    unsigned int j;
 
     modvlad_client_trans_get(a_r->pool,
                              a_conf->pipe_cli[0],
@@ -128,6 +131,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     ap_rprintf(a_r, "          <th align=\"center\"><input type=\"button\" value=\"add\" onclick=\"addform%d.submit();\"/></th>\n", i);
     ap_rprintf(a_r, "        <tr>\n");
 
+    /* the parameters of this transformation */
     for (j = 0; j < tt_listlen; j++) {
       ap_rprintf(a_r, "     <tr>\n");
       ap_rprintf(a_r, "       <td align=\"center\">parameter %d</td>\n", j);
@@ -140,6 +144,7 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     ap_rprintf(a_r, "    </form>\n");
   }
 
+  /* identifier list */
   ap_rprintf(a_r, "    <h3>Available Identifiers</h3>\n");
   ap_rprintf(a_r, "    <form name=\"idform\">\n");
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"ident\" value=\"\"/>\n");
