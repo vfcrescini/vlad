@@ -101,5 +101,13 @@ class kb {
     int encode_atom(atom *a, unsigned int s, unsigned int *n);
     /* returns the atom details given the id */
     int decode_atom(atom **a, unsigned int *s, unsigned int n);
+    /* returns an atom id based on the info given */
+    unsigned int compute_atom(unsigned int a_st, bool a_tr, unsigned int a_atm);
+    /* returns a holds atom id based on the info given */
+    unsigned int compute_holds(unsigned int a_st, bool a_tr, unsigned int a_sub, unsigned int a_acc, unsigned int a_obj);
+    /* returns a member atom id based on the info given */
+    unsigned int compute_member(unsigned int a_st, bool a_tr, char a_ty, unsigned int a_elt, unsigned int a_grp);
+    /* returns a subset atom id based on the info given */
+    unsigned int compute_subset(unsigned int a_st, bool a_tr, char a_ty, unsigned int a_grp1, unsigned int a_grp2);
 } ;
 #endif

@@ -6,6 +6,8 @@
 
 	* kb/kb.cpp :
 
+	  - Added a few compute_*() functions for simplification.
+
 	  - Added identity rules (ie. each set is a subset of itself).
 
 	  - Added an extension to the inheritance rules (for subsets) where
