@@ -1,0 +1,57 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+CC = @CC@
+CXX = @CXX@
+LEX = @LEX@
+YACC = @YACC@
+DEBUG = @enable_debug@
+CFLAGS = -ansi	                \
+	 -Wall	                \
+	 -Wstrict-prototypes    \
+	 -I$(TOPSRCDIR)/include	\
+	 -L$(TOPSRCDIR)/lib     \
+	 $(NULL)
+TARGETS = libkb.a
+INCLUDES = identifier.h symtab.h
+
+ifeq "$(DEBUG)" "yes"
+CFLAGS += -g -DDEBUG
+else
+CFLAGS += -O2 
+endif
+
+CXXFLAGS = $(CFLAGS)
+
+all : public
+
+public : $(TARGETS)
+	@mkdir -p $(TOPSRCDIR)/include
+	@mkdir -p $(TOPSRCDIR)/lib
+	@for i in $(INCLUDES); do              \
+	ln -sf ../kb/$$i $(TOPSRCDIR)/include; \
+	done
+	@for i in $(TARGETS); do           \
+	ln -sf ../kb/$$i $(TOPSRCDIR)/lib; \
+	done
+
+libkb.a : identifier.o symtab.o
+	$(AR) -rcs $(@) identifier.o symtab.o
+
+identifier.o : identifier.h identifier.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c identifier.cpp
+
+symtab.o : symtab.h symtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
+
+clean :
+	$(RM) *.o
+
+distclean : clean
+	$(RM) $(TARGETS) Makefile
+	@for i in $(INCLUDES); do       \
+	$(RM) $(TOPSRCDIR)/include/$$i; \
+	done
+	@for i in $(TARGETS); do    \
+	$(RM) $(TOPSRCDIR)/lib/$$i; \
+	done

@@ -4,8 +4,17 @@
  */
 
 #include <stdlib.h>
+#include <new.h>
 #include "vlad.h"
 #include "list.h"
+
+list_item::list_item()
+{
+}
+
+list_item::~list_item()
+{
+}
 
 list::list()
 {
@@ -81,7 +90,7 @@ int list::del_d(list_item *data, bool f)
 
   list_node *prev;
   list_node *curr;
-  int found = 0;
+  bool found = false;
 
   if (data == NULL)
     return VLAD_NULLPTR;
@@ -92,7 +101,7 @@ int list::del_d(list_item *data, bool f)
   while (curr != NULL) {
     if (curr->data->cmp(data)) {
 
-      found = 1;
+      found = true;
 
       if (prev == NULL)
         head = head->next;
@@ -133,6 +142,30 @@ int list::get_i(unsigned int index, list_item **data)
   *data = curr->data;
 
   return VLAD_OK;
+}
+
+/* gives a reference to the data that matches item */
+int list::get_d(list_item *item, list_item **data)
+{
+  list_node *curr;
+
+  if (data == NULL || item == NULL)
+    return VLAD_NULLPTR;
+
+  curr = head;
+  
+  while (curr != NULL) {
+    if (curr->data->cmp(item)) {
+      /* here we only find the first match any other matching
+       * items are (wrongly) ignored. */
+      *data = curr->data;
+
+      return VLAD_OK;
+    }
+    curr = curr->next;
+  }
+
+  return VLAD_NOTFOUND;
 }
 
 /* returns 0 if data is in the list */
