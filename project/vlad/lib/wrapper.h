@@ -94,6 +94,8 @@ VLAD_EXTERN int vlad_strlist_create(void **a_slist);
 VLAD_EXTERN int vlad_strlist_destroy(void *a_slist);
 /* add a string into stringlist */
 VLAD_EXTERN int vlad_strlist_add(void *a_slist, const char *a_s);
+/* get the i'th string from list */
+VLAD_EXTERN int vlad_strlist_get(void *a_slist, unsigned int a_i, char **a_s);
 
 /* create an atom */
 VLAD_EXTERN int vlad_atom_create(void **a_atm);

@@ -1,11 +1,18 @@
+2003-07-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+
+	  - Added strlist_get().
+
 2003-06-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-	* kb.cpp :
-	* kb.h :
-	* symtab.cpp :
-	* symtab.h :
-	* wrapper.cpp :
-	* wrapper.h :
+	* lib/kb.cpp :
+	* lib/kb.h :
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
 
 	  - Added functions to retrieve symtab identifiers.
 
