@@ -28,6 +28,12 @@ int simplelist_init(simplelist_type *list);
 /* return length */
 int simplelist_length(simplelist_type list, unsigned int *length);
 
+/* gives the index of the first instance of the node that matches data */
+int simplelist_index(simplelist_type list,
+                     void *data,
+                     unsigned int *index,
+                     int (*cmp)(void *, void *));
+
 /* add pointer to list, assumes memory has been allocated to it */
 int simplelist_add(simplelist_type *list, void *data);
 

@@ -19,6 +19,9 @@ int stringlist_length(stringlist_type list, unsigned int *len);
 /* return 0 if the string is in the stringlist */
 int stringlist_find(stringlist_type list, char *string);
 
+/* gives the index of the string given, if in the list */
+int stringlist_index(stringlist_type list, char *string, unsigned int *index);
+
 /* gives a reference to the index'th string in the stringlist */
 int stringlist_get(stringlist_type list, unsigned int index, char **string);
 

@@ -1,3 +1,13 @@
+2002-09-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+	* datastruct/stringlist.c :
+	* datastruct/stringlist.h :
+
+	  - Added an index function that returns the index of the first
+	    node that matches the given data.
+
 2002-09-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/expression.h :

@@ -29,6 +29,34 @@ int simplelist_length(simplelist_type list, unsigned int *length)
   return 0;
 }
 
+/* gives the index of the first instance of the node that matches data */
+int simplelist_index(simplelist_type list,
+                     void *data,
+                     unsigned int *index,
+                     int (*cmp)(void *, void *))
+{
+  simplelist_node *curr;
+
+  if (list.length <= 0 ||
+      data == NULL ||
+      index == NULL ||
+      cmp == NULL)
+    return -1;
+
+  curr = list.list;
+  *index = 0;
+
+  while (curr != NULL) {
+    if (cmp(curr->data, data) == 0)
+      return 0;
+
+    curr = curr->next;
+    *index = *index + 1;
+  }
+
+  return -1;
+}
+
 /* add pointer to list, assumes memory has been allocated to it */
 int simplelist_add(simplelist_type *list, void *data)
 {
@@ -194,7 +222,7 @@ int simplelist_find_data(simplelist_type list,
   curr = list.list;
 
   while (curr != NULL) {
-    if (!cmp(curr->data, data)) 
+    if (cmp(curr->data, data) == 0) 
       return 0;
 
     curr = curr->next;

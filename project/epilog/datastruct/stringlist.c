@@ -28,6 +28,12 @@ int stringlist_find(stringlist_type list, char *string)
   return simplelist_find_data(list, (void *) string, stringlist_compare);
 }
 
+/* gives the index of the string given, if in the list */
+int stringlist_index(stringlist_type list, char *string, unsigned int *index)
+{
+  return simplelist_index(list, (void *) string, index, stringlist_compare);
+}
+
 /* gives a reference to the index'th string in the stringlist */
 int stringlist_get(stringlist_type list, unsigned int index, char **string)
 {
