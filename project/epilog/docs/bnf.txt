@@ -41,6 +41,10 @@ BNF
 
 <trans-identifier>     : <alpha-num> <alpha-num-uscr-str>
 
+<sub-acc-obj-ident>    : <subject-identifier> |
+                         <access-identifier> |
+                         <object-identifier>
+
 <true>                 : true
 
 <false>                : false
@@ -62,6 +66,10 @@ BNF
 <causes>               : causes
 
 <if>                   : if
+
+<is>                   : is
+
+<after>                : after
 
 <underscore>           : _
 
@@ -115,10 +123,10 @@ BNF
 <ground-object-elt>    : <element> <open-bracket> <s-object-ident>
                          <comma> <g-object-ident> <close-bracket>
 
-<initial-stmt>         : <initially> <ground-exp>
+<initial-stmt>         : <initially> <ground-exp> <semicolon>
 
 <trans-stmt>           : <trans> <trans-identifier> <trans-var-def>
-                         <causes> <ground-exp> <if> <ground-exp>
+                         <causes> <ground-exp> <if> <ground-exp> <semicolon>
 
 <trans-var-def>        : <open-bracket> <close-bracket> |
                          <open-bracket> <trans-var-list> <close-bracket> 
@@ -126,3 +134,24 @@ BNF
 <trans-var-list>       : <var-identifier> | <var-identifier> <comma>
                          <trans-var-list>
 
+<policy-stmt>          : <policy-prop> <after-clause> <semicolon> |
+                         <policy-prop> <semicolon>
+
+<policy-prop>          : <is> <ground-exp>
+
+<after-clause>         : <after> <trans-ref-list>
+
+<trans-ref-list>       : <trans-ref-def> | <trans-ref-def> <comma> 
+                         <trans-ref-list>
+
+<trans-ref-def>        : <trans-identifier> <open-bracket>
+                         <sub-acc-obj-list> <close-bracket>
+
+<sub-acc-obj-list>     : <sub-acc-obj-ident> | <sub-acc-obj-ident> <comma>
+                         <sub-acc-obj-list>
+
+<program>              : <statement-list>
+
+<statement-list>       : <statement> | <statement> <statement-list>
+
+<statement>            : <initial-stmt> | <trans-stmt> | <policy-stmt>
