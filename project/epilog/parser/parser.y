@@ -658,12 +658,12 @@ comp_holds_atom :
       /* subject is an identifier */
       if (!EPI_IDENT_IS_SUBJECT(*subject))
         exit_error("first parameter of holds must be a subject");
-      if (name_create_ident(subject, &($$.atom.holds.subject)) != 0)
+      if (name_create_ident(subject, &(EPI_ATOM_HOLDS_SUBJECT($$))) != 0)
         exit_error("internal error");
     }
     else {
       /* subject is a variable */
-      if (name_create_var($3, &($$.atom.holds.subject)) != 0)
+      if (name_create_var($3, &(EPI_ATOM_HOLDS_SUBJECT($$))) != 0)
         exit_error("internal error");
     }
 
@@ -671,12 +671,12 @@ comp_holds_atom :
       /* access is an identifier */
       if (!EPI_IDENT_IS_ACCESS(*access))
         exit_error("second parameter of holds must be an access-right");
-      if (name_create_ident(access, &($$.atom.holds.access)) != 0)
+      if (name_create_ident(access, &(EPI_ATOM_HOLDS_ACCESS($$))) != 0)
         exit_error("internal error");
     }
     else {
       /* access is a variable */
-      if (name_create_var($5, &($$.atom.holds.access)) != 0)
+      if (name_create_var($5, &(EPI_ATOM_HOLDS_ACCESS($$))) != 0)
         exit_error("internal error");
     }
 
@@ -684,12 +684,12 @@ comp_holds_atom :
       /* object is an identifier */
       if (!EPI_IDENT_IS_OBJECT(*object))
         exit_error("third parameter of holds must be an object");
-      if (name_create_ident(object, &($$.atom.holds.object)) != 0)
+      if (name_create_ident(object, &(EPI_ATOM_HOLDS_OBJECT($$))) != 0)
         exit_error("internal error");
     }
     else {
       /* object is a variable */
-      if (name_create_var($7, &($$.atom.holds.object)) != 0)
+      if (name_create_var($7, &(EPI_ATOM_HOLDS_OBJECT($$))) != 0)
         exit_error("internal error");
     }
   }
@@ -718,12 +718,12 @@ comp_subst_atom :
       /* group1 is an identifier */
       if (!EPI_IDENT_IS_GROUP(*group1))
         exit_error("first parameter of subst must be a group");
-      if (name_create_ident(group1, &($$.atom.subst.group1)) != 0)
+      if (name_create_ident(group1, &(EPI_ATOM_SUBST_GROUP1($$))) != 0)
         exit_error("internal error");
     }
     else {
       /* group1 is a variable */
-      if (name_create_var($3, &($$.atom.subst.group1)) != 0)
+      if (name_create_var($3, &(EPI_ATOM_SUBST_GROUP1($$))) != 0)
         exit_error("internal error");
     }
 
@@ -731,12 +731,12 @@ comp_subst_atom :
       /* group2 is an identifier */
       if (!EPI_IDENT_IS_GROUP(*group2))
         exit_error("first parameter of subst must be a group");
-      if (name_create_ident(group2, &($$.atom.subst.group2)) != 0)
+      if (name_create_ident(group2, &(EPI_ATOM_SUBST_GROUP2($$))) != 0)
         exit_error("internal error");
     }
     else {
       /* group2 is a variable */
-      if (name_create_var($5, &($$.atom.subst.group2)) != 0)
+      if (name_create_var($5, &(EPI_ATOM_SUBST_GROUP2($$))) != 0)
         exit_error("internal error");
     }
   }
@@ -765,12 +765,12 @@ comp_memb_atom :
       /* element is an identifier */
       if (EPI_IDENT_IS_GROUP(*element))
         exit_error("first parameter of memb must not be a group");
-      if (name_create_ident(element, &($$.atom.memb.element)) != 0)
+      if (name_create_ident(element, &(EPI_ATOM_MEMB_ELEMENT($$))) != 0)
         exit_error("internal error");
     }
     else {
       /* element is a variable */
-      if (name_create_var($3, &($$.atom.memb.element)) != 0)
+      if (name_create_var($3, &(EPI_ATOM_MEMB_ELEMENT($$))) != 0)
         exit_error("internal error");
     }
 
@@ -778,12 +778,12 @@ comp_memb_atom :
       /* group is an identifier */
       if (!EPI_IDENT_IS_GROUP(*group)) 
         exit_error("second parameter of memb must be a group");
-      if (name_create_ident(group, &($$.atom.memb.group)) != 0)
+      if (name_create_ident(group, &(EPI_ATOM_MEMB_GROUP($$))) != 0)
         exit_error("internal error");
     }
     else {
       /* group is a variable */
-      if (name_create_var($5, &($$.atom.memb.group)) != 0)
+      if (name_create_var($5, &(EPI_ATOM_MEMB_GROUP($$))) != 0)
         exit_error("internal error");
     }
   }
@@ -881,19 +881,19 @@ int dump_gnd_atom(gnd_atom_type atom)
   else if (EPI_ATOM_IS_HOLDS(atom))
     fprintf(yyerr, "    %sholds(%s, %s, %s)\n",
            atom.truth == 0 ? "" : "not ",
-           EPI_IDENT_STRING(atom.atom.holds.subject),
-           EPI_IDENT_STRING(atom.atom.holds.access),
-           EPI_IDENT_STRING(atom.atom.holds.object));
+           EPI_IDENT_STRING(EPI_ATOM_HOLDS_SUBJECT(atom)),
+           EPI_IDENT_STRING(EPI_ATOM_HOLDS_ACCESS(atom)),
+           EPI_IDENT_STRING(EPI_ATOM_HOLDS_OBJECT(atom)));
   else if (EPI_ATOM_IS_MEMB(atom))
     fprintf(yyerr, "    %smemb(%s, %s)\n", 
            atom.truth == 0 ? "" : "not ",
-           EPI_IDENT_STRING(atom.atom.memb.element),
-           EPI_IDENT_STRING(atom.atom.memb.group));
+           EPI_IDENT_STRING(EPI_ATOM_MEMB_ELEMENT(atom)),
+           EPI_IDENT_STRING(EPI_ATOM_MEMB_GROUP(atom)));
   else if (EPI_ATOM_IS_SUBST(atom))
     fprintf(yyerr, "    %ssubst(%s, %s)\n", 
            atom.truth == 0 ? "" : "not ",
-           EPI_IDENT_STRING(atom.atom.subst.group1),
-           EPI_IDENT_STRING(atom.atom.subst.group2));
+           EPI_IDENT_STRING(EPI_ATOM_SUBST_GROUP1(atom)),
+           EPI_IDENT_STRING(EPI_ATOM_SUBST_GROUP2(atom)));
 
   return 0;
 }
@@ -905,19 +905,19 @@ int dump_comp_atom(comp_atom_type atom)
   else if (EPI_ATOM_IS_HOLDS(atom))
     fprintf(yyerr, "    %sholds(%s, %s, %s)\n",
            atom.truth == 0 ? "" : "not ",
-           EPI_NAME_STRING(atom.atom.holds.subject),
-           EPI_NAME_STRING(atom.atom.holds.access),
-           EPI_NAME_STRING(atom.atom.holds.object));
+           EPI_NAME_STRING(EPI_ATOM_HOLDS_SUBJECT(atom)),
+           EPI_NAME_STRING(EPI_ATOM_HOLDS_ACCESS(atom)),
+           EPI_NAME_STRING(EPI_ATOM_HOLDS_OBJECT(atom)));
   else if (EPI_ATOM_IS_MEMB(atom))
     fprintf(yyerr, "    %smemb(%s, %s)\n", 
            atom.truth == 0 ? "" : "not ",
-           EPI_NAME_STRING(atom.atom.memb.element),
-           EPI_NAME_STRING(atom.atom.memb.group));
+           EPI_NAME_STRING(EPI_ATOM_MEMB_ELEMENT(atom)),
+           EPI_NAME_STRING(EPI_ATOM_MEMB_GROUP(atom)));
   else if (EPI_ATOM_IS_SUBST(atom))
     fprintf(yyerr, "    %ssubst(%s, %s)\n", 
            atom.truth == 0 ? "" : "not ",
-           EPI_NAME_STRING(atom.atom.subst.group1),
-           EPI_NAME_STRING(atom.atom.subst.group2));
+           EPI_NAME_STRING(EPI_ATOM_SUBST_GROUP1(atom)),
+           EPI_NAME_STRING(EPI_ATOM_SUBST_GROUP2(atom)));
 
   return 0;
 }

@@ -1,5 +1,6 @@
 2003-10-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/expression.h :
 	* exp/comp_atom.h :
 	* exp/gnd_atom.h :
 	
@@ -7,6 +8,7 @@
 	  
 	* exp/comp_exp.c : 
 	* exp/gnd_exp.c :
+	* parser/parser.y :
 
 	  - Used convenience macros.
 

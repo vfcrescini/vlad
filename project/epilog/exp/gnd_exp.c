@@ -188,8 +188,8 @@ int gnd_exp_cmp_subst(void *p1, void *p2)
   if (tmp_atom1->truth != tmp_atom2->truth)
     return -1;
 
-  if (ident_compare(*(EPI_GNDATOM_SUBST_GROUP1(*tmp_atom1)),
-                    *(EPI_GNDATOM_SUBST_GROUP1(*tmp_atom2))) != 0)
+  if (ident_compare(*(EPI_ATOM_SUBST_GROUP1(*tmp_atom1)),
+                    *(EPI_ATOM_SUBST_GROUP1(*tmp_atom2))) != 0)
     return -1;
 
   return 0;
@@ -214,8 +214,8 @@ int gnd_exp_cmp_memb(void *p1, void *p2)
   if (tmp_atom1->truth != tmp_atom2->truth)
     return -1;
 
-  if (ident_compare(*(EPI_GNDATOM_MEMB_ELEMENT(*tmp_atom1)), 
-                    *(EPI_GNDATOM_MEMB_ELEMENT(*tmp_atom2))) != 0)
+  if (ident_compare(*(EPI_ATOM_MEMB_ELEMENT(*tmp_atom1)), 
+                    *(EPI_ATOM_MEMB_ELEMENT(*tmp_atom2))) != 0)
     return -1;
 
   return 0;
@@ -248,7 +248,7 @@ int gnd_exp_group(ident_type ident,
   if (EPI_IDENT_IS_GROUP(ident)) {
     /* if it is a group, we have to look for subset atoms */
     tmp_atom.type = EPI_ATOM_SUBST;
-    EPI_GNDATOM_SUBST_GROUP1(tmp_atom) = &ident;
+    EPI_ATOM_SUBST_GROUP1(tmp_atom) = &ident;
 
     /* now search for atoms where in ident is a subset */
     simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst); 
@@ -256,7 +256,7 @@ int gnd_exp_group(ident_type ident,
   else {
    /* if it is a non-group, we have to look for memb atoms */
    tmp_atom.type = EPI_ATOM_MEMB;
-   EPI_GNDATOM_MEMB_ELEMENT(tmp_atom) = &ident;
+   EPI_ATOM_MEMB_ELEMENT(tmp_atom) = &ident;
 
     /* now search for atoms where in ident is a memb */
     simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb);
@@ -274,9 +274,9 @@ int gnd_exp_group(ident_type ident,
 
     /* get superset */
     if (EPI_IDENT_IS_GROUP(ident))
-      tmp_ident = EPI_GNDATOM_SUBST_GROUP2(*ptr_atom);
+      tmp_ident = EPI_ATOM_SUBST_GROUP2(*ptr_atom);
     else
-      tmp_ident = EPI_GNDATOM_MEMB_GROUP(*ptr_atom);
+      tmp_ident = EPI_ATOM_MEMB_GROUP(*ptr_atom);
 
     /* see if we already have this identifier */
     if (identlist_find(*list, tmp_ident->name) == 0)
@@ -332,13 +332,13 @@ int gnd_exp_eval_holds_atom(ident_type sub,
   /* now go through all the possible combinations of all three lists to
    * see if we find a match */
   for (i = 0; i < identlist_length(tmp_sub); i++) {
-    if (identlist_get(tmp_sub, i, &(EPI_GNDATOM_HOLDS_SUBJECT(tmp_atom))) != 0)
+    if (identlist_get(tmp_sub, i, &(EPI_ATOM_HOLDS_SUBJECT(tmp_atom))) != 0)
       return -1;
     for (j = 0; j < identlist_length(tmp_acc); j++) {
-      if (identlist_get(tmp_acc, j, &(EPI_GNDATOM_HOLDS_ACCESS(tmp_atom))) != 0)
+      if (identlist_get(tmp_acc, j, &(EPI_ATOM_HOLDS_ACCESS(tmp_atom))) != 0)
         return -1;
       for (k = 0; k < identlist_length(tmp_obj); k++) {
-        if (identlist_get(tmp_obj, k, &(EPI_GNDATOM_HOLDS_OBJECT(tmp_atom))) != 0)
+        if (identlist_get(tmp_obj, k, &(EPI_ATOM_HOLDS_OBJECT(tmp_atom))) != 0)
           return -1;
         if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == 0) { 
           *res = epi_res_true;
@@ -471,9 +471,9 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
   EPI_ATOM_NEGATE(atom); 
 
   if (EPI_ATOM_IS_HOLDS(atom)) {
-    if (gnd_exp_eval_holds_atom(*(EPI_GNDATOM_HOLDS_SUBJECT(atom)),
-                                *(EPI_GNDATOM_HOLDS_ACCESS(atom)),
-                                *(EPI_GNDATOM_HOLDS_OBJECT(atom)),
+    if (gnd_exp_eval_holds_atom(*(EPI_ATOM_HOLDS_SUBJECT(atom)),
+                                *(EPI_ATOM_HOLDS_ACCESS(atom)),
+                                *(EPI_ATOM_HOLDS_OBJECT(atom)),
                                 exp,
                                 res) != 0)
       return -1;
@@ -482,8 +482,8 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
       *res = (*res == atom.truth) ? epi_res_true : epi_res_false;
   }
   else if (EPI_ATOM_IS_MEMB(atom)) {
-    if (gnd_exp_eval_memb_atom(*(EPI_GNDATOM_MEMB_ELEMENT(atom)),
-                               *(EPI_GNDATOM_MEMB_GROUP(atom)),
+    if (gnd_exp_eval_memb_atom(*(EPI_ATOM_MEMB_ELEMENT(atom)),
+                               *(EPI_ATOM_MEMB_GROUP(atom)),
                                exp,
                                res) != 0)
       return -1;
@@ -492,8 +492,8 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
       *res = (*res == atom.truth) ? epi_res_true : epi_res_false;
   }
   else if (EPI_ATOM_IS_SUBST(atom)) {
-    if (gnd_exp_eval_memb_atom(*(EPI_GNDATOM_SUBST_GROUP1(atom)),
-                               *(EPI_GNDATOM_SUBST_GROUP2(atom)),
+    if (gnd_exp_eval_memb_atom(*(EPI_ATOM_SUBST_GROUP1(atom)),
+                               *(EPI_ATOM_SUBST_GROUP2(atom)),
                                exp,
                                res) != 0)
       return -1;

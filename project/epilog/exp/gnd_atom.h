@@ -74,13 +74,6 @@ void gnd_atom_destroy(gnd_atom_type *atom);
 int gnd_atom_compare(gnd_atom_type atom1, gnd_atom_type atom2);
 
 /* some convenience macro(s) */
-#define EPI_GNDATOM_MALLOC           ((gnd_atom_type *) malloc(sizeof(gnd_atom_type)))
-#define EPI_GNDATOM_HOLDS_SUBJECT(X) ((X).atom.holds.subject)
-#define EPI_GNDATOM_HOLDS_ACCESS(X)  ((X).atom.holds.access)
-#define EPI_GNDATOM_HOLDS_OBJECT(X)  ((X).atom.holds.object)
-#define EPI_GNDATOM_MEMB_ELEMENT(X)  ((X).atom.memb.element)
-#define EPI_GNDATOM_MEMB_GROUP(X)    ((X).atom.memb.group)
-#define EPI_GNDATOM_SUBST_GROUP1(X)  ((X).atom.subst.group1)
-#define EPI_GNDATOM_SUBST_GROUP2(X)  ((X).atom.subst.group2)
+#define EPI_GNDATOM_MALLOC ((gnd_atom_type *) malloc(sizeof(gnd_atom_type)))
 
 #endif
