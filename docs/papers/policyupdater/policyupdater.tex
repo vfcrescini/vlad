@@ -1544,8 +1544,11 @@ query holds(alice, read, file);
               $find(identifier, type)$ returns true if $identifier$ of type
               $type$ is stored in the symbol table.
             \item
-              $type(identifier)$ returns the identifier type (one of
+              $type(identifier)$ returns the type of $identifier$ (one of
               $\{ss|as|os|sg|ag|og\}$).
+            \item
+              $idx(identifier, type)$ returns the index of the given identifier
+              with the given type.
           \end{itemize}
 
         \paragraph{Policy Base.}
@@ -2066,19 +2069,109 @@ query holds(alice, read, file);
 
           This procedure can also be extended to assign indices to facts in
           states after $S_{0}$. The indices of facts in state $S_{n}$ is offset
-          by the total number of facts in $S_{n - 1}$. Generally, we define
-          the $encode$ function:
+          by the total number of facts in $S_{n - 1}$. To generalize, we define
+          the $encode$ function, which takes a $fact$, a $state$ and the symbol
+          table $stab$ as input:
 
           \begin{alltt}
-FUNCTION \(encode\)(\(fact\))
+FUNCTION \(encode\)(\(fact\), \(state\), \(stab\))
+  \(h\_off\) =
+    (\(stab.ss.len()\) + \(stab.sg.len()\)) \(\times\)
+    (\(stab.as.len()\) + \(stab.ag.len()\)) \(\times\)
+    (\(stab.os.len()\) + \(stab.og.len()\))
+  \(m\_off\) =
+    (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
+    (\(stab.as.len()\) \(\times\) \(stab.ag.len()\)) +
+    (\(stab.os.len()\) \(\times\) \(stab.og.len()\))
+  \(s\_off\) =
+    (\(stab.sg.len()\) \(\times\) \(stab.sg.len()\)) +
+    (\(stab.ag.len()\) \(\times\) \(stab.ag.len()\)) +
+    (\(stab.og.len()\) \(\times\) \(stab.og.len()\))
+
+  \(pos\_off\) = \(h\_off\) + \(m\_off\) + \(s\_off\)
+
   CASE \(fact.type\) OF
     \(holds\) : 
-      \(fact\).\(holds\).\(sub\)
-      \(fact\).\(holds\).\(acc\)
-      \(fact\).\(holds\).\(memb\)
+      \(s\) = \(stab.s.idx\)(\(fact.holds.sub\))
+      \(a\) = \(stab.a.idx\)(\(fact.holds.acc\))
+      \(o\) = \(stab.o.idx\)(\(fact.holds.obj\))
+
+      \(index\) =
+       (\(s\) \(\times\) (\(stab.as.len()\) + \(stab.ag.len()\)) \(\times\)
+            (\(stab.os.len()\) + \(stab.og.len()\))) +
+       (\(a\) \(\times\) (\(stab.os.len()\) + \(stab.og.len()\))) +
+       \(o\)
+
     \(memb\) :
+      \(e\_type\) = \(stab.type\)(\(fact.memb.elt\))
+      \(g\_type\) = \(stab.type\)(\(fact.memb.grp\))
+
+      IF \(basetype\)(\(e\_type\)) !=
+         \(basetype\)(\(g\_type\)) OR 
+         \(is\_group\)(\(e\_type\)) OR
+         NOT \(is\_group\)(\(g\_type\)) THEN
+        RETURN -1
+      ENDIF
+
+      \(e\) = \(stab.idx\)(\(fact.memb.elt\), \(e\_type\))
+      \(g\) = \(stab.idx\)(\(fact.memb.grp\), \(g\_type\))
+      
+      CASE \(basetype\)(\(e\_type)\) OF
+        \(s\) : 
+          \(index\) =
+            \(h\_off\) +
+            (\(e\) \(\times\) \(stab.sg.len()\)) + \(g\)
+        \(a\) : 
+          \(index\) =
+            \(h\_off\) +
+            (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
+            (\(e\) \(\times\) \(stab.ag.len()\)) + \(g\)
+        \(o\) :
+          \(index\) =
+            \(h\_off\) +
+            (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
+            (\(stab.as.len()\) \(\times\) \(stab.ag.len()\)) +
+            (\(e\) \(\times\) \(stab.og.len()\)) + \(g\)
+      ENDCASE
+
     \(subset\) :
+      \(g1\_type\) = \(stab.type\)(\(fact.subst.grp1\))
+      \(g2\_type\) = \(stab.type\)(\(fact.subst.grp2\))
+
+      IF \(g1\_type\) != \(g2\_type\) OR
+         NOT \(is\_group\)(\(g1\_type\)) THEN
+        RETURN -1
+      ENDIF
+
+      \(g1\) = \(stab.idx\)(\(fact.subst.grp1\), \(g1\_type\))
+      \(g2\) = \(stab.idx\)(\(fact.subst.grp2\), \(g2\_type\))
+      
+      CASE \(basetype(g1\_type)\) OF
+        \(s\) : 
+          \(index\) =
+            \(h\_off\) + \(m\_off\) +
+            (\(g1\) \(\times\) \(stab.sg.len()\)) + \(g2\)
+        \(a\) : 
+          \(index\) =
+            \(h\_off\) + \(m\_off\) +
+            (\(stab.sg.len()\) \(\times\) \(stab.sg.len()\)) +
+            (\(g1\) \(\times\) \(stab.ag.len()\)) + \(g2\)
+        \(o\) :
+          \(index\) =
+            \(h\_off\) + \(m\_off\) +
+            (\(stab.sg.len()\) \(\times\) \(stab.sg.len()\)) +
+            (\(stab.ag.len()\) \(\times\) \(stab.ag.len()\)) +
+            (\(g1\) \(\times\) \(stab.og.len()\)) + \(g2\)
+      ENDCASE
   ENDCASE
+
+  \(index\) += (\(state\) \(\times\) \(pos\_off\) \(\times\) \(2\))
+
+  IF \(fact.truth\) THEN
+    \(index\) += \(pos\_off\)
+  ENDIF
+
+  RETURN \(index\)
 ENDFUNCTION
           \end{alltt}
 
