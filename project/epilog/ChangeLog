@@ -1,3 +1,16 @@
+2002-08-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/expression.c :
+
+	  - Adding atoms to an expression will now be checked first.
+	    If the atom is aleady there, simply accept silently, if
+	    the negation is already in, replace the whole expression
+	    with a constant FALSE.
+
+	* parser/parser.y :
+
+	  - Added debug code to dump the contents of the initial expression.
+
 2002-08-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/atom.c:

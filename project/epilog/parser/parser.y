@@ -106,6 +106,39 @@ init :
 
 destroy :
   {
+
+#ifdef DEBUG
+    unsigned int i;
+    unsigned int len;
+    atom_type *tmp_atom = NULL;
+
+    expression_length(initial_exp, &len);
+
+    for (i = 0; i < len; i++) {
+      expression_get(initial_exp, i, &tmp_atom);
+
+      if (EPI_ATOM_IS_CONST(tmp_atom->type))
+        printf("initial state: constant %s\n", tmp_atom->truth == 0 ? "true" : "false");
+      else if (EPI_ATOM_IS_HOLDS(tmp_atom->type))
+        printf("initial state: %sholds(%s, %s, %s)\n",
+               tmp_atom->truth == 0 ? "" : "not ",
+               tmp_atom->atom.holds.subject->name,
+               tmp_atom->atom.holds.access->name,
+               tmp_atom->atom.holds.object->name);
+      else if (EPI_ATOM_IS_MEMB(tmp_atom->type))
+        printf("initial state: %smemb(%s, %s)\n", 
+               tmp_atom->truth == 0 ? "" : "not ",
+               tmp_atom->atom.memb.element->name,
+               tmp_atom->atom.memb.group->name);  
+      else if (EPI_ATOM_IS_SUBST(tmp_atom->type))
+        printf("initial state: %ssubst(%s, %s)\n", 
+               tmp_atom->truth == 0 ? "" : "not ",
+               tmp_atom->atom.subst.group1->name,
+               tmp_atom->atom.subst.group2->name);     
+    }
+    
+#endif
+
     if (destroy() != 0) {
       yyerror("internal error");
       return -1;
