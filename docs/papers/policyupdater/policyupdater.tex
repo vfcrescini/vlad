@@ -1331,9 +1331,9 @@ query holds(alice, read, file);
                 \hline
                 \textbf{Field} & \textbf{Type} & \textbf{Description} \\
                 \hline
-                $element$ & string & single entity identifier \\
+                $elt$ & string & single entity identifier \\
                 \hline
-                $group$ & string & group entity identifier \\
+                $grp$ & string & group entity identifier \\
                 \hline
               \end{tabular}
             \end{quote}
@@ -1344,9 +1344,9 @@ query holds(alice, read, file);
                 \hline
                 \textbf{Field} & \textbf{Type} & \textbf{Description} \\
                 \hline
-                $group1$ & string & subgroup entity identifier \\
+                $grp1$ & string & subgroup entity identifier \\
                 \hline
-                $group2$ & string & supergroup entity identifier \\
+                $grp2$ & string & supergroup entity identifier \\
                 \hline
               \end{tabular}
             \end{quote}
@@ -1439,15 +1439,16 @@ query holds(alice, read, file);
 
     \subsection{Translation to Normal Logic Program}
 
-      \subsubsection{Grounding of Variables}
+      \subsubsection{Grounding of Constraint Variables}
 
       \subsubsection{Representing Facts in Propositional Form}
 
         Given the symbol table $st$, we first enumerate all facts defined
         in the policy base:
 
-        % holds
-        \begin{quote}
+        \paragraph{Holds}
+          \noindent
+
           \begin{tabular}[t]{|l|l|l|}
             \hline
             $st.s[0]$ & $st.a[0]$ & $st.o[0]$ \\
@@ -1458,32 +1459,33 @@ query holds(alice, read, file);
             \hline
              ... & ... & ... \\
             \hline
-            $st.s[0]$ & $st.acc[len(st.acc)]$ & $st.obj[0]$ \\
+            $st.s[0]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
             \hline
             ... & ... & ... \\
             \hline
-            $st.s[0]$ & $st.acc[len(st.a)]$ & $st.o[len(st.o)]$ \\
-            ... & ... & ... \\
-            \hline
-            $st.s[len(st.sub)]$ & $st.a[0]$ & $st.o[0]$ \\
+            $st.s[0]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
             \hline
             ... & ... & ... \\
             \hline
-            $st.s[len(st.sub)]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
+            $st.s[len(st.s)]$ & $st.a[0]$ & $st.o[0]$ \\
             \hline
             ... & ... & ... \\
             \hline
-            $st.s[len(st.sub)]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
+            $st.s[len(st.s)]$ & $st.a[0]$ & $st.o[len(st.o)]$ \\
             \hline
             ... & ... & ... \\
             \hline
-            $st.s[len(st.sub)]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
+            $st.s[len(st.s)]$ & $st.a[len(st.a)]$ & $st.o[0]$ \\
+            \hline
+            ... & ... & ... \\
+            \hline
+            $st.s[len(st.s)]$ & $st.a[len(st.a)]$ & $st.o[len(st.o)]$ \\
             \hline
           \end{tabular}
-        \end{quote}
 
-        % member
-        \begin{quote}
+        \paragraph{Member}
+          \noindent
+
           \begin{tabular}[t]{|l|l|}
             \hline
             % subject
@@ -1532,10 +1534,10 @@ query holds(alice, read, file);
             $st.os[len(st.os)]$ & $st.og[len(st.og)]$ \\
             \hline
           \end{tabular}
-        \end{quote}
 
-        % subset
-        \begin{quote}
+        \paragraph{Subset}
+          \noindent
+
           \begin{tabular}[t]{|l|l|}
             \hline
             % subject
@@ -1568,6 +1570,7 @@ query holds(alice, read, file);
             \hline
             $st.ag[len(st.ag)]$ & $st.ag[len(st.ag)]$ \\
             \hline
+            % object
             $st.og[0]$ & $st.og[0]$ \\
             \hline
             ... & ... \\
@@ -1583,8 +1586,6 @@ query holds(alice, read, file);
             $st.og[len(st.og)]$ & $st.og[len(st.og)]$ \\
             \hline
           \end{tabular}
-        \end{quote}
-
 
 
   \section{Case Study: Web Server Application}
