@@ -169,16 +169,25 @@ static int processreq(apr_pool_t *a_p,
                                ((const char **)a_req->elts)[3],
                                ((const char **)a_req->elts)[4]);
 
-    vlad_kb_query_evaluate(a_kb, exp, &res);
+    if (!exp) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
+
+    if (vlad_kb_query_evaluate(a_kb, exp, &res) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
 
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "QR");
+
     if (res == VLAD_RESULT_TRUE) 
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "Y");
     else if (res == VLAD_RESULT_FALSE) 
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "N");
     else 
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "?");
-
+  
     /* cleanup */
     vlad_exp_destroy(exp);
   }
@@ -221,7 +230,10 @@ static int processreq(apr_pool_t *a_p,
 
     idx = ((char **)a_req->elts)[2];
 
-    vlad_kb_get_symtab(a_kb, atoi(idx), &name);
+    if (vlad_kb_get_symtab(a_kb, atoi(idx), &name) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
 
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "IGR");
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, name);
@@ -241,7 +253,10 @@ static int processreq(apr_pool_t *a_p,
 
     idx = ((char **)a_req->elts)[2];
 
-    vlad_kb_get_seqtab(a_kb, atoi(idx), &name, &list);
+    if (vlad_kb_get_seqtab(a_kb, atoi(idx), &name, &list) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
 
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "SGR");
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, name);
@@ -257,21 +272,31 @@ static int processreq(apr_pool_t *a_p,
     name = ((char **)a_req->elts)[2];
     num = ((char **)a_req->elts)[3];
 
-    vlad_strlist_create(&slist);
-    vlad_tref_create(&tref);
+    if (vlad_strlist_create(&slist) != VLAD_OK ||
+        vlad_tref_create(&tref) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
 
     for (i = 0; i < atoi(num); i++) {
       char *parm = NULL;
       parm = ((char **)a_req->elts)[4 + i];
-      vlad_strlist_add(slist, parm);
+
+      if (vlad_strlist_add(slist, parm) != VLAD_OK) {
+        *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+        return MODVLAD_FAILURE;
+      }
+
+      if (vlad_tref_init(tref, name, slist) != VLAD_OK ||
+          vlad_kb_add_seqtab(a_kb, tref) != VLAD_OK ||
+          vlad_kb_compute_evaluate(a_kb) != VLAD_OK) {
+        *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+        return MODVLAD_FAILURE;
+      }
+
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "SAR");
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "0");
     }
-
-    vlad_tref_init(tref, name, slist);
-    vlad_kb_add_seqtab(a_kb, tref);
-    vlad_kb_compute_evaluate(a_kb);
-
-    *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "SAR");
-    *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "0");
   }
   else if (!strcmp(cmd, "SD")) {
     /* delete from sequence */
@@ -279,8 +304,11 @@ static int processreq(apr_pool_t *a_p,
 
     idx = ((char **)a_req->elts)[2];
 
-    vlad_kb_del_seqtab(a_kb, atoi(idx));
-    vlad_kb_compute_evaluate(a_kb);
+    if ((vlad_kb_del_seqtab(a_kb, atoi(idx)) != VLAD_OK) ||
+         vlad_kb_compute_evaluate(a_kb) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
 
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "SDR");
     *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "0");
@@ -320,12 +348,17 @@ int modvlad_client_query(apr_pool_t *a_p,
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
 
+  if (strcmp(((char **)arr_in->elts)[1], "QR"))
+    return MODVLAD_FAILURE;
+
   if (!strcmp(((char **)arr_in->elts)[2], "Y"))
     *a_res = VLAD_RESULT_TRUE;
   else if (!strcmp(((char **)arr_in->elts)[2], "N"))
     *a_res = VLAD_RESULT_FALSE;
-  else 
+  else if (!strcmp(((char **)arr_in->elts)[2], "?"))
     *a_res = VLAD_RESULT_UNKNOWN;
+  else
+    return MODVLAD_FAILURE;
 
   return MODVLAD_OK;
 }
@@ -350,6 +383,9 @@ int modvlad_client_trans_total(apr_pool_t *a_p,
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (strcmp(((char **)arr_in->elts)[1], "TTR"))
+    return MODVLAD_FAILURE;
 
   *a_tot = atoi(((char **)arr_in->elts)[2]);
 
@@ -380,6 +416,9 @@ int modvlad_client_trans_get(apr_pool_t *a_p,
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
 
+  if (strcmp(((char **)arr_in->elts)[1], "TGR"))
+    return MODVLAD_FAILURE;
+
   *a_name = apr_pstrdup(a_p, ((char **)arr_in->elts)[2]);
   *a_tot = atoi(apr_pstrdup(a_p, ((char **)arr_in->elts)[3]));
 
@@ -406,6 +445,9 @@ int modvlad_client_ident_total(apr_pool_t *a_p,
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (strcmp(((char **)arr_in->elts)[1], "ITR"))
+    return MODVLAD_FAILURE;
 
   *a_tot = atoi(((char **)arr_in->elts)[2]);
 
@@ -435,6 +477,9 @@ int modvlad_client_ident_get(apr_pool_t *a_p,
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
 
+  if (strcmp(((char **)arr_in->elts)[1], "IGR"))
+    return MODVLAD_FAILURE;
+
   *a_name = apr_pstrdup(a_p, ((char **)arr_in->elts)[2]);
 
   return MODVLAD_OK;
@@ -460,6 +505,9 @@ int modvlad_client_seq_total(apr_pool_t *a_p,
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (strcmp(((char **)arr_in->elts)[1], "STR"))
+    return MODVLAD_FAILURE;
 
   *a_tot = atoi(((char **)arr_in->elts)[2]);
 
@@ -488,6 +536,9 @@ int modvlad_client_seq_get(apr_pool_t *a_p,
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (strcmp(((char **)arr_in->elts)[1], "SGR"))
+    return MODVLAD_FAILURE;
 
   *a_name = apr_pstrdup(a_p, ((char **)arr_in->elts)[2]);
 
@@ -520,6 +571,9 @@ int modvlad_client_seq_add(apr_pool_t *a_p,
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
 
+  if (strcmp(((char **)arr_in->elts)[1], "SAR"))
+    return MODVLAD_FAILURE;
+
   return !strcmp(((char **)arr_in->elts)[2], "0") ? MODVLAD_OK : MODVLAD_FAILURE;
 }
 
@@ -544,6 +598,9 @@ int modvlad_client_seq_del(apr_pool_t *a_p,
 
   sendfd(a_fdin, a_mx, arr_out);
   receivefd(a_fdout, a_mx, arr_in);
+
+  if (strcmp(((char **)arr_in->elts)[1], "SDR"))
+    return MODVLAD_FAILURE;
 
   return !strcmp(((char **)arr_in->elts)[2], "0") ? MODVLAD_OK : MODVLAD_FAILURE;
 }
