@@ -1,6 +1,6 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-AC_INIT(vlad,0.0.1,jcrescin@cit.uws.edu.au)
+AC_INIT(vlad,0.0.2,jcrescin@cit.uws.edu.au)
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LEX
