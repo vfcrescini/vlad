@@ -291,17 +291,25 @@
 
     The diagram in Figure \ref{fig-1} illustrates how access control is
     enforced in a simplified HTTP request. (1) client makes a {\em GET}
-    request for a file; (2) the access control modules check if a policy is
-    associated with the resource, then evaluates the policy to decide whether
-    to allow or deny the request; (3) if the request is allowed, it is then
-    passed on to other request handlers for processing; and (4) eventually, the
-    transaction is completed by sending the requested file back to the client.
+    request for a file; (2) the access control modules evaluate the request
+    against the policy to decide whether to allow or deny the request; (3) if
+    the request is allowed, it is then passed on to other request handlers for
+    processing and eventually, the transaction is completed by sending the
+    requested file back to the client.
 
-    add: http request methods
+    [add: http request methods]
 
-    add: details of apache policy description.
+    [add: details of apache policy description]
 
     \subsection{Integration of PolicyUpdater}
+
+      \begin{figure}[ht]
+        \begin{center}
+          \epsfig{file=polupdate_apache.eps}
+          \caption{Apache Access Contro Mechanism with PolicyUpdater}
+          \label{fig-2}
+        \end{center}
+      \end{figure}
 
       \paragraph{\bf Policy Description}
 

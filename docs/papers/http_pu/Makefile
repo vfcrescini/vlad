@@ -6,7 +6,7 @@ PSPDF=ps2pdf
 FIG2DEV=fig2dev
 
 LATEX_SRCS=http_pu
-XFIG_SRCS=apache
+XFIG_SRCS=apache polupdate_apache
 
 CLASS=llncs.cls
 
@@ -37,7 +37,7 @@ ps : $(patsubst %,%.ps,$(LATEX_SRCS))
 
 pdf : $(patsubst %,%.pdf,$(LATEX_SRCS))
 
-http_pu.dvi : http_pu.tex apache.eps $(CLASS)
+http_pu.dvi : http_pu.tex apache.eps polupdate_apache.eps $(CLASS)
 	$(LATEX) http_pu.tex
 	$(LATEX) http_pu.tex
 
