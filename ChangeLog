@@ -1,3 +1,27 @@
+2003-03-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/Makefile.in :
+	* common/stringlist.cpp :
+	* common/stringlist.h :
+
+	  - Added a simple string list class.
+
+	* kb/Makefile.in :
+	* kb/identifier.h :
+	* kb/identifier.cpp :
+
+	  - Removed identifier class. Now identifiers will be stored
+	    simply as a string.
+
+	* kb/kb.cpp :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+
+	  - Took out identlist class and replaced it with stringlist
+	    since identifiers are now stored as strings.
+
+	  - Simplified some macro definitions.
+
 2003-03-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.cpp :
