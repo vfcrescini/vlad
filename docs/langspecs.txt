@@ -156,25 +156,24 @@ Started 2002 Dec 08
       <trans-identifier> is the identifier of this transformation.
 
       <post-condition-expression> an expression that will be true in the
-        resulting state after the transformation is the identifier of this
-        transformation.
+        resulting state after the transformation is applied.
 
       <pre-condition-expression> an expression that must be true in the
         current state before the transformation may be applied.
 
     Note that a transformation definition statement may have variables:
 
-      tdelete-write(vSUBJECT, vOBJECT)
+      delete_write(vSUBJECT, vOBJECT)
       causes !holds(vSUBJECT, a_write, vOBJECT)
       if holds(vSUBJECT, a_write, vOBJECT)
 
     this means 
 
-      tdelete-write(subject1, object1)
+      delete_write(subject1, object1)
 
     and
 
-      tdelete-write(subject2, object2)
+      delete_write(subject2, object2)
 
     will cause
 
