@@ -114,10 +114,6 @@ class kb {
     unsigned int s_tot;
     unsigned int pos_tot;
     unsigned char stage;
-#ifdef VLAD_SMODELS
-    /* checks whether the given atom is true, false or unknown */
-    int evaluate_atom(unsigned int a_atom, unsigned char *a_res);
-#endif
     /* make sure atom a is valid */
     int verify_atom(atom *a, stringlist *v);
     /* make sure expression e is valid */
@@ -162,5 +158,11 @@ class kb {
     unsigned int compute_member(unsigned int a_st, bool a_tr, char a_ty, unsigned int a_elt, unsigned int a_grp);
     /* returns a subset atom id based on the info given */
     unsigned int compute_subset(unsigned int a_st, bool a_tr, char a_ty, unsigned int a_grp1, unsigned int a_grp2);
+    /* dumps the string representation of the given numeric atom to fs */
+    int print_atom(unsigned int a_atm, FILE *a_fs);
+#ifdef VLAD_SMODELS
+    /* checks whether the given atom is true, false or unknown */
+    int evaluate_atom(unsigned int a_atom, unsigned char *a_res);
+#endif
 } ;
 #endif
