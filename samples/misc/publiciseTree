@@ -4,25 +4,28 @@
 # Vino Crescini
 # 11 June 2001
 
-# recursive chmod, treat files 
+# recursive chmod and chown, treat files 
 # and dirs differently
 
-DIR_PERMISSION=777
-FILE_PERMISSION=666
+DIR_PERMISSION=775
+FILE_PERMISSION=644
+OWNER=root
+GROUP=users
 
-if [ $# = 1 ] 
+if [ ${#} = 1 ] 
 then
-  if [ -d $1 ]
+  if [ -d ${1} ]
   then
-    find $1 | while read i
+    find ${1} | while read i
     do
-      if [ -d "$i" ]
+      if [ -d "${i}" ]
       then
-        chmod $DIR_PERMISSION "$i"
-        echo dir : $i
+        chown ${OWNER}:${GROUP} "${i}"
+        chmod ${DIR_PERMISSION} "${i}"
+        echo dir : ${i}
       else
-        chmod $FILE_PERMISSION "$i"
-        echo file : $i
+        chmod ${FILE_PERMISSION} "${i}"
+        echo file : ${i}
       fi
     done
   fi
