@@ -20,11 +20,16 @@
 #define MODVLAD_LOGLEVEL APLOG_NOTICE
 #endif
 
+extern void policyparse();
+extern void policy_set_yyinput(int (*a_func)(void *, char *, int), void *a_stream);
+
 typedef struct {
   char *user_file;
   char *policy_file;
   void *kb;
 } modvlad_config_rec;
+
+int modvlad_yyinput(void *a_stream, char *a_buf, int a_max);
 
 static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d);
 static char *modvlad_get_passwd(request_rec *a_r,
@@ -58,6 +63,16 @@ module AP_MODULE_DECLARE_DATA modvlad_module =
   modvlad_auth_cmds,
   modvlad_register_hooks,
 };
+
+int modvlad_yyinput(void *a_stream, char *a_buf, int a_max)
+{
+  apr_size_t size = (apr_size_t) a_max;
+  apr_file_t *file = (apr_file_t *) a_stream;
+
+  apr_file_read(file, (void *) a_buf, &size);
+
+  return size;
+}
 
 static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
 {
@@ -241,6 +256,7 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                                     const char *a_pname)
 {
   modvlad_config_rec *conf = NULL;
+  apr_file_t *polfile;
 
 #ifdef DEBUG
   ap_log_perror(APLOG_MARK,
@@ -265,6 +281,15 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                             conf->kb,
                             kb_destroy,
                             apr_pool_cleanup_null);
+
+  /* now for some real initialisation */
+  apr_file_open(&polfile, conf->policy_file, APR_READ, APR_OS_DEFAULT, a_cmd->pool);
+
+  policy_set_yyinput(modvlad_yyinput, (void *)polfile);
+
+  policyparse();
+
+  apr_file_close(polfile);
 
   return NULL;
 }

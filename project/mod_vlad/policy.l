@@ -5,7 +5,7 @@
 
 %option nounput
 %option noyywrap
-%option always-interactive
+%option never-interactive
 %s COMMENT
 
 %{
@@ -13,6 +13,17 @@
 #include <string.h>
 
 #include "policy.tab.h"
+
+#undef YY_INPUT
+#define YY_INPUT(a_buf, a_res, a_max) \
+  (a_res = custom_yyinput(custom_stream, a_buf, a_max))
+
+void policy_set_yyinput(int (*a_func)(void *, char *, int), void *a_stream);
+
+static int default_yyinput(void *a_stream, char *a_buf, int a_maxsize);
+static int (*custom_yyinput)(void *, char *, int) = &default_yyinput;
+
+void *custom_stream = &policyin;
 %}
 
 begin_comment      \/\*
@@ -134,3 +145,25 @@ everything         .
 }
 
 %%
+
+/* default is to just fread a_str, which is just a FILE* */
+static int default_yyinput(void *a_stream, char *a_buf, int a_maxsize)
+{
+  int res;
+  FILE *tmp = (FILE *) a_stream;
+
+  /* if an error is encountered, assume EOF */
+  if (((res = fread(a_buf, 1, a_maxsize, tmp)) == 0) && ferror(tmp)) {
+    *a_buf = EOF;
+    return 1;
+  }
+
+  return res;
+}
+
+/* func to register a new yyinput func */
+void policy_set_yyinput(int (*a_func)(void *, char *, int), void *a_stream)
+{
+  custom_yyinput = (a_func) ? a_func : &default_yyinput;
+  custom_stream = (a_stream) ? a_stream : (void *) policyin;
+}
