@@ -1,5 +1,10 @@
+2002-06-13  Vino Crescini  <jvcrescini@yahoo.com>
 
-2002-03-15  <vino@igelaus.com.au>
+	* hwaddr.c :
+
+	  - Added include directive to get rid of warnings.
+
+2002-03-15  Vino Crescini  <jvcrescini@yahoo.com>
 
 	* ChangeLog :
 
