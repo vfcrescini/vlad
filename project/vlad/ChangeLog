@@ -5,6 +5,8 @@
 
 	  - Added code to store ground expressions.
 
+	  - Duplicate atoms are ignored and only stored once.
+
 2003-03-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.cpp :
