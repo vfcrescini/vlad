@@ -1,5 +1,12 @@
 2002-09-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* trans/transtab.c :
+	* trans/transtab.h :
+
+	  - Added transform function in transtab. Takes an initial expression,
+	    the tranformation name with the variable replacements then
+	    gives out the resulting expression.
+
 	* exp/comp_exp.c :
 
 	  - Fixed pointer bug.

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <simplelist.h>
+#include <comp_exp.h>
 #include "transtab.h"
 
 int transtab_compare(void *p1, void *p2);
@@ -74,6 +75,74 @@ int transtab_find(char *name)
   return simplelist_find_data(list,
                               (void *) &tmp_trans,
                               transtab_compare);
+}
+
+/* gives the resulting expression after the transformation is performed */
+int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
+{
+  transdef_type *tmp_trans;
+  gnd_atom_type *tmp_atom;
+  gnd_exp_type tmp_precond;
+  gnd_exp_type tmp_postcond;
+  res_type tmp_res;
+  unsigned int len;
+  unsigned int i;
+
+  if (res == NULL)
+    return -1;
+
+  /* get a reference of the tranformation from the transtab */
+  if (transtab_get(tr.name, &tmp_trans) != 0)
+    return -1;
+  
+  /* replace the precondition of the transformation with the list of
+   * identifiers provided when the tranformation was referenced */
+  if (comp_exp_replace(tmp_trans->precond,
+                       &tmp_precond,
+                       tmp_trans->varlist,
+                       tr.identlist) != 0)
+    return -1;
+
+  /* copy kb in res */
+  if (gnd_exp_copy(kb, res) != 0)
+    return -1;
+
+  /* see if the precondition is true in the kb */
+  if (gnd_exp_eval(tmp_precond, kb, &tmp_res) != 0)
+    return -1;
+
+  /* before doing anything else, do some cleanup */
+  if (gnd_exp_purge(&tmp_precond) != 0)
+    return -1;
+
+  /* if the result is false or unknown we just return with a copy
+   * of kb in res */
+  if (tmp_res == epi_res_false || tmp_res == epi_res_unknown)
+    return 0;
+
+  /* at this point we the precondition holds in kb so we add the
+   * postcondition in res */
+  
+  /* replace the postcondition of the transformation with the list of
+   * identifiers provided when the tranformation was referenced */
+  if (comp_exp_replace(tmp_trans->postcond,
+                       &tmp_postcond,
+                       tmp_trans->varlist,
+                       tr.identlist) != 0)
+    return -1;
+
+  /* now we individually add each atom in the postcondition to res */
+  if (gnd_exp_length(tmp_postcond, &len) != 0)
+    return -1;
+
+  for (i = 0; i < len; i++) {
+    if (gnd_exp_get(tmp_postcond, i, &tmp_atom) != 0)
+      return -1;
+    if (gnd_exp_add(res, *tmp_atom) != 0)
+      return -1;
+  }
+
+  return gnd_exp_purge(&tmp_postcond);
 }
 
 /* empty the list */
