@@ -1,5 +1,15 @@
 2003-05-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* configure :
+	* configure.ac :
+	* rules.mk :
+	* lib/Makefile.in :
+	* main/Makefile.in :
+
+	  - Library moved from dist/lib/vlad to dist/lib.
+
+	  - Cleanup.
+
 	* Makefile.in :
 	* configure :
 	* configure.ac :
