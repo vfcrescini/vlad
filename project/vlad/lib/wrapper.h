@@ -69,6 +69,8 @@ VLAD_EXTERN int vlad_strlist_add(void *a_slist, const char *a_s);
 VLAD_EXTERN int vlad_atom_create(void **a_atm);
 /* destroy an atom */
 VLAD_EXTERN int vlad_atom_destroy(void *a_atm);
+/* negate an atom */
+VLAD_EXTERN int vlad_atom_negate(void *a_atm);
 /* initialise atoms */
 VLAD_EXTERN int vlad_atom_init_holds(void *a_atm,
                                      const char *a_s,
