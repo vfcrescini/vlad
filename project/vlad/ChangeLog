@@ -1,5 +1,12 @@
 2003-07-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/kb.cpp :
+	* lib/kb.h :
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+
+	  - Added symtab_get_array().
+
 	* lib/wrapper.cpp :
 	* lib/wrapper.h :
 
