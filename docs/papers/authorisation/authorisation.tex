@@ -1,11 +1,10 @@
 % Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-\documentclass[a4paper,draft]{article}
-\usepackage[light]{draftcopy}
+\documentclass[a4paper]{article}
 \usepackage{moreverb}
 \author{Vino Fernando Crescini\\jcrescin@cit.uws.edu.au\\\\Intelligent Systems Laboratory\\School of Computing and Information Technology\\University of Western Sydney}
 \title{Implementing a High-Level Description Language for a Sequence of Transformations of Authorisation Policies}
-\date{17/03/2003}
+\date{21/03/2003}
 \begin{document}
   \maketitle
   \section{Introduction}
@@ -64,7 +63,7 @@
       As mentioned above, there has been quite a few studies made in this
       field. However, most if not all of the work in this field have a very
       specific, and different, purpose that what is intended in this paper.
-      Those studies that do propose an authorisation system rarely provides
+      Those studies that do propose an authorisation system rarely provide
       enough detail to fully cover the issues involved to implement such a
       system. Moreover, at the time of writing, there is no known
       implementation of a logic-based access control system.
@@ -94,8 +93,6 @@
       a discussion of the implementation issues of both the logic engine and
       the application program. Finally, an up-to-date progress report can be
       found at the conclusion section of this paper.
-
-    \pagebreak
 
   \section{A Formal Authorisation Language}
 
@@ -144,9 +141,9 @@
           hand, simply means that a proposition is assumed to be false if
           there is no evidence that the proposition is true. \cite{GV}
 
-          The language uses \emph{not}, or symbolically, \emph{!} as classical
-          negation. Negation as failure is achieved by the \emph{with absence}
-          clause of the constraint statement.
+          The language uses \emph{$\lnot$}, or symbolically, \emph{!} as
+          classical negation. Negation as failure is achieved by the
+          \emph{with absence} clause of the constraint statement.
 
         \item
           Query Functionality
@@ -433,8 +430,6 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
     The statement will return one of the following: \emph{true}, \emph{false}
     or \emph{?}.
 
-    \pagebreak
-
   \section{Translation into a Logic Program}
 
     \subsection{Conversion to Extended Logic Program: Flattening the States}
@@ -708,8 +703,6 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
             false $\leftarrow$ holds(C, S$_{1}$, t) $\land$ holds(C, S$_{1}$, f)
         \end{list}
 
-    \pagebreak
-
   \section{System Structure}
 
     \subsection{Parser1: Epilog}
@@ -854,8 +847,6 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
       reply, it will grant the user making the request access the site.
       A denied reply would cause it to revoke the request.
 
-    \pagebreak
-
   \section{Conclusion}
 
     Although the first parser, Epilog, is capable of performing normal 
@@ -884,8 +875,6 @@ http://www.cit.uws.eud.au/~jcrescin/project/epilog/current.tar.gz
     \begin{verbatim}
 http://www.cit.uws.edu.au/~jcrescin/project/vlad/current.tar.gz
     \end{verbatim}
-
-    \pagebreak
 
   \begin{thebibliography}{}
     \bibitem{BV1}Y. Bai and V. Varadharajan, \emph{On Transformation of Authorization Policies}. School of Computing and Information Technology, University of Western Sydney, 1997.
