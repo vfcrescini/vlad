@@ -43,6 +43,10 @@ class kb {
                      expression *po);
     /* generate a human-readable general logic program and dump output to f */
     int generate_nlp(expression *e, sequence *s, FILE *f);
+#ifdef SMODELS
+    /* use wrapper class to evaluate a query */
+    int evaluate_query(expression *e, sequence *s, unsigned char *r);
+#endif
   private :
     symtab *stable;
     expression *itable;
