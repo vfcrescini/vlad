@@ -312,11 +312,11 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
 
   /* finally, compute */
 
-  vlad_kb_compute_evaluate(conf->kb);
-
 #ifdef MODVLAD_DEBUG
   vlad_kb_compute_generate(conf->kb, stderr);
   fflush(stderr);
+#else
+  vlad_kb_compute_evaluate(conf->kb);
 #endif
 
   return NULL;
