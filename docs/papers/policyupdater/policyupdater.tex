@@ -1,4 +1,4 @@
-\documentclass[global,twocolumn]{svjour}
+\documentclass[global,twocolumn,draft]{svjour}
 \usepackage{times}
 \usepackage{amsmath}
 \usepackage{alltt}
@@ -51,7 +51,7 @@
     School of Computing and Information Technology \\
     University of Western Sydney                   \\
     Penrith South DC, NSW 1797, Australia          \\
-    \email{\{jcrescin,yan\}@cit.uws.edu.au}        \\
+    \email{\{jcrescin,yan\}@cit.uws.edu.au}
   }
 
   \maketitle
@@ -68,8 +68,8 @@
   \end{abstract}
 
   \footnotetext{
-    PolicyUpdater homepage: {\tt \scriptsize http://www.cit.uws.edu.au/
-    \~{}jcrescin/projects/PolicyUpdater/index.html}
+    PolicyUpdater homepage at:
+    {\tt \scriptsize http://www.cit.uws.edu.au/\~{}jcrescin/projects/PolicyUpdater}
   }
 
   \section{Introduction}
@@ -189,8 +189,8 @@
               \end{vverbatim}
 
             \item
-              {\em Variable Identifiers} are used as entity identifier
-              place-holders. To distinguish them from entity and policy update
+              {\em Variable Identifiers} are used as place-holders for entity
+              identifiers. To distinguish them from entity and policy update
               identifiers, variable identifiers are prefixed with an upper-case
               character, followed by 0 to 127 alphanumeric and underscore
               characters. The following regular expression shows the syntax of
@@ -238,7 +238,7 @@
           identifiers, are called {\em ground atoms}.
 
         \paragraph{Facts.}
-          A fact makes a claim that the relationship represented by an atom or
+          A fact states that the relationship represented by an atom or
           its negation holds in the current context. Facts are negated by the
           use of the negation operator ($!$). The following shows the formal
           syntax of a fact:
@@ -290,16 +290,16 @@
 
         \paragraph{Constraint Definition.}
 
-          Constraints are logical rules that hold regardless of any changes
-          that may occur when the policy base is updated. The constraint rules
-          are true in the initial state and remain true after any policy
+          A constraint statement is a logical rule that holds regardless of any
+          changes that may occur when the policy base is updated. Constraint
+          rules are true in the initial state and remain true after any policy
           update.
 
           The constraint syntax below shows that for any state of the policy
           base, expression $exp1$ holds if expression $exp2$ is true and there
           is no evidence that $exp3$ is true. The $with$ $absence$ clause
-          allows constraints to behave like default propositions, where the
-          absence of proof that an expression holds  satisfies the clause
+          allows constraints to have a default proposition behaviour, where
+          the absence of proof that an expression holds  satisfies the clause
           condition of the proposition.
 
           It is important to note that the expressions $exp1$, $exp2$ and
@@ -514,8 +514,8 @@
         All other states are represented as a resulting state obtained by
         applying the $Res$ function.
 
-        The $Res$ function takes a policy update reference $u$, where $u$
-        $\in$ $\psi$, and the current state $\sigma$ as input arguments and
+        The $Res$ function takes a policy update reference $u$ ($u$ $\in$
+        $\psi$) and the current state $\sigma$ as input arguments and
         returns the resulting state $\sigma'$ after update $u$ has been applied
         to state $\sigma$:
 
@@ -655,18 +655,18 @@
           \end{math}
         \end{vquote}
 
-        The other function, $TransFact$, is similar to the $TransAtom$
+        The $TransFact$ function is similar to the $TransAtom$
         function, but instead of translating an atom, it takes a fact
         from language ${\cal L}$ and a state then returns the equivalent
         fact in language ${\cal L}^{*}$.
 
         \paragraph{Initial Fact Rules.}
 
-          Translating initial fact expressions of language ${\cal L}$ to
-          language ${\cal L}^{*}$ rules is a trivial procedure: translate each
-          fact that make up the initial fact expression of language ${\cal L}$
-          with its corresponding equivalent initial state atom of language
-          ${\cal L}^{*}$.
+          The process of franslating initial fact expressions of language
+          ${\cal L}$ to language ${\cal L}^{*}$ rules is trivial:
+          translate each fact that make up the initial fact expression of
+          language ${\cal L}$ with its corresponding equivalent initial state
+          atom of language ${\cal L}^{*}$.
 
           Given an initial fact expression of language ${\cal L}$ that is
           composed of $n$ facts:
@@ -688,7 +688,7 @@
             $0$ $\leq$ $i$ $\leq$ $n$
           \end{vquote}
 
-          The following code shows an example of language ${\cal L}$
+          The following code shows an example of a language ${\cal L}$
           $initially$ statement:
 
           \begin{vverbatim}
@@ -740,10 +740,10 @@
             $not$ $c_{0}$, \ldots, $not$ $c_{o}$
           \end{vquote}
 
-          Under the definition of constraints, each of the rules above must be
-          made to hold in all states as defined by the sequence list $\psi$.
-          This can be accomplished by translating each of the rules above to
-          a set of $|\psi|$ rules, one for each state.
+          Under the definition of constraints, each of the rules listed above
+          must be made to hold in all states as defined by the sequence list
+          $\psi$. This can be accomplished by translating each of the above
+          rules to a set of $|\psi|$ rules, one for each state.
 
            \begin{vquote}
             $\hat{a}^{S_{0}}_{0}$ $\leftarrow$
@@ -881,7 +881,7 @@
     if memb(alice, writers);
           \end{vverbatim}
 
-          Given the update sequence list $\psi$ $=$
+          Given the update sequence list $\psi$ constains
           \{$grant\_read$, $grant\_write$\}, the above statements are written
           in language ${\cal L}^{*}$ as:
 
@@ -903,9 +903,9 @@
 
         \paragraph{Additional Constraints.}
 
-          In addition to the above translations, there are a few other implicit
-          constraint rules implied by language ${\cal L}$ that needs to be
-          explicitly defined in language ${\cal L}^{*}$.
+          In addition to the translations discussed above, there are a few
+          other implicit constraint rules implied by language ${\cal L}$
+          that need to be explicitly defined in language ${\cal L}^{*}$.
 
           \subparagraph{Inheritance rules.}
             All properties held by a group is inherited by all the members and
@@ -1415,15 +1415,15 @@
         \end{vexample}
 
         From the above example, it may be observed that given a domain
-        description ${\cal D_{L}}$, the language ${\cal L^{*}}$ translation
-        $Trans$(${\cal D_{L}}$) may contain more rules than the original
-        statements in ${\cal D_{L}}$. However, as the theorem below defines the
-        maximum number of rules generated in a translation
-        $Trans$(${\cal D_{L}}$), it shows that the size of a translated
-        domain $|$$Trans$(${\cal D_{L}}$)$|$ is only polynomially larger
-        than the size of the given domain $|$${\cal D_{L}}$$|$. Therefore, from
-        a computational viewpoint, computing the answer sets of
-        $Trans$(${\cal D_{L}}$) is always feasible.
+        description ${\cal D_{L}}$, the translation $Trans$(${\cal D_{L}}$) may
+        contain more rules than the original statements in ${\cal D_{L}}$.
+        However, as the theorem below defines the maximum number of rules
+        generated in a translation $Trans$(${\cal D_{L}}$), it shows that
+        the size of a translated domain $|$$Trans$(${\cal D_{L}}$)$|$ is only
+        polynomially larger than the size of the given domain
+        $|$${\cal D_{L}}$$|$. Therefore, from a computational viewpoint,
+        computing the answer sets of $Trans$(${\cal D_{L}}$) is always
+        feasible.
 
         \begin{vtheorem}{Translation Size}
           \label{the-size}
@@ -1627,8 +1627,8 @@
           $\overline{Eff(\gamma)}$ $\cap$ $Pre(\gamma)$ = $\emptyset$.
         \item
           For any two constraint statements $\gamma$ and $\gamma'$ in
-          ${\cal D_{L}}$, $Def(\gamma)$ $\cap$ $Eff(\gamma')$ =
-          $\emptyset$.
+          ${\cal D_{L}}$, including $\gamma$ = $\gamma'$, $Def(\gamma)$ $\cap$
+          $Eff(\gamma')$ = $\emptyset$.
         \item
           For any two {\em complementary} statements $\gamma$ and $\gamma'$ in
           ${\cal D_{L}}$, there exists a pair of ground expression $\epsilon$
@@ -1646,13 +1646,13 @@
       {\em consistent}.
     \end{vtheorem}
 
-    Basically, only consistent domain descriptions can be evaluated in terms
-    of user queries. For this reason, Theorem \ref{the-cons} may be used to
-    check whether a domain description is consistent.
+    As only consistent domain descriptions can be evaluated in terms of user
+    queries, Theorem \ref{the-cons} may be used to check whether a domain
+    description is consistent.
 
     \begin{vdefinition}
       \label{def-eval}
-      Given a {\em consistent} domain description ${\cal D}_{\cal L}$, ground
+      Given a {\em consistent} domain description ${\cal D}_{\cal L}$, a ground
       query expression $\phi$ and a finite sequence list $\psi$, we say
       {\em query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
       in sequence list $\psi$ have been applied}, denoted as
@@ -1677,8 +1677,8 @@
     \begin{vexample}
       \label{ex-3}
       Given the language ${\cal L}$ code listing in Example \ref{ex-1} and its
-      semantic translation in Example \ref{ex-2}, where $\psi$ =
-      \{$delete\_read$($grp1$, $file$)\}. The following shows the
+      semantic translation in Example \ref{ex-2}, where the update sequence
+      list $\psi$ = \{$delete\_read$($grp1$, $file$)\}. The following shows the
       results of each query $\phi$:
 
       \begin{vquote}
@@ -1710,7 +1710,7 @@
     \end{figure}
 
       As shown in Figure \ref{fig-1}, the PolicyUpdater system works in
-      collaboration with an authorisation agent program that queries the
+      conjunction with an authorisation agent program that queries the
       policy base to determine whether to allow users access to resources.
       Through an authorisation agent program, the PolicyUpdater system also
       allows administrators to dynamically update the policy base by adding
@@ -1739,12 +1739,12 @@
 
       \subsubsection{Data Structures}
 
-        As a program of language ${\cal L}$ is parsed, each statement
-        containing entity declarations, facts, constraint rules and policy
-        updates must be stored into a structure before the translation process
-        is started. As shown in Appendix \ref{app-store}, the structure is composed
-        of the symbol table, the policy base and the policy update sequence
-        table.
+        As language ${\cal L}$ program is parsed, each statement containing
+        entity declarations, initial facts, constraint rules and policy
+        updates must first be stored into a structure before the translation
+        process is started. As shown in Appendix \ref{app-store}, the structure
+        is composed of the symbol table, the policy base and the policy update
+        sequence table.
 
         The symbol table is used to store all entity identifiers defined in the
         policy, while the rest of the policy definitions are stored into the
@@ -1769,31 +1769,32 @@
 
       \subsubsection{Grounding Constraint Variables}
 
-        While constraints are being added into the constraints table, each
-        variable identifier that occurs within each constraint is grounded by
-        replacing that constraint with a set of constraints wherein each
-        instance of the variable is replaced by all entity identifiers defined
-        in the symbol table. Note that only those entity identifiers that are
-        valid for each fact in the current constraint are used to replace the
-        variable (e.g. only singular subject entity identifiers are used to
-        replace an element variable occurring in a subject member fact).
+        While the constraint statements are in the process of being added into
+        the constraints table, each variable identifier that occurs within each
+        constraint is grounded by replacing that constraint with a set of
+        constraints wherein each instance of the variable is replaced by all
+        entity identifiers defined in the symbol table. Note that only those
+        entity identifiers that are valid for each fact in the current
+        constraint are used to replace the variable (e.g. only singular
+        subject entity identifiers are used to replace an element variable
+        occurring in a subject member fact).
 
         For example, given that the symbol table contains three singular
         subject entity identifiers: $alice$, $bob$ and $charlie$, and the
         following constraint:
-
+        
         \begin{vverbatim}
   always holds(SSUB, write, file)
     implied by
       holds(SSUB, read, file) &&
       memb(SSUB, students)
     with absence
-      !holds(SSUB, write, file)
+      !holds(SSUB, write, file);
         \end{vverbatim}
 
-        Grounding the constraint above yields three new constraints, each
-        replacing occurrences of the variable $SSUB$ with $alice$, $bob$ and
-        $charlie$, respectively.
+        Grounding the constraint statement above will yield three new
+        constraint rules, each replacing occurrences of the variable $SSUB$
+        with $alice$, $bob$ and $charlie$, respectively.
 
       \subsubsection{Policy Updates}
 
@@ -1815,7 +1816,7 @@
 
       \subsubsection{Translation to Normal Logic Program}
 
-        The semantics of language ${\cal L}$ shows that any language
+        The semantics of language ${\cal L}$ shows that any consistent language
         ${\cal L}$ program can be translated into an equivalent extended logic
         program then translated again into an equivalent normal logic program.
         However, the implementation of such translations can be greatly
@@ -1885,7 +1886,7 @@
             This procedure relies on the assumption that the list of all
             possible atoms derived from the step above is arranged in a
             predefined order. In this step we ensure that the atoms are
-            enumerated in the following order (first to last): $holds$,
+            enumerated in the following order (from first to last): $holds$,
             $subject$ $member$, $access$ $right$ $member$, $object$ $member$,
             $subject$ $subset$, $access$ $right$ $subset$ and $object$
             $subset$. In addition to the ordering of atom types, atoms of each
@@ -1956,8 +1957,8 @@
     \end{figure}
 
     The expressiveness of language $\cal{L}$ and the effectiveness of the
-    PolicyUpdater system can be best demonstrated by a web server
-    authorisation application. In this application, PolicyUpdater serves as
+    PolicyUpdater system can be demonstrated by a web server authorisation
+    application. In this application, the PolicyUpdater system serves as
     an authorisation module for the {\em Apache}\footnotemark web server.
 
     \footnotetext{Apache Web Server ({\tt \scriptsize http://www.apache.org})}
@@ -2005,10 +2006,9 @@
           all users must first be authenticated, the password table used
           in authentication may also be used to extract the list of subjects.
         \item
-          {\bf Access Rights} of the policies are built in: they are the
-          HTTP request methods as defined by the HTTP 1.1 standard
-          \cite{HTTP1} (i.e. OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE
-          and CONNECT).
+          {\bf Access Rights} are built in: they are the HTTP request methods
+          as defined by the HTTP 1.1 standard \cite{HTTP1} (i.e. OPTIONS, GET,
+          HEAD, POST, PUT, DELETE, TRACE and CONNECT).
         \item
           {\bf Objects} are the resources available in the server themselves.
           Assuming that the document root is a hierarchy of directories and
@@ -2028,21 +2028,20 @@
 
       \begin{itemize}
         \item
-          {\bf Generating entity identifier definitions}. Subjects are
-          extracted from the authentication (password) table; access rights
-          are hard-coded built-ins; and the list of objects are generated by
+          {\bf Generating entity identifier definitions}. Subject entities are
+          taken from the authentication (password) table; access rights are
+          hard-coded built-ins; and the list of objects are generated by
           traversing the document root for files and directories.
         \item
-          {\bf Generating additional constraints}. The module also generates
+          {\bf Generating additional constraints}. The module generates
           additional constraints to preserve the relationship between groups
           and elements. This is useful to model the assertion that unless
           explicitly stated, users holding particular access rights to a
           directory automatically hold those access rights to every file in
-          that directory (recursively, if with subdirectories). The
-          PolicyUpdater module achieves this assertion by generating
-          non-conditional constraint rules that state that each file
-          (object) is a member of the directory (object group) in which it
-          is contained.
+          that directory (recursively, if with subdirectories). The module
+          makes this assertion by generating non-conditional constraint rules
+          that state that each file (object) is a member of the directory
+          (object group) in which it is contained.
       \end{itemize}
 
       All other language ${\cal L'}$ statements (initial state definitions,
@@ -2058,10 +2057,9 @@
       \end{quote}
 
       $usr$ is the authenticated username that made the request (subject);
-      $req\_meth$ is any of the standard HTTP request methods (access
-      right); and $req\_res$ is the resource associated with the request
-      (object). Intuitively, such a tuple may be expressed as a language
-      ${\cal L}$ atom:
+      $req\_meth$ is a standard HTTP request method (access right); and
+      $req\_res$ is the resource associated with the request (object).
+      Intuitively, such a tuple may be expressed as a language ${\cal L}$ atom:
 
       \begin{vverbatim}
   holds(usr, req\_meth, req\_res)
