@@ -491,10 +491,10 @@
 
         \begin{enumerate}
           \item
-            For any rule of the form $F_{0}$ $\leftarrow$ $F_{1}$,
-            $\hdots$, $F_{n}$ where $n$ $>$ 1, if $F_{1}$, $\hdots$,
-            $F_{n}$ $\in$ $S$, then
-            $F_{0}$ $\in$ $S$.
+            For any rule of the form $\rho_{0}$ $\leftarrow$ $\rho_{1}$,
+            $\hdots$, $\rho_{n}$ where $n$ $>$ 1, if $\rho_{1}$, $\hdots$,
+            $\rho_{n}$ $\in$ $S$, then
+            $\rho_{0}$ $\in$ $S$.
           \item
             If $S$ contains a pair of complementary facts (i.e. a fact and
             its negation), then $S$ = ${\cal F}$.
@@ -507,10 +507,10 @@
 
         \begin{enumerate}
           \item
-            Each rule that contains a fact of the form $not$ $F$ in its body
-            where $F$ $\in$ $S$.
+            Each rule that contains a fact of the form $not$ $\rho$ in its body
+            where $\rho$ $\in$ $S$.
           \item
-            All facts of the form $not$ $F$ in the bodies of the remaining
+            All facts of the form $not$ $\rho$ in the bodies of the remaining
             rules.
         \end{enumerate}
       \end{vdefinition}
@@ -1920,15 +1920,19 @@
       be {\em normal} if it satisfies all of the following conditions:
       \begin{enumerate}
         \item
+          \label{def-norm-1}
           ${\cal F}^{+}_{int}$ $\cap$ ${\cal F}^{-}_{int}$ = $\emptyset$
         \item
+          \label{def-norm-2}
           For all constraint statements $\gamma$ in ${\cal D_{L}}$,
           $\overline{Eff(\gamma)}$ $\cap$ $Pre(\gamma)$ = $\emptyset$.
         \item
+          \label{def-norm-3}
           For any two constraint statements $\gamma$ and $\gamma'$ in
           ${\cal D_{L}}$, including $\gamma$ = $\gamma'$, $Def(\gamma)$ $\cap$
           $Eff(\gamma')$ = $\emptyset$.
         \item
+          \label{def-norm-4}
           For any two {\em complementary} statements $\gamma$ and $\gamma'$ in
           ${\cal D_{L}}$, there exists a pair of ground expression $\epsilon$
           $\in$ $Pre(\gamma)$ and $\epsilon'$ $\in$ $Pre(\gamma')$ such that
@@ -1944,6 +1948,14 @@
       A {\em normal} domain description of language ${\cal L}$ is also
       {\em consistent}.
     \end{vtheorem}
+
+    \begin{vproof}
+      From Definition \ref{def-trans}, given a normal domain description
+      ${\cal D}_{\cal L}$, we only need to show that
+      $Trans$(${\cal D}_{\cal L}$) has at least one consistent answer set to
+      prove that ${\cal D}_{\cal L}$ is also consistent.
+
+    \end{vproof}
 
     As only consistent domain descriptions can be evaluated in terms of user
     queries, Theorem \ref{the-cons} may be used to check whether a domain
