@@ -1,3 +1,15 @@
+2002-09-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* ident/Makefile :
+	* ident/identlist.c :
+	* ident/identlist.h :
+	* ident/symtab.c :
+	* ident/symtab.h :
+
+	  - Separated the symbol table from identlist. Now the small
+	    differences between the two are separated for good. See symtab.h
+	    for a list of differences.
+
 2002-09-06  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* simplelist.c :

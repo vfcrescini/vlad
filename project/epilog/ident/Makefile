@@ -3,7 +3,7 @@
 TOPSRCDIR = ..
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libident.a
-INCLUDES = ident.h identlist.h
+INCLUDES = ident.h identlist.h symtab.h
 
 ifdef DEBUG
 CFLAGS += -g -DDEBUG
@@ -23,14 +23,17 @@ public : $(TARGETS)
 	ln -sf ../ident/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libident.a : ident.o identlist.o
-	$(AR) -rcs $(@) ident.o identlist.o
+libident.a : ident.o identlist.o symtab.o
+	$(AR) -rcs $(@) ident.o identlist.o symtab.o
 
 ident.o : ident.h ident.c
 	$(CC) $(CFLAGS) -o $(@) -c ident.c
 
 identlist.o : ident.h identlist.h identlist.c
 	$(CC) $(CFLAGS) -o $(@) -c identlist.c
+
+symtab.o : ident.h symtab.h symtab.c
+	$(CC) $(CFLAGS) -o $(@) -c symtab.c
 
 clean :
 	$(RM) $(TARGETS) *.o

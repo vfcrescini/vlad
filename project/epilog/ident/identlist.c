@@ -30,20 +30,6 @@ int identlist_find(identlist_type list, char *name)
 }
 
 /* add identifier */
-int identlist_add_new(identlist_type *list, char *name, unsigned short type)
-{
-  ident_type *new_ident = NULL;
-  
-  if (list == NULL || name == NULL)
-    return -1;
-
-  if (ident_create(&new_ident, name, type) != 0)
-    return -1;
-
-  return simplelist_add(list, (void *) new_ident);
-}
-
-/* add ref without allocating mem */
 int identlist_add_ref(identlist_type *list, ident_type *ident)
 {
   if (list == NULL || ident == NULL)
@@ -52,39 +38,25 @@ int identlist_add_ref(identlist_type *list, ident_type *ident)
   return simplelist_add(list, (void *) ident);
 }
 
-/* get identifier structure based on name */
-int identlist_get(identlist_type list, char *name, ident_type **ident)
+/* get identifier structure based on index */
+int identlist_get(identlist_type list, unsigned int index, ident_type **ident)
 {
-  ident_type tmp_ident;
-
-  if (name == NULL || ident == NULL)
+  if (ident == NULL)
     return -1;
 
-  tmp_ident.name = name;
-
-  return simplelist_get_data(list, 
-                             (void *) &tmp_ident,
-                             (void **) ident,
-                             identlist_compare);
+  return simplelist_get_index(list, index, (void **) ident);
 }
 
-/* delete identifier entry based on name */
-int identlist_del(identlist_type *list, char *name)
+/* delete identifier entry based on index but not free the indentifier */
+int identlist_del(identlist_type *list, unsigned int index)
 {
-  ident_type tmp_ident;
-
-  if (list == NULL || name == NULL)
+  if (list == NULL)
     return -1;
 
-  tmp_ident.name = name;
-
-  return simplelist_del_data(list,
-                             (void *) &tmp_ident,
-                             identlist_compare,
-                             identlist_destroy);
+  return simplelist_del_index(list, index, NULL);
 }
 
-/* delete all entries */
+/* delete all entries but not free the identifiers */
 int identlist_purge(identlist_type *list)
 {
   unsigned int len;
@@ -98,25 +70,6 @@ int identlist_purge(identlist_type *list)
 
   for (i = 0; i < len; i++)
     if (simplelist_del_index(list, 0, NULL) != 0)
-      return -1;
-
-  return 0;
-}
-
-/* delete all entries and free members */
-int identlist_purge_all(identlist_type *list)
-{
-  unsigned int len;
-  unsigned int i;
-
-  if (list == NULL)
-    return -1;
-
-  if (simplelist_length(*list, &len) != 0)
-    return -1;
-
-  for (i = 0; i < len; i++)
-    if (simplelist_del_index(list, 0, identlist_destroy) != 0)
       return -1;
 
   return 0;
