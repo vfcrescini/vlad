@@ -172,7 +172,7 @@
               syntax of entity identifiers:
 
               \begin{vverbatim}
-[a-z]([a-zA-Z0-9\_]){0,127}
+  [a-z]([a-zA-Z0-9\_]){0,127}
               \end{vverbatim}
 
             \item
@@ -185,7 +185,7 @@
 
 
               \begin{vverbatim}
-[a-z]([a-zA-Z0-9\_]){0,127}
+  [a-z]([a-zA-Z0-9\_]){0,127}
               \end{vverbatim}
 
             \item
@@ -197,7 +197,7 @@
               variable identifiers:
 
               \begin{vverbatim}
-[A-Z]([a-zA-Z0-9\_]){0,127}
+  [A-Z]([a-zA-Z0-9\_]){0,127}
               \end{vverbatim}
           \end{itemize}
 
@@ -213,7 +213,7 @@
               for the object identifier $obj$.
 
               \begin{vverbatim}
-holds(<sub>, <acc>, <obj>)
+  holds(<sub>, <acc>, <obj>)
               \end{vverbatim}
             \item
               {\em Membership.} This type of atom states that the singular
@@ -222,7 +222,7 @@ holds(<sub>, <acc>, <obj>)
               must be of the same base type (e.g. subject and subject group).
 
               \begin{vverbatim}
-memb(<elt>, <grp>)
+  memb(<elt>, <grp>)
               \end{vverbatim}
             \item
               {\em Subset.} The subset atom states that the group identifiers
@@ -230,7 +230,7 @@ memb(<elt>, <grp>)
               a subset of the group $grp2$.
 
               \begin{vverbatim}
-subst(<grp1>, <grp2>)
+  subst(<grp1>, <grp2>)
               \end{vverbatim}
           \end{itemize}
 
@@ -244,8 +244,8 @@ subst(<grp1>, <grp2>)
           syntax of a fact:
 
           \begin{vverbatim}
-[!]<holds\_atom>|<memb\_atom>|
-   <subst\_atom>
+  [!]<holds\_atom>|<memb\_atom>|
+     <subst\_atom>
           \end{vverbatim}
 
           Note that facts may be made up of atoms that contain variable
@@ -257,7 +257,7 @@ subst(<grp1>, <grp2>)
           separated by the double-ampersand characters $\&\&$.
 
           \begin{vverbatim}
-<fact1> [&& <fact2> [&& ...]]
+  <fact1> [&& <fact2> [&& ...]]
           \end{vverbatim}
 
           Expressions that are made up of only ground facts are called
@@ -274,8 +274,8 @@ subst(<grp1>, <grp2>)
           particular type.
 
           \begin{vverbatim}
-ident sub|acc|obj[-grp]
-  <entity\_id>[, ...];
+  ident sub|acc|obj[-grp]
+    <entity\_id>[, ...];
           \end{vverbatim}
 
         \paragraph{Initial Fact Definition.}
@@ -285,7 +285,7 @@ ident sub|acc|obj[-grp]
           definition syntax:
 
           \begin{vverbatim}
-initially <ground-exp>;
+  initially <ground-exp>;
           \end{vverbatim}
 
         \paragraph{Constraint Definition.}
@@ -307,9 +307,9 @@ initially <ground-exp>;
           occurring in these expressions to be variables.
 
           \begin{vverbatim}
-always <exp1>
-  [implied by <exp2>
-  [with absence <exp3>]];
+  always <exp1>
+    [implied by <exp2>
+    [with absence <exp3>]];
           \end{vverbatim}
 
         \paragraph{Policy Update Definition.}
@@ -318,9 +318,9 @@ always <exp1>
           using the following syntax:
 
           \begin{vverbatim}
-<up\_id>([<var\_id>[, ...]])
-  causes <exp1>
-  if <exp2>;
+  <up\_id>([<var\_id>[, ...]])
+    causes <exp1>
+    if <exp2>;
           \end{vverbatim}
 
           $up\_id$ is the policy update identifier to be used in referencing
@@ -354,7 +354,7 @@ always <exp1>
           use of the following directive:
 
           \begin{vverbatim}
-seq add <up\_id>([<e\_id>[, ...]]);
+  seq add <up\_id>([<e\_id>[, ...]]);
           \end{vverbatim}
 
           \noindent where $up\_id$ is the identifier of a defined policy
@@ -367,14 +367,14 @@ seq add <up\_id>([<e\_id>[, ...]]);
           the policy update sequence list.
 
           \begin{vverbatim}
-seq list;
+  seq list;
           \end{vverbatim}
 
           This directive is answered with an ordinal list of policy updates in
           the form:
 
           \begin{vverbatim}
-<n> <up\_id>([<e\_id>[, ...]])
+  <n> <up\_id>([<e\_id>[, ...]])
           \end{vverbatim}
 
           \noindent where $n$ is the ordinal index of the policy update within
@@ -390,7 +390,7 @@ seq list;
           references.
 
           \begin{vverbatim}
-seq del <n>;
+  seq del <n>;
           \end{vverbatim}
 
         \subparagraph{Computing an update sequence.}
@@ -403,7 +403,7 @@ seq del <n>;
           query requests can be evaluated.
 
           \begin{vverbatim}
-compute;
+  compute;
           \end{vverbatim}
 
         \paragraph{Query Directive.}
@@ -416,7 +416,7 @@ compute;
           its negation holds, or neither, respectively. Syntax is as follows:
 
           \begin{vverbatim}
-query <ground-exp>;
+  query <ground-exp>;
           \end{vverbatim}
 
         \begin{vexample}
@@ -436,34 +436,34 @@ query <ground-exp>;
           the policy update is performed.
 
           \begin{vverbatim}
-ident sub alice;
-ident sub-grp grp1, grp2, grp3;
-ident acc read, write;
-ident obj file;
+  ident sub alice;
+  ident sub-grp grp1, grp2, grp3;
+  ident acc read, write;
+  ident obj file;
 
-initially
-  memb(alice, grp3) &&
-  holds(grp1, read, file) &&
-  subst(grp3, grp2) &&
-  subst(grp2, grp1);
+  initially
+    memb(alice, grp3) &&
+    holds(grp1, read, file) &&
+    subst(grp3, grp2) &&
+    subst(grp2, grp1);
 
-always holds(grp1, write, file)
-  implied by
-    holds(grp1, read, file)
-  with absence
-    !holds(grp1, write, file);
+  always holds(grp1, write, file)
+    implied by
+      holds(grp1, read, file)
+    with absence
+      !holds(grp1, write, file);
 
-delete\_read(SG0, OS0)
-  causes !holds(SG0, read, OS0);
+  delete\_read(SG0, OS0)
+    causes !holds(SG0, read, OS0);
 
-seq add delete\_read(grp1, file);
+  seq add delete\_read(grp1, file);
 
-compute;
+  compute;
 
-query holds(grp1, write, file);
-query holds(grp1, read, file);
-query holds(alice, write, file);
-query holds(alice, read, file);
+  query holds(grp1, write, file);
+  query holds(grp1, read, file);
+  query holds(alice, write, file);
+  query holds(alice, read, file);
           \end{vverbatim}
         \end{vexample}
 
@@ -675,7 +675,7 @@ query holds(alice, read, file);
           composed of $n$ facts:
 
           \begin{vverbatim}
-\(f\sb{0}\) && \ldots && \(f\sb{n}\)
+  \(f\sb{0}\) && \ldots && \(f\sb{n}\)
           \end{vverbatim}
 
           In language ${\cal L}^{*}$, the statement above is translated to:
@@ -695,16 +695,16 @@ query holds(alice, read, file);
           $initially$ statement:
 
           \begin{vverbatim}
-initially
-  holds(admins, read, sys\_data) &&
-  memb(alice, admins) &&
-  memb(bob, admins);
+  initially
+    holds(admins, read, sys\_data) &&
+    memb(alice, admins) &&
+    memb(bob, admins);
           \end{vverbatim}
 
         In language ${\cal L}^{*}$, the above statements are translated to:
 
         \begin{vquote}
-          $\hat{holds}$($admins$, $read$, $system\_data$, $S_{0}$) $\leftarrow$
+          $\hat{holds}$($admins$, $read$, $sys\_data$, $S_{0}$) $\leftarrow$
 
           $\hat{memb}$($alice$, $admins$, $S_{0}$) $\leftarrow$
 
@@ -720,9 +720,9 @@ initially
           as:
 
           \begin{vverbatim}
-always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
-  implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
-  with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
+  always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
+    implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
+    with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
           \end{vverbatim}
 
           Each fact in the $always$ clause of language ${\cal L}$ corresponds
@@ -789,13 +789,13 @@ always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
           fragment is translated to language ${\cal L}^{*}$:
 
           \begin{vverbatim}
-always
-  holds(alice, read, secret_data) &&
-  holds(alice, write, secret_data)
-implied by
-  memb(alice, admin)
-with absence
-  !holds(alice, read, secret_data);
+  always
+    holds(alice, read, data) &&
+    holds(alice, write, data)
+  implied by
+    memb(alice, admin)
+  with absence
+    !holds(alice, read, data);
           \end{vverbatim}
 
           Given a policy update reference in the sequence list $\psi$ (i.e.
@@ -805,33 +805,33 @@ with absence
           \begin{vquote}
             \begin{math}
               \begin{aligned}[t]
-                \hat{holds}&(alice, read, secret\_data, S_{0}) \leftarrow \\
+                \hat{holds}&(alice, read, data, S_{0}) \leftarrow \\
                  & \hat{memb}(alice, admin, S_{0}), \\
-                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{0})
+                 & not \lnot \hat{holds}(alice, read, data, S_{0})
               \end{aligned}
             \end{math}
 
             \begin{math}
               \begin{aligned}[t]
-                \hat{holds}&(alice, write, secret\_data, S_{0}) \leftarrow \\
+                \hat{holds}&(alice, write, data, S_{0}) \leftarrow \\
                  & \hat{memb}(alice, admin, S_{0}), \\
-                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{0})
+                 & not \lnot \hat{holds}(alice, read, data, S_{0})
               \end{aligned}
             \end{math}
 
             \begin{math}
               \begin{aligned}[t]
-                \hat{holds}&(alice, read, secret\_data, S_{1}) \leftarrow \\
+                \hat{holds}&(alice, read, data, S_{1}) \leftarrow \\
                  & \hat{memb}(alice, admin, S_{1}), \\
-                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{1})
+                 & not \lnot \hat{holds}(alice, read, data, S_{1})
               \end{aligned}
             \end{math}
 
             \begin{math}
               \begin{aligned}[t]
-                \hat{holds}&(alice, write, secret\_data, S_{1}) \leftarrow \\
+                \hat{holds}&(alice, write, data, S_{1}) \leftarrow \\
                  & \hat{memb}(alice, admin, S_{1}), \\
-                 & not \lnot \hat{holds}(alice, read, secret\_data, S_{1})
+                 & not \lnot \hat{holds}(alice, read, data, S_{1})
               \end{aligned}
             \end{math}
           \end{vquote}
@@ -875,17 +875,17 @@ with absence
           definitions:
 
           \begin{vverbatim}
-grant\_read()
-  causes
-    holds(alice, read, file)
-  if
-    memb(alice, readers);
+  grant\_read()
+    causes
+      holds(alice, read, file)
+    if
+      memb(alice, readers);
 
-grant\_write()
-  causes
-    holds(alice, write, file)
-  if
-    memb(alice, writers);
+  grant\_write()
+    causes
+      holds(alice, write, file)
+    if
+      memb(alice, writers);
           \end{vverbatim}
 
           Given the update sequence list $\psi$ $=$
@@ -1449,21 +1449,21 @@ grant\_write()
     composed of the following language ${\cal L}$ statements:
 
     \begin{vverbatim}
-initially
-  \(a\sb{0}\) &&\ldots&& \(a\sb{n}\) && !\(b\sb{0}\) &&\ldots&& !\(b\sb{m}\)
+  initially
+    \(a\sb{0}\) &&\ldots&& \(a\sb{n}\) && !\(b\sb{0}\) &&\ldots&& !\(b\sb{m}\)
 
-always
-  \(c\sb{0}\) &&\ldots &&\(c\sb{o}\) && !\(d\sb{0}\) &&\ldots&& !\(d\sb{p}\)
-  implied by
+  always
+    \(c\sb{0}\) &&\ldots&& \(c\sb{o}\) && !\(d\sb{0}\) &&\ldots&& !\(d\sb{p}\)
+    implied by
     \(e\sb{0}\) &&\ldots&& \(e\sb{q}\) && !\(f\sb{0}\) &&\ldots&& !\(f\sb{r}\)
-  with absence
+    with absence
     \(g\sb{0}\) &&\ldots&& \(g\sb{s}\) && !\(h\sb{0}\) &&\ldots&& !\(h\sb{t}\)
 
-update()
-  causes
-    \(i\sb{0}\) &&\ldots && \(i\sb{u}\) && !\(j\sb{0}\) &&\ldots&& !\(j\sb{v}\)
-  if
-    \(k\sb{0}\) &&\ldots && \(k\sb{w}\) && !\(l\sb{0}\) &&\ldots&& !\(l\sb{x}\)
+  update()
+    causes
+    \(i\sb{0}\) &&\ldots&& \(i\sb{u}\) && !\(j\sb{0}\) &&\ldots&& !\(j\sb{v}\)
+    if
+    \(k\sb{0}\) &&\ldots&& \(k\sb{w}\) && !\(l\sb{0}\) &&\ldots&& !\(l\sb{x}\)
     \end{vverbatim}
 
     We define the following sets of ground facts:
@@ -1703,12 +1703,12 @@ update()
         following constraint:
 
         \begin{vverbatim}
-always holds(SSUB, write, file)
-  implied by
-    holds(SSUB, read, file) &&
-    memb(SSUB, students)
-  with absence
-    !holds(SSUB, write, file)
+  always holds(SSUB, write, file)
+    implied by
+      holds(SSUB, read, file) &&
+      memb(SSUB, students)
+    with absence
+      !holds(SSUB, write, file)
         \end{vverbatim}
 
         Grounding the constraint above yields three new constraints, each
@@ -2007,7 +2007,7 @@ always holds(SSUB, write, file)
       ${\cal L}$ atom:
 
       \begin{vverbatim}
-holds(usr, req\_meth, req\_res)
+  holds(usr, req\_meth, req\_res)
       \end{vverbatim}
 
       With each request expressed as language ${\cal L}$ atoms, a language
@@ -2015,7 +2015,8 @@ holds(usr, req\_meth, req\_res)
       to be honoured:
 
       \begin{vverbatim}
-query holds(usr, req\_meth, req\_res);
+  query
+    holds(usr, req\_meth, req\_res);
       \end{vverbatim}
 
       Once the query statement is composed, it is then sent by the
