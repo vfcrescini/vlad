@@ -1256,3 +1256,420 @@ int kb::decode_atom(atom **a, unsigned int *s, unsigned int n)
 
   return VLAD_OK;
 }
+
+/* gives a list of encoded atom id's that represent inheritance rules */
+int kb::generate_inheritance(unsigned int state_tot,
+                             numberlist **l1,
+                             numberlist **l2,
+                             numberlist **l3)
+{
+  int retval;
+  unsigned int i_state;
+  unsigned int i_truth;
+  unsigned int i_sub;
+  unsigned int i_acc;
+  unsigned int i_obj;
+  unsigned int i_group;
+
+  /* make sure we are in stage 5 */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  if (l1 == NULL || l2 == NULL || l3 == NULL)
+    return VLAD_NULLPTR;
+
+  /* create number lists */
+  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((*l2 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((*l3 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* state loop */
+  for (i_state = 0; i_state < state_tot; i_state++) {
+    /* truth loop */
+    for (i_truth = 0; i_truth < 2; i_truth++) {
+      /* subject groups */
+      for (i_group = 0; i_group < sg_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + (i_sub * sg_len) + i_group;
+              if ((retval = (*l1)->add(param1)) != VLAD_OK)
+                return retval;
+              if ((retval = (*l2)->add(param2)) != VLAD_OK)
+                return retval;
+              if ((retval = (*l3)->add(param3)) != VLAD_OK)
+                return retval;
+            }
+          }
+        }
+      }
+      /* access groups */
+      for (i_group = 0; i_group < ag_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj;
+              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group;
+              if ((retval = (*l1)->add(param1)) != VLAD_OK)
+                return retval;
+              if ((retval = (*l2)->add(param2)) != VLAD_OK)
+                return retval;
+              if ((retval = (*l3)->add(param3)) != VLAD_OK)
+                return retval;
+            }
+          }
+        }
+      }
+      /* object groups */
+      for (i_group = 0; i_group < og_len; i_group++) {
+        for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+            for (i_obj = 0; i_obj < o_len; i_obj++) {
+              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len;
+              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group;
+              if ((retval = (*l1)->add(param1)) != VLAD_OK)
+                return retval;
+              if ((retval = (*l2)->add(param2)) != VLAD_OK)
+                return retval;
+              if ((retval = (*l3)->add(param3)) != VLAD_OK)
+                return retval;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return VLAD_OK;
+}
+
+/* gives a list of encoded atom id's that represent transitivity rules */
+int kb::generate_transitivity(unsigned int state_tot,
+                              numberlist **l1,
+                              numberlist **l2,
+                              numberlist **l3)
+{
+  int retval;
+  unsigned int i_state;
+  unsigned int i_grp1;
+  unsigned int i_grp2;
+  unsigned int i_grp3;
+
+  /* make sure we are in stage 5 */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  if (l1 == NULL || l2 == NULL || l3 == NULL)
+    return VLAD_NULLPTR;
+
+  /* create number lists */
+  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((*l2 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((*l3 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* state loop */
+  for (i_state = 0; i_state < state_tot; i_state++) {
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < sg_len; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (i_grp1 * sg_len) + i_grp3;
+          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2;
+          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (i_grp2 * sg_len) + i_grp3;
+          if ((retval = (*l1)->add(param1)) != VLAD_OK)
+            return retval;
+          if ((retval = (*l2)->add(param2)) != VLAD_OK)
+            return retval;
+          if ((retval = (*l3)->add(param3)) != VLAD_OK)
+            return retval;
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < ag_len; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp3;
+          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp2;
+          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (i_grp2 * sg_len) + i_grp3;
+          if ((retval = (*l1)->add(param1)) != VLAD_OK)
+            return retval;
+          if ((retval = (*l2)->add(param2)) != VLAD_OK)
+            return retval;
+          if ((retval = (*l3)->add(param3)) != VLAD_OK)
+            return retval;
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
+        for (i_grp3 = 0; i_grp3 < og_len; i_grp3++) {
+          /* ignore if any 2 are the same */
+          if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
+            continue;
+          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp3;
+          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp2;
+          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp2 * sg_len) + i_grp3;
+          if ((retval = (*l1)->add(param1)) != VLAD_OK)
+            return retval;
+          if ((retval = (*l2)->add(param2)) != VLAD_OK)
+            return retval;
+          if ((retval = (*l3)->add(param3)) != VLAD_OK)
+            return retval;
+        }
+      }
+    }
+  }
+
+  return VLAD_OK;
+}
+
+/* gives a list of encoded atom id's that represent complementary rules */
+int kb::generate_complementary(unsigned int state_tot,
+                               numberlist **l1,
+                               numberlist **l2)
+{
+  int retval;
+  unsigned int i_state;
+  unsigned int i_atom;
+
+  /* make sure we are in stage 5 */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  if (l1 == NULL || l2 == NULL)
+    return VLAD_NULLPTR;
+
+  /* create number lists */
+  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((*l2 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* state loop */
+  for (i_state = 0; i_state < state_tot; i_state++) {
+    for (i_atom = 0; i_atom < pos_tot; i_atom++) {
+      if ((retval = (*l1)->add((i_state * pos_tot * 2) + i_atom + pos_tot)) != VLAD_OK)
+        return retval;
+      if ((retval = (*l2)->add((i_state * pos_tot * 2) + i_atom)) != VLAD_OK)
+        return retval;
+    }
+  }
+
+  return VLAD_OK;
+}
+
+/* gives a list of encoded atom id's that represent initial state atoms */
+int kb::generate_initialstate(numberlist **l1)
+{
+  int retval;
+  unsigned int i;
+  atom *tmp_atom;
+  unsigned int tmp_num;
+
+  /* make sure we are in stage 5 */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  if (l1 == NULL)
+    return VLAD_NULLPTR;
+
+  /* create number lists */
+  if ((*l1 = VLAD_NEW(numberlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < itable->length(); i++) {
+    if ((retval = itable->get(i, &tmp_atom)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_atom(tmp_atom, 0, &tmp_num)) != VLAD_OK)
+      return retval;
+    if ((retval = (*l1)->add(tmp_num)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+/* gives a list of encoded atom id's that represent constraint rules */
+int kb::generate_constraints(unsigned int state_tot,
+                             numberlistlist **l1,
+                             numberlistlist **l2,
+                             numberlistlist **l3)
+{
+  int retval;
+  unsigned int i_state;
+  unsigned int i_const;
+  unsigned int i_exp;
+  atom *tmp_atom;
+  unsigned int tmp_num;
+
+  /* make sure we are in stage 5 */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  if (l1 == NULL || l2 == NULL || l3 == NULL)
+    return VLAD_NULLPTR;
+
+  /* create number list lists */
+  if ((*l1 = VLAD_NEW(numberlistlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((*l2 = VLAD_NEW(numberlistlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((*l3 = VLAD_NEW(numberlistlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* state loop */
+  for (i_state = 0; i_state < state_tot; i_state++) {
+    /* constraint loop */
+    for (i_const = 0; i_const < ctable->length(); i_const++) {
+      expression *tmp_e;
+      expression *tmp_c;
+      expression *tmp_n;
+      numberlist *sl1;
+      numberlist *sl2;
+      numberlist *sl3;
+
+      if ((retval = ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
+        return retval;
+
+      /* create number lists (sublists) */
+      if ((sl1 = VLAD_NEW(numberlist())) == NULL)
+        return VLAD_MALLOCFAILED;
+      if ((sl2 = VLAD_NEW(numberlist())) == NULL)
+        return VLAD_MALLOCFAILED;
+      if ((sl3 = VLAD_NEW(numberlist())) == NULL)
+        return VLAD_MALLOCFAILED;
+
+      /* constaint expression */
+      for (i_exp = 0; i_exp < tmp_e->length(); i_exp++) {
+        if ((retval = tmp_e->get(i_exp, &tmp_atom)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
+          return retval;
+        if ((retval = sl1->add(tmp_num)) != VLAD_OK)
+          return retval;
+      }
+
+      /* constraint condition */
+      for (i_exp = 0; i_exp < tmp_c->length(); i_exp++) {
+        if ((retval = tmp_c->get(i_exp, &tmp_atom)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
+          return retval;
+        if ((retval = sl2->add(tmp_num)) != VLAD_OK)
+          return retval;
+      }
+
+      /* constraint negative condition */
+      for (i_exp = 0; i_exp < tmp_n->length(); i_exp++) {
+        if ((retval = tmp_n->get(i_exp, &tmp_atom)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
+          return retval;
+        if ((retval = sl3->add(tmp_num)) != VLAD_OK)
+          return retval;
+      }
+
+      /* now add each sublist in the main lists */
+      if ((retval = (*l1)->add(sl1)) != VLAD_OK)
+        return retval;
+      if ((retval = (*l2)->add(sl2)) != VLAD_OK)
+        return retval;
+      if ((retval = (*l3)->add(sl3)) != VLAD_OK)
+        return retval;
+    }
+  }
+
+  return VLAD_OK;
+}
+
+/* gives a list of encoded atom id's that represent transformation rules */
+int kb::generate_transformation(sequence *seq,
+                                numberlistlist **l1,
+                                numberlistlist **l2)
+{
+  int retval;
+  unsigned int i_state;
+  unsigned int i_exp;
+
+  /* make sure we are in stage 5 */
+  if (stage != 5)
+    return VLAD_FAILURE;
+
+  if (seq == NULL || l1 == NULL || l2 == NULL)
+    return VLAD_NULLPTR;
+
+  /* create number list lists */
+  if ((*l1 = VLAD_NEW(numberlistlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+  if ((*l2 = VLAD_NEW(numberlistlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* state loop */
+  for (i_state = 0; i_state < seq->length(); i_state++) {
+    char *tmp_name;
+    atom *tmp_atom;
+    unsigned int tmp_num;
+    stringlist *tmp_ilist;
+    expression *tmp_pre;
+    expression *tmp_post;
+    numberlist *sl1;
+    numberlist *sl2;
+
+    if ((retval = seq->get(i_state, &tmp_name, &tmp_ilist)) != VLAD_OK)
+      return retval;
+
+    if ((retval = ttable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
+      return retval;
+
+    /* create number lists (sublists) */
+    if ((sl1 = VLAD_NEW(numberlist())) == NULL)
+      return VLAD_MALLOCFAILED;
+    if ((sl2 = VLAD_NEW(numberlist())) == NULL)
+      return VLAD_MALLOCFAILED;
+
+    /* precondition loop */
+    for (i_exp = 0; i_exp < tmp_pre->length(); i_exp++) {
+      if ((retval = tmp_pre->get(i_exp, &tmp_atom)) != VLAD_OK)
+        return retval;
+      if ((retval = encode_atom(tmp_atom, i_state, &tmp_num)) != VLAD_OK)
+        return retval;
+      if ((retval = sl1->add(tmp_num)) != VLAD_OK)
+        return retval;
+    }
+
+    /* postcondition loop */
+    for (i_exp = 0; i_exp < tmp_post->length(); i_exp++) {
+      if ((retval = tmp_post->get(i_exp, &tmp_atom)) != VLAD_OK)
+        return retval;
+      if ((retval = encode_atom(tmp_atom, i_state + 1, &tmp_num)) != VLAD_OK)
+        return retval;
+      if ((retval = sl2->add(tmp_num)) != VLAD_OK)
+        return retval;
+    }
+
+    /* now add each sublist in the main lists */
+    if ((retval = (*l1)->add(sl1)) != VLAD_OK)
+      return retval;
+    if ((retval = (*l2)->add(sl2)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}

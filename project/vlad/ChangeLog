@@ -1,5 +1,10 @@
 2003-04-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+	* kb/kb.h :
+
+	  - Separated the generate() functions. Cleanup work.
+
 	* common/numberlist.cpp :
 	* common/numberlist.h :
 
