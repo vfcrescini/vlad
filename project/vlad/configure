@@ -1174,10 +1174,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers config.h"
 
 
-VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
-VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
-VLAD_LDFLAGS="-L\$(DISTDIR)/lib/vlad $LDFLAGS"
-
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2571,11 +2567,11 @@ _ACEOF
 
   DEBUG=1
 
-  VLAD_CFLAGS="$VLAD_CFLAGS -g"
-  VLAD_CXXFLAGS="$VLAD_CXXFLAGS -g"
+  CFLAGS="$VLAD_CFLAGS -g"
+  CXXFLAGS="$VLAD_CXXFLAGS -g"
 else
-  VLAD_CFLAGS="$VLAD_CFLAGS -O2"
-  VLAD_CXXFLAGS="$VLAD_CXXFLAGS -O2"
+  CFLAGS="$VLAD_CFLAGS -O2"
+  CXXFLAGS="$VLAD_CXXFLAGS -O2"
 fi
 
 # Check whether --enable-strip or --disable-strip was given.
@@ -2617,9 +2613,9 @@ echo "$as_me: error: *** invalid path: $with_smodels_src ***" >&2;}
   fi
 fi
 
-CFLAGS="$VLAD_CFLAGS $CFLAGS"
-CXXFLAGS="$VLAD_CXXFLAGS $CXXFLAGS"
-LDFLAGS="$VLAD_LDFLAGS $LDFLAGS"
+CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
+CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
+LDFLAGS="-L\$(DISTDIR)/lib/vlad $LDFLAGS"
 
 cat >>confdefs.h <<_ACEOF
 #define VERSION "$PACKAGE_VERSION"
