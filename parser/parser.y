@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
+#include <new>
 
 #include <config.h>
 #include <vlad.h>
@@ -28,6 +29,7 @@ int yylex(void);
   char identifier[128];
   unsigned int terminal;
   unsigned int gnd_atom;
+  numberlist *gnd_exp;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -66,6 +68,7 @@ int yylex(void);
 %type <gnd_atom> ground_subst_atom 
 %type <gnd_atom> ground_memb_atom 
 %type <gnd_atom> logical_atom 
+%type <gnd_exp> ground_exp
 
 %start program
 
@@ -521,8 +524,18 @@ logical_op :
 
 ground_exp : 
   ground_boolean_atom { 
+    int retval;
+    if (($$ = VLAD_NEW(numberlist("ground exp"))) == NULL) {
+      fprintf(stderr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    }
+    if ((retval = $$->add($1)) != VLAD_OK)
+      return retval;
   }
   | ground_exp logical_op ground_boolean_atom {
+    int retval;
+    if ((retval = $$->add($3)) != VLAD_OK)
+      return retval; 
   }
   ;
 
