@@ -13,58 +13,58 @@
 
 string::string()
 {
-  str = NULL;
+  m_string = NULL;
 }
 
 string::~string()
 {
-  if (str != NULL)
-    free(str);
+  if (m_string != NULL)
+    free(m_string);
 }
 
 /* compare item with this string */
-bool string::cmp(list_item *item)
+bool string::cmp(list_item *a_item)
 {
   string *tmp = NULL;
 
   /* a NULL will not match anything */
-  if (item == NULL)
+  if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<string *> (item)) == NULL)
+  if ((tmp = dynamic_cast<string *>(a_item)) == NULL)
     return false;
 
   /* only return true if they are both NULL */
-  if (tmp->str == NULL)
-      return (str == NULL);
+  if (tmp->m_string == NULL)
+      return (m_string == NULL);
 
-  return (strcmp(tmp->str, str) == 0);
+  return (strcmp(tmp->m_string, m_string) == 0);
 }
 
-int string::init(const char *s)
+int string::init(const char *a_str)
 {
-  if (s == NULL)
+  if (a_str == NULL)
     return VLAD_NULLPTR;
 
-  if (str != NULL)
-    free(str);
+  if (m_string != NULL)
+    free(m_string);
 
-  if ((str = VLAD_STRING_MALLOC(s)) == NULL)
+  if ((m_string = VLAD_STRING_MALLOC(a_str)) == NULL)
     return VLAD_MALLOCFAILED;
 
-  return ((strcpy(str, s) == NULL) ? VLAD_FAILURE : VLAD_OK);
+  return ((strcpy(m_string, a_str) == NULL) ? VLAD_FAILURE : VLAD_OK);
 }
 
 char *string::get()
 {
-  return str;
+  return m_string;
 }
 
 #ifdef VLAD_DEBUG
 /* assuming s has enough memory allocation */
-void string::print(char *s)
+void string::print(char *a_str)
 {
-  strcpy(s, (str ? str : ""));
+  strcpy(a_str, (m_string ? m_string : ""));
 }
 #endif
 
@@ -78,18 +78,18 @@ stringlist::~stringlist()
 }
 
 /* add a string in the list */
-int stringlist::add(const char *s)
+int stringlist::add(const char *a_str)
 {
   int retval;
   string *tmp = NULL;
 
-  if (s == NULL)
+  if (a_str == NULL)
     return VLAD_NULLPTR;
 
   if ((tmp = VLAD_NEW(string())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = tmp->init(s)) != VLAD_OK)
+  if ((retval = tmp->init(a_str)) != VLAD_OK)
     return retval;
 
   if ((retval = list::add(tmp)) != VLAD_OK) {
@@ -100,24 +100,24 @@ int stringlist::add(const char *s)
 }
 
 /* get the index of the string */
-int stringlist::get(const char *s, unsigned int *i)
+int stringlist::get(const char *a_str, unsigned int *a_index)
 {
   int retval;
   string tmp;
   unsigned int size;
   unsigned int *array;
 
-  if (s == NULL || i == NULL)
+  if (a_str == NULL || a_index == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = tmp.init(s)) != VLAD_OK)
+  if ((retval = tmp.init(a_str)) != VLAD_OK)
     return retval;
 
   if ((retval = list::get(&tmp, &array, &size)) != VLAD_OK)
     return retval;
 
   /* there should be exactly one in the array */
-  *i = array[0];
+  *a_index = array[0];
 
   free(array);
 
@@ -125,7 +125,7 @@ int stringlist::get(const char *s, unsigned int *i)
 }
 
 /* get the ith string in the list */
-int stringlist::get(unsigned int i, char **s)
+int stringlist::get(unsigned int a_index, char **a_str)
 {
   int retval;
   string *tmp = NULL;
@@ -135,21 +135,21 @@ int stringlist::get(unsigned int i, char **s)
    * so care must be taken to ensure that s is not changed.
    */
 
-  if ((retval = list::get(i, (list_item **) &tmp)) != VLAD_OK)
+  if ((retval = list::get(a_index, (list_item **) &tmp)) != VLAD_OK)
     return retval;
 
-  *s = tmp->get();
+  *a_str = tmp->get();
 
   return VLAD_OK;
 }
 
 /* return true if string is in the list */
-int stringlist::find(const char *s)
+int stringlist::find(const char *a_str)
 {
   int retval;
   string tmp;
 
-  if ((retval = tmp.init(s)) != VLAD_OK)
+  if ((retval = tmp.init(a_str)) != VLAD_OK)
     return retval;
 
   return list::find(&tmp);
@@ -157,21 +157,20 @@ int stringlist::find(const char *s)
 
 #ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
-void stringlist::print(char *s)
+void stringlist::print(char *a_str)
 {
   unsigned int i;
-  char tmps[VLAD_MAXLEN_STR];
-  string *tmpa;
+  char tmp_str[VLAD_MAXLEN_STR];
+  string *tmp_obj;
 
-  memset(tmps, 0, VLAD_MAXLEN_STR);
+  memset(tmp_str, 0, VLAD_MAXLEN_STR);
 
   for (i = 0; i < list::length(); i++) {
-    if (list::get(i, (list_item **) &tmpa) != VLAD_OK)
+    if (list::get(i, (list_item **) &tmp_obj) != VLAD_OK)
       break;
 
-    tmpa->print(tmps);
-    sprintf(s, "%s %s", s, tmps);
+    tmp_obj->print(tmp_str);
+    sprintf(a_str, "%s %s", a_str, tmp_str);
   }
 }
 #endif
-

@@ -1,5 +1,7 @@
 2003-12-31  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/stringlist.cpp :
+	* lib/stringlist.h :
 	* lib/list.cpp :
 	* lib/list.h :
 
