@@ -51,6 +51,8 @@ $(foreach f,$(XFIG_SRCS),$(f).eps) : $(patsubst %.eps,%.fig,$(@))
 
 policyupdater.dvi : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).eps) $(CLASS) $(STYLE)
 	$(LATEX) policyupdater.tex
+	$(LATEX) policyupdater.tex
 
 policyupdater.pdf : policyupdater.tex $(foreach f,$(XFIG_SRCS),$(f).pdf) $(CLASS) $(STYLE)
+	$(PDFLATEX) policyupdater.tex
 	$(PDFLATEX) policyupdater.tex
