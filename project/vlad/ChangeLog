@@ -1,5 +1,13 @@
 2003-04-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/atom.cpp :
+	* kb/consttab.cpp :
+	* kb/sequence.cpp :
+	* kb/transtab.cpp :
+
+	  - Added code to initialise classes.
+
+
 	* kb/querytab.h :
 	* kb/querytab.cpp :
 

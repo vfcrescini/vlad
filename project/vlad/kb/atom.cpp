@@ -14,6 +14,9 @@
 
 atom::atom()
 {
+  type = 0;
+  truth = true;
+  constant = NULL;
   initialised = false;	
 }
 

@@ -13,6 +13,9 @@
 
 constraint::constraint()
 {
+  exp = NULL;
+  cond = NULL;
+  ncond = NULL;
   initialised = false;
 }
 
