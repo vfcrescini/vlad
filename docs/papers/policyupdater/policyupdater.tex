@@ -1683,6 +1683,64 @@ query holds(alice, read, file);
 
       \subsubsection{Grounding Constraint Variables}
 
+        While constraints are in the process of being added into the
+        constraints table, each variable identifier that occurs within each
+        constraint is grounded by replacing it with all the entity identifiers
+        in the symbol table that matches the variable type (subject, access
+        rights, objects, or groups). This means each constraint with variables
+        are replaced by $n_0$ $\times$ $n_1$ $\times$ $\hdots$ $\times$ $n_m$
+        constraints, where $m$ is the number of distinct variable occurences
+        and $n_i$ ($0$ $\leq$ $i$ $\leq$ $m$) is the number of entity
+        identifiers of the same type as variable $i$.
+
+        \begin{example}
+          Given the symbol table below:
+
+          \begin{quote}
+            \begin{tabular}[t]{|l|l|l|l|l|l|}
+              \hline
+              \textbf{ss} & \textbf{sa} & \textbf{so} & \textbf{sg} & \textbf{ag} & \textbf{og} \\
+              \hline
+              alice & read & file1 & students & & \\
+              bob & write & & & & \\
+              charlie & & & & & \\
+              \hline
+            \end{tabular}
+          \end{quote}
+
+          grounding the following constraint:
+
+          \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+                holds&(SS0, write, file1) \leftarrow \\
+                & holds(SS0, read, file1), \\
+                & memb(SS0, students)
+              \end{aligned}
+            \end{math}
+          \end{quote}
+
+          yields the following 3 constraints:
+
+          \begin{quote}
+            \begin{math}
+              \begin{aligned}[t]
+                holds&(alice, write, file1) \leftarrow \\
+                & holds(alice, read, file1), \\
+                & memb(alice, students) \\
+                holds&(bob, write, file1) \leftarrow \\
+                & holds(bob, read, file1), \\
+                & memb(bob, students) \\
+                holds&(charlie, write, file1) \leftarrow \\
+                & holds(charlie, read, file1), \\
+                & memb(charlie, students)
+              \end{aligned}
+            \end{math}
+          \end{quote}
+
+
+        \end{example}
+
       \subsubsection{Policy Updates}
 
       \subsubsection{Translation to Normal Logic Program}
