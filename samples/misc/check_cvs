@@ -19,7 +19,7 @@
 #
 # Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 # Started: 2002 Aug 11
-# Updated: 2003 Dec 01 
+# Updated: 2003 Dec 07
 
 progname="check_cvs"
 progver="1.0"
