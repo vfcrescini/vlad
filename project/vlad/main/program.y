@@ -111,11 +111,11 @@ init :
 
 body :
   ident_section initial_section constraint_section trans_section {
-  int retval;
+    int retval;
     /* after the body, we must close the kb */
     if ((retval = kbase->close_kb()) != VLAD_OK) {
       errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
+      programerror("unable to close kb");
       return retval;
     }
   }
@@ -131,7 +131,7 @@ ident_section : {
     /* after the ident section, we must close the symbol table */
     if ((retval = kbase->close_symtab()) != VLAD_OK) {
       errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
+      programerror("unable to close symtab");
       return retval;
     }
   }
@@ -140,7 +140,7 @@ ident_section : {
     /* after the ident section, we must close the symbol table */
     if ((retval = kbase->close_symtab()) != VLAD_OK) {
       errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
+      programerror("unable to close symtab");
       return retval;
     }
   }
