@@ -269,10 +269,71 @@
 
         \begin{verbatim}query <ground-exp>;\end{verbatim}
 
-    \subsection{Query Evaluation}
+    \subsection{Query Evaluation and Policy Updates}
 
+      The PolicyUpdater system evaluates queries by translating language
+      ${\cal L}$ policy base into a {\em normal logic program}, which can be
+      evaluated using the {\em stable model semantics}. With the use of the
+      {\em smodels}\footnotemark library to generate a set of all the stable
+      models $S$ of the policy, PolicyUpdater can then perform query
+      evaluations by checking to see if the query expression holds in set $S$.
 
-    \subsection{Policy Updates}
+      \footnotetext{Smodels from http://www.tcs.hut.fi/Software/smodels}
+
+      Without policy updates, the translation of language ${\cal L}$ into a
+      normal logic program is a straightforward procedure: simply express each
+      statement as a logical rule of the form:
+
+      \begin{quote}
+        $Q$ $\leftarrow$ $P_{0}$, $P_{1}$, ..., $P_{n}$
+
+        where $P_{i}$ ($0$ $\leq$ $i$ $\leq$ $n$) are the premise facts and $Q$
+        is the consequent fact.
+      \end{quote}
+
+      However, with policy updates, the policy base has states: a state
+      transition occurs when a policy update is applied. Since atoms cannot
+      express the states in which its relation is meaningful, facts cannot
+      express the states in which they hold or do not hold. Such policy bases
+      cannot be translated into normal logic programs as rules in one state
+      may not necessarily apply to another state, and there is no means to
+      distinguish between two states.
+
+      PolicyUpdater solves the problem described above by redefining atoms:
+      instead of just binding entities in a relation, atoms now represent
+      a relationship in a particular state. This is achieved by adding a state
+      parameter on every atom. The initial state, or the state before any
+      policy update is applied, is assigned state $S_{0}$. States after $S_{0}$
+      is defined by the following funcion:
+
+      \begin{quote}
+        $S'$ = $update$($S$, $U$)
+
+        where $S$ is the current state, $S'$ is the state after update $U$ is
+        applied and the function $update$ applies update $U$ to state $S$.
+      \end{quote}
+
+      By using this technique, we can now translate each statement of language
+      ${\cal L}$ to normal logic program:
+
+      \begin{itemize}
+        \item
+          Initial state facts are assigned the extra parameter $S_{0}$.
+        \vspace{1mm}
+        \item
+          Constraints are rules that apply regardless of any updates, so
+          for each state $S_{i}$ ($0$ $\leq$ $i$ $\leq$ $n$, $n$ is the total
+          number of applied updates), each fact in each constraint is assigned
+          the new parameter $S_{i}$.
+        \vspace{1mm}
+        \item
+          Policy Updates are applied by translating them into logic rules:
+          preconditions are premises and postconditions are consequents. Note
+          that facts in the premises are given the parameter $S_{b}$ and
+          facts in the consequents are given the parameter $S_{a}$ ($S_{b}$ is
+          the current state before update $U$ is applied and $S_{a}$ =
+          $update$($S_{b}$, $U$)).
+      \end{itemize}
 
   \section{Web Server Access Control}
 
