@@ -13,7 +13,7 @@ class list_item
   public :
     list_item();
     virtual ~list_item();
-    virtual bool cmp(list_item *item) = 0;
+    virtual bool cmp(list_item *a_item) = 0;
 } ;
 
 /*
@@ -32,32 +32,32 @@ class list
 {
   public :
     list();
-    list(bool u);
+    list(bool a_uniq);
     virtual ~list();
-    bool cmp(list *l);
+    bool cmp(list *a_list);
     unsigned int length();
   private :
-    unsigned int len;
-    bool unique;
-    list_node *head;
-    list_node *tail;
+    unsigned int m_length;
+    bool m_uniq;
+    list_node *m_head;
+    list_node *m_tail;
   protected :
     /* add pointer to list, assumes memory has been allocated to it */
-    int add(list_item *data);
-    /* deletes index'th data, f = true to free mem or false to not free it */
-    int del(unsigned int index, bool f);
-    /* deletes all the nodes that matches data, f = true to free mem */
-    int del(list_item *data, bool f);
+    int add(list_item *a_data);
+    /* deletes index'th data, free = true to free mem or false to not free it */
+    int del(unsigned int a_index, bool a_free);
+    /* deletes all the nodes that matches data, free = true to free mem */
+    int del(list_item *a_data, bool a_free);
     /* gives an array of indices of the data given */
-    int get(list_item *item, unsigned int **array, unsigned int *s);
+    int get(list_item *a_item, unsigned int **a_array, unsigned int *a_size);
     /* gives a reference to the index'th data */
-    int get(unsigned int index, list_item **data);
+    int get(unsigned int a_index, list_item **a_data);
     /* gives a reference to all the nodes that matches item. array + size */
-    int get(list_item *item, list_item ***data, unsigned int *s);
+    int get(list_item *a_item, list_item ***a_data, unsigned int *a_size);
     /* returns 0 if data is in the list */
-    int find(list_item *data);
+    int find(list_item *a_data);
     /* destroys the list, f = true to free mem */
-    void purge(bool f);
+    void purge(bool a_free);
 } ;
 
 #endif
