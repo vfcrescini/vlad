@@ -7,6 +7,7 @@
 #define __VLAD_EXPRESSION_H
 
 #include <vlad/list.h>
+#include <vlad/stringlist.h>
 #include <vlad/fact.h>
 
 /* a list of facts. no checking. */
@@ -26,6 +27,8 @@ class expression : public list
     int replace(const char *a_var, const char *a_ident, expression **a_exp);
     /* replace vars in vlist to entity in ilist. create a new expression */
     int replace(stringlist *a_vlist, stringlist *a_ilist, expression **a_exp);
+    /* gives a list of vars occuring in the expr. assumes list is init'ed */
+    int varlist(stringlist **a_list);
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *a_str);

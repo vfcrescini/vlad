@@ -110,16 +110,43 @@ int constraint::replace(const char *a_var,
   /* replace the individual expressions of this constraint */
   if ((retval = m_exp->replace(a_var, a_ident, &(exps[0]))) != VLAD_OK)
     return retval;
-  if ((retval = m_cond->replace(a_var, a_ident, &(exps[1]))) != VLAD_OK)
-    return retval;
-  if ((retval = m_ncond->replace(a_var, a_ident, &(exps[2]))) != VLAD_OK)
-    return retval;
+  if (m_cond != NULL)
+    if ((retval = m_cond->replace(a_var, a_ident, &(exps[1]))) != VLAD_OK)
+      return retval;
+  if (m_ncond != NULL)
+    if ((retval = m_ncond->replace(a_var, a_ident, &(exps[2]))) != VLAD_OK)
+      return retval;
 
   /* now create a new constraint */
   if ((tmp = VLAD_NEW(constraint())) == NULL)
     return VLAD_MALLOCFAILED;
 
   return tmp->init(exps[0], exps[1], exps[2]);
+}
+
+/* gives a list of vars occuring in the constr, creats a new constr */
+int constraint::varlist(stringlist **a_list)
+{
+  int retval; 
+
+  if (a_list == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a_list = VLAD_NEW(stringlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  if ((retval = m_exp->varlist(a_list)) != VLAD_OK)
+    return retval;
+
+  if (m_cond != NULL)
+    if ((retval = m_cond->varlist(a_list)) != VLAD_OK)
+      return retval;
+
+  if (m_ncond != NULL)
+    if ((retval = m_ncond->varlist(a_list)) != VLAD_OK)
+      return retval;
+
+  return VLAD_OK;
 }
 
 consttab::consttab() : list(true)

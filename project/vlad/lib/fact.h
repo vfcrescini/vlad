@@ -73,6 +73,8 @@ class fact : public list_item
     int type(unsigned char *a_type);
     /* gives the truth value of the fact */
     int truth(bool *a_truth);
+    /* gives a list of vars occuring in the fact. assumes list is init'ed */
+    int varlist(stringlist **a_list);
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */
     void print(char *a_str);
