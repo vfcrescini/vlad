@@ -55,7 +55,7 @@ class subset_atom
     identifier *grp2;
 } ;
 
-class atom
+class atom : public list_item
 {
   public :
     atom();
@@ -65,6 +65,7 @@ class atom
     int init_subset(identifier *g1, identifier *g2, bool t);
     unsigned char get_type();
     int get(identifier **i1, identifier **i2, identifier **i3, bool *tr, unsigned char *ty);
+    bool cmp(list_item *item);
   private :
     unsigned char type;
     bool truth;

@@ -1,3 +1,13 @@
+2003-02-24  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.c :
+	* kb/atom.h :
+
+	  - Atom class is now a derived class of list_item. This is to make
+	    way for the atomlist class.
+
+	  - Added a cmp() function in atom.
+
 2003-02-18  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* configure :
