@@ -1614,102 +1614,6 @@ int kb::verify_atom_subset(const char *g1, const char *g2, stringlist *v)
   return VLAD_OK;
 }
 
-int kb::encode_holds(const char *s, const char *a, const char *o, unsigned int *n)
-{
-  int retval;
-  unsigned int s_index;
-  unsigned int a_index;
-  unsigned int o_index;
-  unsigned char s_type;
-  unsigned char a_type;
-  unsigned char o_type;
-  unsigned int hs;
-  unsigned int ha;
-  unsigned int ho;
-
-  /* get the indices of the identifiers */
-  if ((retval = stable->get(s, &s_index, &s_type)) != VLAD_OK)
-    return retval;
-  if ((retval = stable->get(a, &a_index, &a_type)) != VLAD_OK)
-    return retval;
-  if ((retval = stable->get(o, &o_index, &o_type)) != VLAD_OK)
-    return retval;
-
-  /* now compute */
-  hs = s_index + (VLAD_IDENT_IS_GROUP(s_type) ? s_len : 0);
-  ha = a_index + (VLAD_IDENT_IS_GROUP(a_type) ? a_len : 0);
-  ho = o_index + (VLAD_IDENT_IS_GROUP(o_type) ? o_len : 0);
-
-  *n = (hs * (a_len + ag_len) * (o_len + og_len)) + (ha * (o_len + og_len)) + ho;
-
-  return VLAD_OK;
-}
-
-int kb::encode_member(const char *e, const char *g, unsigned int *n)
-{
-  int retval;
-  unsigned int e_index;
-  unsigned int g_index;
-  unsigned char e_type;
-  unsigned char g_type;
-
-  /* get the indices of the identifiers */
-  if ((retval = stable->get(e, &e_index, &e_type)) != VLAD_OK)
-    return retval;
-  if ((retval = stable->get(g, &g_index, &g_type)) != VLAD_OK)
-    return retval;
-
-  /* now compute */
-  switch(VLAD_IDENT_BASETYPE(e_type)) {
-    case VLAD_IDENT_SUBJECT :
-      *n = (e_index * sg_len) + g_index;
-      break;
-    case VLAD_IDENT_ACCESS :
-      *n = (s_len * sg_len) + (e_index * ag_len) + g_index;
-      break;
-    case VLAD_IDENT_OBJECT :
-      *n = (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index;
-      break;
-    default :
-      /* this should never happen */
-      return VLAD_FAILURE;
-  }
-
-  return VLAD_OK;
-}
-
-int kb::encode_subset(const char *g1, const char *g2, unsigned int *n)
-{
-  int retval;
-  unsigned int g1_index;
-  unsigned int g2_index;
-  unsigned char g1_type;
-  unsigned char g2_type;
-
-  /* get the indices of the identifiers */
-  if ((retval = stable->get(g1, &g1_index, &g1_type)) != VLAD_OK)
-    return retval;
-  if ((retval = stable->get(g2, &g2_index, &g2_type)) != VLAD_OK)
-    return retval;
-
-  /* now we compute */
-  switch(VLAD_IDENT_BASETYPE(g1_type)) {
-    case VLAD_IDENT_SUBJECT :
-      *n = (g1_index * sg_len) + g2_index;
-      break;
-    case VLAD_IDENT_ACCESS :
-      *n = (sg_len * sg_len) + (g1_index * ag_len) + g2_index;
-      break;
-    case VLAD_IDENT_OBJECT :
-      *n = (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index;
-      break;
-    default :
-      /* this should never happen */
-      return VLAD_FAILURE;
-  }
-  return VLAD_OK;
-}
-
 int kb::decode_holds(char **s, char **a, char **o, unsigned int n)
 {
   int retval;
@@ -1799,7 +1703,6 @@ int kb::decode_subset(char **g1, char **g2, unsigned int n)
 int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
 {
   int retval;
-  unsigned int num;
   char *tmp1;
   char *tmp2;
   char *tmp3;
@@ -1817,31 +1720,66 @@ int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
 
   /* get the unsigned, unstated id of the atom */
   switch(ty) {
-    case VLAD_ATOM_HOLDS :
-      if ((retval = encode_holds(tmp1, tmp2, tmp3, &num)) != VLAD_OK)
+    case VLAD_ATOM_HOLDS : {
+      unsigned int s_index;
+      unsigned int a_index;
+      unsigned int o_index;
+      unsigned char s_type;
+      unsigned char a_type;
+      unsigned char o_type;
+
+      /* get incices */
+      if ((retval = stable->get(tmp1, &s_index, &s_type)) != VLAD_OK)
         return retval;
-      break;
-    case VLAD_ATOM_MEMBER :
-      if ((retval = encode_member(tmp1, tmp2, &num)) != VLAD_OK)
+      if ((retval = stable->get(tmp2, &a_index, &a_type)) != VLAD_OK)
         return retval;
-      num = num + h_tot;
-      break;
-    case VLAD_ATOM_SUBSET :
-      if ((retval = encode_subset(tmp1, tmp2, &num)) != VLAD_OK)
+      if ((retval = stable->get(tmp3, &o_index, &o_type)) != VLAD_OK)
         return retval;
-      num = num + h_tot + m_tot;
-      break;
-    default :
-      return VLAD_INVALIDINPUT;
+
+      /* adjust for groups */
+      s_index += (VLAD_IDENT_IS_GROUP(s_type) ? s_len : 0);
+      a_index += (VLAD_IDENT_IS_GROUP(a_type) ? a_len : 0);
+      o_index += (VLAD_IDENT_IS_GROUP(o_type) ? o_len : 0);
+
+      *n = compute_holds(s, tr, s_index, a_index, o_index);
+
+      return VLAD_OK;
+    }
+    case VLAD_ATOM_MEMBER : {
+      unsigned int e_index;
+      unsigned int g_index;
+      unsigned char e_type;
+      unsigned char g_type;
+
+      /* get incices */
+      if ((retval = stable->get(tmp1, &e_index, &e_type)) != VLAD_OK)
+        return retval;
+      if ((retval = stable->get(tmp2, &g_index, &g_type)) != VLAD_OK)
+        return retval;
+
+      *n = compute_member(s, tr, e_type, e_index, g_index);
+
+      return VLAD_OK;
+    }
+    case VLAD_ATOM_SUBSET : {
+      unsigned int g1_index;
+      unsigned int g2_index;
+      unsigned char g1_type;
+      unsigned char g2_type;
+
+      /* get incices */
+      if ((retval = stable->get(tmp1, &g1_index, &g1_type)) != VLAD_OK)
+        return retval;
+      if ((retval = stable->get(tmp2, &g2_index, &g2_type)) != VLAD_OK)
+        return retval;
+
+      *n = compute_subset(s, tr, g1_type, g1_index, g2_index);
+
+      return VLAD_OK;
+    }
   }
 
-  /* consider the truth value */
-  num = num + (tr ? pos_tot : 0);
-
-  /* now the state */
-  *n = num + (s * (pos_tot * 2));
-
-  return VLAD_OK;
+  return VLAD_INVALIDINPUT;
 }
 
 /* returns the atom given the id */

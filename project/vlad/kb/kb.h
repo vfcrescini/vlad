@@ -89,10 +89,6 @@ class kb {
      * type, or listed in v if v is non-null
      */ 
     int verify_atom_subset(const char *g1, const char *g2, stringlist *v);
-    /* functions for encoding atoms */
-    int encode_holds(const char *s, const char *a, const char *o, unsigned int *n);
-    int encode_member(const char *e, const char *g, unsigned int *n);
-    int encode_subset(const char *g1, const char *g2, unsigned int *n);
     /* functions for decoding atoms */
     int decode_holds(char **s, char **a, char **o, unsigned int n);
     int decode_member(char **e, char **g, unsigned int n);
