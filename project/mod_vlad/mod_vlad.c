@@ -82,7 +82,7 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
     conf->user_file = NULL;
     conf->policy_file = NULL;
     conf->kb = NULL;
-    conf->path = modvlad_strip_slash(a_p, apr_pstrdup(a_p, a_d));
+    conf->path = modvlad_strip_url(a_p, apr_pstrdup(a_p, a_d));
   }
 
   return conf;
@@ -159,7 +159,7 @@ static int modvlad_authenticate(request_rec *a_r)
   /* get password from browser */
   if ((retval = ap_get_basic_auth_pw(a_r, &sent_passwd))) {
     ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
+                  APLOG_NOTICE,
                   0,
                   a_r,
                   "mod_vlad: could not get password from browser");
@@ -171,7 +171,7 @@ static int modvlad_authenticate(request_rec *a_r)
 
   if (!real_passwd) {
     ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
+                  APLOG_NOTICE,
                   0,
                   a_r,
                   "mod_vlad: invalid user: user=\"%s\" uri=\"%s\"",
@@ -188,7 +188,7 @@ static int modvlad_authenticate(request_rec *a_r)
 
   if (status != APR_SUCCESS) {
     ap_log_rerror(APLOG_MARK,
-                  APLOG_ERR,
+                  APLOG_NOTICE,
                   0,
                   a_r,
                   "mod_vlad: password mismatch: user=\"%s\" uri=\"%s\"",
@@ -227,8 +227,8 @@ static int modvlad_authorize(request_rec *a_r)
     return DECLINED;
   }
 
-  /* strip the trailing slash from the uri */
-  real_uri = modvlad_strip_slash(a_r->pool, a_r->unparsed_uri);
+  /* clean url */
+  real_uri = modvlad_strip_url(a_r->pool, a_r->uri);
 
   ap_log_rerror(APLOG_MARK,
                 APLOG_NOTICE,

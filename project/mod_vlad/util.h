@@ -62,7 +62,7 @@ int modvlad_init(apr_pool_t *a_p,
                  const char *a_uname,
                  const char *a_pname);
 
-/* strips out the trailing / from a_str */
-const char *modvlad_strip_slash(apr_pool_t *a_p, const char *a_str);
+/* strips out trailing slashes and/or everything after a ? */
+const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url);
 
 #endif

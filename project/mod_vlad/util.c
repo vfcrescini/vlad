@@ -35,6 +35,10 @@ static const char *get_docroot(apr_pool_t *a_p,
                                server_rec *a_s);
 /* returns the parent of the given filepath */
 static const char *get_parent(apr_pool_t *a_p, const char *a_path);
+/* strips out everything after ? */
+const char *strip_question(apr_pool_t *a_p, const char *a_str);
+/* strips out the trailing / from a_str */
+const char *strip_slash(apr_pool_t *a_p, const char *a_str);
 
 /* a version of yyinput that uses apache apr */
 int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max)
@@ -105,25 +109,9 @@ int modvlad_init(apr_pool_t *a_p,
   return 0;
 }
 
-/* strips out the trailing / from a_str */
-const char *modvlad_strip_slash(apr_pool_t *a_p, const char *a_str)
+const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url)
 {
-  char tmpstring[5120];
-  int i;
-
-  if (a_str == NULL || a_p == NULL)
-    return NULL;
-
-  strcpy(tmpstring, a_str);
-
-  for (i = strlen(a_str) - 1; i >= 0; i--) {
-    if (tmpstring[i] == '/')
-      tmpstring[i] = '\0';
-    else
-      break;
-  }
-
-  return apr_pstrdup(a_p, (strcmp(tmpstring, "") ? tmpstring : "/"));
+  return strip_slash(a_p, strip_question(a_p, a_url));
 }
 
 /* register the users into the kb */
@@ -395,3 +383,47 @@ static const char *get_parent(apr_pool_t *a_p, const char *a_path)
 
   return apr_pstrdup(a_p, !slash ? a_path : (strcmp(tmpstring, "") ? tmpstring : "/"));
 }
+
+/* strips out the trailing / from a_str */
+const char *strip_slash(apr_pool_t *a_p, const char *a_str)
+{
+  char tmpstring[5120];
+  int i;
+
+  if (a_str == NULL || a_p == NULL)
+    return NULL;
+
+  strcpy(tmpstring, a_str);
+
+  for (i = strlen(a_str) - 1; i >= 0; i--) {
+    if (tmpstring[i] == '/')
+      tmpstring[i] = '\0';
+    else
+      break;
+  }
+
+  return apr_pstrdup(a_p, (strcmp(tmpstring, "") ? tmpstring : "/"));
+}
+
+/* strips out everything after ? */
+const char *strip_question(apr_pool_t *a_p, const char *a_str)
+{
+  char tmpstring[5120];
+  int i;
+
+  if (a_str == NULL || a_p == NULL)
+    return NULL;
+
+  strcpy(tmpstring, a_str);
+
+  for (i = 0; i < strlen(a_str); i++) {
+    if (tmpstring[i] == '?') {
+      tmpstring[i] = '\0';
+      break;
+    }
+  }
+
+  return apr_pstrdup(a_p, tmpstring);
+}
+
+
