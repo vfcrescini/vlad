@@ -285,7 +285,7 @@
           definition syntax:
 
           \begin{vverbatim}
-  initially <ground-exp>;
+  initially <ground\_exp>;
           \end{vverbatim}
 
         \paragraph{Constraint Definition.}
@@ -318,19 +318,19 @@
           using the following syntax:
 
           \begin{vverbatim}
-  <up\_id>([<var\_id>[, ...]])
+  <upd\_id>([<var\_id>[, ...]])
     causes <exp1>
     [if <exp2>];
           \end{vverbatim}
 
-          $up\_id$ is the policy update identifier to be used in referencing
-          this policy update. The optional $var\_id$ list are the variable
-          identifiers occurring in the expressions $exp1$ and $exp2$ and will
-          eventually be replaced by entity identifiers when the update is
-          referenced. The postcondition expression $exp1$ is an expression that
-          will hold in the state after this update is applied. The expression
-          $exp2$ is a precondition expression that must hold in the current
-          state before this update is applied.
+          $upd\_id$ is the policy update identifier to be used in referencing
+          this policy update. The optional parameter $var\_id$ is a list
+          contains the variable identifiers occurring in the expressions $exp1$
+          and $exp2$ and will eventually be replaced by entity identifiers when
+          the update is referenced. The postcondition expression $exp1$ is an
+          expression that will hold in the state after this update is applied.
+          The expression $exp2$ is a precondition expression that must hold in
+          the current state before this update is applied.
 
           Note that a policy update definition will have no effect on the
           policy base until it is applied by one of the directives described in
@@ -356,13 +356,13 @@
             use of the following directive:
 
             \begin{vverbatim}
-  seq add <up\_id>([<e\_id>[, ...]]);
+  seq add <upd\_id>([<elt\_id>[, ...]]);
             \end{vverbatim}
 
-            \noindent where $up\_id$ is the identifier of a defined policy
-            update and the $e\_id$ list is a comma-separated list of entity
-            identifiers that will replace the variable identifiers that occur in
-            the definition of the policy update.
+            \noindent where $upd\_id$ is the identifier of a defined policy
+            update and the $elt\_id$ list is a comma-separated list of entity
+            identifiers that will replace the variable identifiers that occur
+            in the definition of the policy update.
 
           \item
             {\em Listing the updates in the sequence.}
@@ -377,12 +377,12 @@
             in the form:
 
             \begin{vverbatim}
-  <n> <up\_id>([<e\_id>[, ...]])
+  <n> <upd\_id>([<elt\_id>[, ...]])
             \end{vverbatim}
 
             \noindent where $n$ is the ordinal index of the policy update
-            within the sequence list starting at 0. $up\_id$ is the policy
-            update identifier and the $e\_id$ list is the list of entity
+            within the sequence list starting at 0. $upd\_id$ is the policy
+            update identifier and the $elt\_id$ list is the list of entity
             identifiers used to replace the variable identifier place-holders.
 
           \item
@@ -421,7 +421,7 @@
           its negation holds, or neither, respectively. Syntax is as follows:
 
           \begin{vverbatim}
-  query <ground-exp>;
+  query <ground\_exp>;
           \end{vverbatim}
 
         \begin{vexample}
