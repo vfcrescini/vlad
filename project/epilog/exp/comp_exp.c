@@ -123,18 +123,6 @@ int comp_exp_replace(comp_exp_type comp,
   return 0;
 }
 
-/* delete an atom from the expression */
-int comp_exp_del(comp_exp_type *exp, comp_atom_type atom)
-{
-  if (exp == NULL)
-    return -1;
-
-  return simplelist_del_data(exp,
-                             (void *) &atom, 
-                             comp_exp_compare,
-                             comp_exp_destroy);
-}
-
 /* delete all atoms from this expression */
 void comp_exp_purge(comp_exp_type *exp)
 {

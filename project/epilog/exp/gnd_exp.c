@@ -181,18 +181,6 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
   return simplelist_add(exp, (void *) new_atom);
 }
 
-/* delete an atom from the gnd_exp */
-int gnd_exp_del(gnd_exp_type *exp, gnd_atom_type atom)
-{
-  if (exp == NULL)
-    return -1;
-
-  return simplelist_del_data(exp,
-                             (void *) &atom, 
-                             gnd_exp_compare,
-                             gnd_exp_destroy);
-}
-
 /* copies exp1 to exp2 */
 int gnd_exp_copy(gnd_exp_type exp1, gnd_exp_type *exp2)
 {

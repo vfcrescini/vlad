@@ -1,3 +1,13 @@
+2002-10-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/comp_exp.c :
+	* exp/comp_exp.h :
+	* exp/gnd_exp.c :
+	* exp/gnd_exp.h :
+
+	  - Removed unnecessary delete function. May have caused
+	    inconsistencies in the expressions.
+
 2002-10-20  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/gnd_exp.c :
