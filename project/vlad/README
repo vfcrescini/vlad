@@ -5,18 +5,16 @@ Build/Use Instructions
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2002 Dec 19
+Updated: 2003 Jan 24
 -------------------------------------------------------------------------------
 
-1. From the toplevel source directory, run autoconf, ./configure, then make :
+1. From the toplevel source directory, run ./configure, then make :
 
-     $ autoconf
      $ ./configure
      $ make
 
    For a debug build (lots of output, compiled with -g) :
 
-     $ autoconf
      $ ./configure --enable-debug
      $ make
 
