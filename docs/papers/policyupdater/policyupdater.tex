@@ -1191,12 +1191,68 @@ query holds(alice, read, file);
 
   \section{Implementation}
 
+    Although the semantics of language ${\cal L}$ shows that any program $P$
+    of language ${\cal L}$ can be translated into an extended logic program
+    $P^{*}$ of language ${\cal L}^{*}$, the stable model semantics requires 
+    a normal logic program for computation. Therefore, a program $P$ of
+    language ${\cal L}$ must then be further translated into a normal logic
+    program first before any query evaluation or policy update can be
+    performed.
+
+    An extended logic program $P^{*}$ in language ${cal L}^{*}$ is translated
+    into a normal logic program by performing 2 additional steps:
+
+    \begin{itemize}
+      \item
+        Removal of classical negation
+      \item
+        Representing facts in propositional form
+    \end{itemize}
+
+    The removal of classical negation from facts of language ${\cal L}$ is a
+    straightforward procedure: each classically negated fact $\lnot$ $f$ is
+    replaced by a new and unique positive fact $f'$ that represents the
+    negation of fact $f$. Then, the following constraint rule must be added to 
+    preserve the consistency of the policy base for all facts $f$ in the
+    domain.
+
+    \begin{quote}
+      $FALSE$ $\leftarrow$ $f$, $\lnot$ $f$
+    \end{quote}
+
+    Semantically, an atom of language ${\cal L}^{*}$ is defined as a relational
+    binding of 2 to 3 entity identifiers and a state parameter. To translate
+    into a normal logic program, atoms of this first-order logic form must be
+    converted into propositional form, that is, an atom must be represented by
+    a single identity or symbol instead of a relation. Such translation is
+    achieved by the following functions:
+
+    \begin{itemize}
+      \item
+        $f^{NLP}$ = $Encode$($f^{\cal L}$)
+      \item
+        $f^{\cal L}$ = $Decode$($f^{NLP}$)
+    \end{itemize}
+
+    Our proposed translation method from language ${\cal L}$ to a normal logic
+    program relies mainly on the representation of atoms and facts in the
+    implementation. As we shall illustrate in the following sections, the
+    representation of atoms and facts plays a major role in both the removal of
+    classical negation and the translation to propositional form. However,
+    before showing the translation, the data structures must first be defined.
+
     \subsection{Data Structures}
 
-      \subsubsection{Entities}
+      As a program of language ${\cal L}$ is parsed, each statement containing
+      entity declarations, facts, constraint rules and policy updates must
+      be stored in a buffer before the translation process is started.
 
-        All defined entities are sorted among 6 separate string lists:
+      \subsubsection{Symbol Table}
 
+        The symbol table is used to store the identifier entities defined in the
+        entity identifier declaration section of language ${\cal L}$ programs.
+        The symbol table is composed of 6 separate string lists:
+ 
         \begin{itemize}
           \item
             Single Subject Entity List ($\cal E_{SS}$)
@@ -1211,10 +1267,10 @@ query holds(alice, read, file);
           \item
             Group Object Entity List ($\cal E_{OG}$)
         \end{itemize}
-
-        In addition to the above lists, we also define 3 pseudo-lists that are
-        concatenations of the above lists:
-
+ 
+        In addition to the above lists, the symbol table also defines 3
+        conceptual pseudo-lists that are concatenations of the above lists:
+ 
         \begin{itemize}
           \item
             Subject Entity List ($\cal E_{S}$ = $\cal E_{SS} + \cal E_{SG}$)
@@ -1223,15 +1279,122 @@ query holds(alice, read, file);
           \item
             Object Entity List ($\cal E_{O}$ = $\cal E_{OS} + \cal E_{OG}$)
         \end{itemize}
+ 
+        Each entity identifier in the above lists are sorted accoring to their
+        type, and ordered accoring to the order in which they are declared in the
+        program. Each list is indexed by consecutive positive integers starting
+        from zero. Pseudo-lists are ordered in the same manner as the other
+        lists, with the single list elements starting at index 0, and the group
+        list elements offset by the length of the single list.
 
-        The function $Find$ takes takes an entity identifier $\epsilon$ and an
-        entity list $\lambda$ as input parameters and returns the index of
-        entity $\epsilon$ with respect to list $\lambda$ or $-1$ if $\epsilon$
-        is not in $\lambda$.
+      \subsubsection{Atoms, Facts and Expressions}
 
-      \subsubsection{Atoms}
+        \paragraph{Atoms.}
+          The three types of atoms are represented as structures of 2 to 3
+          strings, with each string matching an entity identifier in the
+          symbol table.
+ 
+          \subparagraph{Holds}
+            \begin{itemize}
+              \item
+                Subject Entity Identifier String
+              \item
+                Access Entity Right Identifier String
+              \item
+                Object Entity Identifier String
+            \end{itemize}
+ 
+          \subparagraph{Member}
+            \begin{itemize}
+              \item
+                Single Entity Identifier String
+              \item
+                Group Entity Identifier String
+            \end{itemize}
+  
+          \subparagraph{Subset}
+            \begin{itemize}
+              \item
+                Subgroup Entity Identifier String
+              \item
+                Supergroup Entity Identifier String
+            \end{itemize} 
 
-    \subsection{Algorithms}
+        \paragraph{Facts.}
+          A fact is a three-element structure composed of a polymorphic type
+          which can be any of the three atom structures above; a type
+          indicator to specify whether the fact is holds, member or subset;
+          and a truth flag, to indicate whether the atom is true or false.
+ 
+          \begin{itemize}
+            \item
+              polymorphic atom structure
+            \item
+              atom type indicator (holds$|$member$|$subset)
+            \item
+              truth flag (true$|$false)
+          \end{itemize}
+ 
+        \paragraph{Expressions.}
+ 
+          Since an expression is simply a conjunction of facts, they are
+          represented as an unordered list of fact structures.
+
+      \subsubsection{Policy Base Tables}
+
+        When a language ${\cal L}$ program is parsed, each of the facts, rules
+        and policy updates must be stored into the policy base tables before
+        they can be translated into language $\cal L^{*}$. The policy base is
+        composed of 4 tables to store the following: initial state facts,
+        constraint rules, policy update definitions and the policy update
+        sequence.
+ 
+        \paragraph{Initial State Facts Table.}
+          The initial state facts table is represented as a single list of
+          fact structures, or an expression. Each fact in all {\em initially}
+          statements are added into the initial state expression.
+ 
+        \paragraph{Constraint Table.}
+          The constraint table is represented as an unordered list of constraint
+          structures, with each structure composed of the following:
+ 
+          \begin{itemize}
+            \item
+              Expression representing the consequent
+            \item
+              Expression representing the positive premise
+            \item
+              Expression representing the negative premise
+          \end{itemize}
+ 
+        \paragraph{Policy Update Table.}
+          Another list of structures is the policy update table. Each element
+          structure of this table is composed of the following 4 sub elements:
+ 
+          \begin{itemize}
+            \item
+              Policy update identifier
+            \item
+              Ordered string list of variable identifier placeholders
+            \item
+              Expression representing the precondition
+            \item
+              Expression representing the postcondition
+          \end{itemize}
+ 
+        \paragraph{Policy Update Sequence Table.}
+ 
+          The policy update sequence table is an ordered list of sequence
+          structures, each with the following elements:
+ 
+          \begin{itemize}
+            \item
+              Polcy update identifier
+            \item
+              Ordered string list of entity identifiers to replace variables
+          \end{itemize}
+
+    \subsection{Translation to Normal Logic Program}
 
   \section{Case Study: Web Server Application}
 
