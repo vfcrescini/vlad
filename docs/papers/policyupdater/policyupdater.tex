@@ -1363,11 +1363,22 @@ query holds(alice, read, file);
         \end{definition}
 
     \begin{example}
-      [a full example (translation + result)]
+      \label{ex-3}
+      Given the language ${\cal L}$ code listing in example \ref{ex-1} and its
+      semantic translation in example \ref{ex-2}, the following shows the
+      results of the query evaluations:
 
+      \begin{quote}
+        \begin{math}
+          \begin{aligned}[t]
+            &holds(grp1, write, file) ? TRUE. \\
+            &holds(grp1, read, file) ? FALSE. \\
+            &holds(alice, write, file) ? TRUE. \\
+            &holds(alice, read, file) ? FALSE.
+          \end{aligned}
+        \end{math}
+      \end{quote}
     \end{example}
-
-  \section{Semantic Properties}
 
   \section{Implementation}
 
