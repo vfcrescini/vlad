@@ -713,6 +713,16 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     }
   }
 
+  /* complementary rules */
+  fprintf(f, "Complementary Rules\n");
+
+  /* state loop */
+  for (i = 0; i <= ((s == NULL) ? 0 : s->length()); i++) {
+    for (j = 0; j < pos_tot; j++) {
+      fprintf(f, "%6d <- %d AND %d\n", pos_tot + (i * pos_tot * 2), j + pos_tot + (i * pos_tot * 2), j + (i * pos_tot * 2));
+    }
+  }
+
   return VLAD_OK;
 }
 
