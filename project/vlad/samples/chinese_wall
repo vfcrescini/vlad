@@ -14,8 +14,8 @@ initially
   memb(Object1, Company1) &&
   memb(Object2, Company2);
 initially 
-  holds(S, Accessible, Object1) &&
-  holds(S, Accessible, Object2);
+  holds(S, Accessible, Company1) &&
+  holds(S, Accessible, Company2);
 
 /* transformations */
 
@@ -25,7 +25,7 @@ Request_Access_Company1(X, Y)
     !holds(X, Accessible, Company2)
   if
     memb(Y, Company1) &&
-    holds(X, Accessible, Y);
+    holds(X, Accessible, Company1);
 
 Request_Access_Company2(X, Y)
   causes
@@ -33,7 +33,7 @@ Request_Access_Company2(X, Y)
     !holds(X, Accessible, Company1)
   if
     memb(Y, Company2) &&
-    holds(X, Accessible, Y);
+    holds(X, Accessible, Company2);
 
 /* queries */
 
