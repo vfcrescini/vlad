@@ -1,5 +1,12 @@
 2002-08-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* trans/Makefile :
+	* trans/varlist.c :
+	* trans/varlist.h :
+
+	  - Added a structure to hold a list of variables (name + identifier
+	    mapping).
+
 	* ident/identlist.c :
 
 	  - More cleanups. Declare them as ident_type instead of ident_type *

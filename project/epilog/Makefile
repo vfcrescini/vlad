@@ -1,6 +1,6 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-DIRS = datastruct ident exp parser main
+DIRS = datastruct ident exp trans parser main
 DEBUG_DIRS = test
 
 all :

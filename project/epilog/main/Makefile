@@ -14,7 +14,7 @@ endif
 all : $(TARGETS)
 
 epilog : epilog.o $(TOPSRCDIR)/lib/*
-	$(CC) $(LDFLAGS) -o $(@) epilog.o -lparser -lexp -lident -ldatastruct -lfl
+	$(CC) $(LDFLAGS) -o $(@) epilog.o -lparser -ltrans -lexp -lident -ldatastruct -lfl
 ifndef DEBUG
 	strip $(@)
 endif
