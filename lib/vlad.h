@@ -25,6 +25,7 @@
 #define VLAD_STR_HOLDS       "holds"
 #define VLAD_STR_MEMBER      "member"
 #define VLAD_STR_SUBSET      "subset"
+#define VLAD_STR_QUERY       "?"
 
 /* string lengths */
 #define VLAD_MAXLEN_STR      5120
