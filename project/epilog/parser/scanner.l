@@ -11,12 +11,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <stringlist.h>
 #include <name.h>
 #include <atom.h>
 #include <expression.h>
-#include <trans.h>
-#include <translist.h>
+#include <stringlist.h>
+#include <identlist.h>
+#include <transdeflist.h>
+#include <transreflist.h>
 
 #include "y.tab.h"
 

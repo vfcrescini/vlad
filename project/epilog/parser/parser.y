@@ -7,14 +7,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <stringlist.h>
 #include <ident.h>
-#include <identlist.h>
 #include <name.h>
 #include <atom.h>
 #include <expression.h>
-#include <trans.h>
-#include <translist.h>
+#include <stringlist.h>
+#include <identlist.h>
+#include <transdeflist.h>
+#include <transreflist.h>
 
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
@@ -33,7 +33,7 @@ int dump_exp(expression_type exp);
 
 expression_type initial_exp;
 identlist_type identifier_list;
-translist_type transform_list;
+transdeflist_type transform_list;
 FILE *yyerr;
 %}
 
@@ -41,9 +41,12 @@ FILE *yyerr;
   char identifier[128];
   name_type name;
   atom_type atm;
-  trans_type trans;
+  transdef_type transdef;
+  transref_type transref;
+  transreflist_type transreflist;
   expression_type exp;
   stringlist_type strlist;
+  identlist_type ident;
   unsigned int terminal;
 }
 
@@ -75,6 +78,7 @@ FILE *yyerr;
 %token <terminal> EPI_SYM_IDENT
 %token <identifier> EPI_SYM_IDENTIFIER
 
+%type <exp> is_clause;
 %type <exp> ground_exp
 %type <exp> comp_exp
 %type <atm> logical_atom
@@ -92,7 +96,11 @@ FILE *yyerr;
 %type <atm> comp_memb_atom
 %type <strlist> trans_var_def;
 %type <strlist> trans_var_list;
-%type <trans> trans_stmt;
+%type <transdef> trans_stmt;
+%type <transref> trans_ref_def;
+%type <transreflist> trans_ref_list;
+%type <transreflist> after_clause;
+%type <ident> trans_ref_ident_list;
 
 %start program
 
@@ -156,10 +164,10 @@ other_stmt :
   initial_stmt {
   }
   | trans_stmt {
-    if (translist_find(transform_list, $1.name) == 0)
+    if (transdeflist_find(transform_list, $1.name) == 0)
       exit_error("trans identifier already declared");
 
-    if (translist_add_trans(&transform_list, $1) != 0)
+    if (transdeflist_add_trans(&transform_list, $1) != 0)
       exit_error("internal error");
   }
   | policy_stmt {
@@ -308,7 +316,7 @@ initial_stmt :
 
 trans_stmt : 
   EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON {
-    if (trans_compose(&$$, $2, $3, $5, $7) != 0)
+    if (transdef_compose(&$$, $2, $3, $5, $7) != 0)
       exit_error("internal_error");
 
 #ifdef DEBUG
@@ -326,8 +334,16 @@ trans_stmt :
   ;
 
 policy_stmt : 
-  is_clause after_clause EPI_SYM_SEMICOLON 
-  | is_clause EPI_SYM_SEMICOLON
+  is_clause after_clause EPI_SYM_SEMICOLON {
+    if (transreflist_purge(&$2) != 0)
+      exit_error("internal error");
+    if (expression_purge(&$1) != 0)
+      exit_error("internal error");
+  }
+  | is_clause EPI_SYM_SEMICOLON {
+     if (expression_purge(&$1) != 0)
+      exit_error("internal error");
+  }
   ;
 
 trans_var_def : 
@@ -364,30 +380,58 @@ trans_var_list :
 
 is_clause : 
   EPI_SYM_IS ground_exp {
+    $$ = $2;
   }
   ;
 
 after_clause : 
   EPI_SYM_AFTER trans_ref_list {
+    $$ = $2;
   }
   ;
 
 trans_ref_list : 
   trans_ref_def {
+    if (transreflist_init(&$$) != 0)
+      exit_error("internal error");
+    if (transreflist_add(&$$, $1) != 0)
+      exit_error("internal error");
   }
   | trans_ref_list EPI_SYM_COMMA trans_ref_def {
+    if (transreflist_add(&$1, $3) != 0)
+      exit_error("internal error");
+    $$ = $1;
   }
   ;
 
 trans_ref_def : 
   EPI_SYM_IDENTIFIER EPI_SYM_OPEN_PARENT trans_ref_ident_list EPI_SYM_CLOSE_PARENT {
+    if (transdeflist_find(transform_list, $1) != 0)
+      exit_error("transformation not declared");
+    if (transref_compose(&$$, $1, $3) != 0)
+      exit_error("internal error");
   }
   ;
 
 trans_ref_ident_list : 
   EPI_SYM_IDENTIFIER {
+    ident_type *tmp_ident = NULL;
+
+    if (identlist_init(&$$) != 0)
+      exit_error("internal error");
+    if (identlist_get(identifier_list, $1, &tmp_ident) != 0)
+      exit_error("identifier not declared");
+    if (identlist_add_ref(&$$, tmp_ident) != 0)
+      exit_error("internal error");
   }
-  | trans_ref_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA {
+  | trans_ref_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
+    ident_type *tmp_ident = NULL;
+
+    if (identlist_get(identifier_list, $3, &tmp_ident) != 0)
+      exit_error("identifier not declared");
+    if (identlist_add_ref(&$1, tmp_ident) != 0)
+      exit_error("internal error");
+    $$ = $1;
   }
   ;
 
@@ -755,7 +799,7 @@ int add_identifier(char ident[], unsigned short type)
     fprintf(yyerr, "declared access-group identifier %s\n", ident); 
 #endif
 
-  if (identlist_add(&identifier_list, ident, type) != 0) {
+  if (identlist_add_new(&identifier_list, ident, type) != 0) {
     yyerror("internal error");
     return -1;
   }
@@ -776,7 +820,7 @@ int initialise(void)
   if (expression_init(&initial_exp) != 0)
     return -1;
 
-  if (translist_init(&transform_list) != 0)
+  if (transdeflist_init(&transform_list) != 0)
     return -1;
 
   return 0;
@@ -789,13 +833,13 @@ int destroy(void)
   fprintf(yyerr, "destroying global lists\n");
 #endif
 
-  if (identlist_purge(&identifier_list) != 0)
+  if (identlist_purge_all(&identifier_list) != 0)
     return -1;
 
   if (expression_purge(&initial_exp) != 0)
     return -1;
 
-  if (translist_purge_all(&transform_list) != 0)
+  if (transdeflist_purge_all(&transform_list) != 0)
     return -1;
 
   return 0;

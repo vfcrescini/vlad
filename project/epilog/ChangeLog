@@ -1,5 +1,33 @@
 2002-09-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* trans/Makefile :
+	* trans/transdef.h :
+	* trans/transref.c :
+	* trans/transdef.c :
+	* trans/transref.h :
+	* trans/transdeflist.c :
+	* trans/transdeflist.h :
+	* trans/transreflist.c :
+	* trans/transreflist.h :
+
+	  - Removed trans.* translist.* and changed it to transref/list and
+	    transdef/list. transdef/list holds transformation definitions
+	    (name, varlist, precond and postcond). transref/list is a temp
+	    storage structure for policy statements to pass transformation
+	    references along with their identifiers.
+
+	* ident/identlist.c :
+	* ident/identlist.h :
+
+	  - Added function to purge the list, but not free the identifiers.
+	    The other function identlist_purge_all purges and frees the
+	    identifiers.
+
+	  - Added a compare function to return 0 if the 2 input lists are
+	    exactly the same.
+
+	  - Made another add function. one that does not allocate new space.
+
 	* parser/parser.y :
 	* parser/scanner.l :
 	* trans/Makefile :

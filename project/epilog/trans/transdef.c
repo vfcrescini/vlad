@@ -1,24 +1,24 @@
 /*
- * trans.c
+ * transdef.c
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #include <stdlib.h>
 #include <string.h>
-#include "trans.h"
+#include "transdef.h"
 
 /* creates a newly-allocated trans; copies and allocates name but only the
  * reference for varlist, precond and postcond */
-int trans_create(trans_type **trans,
-                 char *name,
-                 stringlist_type varlist,
-                 expression_type precond,
-                 expression_type postcond)
+int transdef_create(transdef_type **trans,
+                    char *name,
+                    stringlist_type varlist,
+                    expression_type precond,
+                    expression_type postcond)
 {
   if (trans == NULL || name == NULL)
     return -1;
 
-  if ((*trans = (trans_type *) malloc(sizeof(trans_type))) == NULL)
+  if ((*trans = (transdef_type *) malloc(sizeof(transdef_type))) == NULL)
     return -1;
 
   if (((*trans)->name = (char *) malloc(sizeof(char) * strlen(name))) == NULL) {
@@ -33,12 +33,12 @@ int trans_create(trans_type **trans,
   return 0;
 }
 
-/* same as above, but does not allocate new mem for the trans_type struct */
-int trans_compose(trans_type *trans,
-                  char *name,
-                  stringlist_type varlist,
-                  expression_type precond,
-                  expression_type postcond)
+/* same as above, but does not allocate new mem for the transdef_type struct */
+int transdef_compose(transdef_type *trans,
+                     char *name,
+                     stringlist_type varlist,
+                     expression_type precond,
+                     expression_type postcond)
 {
   if (trans == NULL || name == NULL)
     return -1;
@@ -55,12 +55,12 @@ int trans_compose(trans_type *trans,
 }
 
 /* creates a copy of trans1 */
-int trans_copy(trans_type **trans2, trans_type trans1)
+int transdef_copy(transdef_type **trans2, transdef_type trans1)
 {
   if (trans2 == NULL)
     return -1;
 
-  return trans_create(trans2,
+  return transdef_create(trans2,
                       trans1.name,
                       trans1.varlist,
                       trans1.precond,
@@ -68,7 +68,7 @@ int trans_copy(trans_type **trans2, trans_type trans1)
 }
 
 /* frees this trans and the name */
-int trans_destroy(trans_type *trans)
+int transdef_destroy(transdef_type *trans)
 {
   if (trans == NULL)
     return -1;
@@ -83,7 +83,7 @@ int trans_destroy(trans_type *trans)
 }
 
 /* frees this trans and all its members */
-int trans_destroy_all(trans_type *trans)
+int transdef_destroy_all(transdef_type *trans)
 {
   if (trans == NULL)
     return -1;
@@ -103,7 +103,7 @@ int trans_destroy_all(trans_type *trans)
 }
 
 /* returns 0 if the two are equivalent */
-int trans_compare(trans_type t1, trans_type t2)
+int transdef_compare(transdef_type t1, transdef_type t2)
 {
   return strcmp(t1.name, t2.name) == 0 && 
          stringlist_cmp(t1.varlist, t2.varlist) == 0 &&

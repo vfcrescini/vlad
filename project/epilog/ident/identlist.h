@@ -18,7 +18,10 @@ int identlist_init(identlist_type *list);
 int identlist_find(identlist_type list, char *name);
 
 /* add identifier */
-int identlist_add(identlist_type *list, char *name, unsigned short type);
+int identlist_add_new(identlist_type *list, char *name, unsigned short type);
+
+/* add ref without allocating mem */
+int identlist_add_ref(identlist_type *list, ident_type *ident);
 
 /* get identifier structure based on name */
 int identlist_get(identlist_type list, char *name, ident_type **ident);
@@ -28,5 +31,11 @@ int identlist_del(identlist_type *list, char *name);
 
 /* delete all entries */
 int identlist_purge(identlist_type *list);
+
+/* delete all entries and free members */
+int identlist_purge_all(identlist_type *list);
+
+/* return 0 if the lists are equivalent */
+int identlist_cmp(identlist_type l1, identlist_type l2);
 	       
 #endif

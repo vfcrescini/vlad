@@ -1,0 +1,15 @@
+EPILOG TODO
+Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+- Enable policy proposition statements.
+
+- Fix cmp function of lists. Currrent implementation relies on the lists
+  to be ordered the same way.
+
+- Add a query/search function in expression. 
+
+- Check malloc/free.
+
+- Review API of all libs.
+
+- Tons of cleanup.
