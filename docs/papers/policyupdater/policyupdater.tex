@@ -197,7 +197,7 @@
 
         \begin{verbatim}ident sub|acc|obj[-grp] <name>[, ...]];\end{verbatim}
 
-      \subsubsection{Initial State Definition}
+      \subsubsection{Initial Fact Definition}
 
         The initial facts of the policy base, facts that hold before any
         policy updates are performed, are defined by using the following
@@ -324,10 +324,11 @@ always <exp1>
         \begin{verbatim}query <ground-exp>;\end{verbatim} 
 
       \begin{example}
-        The following language L program code listing shows the chinese-wall
-        example.  The main function of this program is to ensure that the
-        subject $alice$ is denied $read$ access to any object in one group if
-        she already holds $read$ to the other group.
+        The following language ${\cal L}$ program code listing shows a simple
+        rule-based document access control system scenario. The main function
+        of this program is to ensure that the subject $alice$ is denied $read$
+        access to any object in one group if she already holds $read$ to the
+        other group.
 
         In this example, the two objects $db1$ and $db2$ are members of the
         groups $comp1$ and $comp2$, respectively. The policy updates
@@ -390,19 +391,11 @@ query holds(alice, read, comp1);
 query holds(alice, read, comp2);
         \end{verbatim}
 
-        The result should be:
-
-        \begin{verbatim}
-TRUE
-?
-TRUE
-FALSE
-        \end{verbatim}
       \end{example}
 
     \subsection{Semantics}
 
-      \subsubsection{Domain Definition of Language ${\cal L}$}
+      \subsubsection{Domain Description of Language ${\cal L}$}
 
         \begin{definition}
           The domain of language ${\cal L}$ is as follows:
@@ -471,20 +464,20 @@ FALSE
         \begin{definition}
 
           The entity set ${\cal E}$ is the union of six disjoint entity sets:
-          single subject ${\cal E}_{SS}$, group subject ${\cal E}_{SG}$,
-          single access right ${\cal E}_{AS}$, group access right
-          ${\cal E}_{AG}$, single object ${\cal E}_{OS}$ and group object
-          ${\cal E}_{OG}$.
+          single subject ${\cal E}_{ss}$, group subject ${\cal E}_{sg}$,
+          single access right ${\cal E}_{as}$, group access right
+          ${\cal E}_{ag}$, single object ${\cal E}_{os}$ and group object
+          ${\cal E}_{og}$.
 
           \begin{enumerate}
             \item
-              ${\cal E} = {\cal E}_{S} \cup {\cal E}_{A} \cup {\cal E}_{O}$
+              ${\cal E} = {\cal E}_{s} \cup {\cal E}_{a} \cup {\cal E}_{o}$
             \item
-              ${\cal E}_{S} = {\cal E}_{SS} \cup {\cal E}_{SG}$
+              ${\cal E}_{s} = {\cal E}_{ss} \cup {\cal E}_{sg}$
             \item
-              ${\cal E}_{A} = {\cal E}_{AS} \cup {\cal E}_{AG}$
+              ${\cal E}_{a} = {\cal E}_{as} \cup {\cal E}_{ag}$
             \item
-              ${\cal E}_{O} = {\cal E}_{OS} \cup {\cal E}_{OG}$
+              ${\cal E}_{o} = {\cal E}_{os} \cup {\cal E}_{og}$
           \end{enumerate}
 
         \end{definition}
@@ -524,11 +517,11 @@ FALSE
 
         \begin{definition}
           The result function $Res$ takes a policy update reference $U$ and
-          the current state $S$ as input and returns the resulting state $S'$
-          after $U$ has been applied to $S$.
+          the current state $\sigma$ as input and returns the resulting state
+          $\sigma'$ after $U$ has been applied to $\sigma$.
 
           \begin{quote}
-            $S'$ = $Res$($U$, $S$)
+            $\sigma'$ = $Res$($U$, $\sigma$)
           \end{quote}
         \end{definition}
 
@@ -547,25 +540,25 @@ FALSE
 
           \begin{enumerate}
             \item
-              ${\cal A}^{\sigma} = {\cal A}^{\sigma}_{H} \cup {\cal A}^{\sigma}_{M} \cup {\cal A}^{\sigma}_{S}$
+              ${\cal A}^{\sigma} = {\cal A}^{\sigma}_{h} \cup {\cal A}^{\sigma}_{m} \cup {\cal A}^{\sigma}_{s}$
             \item
-              \mbox{${\cal A}^{\sigma}_{H} = \{\forall (s \in {\cal E}_{S}, a \in {\cal E}_{A}, o \in {\cal E}_{O}), holds(s, a, o, \sigma) \}$}
+              ${\cal A}^{\sigma}_{h} = \{\forall (s \in {\cal E}_{s}, a \in {\cal E}_{a}, o \in {\cal E}_{o}), holds(s, a, o, \sigma) \}$
             \item
-              ${\cal A}^{\sigma}_{M} = {\cal A}^{\sigma}_{MS} \cup {\cal A}^{\sigma}_{MA} \cup {\cal A}^{\sigma}_{MO}$
+              ${\cal A}^{\sigma}_{m} = {\cal A}^{\sigma}_{ms} \cup {\cal A}^{\sigma}_{ma} \cup {\cal A}^{\sigma}_{mo}$
             \item
-              ${\cal A}^{\sigma}_{S} = {\cal A}^{\sigma}_{SS} \cup {\cal A}^{\sigma}_{SA} \cup {\cal A}^{\sigma}_{SO}$
+              ${\cal A}^{\sigma}_{s} = {\cal A}^{\sigma}_{ss} \cup {\cal A}^{\sigma}_{sa} \cup {\cal A}^{\sigma}_{so}$
             \item
-              ${\cal A}^{\sigma}_{MS} = \{\forall (e \in {\cal E}_{SS}, g \in {\cal E}_{SG}), memb(e, g, \sigma)\}$
+              ${\cal A}^{\sigma}_{ms} = \{\forall (e \in {\cal E}_{ss}, g \in {\cal E}_{sg}), memb(e, g, \sigma)\}$
             \item
-              ${\cal A}^{\sigma}_{MA} = \{\forall (e \in {\cal E}_{AS}, g \in {\cal E}_{AG}), memb(e, g, \sigma)\}$
+              ${\cal A}^{\sigma}_{ma} = \{\forall (e \in {\cal E}_{as}, g \in {\cal E}_{ag}), memb(e, g, \sigma)\}$
             \item
-              ${\cal A}^{\sigma}_{MO} = \{\forall (e \in {\cal E}_{OS}, g \in {\cal E}_{OG}), memb(e, g, \sigma)\}$
+              ${\cal A}^{\sigma}_{mo} = \{\forall (e \in {\cal E}_{os}, g \in {\cal E}_{og}), memb(e, g, \sigma)\}$
             \item
-              ${\cal A}^{\sigma}_{SS} = \{\forall (g1, g2 \in {\cal E}_{SG}), subst(g1, g2, \sigma)\}$
+              ${\cal A}^{\sigma}_{ss} = \{\forall (g1, g2 \in {\cal E}_{sg}), subst(g1, g2, \sigma)\}$
             \item
-              ${\cal A}^{\sigma}_{SA} = \{\forall (g1, g2 \in {\cal E}_{AG}), subst(g1, g2, \sigma)\}$
+              ${\cal A}^{\sigma}_{sa} = \{\forall (g1, g2 \in {\cal E}_{ag}), subst(g1, g2, \sigma)\}$
             \item
-              ${\cal A}^{\sigma}_{SO} = \{\forall (g1, g2 \in {\cal E}_{OG}), subst(g1, g2, \sigma)\}$
+              ${\cal A}^{\sigma}_{so} = \{\forall (g1, g2 \in {\cal E}_{og}), subst(g1, g2, \sigma)\}$
           \end{enumerate}
 
         \end{definition} 
@@ -720,10 +713,10 @@ FALSE
 
                 $\forall (s_{s}, s_{g}, a, o, \sigma)$ where:
 
-                $s_{s} \in {\cal A}^{\sigma}_{SS}$,
-                $s_{g} \in {\cal A}^{\sigma}_{SG}$,
-                $a \in {\cal A}^{\sigma}_{A}$,
-                $o \in {\cal A}^{\sigma}_{O}$,
+                $s_{s} \in {\cal A}^{\sigma}_{ss}$,
+                $s_{g} \in {\cal A}^{\sigma}_{sg}$,
+                $a \in {\cal A}^{\sigma}_{a}$,
+                $o \in {\cal A}^{\sigma}_{o}$,
                 $0 \leq \sigma \leq \Sigma$
               \item
                 \begin{math}
@@ -736,10 +729,10 @@ FALSE
 
                 $\forall (s, a_{s}, a_{g}, o, \sigma)$ where:
 
-                $s \in {\cal A}^{\sigma}_{S}$,
-                $a_{s} \in {\cal A}^{\sigma}_{AS}$,
-                $a_{g} \in {\cal A}^{\sigma}_{AG}$,
-                $o \in {\cal A}^{\sigma}_{O}$,
+                $s \in {\cal A}^{\sigma}_{s}$,
+                $a_{s} \in {\cal A}^{\sigma}_{as}$,
+                $a_{g} \in {\cal A}^{\sigma}_{ag}$,
+                $o \in {\cal A}^{\sigma}_{o}$,
                 $0 \leq \sigma \leq \Sigma$
               \item
                 \begin{math}
@@ -752,10 +745,10 @@ FALSE
 
                 $\forall (s, a, o_{s}, o_{g}, \sigma)$ where:
 
-                $s \in {\cal A}^{\sigma}_{S}$,
-                $a \in {\cal A}^{\sigma}_{A}$,
-                $o_{s} \in {\cal A}^{\sigma}_{OS}$,
-                $o_{g} \in {\cal A}^{\sigma}_{OG}$,
+                $s \in {\cal A}^{\sigma}_{s}$,
+                $a \in {\cal A}^{\sigma}_{a}$,
+                $o_{s} \in {\cal A}^{\sigma}_{os}$,
+                $o_{g} \in {\cal A}^{\sigma}_{og}$,
                 $0 \leq \sigma \leq \Sigma$
               \item
                 \begin{math}
@@ -768,9 +761,9 @@ FALSE
 
                 $\forall (s_{g1}, s_{g2}, a, o, \sigma)$ where:
 
-                $s_{g1}, s_{g2} \in {\cal A}^{\sigma}_{SG}$,
-                $a \in {\cal A}^{\sigma}_{A}$,
-                $o \in {\cal A}^{\sigma}_{O}$,
+                $s_{g1}, s_{g2} \in {\cal A}^{\sigma}_{sg}$,
+                $a \in {\cal A}^{\sigma}_{a}$,
+                $o \in {\cal A}^{\sigma}_{o}$,
                 $0 \leq \sigma \leq \Sigma$
               \item
                 \begin{math}
@@ -783,9 +776,9 @@ FALSE
 
                 $\forall (s, a_{g1}, a_{g2}, o, \sigma)$ where:
 
-                $s \in {\cal A}^{\sigma}_{S}$,
-                $a_{g1}, a_{g2} \in {\cal A}^{\sigma}_{AG}$,
-                $o \in {\cal A}^{\sigma}_{O}$,
+                $s \in {\cal A}^{\sigma}_{s}$,
+                $a_{g1}, a_{g2} \in {\cal A}^{\sigma}_{ag}$,
+                $o \in {\cal A}^{\sigma}_{o}$,
                 $0 \leq \sigma \leq \Sigma$
               \item
                 \begin{math}
@@ -798,9 +791,9 @@ FALSE
 
                 $\forall (s, a, o_{g1}, o_{g2}, \sigma)$ where:
 
-                $s \in {\cal A}^{\sigma}_{S}$,
-                $a \in {\cal A}^{\sigma}_{A}$,
-                $o_{g1}, o_{g2} \in {\cal A}^{\sigma}_{OG}$,
+                $s \in {\cal A}^{\sigma}_{s}$,
+                $a \in {\cal A}^{\sigma}_{a}$,
+                $o_{g1}, o_{g2} \in {\cal A}^{\sigma}_{og}$,
                 $0 \leq \sigma \leq \Sigma$
             \end{enumerate}
           \end{definition}
@@ -826,7 +819,7 @@ FALSE
 
                 $\forall (sg_{1}, sg_{2}, sg_{3}, \sigma)$ where:
 
-                $sg_{1}, sg_{2}, sg_{3} \in {\cal A}^{\sigma}_{SG}$,
+                $sg_{1}, sg_{2}, sg_{3} \in {\cal A}^{\sigma}_{sg}$,
                 $0 \leq \sigma \leq \Sigma$
               \item
                 \begin{math}
@@ -839,7 +832,7 @@ FALSE
 
                 $\forall (ag_{1}, ag_{2}, ag_{3}, \sigma)$ where:
 
-                $ag_{1}, ag_{2}, ag_{3} \in {\cal A}^{\sigma}_{AG}$,
+                $ag_{1}, ag_{2}, ag_{3} \in {\cal A}^{\sigma}_{ag}$,
                 $0 \leq \sigma \leq \Sigma$
               \item
                 \begin{math}
@@ -852,7 +845,7 @@ FALSE
 
                 $\forall (og_{1}, og_{2}, og_{3}, \sigma)$ where:
 
-                $og_{1}, og_{2}, og_{3} \in {\cal A}^{\sigma}_{OG}$,
+                $og_{1}, og_{2}, og_{3} \in {\cal A}^{\sigma}_{og}$,
                 $0 \leq \sigma \leq \Sigma$
 
             \end{enumerate}
