@@ -443,17 +443,17 @@ void add_identifier(const char ident[], unsigned char type)
   switch (kbase.add_ident(ident, type)) {
     case VLAD_OK :
 #ifdef DEBUG
-      if (VLAD_IDENT_TYPE_IS_SUBJECT(type) && ! VLAD_IDENT_TYPE_IS_GROUP(type))
+      if (VLAD_IDENT_IS_SUBJECT(type) && ! VLAD_IDENT_IS_GROUP(type))
         fprintf(yyerr, "declared subject identifier %s\n", ident);
-      else if (VLAD_IDENT_TYPE_IS_OBJECT(type) && ! VLAD_IDENT_TYPE_IS_GROUP(type))
+      else if (VLAD_IDENT_IS_OBJECT(type) && ! VLAD_IDENT_IS_GROUP(type))
         fprintf(yyerr, "declared object identifier %s\n", ident);
-      else if (VLAD_IDENT_TYPE_IS_ACCESS(type) && ! VLAD_IDENT_TYPE_IS_GROUP(type))
+      else if (VLAD_IDENT_IS_ACCESS(type) && ! VLAD_IDENT_IS_GROUP(type))
         fprintf(yyerr, "declared access identifier %s\n", ident); 
-      if (VLAD_IDENT_TYPE_IS_SUBJECT(type) && VLAD_IDENT_TYPE_IS_GROUP(type))
+      if (VLAD_IDENT_IS_SUBJECT(type) && VLAD_IDENT_IS_GROUP(type))
         fprintf(yyerr, "declared subject-group identifier %s\n", ident);
-      else if (VLAD_IDENT_TYPE_IS_OBJECT(type) && VLAD_IDENT_TYPE_IS_GROUP(type))
+      else if (VLAD_IDENT_IS_OBJECT(type) && VLAD_IDENT_IS_GROUP(type))
         fprintf(yyerr, "declared object-group identifier %s\n", ident);
-      else if (VLAD_IDENT_TYPE_IS_ACCESS(type) && VLAD_IDENT_TYPE_IS_GROUP(type))
+      else if (VLAD_IDENT_IS_ACCESS(type) && VLAD_IDENT_IS_GROUP(type))
         fprintf(yyerr, "declared access-group identifier %s\n", ident); 
 #endif
       break;
