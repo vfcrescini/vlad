@@ -61,13 +61,270 @@
 
     \pagebreak
 
-  \section{A Formal Language}
+  \section{A Formal Authorisation Language}
 
-    \subsection{Definition}
+    \subsection{Defintions}
 
-    \subsection{Syntax}
+      Before the language may be completely defined, a definition for the
+      following components must first be formalised:
+ 
+      \subsubsection{Identifiers}
 
-    \subsection{Semantics}
+        An identifier is an alphanumeric string whose first character is an
+        alpha character. The formal regular expression specifications of an
+        identifier is:
+
+\begin{verbatim}
+[a-zA-Z][a-zA-Z0-9_]*
+\end{verbatim}
+
+        Identifiers are literal representations of any of the three possible
+        conceptual disjoint types:
+
+        \begin{itemize}
+          \item Subject (e.g. user1, alice, bob)
+          \item Access (e.g. read, write, execute)
+          \item Object (e.g. file1, database4)
+        \end{itemize}
+
+        In addition to the above types, identifiers may also be used to
+        represent a group of identifiers of the same type.
+
+        \begin{itemize}
+          \item Subject Group
+          \item Access Group
+          \item Object Group
+        \end{itemize}
+
+      \subsubsection{Variables}
+
+        Variables are identifier placeholders that may be used to represent a
+        specific literal or all literals of a specific type. Like an identifier,
+        the regular expression of a variable is:
+
+\begin{verbatim}
+[a-zA-Z][a-zA-Z0-9_]*
+\end{verbatim}
+
+      \subsubsection{Atoms}
+
+        Atoms are composed of a relation and two or more literals to represent
+        a logical fact or predicate. The three relations, and therefore, three
+        types of atoms are as follows:
+
+        \begin{itemize}
+
+          \item holds(S, A, O)
+
+            An atom of this type states that the subject S holds the
+            access-right A for object O.
+
+          \item memb(E, G)
+
+          This atom states that the non-group literal E is an element of the
+          group literal G, where E and G are of the same literal type.
+          E $\in$ G.
+
+          \item subst(G1, G2)
+
+          This atom states that the group literal G1 is a proper subset of the
+          group literal G2, where G1 and G2 are of the same literal type.
+          G1 $\subseteq$ G2.
+
+        \end{itemize}
+
+        An atom may also be negated by the \emph{not} ! operator. (e.g.
+        !holds(S,A,O))
+
+      \subsubsection{Expressions}
+
+        An expression is simply a conjuntion of atoms. In this language,
+        disjunctions are not allowed. The conjunction \emph{and} is 
+        represented by the symbol \&\&. For example, holds(S,A,O) \&\& 
+        !memb(E,G) \&\& subst(G1,G2) is interpreted as holds(S,A,O) $\land$
+        (not E $\in$ G) $\land$ (G1 $\subseteq$ G2).
+
+        Since negated expressions yield a disjunction of atoms, only
+        atoms are allowed to be negated. For example, De Morgan's Law
+        states that not (holds(S1,A1,O1) $\land$ holds(S2,A2,O2)) is
+        equivalent to (not holds(S1,A1,O1)) $\lor$ (not holds(S2,A2,O2)).
+        As a consequence, parentheses are allowed only to enclose literals
+        within atoms but not to group atoms together. 
+
+    \subsection{Syntax and Semantics}
+
+      The language is structured into 5 different ordered sections where each
+      section is a set of statements native to that section. Each statement
+      will be terminated by a semicolon ; to mark the end of that statement.
+
+      \subsubsection{Identifier Declarations}
+
+        All identifiers, except transformation identifiers, must first be 
+        declared in this section before any proposition, constraint, 
+        transformation or query statements are declared.
+
+        This section must contain one or more identifier declaration
+        statements. However, more than one identifier of one type may be 
+        declared in each identifier declaration statement.
+
+\begin{verbatim}
+ident <type> <identifier>[,<identifier2>[,...]]
+\end{verbatim}
+
+        where type is one of the following: sub, acc, obj, sub-grp, acc-grp
+        or obj-grp.
+
+        Example:
+
+\begin{verbatim}
+ident sub s1, s2;
+ident acc read, write, execute;
+ident obj file1, file2;
+\end{verbatim}
+
+      \subsubsection{Initial State Definition}
+
+        Before transformatons or constraints can be applied or even defined,
+        the initial state must first be defined. This section will contain
+        one or more definition statements of the form:
+
+\begin{verbatim}
+initially <expression>
+\end{verbatim}
+
+      \subsubsection{Constraint Statements}
+
+        This section allows constrains or default propositions to be defined.
+        Naturally, constraints will have to be defined first before
+        transformations.
+
+        The most general form is:
+
+\begin{verbatim}
+<expression1> implies <expression2> with absence <expression3>
+\end{verbatim}
+
+        The statement above says that if expression1 is true in the current
+        state, and that it cannot be proven that expression3 is true in
+        the current state, then expression1 is inferred to be true.
+
+        If the "with absence" clause is ommitted, then expression2 is applied
+        if and only if expression1 is true:
+
+\begin{verbatim}
+<expression1> implies <expression2>
+\end{verbatim}
+
+        A special case of the above statement is when expression1 is the
+        constant \emph{true}. In this case, expression2 is always applied
+        to the current state. The statement below:
+
+\begin{verbatim}
+always <expression2>
+\end{verbatim}
+
+        is equivalent to:
+
+\begin{verbatim}
+true implies <expression2>
+\end{verbatim}
+
+      \subsubsection{Transformation Statements}
+
+        A transformation definition statement must be defined in the following
+        syntax:
+
+\begin{verbatim}
+<trans-identifier>([<var1>[,<var2>][,...]]])
+causes <post-condition-expression>
+if <pre-condition-expression>
+\end{verbatim}
+
+        where:
+
+        \begin{itemize}
+          \item
+            trans-identifier is the name of this transformation.
+          \item
+            post-condition-expression an expression that will be true in the
+            resulting state after the transformation is applied.
+          \item
+            pre-condition-expression an expression that must be true in the
+            current state before the transformation may be applied.
+        \end{itemize}
+
+
+        Transformation statements may also contain variables:
+
+\begin{verbatim}
+delete_write(vSUBJECT, vOBJECT)
+causes !holds(vSUBJECT, a_write, vOBJECT)
+if holds(vSUBJECT, a_write, vOBJECT)
+\end{verbatim}
+        this means
+
+\begin{verbatim}
+delete_write(subject1, object1)
+\end{verbatim}
+
+        and
+
+\begin{verbatim}
+delete_write(subject2, object2)
+\end{verbatim}
+
+        will cause
+
+\begin{verbatim}
+!holds(subject1, a_write, object1)
+\end{verbatim}
+
+        and
+
+\begin{verbatim}
+!holds(subject2, a_write, object2)
+\end{verbatim}
+
+        if subject1 and subject2 had write access rights to object1 and
+        object2, respectively. The case where the pre-condition is an
+        empty set (i.e. the transformation has no pre-condition) does not 
+        have to be a special case:
+
+\begin{verbatim}
+<trans-identifier>()
+causes <post-condition-expression>
+\end{verbatim}
+
+        is equivalent to:
+
+\begin{verbatim}
+<trans-identifier>()
+causes <post-condition-expression>
+if true
+\end{verbatim}
+
+      \subsubsection{Query Statements}
+
+        The general form is:
+
+\begin{verbatim}
+is <policy-expression> [after <trans-identifier1>([identifier1[,...]])[,...]]
+\end{verbatim}
+
+        where:
+
+        \begin{itemize}
+          \item
+            policy-expression is the expression that will be tested.
+          \item
+            trans-identifiers are the names of the transformations that will
+            be applied in series before the query is performed.
+          \item
+            identifiers are the names of the literals that will be used in
+            place of the variables used in the tranformation declarations.
+        \end{itemize}
+
+    The statement will return one of the following: true, false or ?
 
     \pagebreak
 
