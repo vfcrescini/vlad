@@ -8,7 +8,7 @@ Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 REQUIREMENTS :
 
   - GNU build system (GCC, GNU Make, GNU Bison and GNU Flex)
-  - libvlad 0.9.4 or newer headers + lib (must be compiled with --with-smodels 
+  - libvlad 0.9.5 or newer headers + lib (must be compiled with --with-smodels 
     and --enable-wrapper
   - Apache 2.0.45 or newer (headers)
 
