@@ -34,6 +34,10 @@ fi
 if [ -n "${NICK[$2]}" ]; then
   echo "nick:    ${NICK[$2]}"
   iwconfig ${1} nick ${NICK[$2]} || exit ${?}
+elif [ -x /bin/hostname ]; then
+  # if NICK is not given, use hostname
+  hostname=`/bin/hostname`
+  [ -n "${hostname}" ] && iwconfig ${1} nick ${hostname} || exit ${?}
 fi
 if [ -n "${MODE[$2]}" ]; then
   echo "mode:    ${MODE[$2]}"
