@@ -17,6 +17,10 @@ int policylex();
   char ident[128];
 }
 
+#ifdef YYBYACC
+int policyparse();
+#endif
+
 %token <tok> MODVLAD_SYM_EOF
 %token <tok> MODVLAD_SYM_ERROR
 %token <tok> MODVLAD_SYM_OPEN_PARENT
