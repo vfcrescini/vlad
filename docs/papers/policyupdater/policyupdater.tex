@@ -1,4 +1,4 @@
-\documentclass[10pt, twocolumn]{article}
+\documentclass[11pt, twocolumn]{article}
 \usepackage{latex8}
 \usepackage{times}
 \usepackage{amsmath}
@@ -7,9 +7,17 @@
 \usepackage{rotating}
 \usepackage{multirow}
 
-\newtheorem{definition}{Definition}
-\newtheorem{examp}{Example}
-\newenvironment{example}{\begin{examp}\rm}{\rule{2mm}{2mm}\end{examp}}
+\newtheorem{vdefinition}{Definition}
+\newtheorem{vexmpl}{Example}
+\newenvironment{vexample}
+  {\begin{vexmpl}\rm}
+  {\rule{2mm}{2mm}\end{vexmpl}}
+\newenvironment{vquote}
+  {\begin{list}{}{\leftmargin 1em}\item[]}
+  {\end{list}}
+\newenvironment{vverbose}
+  {\begin{alltt}}
+  {\vspace{-\baselineskip}\end{alltt}}
 
 \begin{document}
   \title{PolicyUpdater -- A System for Dynamic Access Control}
@@ -36,8 +44,9 @@
     evaluation using the {\em Stable Model} semantics.
   \end{abstract}
 
-  \footnotetext{PolicyUpdater home page at \\
-                \tt http://www.cit.uws.edu.au/\~{}jcrescin/PolicyUpdater}
+  \footnotetext{
+    \tt http://www.cit.uws.edu.au/\~{}jcrescin/
+    projects/PolicyUpdater}
 
   \section{Introduction}
 
@@ -136,7 +145,9 @@
               underscore characters. The following regular expression shows the
               syntax of entity identifiers:
 
-              \begin{verbatim}[a-z]([a-zA-Z0-9_]){0,127}\end{verbatim}
+              \begin{vverbose}
+[a-z]([a-zA-Z0-9\_]){0,127}
+              \end{vverbose}
 
             \item
               {\em Policy Update Identifiers} are used for the sole purpose of
@@ -146,7 +157,10 @@
               from entity identifiers. For this reason, policy update
               identifiers share the same syntax with entity identifiers:
 
-              \begin{verbatim}[a-z]([a-zA-Z0-9_]){0,127}\end{verbatim}
+
+              \begin{vverbose}
+[a-z]([a-zA-Z0-9\_]){0,127}
+              \end{vverbose}
 
             \item
               {\em Variable Identifiers} are used as entity identifier
@@ -156,7 +170,9 @@
               characters. The following regular expression shows the syntax of
               variable identifiers:
 
-              \begin{verbatim}[A-Z]([a-zA-Z0-9_]){0,127}\end{verbatim}
+              \begin{vverbose}
+[A-Z]([a-zA-Z0-9\_]){0,127}
+              \end{vverbose}
           \end{itemize}
 
         \paragraph{Atoms.}
@@ -170,20 +186,26 @@
               identifier $sub$ holds the access right identifier $acc$
               for the object identifier $obj$.
 
-              \begin{verbatim}holds(<sub>, <acc>, <obj>)\end{verbatim}
+              \begin{vverbose}
+holds(<sub>, <acc>, <obj>)
+              \end{vverbose}
             \item
               {\em Membership.} This type of atom states that the singular
               identifier $elt$ is a member or element of the group identifier
               $grp$. It is important to note that identifiers $elt$ and $grp$
               must be of the same base type (e.g. subject and subject group).
 
-              \begin{verbatim}memb(<elt>, <grp>)\end{verbatim}
+              \begin{vverbose}
+memb(<elt>, <grp>)
+              \end{vverbose}
             \item
               {\em Subset.} The subset atom states that the group identifiers
               $grp1$ and $grp2$ are of the same types and that group $grp1$ is
               a subset of the group $grp2$.
 
-              \begin{verbatim}subst(<grp1>, <grp2>)\end{verbatim}
+              \begin{vverbose}
+subst(<grp1>, <grp2>)
+              \end{vverbose}
           \end{itemize}
 
           Atoms that contain no variables, i.e. composed entirely of entity
@@ -195,7 +217,10 @@
           use of the negation operator ($!$). The following shows the formal
           syntax of a fact:
 
-          \begin{verbatim}[!]<holds_atm>|<memb_atm>|<subst_atm>\end{verbatim}
+          \begin{vverbose}
+[!]<holds\_atom>|<memb\_atom>|
+   <subst\_atom>
+          \end{vverbose}
 
           Note that facts may be made up of atoms that contain variable
           identifiers. Facts with no variable occurrences are called
@@ -205,7 +230,9 @@
           An expression is either a fact, or a logical conjunction of facts,
           separated by the double-ampersand characters $\&\&$.
 
-          \begin{verbatim}<fact1> [&& <fact2> [&& ...]]\end{verbatim}
+          \begin{vverbose}
+<fact1> [&& <fact2> [&& ...]]
+          \end{vverbose}
 
           Expressions that are made up of only ground facts are called
           {\em ground expressions}.
@@ -220,7 +247,10 @@
           syntax illustrates how to define one or more entity identifiers of a
           particular type.
 
-          \begin{verbatim}ident sub|acc|obj[-grp] <e_id>[, ...];\end{verbatim}
+          \begin{vverbose}
+ident sub|acc|obj[-grp]
+  <entity\_id>[, ...];
+          \end{vverbose}
 
         \paragraph{Initial Fact Definition.}
 
@@ -228,7 +258,9 @@
           policy updates are performed, are defined by using the following
           definition syntax:
 
-          \begin{verbatim}initially <ground-exp>;\end{verbatim}
+          \begin{vverbose}
+initially <ground-exp>;
+          \end{vverbose}
 
         \paragraph{Constraint Definition.}
 
@@ -247,22 +279,22 @@
           $exp3$ are non-ground expressions, which means identifiers within
           them may be variables.
 
-          \begin{verbatim}
+          \begin{vverbose}
 always <exp1>
   [implied by <exp2>
   [with absence <exp3>]];
-          \end{verbatim}
+          \end{vverbose}
 
         \paragraph{Policy Update Definition.}
 
           Before a policy update can be applied, it must first be defined by
           using the following syntax:
 
-          \begin{verbatim}
-<up_id>([<var_id>[, ...]])
+          \begin{vverbose}
+<up\_id>([<var\_id>[, ...]])
   causes <exp1>
   if <exp2>;
-          \end{verbatim}
+          \end{vverbose}
 
           $up\_id$ is the policy update identifier to be used in referencing
           this policy update. The optional $var\_id$ list are the variable
@@ -294,7 +326,9 @@ always <exp1>
           Defined policy updates are added into the sequence list through the
           use of the following directive:
 
-          \begin{verbatim}seq add <up_id>([<e_id>[, ...]]);\end{verbatim}
+          \begin{vverbose}
+seq add <up\_id>([<e\_id>[, ...]]);
+          \end{vverbose}
 
           \noindent where $up\_id$ is the identifier of a defined policy
           update and the $e\_id$ list is a comma-separated list of entity
@@ -305,12 +339,16 @@ always <exp1>
           The following directive may be used to list the current contents of
           the policy update sequence list.
 
-          \begin{verbatim}seq list;\end{verbatim}
+          \begin{vverbose}
+seq list;
+          \end{vverbose}
 
           This directive is answered with an ordinal list of policy updates in
           the form:
 
-          \begin{verbatim}<n> <up_id>([e_id[, ...]])\end{verbatim}
+          \begin{vverbose}
+<n> <up\_id>([e\_id[, ...]])
+          \end{vverbose}
 
           \noindent where $n$ is the ordinal index of the policy update within
           the sequence list starting at 0. $up\_id$ is the policy update
@@ -324,7 +362,9 @@ always <exp1>
           from the sequence list may change the ordinal index of other update
           references.
 
-          \begin{verbatim}seq del <n>;\end{verbatim}
+          \begin{vverbose}
+seq del <n>;
+          \end{vverbose}
 
         \subparagraph{Computing an update sequence.}
 
@@ -335,7 +375,9 @@ always <exp1>
           causes the system to generate the policy base models against which
           query requests can be evaluated.
 
-          \begin{verbatim}compute;\end{verbatim}
+          \begin{vverbose}
+compute;
+          \end{vverbose}
 
         \paragraph{Query Directive.}
 
@@ -346,9 +388,11 @@ always <exp1>
           or an $unknown$, depending on whether the queried expression holds,
           its negation holds, or neither, respectively. Syntax is as follows:
 
-          \begin{verbatim}query <ground-exp>;\end{verbatim}
+          \begin{vverbose}
+query <ground-exp>;
+          \end{vverbose}
 
-        \begin{example}
+        \begin{vexample}
           \label{ex-1}
           The following language ${\cal L}$ program code listing shows a simple
           rule-based document access control system scenario.
@@ -362,7 +406,7 @@ always <exp1>
           $write$ access for $file$, then the group $grp1$ is granted $write$
           access for $file$.
 
-          \begin{verbatim}
+          \begin{vverbose}
 ident sub alice;
 ident sub-grp grp1, grp2, grp3;
 ident acc read, write;
@@ -380,10 +424,10 @@ always holds(grp1, write, file)
   with absence
     !holds(grp1, write, file);
 
-delete_read(SG0, OS0)
+delete\_read(SG0, OS0)
   causes !holds(SG0, read, OS0);
 
-seq add delete_read(grp1, file);
+seq add delete\_read(grp1, file);
 
 compute;
 
@@ -391,19 +435,19 @@ query holds(grp1, write, file);
 query holds(grp1, read, file);
 query holds(alice, write, file);
 query holds(alice, read, file);
-          \end{verbatim}
-        \end{example}
+          \end{vverbose}
+        \end{vexample}
 
     \subsection{Semantics}
       \label{subsec-semantics}
 
       \subsubsection{Domain Description of Language ${\cal L}$}
 
-        \begin{definition}
+        \begin{vdefinition}
           The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
           defined as a finite set of ground initial state facts, constraint
           rules and policy update definitions.
-        \end{definition}
+        \end{vdefinition}
 
         In addition to the domain description ${\cal D}_{\cal L}$, language
         ${\cal L}$ also includes an additional ordered set: the sequence list
@@ -423,9 +467,9 @@ query holds(alice, read, file);
         new state $PB'$ is generated from the current state $PB$ after the
         policy update $u$ is applied.
 
-        \begin{quote}
+        \begin{vquote}
           $PB$ $\overrightarrow{_{u}}$ $PB'$
-        \end{quote}
+        \end{vquote}
 
         This definition of a state means that for every policy update applied
         to the policy base, a new instance of the policy base or a new set of
@@ -445,15 +489,15 @@ query holds(alice, read, file);
         returns the resulting state $\sigma'$ after update $u$ has been applied
         to state $\sigma$:
 
-        \begin{quote}
+        \begin{vquote}
           $\sigma'$ = $Result$($u$, $\sigma$)
-        \end{quote}
+        \end{vquote}
 
         Given an initial state $S_{0}$ and a sequence list $\psi$, each state
         $\sigma_{i}$ ($0$ $\leq$ $i$ $\leq$ $|\psi|$) may be represented as
         follows:
 
-        \begin{quote}
+        \begin{vquote}
           $\sigma_{0} = S_{0}$
 
           $\sigma_{1} = Result(u_{0}, \sigma_{0})$
@@ -461,19 +505,19 @@ query holds(alice, read, file);
           $\vdots$
 
           $\sigma_{|\psi|} = Result(u_{|\psi| - 1}, \sigma_{|\psi| - 1})$
-        \end{quote}
+        \end{vquote}
 
         Substituting each state with a recursive call to the $Result$ function,
         the final state $S_{|\psi|}$ is defined as follows:
 
-        \begin{quote}
+        \begin{vquote}
           \begin{math}
             \begin{aligned}[t]
-              S_{|\psi|} = Result&(u_{|\psi| - 1}, Result(\ldots, \\
-              &Result(u_{0}, S_{0})))
+              S_{|\psi|} = & Result(u_{|\psi| - 1}, Result(\ldots, \\
+              & Result(u_{0}, S_{0})))
             \end{aligned}
           \end{math}
-        \end{quote}
+        \end{vquote}
 
         \paragraph{Entities.}
 
@@ -484,7 +528,7 @@ query holds(alice, read, file);
           ${\cal E}_{og}$. Each entity in set ${\cal E}$ corresponds directly
           to the {\em entity identifiers} of language ${\cal L}$.
 
-          \begin{enumerate}
+          \begin{itemize}
             \item
               ${\cal E} = {\cal E}_{s} \cup {\cal E}_{a} \cup {\cal E}_{o}$
             \item
@@ -493,7 +537,7 @@ query holds(alice, read, file);
               ${\cal E}_{a} = {\cal E}_{as} \cup {\cal E}_{ag}$
             \item
               ${\cal E}_{o} = {\cal E}_{os} \cup {\cal E}_{og}$
-          \end{enumerate}
+          \end{itemize}
 
         \paragraph{Atoms.}
 
@@ -510,11 +554,16 @@ query holds(alice, read, file);
           The atom set ${\cal A}^{\sigma}$ is the set of all atoms in state
           $\sigma$.
 
-          \begin{enumerate}
+          \begin{itemize}
             \item
               ${\cal A}^{\sigma} = {\cal A}^{\sigma}_{h} \cup {\cal A}^{\sigma}_{m} \cup {\cal A}^{\sigma}_{s}$
             \item
-              ${\cal A}^{\sigma}_{h} = \{\forall (s \in {\cal E}_{s}, a \in {\cal E}_{a}, o \in {\cal E}_{o}), \hat{holds}(s, a, o, \sigma) \}$
+              \begin{math}
+                \begin{aligned}[t]
+                  {\cal A}^{\sigma}_{h} =&\{\forall (s \in {\cal E}_{s}, a \in {\cal E}_{a}, o \in {\cal E}_{o}),\\
+                  &\hat{holds}(s, a, o, \sigma) \}
+                \end{aligned}
+              \end{math}
             \item
               ${\cal A}^{\sigma}_{m} = {\cal A}^{\sigma}_{ms} \cup {\cal A}^{\sigma}_{ma} \cup {\cal A}^{\sigma}_{mo}$
             \item
@@ -531,7 +580,7 @@ query holds(alice, read, file);
               ${\cal A}^{\sigma}_{sa} = \{\forall (g1, g2 \in {\cal E}_{ag}), \hat{subst}(g1, g2, \sigma)\}$
             \item
               ${\cal A}^{\sigma}_{so} = \{\forall (g1, g2 \in {\cal E}_{og}), \hat{subst}(g1, g2, \sigma)\}$
-          \end{enumerate}
+          \end{itemize}
 
         \paragraph{Facts.}
 
@@ -539,20 +588,20 @@ query holds(alice, read, file);
           holds or does not hold at a particular state. The following is the
           formal definition of fact $f$ in state $\sigma$:
 
-          \begin{quote}
+          \begin{vquote}
             $f^{\sigma}$ = $[\lnot]$$\alpha$, $\alpha$ $\in$ ${\cal A}^{\sigma}$
-          \end{quote}
+          \end{vquote}
 
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
-        \begin{definition}
+        \begin{vdefinition}
           Given a domain description ${\cal D}_{\cal L}$ of language
           ${\cal L}$, $Trans$(${\cal D}_{\cal L}$) is defined as the
           extended logic program ${\cal L}^{*}$ translation of language
           ${\cal L}$. The domain description ${\cal D}_{\cal L}$ is said to be
           {\em consistent} if and only if $Trans$(${\cal D}_{\cal L}$) has
           a consistent answer set.
-        \end{definition}
+        \end{vdefinition}
 
         Before we can fully define $Trans$(${\cal D}_{\cal L}$), we should
         first define the following functions:
@@ -564,7 +613,7 @@ query holds(alice, read, file);
           $\sigma'$. The function returns an equivalent atom of the same type
           and with the same entities, but in the new state specified.
 
-          \begin{quote}
+          \begin{vquote}
             $CopyAtom$($\hat{\alpha}$, $\sigma'$)
 
             =
@@ -575,7 +624,7 @@ query holds(alice, read, file);
                 \mbox{$\hat{subst}$($g_{1}$, $g_{2}$, $\sigma'$), if $\hat{\alpha}$ = $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)}
               \end{cases}
             \end{math}
-          \end{quote}
+          \end{vquote}
 
         \paragraph{}
 
@@ -583,7 +632,7 @@ query holds(alice, read, file);
           ${\cal L}$ and an arbitrary state $\sigma$ and returns the equivalent
           atom of language ${\cal L}^{*}$.
 
-          \begin{quote}
+          \begin{vquote}
             $TransAtom$($\alpha$, $\sigma$)
 
             =
@@ -594,14 +643,14 @@ query holds(alice, read, file);
                 \mbox{$\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$), if $\alpha$ = $subst$($g_{1}$, $g_{2}$)}
               \end{cases}
             \end{math}
-          \end{quote}
+          \end{vquote}
 
         \paragraph{}
 
-          The $TransFact$ function is similar to the $TransAtom$ function, but
-          instead of translating an atom, it takes a fact from language
-          ${\cal L}$ and a state then returns the equivalent fact in language
-          ${\cal L}^{*}$.
+          The other function, $TransFact$, is similar to the $TransAtom$
+          function, but instead of translating an atom, it takes a fact
+          from language ${\cal L}$ and a state then returns the equivalent
+          fact in language ${\cal L}^{*}$.
 
         \paragraph{Initial Fact Expression.}
 
@@ -614,13 +663,13 @@ query holds(alice, read, file);
           Given an initial fact expression of language ${\cal L}$ that is
           composed of $n$ facts:
 
-          \begin{alltt}
-  initially \(f\sb{0}\) && \ldots && \(f\sb{n}\)
-          \end{alltt}
+          \begin{vverbose}
+\(f\sb{0}\) && \ldots && \(f\sb{n}\)
+          \end{vverbose}
 
           In language ${\cal L}^{*}$, the statement above is represented as:
 
-          \begin{quote}
+          \begin{vquote}
             $\hat{f_{0}}$ $\leftarrow$
 
             $\vdots$
@@ -629,24 +678,24 @@ query holds(alice, read, file);
 
             where $\hat{f_{i}}$ $=$ $TransFact$($f_{i}$, $S_{0}$),
             $0$ $\leq$ $i$ $\leq$ $n$
-          \end{quote}
+          \end{vquote}
 
-          For example, given the following language ${\cal L}$ $initially$
-          statements:
+          The following code below shows an example of language ${\cal L}$
+          $initially$ statements:
 
-          \begin{verbatim}
-  initially
-    holds(admins, exec, system_tools);
-  initially
-    holds(admins, read, system_data);
-  initially
-    memb(alice, admins) &&
-    memb(bob, admins);
-          \end{verbatim}
+          \begin{vverbose}
+initially
+  holds(admins, exec, sys_tools);
+initially
+  holds(admins, read, sys_data);
+initially
+  memb(alice, admins) &&
+  memb(bob, admins);
+          \end{vverbose}
 
         In language ${\cal L}^{*}$, the above statements are translated to:
 
-        \begin{quote}
+        \begin{vquote}
           $\hat{holds}$($admins$, $exec$, $system\_tools$, $S_{0}$) $\leftarrow$
 
           $\hat{holds}$($admins$, $read$, $system\_data$, $S_{0}$) $\leftarrow$
@@ -654,7 +703,7 @@ query holds(alice, read, file);
           $\hat{memb}$($alice$, $admins$, $S_{0}$) $\leftarrow$
 
           $\hat{memb}$($bob$, $admins$, $S_{0}$) $\leftarrow$
-        \end{quote}
+        \end{vquote}
 
         \paragraph{Constraint Rules.}
 
@@ -664,11 +713,11 @@ query holds(alice, read, file);
           language ${\cal L}$, with $m$, $n$, $o$ $\geq$ $0$ may be represented
           as:
 
-          \begin{alltt}
-  always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
-  implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
-  with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
-          \end{alltt}
+          \begin{vverbose}
+always \(a\sb{0}\) && \ldots && \(a\sb{m}\)
+implied by \(b\sb{0}\) && \ldots && \(b\sb{n}\)
+with absence \(c\sb{0}\) && \ldots && \(c\sb{o}\)
+          \end{vverbose}
 
           Each fact in the $always$ clause of language ${\cal L}$ corresponds
           to a new rule, where it is the consequent. Each of these new rules
@@ -676,7 +725,7 @@ query holds(alice, read, file);
           premise and the expression $c$ in the $with$ $absence$ clause as the
           negative premise.
 
-          \begin{quote}
+          \begin{vquote}
             $a_{0}$ $\leftarrow$
             $b_{0}$, \ldots, $b_{n}$,
             $not$ $c_{0}$, \ldots, $not$ $c_{o}$
@@ -686,14 +735,14 @@ query holds(alice, read, file);
             $a_{m}$ $\leftarrow$
             $b_{0}$, \ldots, $b_{n}$,
             $not$ $c_{0}$, \ldots, $not$ $c_{o}$
-          \end{quote}
+          \end{vquote}
 
           Under the definition of constraints, each of the rules above must be
           made to hold in all states as defined by the sequence list $\psi$.
           This can be accomplished by translating each of the rules above to
           a set of $|\psi|$ rules, one for each state.
 
-           \begin{quote}
+           \begin{vquote}
             $\hat{a}^{S_{0}}_{0}$ $\leftarrow$
             $\hat{b}^{S_{0}}_{0}$, \ldots, $\hat{b}^{S_{0}}_{n}$,
             $not$ $\hat{c}^{S_{0}}_{0}$, \ldots, $not$ $\hat{c}^{S_{0}}_{o}$
@@ -728,26 +777,26 @@ query holds(alice, read, file);
             $0$ $\leq$ $k$ $\leq$ $o$,
 
             $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
-          \end{quote}
+          \end{vquote}
 
           The example below shows how the following language ${\cal L}$ code
           fragment is translated to language ${\cal L}^{*}$:
 
-          \begin{verbatim}
-  always
-    holds(alice, read, secret_data) &&
-    holds(alice, write, secret_data)
-  implied by
-    memb(alice, admin)
-  with absence
-    !holds(alice, read, secret_data);
-          \end{verbatim}
+          \begin{vverbose}
+always
+  holds(alice, read, secret_data) &&
+  holds(alice, write, secret_data)
+implied by
+  memb(alice, admin)
+with absence
+  !holds(alice, read, secret_data);
+          \end{vverbose}
 
           Given a policy update reference in the sequence list $\psi$ (i.e.
           $|\psi|$ $=$ $1$), the language ${\cal L}^{*}$ equivalent is as
           follows:
 
-          \begin{quote}
+          \begin{vquote}
             \begin{math}
               \begin{aligned}[t]
                 \hat{holds}&(alice, read, secret\_data, S_{0}) \leftarrow \\
@@ -779,7 +828,7 @@ query holds(alice, read, file);
                  & not \lnot \hat{holds}(alice, read, secret\_data, S_{1})
               \end{aligned}
             \end{math}
-          \end{quote}
+          \end{vquote}
 
         \paragraph{Policy Updates.}
 
@@ -787,10 +836,10 @@ query holds(alice, read, file);
           identifiers, a policy update $u$, as defined by language ${\cal L}$
           is in the form:
 
-          \begin{quote}
+          \begin{vquote}
             $u$ causes $a_{0}$ \&\& \ldots \&\& $a_{m}$
             if $b_{0}$ \&\& \ldots \&\& $b_{n}$
-          \end{quote}
+          \end{vquote}
 
           In language ${\cal L}^{*}$, such policy updates may be represented as
           a set of implications, with each fact $a$ in the postcondition
@@ -800,7 +849,7 @@ query holds(alice, read, file);
           policy update is applied and that the consequent holds in the state
           after the application.
 
-          \begin{quote}
+          \begin{vquote}
             $\hat{a}_{0}$ $\leftarrow$ $\hat{b}_{0}$, \ldots, $\hat{b}_{n}$
 
             $\vdots$
@@ -814,29 +863,30 @@ query holds(alice, read, file);
 
             $\hat{b}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
             $0$ $\leq$ $j$ $\leq$ $n$
-          \end{quote}
+          \end{vquote}
 
           For example, given the following 2 language ${\cal L}$ policy update
           definitions:
 
-          \begin{verbatim}
-  grant_read()
-    causes
-      holds(alice, read, file)
-    if
-      memb(alice, readers);
+          \begin{vverbose}
+grant\_read()
+  causes
+    holds(alice, read, file)
+  if
+    memb(alice, readers);
 
-  grant_write()
-    causes
-      holds(alice, write, file)
-    if
-      memb(alice, writers);
-          \end{verbatim}
+grant\_write()
+  causes
+    holds(alice, write, file)
+  if
+    memb(alice, writers);
+          \end{vverbose}
 
-          Given sequence list $\psi$ $=$ \{$grant\_read$, $grant\_write$\},
-          the above statements are written in language ${\cal L}^{*}$ as:
+          Given the update sequence list $\psi$ $=$ 
+          \{$grant\_read$, $grant\_write$\}, the above statements are written
+          in language ${\cal L}^{*}$ as:
 
-          \begin{quote}
+          \begin{vquote}
             \begin{math}
               \begin{aligned}[t]
                 \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
@@ -850,7 +900,7 @@ query holds(alice, read, file);
                 & \hat{memb}(alice, writers, S_{1})
               \end{aligned}
             \end{math}
-          \end{quote}
+          \end{vquote}
 
         \paragraph{Additional Constraints.}
 
@@ -1084,7 +1134,7 @@ query holds(alice, read, file);
             explicitly stated as a constraint. Formally, the inertial rules
             are expressed as follows:
 
-            \begin{quote}
+            \begin{vquote}
               $\hat{\alpha}'$ $\leftarrow$ $\hat{\alpha}$, $not$ $\lnot$ $\hat{\alpha}'$
 
               $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
@@ -1094,9 +1144,9 @@ query holds(alice, read, file);
               $u$ $\in$ $\psi$,
 
               $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Result$($u$, $\sigma$))
-            \end{quote}
+            \end{vquote}
 
-        \begin{example}
+        \begin{vexample}
           \label{ex-2}
           The following shows the language ${\cal L}$ program listing in
           Example \ref{ex-1},  translated into language ${\cal L}^{*}$.
@@ -1359,32 +1409,32 @@ query holds(alice, read, file);
                 \end{aligned}
               \end{math}
           \end{enumerate}
-        \end{example}
+        \end{vexample}
       \subsection{Evaluation}
 
-        \begin{definition}
+        \begin{vdefinition}
           Given a consistent domain description ${\cal D}_{\cal L}$, ground
           query expression $\phi$ and a finite sequence list $\psi$, we say the
           query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
           in the sequence list $\psi$ has been applied, denoted as
 
-          \begin{quote}
+          \begin{vquote}
             ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\},
-          \end{quote}
+          \end{vquote}
 
           \noindent if and only if for every atom $\alpha$ in $\phi$, $\alpha$
           $\in$ ${\cal A}^{|\psi|}$, [$\lnot$] $\alpha$ is in every answer
           set of $Trans$(${\cal D}_{\cal L}$).
-        \end{definition}
+        \end{vdefinition}
 
-    \begin{example}
+    \begin{vexample}
       \label{ex-3}
       Given the language ${\cal L}$ code listing in Example \ref{ex-1} and its
       semantic translation in Example \ref{ex-2}, where $\psi$ =
       \{$delete\_read$($grp1$, $file$)\}. The following shows the
       results of each $\phi$:
 
-      \begin{quote}
+      \begin{vquote}
         \begin{math}
           \begin{aligned}[t]
             &\phi_{0} = holds(grp1, write, file) : TRUE \\
@@ -1393,8 +1443,8 @@ query holds(alice, read, file);
             &\phi_{3} = holds(alice, read, file) : FALSE
           \end{aligned}
         \end{math}
-      \end{quote}
-    \end{example}
+      \end{vquote}
+    \end{vexample}
 
   \section{Implementation}
     \label{sec-implement}
@@ -1482,14 +1532,14 @@ query holds(alice, read, file);
         subject entity identifiers: $alice$, $bob$ and $charlie$, and the
         following constraint:
 
-        \begin{verbatim}
-  always holds(SSUB, write, file)
-    implied by
-      holds(SSUB, read, file) &&
-      memb(SSUB, students)
-    with absence
-      !holds(SSUB, write, file)
-        \end{verbatim}
+        \begin{vverbose}
+always holds(SSUB, write, file)
+  implied by
+    holds(SSUB, read, file) &&
+    memb(SSUB, students)
+  with absence
+    !holds(SSUB, write, file)
+        \end{vverbose}
 
         Grounding the constraint above yields three new constraints, each
         replacing occurrences of the variable $SSUB$ with $alice$, $bob$ and
@@ -1530,34 +1580,34 @@ query holds(alice, read, file);
           fact $f$. To preserve the consistency of the policy base for all
           facts $f$ in the domain, the following constraint rule must be added:
 
-          \begin{quote}
+          \begin{vquote}
             $FALSE$ $\leftarrow$ $f$, $f'$
-          \end{quote}
+          \end{vquote}
 
-          The removal process is achieved by adding a boolean parameter to
-          each fact to indicate whether the fact is classically negated or
-          not. For example, given the fact:
+          The removal process involves adding a boolean parameter to each fact
+          to indicate whether the fact is classically negated or not. For
+          example, given the fact:
 
-          \begin{quote}
+          \begin{vquote}
             $\lnot$ $holds$($alice$, $exec$, $file$)
-          \end{quote}
+          \end{vquote}
 
           To remove classical negation, this fact is replaced by:
 
-          \begin{quote}
+          \begin{vquote}
             $holds$($alice$, $exec$, $file$, $false$)
-          \end{quote}
+          \end{vquote}
 
           For consistency, the following constraint is added:
 
-          \begin{quote}
+          \begin{vquote}
             \begin{math}
               \begin{aligned}[t]
                 FALSE \leftarrow & holds(alice, exec, file, true), \\
                 & holds(alice, exec, file, false)
               \end{aligned}
             \end{math}
-          \end{quote}
+          \end{vquote}
 
         \paragraph{Representing Facts in Propositional Form.}
 
@@ -1610,9 +1660,9 @@ query holds(alice, read, file);
 
           The steps outlined above may be summarised by the function below:
 
-          \begin{quote}
+          \begin{vquote}
             $index$ = $encode$($ent1$, $ent2$, $ent3$, $state$, $truth$)
-          \end{quote}
+          \end{vquote}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
@@ -1694,9 +1744,9 @@ query holds(alice, read, file);
     of Apache's built-in authorisation module {\em mod\_auth}, it does
     provide a flexible logic-based authorisation mechanism.
 
-    The PolicyUpdater module works by intercepting all authenticated HTTP
-    requests made to the web server. Users and groups directly correspond to
-    the language $\cal{L}$ subjects, HTTP request methods (i.e. GET, POST,
+    The PolicyUpdater web server module works by intercepting all authenticated
+    HTTP requests made to the web server. Users and groups directly correspond
+    to the language $\cal{L}$ subjects, HTTP request methods (i.e. GET, POST,
     etc.) are the access-rights, and files, directories and other resources
     in the document root are the objects. These entities plus any initial
     facts, constraints and update propositions in the policy base make up the
@@ -1739,7 +1789,7 @@ query holds(alice, read, file);
       the entity identifier declaration section of language ${\cal L}$
       programs. The symbol table is composed of 6 separate string lists:
 
-      \begin{quote}
+      \begin{vquote}
         \begin{tabular}[t]{|l|l|l|}
           \hline
           \textbf{Field} & \textbf{Type} & \textbf{Description} \\
@@ -1757,7 +1807,7 @@ query holds(alice, read, file);
           $og$ & string list & group object \\
           \hline
         \end{tabular}
-      \end{quote}
+      \end{vquote}
 
       Each entity identifier are sorted in the above lists according to
       their type, and ordered according to the order in which they are
@@ -1778,7 +1828,7 @@ query holds(alice, read, file);
         represented as structures of 2 to 3 strings, with each string
         matching an entity identifier in the symbol table.
 
-        \begin{quote}
+        \begin{vquote}
           \begin{tabular}[t]{|l|l|l|l|}
             \hline
             \textbf{Field} & \textbf{Type} & \textbf{Description} & \\
@@ -1800,7 +1850,7 @@ query holds(alice, read, file);
             $grp2$ & string & supergroup entity & \\
             \hline
           \end{tabular}
-        \end{quote}
+        \end{vquote}
 
       \subsubsection{Facts}
 
@@ -1811,7 +1861,7 @@ query holds(alice, read, file);
         atom is classically negated or not ({\em true} if the fact holds
         and {\em false} if the classical negation of the fact holds.
 
-        \begin{quote}
+        \begin{vquote}
           \begin{tabular}[t]{|l|l|l|}
             \hline
             \textbf{Field} & \textbf{Type} & \textbf{Description} \\
@@ -1823,7 +1873,7 @@ query holds(alice, read, file);
             $truth$ & boolean & negation indicator \\
             \hline
           \end{tabular}
-        \end{quote}
+        \end{vquote}
 
       \subsubsection{Expressions}
 
@@ -1841,7 +1891,7 @@ query holds(alice, read, file);
         The constraint table is represented as a list of constraint
         structures, with each structure composed of the following:
 
-        \begin{quote}
+        \begin{vquote}
           \begin{tabular}[t]{|l|l|l|}
             \hline
             \textbf{Field} & \textbf{Type} & \textbf{Description} \\
@@ -1853,14 +1903,14 @@ query holds(alice, read, file);
             $ncond$ & expression type & negative premise \\
             \hline
           \end{tabular}
-        \end{quote}
+        \end{vquote}
 
       \subsubsection{Policy Update Definition Table}
 
         Another list of structures is the policy update table. Each element
         structure of this table is composed of the following 4 fields:
 
-        \begin{quote}
+        \begin{vquote}
           \begin{tabular}[t]{|l|l|l|}
             \hline
             \textbf{Field} & \textbf{Type} & \textbf{Description} \\
@@ -1874,14 +1924,14 @@ query holds(alice, read, file);
             $post$ & expression type & postcondition \\
             \hline
           \end{tabular}
-        \end{quote}
+        \end{vquote}
 
     \subsection{Policy Update Sequence Table}
 
       The policy update sequence table is an ordered list of sequence
       structures, each with the following elements:
 
-      \begin{quote}
+      \begin{vquote}
         \begin{tabular}[t]{|l|l|l|}
           \hline
           \textbf{Field} & \textbf{Type} & \textbf{Description} \\
@@ -1891,7 +1941,7 @@ query holds(alice, read, file);
           $ilist$ & ordered string list & identifiers \\
           \hline
         \end{tabular}
-      \end{quote}
+      \end{vquote}
 
   \begin{thebibliography}{5}
     \bibitem{BA1}
