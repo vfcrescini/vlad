@@ -16,7 +16,7 @@ extern int yylval;
 underscore         _
 open_parent        \(
 close_parent       \)
-comma              ,
+comma              \,
 semicolon          ;
 and                &&
 not                !
