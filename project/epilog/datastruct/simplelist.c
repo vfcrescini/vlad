@@ -245,6 +245,9 @@ int simplelist_copy(simplelist_type l1,
 
   curr = l1.list;
 
+  l2->list = NULL;
+  l2->length = 0;
+
   while (curr != NULL) {
     if (cpy(curr->data, &data) != 0)
       return -1;
