@@ -8,6 +8,10 @@
 #include "vlad.h"
 #include "list.h"
 
+#ifdef DEBUG
+  #include <stdio.h>
+#endif
+
 list_item::list_item()
 {
 }
@@ -18,8 +22,12 @@ list_item::~list_item()
 
 list::list()
 {
+  unique = true;
   len = 0;
   head = NULL;
+#ifdef DEBUG
+  fprintf(stderr, "list is unique\n");
+#endif
 }
 
 list::list(bool u)
@@ -27,11 +35,18 @@ list::list(bool u)
   unique = u;
   len = 0;
   head = NULL;
+#ifdef DEBUG
+  fprintf(stderr, "list is %s\n", u ? "unique" : "not-unique");
+#endif
 }
 
 list::~list()
 {
   purge(true);
+#ifdef DEBUG
+  fprintf(stderr, "list is destroyed\n");
+#endif
+
 }
 
 unsigned int list::length()

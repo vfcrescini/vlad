@@ -8,9 +8,8 @@
 #include <vlad.h>
 #include "symtab.h"
 
-symtab::symtab()
+symtab::symtab() : list::list(true)
 {
-  list::list(false);
 }
 
 symtab::~symtab()
