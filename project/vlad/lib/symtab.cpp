@@ -108,6 +108,43 @@ int symtab::add(const char *s, unsigned char t)
   return VLAD_INVALIDINPUT;
 }
 
+/* get the i'th identifier */
+int symtab::get(unsigned int i, char **s)
+{
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (i < VLAD_LIST_LENGTH(sub_list))
+    return get(i, VLAD_IDENT_SUBJECT, s);
+  else {
+    i -= VLAD_LIST_LENGTH(sub_list);
+    if (i < VLAD_LIST_LENGTH(acc_list))
+      return get(i, VLAD_IDENT_ACCESS, s);
+    else {
+      i -= VLAD_LIST_LENGTH(acc_list);
+      if (i < VLAD_LIST_LENGTH(obj_list))
+        return get(i, VLAD_IDENT_OBJECT, s);
+      else {
+        i -= VLAD_LIST_LENGTH(obj_list);
+        if (i < VLAD_LIST_LENGTH(sub_grp_list))
+          return get(i, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, s);
+        else {
+          i -= VLAD_LIST_LENGTH(sub_grp_list);
+          if (i < VLAD_LIST_LENGTH(acc_grp_list))
+            return get(i, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, s);
+          else {
+            i -= VLAD_LIST_LENGTH(acc_grp_list);
+            if (i < VLAD_LIST_LENGTH(obj_grp_list))
+              return get(i, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, s);
+            else
+              return VLAD_OUTOFBOUNDS;
+          }
+        }
+      }
+    }
+  }
+}
+
 /* get the index and type of the identifier based on name */
 int symtab::get(const char *s, unsigned int *i, unsigned char *t)
 {
@@ -264,6 +301,21 @@ int symtab::get(unsigned char t, char ***a, unsigned int *s)
   }
 
   return VLAD_INVALIDINPUT;
+}
+
+/* return the total number of indentifers */
+unsigned int symtab::length()
+{
+  if (!initialised)
+    return 0;
+
+  return
+    VLAD_LIST_LENGTH(sub_list) +
+    VLAD_LIST_LENGTH(acc_list) +
+    VLAD_LIST_LENGTH(obj_list) +
+    VLAD_LIST_LENGTH(sub_grp_list) +
+    VLAD_LIST_LENGTH(acc_grp_list) +
+    VLAD_LIST_LENGTH(obj_grp_list);
 }
 
 /* return the number of identifiers that are of type t */

@@ -90,6 +90,36 @@ VLAD_EXTERN int vlad_kb_close_kb(void *a_kb)
   return tmp_kb->close_kb();
 }
 
+/* gives the length of the symtab */
+VLAD_EXTERN int vlad_kb_length_symtab(void *a_kb, unsigned int *a_len)
+{
+  kb *tmp_kb = NULL;
+
+  if (a_kb == NULL)
+    return VLAD_NULLPTR;
+
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
+    return VLAD_INVALIDINPUT;
+
+  return tmp_kb->length_symtab(a_len);
+}
+
+/* gets the i'th identifier from symtab */
+VLAD_EXTERN int vlad_kb_get_symtab(void *a_kb,
+                                   unsigned int a_index,
+                                   char **a_str)
+{
+  kb *tmp_kb = NULL;
+
+  if (a_kb == NULL)
+    return VLAD_NULLPTR;
+
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
+    return VLAD_INVALIDINPUT;
+
+  return tmp_kb->get_symtab(a_index, a_str);
+}
+
 /* check if the identifier of the given type is in the symtab */
 VLAD_EXTERN int vlad_kb_check_symtab(void *a_kb,
                                      const char *a_n,

@@ -167,6 +167,32 @@ int kb::close_kb()
   return VLAD_OK;
 }
 
+/* gives the length of the symtab */
+int kb::length_symtab(unsigned int *l)
+{
+  if (stage < 2)
+    return VLAD_INVALIDOP;
+
+  if (l == NULL)
+    return VLAD_NULLPTR;
+
+  *l = stable->length();
+
+  return VLAD_OK;
+}
+
+/* gets the i'th identifier from symtab */
+int kb::get_symtab(unsigned int i, char **s)
+{
+  if (stage < 2)
+    return VLAD_INVALIDOP;
+
+  if (s == NULL)
+    return VLAD_NULLPTR;
+
+  return stable->get(i, s);
+}
+
 /* register an identifier in the kb */
 int kb::add_symtab(const char *n, unsigned char t)
 {
