@@ -1,0 +1,192 @@
+Language LT
+
+1. Components
+
+  1.1. Identifiers
+
+    1.1.1. Entities
+
+      [a-z]([a-zA-Z0-9_]){0,127}
+
+      1.1.1.1. Single Subject
+        
+      1.1.1.2. Group Subject
+        
+      1.1.1.3. Single Access Right
+        
+      1.1.1.4. Group Access Right
+        
+      1.1.1.5. Single Object
+        
+      1.1.1.6. Group Object
+
+    1.1.2. Variable Identifiers
+
+      [A-Z]([a-zA-Z0-9_]){0,127}
+
+    1.1.3. Policy Update Identifiers
+
+      Because policy update identifiers occupy a different namespace from
+      entity identifiers, they share the same syntax:
+
+      [a-z]([a-zA-Z0-9_]){0,127}
+
+    1.1.4. Temporal Interval Identifiers
+
+      Temporal interval identifiers are used to label temporal intervals.
+      The language do not permit literal intervals to occur in the policies.
+
+      [a-z]([a-zA-Z0-9_]){0,127}
+
+  1.2. Atoms
+
+    An atom may be one of the following:
+
+    1.2.1. Holds
+
+      holds(
+        <subject_single> | <subject_group>,
+        <access_right_single> | <access_right_group>,
+        <object_single> | <object_group>,
+        <interval>
+      )
+  
+    1.2.2. Membership
+
+      memb(<subject_single>, <subject_group>, <interval>) |
+      memb(<access_right_single>, <access_right_group>, <interval>) |
+      memb(<object_single>, <object_group>, <interval>)
+  
+    1.2.3. Subset
+
+      subst(<subject_group>, <subject_group>, <interval>) |
+      subst(<access_right_group>, <access_right_group>, <interval>) |
+      subst(object_group>, <object_group>, <interval>)
+  
+  1.3. Facts
+
+    1.3.1 Positive Facts
+
+      <atom>
+  
+    1.3.2 Negative Facts
+
+      !<atom>
+
+  1.4. Expressions
+
+    <fact1> [&& <fact2> [ && ...]]
+
+2. Definitions
+
+  2.1. Entity Declarations
+
+    entity sub|acc|obj[-grp] <entity1> [, <entity2>, [, ...]]
+
+    (Difference from original language: note the change from the keyword
+    "ident" to "entity" -- changed for clarity as intervals are identifiers
+    too)
+
+  2.2. Temporal Interval Declaration
+
+    interval <int_ident> [[<start_value>] - [<end_value>]];
+
+    where <start_value> and <end_value> are positive integers.
+
+    Example:
+
+      The statement below defined the interval int1 occuring between time
+      index 100 and time index 200 (inclusive).
+
+        interval int1 100 - 200;
+
+      The statement below defines the interval int2 without any binding time
+      indexes (i.e. unknown bounds).
+
+        interval int2;
+
+      Below is an example of how to declare an infinite interval (i.e. unbound:
+      an interval whose start time is less than any other interval's start time
+      and and end time that is greater that any other interval's end time):
+
+        interval int3 -;
+
+      The interval definition below defines an interval whose start time is
+      100 and an unbound end time:
+
+        interval int4 100 -;
+
+      Below is the opposite of the above. Start time is unbound and end time
+      is 200:
+
+        interval int5 - 200;
+
+  2.3. Temporal Interval Relation Declaration
+
+    interval 
+      equals(int1, int2) |
+      before(int1, int2) |
+      meets(int1, int2) |
+      overlaps(int1, int2) |
+      during(int1, int2) |
+      starts(int1, int2) |
+      ends(int1, int2);
+
+  2.4. Initial Expression Declaration
+
+    initially <expression>;
+
+  2.5. Constraint Declaration
+
+    always <exp1> implied by <exp2> with absence <exp3>;
+
+  2.6. Policy Update Declaration
+
+    <update_id>([<var_id>[, ...]]) causes <vexp1> if <vexp2>;
+
+    where <vexp1> and <vexp2> are expressions containing atoms that may
+    contain variables in place of identifiers.
+
+3. Directives
+
+  3.1. Query Directive
+
+    query <expression>;
+
+  3.2. Compute Directive
+
+    compute;
+
+  3.3. Policy Update Sequence Directives
+
+    3.3.1. Add
+
+      seq add <update_id>([<id>[, ...]]);
+
+      where <id> may be entity or interval identifiers.
+
+    3.3.2. Delete
+
+      seq del <n>;
+
+    3.3.3. List
+
+      seq list;
+
+4. Translation
+
+  4,1, Initial Expression Rules
+
+  4.2. Constraint Rules
+
+  4.3. Policy Update Rules
+
+  4.4. Inheritance Rules
+
+    4.4.1. Membership Inheritance
+
+    4.4.2. Subset Interhitance
+
+  4.5. Transitivity Rules
+
+  4.6. Inertial Rules
