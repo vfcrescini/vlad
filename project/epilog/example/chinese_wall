@@ -19,7 +19,7 @@ initially
 
 /* transformations */
 
-trans Request_Access_Company1(X, Y)
+Request_Access_Company1(X, Y)
   causes
     holds(X, Access, Y) &&
     !holds(X, Accessible, Company2)
@@ -27,7 +27,7 @@ trans Request_Access_Company1(X, Y)
     memb(Y, Company1) &&
     holds(X, Accessible, Company1);
 
-trans Request_Access_Company2(X, Y)
+Request_Access_Company2(X, Y)
   causes
     holds(X, Access, Y) &&
     !holds(X, Accessible, Company1)

@@ -60,8 +60,8 @@ Updated 2003 Apr 10
 
 <initial-stmt>          : <initially> <ground-exp> <semicolon>
                         
-<trans-stmt>            : <trans> <identifier> <trans-var-def> <causes>
-                          <comp-exp> <if-clause> <semicolon>
+<trans-stmt>            : <identifier> <trans-var-def> <causes> <comp-exp>
+                          <if-clause> <semicolon>
 
 <if-clause>             : NIL | <if> <comp-exp>
                        
@@ -135,8 +135,6 @@ Updated 2003 Apr 10
 <member>                : memb
                         
 <subset>                : subst
-                        
-<transform>             : trans
 
 <initially>             : initially
                         

@@ -13,6 +13,9 @@
 	* parser/parser.y :
 	* parser/scanner.l :
 
+	  - Removed unnecessary "trans" keyword from language to be compatible
+	    with vlad.
+
 	  - Changed "is" statement to "query".
 
 	* docs/bnf.txt :

@@ -139,7 +139,7 @@ Updated 2003 Apr 10
     A transformation definition statement must be defined in the following
     syntax:
 
-      trans <trans-identifier>([<var1>[,<var2>][,...]]])
+      <trans-identifier>([<var1>[,<var2>][,...]]])
       causes <post-condition-expression>
       if <pre-condition-expression>
 

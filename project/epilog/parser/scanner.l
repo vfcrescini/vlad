@@ -39,7 +39,6 @@ holds              holds
 member             memb
 subset             subst
 initially          initially
-transform          trans
 causes             causes
 if                 if
 query              query
@@ -77,8 +76,6 @@ everything         .
 <INITIAL>{subset} return EPI_SYM_SUBST;
 
 <INITIAL>{initially} return EPI_SYM_INITIALLY;
-
-<INITIAL>{transform} return EPI_SYM_TRANS;
 
 <INITIAL>{causes} return EPI_SYM_CAUSES;
 

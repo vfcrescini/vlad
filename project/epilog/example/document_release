@@ -15,7 +15,7 @@ initially holds(Sci, Write, Doc);
 
 /* transformations */
 
-trans Request(X, Y, Z)
+Request(X, Y, Z)
   causes
     holds(Z, Review, Y) &&
     !holds(X, Write, Y)
@@ -23,7 +23,7 @@ trans Request(X, Y, Z)
     holds(X, Own, Y) &&
     holds(X, Write, Y);
 
-trans Get_Approval(X, Y, Z)
+Get_Approval(X, Y, Z)
   causes
     holds(X, Pat_Ok, Y) &&
     !holds(Z, Review, Y)
@@ -31,7 +31,7 @@ trans Get_Approval(X, Y, Z)
     holds(Z, Review, Y) &&
     holds(X, Own, Y);
 
-trans Get_Rejection(X, Y, Z)
+Get_Rejection(X, Y, Z)
   causes
     holds(X, Pat_Reject, Y) &&
     !holds(Z, Review, Y)
@@ -39,14 +39,14 @@ trans Get_Rejection(X, Y, Z)
     holds(Z, Review, Y) &&
     holds(X, Own, Y);
 
-trans Release_Doc(X, Y)
+Release_Doc(X, Y)
   causes
     holds(X, Release, Y) &&
     !holds(X, Pat_Ok, Y)
   if
     holds(X, Pat_Ok, Y);
 
-trans Revise_Doc(X, Y)
+Revise_Doc(X, Y)
   causes
     holds(X, Write, Y)
   if

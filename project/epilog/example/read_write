@@ -9,8 +9,8 @@ ident obj f;
 
 initially holds(s, read, f);
 
-trans assign_write(X, Y) causes holds(X, write, Y);
-trans delete_write(X, Y) causes !holds(X, write, Y) if holds(X, write, Y);
+assign_write(X, Y) causes holds(X, write, Y);
+delete_write(X, Y) causes !holds(X, write, Y) if holds(X, write, Y);
 
 query holds(s, write, f) after assign_write(s, f);
 query !holds(s, write, f) after assign_write(s, f), delete_write(s, f);

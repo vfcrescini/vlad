@@ -33,22 +33,22 @@ initially subst(biologists, scientists) &&
 
 /* transformation declarations */
 
-trans give_read_access(sub_var, obj_var)
+give_read_access(sub_var, obj_var)
   causes holds(sub_var, read, obj_var);
 
-trans give_write_access(sub_var, obj_var)
+give_write_access(sub_var, obj_var)
   causes holds(sub_var, write, obj_var);
 
-trans give_exec_access(sub_var, obj_var)
+give_exec_access(sub_var, obj_var)
   causes holds(sub_var, exec, obj_var);
 
-trans become_astrologer(sub_var)
+become_astrologer(sub_var)
   causes memb(sub_var, astrologers);
 
-trans become_biologist(sub_var)
+become_biologist(sub_var)
   causes memb(sub_var, biologists);
 
-trans dumbify_alice()
+dumbify_alice()
   causes memb(alice, astrologers);
 
 /* queries */

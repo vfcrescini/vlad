@@ -19,7 +19,7 @@ initially
 
 /* transformations */
 
-trans Request_Submit(X, Y) 
+Request_Submit(X, Y) 
   causes
     holds(X, Submit, Y) &&
     !holds(X, Evaluateable, Y) &&
@@ -28,7 +28,7 @@ trans Request_Submit(X, Y)
     memb(X, Officer) &&
     holds(X, Submitable, Y);
 
-trans Request_Evaluate(X, Y)
+Request_Evaluate(X, Y)
   causes
     holds(X, Evaluate, Y) &&
     !holds(X, Approveable, Y) &&
@@ -37,7 +37,7 @@ trans Request_Evaluate(X, Y)
     memb(X, Officer) &&
     holds(X, Evaluateable, Y);
 
-trans Request_Approve(X, Y)
+Request_Approve(X, Y)
   causes
     holds(X, Approve, Y) &&
     !holds(X, Evaluateable, Y) &&

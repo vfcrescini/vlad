@@ -67,7 +67,6 @@ gnd_exp_type initial_exp;
 %token <terminal> EPI_SYM_MEMB
 %token <terminal> EPI_SYM_SUBST
 %token <terminal> EPI_SYM_INITIALLY
-%token <terminal> EPI_SYM_TRANS
 %token <terminal> EPI_SYM_CAUSES
 %token <terminal> EPI_SYM_IF
 %token <terminal> EPI_SYM_QUERY
@@ -301,10 +300,10 @@ initial_stmt :
   ;
 
 trans_stmt : 
-  EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp if_clause EPI_SYM_SEMICOLON {
+  EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp if_clause EPI_SYM_SEMICOLON {
     transdef_type tmp_transdef;
 
-    switch (transdef_compose(&tmp_transdef, $2, $3, $6, $5)) {
+    switch (transdef_compose(&tmp_transdef, $1, $2, $5, $4)) {
       case EPI_OK :
         break;
       case EPI_MALLOCFAILED :
@@ -319,13 +318,13 @@ trans_stmt :
 #ifdef DEBUG
         fprintf(yyerr, "transformation declaration\n");
         fprintf(yyerr, "  name:\n");
-        fprintf(yyerr, "    %s\n", $2);
+        fprintf(yyerr, "    %s\n", $1);
         fprintf(yyerr, "  variables:\n");
-        dump_strlist($3);
+        dump_strlist($2);
         fprintf(yyerr, "  preconditions:\n");
-        dump_comp_exp($7);
+        dump_comp_exp($6);
         fprintf(yyerr, "  postconditions:\n");
-        dump_comp_exp($5);
+        dump_comp_exp($4);
 #endif
         break;
       case EPI_DUPLICATE :
