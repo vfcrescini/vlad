@@ -7,8 +7,9 @@
 
 #include "vlad/wrapper.h"
 
-#include "apr_strings.h"
+#include "http_log.h"
 #include "http_protocol.h"
+#include "apr_strings.h"
 
 void modvlad_generate_header(request_rec *a_r)
 {
@@ -33,8 +34,8 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   ap_rprintf(a_r, "    <h3>Current Sequence</h3>\n");
   ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"\">\n");
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"delete\"/>\n");
-  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"sequence\" value=\"\"/>\n");
-  ap_rprintf(a_r, "      <ul>\n");
+  ap_rprintf(a_r, "      <input type=\"hidden\" name=\"index\" value=\"\"/>\n");
+  ap_rprintf(a_r, "      <table cols=\"2\" border=\"1\">\n");
 
   for (i = 0; i < vlad_kb_length_seqtab(a_conf->kb); i++) {
     char *st_name = NULL;
@@ -42,20 +43,51 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
     vlad_kb_get_seqtab(a_conf->kb, i, &st_name, &st_list);
 
-    ap_rprintf(a_r, "         <li>\n");
-    ap_rprintf(a_r, "           <input type=\"button\" value=\"delete\" onclick=\"delform.sequence.value=%d;delform.submit();\"/>\n", i);
-    ap_rprintf(a_r, "           %s\n", st_name);
-    ap_rprintf(a_r, "         </li>\n");
+    ap_rprintf(a_r, "         <tr>\n");
+    ap_rprintf(a_r, "           <th align=\"center\">%s</th>\n", st_name);
+    ap_rprintf(a_r, "           <td align=\"center\"><input type=\"button\" value=\"delete\" onclick=\"delform.index.value=%d;delform.submit();\"/></td>\n", i);
+    ap_rprintf(a_r, "         </tr>\n");
   }  
 
-  ap_rprintf(a_r, "      </ul>\n");
+  ap_rprintf(a_r, "      </table>\n");
   ap_rprintf(a_r, "    </form>\n");
+
+  ap_rprintf(a_r, "    <h3>Available Transformations</h3>\n");
+
+  for (i = 0; i <  vlad_kb_length_transtab(a_conf->kb); i++) {
+    char *tt_name = NULL;
+    void *tt_list = NULL;
+    void *tt_prexp = NULL;
+    void *tt_poexp = NULL;
+
+    vlad_kb_get_transtab(a_conf->kb, i, &tt_name, &tt_list, &tt_prexp, &tt_poexp);
+
+    ap_rprintf(a_r, "    <form name=\"addform%d\" method=\"POST\" action=\"\">\n", i);
+    ap_rprintf(a_r, "      <input type=\"hidden\" name=\"command\" value=\"add\"/>\n");
+    ap_rprintf(a_r, "      <input type=\"hidden\" name=\"args\" value=\"%d\"/>\n",  vlad_list_length(tt_list));
+    ap_rprintf(a_r, "      <input type=\"hidden\" name=\"trans\" value=\"%s\"/>\n", tt_name);
+    ap_rprintf(a_r, "      <table cols=\"3\" border=\"1\">\n");
+    ap_rprintf(a_r, "        <tr>\n");
+    ap_rprintf(a_r, "          <th align=\"center\" colspan=\"2\">%s</th>\n", tt_name);
+    ap_rprintf(a_r, "          <th align=\"center\"><input type=\"button\" value=\"add\" onclick=\"addform%d.submit();\"/></th>\n", i);
+    ap_rprintf(a_r, "        <tr>\n");
+
+    for (j = 0; j < vlad_list_length(tt_list); j++) {
+      ap_rprintf(a_r, "     <tr>\n");
+      ap_rprintf(a_r, "       <td align=\"center\">parameter %d</td>\n", j);
+      ap_rprintf(a_r, "       <td align=\"center\"><input type=\"text\" name=\"arg%d\" value=\"\" readonly=\"1\"/></td>\n", j);
+      ap_rprintf(a_r, "       <td align=\"center\"><input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\"/></td>\n", i, j);
+      ap_rprintf(a_r, "     </tr>\n");
+    }
+
+    ap_rprintf(a_r, "      </table>\n");
+    ap_rprintf(a_r, "    </form>\n");
+  }
 
   ap_rprintf(a_r, "    <h3>Available Identifiers</h3>\n");
   ap_rprintf(a_r, "    <form name=\"idform\">\n");
   ap_rprintf(a_r, "      <input type=\"hidden\" name=\"ident\" value=\"\"/>\n");
   ap_rprintf(a_r, "      <ul>\n");
-
 
   for (i = 0; i < vlad_kb_length_symtab(a_conf->kb); i++) {
     char *it_name = NULL;
@@ -71,39 +103,6 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   ap_rprintf(a_r, "      </ul>\n");
   ap_rprintf(a_r, "    </form>\n");
-
-  ap_rprintf(a_r, "    <h3>Available Transformations</h3>\n");
-  ap_rprintf(a_r, "    <ul>\n");
-
-  for (i = 0; i <  vlad_kb_length_transtab(a_conf->kb); i++) {
-    char *tt_name = NULL;
-    void *tt_list = NULL;
-    void *tt_prexp = NULL;
-    void *tt_poexp = NULL;
-
-    vlad_kb_get_transtab(a_conf->kb, i, &tt_name, &tt_list, &tt_prexp, &tt_poexp);
-
-    ap_rprintf(a_r, "      <li>\n");
-    ap_rprintf(a_r, "        <form name=\"addform%d\" method=\"POST\" action=\"\">\n", i);
-    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"command\" value=\"add\"/>\n");
-    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"args\" value=\"%d\"/>\n",  vlad_list_length(tt_list));
-    ap_rprintf(a_r, "          <input type=\"hidden\" name=\"trans\" value=\"%s\">\n", tt_name);
-    ap_rprintf(a_r, "            %s\n", tt_name);
-    ap_rprintf(a_r, "          </input>\n");
-    ap_rprintf(a_r, "          <input type=\"button\" value=\"add\" onclick=\"addform%d.submit();\"/>\n", i);
-    ap_rprintf(a_r, "          <br/>\n");
-
-    for (j = 0; j < vlad_list_length(tt_list); j++) {
-      ap_rprintf(a_r, "          arg%d\n", j);
-      ap_rprintf(a_r, "          <input type=\"text\" name=\"arg%d\" value=\"\" readonly=\"1\"/>\n", j);
-      ap_rprintf(a_r, "          <input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\"/>\n", i, j);
-    }
-
-    ap_rprintf(a_r, "        </form>\n");
-    ap_rprintf(a_r, "      </li>\n");
-  }
-
-  ap_rprintf(a_r, "    </ul>\n");
 }
 
 void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
@@ -122,31 +121,100 @@ void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
   cmd = apr_table_get(tab, "command");
 
   if (!strcmp(cmd, "add")) {
+    int retval;
     unsigned int i;
-    int args;
+    unsigned int args;
     const char *name = NULL;
     void *tref = NULL;
     void *vlist = NULL;
 
-    ap_rprintf(a_r, "    <blink>add</blink>\n    <br/>\n");
-
     args = atoi(apr_table_get(tab, "args"));
     name = apr_table_get(tab, "trans");
 
-    vlad_strlist_create(&vlist);
+    if ((retval = vlad_strlist_create(&vlist)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: failed to create stringlist: %d",
+                    retval);
+      ap_rprintf(a_r, "    <blink>add error</blink>\n    <br/>\n");
+      return;
+    }
 
     for (i = 0; i < args; i++) {
       const char *value = NULL;
       value = apr_table_get(tab, apr_psprintf(a_r->pool, "arg%d", i));
-      vlad_strlist_add(vlist, value);
+
+      if ((retval = vlad_strlist_add(vlist, value)) != VLAD_OK) {
+        ap_log_perror(APLOG_MARK,
+                      APLOG_ERR,
+                      0,
+                      a_r->pool,
+                      "mod_vlad: failed to add string to strlist: %d",
+                      retval);
+        ap_rprintf(a_r, "    <blink>add error</blink>\n    <br/>\n");
+        vlad_strlist_destroy(vlist);
+        return;
+      }
     }
 
-    vlad_tref_create(&tref);
-    vlad_tref_init(tref, name, vlist);
-    vlad_kb_add_seqtab(a_conf->kb, tref);
+    if ((retval = vlad_tref_create(&tref)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: failed to create transref: %d",
+                    retval);
+      ap_rprintf(a_r, "    <blink>add error</blink>\n    <br/>\n");
+      vlad_strlist_destroy(vlist);
+      return;
+    }
+    if ((retval = vlad_tref_init(tref, name, vlist)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: failed to init transref: %d",
+                    retval);
+      ap_rprintf(a_r, "    <blink>add error</blink>\n    <br/>\n");
+      vlad_tref_destroy(tref);
+      vlad_strlist_destroy(vlist);
+      return;
+    }
+
+    if ((retval = vlad_kb_add_seqtab(a_conf->kb, tref)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: failed to add to seqtab: %d",
+                    retval);
+      ap_rprintf(a_r, "    <blink>add error</blink>\n    <br/>\n");
+      vlad_tref_destroy(tref);
+      return;
+    }
+
+    ap_rprintf(a_r, "    <blink>add successful</blink>\n    <br/>\n");
   }
   else if (!strcmp(cmd, "delete")) {
-    ap_rprintf(a_r, "    <blink>delete</blink>\n    <br/>\n");
+    int retval;
+    unsigned int args;
+
+    args = atoi(apr_table_get(tab, "index"));
+
+    if ((retval = vlad_kb_del_seqtab(a_conf->kb, args)) != VLAD_OK) {
+      ap_log_perror(APLOG_MARK,
+                    APLOG_ERR,
+                    0,
+                    a_r->pool,
+                    "mod_vlad: failed to delete from seqtab: %d",
+                    retval);
+      ap_rprintf(a_r, "    <blink>delete error</blink>\n    <br/>\n");
+      return;
+    }
+
+    ap_rprintf(a_r, "    <blink>delete successful</blink>\n    <br/>\n");
   }
   else
     ap_rprintf(a_r, "    <blink>error</blink>\n    <br/>\n");
