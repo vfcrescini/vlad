@@ -27,4 +27,3 @@ is subst(melbourne, nsw);
 is subst(melbourne, victoria);
 is subst(blacktown, victoria);
 is subst(sydney, victoria);
-
