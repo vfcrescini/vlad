@@ -94,8 +94,8 @@
 
             \item
               {\em Variable Identifiers} are used as entity identifier
-              place-holers. To distinguish them from entity and policy update
-              identifiers, varaible identifiers are prefixed with an upper-case
+              place-holders. To distinguish them from entity and policy update
+              identifiers, variable identifiers are prefixed with an upper-case
               character, followed by 0 to 127 alphanumeric and underscore
               characters. The following regular expression shows the syntax of
               variable identifiers:
@@ -142,7 +142,7 @@
           \begin{verbatim}[!]<holds_atm>|<memb_atm>|<subst_atm>\end{verbatim}
 
           Note that facts may be made up of atoms that contain variable
-          identifiers. Facts with no variable occurences are called
+          identifiers. Facts with no variable occurrences are called
           {\em ground facts}.
 
         \paragraph{Expressions.}
@@ -219,7 +219,7 @@ always <exp1>
           state before this update is applied.
 
           It is important to note that a policy update definition will have no
-          effect on the policy base until it is appled by one of the directives
+          effect on the policy base until it is applied by one of the directives
           described in the following section.
 
         \subsubsection{Directive Statements}
@@ -383,7 +383,7 @@ query holds(alice, read, file);
         facts and constraints are generated. To precisely define the underlying
         semantics of domain description ${\cal D}_{\cal L}$ in language
         ${\cal L}$, we introduce language ${\cal L}^{*}$, which is an extended
-        logic program representation of langauge ${\cal L}$, with state as an
+        logic program representation of language ${\cal L}$, with state as an
         explicit sort.
 
         Language ${\cal L}^{*}$ contains only one special state constant
@@ -450,7 +450,7 @@ query holds(alice, read, file);
 
           The main difference between language ${\cal L}$ and language
           ${\cal L}^{*}$ lies in the definition of an atom. Atoms in language
-          ${\cal L}^{*}$ represent a logical replationship of two to three
+          ${\cal L}^{*}$ represent a logical relationship of two to three
           entities, as with atoms of language ${\cal L}$. Furthermore, atoms of
           language ${\cal L}^{*}$ extends this definition by defining the
           state of the policy base in which the relationship holds. In this
@@ -611,7 +611,7 @@ query holds(alice, read, file);
 
           Each constraint rule in language ${\cal L}$ is expressed as a series
           of logical rules in language ${\cal L}^{*}$. Given that all variable
-          occurences have been grounded to entity identifiers, a constraint in
+          occurrences have been grounded to entity identifiers, a constraint in
           language ${\cal L}$, with $m$, $n$, $o$ $\geq$ $0$ may be represented
           as:
 
@@ -767,7 +767,7 @@ query holds(alice, read, file);
 
         \paragraph{Policy Updates.}
 
-          With all occurences of variable placeholders grounded to entity
+          With all occurrences of variable place-holders grounded to entity
           identifiers, a policy update $u$, as defined by language ${\cal L}$
           is in the form:
 
@@ -854,7 +854,7 @@ query holds(alice, read, file);
             holds all access rights contained in the access right group for
             that object.
 
-            A conflic is encountered when a particular property is to be
+            A conflict is encountered when a particular property is to be
             inherited by an entity from a group of which it is a member or
             subset, and the contained entity already holds the negation of
             that property. This conflict is resolved by giving negative facts
@@ -862,7 +862,7 @@ query holds(alice, read, file);
             or subset entities to inherit its parent group's properties only if
             the entities do not already hold the negation of those properties.
 
-            The following are the inheritance constriant rules to allow the
+            The following are the inheritance constraint rules to allow the
             properties held by a group to propagate to its members and
             subsets that do not already hold the negation of the properties.
 
@@ -1065,7 +1065,7 @@ query holds(alice, read, file);
             Intuitively, all facts in the current state that are not affected
             by a policy update should be carried over to the next state after
             the update. In language ${\cal L}^{*}$, this rule must be
-            explicitly stated as a constraint. Formally, the intertial rules
+            explicitly stated as a constraint. Formally, the inertial rules
             are expressed as follows:
 
             \begin{quote}
@@ -1403,7 +1403,7 @@ query holds(alice, read, file);
 
           The policy parser is responsible for correctly reading the policy
           file into the core PolicyUpdater system. The parser ensures that
-          the policy file stricly adheres to the language $\cal{L}$ syntax
+          the policy file strictly adheres to the language $\cal{L}$ syntax
           then systematically stores entity identifiers into the symbol table
           and initial state facts, constraint expressions and policy update
           definitions are stored into their respective tables in the policy
@@ -1457,7 +1457,7 @@ query holds(alice, read, file);
         entity identifiers defined in the symbol table. Note that only those
         entity identifiers that are valid for each fact in the current
         constraint are used to replace the variable (e.g. only singular subject entity
-        identifiers are used to replace an element variable occuring in a
+        identifiers are used to replace an element variable occurring in a
         subject member fact).
 
         For example, given that the symbol table contains three singular
@@ -1474,7 +1474,7 @@ query holds(alice, read, file);
         \end{verbatim}
 
         Grounding the constraint above yields three new constraints, each
-        replacing occurences of the variable $SSUB$ with $alice$, $bob$ and
+        replacing occurrences of the variable $SSUB$ with $alice$, $bob$ and
         $charlie$, respectively.
 
       \subsubsection{Policy Updates}
@@ -1556,7 +1556,7 @@ query holds(alice, read, file);
           into normal logic program form is achieved by performing the
           following steps:
 
-          \subparagraph{Enunmerate all possible atoms.}
+          \subparagraph{Enumerate all possible atoms.}
             By using all the entities in the symbol table, all possible
             language ${\cal L}$ atoms may be enumerated by grouping together
             2 to 3 entities together. All possible atoms of type $holds$ are
@@ -1587,8 +1587,8 @@ query holds(alice, read, file);
           \subparagraph{Extend indexing procedure to represent facts.} The
             indices produced in the above step represent positive facts. Since
             negative facts are just mirror images of their positive
-            counterparts, their indices are caclulated by adding $n$ to the
-            indices of the correspoding positive facts. Furthermore, this
+            counterparts, their indices are calculated by adding $n$ to the
+            indices of the corresponding positive facts. Furthermore, this
             procedure is again extended to represent the states of the facts.
             The process is similar: indices $i$ ($0$ $\leq$ $i$ $<$ $2n$)
             represent facts of state $S_{0}$, indices $i$ ($2n$ $\leq$ $i$ $<$
@@ -1607,7 +1607,7 @@ query holds(alice, read, file);
           then be generated for evaluation. Using the translation methods
           described in the semantics section and the method for eliminating
           classical negation, each initial state expression, constraint rule
-          and polcy update becomes a set of simple logical rules. By applying
+          and policy update becomes a set of simple logical rules. By applying
           the $encode$ function above for each fact in each of these rules,
           a normal logic program is generated.
 
@@ -1615,10 +1615,12 @@ query holds(alice, read, file);
 
         Once a normal logic program has been generated from the policy stored
         in the storage structure, a set of answer sets may then be generated
-        by using the stable model semantics with the $smodels$ program. Query
-        evaluation then becomes possible by checking whether each fact of a
-        given query holds in each generated answer set of the normal logic
-        program.
+        by using the stable model semantics with the
+        {\emph smodels}\footnotemark program. Query evaluation then becomes
+        possible by checking whether each fact of a given query holds in each
+        generated answer set of the normal logic program.
+
+        \footnotetext{Smodels [smodels homepage url]}
 
         If a given fact indeed holds in all the answer sets, it is then
         evaluated to be true. On the other hand, if the negation of a fact
@@ -1627,8 +1629,6 @@ query holds(alice, read, file);
         nor false: inconclusive.
 
   \section{Conclusion}
-
-    [summary]
 
     [effectiveness of system/application]
 
@@ -1679,8 +1679,8 @@ query holds(alice, read, file);
           \end{tabular}
         \end{quote}
 
-        Each entity identifier are sorted in the above lists accoring to
-        their type, and ordered accoring to the order in which they are
+        Each entity identifier are sorted in the above lists according to
+        their type, and ordered according to the order in which they are
         declared in the program. Each list is indexed by consecutive
         positive integers starting from zero.
 
@@ -1828,6 +1828,7 @@ query holds(alice, read, file);
       PolicyUpdater system can best be demonstrated by a web server
       authorisation application. In this application, PolicyUpdater serves as
       an authorisation module for the \emph{Apache}\footnotemark web server.
+
       \footnotetext{Apache Web Server (\tt http://www.apache.org).}
 
       Although the PolicyUpdater module do not provide the full functionality
@@ -1853,6 +1854,5 @@ query holds(alice, read, file);
       $a$ to the file $o$ (5) and sends the results back to user $s$ (6).
       Optionally, an Administrator, once properly authenticated can dynamically
       update the policy (7) by altering the update sequence in the policy base.
-
 
 \end{document}
