@@ -1375,7 +1375,8 @@ query holds(alice, read, file);
     implementation. As we shall illustrate in the following sections, the
     representation of atoms and facts plays a major role in both the removal of
     classical negation and the translation to propositional form. However,
-    before showing the translation, the data structures must first be defined.
+    before showing the translation, the data structures used for storage must
+    first be defined.
 
     \subsection{Data Structures}
 
@@ -1495,7 +1496,7 @@ query holds(alice, read, file);
           structures above; a type indicator to specify whether the fact is
           holds, member or subset; and a truth flag, to indicate whether the
           atom is classically negated or not ({\em true}, if the fact holds
-          and {\em false}, if the fact is classically negated.
+          and {\em false}, if the classical negation of the fact holds.
 
           \begin{quote}
             \begin{tabular}[t]{|l|l|l|}
@@ -1513,7 +1514,7 @@ query holds(alice, read, file);
  
         \paragraph{Expressions.}
           Since expressions are simply conjunctions of facts, they are
-          represented as an unordered list of fact structures.
+          represented as a list of fact structures.
 
         \paragraph{Initial State Facts Table.}
           The initial state facts table is represented as a single list of
@@ -1521,7 +1522,7 @@ query holds(alice, read, file);
           statements are added into the initial state facts table.
  
         \paragraph{Constraint Table.}
-          The constraint table is represented as an unordered list of constraint
+          The constraint table is represented as a list of constraint
           structures, with each structure composed of the following:
 
           \begin{quote}
@@ -1729,7 +1730,7 @@ query holds(alice, read, file);
           \end{tabular}
 
 
-  \section{Case Study: Web Server Application}
+  \section{A Case Study: Web Server Application}
 
   \section{Conclusion}
 
