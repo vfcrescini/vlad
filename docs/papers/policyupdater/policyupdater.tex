@@ -598,13 +598,10 @@ query holds(alice, read, file);
         \paragraph{Constraint Rules.}
 
           Each constraint rule in language ${\cal L}$ is expressed as a series
-          of logical rules in language ${\cal L}_{*}$. Each constraint rule
-          in language ${\cal L}$ is translated to $\delta$ rules in language
-          $\cal{L}^{*}$, where $\delta$ = [number of facts in the always
-          clause] $\times$ $\Sigma$.
-
-          Given a constraint in language ${\cal L}$, with $m$ $>$ $0$ and $n$,
-          $o$ $\geq$ $0$:
+          of logical rules in language ${\cal L}_{*}$. Given that all variable
+          occurences have been grounded to entity identifiers, a constraint in
+          language ${\cal L}$, with $m$ $>$ $0$ and $n$, $o$ $\geq$ $0$ may be
+          preresented as:
 
           \begin{quote}
             always $a_{0}$ \&\& ... \&\& $a_{m}$
@@ -622,50 +619,73 @@ query holds(alice, read, file);
 
           \begin{quote}
             $a_{0}$ $\leftarrow$
-            $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$
-            $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
+            $b_{0}$, ..., $b_{n}$,
+            $not$ $c_{0}$, ..., $not$ $c_{o}$
 
             ...
 
             $a_{m}$ $\leftarrow$
-            $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$
-            $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
+            $b_{0}$, ..., $b_{n}$,
+            $not$ $c_{0}$, ..., $not$ $c_{o}$
           \end{quote}
 
-          Each rule above corresponds to $\Sigma$ equivalent constraint
-          rules in language ${\cal L}^{*}$, for each state defined by the
-          sequence list $\psi$ plus the initial state.
+          Under the definition of constraints, each of the rules above must be
+          made to hold in all states as defined by the sequence list $\psi$.
+          This can be accomplished by translating each of the rules above to
+          a set of $\Sigma$ rules, one for each state.
 
-          Given the method described above for translating constraint rules
-          from language ${\cal L}$ to language ${\cal L}^{*}$, a constraint
-          rule in language ${\cal L}^{*}$ is defined as follows:
+           \begin{quote}
+            $\hat{a}^{S_{0}}_{0}$ $\leftarrow$
+            $\hat{b}^{S_{0}}_{0}$, ..., $\hat{b}^{S_{0}}_{n}$,
+            $not$ $\hat{c}^{S_{0}}_{0}$, ..., $not$ $\hat{c}^{S_{0}}_{o}$
 
-          \begin{quote}
-            $a$ $\leftarrow$
-            $b_{0}$ $\land$ ... $\land$ $b_{m}$ $\land$
-            $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{n}$
+            ...
+
+            $\hat{a}^{S_{\Sigma}}_{0}$ $\leftarrow$
+            $\hat{b}^{S_{\Sigma}}_{0}$, ..., $\hat{b}^{S_{\Sigma}}_{n}$,
+            $not$ $\hat{c}^{S_{\Sigma}}_{0}$, ..., $not$ $\hat{c}^{S_{\Sigma}}_{o}$
+
+            ...
+
+            $\hat{a}^{S_{0}}_{m}$ $\leftarrow$
+            $\hat{b}^{S_{0}}_{0}$, ..., $\hat{b}^{S_{0}}_{n}$,
+            $not$ $\hat{c}^{S_{0}}_{0}$, ..., $not$ $\hat{c}^{S_{0}}_{o}$
+
+            ...
+
+            $\hat{a}^{S_{\Sigma}}_{m}$ $\leftarrow$
+            $\hat{b}^{S_{\Sigma}}_{0}$, ..., $\hat{b}^{S_{\Sigma}}_{n}$,
+            $not$ $\hat{c}^{S_{\Sigma}}_{0}$, ..., $not$ $\hat{c}^{S_{\Sigma}}_{o}$
 
             where:
 
             \begin{itemize}
               \item
-                $a$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{\sigma}$
+                $a^{\sigma}_{i}$ $=$ $TranslateFact$($a_{i}$, $\sigma$)
               \item
-                $b_{i}$ = $[\lnot]$ $b$, $b$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $i$ $\leq$ $m$
+                $b^{\sigma}_{j}$ $=$ $TranslateFact$($b_{j}$, $\sigma$)
               \item
-                $c_{j}$ = $[\lnot]$ $c$, $c$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $j$ $\leq$ $n$
+                $c^{\sigma}_{k}$ $=$ $TranslateFact$($c_{k}$, $\sigma$)
               \item
-                $\sigma$ = $S_{k}$, $0$ $\leq$ $k$ $\leq$ $\Sigma$
-              \end{itemize}
-          \end{quote}
+                $0$ $<$ $i$ $\leq$ $m$
+              \item
+                $0$ $<$ $j$ $\leq$ $n$
+              \item
+                $0$ $<$ $k$ $\leq$ $o$
+              \item
+                $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$
+            \end{itemize}
+          \end{quote}      
 
         \paragraph{Policy Updates.}
 
-          With all variable occurences grounded to entity identifiers, a
-          policy update $u$, as defined by language ${\cal L}$ is in the form:
+          With all occurences of variable placeholders grounded to entity
+          identifiers, a policy update $u$, as defined by language ${\cal L}$
+          is in the form:
 
           \begin{quote}
-            $u$ causes $a_{0}$ $\land$ ... $\land$ $a_{m}$ if $b_{0}$ $\land$ ... $\land$ $b_{n}$
+            $u$ causes $a_{0}$ \&\& ... \&\& $a_{m}$
+            if $b_{0}$ \&\& ... \&\& $b_{n}$
           \end{quote}
 
           In language ${\cal L}^{*}$, a distinction must be made between the
