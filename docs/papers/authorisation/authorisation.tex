@@ -683,9 +683,40 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
 
     \subsection{Parser1: Epilog}
 
+
     \subsection{Parser2: Vlad}
 
     \subsection{Application Program}
+
+      The application that will be developed for this project is a website 
+      access control system. Authorisation control for websites is not 
+      something new. Most web servers are run on top of a Unix or Unix-like
+      filesystem that provides some basic authorisation scheme by directly
+      manipulating file-access permissions. Some web servers such as Apache
+      provide a much better authorisation and authentication scheme with
+      the htaccess mechanism.
+
+      The web authorisation system will allow the website administrator to
+      define high-level abstract objects and subjects from the different web
+      pages in his/her site and the users that will access the site. For
+      example a web administrator might create an object called Accounting
+      Site, which should only be accessible by a group of users called
+      Accountants. The policies will be written and evaluated in the new
+      language. The transformation and conflict resolution will be very
+      helpful in situations where the administrator decides to change
+      the policies.
+
+      The diagram below illustrates how the system will work. An administrator 
+      feeds the policy base with the authorisation rules and constraints 
+      using the new language. It is then up to the policy base to resolve 
+      any conflicts and inconsistencies that might arise when the administrator
+      changes a policy. The policy base will also work closely with the
+      enforcement agent, who will send a query to the policy base every time it
+      receives a request from a user. When this happens, the policy base will
+      then evaluate the query and return Granted or Denied depending on whether
+      there is a policy covering that specific query. If the enforcement agent
+      receives a granted reply, it will grant the user making the request
+      access the site. A denied reply would cause it to revoke the request.
 
     \pagebreak
 
@@ -698,7 +729,8 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
     \bibitem{BV2}Y. Bai and V. Varadharajan, \emph{On Sequence of Authorization Policy Transformations}. School of Computing and Information Technology, University of Western Sydney, 1997.
     \bibitem{GV}M. Gelfond and V. Lifschitz, \emph{Classical Negation in Logic Programs and Disjunctive Databases}. New Generation Computing, 1991.
     \bibitem{RN}S. Russell and P. Norvig, \emph{Artificial Intelligence - A Modern Approach}. Prentice Hall, 1995.
+    \bibitem{S}P. Simons, \emph{Efficient Implementation of the Stable Model Semantics for Normal Logic Programs}. Helsinki University of Technology, Series A Research Reports, No. 35, 1995.
     \bibitem{WL}.Y.C. Woo and S.S. Lam, \emph{Authorization in Distributed systems: A Formal Approach}. Proceedings of IEEE Symposium on Research in Security and Privacy, 1992.
   \end{thebibliography}
-
 \end{document}
+
