@@ -5,8 +5,7 @@
  */
 
 %{
-#include <stdio.h>
-#include "y.tab.h"
+#include "parser.h"
 %}
 
 underscore         _

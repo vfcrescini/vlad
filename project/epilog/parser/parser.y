@@ -4,6 +4,10 @@
  *
  */
 
+%{
+#include <stdio.h>
+%}
+
 %token EPI_SYM_OPEN_PARENT
 %token EPI_SYM_CLOSE_PARENT
 %token EPI_SYM_COMMA
@@ -143,3 +147,20 @@ logical_const : EPI_SYM_TRUE | EPI_SYM_FALSE
   ;
 
 %%
+
+extern FILE *yyin;
+
+int main()
+{
+  while (!feof(yyin))
+    yyparse();
+
+  return 0;
+}
+
+int yyerror(char *error)
+{
+  fprintf(stderr, "%s\n", error);
+
+  return 0;
+}
