@@ -34,6 +34,14 @@ int expression::find(atom a)
 {
   return list::find(&a);
 }
+/* give a reference to the i'th atom */
+int expression::get(unsigned int i, atom **a)
+{
+  if (a == NULL)
+    return VLAD_NULLPTR;
+
+  return list::get(i, (list_item **) a);
+}
 
 #ifdef DEBUG
 /* assumimg s has enough memory allocation */

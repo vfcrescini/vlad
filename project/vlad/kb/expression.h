@@ -20,6 +20,8 @@ class expression : public list
     int add(atom *a);
     /* return true if atom is in the expression */
     int find(atom a);
+    /* give i'th atom */
+    int get(unsigned int i, atom **a);
 #ifdef DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *s);

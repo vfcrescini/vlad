@@ -86,6 +86,88 @@ bool atom::cmp(list_item *item)
   return false;
 }
 
+unsigned char atom::get_type()
+{
+  return type;
+}
+
+bool atom::get_truth()
+{
+  return truth;
+}
+
+int atom::get_const(bool *c)
+{
+  if (c == NULL)
+    return VLAD_NULLPTR;
+
+  if (type != VLAD_ATOM_CONST)
+    return VLAD_FAILURE;
+
+  *c = constant;
+
+  return VLAD_OK;
+}
+
+int atom::get_holds(char **s, char **a, char **o)
+{
+  if (s == NULL || a == NULL || o == NULL)
+    return VLAD_NULLPTR;
+
+  if (type != VLAD_ATOM_HOLDS)
+    return VLAD_FAILURE;
+
+  *s = holds.subject;
+  *a = holds.access;
+  *o = holds.object;
+
+  return VLAD_OK;
+}
+
+int atom::get_member(char **e, char **g)
+{
+  if (e == NULL || g == NULL)
+    return VLAD_NULLPTR;
+
+  if (type != VLAD_ATOM_MEMBER)
+    return VLAD_FAILURE;
+
+  *e = member.element;
+  *g = member.group;
+
+  return VLAD_OK;
+}
+
+int atom::get_subset(char **g1, char **g2)
+{
+  if (g1 == NULL || g2 == NULL)
+    return VLAD_NULLPTR;
+
+  if (type != VLAD_ATOM_SUBSET)
+    return VLAD_FAILURE;
+
+  *g1 = subset.group1;
+  *g2 = subset.group2;
+
+  return VLAD_OK;
+}
+
+int atom::init_atom(atom *a)
+{
+  switch(a->type) {
+    case VLAD_ATOM_CONST :
+      return init_const(a->constant, a->truth);
+    case VLAD_ATOM_HOLDS :
+      return init_holds(a->holds.subject, a->holds.access, a->holds.object, a->truth);
+    case VLAD_ATOM_MEMBER :
+      return init_member(a->member.element, a->member.group, a->truth);
+    case VLAD_ATOM_SUBSET :
+      return init_subset(a->subset.group1, a->subset.group2, a->truth);
+  }
+
+  return VLAD_INVALIDINPUT;
+}
+
 int atom::init_const(bool c, bool t)
 {
   type = VLAD_ATOM_CONST;

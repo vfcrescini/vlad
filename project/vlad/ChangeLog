@@ -3,6 +3,34 @@
 	* kb/atom.cpp :
 	* kb/atom.h :
 
+	  - Added get_*() functions.
+
+	  - Added init_atom() to effectively copy the contents of a given
+	    atom.
+
+	* kb/expression.cpp :
+	* kb/expression.h :
+
+	  - Added a get() function.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+
+	  - Added init table and add_inittab() function.
+
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+
+	  - Added a function to return the type of an identifier based on
+	    the name.
+
+	* parser/parser.y :
+
+	  - Initial state atoms are now stored in kb.
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+
 	  - Added negate function.
 
 	  - Added a print function for debugging.

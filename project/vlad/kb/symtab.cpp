@@ -279,3 +279,65 @@ int symtab::find(const char *s)
 
   return obj_grp_list->find(s);
 }
+
+/* give the type of the given identifier */
+int symtab::type(const char *s, unsigned char *t)
+{
+  int retval;
+
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  if (s == NULL || t == NULL)
+    return VLAD_NULLPTR;
+
+  /* first see if they are constants */
+  if (!strcmp(s, VLAD_CONST_FALSE)) {
+    *t = VLAD_IDENT_CONST;
+    return VLAD_OK;
+  }
+
+  if (!strcmp(s, VLAD_CONST_TRUE)) {
+    *t = VLAD_IDENT_CONST;
+    return VLAD_OK;
+  }
+
+  /* try to find s from all the lists sequentially */
+  if ((retval = sub_list->find(s)) != VLAD_NOTFOUND) {
+    if (retval == VLAD_OK)
+      *t = VLAD_IDENT_SUBJECT;
+    return retval;
+  }
+
+  if ((retval = acc_list->find(s)) != VLAD_NOTFOUND) {
+    if (retval == VLAD_OK)
+      *t = VLAD_IDENT_ACCESS;
+    return retval;
+  }
+
+  if ((retval = obj_list->find(s)) != VLAD_NOTFOUND) {
+    if (retval == VLAD_OK)
+      *t = VLAD_IDENT_OBJECT;
+    return retval;
+  }
+
+  if ((retval = sub_grp_list->find(s)) != VLAD_NOTFOUND) {
+    if (retval == VLAD_OK)
+      *t = VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP;
+    return retval;
+  }
+
+  if ((retval = acc_grp_list->find(s)) != VLAD_NOTFOUND) {
+    if (retval == VLAD_OK)
+      *t = VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP;
+    return retval;
+  }
+
+  if ((retval = obj_grp_list->find(s)) != VLAD_NOTFOUND) {
+    if (retval == VLAD_OK)
+      *t = VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP;
+    return retval;
+  }
+
+  return VLAD_NOTFOUND;
+}

@@ -48,6 +48,13 @@ class atom : public list_item
     atom();
     ~atom();
     bool cmp(list_item *item);
+    unsigned char get_type();
+    bool get_truth();
+    int get_const(bool *c);
+    int get_holds(char **s, char **a, char **o);
+    int get_member(char **e, char **g);
+    int get_subset(char **g1, char **g2);
+    int init_atom(atom *a);
     int init_const(bool c, bool t);
     int init_holds(const char *s, const char *a, const char *o, bool t);
     int init_member(const char *e, const char *g, bool t);
