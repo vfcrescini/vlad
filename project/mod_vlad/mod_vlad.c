@@ -278,7 +278,10 @@ static const char *modvlad_set_enable(cmd_parms *a_cmd,
   kb_init(conf->kb);
 
   /* register the kb to be destroyed with this pool */
-  apr_pool_cleanup_register(a_cmd->pool, conf->kb, kb_destroy, kb_destroy);
+  apr_pool_cleanup_register(a_cmd->pool,
+                            conf->kb,
+                            kb_destroy,
+                            apr_pool_cleanup_null);
 
 #ifdef DEBUG
   ap_log_perror(APLOG_MARK,
