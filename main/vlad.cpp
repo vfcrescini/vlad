@@ -56,12 +56,12 @@ int main(int argc, char *argv[])
   identifier *y;
 
   x = new symtab();
-  x->add("1",subject,false);
-  x->add("2",subject,false);
-  x->add("3",subject,false);
-  x->add("4",subject,false);
-  x->add("5",subject,false);
-  x->add("5",subject,false);
+  x->add("1",subject_ident,false);
+  x->add("2",subject_ident,false);
+  x->add("3",subject_ident,false);
+  x->add("4",subject_ident,false);
+  x->add("5",subject_ident,false);
+  x->add("5",subject_ident,false);
 
   fprintf(stderr, "%d\n\n", x->length());
 
