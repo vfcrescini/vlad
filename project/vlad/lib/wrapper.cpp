@@ -13,14 +13,18 @@
 #include <vlad/wrapper.h>
 #include <vlad/kb.h>
 
+/* static cast X into tyoe Y */
+#define VLAD_WRAPPER_CAST(X,Y)                                   \
+  (((X) == NULL) ? NULL : static_cast<Y>(X))
+
 /* super macro that creates an instance of class X and assign to Y (void **)
  * evaluate to VLAD_OK, VLAD_MALLOCFAILED or VLAD_NULLPTR */
-#define VLAD_WRAPPER_CREATE(X,Y)                                \
-  (((Y) == NULL) ?                                              \
-    VLAD_NULLPTR :                                              \
-    (((*(Y) = static_cast<void *>(VLAD_NEW((X)())))) == NULL) ? \
-      VLAD_MALLOCFAILED :                                       \
-      VLAD_OK)
+#define VLAD_WRAPPER_CREATE(X,Y)                                 \
+  (((Y) == NULL) ?                                               \
+    VLAD_NULLPTR :                                               \
+    (((*(Y) = VLAD_WRAPPER_CAST(VLAD_NEW(X), void *)) == NULL) ? \
+      VLAD_MALLOCFAILED :                                        \
+      VLAD_OK))
 
 /* create a kb */
 VLAD_EXTERN int vlad_kb_create(void **a_kb)
@@ -36,7 +40,7 @@ VLAD_EXTERN int vlad_kb_destroy(void *a_kb)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_kb;
@@ -52,7 +56,7 @@ VLAD_EXTERN int vlad_kb_init(void *a_kb)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->init();
@@ -66,7 +70,7 @@ VLAD_EXTERN int vlad_kb_close_symtab(void *a_kb)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->close_symtab();
@@ -80,7 +84,7 @@ VLAD_EXTERN int vlad_kb_close_kb(void *a_kb)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->close_kb();
@@ -96,7 +100,7 @@ VLAD_EXTERN int vlad_kb_add_symtab(void *a_kb,
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->add_symtab(a_n, a_t);
@@ -110,10 +114,10 @@ VLAD_EXTERN int vlad_kb_add_inittab(void *a_kb, void *a_atm)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_kb->add_inittab(static_cast<atom *>(a_atm));
+  return tmp_kb->add_inittab(VLAD_WRAPPER_CAST(a_atm, atom *));
 }
 
 /* add an expression into the constraints table */
@@ -127,12 +131,12 @@ VLAD_EXTERN int vlad_kb_add_consttab(void *a_kb,
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_kb->add_consttab(static_cast<expression *>(a_e),
-                              static_cast<expression *>(a_c),
-                              static_cast<expression *>(a_n));
+  return tmp_kb->add_consttab(VLAD_WRAPPER_CAST(a_e, expression *),
+                              VLAD_WRAPPER_CAST(a_c, expression *),
+                              VLAD_WRAPPER_CAST(a_n, expression *));
 }
 
 /* add a transformation declaration in the trans table */
@@ -147,13 +151,13 @@ VLAD_EXTERN int vlad_kb_add_transtab(void *a_kb,
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
   
   return tmp_kb->add_transtab(a_n,
-                              static_cast<stringlist *>(a_v),
-                              static_cast<expression *>(a_pr),
-                              static_cast<expression *>(a_po));
+                              VLAD_WRAPPER_CAST(a_v, stringlist *),
+                              VLAD_WRAPPER_CAST(a_pr, expression *),
+                              VLAD_WRAPPER_CAST(a_po, expression *));
 }
 
 /* add a transformation reference to the sequence table */
@@ -164,10 +168,10 @@ VLAD_EXTERN int vlad_kb_add_seqtab(void *a_kb, void *a_tr)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_kb->add_seqtab(static_cast<transref *>(a_tr));
+  return tmp_kb->add_seqtab(VLAD_WRAPPER_CAST(a_tr, transref *));
 }
 
 /* delete a transformation reference from the sequence table */
@@ -178,7 +182,7 @@ VLAD_EXTERN int vlad_kb_del_seqtab(void *a_kb, unsigned int a_i)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->del_seqtab(a_i);
@@ -192,7 +196,7 @@ VLAD_EXTERN int vlad_kb_list_seqtab(void *a_kb, FILE *a_fs)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->list_seqtab(a_fs);
@@ -206,7 +210,7 @@ VLAD_EXTERN int vlad_kb_compute_generate(void *a_kb, FILE *a_fs)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->compute_generate(a_fs);
@@ -220,10 +224,10 @@ VLAD_EXTERN int vlad_kb_query_generate(void *a_kb, void *a_exp, FILE *a_fs)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_kb->query_generate(static_cast<expression *>(a_exp), a_fs);
+  return tmp_kb->query_generate(VLAD_WRAPPER_CAST(a_exp, expression *), a_fs);
 }
 
 /* prepares the kb for queries */
@@ -235,7 +239,7 @@ VLAD_EXTERN int vlad_kb_compute_evaluate(void *a_kb)
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_kb->compute_evaluate();
@@ -255,10 +259,10 @@ VLAD_EXTERN int vlad_kb_query_evaluate(void *a_kb,
   if (a_kb == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_kb = static_cast<kb *>(a_kb)) == NULL)
+  if ((tmp_kb = VLAD_WRAPPER_CAST(a_kb, kb *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_kb->query_evaluate(static_cast<expression *>(a_exp), a_res);
+  return tmp_kb->query_evaluate(VLAD_WRAPPER_CAST(a_exp, expression *), a_res);
 #else
   return VLAD_FAILURE;
 #endif
@@ -278,7 +282,7 @@ VLAD_EXTERN int vlad_strlist_destroy(void *a_slist)
   if (a_slist == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_slist = static_cast<stringlist *>(a_slist)) == NULL)
+  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, stringlist *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_slist;
@@ -294,7 +298,7 @@ VLAD_EXTERN int vlad_strlist_add(void *a_slist, const char *a_s)
   if (a_slist == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_slist = static_cast<stringlist *>(a_slist)) == NULL)
+  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, stringlist *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_slist->add(a_s);
@@ -314,7 +318,7 @@ VLAD_EXTERN int vlad_atom_destroy(void *a_atm)
   if (a_atm == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_atm = static_cast<atom *>(a_atm)) == NULL)
+  if ((tmp_atm = VLAD_WRAPPER_CAST(a_atm, atom *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_atm;
@@ -330,7 +334,7 @@ VLAD_EXTERN int vlad_atom_negate(void *a_atm)
   if (a_atm == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_atm = static_cast<atom *>(a_atm)) == NULL)
+  if ((tmp_atm = VLAD_WRAPPER_CAST(a_atm, atom *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   tmp_atm->negate();
@@ -350,7 +354,7 @@ VLAD_EXTERN int vlad_atom_init_holds(void *a_atm,
   if (a_atm == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_atm = static_cast<atom *>(a_atm)) == NULL)
+  if ((tmp_atm = VLAD_WRAPPER_CAST(a_atm, atom *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_atm->init_holds(a_s, a_a, a_o, (bool) a_t);
@@ -366,7 +370,7 @@ VLAD_EXTERN int vlad_atom_init_member(void *a_atm,
   if (a_atm == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_atm = static_cast<atom *>(a_atm)) == NULL)
+  if ((tmp_atm = VLAD_WRAPPER_CAST(a_atm, atom *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_atm->init_member(a_e, a_g, (bool) a_t);
@@ -382,7 +386,7 @@ VLAD_EXTERN int vlad_atom_init_subset(void *a_atm,
   if (a_atm == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_atm = static_cast<atom *>(a_atm)) == NULL)
+  if ((tmp_atm = VLAD_WRAPPER_CAST(a_atm, atom *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_atm->init_subset(a_g1, a_g2, (bool) a_t);
@@ -402,7 +406,7 @@ VLAD_EXTERN int vlad_exp_destroy(void *a_exp)
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_exp = static_cast<expression *>(a_exp)) == NULL)
+  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, expression *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_exp;
@@ -418,10 +422,10 @@ VLAD_EXTERN int vlad_exp_add(void *a_exp, void *a_atm)
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_exp = static_cast<expression *>(a_exp)) == NULL)
+  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, expression *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_exp->add(static_cast<atom *>(a_atm));
+  return tmp_exp->add(VLAD_WRAPPER_CAST(a_atm, atom *));
 }
 
 /* gives the i'th atom */
@@ -434,7 +438,7 @@ VLAD_EXTERN int vlad_exp_get(void *a_exp, unsigned int a_i, void **a_atm)
   if (a_exp == NULL || a_atm == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_exp = static_cast<expression *>(a_exp)) == NULL)
+  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, expression *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   if ((retval = tmp_exp->get(a_i, &tmp_atom)) != VLAD_OK)
@@ -459,7 +463,7 @@ VLAD_EXTERN int vlad_tref_destroy(void *a_tref)
   if (a_tref == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_tref = static_cast<transref *>(a_tref)) == NULL)
+  if ((tmp_tref = VLAD_WRAPPER_CAST(a_tref, transref *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_tref;
@@ -475,10 +479,10 @@ VLAD_EXTERN int vlad_tref_init(void *a_tref, const char *a_n, void *a_slist)
   if (a_tref == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_tref = static_cast<transref *>(a_tref)) == NULL)
+  if ((tmp_tref = VLAD_WRAPPER_CAST(a_tref, transref *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_tref->init(a_n, static_cast<stringlist *>(a_slist));
+  return tmp_tref->init(a_n, VLAD_WRAPPER_CAST(a_slist, stringlist *));
 }
 
 /* create a consttab */
@@ -495,7 +499,7 @@ VLAD_EXTERN int vlad_consttab_destroy(void *a_ct)
   if (a_ct == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_ct = static_cast<consttab *>(a_ct)) == NULL)
+  if ((tmp_ct = VLAD_WRAPPER_CAST(a_ct, consttab *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_ct;
@@ -511,12 +515,12 @@ VLAD_EXTERN int vlad_consttab_add(void *a_ct, void *a_e, void *a_c, void *a_n)
   if (a_ct == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_ct = static_cast<consttab *>(a_ct)) == NULL)
+  if ((tmp_ct = VLAD_WRAPPER_CAST(a_ct, consttab *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_ct->add(static_cast<expression *>(a_e),
-                     static_cast<expression *>(a_c),
-                     static_cast<expression *>(a_n));
+  return tmp_ct->add(VLAD_WRAPPER_CAST(a_e, expression *),
+                     VLAD_WRAPPER_CAST(a_c, expression *),
+                     VLAD_WRAPPER_CAST(a_n, expression *));
 }
 
 /* get the length of the list */
@@ -527,7 +531,7 @@ VLAD_EXTERN int vlad_list_length(void *a_list)
   if (a_list == NULL)
     return 0;
 
-  if ((tmp_list = static_cast<list *>(a_list)) == NULL)
+  if ((tmp_list = VLAD_WRAPPER_CAST(a_list, list *)) == NULL)
     return 0;
 
   return tmp_list->length();
