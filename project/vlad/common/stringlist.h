@@ -5,6 +5,9 @@
 
 #include <list.h>
 
+#ifndef __VLAD_STRINGLIST_H
+#define __VLAD_STRINGLIST_H
+
 class string : public list_item
 {
   public :
@@ -33,3 +36,5 @@ class stringlist : public list
     /* return true if string is in the list */
     int find(const char *s);
 } ;
+
+#endif
