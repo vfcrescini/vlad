@@ -4,8 +4,11 @@
  *
  */
 
+
 %{
-#include "parser.tab.h"
+#include "y.tab.h"
+#include "symtab.h"
+#define YY_NO_UNPUT
 %}
 
 underscore         _
@@ -39,8 +42,8 @@ s_object_ident     o|o{alpha_num_uscr_str}
 g_subject_ident    S|S{alpha_num_uscr_str}
 g_access_ident     A|A{alpha_num_uscr_str}
 g_object_ident     O|O{alpha_num_uscr_str}
-v_ident            v|v{alpha_num_uscr_str}
-t_ident            {alpha}{alpha_num_uscr_str}
+v_ident            v|v{alpha_num_uscr_str}|V|V{alpha_num_uscr_str}
+t_ident            t|t{alpha_num_uscr_str}|T|T{alpha_num_uscr_str}
 whitespace         [\t ]+
 
 %%
@@ -62,14 +65,38 @@ whitespace         [\t ]+
 {if} return EPI_SYM_IF;
 {is} return EPI_SYM_IS;
 {after} return EPI_SYM_AFTER;
-{s_subject_ident} return EPI_SYM_S_SUB_IDENT;
-{s_access_ident} return EPI_SYM_S_ACC_IDENT;
-{s_object_ident} return  EPI_SYM_S_OBJ_IDENT;
-{g_subject_ident} return EPI_SYM_G_SUB_IDENT;
-{g_access_ident} return EPI_SYM_G_ACC_IDENT;
-{g_object_ident} return EPI_SYM_G_OBJ_IDENT;
-{v_ident} return EPI_SYM_VAR_IDENT;
-{t_ident} return EPI_SYM_TRANS_IDENT;
+{s_subject_ident} {
+  symtab_add(yytext, &yylval);
+  return EPI_SYM_S_SUB_IDENT;
+}
+{s_access_ident} {
+  symtab_add(yytext, &yylval);
+  return EPI_SYM_S_ACC_IDENT;
+}
+{s_object_ident} {
+  symtab_add(yytext, &yylval);
+  return  EPI_SYM_S_OBJ_IDENT;
+}
+{g_subject_ident} {
+  symtab_add(yytext, &yylval);
+  return EPI_SYM_G_SUB_IDENT;
+}
+{g_access_ident} {
+  symtab_add(yytext, &yylval);
+  return EPI_SYM_G_ACC_IDENT;
+}
+{g_object_ident} {
+  symtab_add(yytext, &yylval);
+  return EPI_SYM_G_OBJ_IDENT;
+}
+{v_ident} {
+  symtab_add(yytext, &yylval);
+  return EPI_SYM_VAR_IDENT;
+}
+{t_ident} {
+  symtab_add(yytext, &yylval);
+  return EPI_SYM_TRANS_IDENT;
+}
 {whitespace}
 
 %%

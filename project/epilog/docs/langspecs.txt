@@ -129,7 +129,7 @@ Language Specifications
    Variables are only permitted to occur on transformation proposition
    statements. They must be in the form:
 
-     v[a-zA-Z0-9]*
+     [vV][a-zA-Z0-9]*
 
 2. Definition Statements
 
@@ -153,7 +153,8 @@ Language Specifications
 
     where:
 
-      <trans-identifier> is the identifier of this transformation
+      <trans-identifier> is the identifier of this transformation. Must
+        start with a t or a T.
 
       <post-condition-expression> an expression that will be true in the
         resulting state after the transformation is the identifier of this
@@ -164,17 +165,17 @@ Language Specifications
 
     Note that a transformation definition statement may have variables:
 
-      trans delete-write(vSUBJECT, vOBJECT)
+      trans tdelete-write(vSUBJECT, vOBJECT)
       causes !holds(vSUBJECT, a_write, vOBJECT)
       if holds(vSUBJECT, a_write, vOBJECT)
 
     this means 
 
-      delete-write(subject1, object1)
+      tdelete-write(subject1, object1)
 
     and
 
-      delete-write(subject2, object2)
+      tdelete-write(subject2, object2)
 
     will cause
 
@@ -209,4 +210,3 @@ Language Specifications
       is <policy-expression> 
 
     The statement will return one of the following: true, false or ?
-

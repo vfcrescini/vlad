@@ -7,6 +7,12 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "symtab.h"
+
+extern FILE *yyin;
+int yyparse();
+int yyerror(char *);
+int yylex();
 %}
 
 %token EPI_SYM_OPEN_PARENT
@@ -37,50 +43,93 @@
 
 %%
 
-program : statement_list
+program : 
+  statement_list
   ;
 
-statement_list : statement | statement statement_list
+statement_list : 
+  statement 
+  | statement statement_list
   ;
 
-statement : initial_stmt | trans_stmt | policy_stmt
+statement : 
+  initial_stmt 
+  | trans_stmt 
+  | policy_stmt
   ;
 
-initial_stmt : EPI_SYM_INITIALLY ground_exp EPI_SYM_SEMICOLON
+initial_stmt : 
+  EPI_SYM_INITIALLY ground_exp EPI_SYM_SEMICOLON
   ;
 
-trans_stmt : EPI_SYM_TRANS EPI_SYM_TRANS_IDENT trans_var_def EPI_SYM_CAUSES ground_exp EPI_SYM_IF ground_exp EPI_SYM_SEMICOLON
+trans_stmt : 
+  EPI_SYM_TRANS EPI_SYM_TRANS_IDENT trans_var_def EPI_SYM_CAUSES ground_exp EPI_SYM_IF ground_exp EPI_SYM_SEMICOLON
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $2);
+    printf("trans = %d = %s\n", $2, tmp_str);
+    free(tmp_str);
+  }
   ;
 
-policy_stmt : is_clause after_clause EPI_SYM_SEMICOLON | is_clause EPI_SYM_SEMICOLON
+policy_stmt : 
+  is_clause after_clause EPI_SYM_SEMICOLON 
+  | is_clause EPI_SYM_SEMICOLON
   ;
 
-trans_var_def : EPI_SYM_OPEN_PARENT EPI_SYM_CLOSE_PARENT | EPI_SYM_OPEN_PARENT trans_var_list EPI_SYM_CLOSE_PARENT
+trans_var_def : 
+  EPI_SYM_OPEN_PARENT EPI_SYM_CLOSE_PARENT 
+  | EPI_SYM_OPEN_PARENT trans_var_list EPI_SYM_CLOSE_PARENT
   ;
 
-trans_var_list : EPI_SYM_VAR_IDENT | EPI_SYM_VAR_IDENT EPI_SYM_COMMA trans_var_list
+trans_var_list : 
+  EPI_SYM_VAR_IDENT 
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $1);
+    printf("var = %d = %s\n", $1, tmp_str);
+    free(tmp_str);
+  }
+  | EPI_SYM_VAR_IDENT EPI_SYM_COMMA trans_var_list
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $1);
+    printf("var = %d = %s\n", $1, tmp_str);
+    free(tmp_str);
+  }
   ;
 
-is_clause : EPI_SYM_IS ground_exp
+is_clause : 
+  EPI_SYM_IS ground_exp
   ;
 
-after_clause : EPI_SYM_AFTER trans_ref_list
+after_clause : 
+  EPI_SYM_AFTER trans_ref_list
   ;
 
-trans_ref_list : trans_ref_def | trans_ref_def EPI_SYM_COMMA trans_ref_list
+trans_ref_list : 
+  trans_ref_def 
+  | trans_ref_def EPI_SYM_COMMA trans_ref_list
   ;
 
-trans_ref_def : EPI_SYM_TRANS_IDENT EPI_SYM_OPEN_PARENT sub_acc_obj_list EPI_SYM_CLOSE_PARENT
+trans_ref_def : 
+  EPI_SYM_TRANS_IDENT EPI_SYM_OPEN_PARENT sub_acc_obj_list EPI_SYM_CLOSE_PARENT
   ;
 
-sub_acc_obj_list : sub_acc_obj_ident | sub_acc_obj_ident EPI_SYM_COMMA sub_acc_obj_list
+sub_acc_obj_list : 
+  sub_acc_obj_ident 
+  | sub_acc_obj_ident EPI_SYM_COMMA sub_acc_obj_list
   ;
 
-sub_acc_obj_ident : subject_identifier | access_identifier | object_identifier
+sub_acc_obj_ident : 
+  subject_identifier 
+  | access_identifier 
+  | object_identifier
   ;
 
 ground_exp : 
-  ground_exp logical_op ground_boolean_exp | ground_boolean_exp
+  ground_exp logical_op ground_boolean_exp 
+  | ground_boolean_exp
   ;
 
 logical_op :
@@ -88,15 +137,20 @@ logical_op :
   ;
 
 ground_boolean_exp :
-  EPI_SYM_NOT ground_logical_exp | ground_logical_exp
+  EPI_SYM_NOT ground_logical_exp 
+  | ground_logical_exp
   ;
 
 ground_logical_exp :
-  ground_atom | EPI_SYM_OPEN_PARENT ground_exp EPI_SYM_CLOSE_PARENT
+  ground_atom 
+  | EPI_SYM_OPEN_PARENT ground_exp EPI_SYM_CLOSE_PARENT
   ;
 
 ground_atom :
-  ground_holds | ground_cont | ground_elt | logical_const
+  ground_holds 
+  | ground_cont 
+  | ground_elt 
+  | logical_const
   ;
 
 ground_holds :
@@ -104,11 +158,15 @@ ground_holds :
   ;
 
 ground_cont :
-  ground_subject_cont | ground_access_cont | ground_object_cont
+  ground_subject_cont 
+  | ground_access_cont 
+  | ground_object_cont
   ;
 
 ground_elt :
-  ground_subject_elt | ground_access_elt | ground_object_elt
+  ground_subject_elt 
+  | ground_access_elt 
+  | ground_object_elt
   ;
 
 ground_subject_cont :
@@ -135,27 +193,67 @@ ground_object_elt :
   EPI_SYM_ELT EPI_SYM_OPEN_PARENT EPI_SYM_S_OBJ_IDENT EPI_SYM_COMMA EPI_SYM_G_OBJ_IDENT EPI_SYM_CLOSE_PARENT
   ;
 
-subject_identifier : EPI_SYM_S_SUB_IDENT |  EPI_SYM_G_SUB_IDENT
+subject_identifier : 
+  EPI_SYM_S_SUB_IDENT  
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $1);
+    printf("subs = %d = %s\n", $1, tmp_str);
+    free(tmp_str);
+  }
+  | EPI_SYM_G_SUB_IDENT
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $1);
+    printf("subg = %d = %s\n", $1, tmp_str);
+    free(tmp_str);
+  }
   ;
 
-access_identifier : EPI_SYM_S_ACC_IDENT | EPI_SYM_G_ACC_IDENT
+access_identifier :
+  EPI_SYM_S_ACC_IDENT 
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $1);
+    printf("accs = %d = %s\n", $1, tmp_str);
+    free(tmp_str);
+  }
+  | EPI_SYM_G_ACC_IDENT
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $1);
+    printf("accg = %d = %s\n", $1, tmp_str);
+    free(tmp_str);
+  }
   ;
 
-object_identifier : EPI_SYM_S_OBJ_IDENT | EPI_SYM_G_OBJ_IDENT
+object_identifier : 
+  EPI_SYM_S_OBJ_IDENT 
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $1);
+    printf("objs = %d = %s\n", $1, tmp_str);
+    free(tmp_str);
+  }
+  | EPI_SYM_G_OBJ_IDENT
+  {
+    char *tmp_str = NULL;
+    symtab_get(&tmp_str, $1);
+    printf("objg = %d = %s\n", $1, tmp_str);
+    free(tmp_str);
+  }
   ;
 
-logical_const : EPI_SYM_TRUE | EPI_SYM_FALSE
+logical_const : 
+  EPI_SYM_TRUE 
+  | EPI_SYM_FALSE
   ;
 
 %%
 
-extern FILE *yyin;
-int yyparse();
-int yyerror(char *);
-int yylex();
-
 int main()
 {
+  symtab_init();
   yyparse();
 
   return 0;

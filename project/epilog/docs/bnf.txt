@@ -37,9 +37,9 @@ BNF
 
 <object-identifier>    : <o-access-ident> | <O-access-ident>
 
-<var-identifier>       : v | v <alpha-num-uscr-str>
+<var-identifier>       : v | v <alpha-num-uscr-str> | V | V <alpha-num-usrc-str>
 
-<trans-identifier>     : <alpha> <alpha-num-uscr-str>
+<trans-identifier>     : t | t <alpha-num-uscr-str> | T | T <alpha-num-usrc-str>
 
 <sub-acc-obj-ident>    : <subject-identifier> |
                          <access-identifier> |
