@@ -1,9 +1,11 @@
 2003-10-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/comp_atom.h :
 	* exp/gnd_atom.h :
 	
 	  - Added some convenience macros.
 	  
+	* exp/comp_exp.c : 
 	* exp/gnd_exp.c :
 
 	  - Used convenience macros.

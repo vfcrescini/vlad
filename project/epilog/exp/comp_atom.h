@@ -74,6 +74,13 @@ void comp_atom_destroy(comp_atom_type *comp_atom);
 int comp_atom_compare(comp_atom_type comp_atom1, comp_atom_type comp_atom2);
 
 /* some convenience macro(s) */
-#define EPI_COMPATOM_MALLOC ((comp_atom_type *) malloc(sizeof(comp_atom_type)))
+#define EPI_COMPATOM_MALLOC           ((comp_atom_type *) malloc(sizeof(comp_atom_type)))
+#define EPI_COMPATOM_HOLDS_SUBJECT(X) ((X).atom.holds.subject)
+#define EPI_COMPATOM_HOLDS_ACCESS(X)  ((X).atom.holds.access)
+#define EPI_COMPATOM_HOLDS_OBJECT(X)  ((X).atom.holds.object)
+#define EPI_COMPATOM_MEMB_ELEMENT(X)  ((X).atom.memb.element)
+#define EPI_COMPATOM_MEMB_GROUP(X)    ((X).atom.memb.group)
+#define EPI_COMPATOM_SUBST_GROUP1(X)  ((X).atom.subst.group1)
+#define EPI_COMPATOM_SUBST_GROUP2(X)  ((X).atom.subst.group2)
 
 #endif

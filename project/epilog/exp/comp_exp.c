@@ -160,18 +160,18 @@ int comp_exp_replace_atom(comp_atom_type comp,
   ground->truth = comp.truth;
 
   if (EPI_ATOM_IS_HOLDS(comp)) {
-    if (comp_exp_get_ident(comp.atom.holds.subject,
-                           &(ground->atom.holds.subject),
+    if (comp_exp_get_ident(EPI_COMPATOM_HOLDS_SUBJECT(comp),
+                           &(EPI_GNDATOM_HOLDS_SUBJECT(*ground)),
                            varlist,
                            identlist) != 0)
       return -1;
-    if (comp_exp_get_ident(comp.atom.holds.access,
-                           &(ground->atom.holds.access),
+    if (comp_exp_get_ident(EPI_COMPATOM_HOLDS_ACCESS(comp),
+                           &(EPI_GNDATOM_HOLDS_ACCESS(*ground)),
                            varlist,
                            identlist) != 0)
       return -1;
-    if (comp_exp_get_ident(comp.atom.holds.object,
-                           &(ground->atom.holds.object),
+    if (comp_exp_get_ident(EPI_COMPATOM_HOLDS_OBJECT(comp),
+                           &(EPI_GNDATOM_HOLDS_OBJECT(*ground)),
                            varlist,
                            identlist) != 0)
       return -1;
@@ -180,13 +180,13 @@ int comp_exp_replace_atom(comp_atom_type comp,
   }
 
   if (EPI_ATOM_IS_MEMB(comp)) {
-    if (comp_exp_get_ident(comp.atom.memb.element,
-                           &(ground->atom.memb.element),
+    if (comp_exp_get_ident(EPI_COMPATOM_MEMB_ELEMENT(comp),
+                           &(EPI_GNDATOM_MEMB_ELEMENT(*ground)),
                            varlist,
                            identlist) != 0)
       return -1;
-    if (comp_exp_get_ident(comp.atom.memb.group,
-                           &(ground->atom.memb.group),
+    if (comp_exp_get_ident(EPI_COMPATOM_MEMB_GROUP(comp),
+                           &(EPI_GNDATOM_MEMB_GROUP(*ground)),
                            varlist,
                            identlist) != 0)
       return -1;
@@ -195,13 +195,13 @@ int comp_exp_replace_atom(comp_atom_type comp,
   }
 
   if (EPI_ATOM_IS_SUBST(comp)) {
-    if (comp_exp_get_ident(comp.atom.subst.group1,
-                           &(ground->atom.subst.group1),
+    if (comp_exp_get_ident(EPI_COMPATOM_SUBST_GROUP1(comp),
+                           &(EPI_GNDATOM_SUBST_GROUP1(*ground)),
                            varlist,
                            identlist) != 0)
       return -1;
-    if (comp_exp_get_ident(comp.atom.subst.group2,
-                           &(ground->atom.subst.group2),
+    if (comp_exp_get_ident(EPI_COMPATOM_SUBST_GROUP2(comp),
+                           &(EPI_GNDATOM_SUBST_GROUP2(*ground)),
                            varlist,
                            identlist) != 0)
       return -1;
