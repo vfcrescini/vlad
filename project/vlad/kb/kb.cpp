@@ -520,107 +520,51 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     for (j = 0; j < 2; j++) {
       /* subject group loop */
       for (k = 0; k < sg_len; k++) {
-        char *tmp1;
-        stable->get(k, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp1);
         /* subject loop */
         for (l = 0; l < s_len; l++) {
-          char *tmp2;
-          stable->get(l, VLAD_IDENT_SUBJECT, &tmp2);
           /* access loop */
           for (m = 0; m < a_len + ag_len; m++) {
-            char *tmp3;
-            if (m < a_len)
-              stable->get(m, VLAD_IDENT_ACCESS, &tmp3);
-            else
-              stable->get(m - a_len, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp3);
             /* object loop */
             for (n = 0; n < o_len + og_len; n++) {
-              char *tmp4;
-              unsigned int tmp5;
-              unsigned int tmp6;
-              unsigned int tmp7;
-
-              if (n < o_len)
-                stable->get(n, VLAD_IDENT_OBJECT, &tmp4);
-              else
-                stable->get(n - o_len, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp4);
-
-              encode_atom(tmp1, tmp3, tmp4, VLAD_ATOM_HOLDS, i, j, &tmp5);
-              encode_atom(tmp2, tmp1, NULL, VLAD_ATOM_MEMBER, i, true, &tmp6);
-              encode_atom(tmp2, tmp3, tmp4, VLAD_ATOM_HOLDS, i, j, &tmp7);
-              fprintf(f, "%6d <- %d AND %d\n", tmp7, tmp5, tmp6);
+              fprintf(f, 
+                      "%6d <- %d AND %d\n",
+                      (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (k * (a_len + ag_len) * (o_len + og_len)) + (m * (o_len + og_len)) + n,
+                      (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (l * (a_len + ag_len) * (o_len + og_len)) + (m * (o_len + og_len)) + n + o_len,
+                      pos_tot + (i * pos_tot * 2) + c_len + h_tot + (l * sg_len) + k);
             }
           }
         }
       }
-
       /* access group loop */
       for (k = 0; k < ag_len; k++) {
-        char *tmp1;
-        stable->get(k, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp1);
         /* access loop */
         for (l = 0; l < a_len; l++) {
-          char *tmp2;
-          stable->get(l, VLAD_IDENT_ACCESS, &tmp2);
           /* subject loop */
           for (m = 0; m < s_len + sg_len; m++) {
-            char *tmp3;
-            if (m < s_len)
-              stable->get(m, VLAD_IDENT_SUBJECT, &tmp3);
-            else
-              stable->get(m - s_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp3);
             /* object loop */
             for (n = 0; n < o_len + og_len; n++) {
-              char *tmp4;
-              unsigned int tmp5;
-              unsigned int tmp6;
-              unsigned int tmp7;
-
-              if (n < o_len)
-                stable->get(n, VLAD_IDENT_OBJECT, &tmp4);
-              else
-                stable->get(n - o_len, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp4);
-
-              encode_atom(tmp3, tmp1, tmp4, VLAD_ATOM_HOLDS, i, j, &tmp5);
-              encode_atom(tmp2, tmp1, NULL, VLAD_ATOM_MEMBER, i, true, &tmp6);
-              encode_atom(tmp3, tmp2, tmp4, VLAD_ATOM_HOLDS, i, j, &tmp7);
-              fprintf(f, "%6d <- %d AND %d\n", tmp7, tmp5, tmp6);
+              fprintf(f, 
+                      "%6d <- %d AND %d\n",
+                      (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (m * (a_len + ag_len) * (o_len + og_len)) + (l * (o_len + og_len)) + n,
+                      (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (m * (a_len + ag_len) * (o_len + og_len)) + (k * (o_len + og_len)) + n + o_len,
+                      pos_tot + (i * pos_tot * 2) + c_len + h_tot + (sg_len * sg_len) + (l * sg_len) + k);
             }
           }
         }
       }
-
       /* object group loop */
       for (k = 0; k < og_len; k++) {
-        char *tmp1;
-        stable->get(k, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp1);
         /* object loop */
         for (l = 0; l < o_len; l++) {
-          char *tmp2;
-          stable->get(l, VLAD_IDENT_OBJECT, &tmp2);
           /* subject loop */
           for (m = 0; m < s_len + sg_len; m++) {
-            char *tmp3;
-            if (m < s_len)
-              stable->get(m, VLAD_IDENT_SUBJECT, &tmp3);
-            else
-              stable->get(m - s_len, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp3);
             /* access loop */
             for (n = 0; n < a_len + ag_len; n++) {
-              char *tmp4;
-              unsigned int tmp5;
-              unsigned int tmp6;
-              unsigned int tmp7;
-
-              if (n < a_len)
-                stable->get(n, VLAD_IDENT_ACCESS, &tmp4);
-              else
-                stable->get(n - a_len, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp4);
-
-              encode_atom(tmp3, tmp4, tmp1, VLAD_ATOM_HOLDS, i, j, &tmp5);
-              encode_atom(tmp2, tmp1, NULL, VLAD_ATOM_MEMBER, i, true, &tmp6);
-              encode_atom(tmp3, tmp4, tmp2, VLAD_ATOM_HOLDS, i, j, &tmp7);
-              fprintf(f, "%6d <- %d AND %d\n", tmp7, tmp5, tmp6);
+              fprintf(f, 
+                      "%6d <- %d AND %d\n",
+                      (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (m * (a_len + ag_len) * (o_len + og_len)) + (n * (o_len + og_len)) + l,
+                      (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (m * (a_len + ag_len) * (o_len + og_len)) + (n * (o_len + og_len)) + k + o_len,
+                      pos_tot + (i * pos_tot * 2) + c_len + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (l * og_len) + k);
             }
           }
         }
@@ -637,76 +581,52 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     for (j = 0; j < 2; j++) {
       /* subject */
       for (k = 0; k < sg_len; k++) {
-        char *tmp1;
-        stable->get(k, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp1);
         for (l = 0; l < sg_len; l++) {
-          char *tmp2;
-          stable->get(l, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp2);
           for (m = 0; m < sg_len; m++) {
-            char *tmp3;
-            unsigned int tmp4;
-            unsigned int tmp5;
-            unsigned int tmp6;
 
             /* ignore if any 2 are the same */
-            if (!strcmp(tmp1, tmp2) || !strcmp(tmp2, tmp3) || !strcmp(tmp1, tmp3))
+            if (k == l || l == m || m == k)
               continue;
 
-            stable->get(m, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp3);
-            encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp4);
-            encode_atom(tmp2, tmp3, NULL, VLAD_ATOM_SUBSET, i, j, &tmp5);
-            encode_atom(tmp1, tmp3, NULL, VLAD_ATOM_SUBSET, i, j, &tmp6);
-            fprintf(f, "%6d <- %d AND %d\n", tmp6, tmp4, tmp5);
+            fprintf(f,
+                    "%6d <- %d AND %d\n",
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (k * sg_len) + m,
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (k * sg_len) + l,
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (l * sg_len) + m);
           }
         }
-      } 
+      }
       /* access */
       for (k = 0; k < ag_len; k++) {
-        char *tmp1;
-        stable->get(k, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp1);
         for (l = 0; l < ag_len; l++) {
-          char *tmp2;
-          stable->get(l, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
           for (m = 0; m < ag_len; m++) {
-            char *tmp3;
-            unsigned int tmp4;
-            unsigned int tmp5;
-            unsigned int tmp6;
 
             /* ignore if any 2 are the same */
-            if (!strcmp(tmp1, tmp2) || !strcmp(tmp2, tmp3) || !strcmp(tmp1, tmp3))
+            if (k == l || l == m || m == k)
               continue;
 
-            stable->get(m, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp3);
-            encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp4);
-            encode_atom(tmp2, tmp3, NULL, VLAD_ATOM_SUBSET, i, j, &tmp5);
-            encode_atom(tmp1, tmp3, NULL, VLAD_ATOM_SUBSET, i, j, &tmp6);
-            fprintf(f, "%6d <- %d AND %d\n", tmp6, tmp4, tmp5);
+            fprintf(f,
+                    "%6d <- %d AND %d\n",
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (k * ag_len) + m,
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (k * ag_len) + l,
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (l * ag_len) + m);
           }
         }
       }
       /* object */
       for (k = 0; k < og_len; k++) {
-        char *tmp1;
-        stable->get(k, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp1);
         for (l = 0; l < og_len; l++) {
-          char *tmp2;
-          stable->get(l, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp2);
           for (m = 0; m < og_len; m++) {
-            char *tmp3;
-            unsigned int tmp4;
-            unsigned int tmp5;
-            unsigned int tmp6;
-            stable->get(m, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp3);
 
             /* ignore if any 2 are the same */
-            if (!strcmp(tmp1, tmp2) || !strcmp(tmp2, tmp3) || !strcmp(tmp1, tmp3))
+            if (k == l || l == m || m == k)
               continue;
 
-            encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp4);
-            encode_atom(tmp2, tmp3, NULL, VLAD_ATOM_SUBSET, i, j, &tmp5);
-            encode_atom(tmp1, tmp3, NULL, VLAD_ATOM_SUBSET, i, j, &tmp6);
-            fprintf(f, "%6d <- %d AND %d\n", tmp6, tmp4, tmp5);
+            fprintf(f,
+                    "%6d <- %d AND %d\n",
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (k * og_len) + m,
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (k * og_len) + l,
+                    (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (l * og_len) + m);
           }
         }
       }

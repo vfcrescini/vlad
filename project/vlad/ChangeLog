@@ -3,9 +3,13 @@
 	* kb/kb.h :
 	* kb/kb.cpp :
 
-	  - Now generate_nlp() generates a list of possible atoms.
+	  - Cleanup so some of the rules are generated mathematically.
+
+	  - Added inertial and complementary rules.
 
 	  - Added inheritance and transitivity rules.
+
+	  - Now generate_nlp() generates a list of possible atoms.
 
 	* kb/symab.h :
 	* kb/symtab.cpp :
