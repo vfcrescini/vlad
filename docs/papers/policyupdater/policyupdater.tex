@@ -187,72 +187,77 @@
           Expressions that are made up of only ground facts are called $ground$
           $expressions$.
 
-      \subsubsection{Entity Identifier Declaration}
+      \subsubsection{Definition Statements}
 
-        All entity identifiers (subjects, access rights, objects and groups)
-        must first be declared before any other statements to define the
-        entity domain of the policy base. The following entity declaration
-        syntax illustrates how to define one or more entity identifiers of a
-        particular type.
+        \paragraph{Entity Identifier Definition.}
 
-        \begin{verbatim}ident sub|acc|obj[-grp] <name>[, ...]];\end{verbatim}
+          All entity identifiers (subjects, access rights, objects and groups)
+          must first be declared before any other statements to define the
+          entity domain of the policy base. The following entity declaration
+          syntax illustrates how to define one or more entity identifiers of a
+          particular type.
 
-      \subsubsection{Initial Fact Definition}
+          \begin{verbatim}ident sub|acc|obj[-grp] <name>[, ...]];\end{verbatim}
 
-        The initial facts of the policy base, facts that hold before any
-        policy updates are performed, are defined by using the following
-        definition syntax:
+        \paragraph{Initial Fact Definition.}
 
-        \begin{verbatim}initially <ground-exp>;\end{verbatim}
+          The initial facts of the policy base, facts that hold before any
+          policy updates are performed, are defined by using the following
+          definition syntax:
 
-      \subsubsection{Constraint Definition}
+          \begin{verbatim}initially <ground-exp>;\end{verbatim}
 
-        Constraints are logical rules that holds regardless of any changes
-        that may occur when the policy base is updated. The constraint rules
-        are true in the initial state and remains true after any policy update.
+        \paragraph{Constraint Definition.}
 
-        The constraint syntax below shows that for any state of the policy
-        base, expression $exp1$ holds if expression $exp2$ is true and there
-        is no evidence that $exp3$ is true. The $with$ $absence$ clause allows
-        constraints to behave like default propositions, where the absence
-        of proof that an expression holds implies that the default expression
-        holds.
+          Constraints are logical rules that holds regardless of any changes
+          that may occur when the policy base is updated. The constraint rules
+          are true in the initial state and remains true after any policy
+          update.
 
-        It is important to note that the expressions $exp1$, $exp2$ and $exp3$
-        are non-ground expressions, which means identifiers within them may
-        be variables.
+          The constraint syntax below shows that for any state of the policy
+          base, expression $exp1$ holds if expression $exp2$ is true and there
+          is no evidence that $exp3$ is true. The $with$ $absence$ clause
+          allows constraints to behave like default propositions, where the
+          absence of proof that an expression holds implies that the default
+          expression holds.
 
-\begin{verbatim}
+          It is important to note that the expressions $exp1$, $exp2$ and
+          $exp3$ are non-ground expressions, which means identifiers within
+          them may be variables.
+
+          \begin{verbatim}
 always <exp1>
   [implied by <exp2>
   [with absence <exp3>]];
-\end{verbatim}
+          \end{verbatim}
 
-      \subsubsection{Policy Update Definition}
+        \paragraph{Policy Update Definition.}
 
-        Before a policy update can be applied, it must first be defined by
-        by using the following syntax:
+          Before a policy update can be applied, it must first be defined by
+          by using the following syntax:
 
-\begin{verbatim}
+          \begin{verbatim}
 <up_ident>([<var_ident>[, ...]])
   causes <exp1>
   if <exp2>;
-\end{verbatim}
+          \end{verbatim}
 
-        $up\_ident$ is the policy update identifier to be used in referencing
-        this policy update. The optional $var\_ident$ list are the variable
-        identifiers occurring the expressions $exp1$ and $exp2$ and will
-        eventually be replaced by entity identifiers when the update is
-        referenced. The postcondition expression $exp1$ is an expression that
-        will hold in the state after this update is applied. The expression
-        $exp2$ is a precondition expression that must hold in the current
-        state before this update is applied.
+          $up\_ident$ is the policy update identifier to be used in referencing
+          this policy update. The optional $var\_ident$ list are the variable
+          identifiers occurring the expressions $exp1$ and $exp2$ and will
+          eventually be replaced by entity identifiers when the update is
+          referenced. The postcondition expression $exp1$ is an expression that
+          will hold in the state after this update is applied. The expression
+          $exp2$ is a precondition expression that must hold in the current
+          state before this update is applied.
 
-        It is important to not that a policy base definition will have no
-        effect on the policy base until it is appled by one of the directives
-        described in the following section.
+          It is important to not that a policy base definition will have no
+          effect on the policy base until it is appled by one of the directives
+          described in the following section.
 
-      \subsubsection{Policy Update Directives}
+        \subsubsection{Directive Statements}
+
+        \paragraph{Policy Update Directives.}
 
         The policy update sequence list contains a list of references to
         defined policy updates in the domain. The policy updates in the
@@ -264,7 +269,7 @@ always <exp1>
         The following four directives are the policy sequence manipulation
         features of language $\cal{L}$.
 
-        \paragraph{Adding an Update into the Sequence.}
+        \subparagraph{Adding an Update into the Sequence.}
           Defined policy updates are added into the sequence list through the
           use of the following directive:
 
@@ -275,7 +280,7 @@ always <exp1>
           identifiers that will replace the variable identifiers that occur in
           the definition of the policy update. 
 
-        \paragraph{Listing the Updates in the Sequence.}
+        \subparagraph{Listing the Updates in the Sequence.}
           The following directive may be used to list the current contents of
           the policy update sequence list.
 
@@ -291,7 +296,7 @@ always <exp1>
           identifier and the $e\_ident$ list is the list of entity identifiers
           used to replace the variable identifier place-holders.
 
-        \paragraph{Removing an Update from the Sequence.}
+        \subparagraph{Removing an Update from the Sequence.}
           The syntax below shows the directive to remove a policy update
           reference from the list. $n$ is the ordinal index of the policy
           update to be removed. Note that removing a policy update reference
@@ -300,7 +305,7 @@ always <exp1>
 
           \begin{verbatim}seq del <n>;\end{verbatim}
 
-        \paragraph{Computing after a Policy Update.}
+        \subparagraph{Computing after a Policy Update.}
 
           The policy updates in the sequence list does not get applied until
           the $compute$ directive is issued. The directive causes the policy
@@ -311,36 +316,36 @@ always <exp1>
 
           \begin{verbatim}compute;\end{verbatim}
 
-      \subsubsection{Query Directive}
+        \paragraph{Query Directive.}
 
-        A query expression may be issued against the current state of the
-        policy base. This current state is derived after all the updates in
-        the update sequence has been applied, one at a time, upon the initial
-        state. Query expressions are answered with a \emph{true}, \emph{false}
-        or an \emph{unknown}, depending on whether the queried expression
-        holds, its negation holds, or neither, respectively. Syntax is as
-        follows:
+          A ground query expression may be issued against the current state of
+          the policy base. This current state is derived after all the updates
+          in the update sequence has been applied, one at a time, upon the
+          initial state. Query expressions are answered with a \emph{true},
+          \emph{false} or an \emph{unknown}, depending on whether the queried
+          expression holds, its negation holds, or neither, respectively.
+          Syntax is as follows:
 
-        \begin{verbatim}query <ground-exp>;\end{verbatim} 
+          \begin{verbatim}query <ground-exp>;\end{verbatim} 
 
-      \begin{example}
-        The following language ${\cal L}$ program code listing shows a simple
-        rule-based document access control system scenario. The main function
-        of this program is to ensure that the subject $alice$ is denied $read$
-        access to any object in one group if she already holds $read$ to the
-        other group.
+        \begin{example}
+          The following language ${\cal L}$ program code listing shows a simple
+          rule-based document access control system scenario. The main function
+          of this program is to ensure that the subject $alice$ is denied
+          $read$ access to any object in one group if she already holds $read$
+          to the other group.
 
-        In this example, the two objects $db1$ and $db2$ are members of the
-        groups $comp1$ and $comp2$, respectively. The policy updates
-        $req\_read\_comp1$ and $req\_read\_comp2$ both grant $read$ access
-        to the given subject for the given object and automatically revokes
-        the subject's right to read objects from the other group. The policy
-        updates can only be applied if their respective preconditions have
-        been met, i.e. that the given subject has $readable$ access for the
-        given object and that the given object is a member of the group
-        concerned.
-        \begin{verbatim}
+          In this example, the two objects $db1$ and $db2$ are members of the
+          groups $comp1$ and $comp2$, respectively. The policy updates
+          $req\_read\_comp1$ and $req\_read\_comp2$ both grant $read$ access
+          to the given subject for the given object and automatically revokes
+          the subject's right to read objects from the other group. The policy
+          updates can only be applied if their respective preconditions have
+          been met, i.e. that the given subject has $readable$ access for the
+          given object and that the given object is a member of the group
+          concerned.
 
+          \begin{verbatim}
 /* declare identifiers */
 
 ident sub alice;
@@ -389,9 +394,14 @@ query holds(alice, read, db1);
 query holds(alice, read, db2);
 query holds(alice, read, comp1);
 query holds(alice, read, comp2);
-        \end{verbatim}
+          \end{verbatim}
+        \end{example}
 
-      \end{example}
+      \subsubsection{Domain Description of Language ${\cal L}$}
+
+        The \emph{domain description} ${\cal D}_{\cal L}$ of language
+        ${\cal L}$ is defined to be a finite set of initial state ground facts,
+        ground constraint rules and policy update definitions.
 
     \subsection{Semantics}
 
