@@ -36,9 +36,9 @@ static const char *get_docroot(apr_pool_t *a_p,
 /* returns the parent of the given filepath */
 static const char *get_parent(apr_pool_t *a_p, const char *a_path);
 /* strips out everything after ? */
-const char *strip_question(apr_pool_t *a_p, const char *a_str);
+static const char *strip_question(apr_pool_t *a_p, const char *a_str);
 /* strips out the trailing / from a_str */
-const char *strip_slash(apr_pool_t *a_p, const char *a_str);
+static const char *strip_slash(apr_pool_t *a_p, const char *a_str);
 
 /* a version of yyinput that uses apache apr */
 int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max)
@@ -391,7 +391,7 @@ static const char *get_parent(apr_pool_t *a_p, const char *a_path)
 }
 
 /* strips out the trailing / from a_str */
-const char *strip_slash(apr_pool_t *a_p, const char *a_str)
+static const char *strip_slash(apr_pool_t *a_p, const char *a_str)
 {
   char tmpstring[5120];
   int i;
@@ -412,7 +412,7 @@ const char *strip_slash(apr_pool_t *a_p, const char *a_str)
 }
 
 /* strips out everything after ? */
-const char *strip_question(apr_pool_t *a_p, const char *a_str)
+static const char *strip_question(apr_pool_t *a_p, const char *a_str)
 {
   char tmpstring[5120];
   int i;
@@ -431,5 +431,3 @@ const char *strip_question(apr_pool_t *a_p, const char *a_str)
 
   return apr_pstrdup(a_p, tmpstring);
 }
-
-
