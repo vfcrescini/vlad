@@ -5,10 +5,9 @@ TARGETS = main
 
 all : $(TARGETS)
 
-main : scanner.c
-	$(CC) $(CFLAGS) scanner.c -ll -o$(@)
+main : parser.y scanner.c
 
-scanner.c : scanner.l symbols.h
+scanner.c : scanner.l y.tab.h
 	$(LEX) -o$(@) scanner.l
 
 clean :

@@ -1,77 +1,76 @@
-%{
 /*
  * Vino Crescini
  * 2002 May 30
  *
  */
 
+%{
 #include <stdio.h>
-#include "symbols.h"
-
+#include "y.tab.h"
 %}
 
-%%
-
-\( {
-  return EPI_OPENBRACKET;
-}
-
-\) {
-  return EPI_CLOSEBRACKET;
-}
-
-, {
-  return EPI_COMMA;
-}
-
-; {
-  return EPI_SEMICOLON;
-}
-
-&& { 
-  return EPI_AND;
-}
-
-\|\| { 
-  return EPI_OR;
-}
-
-! {
-  return EPI_NOT;
-}
-
-elt {
-  return EPI_ELEMENT;
-}
-
-cont {
-  return EPI_CONTAIN;
-}
-
-gholds { 
-  return EPI_GHOLDS;
-}
-
-sholds {
-  return EPI_SHOLDS;
-}
-
-#.*\n {
-}
-
-[a-z][a-zA-Z0-9_]* {
-  printf("identifier\n");
-  return EPI_IDENTIFIER;
-}
-
-[A-Z][a-zA-Z0-9_]* {
-  printf("variable\n");
-  return EPI_VARIABLE;
-}
+underscore         _
+open_parent        \(
+close_parent       \)
+comma              ,
+semicolon          ;
+and                &&
+not                !
+true               true
+false              false
+holds              holds
+element            elt
+containment        cont
+initially          initially
+transform          trans
+causes             causes
+if                 if
+is                 is
+after              after
+lower_case         [a-z]
+upper_case         [A-Z]
+digit              [0-9]
+alpha              {lower_case}|{upper_case}
+alpha_num          {alpha}|{digit}
+alpha_num_uscr     {alpha_num}|{underscore}
+alpha_num_uscr_str {alpha_num_uscr}+
+s_subject_ident    s|s{alpha_num_uscr_str}
+s_access_ident     a|a{alpha_num_uscr_str}
+s_object_ident     o|o{alpha_num_uscr_str}
+g_subject_ident    S|S{alpha_num_uscr_str}
+g_access_ident     A|A{alpha_num_uscr_str}
+g_object_ident     O|O{alpha_num_uscr_str}
+v_ident            v|v{alpha_num_uscr_str}
+t_ident            {alpha}{alpha_num_uscr_str}
+whitespace         [\t ]+
 
 %%
 
-int main()
-{
-  return yylex();
-}
+{open_parent} return EPI_SYM_OPEN_PARENT;
+{close_parent} return EPI_SYM_CLOSE_PARENT;
+{comma} return EPI_SYM_COMMA;
+{semicolon} return EPI_SYM_SEMICOLON;
+{and} return EPI_SYM_AND;
+{not} return EPI_SYM_NOT;
+{true} return EPI_SYM_TRUE;
+{false} return EPI_SYM_FALSE;
+{holds} return EPI_SYM_HOLDS;
+{element} return EPI_SYM_ELT;
+{containment} return EPI_SYM_CONT;
+{initially} return EPI_SYM_INITIALLY;
+{transform} return EPI_SYM_TRANS;
+{causes} return EPI_SYM_CAUSES;
+{if} return EPI_SYM_IF;
+{is} return EPI_SYM_IS;
+{after} return EPI_SYM_AFTER;
+{s_subject_ident} return EPI_SYM_S_SUB_IDENT;
+{s_access_ident} return EPI_SYM_S_ACC_IDENT;
+{s_object_ident} return  EPI_SYM_S_OBJ_IDENT;
+{g_subject_ident} return EPI_SYM_G_SUB_IDENT;
+{g_access_ident} return EPI_SYM_G_ACC_IDENT;
+{g_object_ident} return EPI_SYM_G_OBJ_IDENT;
+{v_ident} return EPI_SYM_VAR_IDENT;
+{t_ident} return EPI_SYM_TRANS_IDENT;
+{whitespace}
+
+%%
