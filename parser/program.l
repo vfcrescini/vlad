@@ -49,7 +49,11 @@ acc_grp_type       acc-grp
 sub_type           sub
 obj_type           obj
 acc_type           acc
-identifier         [a-zA-Z]([a-zA-Z0-9_]){0,127}
+digit              [0-9]
+number             ({digit})+
+alpha              [a-zA-Z]
+alphanum           {alpha}|{digit}|{underscore}
+identifier         {alpha}({alphanum}){0,127}
 whitespace         ([\t ])+
 newline            \n
 everything         .
