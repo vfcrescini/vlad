@@ -2,6 +2,7 @@
 \usepackage{latex8}
 \usepackage{times}
 \usepackage{amsmath}
+\usepackage{alltt}
 
 \newtheorem{definition}{Definition}
 \newtheorem{examp}{Example}
@@ -1190,7 +1191,45 @@ query holds(alice, read, file);
 
   \section{Implementation}
 
-    \subsection{System Structure}
+    \subsection{Data Structures}
+
+      \subsubsection{Entities}
+
+        All defined entities are sorted among 6 separate string lists:
+
+        \begin{itemize}
+          \item
+            Single Subject Entity List ($\cal E_{SS}$)
+          \item
+            Group Subject Entity List ($\cal E_{SG}$)
+          \item
+            Single Access Right Entity List ($\cal E_{AS}$)
+          \item
+            Group Access Right Entity List ($\cal E_{AG}$)
+          \item
+            Single Object Entity List ($\cal E_{OS}$)
+          \item
+            Group Object Entity List ($\cal E_{OG}$)
+        \end{itemize}
+
+        In addition to the above lists, we also define 3 pseudo-lists that are
+        concatenations of the above lists:
+
+        \begin{itemize}
+          \item
+            Subject Entity List ($\cal E_{S}$ = $\cal E_{SS} + \cal E_{SG}$)
+          \item
+            Access Right Entity List ($\cal E_{A}$ = $\cal E_{AS} + \cal E_{AG}$)
+          \item
+            Object Entity List ($\cal E_{O}$ = $\cal E_{OS} + \cal E_{OG}$)
+        \end{itemize}
+
+        The function $Find$ takes takes an entity identifier $\epsilon$ and an
+        entity list $\lambda$ as input parameters and returns the index of
+        entity $\epsilon$ with respect to list $\lambda$ or $-1$ if $\epsilon$
+        is not in $\lambda$.
+
+      \subsubsection{Atoms}
 
     \subsection{Algorithms}
 
