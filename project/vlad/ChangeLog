@@ -1,5 +1,10 @@
 2003-06-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/kb.cpp :
+	* lib/vlad.h :
+
+	  - Now generate_nlp() outputs the queries too.
+
 	* docs/bnf_operations.txt :
 	* docs/langspecs.txt :
 	* main/operation.l :

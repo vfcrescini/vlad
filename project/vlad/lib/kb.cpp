@@ -945,6 +945,27 @@ int kb::generate_nlp(expression *e, FILE *f)
       fprintf(f, "\n");
   }
 
+  /* and now for the queries */
+  fprintf(f, "Queries\n");
+
+  for (i = 0; i < VLAD_LIST_LENGTH(e); i++) {
+    atom *tmp_atom;
+    unsigned int tmp_num;
+
+    if ((retval = e->get(i, &tmp_atom)) != VLAD_OK)
+      return retval;
+    if ((retval = encode_atom(tmp_atom, VLAD_LIST_LENGTH(setable), &tmp_num)) != VLAD_OK)
+      return retval;
+
+    if (i == 0)
+      fprintf(f, "  ");
+
+    if (i + 1 == VLAD_LIST_LENGTH(e))
+      fprintf(f, "%d %s\n", tmp_num, VLAD_STR_QUERY);
+    else
+      fprintf(f, "%d %s ", tmp_num, VLAD_STR_AND);
+  }
+
   return VLAD_OK;
 }
 
