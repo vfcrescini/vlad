@@ -230,3 +230,29 @@ int simplelist_find_data(simplelist_type list,
 
   return -1;
 }
+
+/* makes an exact copy of l1 to l2, uses cpy to make a new copy */
+int simplelist_copy(simplelist_type l1,
+                    simplelist_type *l2,
+                    int (*cpy)(void *, void **))
+
+{
+  simplelist_node *curr;
+  void *data;
+
+  if (l2 == NULL || cpy == NULL)
+    return -1;
+
+  curr = l1.list;
+
+  while (curr != NULL) {
+    if (cpy(curr->data, &data) != 0)
+      return -1;
+    if (simplelist_add(l2, data) != 0)
+      return -1;
+    
+    curr = curr->next;
+  }
+
+  return 0;
+}

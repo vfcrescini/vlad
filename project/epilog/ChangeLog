@@ -1,3 +1,11 @@
+2002-09-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+
+	  - Added a copy function to copy the contents of one list to
+	    another. 
+
 2002-09-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/comp_exp.c :

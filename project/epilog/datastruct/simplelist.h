@@ -67,4 +67,9 @@ int simplelist_get_data(simplelist_type list,
 int simplelist_find_data(simplelist_type list, 
                          void *data, 
                          int (*cmp)(void *, void *));
+
+/* makes an exact copy of l1 to l2, uses cpy to make a new copy */
+int simplelist_copy(simplelist_type l1,
+                    simplelist_type *l2,
+                    int (*cpy)(void *, void **));
 #endif
