@@ -95,7 +95,7 @@ int kb::init()
 int kb::close_symtab()
 {
   if (stage != 1)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* first get some needed values */
 
@@ -124,7 +124,7 @@ int kb::close_symtab()
 int kb::close_inittab()
 {
   if (stage != 2)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   stage = 3;
 
@@ -135,7 +135,7 @@ int kb::close_inittab()
 int kb::close_consttab()
 {
   if (stage != 3)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   stage = 4;
   return VLAD_OK;
@@ -145,7 +145,7 @@ int kb::close_consttab()
 int kb::close_transtab()
 {
   if (stage != 4)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   stage = 5;
   return VLAD_OK;
@@ -155,7 +155,7 @@ int kb::close_transtab()
 int kb::add_symtab(const char *n, unsigned char t)
 {
   if (stage != 1)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   return stable->add(n, t);
 }
@@ -167,7 +167,7 @@ int kb::add_inittab(atom *a)
   atom *tmp;
 
   if (stage != 2)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   if (a == NULL)
     return VLAD_NULLPTR;
@@ -195,7 +195,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
   atom *tmp2;
 
   if (stage != 3)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* only e is required to be non-null */
   if (e == NULL)
@@ -275,7 +275,7 @@ int kb::add_transtab(const char *n,
 
   /* we only allow this function after consttab is closed */
   if (stage != 4)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* precondition and vlist are allowed to be NULL */
   if (n == NULL || po == NULL)
@@ -298,7 +298,7 @@ int kb::add_transtab(const char *n,
         return retval;
       /* check if the variable is already used as an identifier */
       if ((retval = stable->find(tmp)) != VLAD_NOTFOUND)
-        return (retval == VLAD_OK) ? VLAD_FAILURE : retval;
+        return (retval == VLAD_OK) ? VLAD_DUPLICATE : retval;
       if ((retval = vlist->add(tmp)) != VLAD_OK)
         return retval;
     }
@@ -352,7 +352,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
   /* we only allow this function after transtab is closed */
   if (stage != 5)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
   if (f == NULL)
@@ -812,7 +812,7 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
 
   /* we only allow this function after transtab is closed */
   if (stage != 5)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   /* verify expression */
   if ((retval = verify_expression(e)) != VLAD_OK)
@@ -1307,7 +1307,7 @@ int kb::verify_atom(atom *a, stringlist *v)
 
   /* this function is only valid after the symtab is closed */
   if (stage < 2)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   if ((retval = a->get(&tmp1, &tmp2, &tmp3, &ty, &tr)) != VLAD_OK)
     return retval;
@@ -1356,7 +1356,7 @@ int kb::verify_transref(char *n, stringlist *il)
   expression *tmp_po;
 
   if (stage < 5)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   if (n == NULL)
     return VLAD_NULLPTR;
@@ -1699,7 +1699,7 @@ int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
   bool tr;
 
   if (stage < 5)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   if (a == NULL || n == NULL)
     return VLAD_NULLPTR;
@@ -1782,7 +1782,7 @@ int kb::decode_atom(atom **a, unsigned int *s, unsigned int n)
   bool tr;
 
   if (stage < 5)
-    return VLAD_FAILURE;
+    return VLAD_INVALIDOP;
 
   if (a == NULL || s == NULL)
     return VLAD_NULLPTR;
