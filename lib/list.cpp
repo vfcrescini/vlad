@@ -49,14 +49,14 @@ bool list::cmp(list *l)
     return false;
 
   for (i = 0; i < len; i++) {
-    /* 
+    /*
      * the following 2 statements will only fail if we give them
      * out of bounds values or null ptrs none of which should occur
      */
     l->get(i, &item1);
     get(i, &item2);
 
-    /* 
+    /*
      * if we are given a list of a different type, list_item::cmp() should
      * detect it and return false.
      */
@@ -88,7 +88,7 @@ int list::add(list_item *data)
     else if (retval != VLAD_NOTFOUND)
       return retval;
   }
-  
+
   if ((new_node = VLAD_ADT_MALLOC(list_node, 1)) == NULL)
     return VLAD_MALLOCFAILED;
 
@@ -101,23 +101,23 @@ int list::add(list_item *data)
   new_node->next = NULL;
   tail = new_node;
   len++;
- 
+
   return VLAD_OK;
 }
 
 /* deletes index'th data, f = true to free mem or false to not free it */
 int list::del(unsigned int index, bool f)
-{  
+{
   list_node *prev;
   list_node *curr;
-  unsigned int i; 
+  unsigned int i;
 
   if (len <= 0 || index >= len)
     return VLAD_OUTOFBOUNDS;
 
   prev = NULL;
   curr = head;
-   
+
   for (i = 0; i < index; i++) {
     prev = curr;
     curr = curr->next;
@@ -206,7 +206,7 @@ int list::get(list_item *item, unsigned int **array, unsigned int *s)
   *s = 0;
   *array = NULL;
   count = 0;
-  
+
   while (curr != NULL) {
     /* if the unique flag is set we stop when we see the first match */
     if (unique && *s >= 1)
@@ -259,7 +259,7 @@ int list::get(list_item *item, list_item ***data, unsigned int *s)
   curr = head;
   *s = 0;
   *data = NULL;
-  
+
   while (curr != NULL) {
     /* if the unique flag is set we stop when we see the first match */
     if (unique && *s >= 1)
@@ -285,11 +285,11 @@ int list::find(list_item *data)
 
   if (data == NULL)
     return VLAD_NULLPTR;
-  
+
   curr = head;
 
   while (curr != NULL) {
-    if (curr->data->cmp(data)) 
+    if (curr->data->cmp(data))
       return VLAD_OK;
 
     curr = curr->next;
@@ -303,10 +303,10 @@ void list::purge(bool f)
 {
   list_node *curr;
   list_node *prev;
-  
+
   if (len > 0) {
     curr = head;
-  
+
     while (curr != NULL) {
       prev = curr;
       curr = curr->next;

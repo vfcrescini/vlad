@@ -13,7 +13,7 @@ Started 2002 Dec 08
 
     Identifiers are case-sensitive, alpha-numeric characters. The first
     character of an identifier must be an alpha character followed by
-    zero to 127 characters of alpha, digit or underscore characters. 
+    zero to 127 characters of alpha, digit or underscore characters.
     Identifiers may be used to identify subject, access-right and object
     entities or groups, transformations or variables.
 
@@ -35,7 +35,7 @@ Started 2002 Dec 08
       A single logical fact describing a set containment relationship to
       another set.
 
-        subst(Subject_1, Subject_2) 
+        subst(Subject_1, Subject_2)
 
       is read as
 
@@ -47,7 +47,7 @@ Started 2002 Dec 08
 
     1.2.3. Membership Atoms
 
-      A single logical fact describing the membership of a singular 
+      A single logical fact describing the membership of a singular
       subject/access-right/object to a subject/access-right/object group.
 
         memb(subject_1, Subject_1)
@@ -70,7 +70,7 @@ Started 2002 Dec 08
 
       Atoms can be negated with the ! symbol (exclamation-point, as it is
       in C).
-     
+
         ! <atom>
 
     1.3.3. Operator Precedence
@@ -86,16 +86,16 @@ Started 2002 Dec 08
 
       Compound statements are always evaluated from left to right. This means
       the left-most operator (conjuction or negation) is evaluated first. This
-      can be safely ignored since the language contains only 2 operators with 
+      can be safely ignored since the language contains only 2 operators with
       different precedence levels.
 
-        ! holds(sub1, acc1, obj1) && 
-        holds(sub2, acc2, obj2) && 
+        ! holds(sub1, acc1, obj1) &&
+        holds(sub2, acc2, obj2) &&
         holds(sub3, acc3, obj3)
 
       is evaluated as
 
-        ((! holds(sub1, acc1, obj1)) && 
+        ((! holds(sub1, acc1, obj1)) &&
         holds(sub2, acc2, obj2)) &&
         holds(sub3, acc3, obj3)
 
@@ -159,7 +159,7 @@ Started 2002 Dec 08
       causes !holds(vSUBJECT, a_write, vOBJECT)
       if holds(vSUBJECT, a_write, vOBJECT)
 
-    this means 
+    this means
 
       delete_write(subject1, object1)
 
@@ -182,7 +182,7 @@ Started 2002 Dec 08
     has no pre-condition) is represented by omitting the if clause:
 
       <trans-identifier>()
-      causes <post-condition-expression> 
+      causes <post-condition-expression>
 
   2.4. Constraint Definition Statement
 
@@ -196,8 +196,8 @@ Started 2002 Dec 08
 
       always <expression1> implied by <expression2> with absence <expression3>
 
-    states that expression1 holds if expression2 is true and the truth 
-    value of expression3 is unknown. 
+    states that expression1 holds if expression2 is true and the truth
+    value of expression3 is unknown.
 
     If the "with absence" clause is omitted, then expression1 is applied
     if and only if expression2 is true:
@@ -221,7 +221,7 @@ Started 2002 Dec 08
     current state will then be derived from the initial state after all
     transformations in the sequence (see below) has been applied.
 
-      query <expression> 
+      query <expression>
 
     The statement will return one of the following: true, false or ?
 
@@ -255,7 +255,7 @@ Started 2002 Dec 08
         <index2> <trans-ident2>([arg1][,arg2][,...]);
         ...
 
-      Where <indexn> is the ordinal index (starting from 0) of a transformation 
+      Where <indexn> is the ordinal index (starting from 0) of a transformation
       as it appears in the sequence.
 
     3.3.3. Delete

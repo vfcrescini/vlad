@@ -358,7 +358,7 @@ int kb::add_seqtab(transref *t)
   int retval;
   char *tmp_name;
   stringlist *tmp_ilist;
-  
+
   /* we only allow this function after kb is closed */
   if (stage < 3)
     return VLAD_INVALIDOP;

@@ -91,7 +91,7 @@ int symtab::add(const char *s, unsigned char t)
       return retval;
   }
 
-  switch(t) { 
+  switch(t) {
     case VLAD_IDENT_SUBJECT :
       return sub_list->add(s);
     case VLAD_IDENT_ACCESS :
@@ -166,7 +166,7 @@ int symtab::get(unsigned int i, unsigned char t, char **s)
   if (!initialised)
     return VLAD_UNINITIALISED;
 
-  switch(t) { 
+  switch(t) {
     case VLAD_IDENT_SUBJECT :
       return sub_list->get(i, s);
     case VLAD_IDENT_ACCESS :
@@ -180,7 +180,7 @@ int symtab::get(unsigned int i, unsigned char t, char **s)
     case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
       return obj_grp_list->get(i, s);
   }
-  return VLAD_INVALIDINPUT; 
+  return VLAD_INVALIDINPUT;
 }
 
 /* get an array of identifiers that matches the given type */
@@ -205,7 +205,7 @@ int symtab::get(unsigned char t, char ***a, unsigned int *s)
 
     if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
       return VLAD_MALLOCFAILED;
-     
+
     /* non-group subject */
     for (i = 0; i < s_len; i++)
       if ((retval = sub_list->get(i, &((*a)[i]))) != VLAD_OK)
@@ -228,7 +228,7 @@ int symtab::get(unsigned char t, char ***a, unsigned int *s)
 
     if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
       return VLAD_MALLOCFAILED;
-     
+
     /* non-group access */
     for (i = 0; i < a_len; i++)
       if ((retval = acc_list->get(i, &((*a)[i]))) != VLAD_OK)
@@ -251,7 +251,7 @@ int symtab::get(unsigned char t, char ***a, unsigned int *s)
 
     if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
       return VLAD_MALLOCFAILED;
-     
+
     /* non-group object */
     for (i = 0; i < o_len; i++)
       if ((retval = obj_list->get(i, &((*a)[i]))) != VLAD_OK)
@@ -273,7 +273,7 @@ unsigned int symtab::length(unsigned char t)
   if (!initialised)
     return 0;
 
-  switch(t) { 
+  switch(t) {
     case VLAD_IDENT_SUBJECT :
       return VLAD_LIST_LENGTH(sub_list);
     case VLAD_IDENT_ACCESS :

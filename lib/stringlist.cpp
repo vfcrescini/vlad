@@ -133,7 +133,7 @@ int stringlist::get(unsigned int i, char **s)
 
   /*
    * this will give a reference to the actual string and not a copy,
-   * so care must be taken to ensure that s is not changed. 
+   * so care must be taken to ensure that s is not changed.
    */
 
   if ((retval = list::get(i, (list_item **) &tmp)) != VLAD_OK)

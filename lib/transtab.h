@@ -36,6 +36,6 @@ class transtab : public list
     int get(const char *n, stringlist **v, expression **pr, expression **po);
     /* replace variables with identifiers in ilist, then get pr and pp */
     int replace(const char *n, stringlist *ilist, expression **pr, expression **po);
-} ; 
+} ;
 
 #endif
