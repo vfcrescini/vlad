@@ -44,8 +44,8 @@ class list
     int del_d(list_item *data, bool f);
     /* gives a reference to the index'th data */
     int get_i(unsigned int index, list_item **data);
-    /* gives a reference to the data that matches item */
-    int get_d(list_item *item, list_item **data);
+    /* gives a reference to all the nodes that matches item. array + size */
+    int get_d(list_item *item, list_item ***data, unsigned int *s);
     /* returns 0 if data is in the list */
     int find(list_item *data);
     /* destroys the list, f = true to free mem */

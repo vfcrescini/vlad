@@ -52,13 +52,20 @@ int symtab::del(const char *n)
 int symtab::get(const char *n, identifier **i)
 {
   int retval;
+  unsigned int size;
   identifier ident;
+  identifier **array;
  
   if ((retval = ident.init(n, subject, false)) != VLAD_OK)
     return retval;
   
-  if ((retval = list::get_d(&ident, (list_item **)i)) != VLAD_OK)
+  if ((retval = list::get_d(&ident, (list_item ***) &array, &size)) != VLAD_OK)
     return retval;
+
+  /* there should be exactly one in the array */
+  *i = array[0];
+
+  free(array);
 
   return VLAD_OK;
 }

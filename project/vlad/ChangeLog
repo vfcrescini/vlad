@@ -1,3 +1,17 @@
+2003-01-25  Vino Crescini  <jcrescin@cit.uws.ued.au>
+
+	* common/list.cpp :
+	* common/list.h :
+	* kb/symtab.cpp :
+
+	  - Added provisions to allow retrieval of identical items from
+	    the list. Matching nodes are passed through an array.
+
+	* kb/identifier.cpp :
+	* kb/identifier.h :
+
+	  - Added functions to return class attributes.
+
 2003-01-24  Vino Crescini  <jcrescin@cit.uws.ued.au>
 
 	* kb/Makefile.in :
