@@ -39,9 +39,18 @@
 
   \section{Language $\cal{L}$}
 
+    Language $\cal{L}$ is a well-defined, first-order logic language that
+    represents a policy base for an authorization system. Two key features of
+    the language are: (1) provides a means to conditionally and dynamically
+    update the existing policy base and (2) provides a mechanism by which
+    queries may be evaluated from the updated policy base.
+
     \subsection{Syntax}
 
-      [language statements, statement terminators, and comments]
+      Logic programs of language ${\cal L}$ are composed of language
+      statements, each terminated by a semicolon ; character. C-style comments
+      delimited by the /* and */ characters may appear anywhere in the logic
+      program.
 
       \subsubsection{Components of Language $\cal{L}$}
 
@@ -580,7 +589,7 @@ query holds(alice, read, file);
 
         \paragraph{}
 
-          Another function, the $TranslateFact$ function is similar to the
+          Finally, the $TranslateFact$ function is similar to the
           $TranslateAtom$ function, but instead of translating an atom, it
           takes a fact from language ${\cal L}$ and a state and returns the
           equivalent fact of language ${\cal L}^{*}$.
