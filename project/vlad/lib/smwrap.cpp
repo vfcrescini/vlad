@@ -118,6 +118,7 @@ int smwrap::add_atom(unsigned int a_atom)
   if ((tmp_atom = pr_api->new_atom()) == NULL)
     return VLAD_MALLOCFAILED;
 
+  memset(tmp_name, 0, VLAD_MAXLEN_NUM);
   sprintf(tmp_name, "%d", a_atom);
   pr_api->set_name(tmp_atom, tmp_name);
 
@@ -143,6 +144,7 @@ int smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
 
     /* if positive, we simply add each axiom */
     for (i = 0; i < a_count; i++) {
+      memset(tmp_name, 0, VLAD_MAXLEN_NUM);
       sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
 
       pr_api->begin_rule(BASICRULE);
@@ -161,6 +163,7 @@ int smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
     va_start(tmp_ap, a_count);
 
     for (i = 0; i < a_count; i++) {
+      memset(tmp_name, 0, VLAD_MAXLEN_NUM);
       sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
       pr_api->add_body(pr_api->get_atom(tmp_name), true);
     }
@@ -190,6 +193,7 @@ int smwrap::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int 
   pr_api->begin_rule(BASICRULE);
 
   /* add head */
+  memset(tmp_name, 0, VLAD_MAXLEN_NUM);
   sprintf(tmp_name, "%d", a_head);
   pr_api->add_head(pr_api->get_atom(tmp_name));
 
@@ -197,12 +201,14 @@ int smwrap::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int 
 
   /* now for the positive body */
   for (i = 0; i < a_pcount; i++) {
+    memset(tmp_name, 0, VLAD_MAXLEN_NUM);
     sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
     pr_api->add_body(pr_api->get_atom(tmp_name), true);
   }
 
   /* then the negative body */
   for (i = 0; i < a_ncount; i++) {
+    memset(tmp_name, 0, VLAD_MAXLEN_NUM);
     sprintf(tmp_name, "%d", va_arg(tmp_ap, unsigned int));
     pr_api->add_body(pr_api->get_atom(tmp_name), false);
   }
@@ -232,6 +238,7 @@ int smwrap::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbo
   pr_api->begin_rule(BASICRULE);
 
   /* add head */
+  memset(tmp_name, 0, VLAD_MAXLEN_NUM);
   sprintf(tmp_name, "%d", a_head);
   pr_api->add_head(pr_api->get_atom(tmp_name));
 
@@ -240,6 +247,7 @@ int smwrap::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbo
     if ((retval = a_pbody->get(i, &tmp_num)) != VLAD_OK)
       return retval;
 
+    memset(tmp_name, 0, VLAD_MAXLEN_NUM);
     sprintf(tmp_name, "%d", tmp_num);
     pr_api->add_body(pr_api->get_atom(tmp_name), true);
   }
@@ -249,6 +257,7 @@ int smwrap::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbo
     if ((retval = a_nbody->get(i, &tmp_num)) != VLAD_OK)
       return retval;
 
+    memset(tmp_name, 0, VLAD_MAXLEN_NUM);
     sprintf(tmp_name, "%d", tmp_num);
     pr_api->add_body(pr_api->get_atom(tmp_name), false);
   }
@@ -269,6 +278,7 @@ int smwrap::ask(unsigned int a_atom, char *a_result)
   if (a_result == NULL)
     return VLAD_NULLPTR;
 
+  memset(tmp_name, 0, VLAD_MAXLEN_NUM);
   sprintf(tmp_name, "%d", a_atom);
 
   if ((pr_api->get_atom(tmp_name)->Bpos)) {

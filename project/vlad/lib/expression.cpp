@@ -80,13 +80,11 @@ void expression::print(char *s)
   char tmps[VLAD_MAXLEN_STR];
   atom *tmpa;
 
-  strcpy(s, "");
-
   for (i = 0; i < list::length(); i++) {
     if (list::get(i, (list_item **) &tmpa) != VLAD_OK)
       break;
 
-    strcpy(tmps, "");
+    memset(tmps, 0, VLAD_MAXLEN_STR);
     tmpa->print(tmps);
     sprintf(s, "%s %s", s, tmps);
   }
