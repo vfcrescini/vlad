@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <kb.h>
 #include "y.tab.h"
 
 extern YYSTYPE yylval;
