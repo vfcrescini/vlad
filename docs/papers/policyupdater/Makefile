@@ -51,4 +51,4 @@ policyupdater.dvi : policyupdater.tex system.fig $(CLASS) $(STYLE)
 	$(PSPDF) $(<) $(@)
 
 %.eps : %.fig
-	$(FIG2DEV) -L eps $(<) $(@) || $(FIG2DEV) -L ps $(@) $(@)
+	$(FIG2DEV) -L eps $(<) $(@) || $(FIG2DEV) -L ps $(<) $(@)
