@@ -69,6 +69,7 @@ int yylex(void);
 %type <gnd_atom> ground_memb_atom 
 %type <gnd_atom> logical_atom 
 %type <gnd_exp> ground_exp
+%type <gnd_exp> with_clause
 
 %start program
 
@@ -498,12 +499,19 @@ implies_stmt :
   ground_exp VLAD_SYM_IMPLIES ground_exp with_clause VLAD_SYM_SEMICOLON {
     delete $1;
     delete $3;
+    delete $4;
   }
   ;
 
-with_clause :
+with_clause : {
+    /* make an empty list */
+    if (($$ = VLAD_NEW(numberlist(NULL))) == NULL) {
+      fprintf(stderr, "memory overflow\n");
+      return VLAD_MALLOCFAILED;
+    }
+  }
   | VLAD_SYM_WITH VLAD_SYM_ABSENCE ground_exp {
-    delete $3;
+    $$ = $3;
   }
   ;
 
