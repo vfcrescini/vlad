@@ -1,11 +1,22 @@
 2002-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-	* ident.c :
-	* ident.h :
-	* identlist.c :
-	* identlist.h :
-	* symtab.c :
-	* symtab.h :
+	* exp/comp_atom.c : 
+	* exp/comp_exp.c :
+	* exp/comp_exp.h :
+	* exp/expression.h :
+	* exp/gnd_atom.c :
+	* exp/gnd_exp.c :
+	* exp/gnd_exp.h :
+	* exp/name.c :
+
+	  - Used error codes.
+
+	* ident/ident.c :
+	* ident/ident.h :
+	* ident/identlist.c :
+	* ident/identlist.h :
+	* ident/symtab.c :
+	* ident/symtab.h :
 
 	  - Used error codes.
 

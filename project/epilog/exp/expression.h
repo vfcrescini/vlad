@@ -6,6 +6,8 @@
 #ifndef __EPI_EXPRESSION_H
 #define __EPI_EXPRESSION_H
 
+#include <epilog.h>
+
 /* first 3 bits indicate the type */
 #define EPI_ATOM_CONST       1
 #define EPI_ATOM_HOLDS       2

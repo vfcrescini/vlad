@@ -12,7 +12,7 @@
 #define gnd_exp_type simplelist_type
 
 /* initialise list */
-void gnd_exp_init(gnd_exp_type *exp);
+int gnd_exp_init(gnd_exp_type *exp);
 
 /* gives the number of atoms in the gnd_exp */
 unsigned int gnd_exp_length(gnd_exp_type exp);
@@ -22,7 +22,7 @@ int gnd_exp_find(gnd_exp_type exp, gnd_atom_type atom);
 
 /* gives true, false or unknown depending on the derivability of the expression
  * in to exp */
-int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, unsigned short int *res);
+int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, unsigned short int *ans);
 
 /* gives a reference to the index'th atom in the gnd_exp */
 int gnd_exp_get(gnd_exp_type exp, unsigned int index, gnd_atom_type **atom);

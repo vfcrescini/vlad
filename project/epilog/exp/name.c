@@ -13,36 +13,36 @@ int name_create_var(char *string, name_type *name)
   char *tmp_string = NULL;
   
   if (string == NULL || name == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   if ((tmp_string = (char *) malloc(sizeof(char) * (strlen(string) + 1))) == NULL)
-    return -1;
+    return EPI_MALLOCFAILED;
 
   name->type = EPI_NAME_VAR;
   name->name.var = tmp_string;
 
   strcpy(name->name.var, string);
 
-  return 0;
+  return EPI_OK;
 }
 
 /* composes an ident name_type */
 int name_create_ident(ident_type *ident, name_type *name)
 {
   if (ident == NULL || name == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   name->type = EPI_NAME_IDENT;
   name->name.ident = ident;
 
-  return 0;
+  return EPI_OK;
 }
 
 /* copies a name_type */
 int name_copy(name_type source, name_type *dest)
 {
   if (dest == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   if (EPI_NAME_IS_VAR(source))
     return name_create_var(source.name.var, dest);
@@ -50,22 +50,22 @@ int name_copy(name_type source, name_type *dest)
   if (EPI_NAME_IS_IDENT(source))
     return name_create_ident(source.name.ident, dest);
 
-  return -1;
+  return EPI_FAILURE;
 }
 
 /* returns 0 if the two names are equivalent */
 int name_compare(name_type one, name_type two)
 {
   if (one.type != two.type)
-    return -1;
+    return EPI_FAILURE;
 
   if (EPI_NAME_IS_VAR(one))
-    return (strcmp(one.name.var, two.name.var) ? -1 : 0);
+    return (strcmp(one.name.var, two.name.var) ? EPI_FAILURE : EPI_OK);
 
   if (EPI_NAME_IS_IDENT(one))
     return (ident_compare(*(one.name.ident), *(two.name.ident)));
 
-  return -1;
+  return EPI_FAILURE;
 }
 
 /* destroy name. only var name strings are freed */

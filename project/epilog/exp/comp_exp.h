@@ -15,7 +15,7 @@
 #define comp_exp_type simplelist_type
 
 /* initialise list */
-void comp_exp_init(comp_exp_type *exp);
+int comp_exp_init(comp_exp_type *exp);
 
 /* gives the number of atoms in the expression */
 unsigned int comp_exp_length(comp_exp_type exp);
