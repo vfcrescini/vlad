@@ -80,7 +80,7 @@ int list::add(list_item *data)
 }
 
 /* deletes index'th data, f = true to free mem or false to not free it */
-int list::del_i(unsigned int index, bool f)
+int list::del(unsigned int index, bool f)
 {  
   list_node *prev;
   list_node *curr;
@@ -113,7 +113,7 @@ int list::del_i(unsigned int index, bool f)
 }
 
 /* deletes all the nodes that matches data, f = true to free mem */
-int list::del_d(list_item *data, bool f)
+int list::del(list_item *data, bool f)
 {
 
   list_node *prev;
@@ -156,7 +156,7 @@ int list::del_d(list_item *data, bool f)
 }
 
 /* gives a reference to the index'th data */
-int list::get_i(unsigned int index, list_item **data)
+int list::get(unsigned int index, list_item **data)
 {
   unsigned int i;
   list_node *curr;
@@ -178,7 +178,7 @@ int list::get_i(unsigned int index, list_item **data)
 }
 
 /* gives a reference to all the nodes that matches item. array + size */
-int list::get_d(list_item *item, list_item ***data, unsigned int *s)
+int list::get(list_item *item, list_item ***data, unsigned int *s)
 {
   list_node *curr;
 

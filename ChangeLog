@@ -1,3 +1,12 @@
+2003-03-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.cpp :
+	* common/list.h :
+	* kb/symtab.cpp :
+
+	  - Renamed del_i(), del_d(), get_i() and get_d() to del() and get().
+
+
 2003-03-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/identifier.h :
