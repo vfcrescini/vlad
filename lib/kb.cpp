@@ -548,119 +548,174 @@ int kb::generate_nlp(expression *e, FILE *f)
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
-    unsigned int i_truth;
     unsigned int i_grp1;
     unsigned int i_grp2;
     unsigned int i_sub;
     unsigned int i_acc;
     unsigned int i_obj;
-    /* truth loop */
-    for (i_truth = 0; i_truth < 2; i_truth++) {
+    /* subset inheritance */
 
-      /* subset inheritance */
-
-       /* subject groups */
-      for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
-        for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
-          if (i_grp1 == i_grp2)
-            continue;
-          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              fprintf(f,
-                      "  %d %s %d %s %d\n",
-                      compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj),
-                      VLAD_STR_ARROW,
-                      compute_holds(i, i_truth, i_grp2 + s_len, i_acc, i_obj),
-                      VLAD_STR_AND,
-                      compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2));
-            }
+     /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+          for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+            fprintf(f,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_grp2 + s_len, i_acc, i_obj),
+                    VLAD_STR_AND,
+                    compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj));
+            fprintf(f,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_grp2 + s_len, i_acc, i_obj),
+                    VLAD_STR_AND,
+                    compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2));
           }
         }
       }
-      /* access groups */
-      for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
-        for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
-          if (i_grp1 == i_grp2)
-            continue;
-          for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              fprintf(f,
-                      "  %d %s %d %s %d\n",
-                      compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj),
-                      VLAD_STR_ARROW,
-                      compute_holds(i, i_truth, i_sub, i_grp2 + a_len, i_obj),
-                      VLAD_STR_AND,
-                      compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2));
-            }
-          }
-        }
-      }
-      /* object groups */
-      for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
-        for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
-          if (i_grp1 == i_grp2)
-            continue;
-          for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-            for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-              fprintf(f,
-                      "  %d %s %d %s %d\n",
-                      compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len),
-                      VLAD_STR_ARROW,
-                      compute_holds(i, i_truth, i_sub, i_acc, i_grp2 + o_len),
-                      VLAD_STR_AND,
-                      compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2));
-            }
-          }
-        }
-      }
-
-      /* member inheritance */
-
-      /* subject groups */
-      for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
-        for (i_sub = 0; i_sub < s_len; i_sub++) {
-          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              fprintf(f,
-                      "  %d %s %d %s %d\n",
-                      compute_holds(i, i_truth, i_sub, i_acc, i_obj),
-                      VLAD_STR_ARROW,
-                      compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj),
-                      VLAD_STR_AND,
-                      compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1));
-            }
-          }
-        }
-      }
-      /* access groups */
-      for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-          for (i_acc = 0; i_acc < a_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              fprintf(f,
-                      "  %d %s %d %s %d\n",
-                      compute_holds(i, i_truth, i_sub, i_acc, i_obj),
-                      VLAD_STR_ARROW,
-                      compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj),
-                      VLAD_STR_AND,
-                      compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1));
-            }
+          for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+            fprintf(f,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_sub, i_grp2 + a_len, i_obj),
+                    VLAD_STR_AND,
+                    compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj));
+            fprintf(f,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_sub, i_grp2 + a_len, i_obj),
+                    VLAD_STR_AND,
+                    compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2));
           }
         }
       }
-      /* object groups */
-      for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len; i_obj++) {
-              fprintf(f,
-                      "  %d %s %d %s %d\n",
-                      compute_holds(i, i_truth, i_sub, i_acc, i_obj),
-                      VLAD_STR_ARROW,
-                      compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len),
-                      VLAD_STR_AND,
-                      compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1));
-            }
+            fprintf(f,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_sub, i_acc, i_grp2 + o_len),
+                    VLAD_STR_AND,
+                    compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len));
+            fprintf(f,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_sub, i_acc, i_grp2 + o_len),
+                    VLAD_STR_AND,
+                    compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2));
+          }
+        }
+      }
+    }
+
+    /* member inheritance */
+
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+      for (i_sub = 0; i_sub < s_len; i_sub++) {
+        for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+          for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+            fprintf(f,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj),
+                    VLAD_STR_AND,
+                    compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_acc, i_obj));
+            fprintf(f,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj),
+                    VLAD_STR_AND,
+                    compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1));
+          }
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+      for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+        for (i_acc = 0; i_acc < a_len; i_acc++) {
+          for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+            fprintf(f,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj),
+                    VLAD_STR_AND,
+                    compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_acc, i_obj));
+            fprintf(f,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj),
+                    VLAD_STR_AND,
+                    compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1));
+          }
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+      for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+        for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+          for (i_obj = 0; i_obj < o_len; i_obj++) {
+            fprintf(f,
+                    "  %d %s %d %s %d %s %s %d\n",
+                    compute_holds(i, true, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len),
+                    VLAD_STR_AND,
+                    compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1),
+                    VLAD_STR_AND,
+                    VLAD_STR_NOT,
+                    compute_holds(i, false, i_sub, i_acc, i_obj));
+            fprintf(f,
+                    "  %d %s %d %s %d\n",
+                    compute_holds(i, false, i_sub, i_acc, i_obj),
+                    VLAD_STR_ARROW,
+                    compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len),
+                    VLAD_STR_AND,
+                    compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1));
           }
         }
       }
@@ -953,137 +1008,163 @@ int kb::compute()
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
-    unsigned int i_truth;
     unsigned int i_grp1;
     unsigned int i_grp2;
     unsigned int i_sub;
     unsigned int i_acc;
     unsigned int i_obj;
-    /* truth loop */
-    for (i_truth = 0; i_truth < 2; i_truth++) {
 
-      /* subset inheritance */
+    /* subset inheritance */
 
-      /* subject groups */
-      for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
-        for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
-          if (i_grp1 == i_grp2)
-            continue;
-          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
-
-              tmp_num1 = compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_grp2 + s_len, i_acc, i_obj);
-              tmp_num3 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2);
-
-              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
-                return retval;
-            }
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < sg_len; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
+        for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+          for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+            /* positive */
+            if ((retval = smobject->add_rule(2,
+                                             1,
+                                             compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj),
+                                             compute_holds(i, true, i_grp2 + s_len, i_acc, i_obj),
+                                             compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2),
+                                             compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = smobject->add_rule(2,
+                                             0,
+                                             compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj),
+                                             compute_holds(i, false, i_grp2 + s_len, i_acc, i_obj),
+                                             compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2))) != VLAD_OK)
+              return retval;
           }
         }
       }
-      /* access groups */
-      for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
-        for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
-          if (i_grp1 == i_grp2)
-            continue;
-          for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
-
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_sub, i_grp2 + a_len, i_obj);
-              tmp_num3 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2);
-
-              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
-                return retval;
-            }
-          }
-        }
-      }
-      /* object groups */
-      for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
-        for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
-          if (i_grp1 == i_grp2)
-            continue;
-          for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-            for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
-
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len);
-              tmp_num2 = compute_holds(i, i_truth, i_sub, i_acc, i_grp2 + o_len);
-              tmp_num3 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2);
-
-              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
-                return retval;
-            }
-          }
-        }
-      }
-
-      /* member inheritance */
-
-      /* subject groups */
-      for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
-        for (i_sub = 0; i_sub < s_len; i_sub++) {
-          for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
-
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj);
-              tmp_num3 = compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1);
-
-              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
-                return retval;
-            }
-          }
-        }
-      }
-      /* access groups */
-      for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < ag_len; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
-          for (i_acc = 0; i_acc < a_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
-
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj);
-              tmp_num3 = compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1);
-
-              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
-                return retval;
-            }
+          for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+            /* positive */
+            if ((retval = smobject->add_rule(2,
+                                             1,
+                                             compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj),
+                                             compute_holds(i, true, i_sub, i_grp2 + a_len, i_obj),
+                                             compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2),
+                                             compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = smobject->add_rule(2,
+                                             0,
+                                             compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj),
+                                             compute_holds(i, false, i_sub, i_grp2 + a_len, i_obj),
+                                             compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2))) != VLAD_OK)
+              return retval;
           }
         }
       }
-      /* object groups */
-      for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+      for (i_grp2 = 0; i_grp2 < og_len; i_grp2++) {
+        if (i_grp1 == i_grp2)
+          continue;
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            for (i_obj = 0; i_obj < o_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
+            /* positive */
+            if ((retval = smobject->add_rule(2,
+                                             1,
+                                             compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len),
+                                             compute_holds(i, true, i_sub, i_acc, i_grp2 + o_len),
+                                             compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2),
+                                             compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = smobject->add_rule(2,
+                                             0,
+                                             compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len),
+                                             compute_holds(i, false, i_sub, i_acc, i_grp2 + o_len),
+                                             compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
 
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len);
-              tmp_num3 = compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1);
+    /* member inheritance */
 
-              if ((retval = smobject->add_rule(2, 0, tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
-                return retval;
-            }
+    /* subject groups */
+    for (i_grp1 = 0; i_grp1 < sg_len; i_grp1++) {
+      for (i_sub = 0; i_sub < s_len; i_sub++) {
+        for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+          for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+            /* positive */
+            if ((retval = smobject->add_rule(2,
+                                             1,
+                                             compute_holds(i, true, i_sub, i_acc, i_obj),
+                                             compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj),
+                                             compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1),
+                                             compute_holds(i, false, i_sub, i_acc, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = smobject->add_rule(2,
+                                             0,
+                                             compute_holds(i, false, i_sub, i_acc, i_obj),
+                                             compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj),
+                                             compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
+    /* access groups */
+    for (i_grp1 = 0; i_grp1 < ag_len; i_grp1++) {
+      for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+        for (i_acc = 0; i_acc < a_len; i_acc++) {
+          for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
+            /* positive */
+            if ((retval = smobject->add_rule(2,
+                                             1,
+                                             compute_holds(i, true, i_sub, i_acc, i_obj),
+                                             compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj),
+                                             compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1),
+                                             compute_holds(i, false, i_sub, i_acc, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = smobject->add_rule(2,
+                                             0,
+                                             compute_holds(i, false, i_sub, i_acc, i_obj),
+                                             compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj),
+                                             compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1))) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
+    }
+    /* object groups */
+    for (i_grp1 = 0; i_grp1 < og_len; i_grp1++) {
+      for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
+        for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
+          for (i_obj = 0; i_obj < o_len; i_obj++) {
+            /* positive */
+            if ((retval = smobject->add_rule(2,
+                                             1,
+                                             compute_holds(i, true, i_sub, i_acc, i_obj),
+                                             compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len),
+                                             compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1),
+                                             compute_holds(i, false, i_sub, i_acc, i_obj))) != VLAD_OK)
+              return retval;
+            /* negative */
+            if ((retval = smobject->add_rule(2,
+                                             0,
+                                             compute_holds(i, false, i_sub, i_acc, i_obj),
+                                             compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len),
+                                             compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1))) != VLAD_OK)
+              return retval;
           }
         }
       }

@@ -1,4 +1,29 @@
-2003-06-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+
+	  - Changed inheritance rules from :
+
+	      holds(Se, A, O) <- holds(Sg, A, O) AND memb(Se, Sg)
+              holds(S, Ae, O) <- holds(S, Ag, O) AND memb(Ae, Ag)
+              holds(S, A, Oe) <- holds(S, A, Og) AND memb(Oe, Og)
+
+	    to :
+
+	      holds(Se, A, O) <- holds(Sg, A, O) AND memb(Se, Sg) AND NOT 
+	      !holds(Se, A, O)
+
+              holds(S, Ae, O) <- holds(S, Ag, O) AND memb(Ae, Ag) AND NOT
+	      !holds(S, Ae, O)
+
+              holds(S, A, Oe) <- holds(S, A, Og) AND memb(Oe, Og) AND NOT
+	      !holds(S, A, Oe)
+
+	    This addition allows group members to override group properties.
+	    note that the negative properties cannot be overridden.
+
+
+2003-05-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :
 	* lib/kb.h :
@@ -19,7 +44,7 @@
 
 	  - ask() now checks all possible models.
 
-2003-06-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* main/vlad.cpp :
 	* lib/Makefile.in :
