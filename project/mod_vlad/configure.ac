@@ -100,9 +100,11 @@ if test "x$with_libvlad" != "x" && test "x$with_libvlad" != "xno"; then
       case "$with_libvlad" in
         /*)
           MODVLAD_CFLAGS="$MODVLAD_CFLAGS -I$with_libvlad/include"
+          MODVLAD_LDFLAGS="$MODVLAD_LDFLAGS -L$with_libvlad/lib"
           ;;
         *)
           MODVLAD_CFLAGS="$MODVLAD_CFLAGS -I\$(TOPSRCDIR)/$with_libvlad/include"
+          MODVLAD_LDFLAGS="$MODVLAD_LDFLAGS -L\$(TOPSRCDIR)/$with_libvlad/lib"
           ;;
       esac
     fi
