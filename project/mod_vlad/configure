@@ -2460,7 +2460,7 @@ if test "x$MODVLAD_FPIC" = "xno" || test "x$MODVLAD_SHARED" = "xno"; then
 echo "$as_me: error: *** $CC must support both -shared and -fPIC or -fpic ***" >&2;}
    { (exit 1); exit 1; }; }
 else
-  PICFLAG=$MODVLAD_FPIC
+  PICFLAG=-f$MODVLAD_FPIC
 
 fi
 

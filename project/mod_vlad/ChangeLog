@@ -1,3 +1,11 @@
+2003-07-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* configure.ac :
+	* configure :
+	* Makefile.in :
+
+	  - Now the -fPIC flag gets passed on to gcc properly.
+
 2003-07-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* admin.c :

@@ -24,7 +24,7 @@ TEMP2 = config.h
 all : $(LIBS)
 
 mod_vlad.so : $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,-soname,$(@).`echo $(VERSION) | cut -d. -f1` -o $(@) $(^) -lvlad
+	$(CC) $(CFLAGS) $(PICFLAG) $(LDFLAGS) -shared -Wl,-soname,$(@).`echo $(VERSION) | cut -d. -f1` -o $(@) $(^) -lvlad
 ifndef DEBUG
   ifdef STRIP
 	strip $(@)
@@ -32,22 +32,22 @@ ifndef DEBUG
 endif
 
 mod_vlad.o : util.h admin.h mod_vlad.h mod_vlad.c
-	$(CC) $(CFLAGS) -fPIC -c -o $(@) mod_vlad.c
+	$(CC) $(CFLAGS) $(PICFLAG) -o $(@) -c mod_vlad.c
 
 util.o : mod_vlad.h util.h util.c
-	$(CC) $(CFLAGS) -o $(@) -c util.c
+	$(CC) $(CFLAGS) $(PICFLAG) -o $(@) -c util.c
 
 admin.o : mod_vlad.h admin.h admin.c
-	$(CC) $(CFLAGS) -o $(@) -c admin.c
+	$(CC) $(CFLAGS) $(PICFLAG) -o $(@) -c admin.c
 
 proc.o : mod_vlad.h proc.h proc.c
-	$(CC) $(CFLAGS) -o $(@) -c proc.c
+	$(CC) $(CFLAGS) $(PICFLAG) -o $(@) -c proc.c
 
 policy_p.o : policy.tab.h policy.tab.c
-	$(CC) $(CFLAGS) -o $(@) -c policy.tab.c
+	$(CC) $(CFLAGS) $(PICFLAG) -o $(@) -c policy.tab.c
 
 policy_s.o : policy.tab.h lex.policy.c
-	$(CC) $(CFLAGS) -o $(@) -c lex.policy.c
+	$(CC) $(CFLAGS) $(PICFLAG) -o $(@) -c lex.policy.c
 
 policy.tab.h : policy.y
 	$(YACC) -b policy -p policy -d policy.y

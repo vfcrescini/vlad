@@ -58,7 +58,7 @@ fi
 if test "x$MODVLAD_FPIC" = "xno" || test "x$MODVLAD_SHARED" = "xno"; then
   AC_MSG_ERROR([*** $CC must support both -shared and -fPIC or -fpic ***])
 else
-  AC_SUBST(PICFLAG,[$MODVLAD_FPIC])
+  AC_SUBST(PICFLAG,[-f$MODVLAD_FPIC])
 fi
 
 # cleanup
