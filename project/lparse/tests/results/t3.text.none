@@ -1,0 +1,2 @@
+f :- not e.
+e :- not f.

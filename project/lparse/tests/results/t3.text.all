@@ -1,0 +1,8 @@
+b.
+a.
+d :- a, not b.
+c :- a, b.
+h :- d, not g.
+g :- d, not h.
+f :- c, not e.
+e :- c, not f.
