@@ -1,5 +1,10 @@
 2002-10-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* datastruct/stringlist.c :
+	* datastruct/stringlist.h :
+
+	  - More errorcodes.
+
 	* datastruct/simplelist.c :
 	* datastruct/simplelist.h :
 

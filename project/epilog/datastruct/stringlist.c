@@ -11,9 +11,9 @@ int stringlist_compare(void *p1, void *p2);
 void stringlist_destroy(void *p);
 
 /* initialise list */
-void stringlist_init(stringlist_type *list)
+int stringlist_init(stringlist_type *list)
 {
-  simplelist_init(list);
+  return simplelist_init(list);
 }
 
 /* gives the number of strings in the stringlist */
@@ -46,10 +46,10 @@ int stringlist_add(stringlist_type *list, char *string)
   char *new_string = NULL;
 
   if (list == NULL || string == NULL)
-    return -1;
+    return STRINGLIST_ERROR_NULLPTR;
 
   if ((new_string = (char *) malloc(sizeof(char) * (strlen(string) + 1))) == NULL)
-    return -1;
+    return STRINGLIST_ERROR_MALLOC;
 
   strcpy(new_string, string);
 
@@ -59,9 +59,6 @@ int stringlist_add(stringlist_type *list, char *string)
 /* delete all instances of string in the list */
 int stringlist_del(stringlist_type *list, char *string)
 {
-  if (list == NULL)
-    return -1;
-
   return simplelist_del_data(list,
                              (void *) string,
                              stringlist_compare,

@@ -11,7 +11,7 @@
 #define stringlist_type simplelist_type
 
 /* initialise list */
-void stringlist_init(stringlist_type *list);
+int stringlist_init(stringlist_type *list);
 
 /* gives the number of strings in the stringlist */
 unsigned int stringlist_length(stringlist_type list);
@@ -33,5 +33,12 @@ int stringlist_del(stringlist_type *list, char *string);
 
 /* delete all strings from this stringlist */
 void stringlist_purge(stringlist_type *list);
+
+#define STRINGLIST_OK                0
+#define STRINGLIST_ERROR_NULLPTR     SIMPLELIST_ERROR_NULLPTR
+#define STRINGLIST_ERROR_MALLOC      SIMPLELIST_ERROR_MALLOC
+#define STRINGLIST_ERROR_OUTOFBOUNDS SIMPLELIST_ERROR_OUTOFBOUNDS
+#define STRINGLIST_ERROR_NOTFOUND    SIMPLELIST_ERROR_NOTFOUND
+#define STRINGLIST_ERROR_UNKNOWN     SIMPLELIST_ERROR_UNKNOWN
 
 #endif
