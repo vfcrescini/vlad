@@ -25,6 +25,7 @@
 #define VLAD_IDENT_IS_OBJECT(X)       (((X).get_type() & 3) == VLAD_IDENT_OBJECT)
 #define VLAD_IDENT_IS_GROUP(X)        ((X).get_type() & VLAD_IDENT_GROUP)
 #define VLAD_IDENT_BASETYPE(X)        ((X).get_type() & 3)
+#define VLAD_IDENT_TYPE_BASETYPE(X)   ((X) & 3)
 #define VLAD_IDENT_TYPE_IS_SUBJECT(X) (((X) & 3) == VLAD_IDENT_SUBJECT)
 #define VLAD_IDENT_TYPE_IS_ACCESS(X)  (((X) & 3) == VLAD_IDENT_ACCESS)
 #define VLAD_IDENT_TYPE_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
