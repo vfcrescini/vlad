@@ -90,11 +90,10 @@ int modvlad_init(apr_pool_t *a_p,
 
 
   /* register the kb to be destroyed with this pool */
-
   apr_pool_cleanup_register(a_p,
                             a_conf->kb,
 			    vlad_kb_destroy,
-                            apr_pool_cleanup_null);
+			    vlad_kb_destroy);
 
   if (add_subject(a_p, a_conf->kb, a_conf->user_file))
     return -1;
