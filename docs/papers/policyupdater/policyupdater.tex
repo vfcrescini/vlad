@@ -32,13 +32,74 @@
 
       \subsubsection{Components of Language $\cal{L}$}
 
-        \noindent\underline{\emph{Identifiers}}
+        \noindent\underline{\emph{Identifiers.}} Language $\cal{L}$ consists of
+        8 types of disjoint identifier types: $subjects$, $access-rights$ and
+        $objects$, with each type being either singular or group, plus the
+        the $policy update$ identifiers and the variables:
 
-        \noindent\underline{\emph{Atoms}}
+        \begin{itemize}
+          \item
+            Subjects: priviledge holders (eg. alice, bob, charlie)
+          \item
+            Access-Rights: priviledges (eg. read, write, execute)
+          \item
+            Objects: resources (eg. document, file)
+          \item
+            Subject Groups: sets of subjects (eg. students, astrologers)
+          \item
+            Access-Right Groups: sets of access-rights (eg. own = \{read,
+            write, execute\})
+          \item
+            Objects Groups: sets of objects (eg. database, directory)
+          \item
+            Policy Update: modifies the policy base (eg. grant\_read,
+            revoke\_execute)
+          \item
+            Variables: placeholder for subjects, access-rights, objects
+            or groups of these.
+        \end{itemize}
 
-        \noindent\underline{\emph{Facts}}
+        The first character of an identifier byst be an alpha character
+        followed by 0 to 127 characters of alpha, digit or underscore
+        characters.
 
-        \noindent\underline{\emph{Expressions}}
+        \begin{verbatim}[a-zA-Z]([a_zA-Z0-9_]){0,127}\end{verbatim}
+
+        \noindent\underline{\emph{Atoms.}} Atoms are composed of a relation
+        plus two or more identifier constants to represent a logical
+        relationship between the identifiers. There are three types of atoms:
+
+        \begin{itemize}
+          \item
+            $Holds$. An atom of this type states that the subject
+            $sub$ holds the access-right $acc$ for the object $obj$.
+
+            \begin{verbatim}holds(<sub>, <acc>, <obj>)\end{verbatim}
+          \item
+            $Membership$. This type of atom states that the singular identifier
+            $elt$ is a member or element of the group identifier $grp$. It is
+            important to note that $elt$ and $grp$ must be of the same base
+            type (eg. subject and subject group).
+
+            \begin{verbatim}memb(<elt>, <grp>)\end{verbatim}
+          \item
+            $Subset$. The subset atom claims that the groups $grp1$ and $grp2$
+            are of the same types and that group $grp1$ is a subset of the
+            group $grp2$. 
+            \begin{verbatim}subst(<grp1>, <grp2>)\end{verbatim}
+        \end{itemize}
+
+        \noindent\underline{\emph{Facts.}} A fact makes a claim that the
+        relationship represented by an atom or its negation holds. Atoms
+        are negated by the use of the negation operator ($!$).
+
+        \begin{verbatim}[!]<holds-atm>|<memb-atm>|<subst-atm>\end{verbatim}
+
+        \noindent\underline{\emph{Expressions.}} An expression is either a
+        fact, or a logical conjunction of facts, separated by the
+        double-ampersand characters $\&\&$.
+
+        \begin{verbatim}<fact1> [&& <fact2> [&& ...]]\end{verbatim}
 
       \subsubsection{Initial State Definition}
 
