@@ -416,13 +416,47 @@ query holds(alice, read, file);
           $PB$ $\overrightarrow{_{u}}$ $PB'$
         \end{quote}
 
-        Using this definition of a state means that for every policy update
-        applied to the policy base, a new instance of the policy base or a new
-        set of facts and constraints are generated. To precisely define the
-        underlying semantics of domain description ${\cal D}_{\cal L}$ in
-        language ${\cal L}$, we introduce language ${\cal L}^{*}$, which is an
-        extended logic program representation of langauge ${\cal L}$, with
-        state as an explicit sort.
+        This definition of a state means that for every policy update applied
+        to the policy base, a new instance of the policy base or a new set of
+        facts and constraints are generated. To precisely define the underlying
+        semantics of domain description ${\cal D}_{\cal L}$ in language
+        ${\cal L}$, we introduce language ${\cal L}^{*}$, which is an extended
+        logic program representation of langauge ${\cal L}$, with state as an
+        explicit sort.
+
+        Language ${\cal L}^{*}$ contains only one special state constant
+        $S_{0}$ to represent the initial state of a given domain description.
+        All other states are represented as a resulting state obtained by
+        applying the $Result$ function.
+
+        The $Result$ function takes a policy update reference $u$, where $u$
+        $\in$ $\psi$, and the current state $\sigma$ as input arguments and
+        returns the resulting state $\sigma'$ after update $u$ has been applied
+        to state $\sigma$.
+ 
+        \begin{quote}
+          $\sigma'$ = $Result$($u$, $\sigma$)
+        \end{quote}
+
+        Given an initial state $S_{0}$ and a sequence list $\psi$, each state
+        may be represented as:
+
+        \begin{quote}
+          $\sigma_{0}$ = $S_{0}$
+
+          $\sigma_{1}$ = $Result$($u_{0}$, $\sigma_{0}$)
+
+          ...
+
+          $\sigma_{|\psi|}$ = $Result$($u_{|\psi| - 1}$, $\sigma_{|\psi| - 1}$)
+        \end{quote}
+
+        Substituting each state with a recursive call to the $Result$ function,
+        the final state $S_{|\psi|}$ is defined as follows:
+
+        \begin{quote}
+          $S_{|\psi|}$ = $Result$($u_{|\psi| - 1}$, $Result$(..., $Result$($u_{0}$, $S_{0}$)))
+        \end{quote}
 
         \paragraph{Entities.}
 
@@ -526,21 +560,6 @@ query holds(alice, read, file);
 
         \paragraph{}
 
-          The $Result$ function takes a policy update reference $u$ and the
-          current state $\sigma$ as input arguments and returns the resulting
-          state $\sigma'$ after $u$ has been applied to $\sigma$.
- 
-          \begin{quote}
-            $\sigma'$ = $Result$($u$, $\sigma$)
-          \end{quote}
-
-          Note that language ${\cal L}^{*}$ contains only one special state
-          constant $S_{0}$ to represent the initial state of a given domain
-          description. All other states are represented as a resulting state
-          obtained by applying the $Result$ function.
-
-        \paragraph{}
-
           Another function, $CopyAtom$, takes two arguments: an atom
           $\hat{\alpha}$ of language ${\cal L}^{*}$ at some state $\sigma$ and
           another state $\sigma'$. The function returns an equivalent atom of
@@ -610,8 +629,8 @@ query holds(alice, read, file);
 
             $\hat{f_{n}}$ $\leftarrow$
 
-            where $\hat{f_{i}}$ $=$ $TransFact$($f_{i}$, $S_{0}$), $0$ $\leq$
-            $i$ $\leq$ $n$
+            where $\hat{f_{i}}$ $=$ $TransFact$($f_{i}$, $S_{0}$),
+            $0$ $\leq$ $i$ $\leq$ $n$
           \end{quote}
 
         \paragraph{Constraint Rules.}
@@ -619,7 +638,7 @@ query holds(alice, read, file);
           Each constraint rule in language ${\cal L}$ is expressed as a series
           of logical rules in language ${\cal L}_{*}$. Given that all variable
           occurences have been grounded to entity identifiers, a constraint in
-          language ${\cal L}$, with $m$, $n$, $o$ $\geq$ $0$ may be preresented
+          language ${\cal L}$, with $m$, $n$, $o$ $\geq$ $0$ may be represented
           as:
 
           \begin{alltt}
@@ -649,7 +668,7 @@ query holds(alice, read, file);
           Under the definition of constraints, each of the rules above must be
           made to hold in all states as defined by the sequence list $\psi$.
           This can be accomplished by translating each of the rules above to
-          a set of $\Sigma$ rules, one for each state.
+          a set of $|\psi|$ rules, one for each state.
 
            \begin{quote}
             $\hat{a}^{S_{0}}_{0}$ $\leftarrow$
@@ -658,9 +677,9 @@ query holds(alice, read, file);
 
             ...
 
-            $\hat{a}^{S_{\Sigma}}_{0}$ $\leftarrow$
-            $\hat{b}^{S_{\Sigma}}_{0}$, ..., $\hat{b}^{S_{\Sigma}}_{n}$,
-            $not$ $\hat{c}^{S_{\Sigma}}_{0}$, ..., $not$ $\hat{c}^{S_{\Sigma}}_{o}$
+            $\hat{a}^{S_{|\psi|}}_{0}$ $\leftarrow$
+            $\hat{b}^{S_{|\psi|}}_{0}$, ..., $\hat{b}^{S_{|\psi|}}_{n}$,
+            $not$ $\hat{c}^{S_{|\psi|}}_{0}$, ..., $not$ $\hat{c}^{S_{|\psi|}}_{o}$
 
             ...
 
@@ -670,22 +689,22 @@ query holds(alice, read, file);
 
             ...
 
-            $\hat{a}^{S_{\Sigma}}_{m}$ $\leftarrow$
-            $\hat{b}^{S_{\Sigma}}_{0}$, ..., $\hat{b}^{S_{\Sigma}}_{n}$,
-            $not$ $\hat{c}^{S_{\Sigma}}_{0}$, ..., $not$ $\hat{c}^{S_{\Sigma}}_{o}$
+            $\hat{a}^{S_{|\psi|}}_{m}$ $\leftarrow$
+            $\hat{b}^{S_{|\psi|}}_{0}$, ..., $\hat{b}^{S_{|\psi|}}_{n}$,
+            $not$ $\hat{c}^{S_{|\psi|}}_{0}$, ..., $not$ $\hat{c}^{S_{|\psi|}}_{o}$
 
-            where:
+            where
 
             $\hat{a}^{\sigma}_{i}$ $=$ $TransFact$($a_{i}$, $\sigma$),
-            $0$ $\leq$ $i$ $\leq$ $m$
+            $0$ $\leq$ $i$ $\leq$ $m$,
 
             $\hat{b}^{\sigma}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
-            $0$ $\leq$ $j$ $\leq$ $n$
+            $0$ $\leq$ $j$ $\leq$ $n$,
 
             $\hat{c}^{\sigma}_{k}$ $=$ $TransFact$($c_{k}$, $\sigma$),
-            $0$ $\leq$ $k$ $\leq$ $o$
+            $0$ $\leq$ $k$ $\leq$ $o$,
 
-            $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$
+            $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
           \end{quote}
 
         \paragraph{Policy Updates.}
@@ -714,10 +733,10 @@ query holds(alice, read, file);
 
             $\hat{a}_{m}$ $\leftarrow$ $\hat{b}_{0}$, ..., $\hat{b}_{n}$
 
-            where:
+            where
 
             $\hat{a}_{i}$ $=$ $TransFact$($a_{i}$, $Result$($u$, $\sigma$)),
-            $0$ $\leq$ $i$ $\leq$ $m$
+            $0$ $\leq$ $i$ $\leq$ $m$,
 
             $\hat{b}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
             $0$ $\leq$ $j$ $\leq$ $n$
@@ -776,7 +795,7 @@ query holds(alice, read, file);
                 $s_{g} \in {\cal E}_{sg}$,
                 $a \in {\cal E}_{a}$,
                 $o \in {\cal E}_{o}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
               \item
                 Access Right Group Membership Inheritance
@@ -799,7 +818,7 @@ query holds(alice, read, file);
                 $a_{s} \in {\cal E}_{as}$,
                 $a_{g} \in {\cal E}_{ag}$,
                 $o \in {\cal E}_{o}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
               \item
                 Object Group Membership Inheritance
@@ -816,13 +835,13 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$) where:
+                $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$) where
 
                 $s \in {\cal E}_{s}$,
                 $a \in {\cal E}_{a}$,
                 $o_{s} \in {\cal E}_{os}$,
                 $o_{g} \in {\cal E}_{og}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
               \item
                 Subject Group Subset Inheritance
@@ -844,7 +863,7 @@ query holds(alice, read, file);
                 $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
                 $a \in {\cal E}_{a}$,
                 $o \in {\cal E}_{o}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
               \item
                 Access Right Group Subset Inheritance
@@ -866,7 +885,7 @@ query holds(alice, read, file);
                 $s \in {\cal E}_{s}$,
                 $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
                 $o \in {\cal E}_{o}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
               \item
                 Object Group Subset Inheritance
@@ -888,7 +907,7 @@ query holds(alice, read, file);
                 $s \in {\cal E}_{s}$,
                 $a \in {\cal E}_{a}$,
                 $o_{g1}, o_{g2} \in {\cal E}_{og}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
             \end{enumerate}
 
           \subparagraph{Transitivity Rules.}
@@ -913,7 +932,7 @@ query holds(alice, read, file);
                 $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$), where
 
                 $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
               \item
                 Access Right Group Transitivity
@@ -929,7 +948,7 @@ query holds(alice, read, file);
                 $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$), where
 
                 $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
 
               \item
                 Object Group Transitivity
@@ -945,7 +964,7 @@ query holds(alice, read, file);
                 $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$), where
 
                 $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
-                $0 \leq \sigma \leq \Sigma$
+                $S_{0} \leq \sigma \leq S_{|\psi|}$
             \end{enumerate}
 
           \subparagraph{Inertial Rules.}
@@ -1150,7 +1169,7 @@ query holds(alice, read, file);
           \end{quote}
 
           \noindent if and only if for every atom $\alpha$ in $\phi$, $\alpha$
-          $\in$ ${\cal A}^{\Sigma}$, [$\lnot$] $\alpha$ is in every answer
+          $\in$ ${\cal A}^{|\psi|}$, [$\lnot$] $\alpha$ is in every answer
           set of $trans$(${\cal D}_{\cal L}$)
         \end{definition}
 
