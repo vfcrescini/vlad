@@ -110,8 +110,10 @@ statement :
 query_stmt :
   VLAD_SYM_QUERY expression VLAD_SYM_SEMICOLON {
     int retval;
-#ifdef DEBUG
+#ifdef SMODELS
     unsigned char res;
+#endif
+#ifdef DEBUG
     char q[VLAD_MAXLEN_STR];
 #endif
 
