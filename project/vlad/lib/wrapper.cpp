@@ -8,8 +8,6 @@
 #include <cstring>
 #include <new>
 
-#include <stdio.h>
-
 #include <vlad/vlad.h>
 #include <vlad/wrapper.h>
 #include <vlad/polbase.h>
