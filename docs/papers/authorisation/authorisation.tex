@@ -87,7 +87,7 @@
 
     \subsection{Organisation of this Paper}
 
-      This paper, while endeavoring to achieve the aims outlined above,
+      This paper, while endeavouring to achieve the aims outlined above,
       discusses the required properties of the new language and its formal
       definition in the next section. Section 3 describes how the new language
       can be converted into an equivalent logic program. Section 4 provides
@@ -777,7 +777,7 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
             If everything went well the program should end up with a state,
             or more accurately, a set of atoms and expressions that holds
             true in the final state. The query expression is then check
-            against this final state and an appropriate answer is retured:
+            against this final state and an appropriate answer is returned:
             true, false or unknown.
             
         \end{itemize}
@@ -803,10 +803,10 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
         to store constraints that was not present in the Epilog implementation.
 
         Another major, but subtle difference is the way atoms are stored. In 
-        the Epilog implmentation, atoms are stored in memory as records of
-        identfiers and a truth value. This implementations, however, offers
+        the Epilog implementation, atoms are stored in memory as records of
+        identifiers and a truth value. This implementations, however, offers
         a more robust and efficient method of storing atoms: conceptually,
-        instead of in memory. Each atom is never actaully stored in physical
+        instead of in memory. Each atom is never actually stored in physical
         memory but is really just a number. This number corresponds to the
         unique combination of the indices of the identifiers that it contains.
 
@@ -857,6 +857,29 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
     \pagebreak
 
   \section{Conclusion}
+
+    Although the first parser, Epilog, is capable of performing normal 
+    authorisation operations, its inability to accept constraints does not
+    make it a good choice for the website access control system. On the
+    other hand, Vlad offer the full expressiveness of the language and all
+    the functionalities. However, the downside is that it relies on the
+    external software package smodels to perform the logic operations, unlike
+    Epilog, which may be less expressive but very simple and self-contained.
+
+    Both implementations have their positive and negative points. The choice,
+    therefore, is left to the application.
+
+    Epilog is now in a stable state although further development and
+    bug-fixing are still in progress. The most current stable version 
+    is available for download online at
+
+    http://www.cit.uws.eud.au/~jcrescin/project/epilog/current.tar.gz
+
+    Unfortunately, at the time of writing, Vlad is still not in a usable state
+    at 90\% progress. As with Epilog, the most current development version is
+    available for download at
+
+    http://www.cit.uws.edu.au/~jcrescin/project/vlad/current.tar.gz
 
     \pagebreak
 
