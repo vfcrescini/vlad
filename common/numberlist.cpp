@@ -55,6 +55,12 @@ numberlist::~numberlist()
   purge(true);
 }
 
+/* compare list with this list */
+bool numberlist::cmp(list_item *item)
+{
+  return list::cmp((list *)item);
+}
+
 /* add a number in the list */
 int numberlist::add(unsigned int n)
 {
@@ -74,41 +80,11 @@ int numberlist::add(unsigned int n)
   return VLAD_OK;
 }
 
-/* get the index of the number */
-int numberlist::geti(unsigned int n, unsigned int *i)
-{
-  int retval;
-  number tmp;
-  unsigned int size;
-  unsigned int *array;
-
-  if (i == NULL)
-    return VLAD_NULLPTR;
-
-  if ((retval = tmp.init(n)) != VLAD_OK)
-    return retval;
-
-  if ((retval = list::get(&tmp, &array, &size)) != VLAD_OK)
-    return retval;
-
-  /* there should be exactly one in the array */
-  *i = array[0];
-
-  free(array);
-
-  return VLAD_OK;
-}
-
-/* get the ith number in the list */
-int numberlist::getn(unsigned int i, unsigned int *n)
+/* get the i'th number in the list */
+int numberlist::get(unsigned int i, unsigned int *n)
 {
   int retval;
   number *tmp = NULL;
-
-  /*
-   * this will give a reference to the actual number and not a copy,
-   * so care must be taken to ensure that s is not changed. 
-   */
 
   if ((retval = list::get(i, (list_item **) &tmp)) != VLAD_OK)
     return retval;
@@ -118,14 +94,27 @@ int numberlist::getn(unsigned int i, unsigned int *n)
   return VLAD_OK;
 }
 
-/* return true if number is in the list */
-int numberlist::find(unsigned int n)
+numberlistlist::numberlistlist()
 {
-  int retval;
-  number tmp;
+}
 
-  if ((retval = tmp.init(n)) != VLAD_OK)
-    return retval;
+numberlistlist::~numberlistlist()
+{
+  purge(true);
+}
 
-  return list::find(&tmp);
+/* add a number list to this list */
+int numberlistlist::add(numberlist *l)
+{
+  if (l == NULL)
+    return VLAD_NULLPTR;
+
+  /* we assume it is pre-malloc'ed */
+  return list::add(l);
+}
+
+/* get the i'th number list in this list */
+int numberlistlist::get(unsigned int i, numberlist **l)
+{
+  return list::get(i, (list_item **) l);
 }
