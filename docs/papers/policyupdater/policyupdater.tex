@@ -854,14 +854,13 @@ query holds(alice, read, file);
             holds all access rights contained in the access right group for
             that object.
 
-            In a situation where a particular property is to be inherited by
-            an entity from a group of which it is a member or subset, and the
-            contained entity already holds the negation of that property, a
-            conflict is encountered. This conflict is resolved by giving
-            negative facts higher precedence over its positive counterpart:
-            by allowing member or subset entities to inherit its parent group's
-            properties only if the entities do not already hold the negation of
-            those properties.
+            A conflic is encountered when a particular property is to be
+            inherited by an entity from a group of which it is a member or
+            subset, and the contained entity already holds the negation of
+            that property. This conflict is resolved by giving negative facts
+            higher precedence over its positive counterpart: by allowing member
+            or subset entities to inherit its parent group's properties only if
+            the entities do not already hold the negation of those properties.
 
             The following are the inheritance constriant rules to allow the
             properties held by a group to propagate to its members and
@@ -1430,17 +1429,16 @@ query holds(alice, read, file);
 
         The symbol table is used to store all entity identifiers defined in the
         policy, while the rest of the policy definitions are stored into the
-        policy base. On the other hand, a sequence of policy update directives
-        are stored into the update table.
+        policy base. On the other hand, the sequence of policy update
+        directives are stored separately into the update table.
 
-    \subsection{Algorithms}
+    \subsection{System Processes}
 
-      The algorithms presented in this section shows how the language
-      ${\cal L}$ policy stored in the data structures described in the previous
-      section is translated into a normal logic program, how it can be updated
-      dynamically and how it can be manipulated to evaluate queries. The
-      flowchart in figure \ref{fig-2} gives an overview of the system
-      processes.
+      The processes presented in this section shows how the language
+      ${\cal L}$ policy stored in the data structures is translated into a
+      normal logic program, how it can be updated dynamically and how it can
+      be manipulated to evaluate queries. The flowchart in figure \ref{fig-2}
+      gives an overview of the system processes.
 
       \begin{figure}[ht]
         \begin{center}
@@ -1605,24 +1603,28 @@ query holds(alice, read, file);
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
           With the language ${\cal L}$ policy elements stored into the storage
-          structures (see appendix \ref{app-1}), a normal logic program can
-          then be generated for evaluation. By applying the translation rules
-          described in the semantics section, and at the same time applying the
-          $encode$ function with each fact, a normal logic program is
-          generated.
-
-          [more details]
+          structure (see appendix \ref{app-1}), a normal logic program can
+          then be generated for evaluation. Using the translation methods
+          described in the semantics section and the method for eliminating
+          classical negation, each initial state expression, constraint rule
+          and polcy update becomes a set of simple logical rules. By applying
+          the $encode$ function above for each fact in each of these rules, 
+          a normal logic program is generated.
 
       \subsubsection{Query Evaluation}
 
         Once a normal logic program has been generated from the policy stored
-        in the storage structure, queries can then be evaluated. This is
-        accomplished by applying the stable model semantics onto the
-        generated normal logic program. By using the $smodels$ progam, a query
-        is evaluated by checking whether the query expression holds in each
-        generated answer set of the normal logic program.
+        in the storage structure, a set of answer sets may then be generated
+        by using the stable model semantics with the $smodels$ program. Query
+        evaluation then becomes possible by checking whether each fact of a
+        given query holds in each generated answer set of the normal logic
+        program.
 
-        [maybe a little bit more]
+        If a given fact indeed holds in all the answer sets, it is then
+        evaluated to be true. On the other hand, if the negation of a fact
+        holds in every answer set, then it is evaluated to be false. A fact
+        or its negation that does not hold in every answer set is neither true
+        nor false: inconclusive.
 
   \section{Conclusion}
 
