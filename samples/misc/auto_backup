@@ -72,7 +72,7 @@ for i in ${source_dirs}; do
     done
 
     # now tar it up and compress
-    ${tar_cmd} . | ${gzip_cmd} > "${backup_dir}/${name}-0.tar.gz"
+    ${tar_cmd} "${i}" | ${gzip_cmd} > "${backup_dir}/${name}-0.tar.gz"
   fi
 done
 
