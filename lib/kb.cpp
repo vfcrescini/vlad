@@ -360,6 +360,33 @@ int kb::add_transtab(const char *n,
   return ttable->add(name, vlist, precond, postcond);
 }
 
+/* gives the length of the transformation table */
+int kb::length_transtab(unsigned int *l)
+{
+  if (l == NULL)
+    return VLAD_NULLPTR;
+
+  if (stage < 2)
+    return VLAD_INVALIDOP;
+
+  *l = ttable->length();
+
+  return VLAD_OK;
+}
+
+/* gives the i'th entry in the transformation table */
+int kb::get_transtab(unsigned int i,
+                     char **n,
+                     stringlist **v,
+                     expression **pr,
+                     expression **po)
+{
+  if (stage < 2)
+    return VLAD_INVALIDOP;
+
+  return ttable->get(i, n, v, pr, po);
+}
+
 /* add a transformation reference to the sequence table */
 int kb::add_seqtab(transref *t)
 {
@@ -445,6 +472,29 @@ int kb::list_seqtab(FILE *f)
   }
 
   return VLAD_OK;
+}
+
+/* gives the length of the sequence table */
+int kb::length_seqtab(unsigned int *l)
+{
+  if (l == NULL)
+    return VLAD_NULLPTR;
+
+  if (stage < 2)
+    return VLAD_INVALIDOP;
+
+  *l = setable->length();
+
+  return VLAD_OK;
+}
+
+/* gives the i'th entry in the sequence table */
+int kb::get_seqtab(unsigned int i, char **n, stringlist **il)
+{
+  if (stage < 2)
+    return VLAD_INVALIDOP;
+
+  return setable->get(i, n, il);
 }
 
 /* generate the query */

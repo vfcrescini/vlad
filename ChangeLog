@@ -1,4 +1,14 @@
-2003-06-25  vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+	* lib/kb.h :
+	* lib/transtab.cpp :
+	* lib/transtab.h :
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+
+	  - Added a get() and length() function wrappers for seqtab and
+	    transtab.
 
 	* lib/kb.cpp :
 	* lib/kb.h :
@@ -9,7 +19,7 @@
 	  - Added a kb_check_symtab() to see if an identifier is in the symbol
 	    table.
 
-2003-06-20  vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-20  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.h :
 	* lib/wrapper.cpp :
@@ -56,7 +66,7 @@
 	  - config.h is now in the lib directory to allow it to be included in
 	    the installation.
 
-2003-06-18  vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-18  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/wrapper.h :
 	* lib/wrapper.cpp :
@@ -64,7 +74,7 @@
 	   - Prefixed each function with vlad_ to avoid namespace pollution
 	     of linked apps.
 
-2003-06-17  vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/wrapper.h :
 	* lib/wrapper.cpp :
@@ -74,7 +84,7 @@
 	  - Fixed the ifdef for smodels dependent function: will now return 
 	    failure if used without smodels support.
 
-2003-06-13  vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/atom.h :
 	* lib/symtab.h :
@@ -82,7 +92,7 @@
 
 	  - Moved macros to vlad.h to allow non-c++ programs to use them.
 
-2003-06-10  vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/Makefile.in :
 	* lib/wrapper.cpp :
@@ -90,7 +100,7 @@
 
 	  - Added C interface for kb.
 
-2003-06-09  vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* config.h.in :
 	* configure :

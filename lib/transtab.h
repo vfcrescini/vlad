@@ -34,6 +34,12 @@ class transtab : public list
     int add(const char *n, stringlist *v, expression *pr, expression *po);
     /* get trans by name */
     int get(const char *n, stringlist **v, expression **pr, expression **po);
+    /* get trans by index */
+    int get(unsigned int i,
+            char **n,
+            stringlist **v,
+            expression **pr,
+            expression **po);
     /* replace variables with identifiers in ilist, then get pr and pp */
     int replace(const char *n, stringlist *ilist, expression **pr, expression **po);
 } ;

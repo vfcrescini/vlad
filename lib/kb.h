@@ -44,12 +44,24 @@ class kb {
                      stringlist *v,
                      expression *pr,
                      expression *po);
+    /* gives the length of the transformation table */
+    int length_transtab(unsigned int *l);
+    /* gives the i'th entry in the transformation table */
+    int get_transtab(unsigned int i,
+                     char **n,
+                     stringlist **v,
+                     expression **pr,
+                     expression **po);
     /* add a transformation reference to the sequence table */
     int add_seqtab(transref *t);
     /* delete a transformation reference from the sequence table */
     int del_seqtab(unsigned int i);
     /* enumerate the sequences in the sequence table, output to f */
     int list_seqtab(FILE *f);
+    /* gives the length of the sequence table */
+    int length_seqtab(unsigned int *l);
+    /* gives the i'th entry in the sequence table */
+    int get_seqtab(unsigned int i, char **n, stringlist **il);
     /* generate the rules necessary to evaluate queries */
     int compute_generate(FILE *f);
     /* generate the query */
