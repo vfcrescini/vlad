@@ -64,8 +64,11 @@ int gnd_atom_create_subst(gnd_atom_type *atom,
 /* return 0 if the gnd_atom is valid */
 int gnd_atom_check(gnd_atom_type atom);
 
-/* creates a copy of gnd_atom1 */
-int gnd_atom_copy(gnd_atom_type **atom2, gnd_atom_type atom1);
+/* creates a copy of gnd_atom1 (no malloc) */
+int gnd_atom_copy(gnd_atom_type *atom2, gnd_atom_type atom1);
+
+/* creates a duplicate of gnd_atom1 (with malloc) */
+int gnd_atom_dup(gnd_atom_type **atom2, gnd_atom_type atom1);
 
 /* destroys gnd_atom structure */
 void gnd_atom_destroy(gnd_atom_type *atom);

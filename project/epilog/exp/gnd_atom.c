@@ -144,8 +144,36 @@ int gnd_atom_check(gnd_atom_type atom)
   return 0;
 }
 
-/* creates a copy of atom1 */
-int gnd_atom_copy(gnd_atom_type **atom2, gnd_atom_type atom1)
+/* creates a copy of atom1 (no malloc) */
+int gnd_atom_copy(gnd_atom_type *atom2, gnd_atom_type atom1)
+{
+  if (atom2 == NULL)
+    return -1;
+
+  if (EPI_ATOM_IS_CONST(atom1))
+    return gnd_atom_create_const(atom2, atom1.truth);
+  else if (EPI_ATOM_IS_HOLDS(atom1))
+    return gnd_atom_create_holds(atom2,
+                                 atom1.atom.holds.subject,
+                                 atom1.atom.holds.access,
+                                 atom1.atom.holds.object,
+                                 atom1.truth);
+  else if (EPI_ATOM_IS_MEMB(atom1))
+    return gnd_atom_create_memb(atom2,
+                                atom1.atom.memb.element,
+                                atom1.atom.memb.group,
+                                atom1.truth);
+  else if (EPI_ATOM_IS_SUBST(atom1))
+    return gnd_atom_create_subst(atom2,
+                                 atom1.atom.subst.group1,
+                                 atom1.atom.subst.group2,
+                                 atom1.truth);
+  else
+    return -1;
+}
+
+/* creates a duplicate of atom1 (with malloc) */
+int gnd_atom_dup(gnd_atom_type **atom2, gnd_atom_type atom1)
 {
   if (atom2 == NULL)
     return -1;
@@ -153,26 +181,7 @@ int gnd_atom_copy(gnd_atom_type **atom2, gnd_atom_type atom1)
   if ((*atom2 = EPI_GNDATOM_MALLOC) == NULL)
     return -1;
 
-  if (EPI_ATOM_IS_CONST(atom1))
-    return gnd_atom_create_const(*atom2, atom1.truth);
-  else if (EPI_ATOM_IS_HOLDS(atom1))
-    return gnd_atom_create_holds(*atom2,
-                                 atom1.atom.holds.subject,
-                                 atom1.atom.holds.access,
-                                 atom1.atom.holds.object,
-                                 atom1.truth);
-  else if (EPI_ATOM_IS_MEMB(atom1))
-    return gnd_atom_create_memb(*atom2,
-                                atom1.atom.memb.element,
-                                atom1.atom.memb.group,
-                                atom1.truth);
-  else if (EPI_ATOM_IS_SUBST(atom1))
-    return gnd_atom_create_subst(*atom2,
-                                 atom1.atom.subst.group1,
-                                 atom1.atom.subst.group2,
-                                 atom1.truth);
-  else
-    return -1;
+  return gnd_atom_copy(*atom2, atom1);
 }
 
 /* returns 0 if the contents of atom1 and atom2 are identical */

@@ -1,5 +1,14 @@
 2002-10-20  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/gnd_atom.h :
+	* exp/gnd_atom.c :
+
+	  - Changed copy function to simply copy the atom without
+	    allocating memory (analogous strcpy).
+
+	  - Added dup function to allocate memory and copy the atom.
+	    (analogous to strdup).
+
 	* exp/gnd_exp.c :
 
 	  - eval_atom function now only checks if the atom is a logical
