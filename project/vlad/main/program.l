@@ -50,7 +50,6 @@ sub_type           sub
 obj_type           obj
 acc_type           acc
 digit              [0-9]
-number             ({digit})+
 alpha              [a-zA-Z]
 alphanum           {alpha}|{digit}|{underscore}
 identifier         {alpha}({alphanum}){0,127}
@@ -107,17 +106,6 @@ everything         .
 <INITIAL>{obj_type} return VLAD_SYM_OBJTYPE;
 
 <INITIAL>{acc_type} return VLAD_SYM_ACCTYPE;
-
-<INITIAL>{number} {
-  if (programtext == NULL) {
-    programlval.number = 0;
-    return VLAD_SYM_ERROR;
-  }
-
-  programlval.number = atoi(programtext);
-
-  return VLAD_SYM_NUMBER;
-}
 
 <INITIAL>{identifier} {
   if (programtext == NULL) {
