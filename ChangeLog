@@ -1,3 +1,12 @@
+2005-04-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+	* lib/kb.h :
+
+	  - compute_generate() now dumps a normal logic program where each
+	    atom is printed as it is, instead of it's internal numeric
+	    representation.
+
 2005-02-21  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/list.cpp :

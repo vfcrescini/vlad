@@ -555,7 +555,7 @@ int kb::query_generate(expression *e, FILE *f)
     return retval;
 
   /* and now for the queries */
-  fprintf(f, "Queries\n");
+  fprintf(f, "Query\n");
 
   for (i = 0; i < VLAD_LIST_LENGTH(e); i++) {
     atom *tmp_atom;
@@ -569,10 +569,14 @@ int kb::query_generate(expression *e, FILE *f)
     if (i == 0)
       fprintf(f, "  ");
 
-    if (i + 1 == VLAD_LIST_LENGTH(e))
-      fprintf(f, "%d %s\n", tmp_num, VLAD_STR_QUERY);
-    else
-      fprintf(f, "%d %s ", tmp_num, VLAD_STR_AND);
+    if (i + 1 == VLAD_LIST_LENGTH(e)) {
+      print_atom(tmp_num, f);
+      fprintf(f, " %s\n", VLAD_STR_QUERY);
+    }
+    else {
+      print_atom(tmp_num, f);
+      fprintf(f, " %s ", VLAD_STR_AND);
+    }
   }
 
   return VLAD_OK;
@@ -592,63 +596,6 @@ int kb::compute_generate(FILE *f)
   if (f == NULL)
     return VLAD_NULLPTR;
 
-  /* first we print out all the possible atoms in the kb */
-  fprintf(f, "Atoms\n");
-
-  for (i = 0; i < (pos_tot * 2 * (VLAD_LIST_LENGTH(setable) + 1)); i++) {
-    atom *tmp_atom;
-    unsigned char tmp_ty;
-    unsigned int tmp_s;
-    bool tmp_tr;
-    char *tmp_param1;
-    char *tmp_param2;
-    char *tmp_param3;
-
-    if ((retval = decode_atom(&tmp_atom, &tmp_s, i)) != VLAD_OK)
-      return retval;
-
-    if ((retval = tmp_atom->get(&tmp_param1, &tmp_param2, &tmp_param3, &tmp_ty, &tmp_tr)) != VLAD_OK)
-      return retval;
-
-    switch(tmp_ty) {
-      case VLAD_ATOM_HOLDS :
-        fprintf(f,
-                "  %d = %s(S%d, %c, %s, %s, %s, %s)\n",
-                i,
-                VLAD_STR_HOLDS,
-                tmp_s,
-                tmp_tr ? 'T' : 'F',
-                VLAD_STR_HOLDS,
-                tmp_param1,
-                tmp_param2,
-                tmp_param3);
-        break;
-      case VLAD_ATOM_MEMBER :
-          fprintf(f,
-                  "  %d = %s(S%d, %c, %s, %s, %s)\n",
-                  i, VLAD_STR_HOLDS,
-                  tmp_s,
-                  tmp_tr ? 'T' : 'F',
-                  VLAD_STR_MEMBER,
-                  tmp_param1,
-                  tmp_param2);
-        break;
-      case VLAD_ATOM_SUBSET :
-          fprintf(f,
-                  "  %d = %s(S%d, %c, %s, %s, %s)\n",
-                  i,
-                  VLAD_STR_HOLDS,
-                  tmp_s,
-                  tmp_tr ? 'T' : 'F',
-                  VLAD_STR_SUBSET,
-                  tmp_param1,
-                  tmp_param2);
-        break;
-    }
-
-    delete tmp_atom;
-  }
-
   /* identity rules */
   fprintf(f, "Identity  Rules\n");
 
@@ -656,26 +603,23 @@ int kb::compute_generate(FILE *f)
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
     unsigned int i_grp;
     /* subject groups */
-    for (i_grp = 0; i_grp < sg_len; i_grp++)
-      fprintf(f,
-              "  %d %s %s\n",
-              compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp, i_grp),
-              VLAD_STR_ARROW,
-              VLAD_STR_TRUE);
+    for (i_grp = 0; i_grp < sg_len; i_grp++) {
+      fprintf(f, "  ");
+      print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp, i_grp), f);
+      fprintf(f, " %s %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+    }
     /* access groups */
-    for (i_grp = 0; i_grp < ag_len; i_grp++)
-      fprintf(f,
-              "  %d %s %s\n",
-              compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp, i_grp),
-              VLAD_STR_ARROW,
-              VLAD_STR_TRUE);
+    for (i_grp = 0; i_grp < ag_len; i_grp++) {
+      fprintf(f, "  ");
+      print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp, i_grp), f);
+      fprintf(f, " %s %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+    }
     /* object groups */
-    for (i_grp = 0; i_grp < og_len; i_grp++)
-      fprintf(f,
-              "  %d %s %s\n",
-              compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp, i_grp),
-              VLAD_STR_ARROW,
-              VLAD_STR_TRUE);
+    for (i_grp = 0; i_grp < og_len; i_grp++) {
+      fprintf(f, "  ");
+      print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp, i_grp), f);
+      fprintf(f, " %s %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+    }
   }
 
   /* inheritance rules */
@@ -697,23 +641,23 @@ int kb::compute_generate(FILE *f)
           continue;
         for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
           for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-            fprintf(f,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, true, i_grp2 + s_len, i_acc, i_obj),
-                    VLAD_STR_AND,
-                    compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj));
-            fprintf(f,
-                    "  %d %s %d %s %d\n",
-                    compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, false, i_grp2 + s_len, i_acc, i_obj),
-                    VLAD_STR_AND,
-                    compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2));
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, true, i_grp2 + s_len, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2), f);
+            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_atom(compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj), f); 
+            fprintf(f, "\n");
+
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, false, i_grp2 + s_len, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2), f);
+            fprintf(f, "\n");
           }
         }
       }
@@ -725,23 +669,23 @@ int kb::compute_generate(FILE *f)
           continue;
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-            fprintf(f,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, true, i_sub, i_grp2 + a_len, i_obj),
-                    VLAD_STR_AND,
-                    compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj));
-            fprintf(f,
-                    "  %d %s %d %s %d\n",
-                    compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, false, i_sub, i_grp2 + a_len, i_obj),
-                    VLAD_STR_AND,
-                    compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2));
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, true, i_sub, i_grp2 + a_len, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2), f);
+            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_atom(compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj), f); 
+            fprintf(f, "\n");
+
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, false, i_sub, i_grp2 + a_len, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2), f);
+            fprintf(f, "\n");
           }
         }
       }
@@ -753,23 +697,23 @@ int kb::compute_generate(FILE *f)
           continue;
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-            fprintf(f,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, true, i_sub, i_acc, i_grp2 + o_len),
-                    VLAD_STR_AND,
-                    compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len));
-            fprintf(f,
-                    "  %d %s %d %s %d\n",
-                    compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, false, i_sub, i_acc, i_grp2 + o_len),
-                    VLAD_STR_AND,
-                    compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2));
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, true, i_sub, i_acc, i_grp2 + o_len), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2), f);
+            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len), f); 
+            fprintf(f, "\n");
+
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_grp2 + o_len), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2), f);
+            fprintf(f, "\n");
           }
         }
       }
@@ -782,23 +726,23 @@ int kb::compute_generate(FILE *f)
       for (i_sub = 0; i_sub < s_len; i_sub++) {
         for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
           for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-            fprintf(f,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    compute_holds(i, true, i_sub, i_acc, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj),
-                    VLAD_STR_AND,
-                    compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    compute_holds(i, false, i_sub, i_acc, i_obj));
-            fprintf(f,
-                    "  %d %s %d %s %d\n",
-                    compute_holds(i, false, i_sub, i_acc, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj),
-                    VLAD_STR_AND,
-                    compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1));
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, true, i_sub, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1), f);
+            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f); 
+            fprintf(f, "\n");
+
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1), f);
+            fprintf(f, "\n");
           }
         }
       }
@@ -808,23 +752,23 @@ int kb::compute_generate(FILE *f)
       for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
         for (i_acc = 0; i_acc < a_len; i_acc++) {
           for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-            fprintf(f,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    compute_holds(i, true, i_sub, i_acc, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj),
-                    VLAD_STR_AND,
-                    compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    compute_holds(i, false, i_sub, i_acc, i_obj));
-            fprintf(f,
-                    "  %d %s %d %s %d\n",
-                    compute_holds(i, false, i_sub, i_acc, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj),
-                    VLAD_STR_AND,
-                    compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1));
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, true, i_sub, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, true, i_sub, i_grp1 + a_len, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1), f);
+            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f); 
+            fprintf(f, "\n");
+
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, false, i_sub, i_grp1 + a_len, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1), f);
+            fprintf(f, "\n");
           }
         }
       }
@@ -834,23 +778,23 @@ int kb::compute_generate(FILE *f)
       for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
         for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
           for (i_obj = 0; i_obj < o_len; i_obj++) {
-            fprintf(f,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    compute_holds(i, true, i_sub, i_acc, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len),
-                    VLAD_STR_AND,
-                    compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    compute_holds(i, false, i_sub, i_acc, i_obj));
-            fprintf(f,
-                    "  %d %s %d %s %d\n",
-                    compute_holds(i, false, i_sub, i_acc, i_obj),
-                    VLAD_STR_ARROW,
-                    compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len),
-                    VLAD_STR_AND,
-                    compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1));
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, true, i_sub, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, true, i_sub, i_acc, i_grp1 + o_len), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1), f);
+            fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f); 
+            fprintf(f, "\n");
+
+            fprintf(f, "  ");
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_obj), f);
+            fprintf(f, " %s ", VLAD_STR_ARROW);
+            print_atom(compute_holds(i, false, i_sub, i_acc, i_grp1 + o_len), f);
+            fprintf(f, " %s ", VLAD_STR_AND);
+            print_atom(compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1), f);
+            fprintf(f, "\n");
           }
         }
       }
@@ -872,14 +816,13 @@ int kb::compute_generate(FILE *f)
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
-
-          fprintf(f,
-                  "  %d %s %d %s %d\n",
-                  compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp3),
-                  VLAD_STR_ARROW,
-                  compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2),
-                  VLAD_STR_AND,
-                  compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp2, i_grp3));
+          fprintf(f, "  ");
+          print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp3), f);
+          fprintf(f, " %s ", VLAD_STR_ARROW);
+          print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2), f);
+          fprintf(f, " %s ", VLAD_STR_AND);
+          print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp2, i_grp3), f);
+          fprintf(f, "\n");
         }
       }
     }
@@ -890,13 +833,13 @@ int kb::compute_generate(FILE *f)
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
-          fprintf(f,
-                  "  %d %s %d %s %d\n",
-                  compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp3),
-                  VLAD_STR_ARROW,
-                  compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2),
-                  VLAD_STR_AND,
-                  compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp2, i_grp3));
+          fprintf(f, "  ");
+          print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp3), f);
+          fprintf(f, " %s ", VLAD_STR_ARROW);
+          print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2), f);
+          fprintf(f, " %s ", VLAD_STR_AND);
+          print_atom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp2, i_grp3), f);
+          fprintf(f, "\n");
         }
       }
     }
@@ -907,13 +850,13 @@ int kb::compute_generate(FILE *f)
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
-          fprintf(f,
-                  "  %d %s %d %s %d\n",
-                  compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp3),
-                  VLAD_STR_ARROW,
-                  compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2),
-                  VLAD_STR_AND,
-                  compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp2, i_grp3));
+          fprintf(f, "  ");
+          print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp3), f);
+          fprintf(f, " %s ", VLAD_STR_ARROW);
+          print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2), f);
+          fprintf(f, " %s ", VLAD_STR_AND);
+          print_atom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp2, i_grp3), f);
+          fprintf(f, "\n");
         }
       }
     }
@@ -926,13 +869,12 @@ int kb::compute_generate(FILE *f)
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
     unsigned int i_atom;
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
-      fprintf(f,
-              "  %s %s %d %s %d\n",
-              VLAD_STR_FALSE,
-              VLAD_STR_ARROW,
-              compute_atom(i, true, i_atom),
-              VLAD_STR_AND,
-              compute_atom(i, false, i_atom));
+      fprintf(f, "  ");
+      fprintf(f, "%s %s ", VLAD_STR_FALSE, VLAD_STR_ARROW);
+      print_atom(compute_atom(i, true, i_atom), f);
+      fprintf(f, " %s ", VLAD_STR_AND);
+      print_atom(compute_atom(i, false, i_atom), f);
+      fprintf(f, "\n");
     }
   }
 
@@ -943,27 +885,26 @@ int kb::compute_generate(FILE *f)
   for (i = 0; i < VLAD_LIST_LENGTH(setable); i++) {
     unsigned int i_atom;
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
-      fprintf(f,
-              "  %d %s %d %s %s %d\n",
-              compute_atom(i + 1, true, i_atom),
-              VLAD_STR_ARROW,
-              compute_atom(i, true, i_atom),
-              VLAD_STR_AND,
-              VLAD_STR_NOT,
-              compute_atom(i + 1, false, i_atom));
-      fprintf(f,
-              "  %d %s %d %s %s %d\n",
-              compute_atom(i + 1, false, i_atom),
-              VLAD_STR_ARROW,
-              compute_atom(i, false, i_atom),
-              VLAD_STR_AND,
-              VLAD_STR_NOT,
-              compute_atom(i + 1, true, i_atom));
+      fprintf(f, "  ");
+      print_atom(compute_atom(i + 1, true, i_atom), f);
+      fprintf(f, " %s ", VLAD_STR_ARROW);
+      print_atom(compute_atom(i, true, i_atom), f);
+      fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+      print_atom(compute_atom(i + 1, false, i_atom), f);
+      fprintf(f, "\n");
+
+      fprintf(f, "  ");
+      print_atom(compute_atom(i + 1, false, i_atom), f);
+      fprintf(f, " %s ", VLAD_STR_ARROW);
+      print_atom(compute_atom(i, false, i_atom), f);
+      fprintf(f, " %s %s ", VLAD_STR_AND, VLAD_STR_NOT);
+      print_atom(compute_atom(i + 1, true, i_atom), f);
+      fprintf(f, "\n");
     }
   }
 
   /* initial state */
-  fprintf(f, "Initial State\n");
+  fprintf(f, "Initial State Rules\n");
 
   for (i = 0; i < VLAD_LIST_LENGTH(itable); i++) {
     atom *tmp_atom;
@@ -974,11 +915,13 @@ int kb::compute_generate(FILE *f)
     if ((retval = encode_atom(tmp_atom, 0, &tmp_num)) != VLAD_OK)
       return retval;
 
-    fprintf(f, "  %d %s %s\n", tmp_num, VLAD_STR_ARROW, VLAD_STR_TRUE);
+    fprintf(f, "  ");
+    print_atom(tmp_num, f);
+    fprintf(f, " %s %s\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
   }
 
   /* constraints */
-  fprintf(f, "Constraints\n");
+  fprintf(f, "Constraint Rules\n");
 
   for (i = 0; i <= VLAD_LIST_LENGTH(setable); i++) {
     unsigned int  i_const;
@@ -995,7 +938,7 @@ int kb::compute_generate(FILE *f)
       if ((retval = ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
         return retval;
 
-      fprintf(f, " ");
+      fprintf(f, "  ");
 
       /* constaint expression */
       for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_e); i_exp++) {
@@ -1003,10 +946,10 @@ int kb::compute_generate(FILE *f)
           return retval;
         if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
           return retval;
-        fprintf(f, " %d", tmp_num);
+        print_atom(tmp_num, f);
       }
 
-      fprintf(f, " %s", VLAD_STR_ARROW);
+      fprintf(f, " %s ", VLAD_STR_ARROW);
 
       /* constraint condition */
       for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_c); i_exp++) {
@@ -1014,7 +957,7 @@ int kb::compute_generate(FILE *f)
           return retval;
         if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
           return retval;
-        fprintf(f, " %d", tmp_num);
+        print_atom(tmp_num, f);
       }
 
       /* constraint negative condition */
@@ -1023,7 +966,8 @@ int kb::compute_generate(FILE *f)
           return retval;
         if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
           return retval;
-        fprintf(f, " %s %d", VLAD_STR_NOT, tmp_num);
+        fprintf(f, " %s ", VLAD_STR_NOT);
+        print_atom(tmp_num, f);
       }
 
       if (tmp_c == NULL && tmp_n == NULL)
@@ -1060,10 +1004,10 @@ int kb::compute_generate(FILE *f)
         return retval;
       if ((retval = encode_atom(tmp_atom, i + 1, &tmp_num)) != VLAD_OK)
         return retval;
-      fprintf(f, " %d", tmp_num);
+      print_atom(tmp_num, f);
     }
 
-    fprintf(f, " %s", VLAD_STR_ARROW);
+    fprintf(f, " %s ", VLAD_STR_ARROW);
 
     /* precondition loop */
     for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_pre); i_exp++) {
@@ -1071,7 +1015,7 @@ int kb::compute_generate(FILE *f)
         return retval;
       if ((retval = encode_atom(tmp_atom, i, &tmp_num)) != VLAD_OK)
         return retval;
-      fprintf(f, " %d", tmp_num);
+      print_atom(tmp_num, f);
     }
 
     if (tmp_pre == NULL)
@@ -2155,6 +2099,68 @@ unsigned int kb::compute_subset(unsigned int a_st, bool a_tr, char a_ty, unsigne
   }
 
   return 0;
+}
+
+/* dumps the string representation of the given numeric atom to fs */
+int kb::print_atom(unsigned int a_atm, FILE *a_fs)
+{
+  int retval;
+  atom *tmp_atom;
+  unsigned char tmp_ty;
+  unsigned int tmp_s;
+  bool tmp_tr;
+  char *tmp_param1;
+  char *tmp_param2;
+  char *tmp_param3;
+    
+  /* we only allow this function after kb is closed */
+  if (stage < 3)
+    return VLAD_INVALIDOP;
+      
+  /* make sure the filestream is not NULL */
+  if (a_fs == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = decode_atom(&tmp_atom, &tmp_s, a_atm)) != VLAD_OK)
+    return retval;
+
+  if ((retval = tmp_atom->get(&tmp_param1, &tmp_param2, &tmp_param3, &tmp_ty, &tmp_tr)) != VLAD_OK)
+    return retval;
+
+  switch(tmp_ty) {
+    case VLAD_ATOM_HOLDS :
+      fprintf(a_fs,
+              "%s(%s, %s, %s, S%d, %c)",
+              VLAD_STR_HOLDS,
+              tmp_param1,
+              tmp_param2,
+              tmp_param3,
+              tmp_s,
+              tmp_tr ? 'T' : 'F');
+      break;
+    case VLAD_ATOM_MEMBER :
+      fprintf(a_fs,
+              "%s(%s, %s, S%d, %c)",
+              VLAD_STR_MEMBER,
+              tmp_param1,
+              tmp_param2,
+              tmp_s,
+              tmp_tr ? 'T' : 'F');
+      break;
+    case VLAD_ATOM_SUBSET :
+      fprintf(a_fs,
+              "%s(%s, %s, S%d, %c)",
+              VLAD_STR_SUBSET,
+              tmp_param1,
+              tmp_param2,
+              tmp_s,
+              tmp_tr ? 'T' : 'F');
+      break;
+  }
+
+  delete tmp_atom;
+
+  return VLAD_OK;
 }
 
 #ifdef VLAD_SMODELS
