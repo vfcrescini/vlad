@@ -1,3 +1,23 @@
+
+2003-10-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/identifier.cpp :
+	* kb/identifier.h :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+
+	  - Replaced identifier type and group flag with an integer to
+	    represent both.
+
+	  - Added defines and macros for identifier types.
+
+	  - Modified identifier so that the cmp() function will allow
+	    the use of wildcards (name == NULL and type == 0 will match
+	    anything).
+
+	  - Added another get() function in symtab to allow an array of
+	    identifier of a particular type/group to be retrieved.
+
 2003-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/identifier.cpp :
@@ -191,5 +211,3 @@
 	* ChangeLog :
 
 	  - Changelog started.
-
-

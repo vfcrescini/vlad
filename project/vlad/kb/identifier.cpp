@@ -11,43 +11,55 @@
 identifier::identifier()
 {
   name = NULL;
-  type = subject_ident;
-  group = false;
+  type = 0;
 }
 
 identifier::~identifier()
 {
   if (name != NULL)
     free(name);
-
-  name = NULL;
-  type = subject_ident;
-  group = false;
 }
 
 bool identifier::cmp(list_item *item)
 {
   identifier *tmp = dynamic_cast<identifier *> (item);
 
-  /* compare only the name */
-  return (strcmp(name, tmp->name) ? false : true);
+  /* we treat type == 0 and name == NULL as wildcards */
+
+  if (tmp->name != NULL) {
+    if (name == NULL)
+      return false;
+
+    if (strcmp(name, tmp->name))
+      return false;
+  }
+
+  if ((tmp->type != 0) && (type != tmp->type))
+    return false;
+
+  return true;
 }
 
-int identifier::init(const char *n, ident_type t, bool g)
+int identifier::init(const char *n, unsigned char t)
 {
-  if (n == NULL)
-    return VLAD_NULLPTR;
+  /* here we allow identifier instances to be created with NULL names
+   * and/or 0 types */
+
+  if (t > VLAD_IDENT_TYPEMAX)
+    return VLAD_INVALIDINPUT;
 
   if (name != NULL)
     free(name);
 
-  if ((name = VLAD_STRING_MALLOC(n)) == NULL)
-    return VLAD_MALLOCFAILED;
-
   type = t;
-  group = g;
 
-  return ((strcpy(name, n) == NULL) ? VLAD_FAILURE : VLAD_OK);
+  if (n != NULL) {
+    if ((name = VLAD_STRING_MALLOC(n)) == NULL)
+      return VLAD_MALLOCFAILED;
+    return ((strcpy(name, n) == NULL) ? VLAD_FAILURE : VLAD_OK);
+  }
+
+  return VLAD_OK;
 }
 
 const char *identifier::get_name()
@@ -55,13 +67,7 @@ const char *identifier::get_name()
   return name;
 }
 
-ident_type identifier::get_type()
+unsigned char identifier::get_type()
 {
   return type;
 }
-
-bool identifier::get_group()
-{
-  return group;
-}
-	

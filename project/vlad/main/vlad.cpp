@@ -49,19 +49,19 @@ int main(int argc, char *argv[])
   yyout = stdout;
   yyerr = stderr;
 
-#if 1
+#if 0
   yyparse();
 #else
   symtab *x;
   identifier *y;
 
   x = new symtab();
-  x->add("1",subject_ident,false);
-  x->add("2",subject_ident,false);
-  x->add("3",subject_ident,false);
-  x->add("4",subject_ident,false);
-  x->add("5",subject_ident,false);
-  x->add("5",subject_ident,false);
+  x->add("1", VLAD_IDENT_SUBJECT);
+  x->add("2", VLAD_IDENT_SUBJECT);
+  x->add("3", VLAD_IDENT_SUBJECT);
+  x->add("4", VLAD_IDENT_SUBJECT);
+  x->add("5", VLAD_IDENT_SUBJECT);
+  x->add("5", VLAD_IDENT_SUBJECT);
 
   fprintf(stderr, "%d\n\n", x->length());
 
