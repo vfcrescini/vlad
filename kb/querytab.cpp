@@ -62,6 +62,7 @@ transreflist::~transreflist()
   purge(true);
 }
 
+/* add pre-malloc'ed transref */
 int transreflist::add(transref *t)
 {
   if (t == NULL)

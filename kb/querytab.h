@@ -26,6 +26,7 @@ class transreflist : public list
    public :
      transreflist(const char *n);
      ~transreflist();
+     /* add pre-malloc'ed transref */
      int add(transref *t);
 } ;
 
