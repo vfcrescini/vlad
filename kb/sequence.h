@@ -13,17 +13,18 @@
 class transref : public list_item
 {
   public :
-    transref(const char *n, stringlist *i);
+    transref();
     ~transref();
     bool cmp(list_item *item);
-    char *get_name();
-    stringlist *get_ilist();
+    int init(const char *n, stringlist *il);
+    int get(char **n, stringlist **il);
 #ifdef DEBUG
     void print(char *s);
 #endif
   private :
     char *name;
     stringlist *ilist;
+    bool initialised;
 } ;
 
 class sequence : public list
@@ -33,7 +34,10 @@ class sequence : public list
      ~sequence();
      /* add pre-malloc'ed transref */
      int add(transref *t);
-     int get(unsigned int i, transref **t);
+     /* add pre-malloc'ed name and ilist */
+     int add(const char *n, stringlist *il);
+     /* get i'th name and ilist */
+     int get(unsigned int i, char **n, stringlist **il);
 #ifdef DEBUG
     void print(char *s);
 #endif
