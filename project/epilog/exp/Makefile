@@ -3,7 +3,7 @@
 TOPSRCDIR = ..
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libexp.a
-INCLUDES = atom.h expression.h varlist.h compatom.h compexp.h
+INCLUDES = name.h atom.h expression.h
 
 ifdef DEBUG
 CFLAGS += -g -DDEBUG
@@ -23,17 +23,17 @@ public : $(TARGETS)
 	ln -sf ../exp/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libexp.a : atom.o expression.o varlist.o
-	$(AR) -rcs $(@) atom.o expression.o varlist.o
+libexp.a : name.o atom.o expression.o
+	$(AR) -rcs $(@) name.o atom.o expression.o
+
+name.o : name.h name.c
+	$(CC) $(CFLAGS) -o $(@) -c name.c
 
 atom.o : atom.h atom.c
 	$(CC) $(CFLAGS) -o $(@) -c atom.c
 
 expression.o : expression.h expression.c
 	$(CC) $(CFLAGS) -o $(@) -c expression.c
-
-varlist.o : varlist.h varlist.c
-	$(CC) $(CFLAGS) -o $(@) -c varlist.c
 
 clean :
 	$(RM) $(TARGETS) *.o

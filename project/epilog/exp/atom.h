@@ -6,7 +6,7 @@
 #ifndef __EPI_ATOM_H
 #define __EPI_ATOM_H
 
-#include <ident.h>
+#include "name.h"
 
 typedef enum
 {
@@ -16,21 +16,21 @@ typedef enum
 
 typedef struct 
 {
-  ident_type *subject;
-  ident_type *access;
-  ident_type *object;
+  name_type subject;
+  name_type access;
+  name_type object;
 } holds_type;
 
 typedef struct
 {
-  ident_type *element;
-  ident_type *group;
+  name_type element;
+  name_type group;
 } memb_type;
 
 typedef struct
 {
-  ident_type *group1;
-  ident_type *group2;
+  name_type group1;
+  name_type group2;
 } subst_type;
 
 typedef struct
@@ -49,21 +49,21 @@ int atom_create_const(atom_type **atom, truth_type truth);
 
 /* creates a pointer to an atom of type holds */
 int atom_create_holds(atom_type **atom, 
-                      ident_type *sub, 
-                      ident_type *acc,
-                      ident_type *obj,
+                      name_type sub, 
+                      name_type acc,
+                      name_type obj,
                       truth_type truth);
 
 /* creates a pointer to an atom of type memb */
 int atom_create_memb(atom_type **atom,
-                     ident_type *element,
-                     ident_type *group,
+                     name_type element,
+                     name_type group,
                      truth_type truth);
 
 /* creates a pointer to an atom of type subst */
 int atom_create_subst(atom_type **atom,
-                      ident_type *group1,
-                      ident_type *group2,
+                      name_type group1,
+                      name_type group2,
                       truth_type truth);
 
 /* return 0 if the atom is valid */

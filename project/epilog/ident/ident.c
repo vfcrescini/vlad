@@ -47,5 +47,5 @@ int ident_compare(ident_type ident1, ident_type ident2)
   if (ident1.type != ident2.type)
     return -1;
 
-  return strcmp(ident1.name, ident2.name);
+  return (strcmp(ident1.name, ident2.name) ? -1 : 0);
 }
