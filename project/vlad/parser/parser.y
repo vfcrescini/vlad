@@ -322,13 +322,13 @@ ground_exp :
   ;
 
 ground_boolean_atom :
-  ground_atom_exp {
+  ground_atom {
   }
-  | VLAD_SYM_NOT ground_atom_exp {
+  | VLAD_SYM_NOT ground_atom {
   }
   ;
 
-ground_atom_exp :
+ground_atom :
   ground_holds_atom {
   }
   | ground_subst_atom {
@@ -361,13 +361,13 @@ comp_exp :
   ;
 
 comp_boolean_atom :
-  comp_atom_exp {
+  comp_atom {
   }
-  | VLAD_SYM_NOT comp_atom_exp {
+  | VLAD_SYM_NOT comp_atom {
   }
   ;
 
-comp_atom_exp :
+comp_atom :
   comp_holds_atom {
   }
   | comp_subst_atom {
