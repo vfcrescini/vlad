@@ -6,7 +6,7 @@
 
   \long\def\comment#1{}
 
-  \title{The Implementation of Policy Updater}
+  \title{The Implementation of PolicyUpdater}
   \subtitle{A System for Dynamic Access Control}
 
   \author{Vino Fernando Crescini \and Yan Zhang}
@@ -19,14 +19,15 @@
   \maketitle
 
   \begin{abstract}
-    In this paper, we propose an access control system, \emph{Policy Updater},
-    that provides policy evaluation as well as dynamic policy manipulation.
-    This is achieved by the use of the proposed logic-based language L to
-    represent the access control policies. As the language L is logic-based,
-    policy manipulation is achieved by adding or removing atoms and constraints
-    that make up the policy base. The policy base can then be translated into a
-    normal logic program and then by using the \emph{Stable Models} semantics,
-    authorization queries can be evaluated.
+    In this paper, we propose an access control system, \emph{PolicyUpdater},
+    that provides policy evaluations as well as dynamic policy manipulations.
+    This is achieved by the use of the proposed logic-based language $\cal{L}$
+    to represent the underlying access control policies. As the language
+    $\cal{L}$ is logic-based, policy manipulation is achieved by adding or
+    removing atoms and constraints that make up the policy base. The policy
+    base can then be translated into a normal logic program and then by
+    using the \emph{Stable Model} semantics, authorization queries can
+    be evaluated.
 
     [needs to be edited]
   \end{abstract}
@@ -34,7 +35,7 @@
   \section{Introduction}
     [text]
 
-  \section{Language L}
+  \section{Language $\cal{L}$}
 
     [some language intro text]
 
@@ -42,7 +43,7 @@
     may appear between the C-style comment symbols /* and */.
 
     \emph{Identifiers} are used to represent an entity (subject, access
-    right, object), a group of entities or a transformation.
+    right, object), a group of entities or an update.
 
     \begin{verbatim}[a-zA-Z]([a-zA-Z0-9_])*\end{verbatim}
 
@@ -56,8 +57,8 @@
     access right of that subject for that object. The Membership atom binds
     a singular entity to a group entity of the same type. Similarly, a Subset
     atom shows the relationship between a group and its supergroup. The
-    negation of an atom is represented in L by prepending the symbol ! to the
-    atom.
+    negation of an atom is represented in $\cal{L}$ by prepending the symbol
+    \emph{!} to the atom.
 
     \begin{verbatim}[!]holds(<sub-identifier>, <acc-identifier>, <obj-identifier>)
 [!]memb(<singular-identifier>, <group-identifier>)
@@ -68,47 +69,44 @@
 
     \begin{verbatim}atom1 [&& atom2 [&& ...]]\end{verbatim}
 
-    \emph{Initial State Definition.} This feature of language L allows the
-    initial facts of the policy base to be set.
+    \emph{Initial State Definition.} This feature of language $\cal{L}$ allows
+    the initial facts of the policy base to be set.
 
     \begin{verbatim}initially <expression>;\end{verbatim}
 
     \emph{Constraint Definition.} Constraints are the logical rules that must
     hold in the initial state and any other state of the policy base after
-    any policy update or transformation. The syntax below states that exp1
-    must hold if exp2 is true and that there is no evidence that exp3 is
-    true.
+    any policy update. The syntax below states that exp1 must hold if exp2 is 
+    true and that there is no evidence that exp3 is true.
 
     \begin{verbatim}always exp1 [implied by exp2 [with absence exp3]];\end{verbatim}
 
-    \emph{Policy Manipulation.} A special feature of the language L allows
-    the policies to be dynamically updated through the process of
-    transformation. The following transformation definition syntax generates
-    a new state by applying exp1 to the current state if and only if exp2 is
-    true in the current state. The variable parameters that may occur in any
-    of the expressions allow identifiers to be set dynamically when the
-    transformation is applied.
+    \emph{Policy Update Definition.} The following policy update definition
+    syntax generates a new state by applying exp1 to the current state
+    if and only if exp2 is true in the current state. The variable
+    parameters that may occur in any of the expressions allow identifiers
+    to be set dynamically when the update is applied.
 
-    \begin{verbatim}<trans-identifier>([<var1>[,...]]) causes exp1 if exp2;\end{verbatim}
+    \begin{verbatim}<update-identifier>([<var1>[,...]]) causes exp1 if exp2;\end{verbatim}
 
     The current state of the policy base (the state in which queries will be
-    evaluated) is derived by applying the transformations that are added into
-    the transformation sequence. Below is the syntax for adding a
-    transformation into the sequence.
+    evaluated) is derived by applying the updates that are added into
+    the policy update sequence list. Below is the syntax for adding an
+    update into the sequence.
 
-    \begin{verbatim}seq add <trans-identifier>([<var1>[,...]]);\end{verbatim}
+    \begin{verbatim}seq add <update-identifier>([<var1>[,...]]);\end{verbatim}
 
-    Similarly, to remove the n'th transformation from the sequence:
+    Similarly, to remove the n'th update from the sequence:
 
     \begin{verbatim}seq del <n>;\end{verbatim}
 
-    For the sake of completeness, the language L also has provisions to list
-    the transformations in the sequence.
+    For the sake of completeness, the language $\cal{L}$ also has provisions to
+    list the updates in the sequence.
 
     \begin{verbatim}seq list;\end{verbatim}
 
     \emph{Query Directive.} The policy base may be given an expression to be
-    queried. Queries are evaluated after after all transformations in the
+    queried. Queries are evaluated after after all updates in the
     sequence and all constraints have been applied. Query directives are
     always answered \emph{true}, \emph{false}, or \emph{unknown}.
 
@@ -116,53 +114,55 @@
 
   \section{Implementation}
 
-    \subsection{Language L to Extended Logic Program}
+    \subsection{Language $\cal{L}$ to Extended Logic Program}
 
       \subsubsection{Integration of Set Theory.}
 
-        Since entities in language L may be singular or groups, certain rules
-        must be added to ensure that set theory holds.
+        Since entities in language $\cal{L}$ may be singular or groups,
+        the following rules must hold to ensure that set theory holds.
 
-        \emph{Inheritance Rules for Members of Groups.} Ensures that members
-        inherit all the properties of groups of which it is a member.
+        \emph{Inheritance Rules for Members of Groups.} The rule below must
+        ensures that each member M inherits all the properties P of group G if
+        M is an element of group G.
 
-        \begin{equation}
-          holds(M, P) \leftarrow holds(G, P) \land M \in G
-        \end{equation}
+        \begin{quote}
+          holds(M, P) $\leftarrow$ holds(G, P) $\land$ M $\in$ G
+        \end{quote}
 
         \emph{Inheritance Rules for Subgroups.} Similarly, groups inherit all
         properties of its supergroup.
 
-        \begin{equation}
-          holds(S1, P) \leftarrow holds(S2, P) \land S1 \subseteq S2
-        \end{equation}
+        \begin{quote}
+          holds(S1, P) $\leftarrow$ holds(S2, P) $\land$ S1 $\subseteq$ S2
+        \end{quote}
 
         \emph{Transitivity Rule.} If S1 is a subset of S2 and S2 is a subset
         of S3, then S1 is a subset of S3.
 
-        \begin{equation}
-          S1 \subseteq S3 \leftarrow S1 \subseteq S2 \land S2 \subseteq S3
-        \end{equation}
+        \begin{quote}
+          S1 $\subseteq$ S3 $\leftarrow$ S1 $\subseteq$ S2 $\land$ S2
+          $\subseteq$ S3
+        \end{quote}
 
       \subsubsection{State Handling Mechanism.}
 
         An undesirable side-effect of providing dynamic update capabilities to
-        language L is the presence of states in the policy base. To translate
-        the language into an extended logic program, the states need to be
-        flattened to produce a stateless policy base. This flattening
+        language $\cal{L}$ is the presence of states in the policy base. To
+        translate the language into an extended logic program, the states need
+        to be flattened to produce a stateless policy base. This flattening
         procedure can easily be achieved by treating the state as a property
         of each atom. Unfortunately, the procedure itself is not as straight-
-        forward as one would expect. Each of the elements of language L will
-        have a different procedure for flattening the states.
+        forward as one would expect. Each of the elements of language $\cal{L}$
+        will have a different procedure for flattening the states.
 
         \emph{Initial State.} Initial state expressions are the easiest to
         translate since the additional state property is fixed to the initial
         state 0. The atom holds(sub, acc, obj) in the initial state is
         translated to holds(sub, acc, obj, 0).
 
-        \begin{equation}
-          \forall\{A | A \in set of all atoms\} holds(A, 0)
-        \end{equation}
+        \begin{quote}
+          $\forall$ A $\in$ \{initial state atoms\}, holds(A, 0)
+        \end{quote}
 
         \emph{Constraint Rules.} As with the initial state expressions, every
         atom in every constraint rule will be given a new state property.
@@ -171,35 +171,37 @@
         Constraints of the form "A implied by B with absence C" is translated
         to:
 
-        \begin{equation}
-          \forall\{S | S \in set of all states\}
-          holds(A, S) \leftarrow holds(B, S) not holds(C, S)
-        \end{equation}
+        \begin{quote}
+          $\forall$ S $\in$ \{all states\},
+          holds(A, S) $\leftarrow$ holds(B, S) not holds(C, S)
+        \end{quote}
 
-        \emph{Transformation.} Given the most basic form of a transformation,
-        "T causes A if B", a transformation T, a state S before transformation
-        T is applied and a function Res that returns the state after
-        transformation T is applied to state S:
+        \emph{Policy Updates.} Given the most basic form of a policy update,
+        "U causes A if B", an update U, a state S before update U is applied
+        and a function Res that returns the state after update U is applied
+        to state S:
 
-        \begin{equation}
-          holds(A, Res(T, S)) \leftarrow holds(B, S)
-        \end{equation}
+        \begin{quote}
+          holds(A, Res(U, S)) $\leftarrow$ holds(B, S)
+        \end{quote}
  
         In addition to the above rule, we also expect atoms that are not
-        affected by the transformation to be carried over to the next state.
-        The following rules must be applied to ensure that this property is
+        affected by the update to be carried over to the next state. The 
+        following rules must be applied to ensure that this property is
         held:
 
-        \begin{equation}
-          holds(A, Res(T, S)) \leftarrow holds(A, S) \land not \lnot holds(A, Res(T, S))
-        \end{equation}
-        \begin{equation}
-          \lnot holds(A, Res(T, S)) \leftarrow \lnot holds(A, S) \land not holds(A, Res(T, S))
-        \end{equation}
+        \begin{quote}
+          holds(A, Res(U, S)) $\leftarrow$ holds(A, S) $\land$ not $\lnot$
+          holds(A, Res(U, S))
+        \end{quote}
+        \begin{quote}
+          $\lnot$ holds(A, Res(U, S)) $\leftarrow$ $\lnot$ holds(A, S) $\land$
+          not holds(A, Res(U, S))
+        \end{quote}
 
-        where T is the transformation, S is the state before transformation
-        T is applied, A is all the atoms in the domain and Res is a function
-        that returns the state after transformation T is applied to state S.
+        where U is the update, S is the state before update U is applied, A is 
+        all the atoms in the domain and Res is a function that returns the
+        state after update U is applied to state S.
 
     \subsection{Extended Logic Program to Normal Logic Program}
 
@@ -233,21 +235,29 @@
         the integrity of the policy base, the following rule must be added 
         for all atoms A in all states S:
 
-        \begin{equation}
-          FALSE \leftarrow holds(A, S, T) \land holds(A, S, F)
-        \end{equation}
+        \begin{quote}
+          FALSE $\leftarrow$ holds(A, S, T) $\land$ holds(A, S, F)
+        \end{quote}
 
   \section{Conclusion}
 
   \begin{thebibliography}{5}
 
-    \bibitem{yan:plp}
-      Zhang and N.Y. Foo,
-      Answer sets for prioritized logic programs.
-      In {\em Proceedings of the 1997 International Logic Programming
-      Symposium (ILPS'97)},
-      pp 69-83. 
-      MIT Press, 1997
+    \bibitem{BAI}
+      Y. Bai and V. Varadharajan,
+      On Formal Languages for Sequences of Authorization Transformations.
+      In \emph{Lecture Notes in Computer Science},
+      Vol. 1698,
+      pp 375-384.
+      Springer-Verlag, 1999
+    \bibitem{JAJ}
+      S. Jajodia, et. al.,
+      Flexible Support for Multiple Access Control Policies.
+      In \emph{ACM Transactions on Database Systems},
+      Vol. 29, No. 2,
+      pp 214-260.
+      ACM, 2001
+      
 
   \end{thebibliography}
 
