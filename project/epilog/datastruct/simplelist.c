@@ -83,8 +83,8 @@ int simplelist_del_index(simplelist_type *list,
   return 0;
 }
 
-/* deletes the node that matches data, uses cmp to compare, fr to free or
- * NULL to not free it */
+/* deletes all the nodes that matches data, uses cmp to compare, 
+ * fr to free or NULL to not free them */
 int simplelist_del_data(simplelist_type *list, 
                         void *data,
                         int (*cmp)(void *, void *),
@@ -104,7 +104,7 @@ int simplelist_del_data(simplelist_type *list,
   curr = list->list;
 
   while (curr != NULL) {
-    if (!cmp(curr->data, data)) {
+    if (cmp(curr->data, data) == 0) {
       if (prev == NULL)
         list->list = list->list->next;
       else
@@ -112,17 +112,16 @@ int simplelist_del_data(simplelist_type *list,
 
       if (fr != NULL)
         fr(curr->data);
+
       free(curr);
 
       (list->length)--;
-
-      return 0;
     }
     prev = curr;
     curr = curr->next;
   }
 
-  return -1;
+  return 0;
 }
 
 /* gives a reference to the index'th data */
@@ -146,26 +145,31 @@ int simplelist_get_index(simplelist_type list,
   return 0;
 }
 
-/* gives a reference to the data that matches data */
-int simplelist_get_data(simplelist_type list, 
-		        void *data,
-                        void **ref,
-                        int (*cmp)(void *, void *))
+/* returns a list of nodes that matches the given data. uses cmp to compare.
+ * resulting list will have the same pointer references as the nodes in the
+ * first list */
+int simplelist_get_data(simplelist_type list,
+                        simplelist_type *res,
+                        void *data,
+                        int (*cmp)(void *, void*))
 {
   simplelist_node *curr;
 
   if (list.length <= 0 ||
       data == NULL ||
-      ref == NULL ||
+      res == NULL ||
       cmp == NULL) 
+    return -1;
+
+  if (simplelist_init(res) != 0)
     return -1;
 
   curr = list.list;
 
   while (curr != NULL) {
     if (!cmp(curr->data, data)) {
-      *ref = curr->data;
-      return 0;
+      if (simplelist_add(res, curr->data) != 0)
+        return -1;
     }
     curr = curr->next;
   }

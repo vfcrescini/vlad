@@ -25,13 +25,10 @@ int stringlist_get(stringlist_type list, unsigned int index, char **string);
 /* add an string into the stringlist */
 int stringlist_add(stringlist_type *list, char *string);
 
-/* delete an string from the stringlist */
+/* delete all instances of string in the list */
 int stringlist_del(stringlist_type *list, char *string);
 
 /* delete all strings from this stringlist */
 int stringlist_purge(stringlist_type *list);
-
-/* returns 0 if the 2 lists are equivalent */
-int stringlist_cmp(stringlist_type s1, stringlist_type s2);
 
 #endif

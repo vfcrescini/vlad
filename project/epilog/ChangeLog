@@ -1,3 +1,21 @@
+2002-09-06  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* simplelist.c :
+	* simplelist.h :
+
+	  - The function simplelist_del_data now deletes ALL instances
+	    of the given data from the list. Before this change, only the
+	    first instance (from the top) is deleted.
+
+	  - The function simplelist_get_data now gives another list containing
+	    pointers to all the nodes from the first list that matches the
+	    given data. API CHANGE.
+
+	* stringlist.c :
+	* stringlist.h :
+
+	  - Took out unused compare function.
+
 2002-09-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* exp/expression.c :

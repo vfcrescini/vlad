@@ -50,7 +50,7 @@ int stringlist_add(stringlist_type *list, char *string)
   return simplelist_add(list, (void *) new_string);
 }
 
-/* delete an string from the stringlist */
+/* delete all instances of string in the list */
 int stringlist_del(stringlist_type *list, char *string)
 {
   if (list == NULL)
@@ -81,33 +81,7 @@ int stringlist_purge(stringlist_type *list)
   return 0;
 }
 
-/* returns 0 if the 2 lists are equivalent */
-int stringlist_cmp(stringlist_type s1, stringlist_type s2)
-{
-  char *str1;
-  char *str2;
-  unsigned int len1;
-  unsigned int len2;
-  unsigned int i;
-
-  if (simplelist_length(s1, &len1) != 0 ||
-      simplelist_length(s2, &len2) != 0 ||
-      len1 != len2)
-    return -1;
-
-  for (i = 0; i < len1; i++) {
-    if (simplelist_get_index(s1, i, (void **) &str1) != 0 ||
-        simplelist_get_index(s2, i, (void **) &str2) != 0)
-      return -1;
-      
-    if (strcmp(str1, str2) != 0)
-      return -1;
-  }
-
-  return 0;
-}
-
-/* returns 0 if the ATOMS pointed to by p1 and p2 are equivalent */
+/* returns 0 if the strings pointed to by p1 and p2 are equivalent */
 int stringlist_compare(void *p1, void *p2)
 {
   if (p1 == NULL || p2 == NULL)

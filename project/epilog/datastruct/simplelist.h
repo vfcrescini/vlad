@@ -8,7 +8,7 @@
 
 /* simple list works like a queue, except the api allows the data
  * to be accessed given its ordinal index (the order in which it was
- * added to the list */
+ * added to the list. */
 
 typedef struct simplelist_node
 {
@@ -37,8 +37,8 @@ int simplelist_del_index(simplelist_type *list,
                          unsigned int index, 
                          int (*fr)(void *));
 
-/* deletes the node that matches data, uses cmp to compare, fr to free or
- * NULL to not free it */
+/* deletes all the nodes that matches data, uses cmp to compare, 
+ * fr to free or NULL to not free them */
 int simplelist_del_data(simplelist_type *list, 
                         void *data,
                         int (*cmp)(void *, void *),
@@ -49,10 +49,12 @@ int simplelist_get_index(simplelist_type list,
                          unsigned int index, 
                          void **ref);
 
-/* gives a reference to the data that matches data */
-int simplelist_get_data(simplelist_type list, 
+/* returns a list of nodes that matches the given data. uses cmp to compare.
+ * resulting list will have the same pointer references as the nodes in the
+ * first list */
+int simplelist_get_data(simplelist_type list,
+                        simplelist_type *res,
 		        void *data,
-                        void **ref,
                         int (*cmp)(void *, void*));
 
 /* returns 0 if data is in the list, uses cmp to compare pointers */
