@@ -1,5 +1,13 @@
 2003-03-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added code to prevent calls the addition of more identifiers
+	    in the symbol table after a call to a close() function. This
+	    will maintain consistency of the atom ids.
+
 	* common/Makefile.in :
 	* common/stringlist.cpp :
 	* common/stringlist.h :

@@ -16,6 +16,7 @@
 
 /* convenience macros */
 #define VLAD_ATOM_TYPE_VALID(X) (((X) >= 0) && ((X) < 4))
+#define VLAD_ATOM_IS_CONST(X)   ((X) == VLAD_ATOM_CONST)
 #define VLAD_ATOM_IS_HOLDS(X)   ((X) == VLAD_ATOM_HOLDS)
 #define VLAD_ATOM_IS_MEMBER(X)  ((X) == VLAD_ATOM_MEMBER)
 #define VLAD_ATOM_IS_SUBSET(X)  ((X) == VLAD_ATOM_SUBSET)
@@ -26,6 +27,8 @@ class kb {
     ~kb();
     /* (re)init kb */
     int init();
+    /* after this is called, no further calls to add_ident() is allowed */
+    int close();
     /* register an identifier in the kb */
     int add_ident(const char *n, unsigned char t);
     /* gives an atom id based on the identifiers already given */
@@ -36,6 +39,8 @@ class kb {
                  unsigned int *a);
   private :
     symtab *stable;
+    bool initialised;
+    bool closed;
 } ;
 
 #endif
