@@ -12,9 +12,6 @@
 #include <config.h>
 #include <vlad.h>
 #include <parser.h>
-#include <list.h>
-#include <identifier.h>
-#include <symtab.h>
 
 int main(int argc, char *argv[])
 {
@@ -52,46 +49,7 @@ int main(int argc, char *argv[])
   yyout = stdout;
   yyerr = stderr;
 
-#if 1
   yyparse();
-#else
-  symtab *x;
-  identifier *y;
-
-  x = new symtab();
-  x->add("1", VLAD_IDENT_SUBJECT);
-  x->add("2", VLAD_IDENT_SUBJECT);
-  x->add("3", VLAD_IDENT_SUBJECT);
-  x->add("4", VLAD_IDENT_SUBJECT);
-  x->add("5", VLAD_IDENT_SUBJECT);
-  x->add("5", VLAD_IDENT_SUBJECT);
-
-  fprintf(stderr, "%d\n\n", x->length());
-
-  x->get("5", &y);
-  fprintf(stderr, "%s\n", y->get_name());
-  x->get("4", &y);
-  fprintf(stderr, "%s\n", y->get_name());
-  x->get("3", &y);
-  fprintf(stderr, "%s\n", y->get_name());
-  x->get("2", &y);
-  fprintf(stderr, "%s\n", y->get_name());
-  x->get("1", &y);
-  fprintf(stderr, "%s\n\n", y->get_name());
-
-  x->del("3");
-  
-  x->get("5", &y);
-  fprintf(stderr, "%s\n", y->get_name());
-  x->get("4", &y);
-  fprintf(stderr, "%s\n", y->get_name());
-  x->get("3", &y);
-  fprintf(stderr, "%s\n", y->get_name());
-  x->get("2", &y);
-  fprintf(stderr, "%s\n", y->get_name());
-  x->get("1", &y);
-  fprintf(stderr, "%s\n\n", y->get_name());
-#endif
 
   return 0;
 }
