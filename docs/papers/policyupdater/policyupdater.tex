@@ -34,33 +34,31 @@
 
     \subsection{Overview of Logic-Based Approaches}
 
-    \subsection{Contribution}
+    \subsection{Contributions}
 
-    \subsection{Structure of this Paper}
+    \subsection{Structure of This Paper}
 
   \section{Language $\cal{L}$}
 
-    Language $\cal{L}$ is a well-defined, first-order logic language that
-    represents a policy base for an authorization system. Two key features of
-    the language are: (1) provides a means to conditionally and dynamically
-    update the existing policy base and (2) provides a mechanism by which
-    queries may be evaluated from the updated policy base.
+    Language $\cal{L}$ is a first-order logic language that represents a policy
+    base for an authorization system. Two key features of the language are: (1)
+    providing a means to conditionally and dynamically update the existing
+    policy base and (2) having a mechanism by which queries may be evaluated
+    from the updated policy base.
 
     \subsection{Syntax}
 
       Logic programs of language ${\cal L}$ are composed of language
-      statements, each terminated by a semicolon ; character. C-style comments
-      delimited by the /* and */ characters may appear anywhere in the logic
-      program.
+      statements, each terminated by a semicolon ";" character. C-style
+      comments delimited by the "/*" and "*/" characters may appear anywhere in
+      the logic program.
 
       \subsubsection{Components of Language $\cal{L}$}
 
         \paragraph{Identifiers.}
-          The most basic unit of language $\cal{L}$ is an identifier.
+          The most basic unit of language $\cal{L}$ is the identifier.
           Identifiers are used to represent the different components of the
-          language.  
-    
-          Identifiers are divided into three main classes:
+          language, and are divided into three main classes:
 
           \begin{itemize}
             \item
@@ -71,19 +69,17 @@
 
               \begin{itemize}
                 \item
-                  {\em Subjects}: privilege holders (e.g. alice, lecturers,
-                  grp).
+                  {\em Subjects}: e.g. alice, lecturers, group.
                 \item
-                  {\em Access Rights}: privilege (e.g. read, write, own).
+                  {\em Access Rights}: e.g. read, write, own.
                 \item
-                  {\em Objects}: privilege entities (e.g. file, database,
-                  directory).
+                  {\em Objects}: e.g. file, database, directory.
               \end{itemize}
 
-              An entity identifier is defined as a lower-case alpha character,
-              followed by 0 to 127 characters of alpha, digit or underscore
-              characters. The following regular expression shows the syntax
-              of entity identifiers:
+              An entity identifier is defined as a lower-case alphabet
+              character, followed by 0 to 127 characters of alphabet, digit or
+              underscore characters. The following regular expression shows the
+              syntax of entity identifiers:
 
               \begin{verbatim}[a-z]([a-zA-Z0-9_]{0,127}\end{verbatim}
 
@@ -91,7 +87,7 @@
               {\em Policy Update Identifiers} are used for the sole purpose of
               naming a policy update. These identifier names are then used as
               labels to refer to policy update definitions and directives. As
-              labels, identifiers of this class occupies a different namespace
+              labels, identifiers of this class occupy a different namespace
               from entity identifiers. For this reason, policy update
               identifiers share the same syntax with entity identifiers:
 
@@ -211,7 +207,7 @@
 
         \paragraph{Initial Fact Definition.}
 
-          The initial facts of the policy base, facts that hold before any
+          The initial facts of the policy base, those that hold before any
           policy updates are performed, are defined by using the following
           definition syntax:
 
@@ -244,7 +240,7 @@ always <exp1>
         \paragraph{Policy Update Definition.}
 
           Before a policy update can be applied, it must first be defined by
-          by using the following syntax:
+          using the following syntax:
 
           \begin{verbatim}
 <up_id>([<var_id>[, ...]])
@@ -261,7 +257,7 @@ always <exp1>
           $exp2$ is a precondition expression that must hold in the current
           state before this update is applied.
 
-          It is important to not that a policy base definition will have no
+          It is important to note that a policy update definition will have no
           effect on the policy base until it is appled by one of the directives
           described in the following section.
 
@@ -273,13 +269,12 @@ always <exp1>
         defined policy updates in the domain. The policy updates in the
         sequence list are applied to the current state of the policy base one
         at a time to produce a policy base state upon which queries can be
-        evaluated. The policy updates are applied to the policy base in the
-        same order as they appear in the sequence list.
+        evaluated. 
 
         The following four directives are the policy sequence manipulation
         features of language $\cal{L}$.
 
-        \subparagraph{Adding an Update into the Sequence.}
+        \subparagraph{Adding an update into the sequence.}
           Defined policy updates are added into the sequence list through the
           use of the following directive:
 
@@ -290,7 +285,7 @@ always <exp1>
           identifiers that will replace the variable identifiers that occur in
           the definition of the policy update. 
 
-        \subparagraph{Listing the Updates in the Sequence.}
+        \subparagraph{Listing the updates in the sequence.}
           The following directive may be used to list the current contents of
           the policy update sequence list.
 
@@ -306,7 +301,7 @@ always <exp1>
           identifier and the $e\_id$ list is the list of entity identifiers
           used to replace the variable identifier place-holders.
 
-        \subparagraph{Removing an Update from the Sequence.}
+        \subparagraph{Removing an update from the sequence.}
           The syntax below shows the directive to remove a policy update
           reference from the list. $n$ is the ordinal index of the policy
           update to be removed. Note that removing a policy update reference
@@ -315,7 +310,7 @@ always <exp1>
 
           \begin{verbatim}seq del <n>;\end{verbatim}
 
-        \subparagraph{Computing after a Policy Update.}
+        \subparagraph{Computing an update sequence.}
 
           The policy updates in the sequence list does not get applied until
           the $compute$ directive is issued. The directive causes the policy
@@ -330,7 +325,7 @@ always <exp1>
 
           A ground query expression may be issued against the current state of
           the policy base. This current state is derived after all the updates
-          in the update sequence has been applied, one at a time, upon the
+          in the update sequence have been applied, one at a time, upon the
           initial state. Query expressions are answered with a $true$, $false$
           or an $unknown$, depending on whether the queried expression holds,
           its negation holds, or neither, respectively. Syntax is as follows:
@@ -399,24 +394,17 @@ query holds(alice, read, file);
           rules and policy update definitions.
         \end{definition}
 
-        In addition to the domain ${\cal D}_{\cal L}$, language ${\cal L}$
-        also includes an additional ordered set: the sequence list $\psi$.
-        The sequence list $\psi$ is an ordered set that contains a sequence of
-        references to policy update definitions. Each policy update reference
-        consists of the policy update identifier and a series of zero or more
-        identifier entities to replace the variable place-holders in the policy
-        update definitions.
-
-        The total number of states $\Sigma$ is the number of policy updates in
-        the sequence list $\psi$ plus the initial state.
-
-        \begin{quote}
-          $\Sigma$ = $|\psi|$ + $1$
-        \end{quote}
+        In addition to the domain description ${\cal D}_{\cal L}$, language
+        ${\cal L}$ also includes an additional ordered set: the sequence list
+        $\psi$. The sequence list $\psi$ is an ordered set that contains a
+        sequence of references to policy update definitions. Each policy update
+        reference consists of the policy update identifier and a series of zero
+        or more identifier entities to replace the variable place-holders in
+        the policy update definitions.
 
       \subsubsection{Language ${\cal L}^{*}$}
 
-        In Language ${\cal L}$, the policy base is subject to change, which is
+        In language ${\cal L}$, the policy base is subject to change, which is
         triggered by the application of policy updates. Such changes bring
         forth the concept of policy base states. Conceptually, a state may be
         thought of as a set of facts and constraints of the policy base at a
@@ -430,11 +418,11 @@ query holds(alice, read, file);
 
         Using this definition of a state means that for every policy update
         applied to the policy base, a new instance of the policy base or a new
-        set of facts and constraints are generated. To avoid having to deal
-        with multiple policy base instances, we introduce an intermediate
-        language, language ${\cal L}^{*}$, which is an extended logic program
-        representation of langauge ${\cal L}$. As such, it is equivalent to
-        language ${\cal L}$ in terms of exressive power.
+        set of facts and constraints are generated. To precisely define the
+        underlying semantics of domain description ${\cal D}_{\cal L}$ in
+        language ${\cal L}$, we introduce language ${\cal L}^{*}$, which is an
+        extended logic program representation of langauge ${\cal L}$, with
+        state as an explicit sort.
 
         \paragraph{Entities.}
 
@@ -497,7 +485,7 @@ query holds(alice, read, file);
         \paragraph{Facts.}
        
           A fact is a logical statement that makes a claim that an atom either
-          holds or does not hold in a particular state. The following is the
+          holds or does not hold at a particular state. The following is the
           formal definition of fact $f$ in state $\sigma$:
 
           \begin{quote}
@@ -505,9 +493,7 @@ query holds(alice, read, file);
           \end{quote}
 
         \paragraph{Expressions and Propositions.}
-
-          Following the standard notation of extended logic programs,
-          expressions or conjunctions of facts are represented as follows:
+          Expressions or conjunctions of facts are represented as follows:
 
           \begin{quote}
             $f_{0}$, ..., $f_{n}$
@@ -527,16 +513,16 @@ query holds(alice, read, file);
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
         \begin{definition}
-          Given the domain description ${\cal D}_{\cal L}$ of language
-          ${\cal L}$, $Translate$(${\cal D}_{\cal L}$) is defined as the
+          Given a domain description ${\cal D}_{\cal L}$ of language
+          ${\cal L}$, $Tran$(${\cal D}_{\cal L}$) is defined as the
           extended logic program ${\cal L}^{*}$ translation of language
           ${\cal L}$. The domain description ${\cal D}_{\cal L}$ is said to be
-          {\em consistent} if and only if $Translate$(${\cal D}_{\cal L}$) has
-          at least one consistent answer set. 
+          {\em consistent} if and only if $Trans$(${\cal D}_{\cal L}$) has
+          a consistent answer set. 
         \end{definition}
 
-        Before we can fully define the \emph{Translate} function, we must first
-        define the following functions:
+        Before we can fully define the $Trans$(${\cal D}_{\cal L}$), we must
+        first define the following functions:
 
         \paragraph{}
 
@@ -548,13 +534,18 @@ query holds(alice, read, file);
             $\sigma'$ = $Result$($u$, $\sigma$)
           \end{quote}
 
+          Note that language ${\cal L}^{*}$ contains only one special state
+          constant $S_{0}$ to represent the initial state of a given domain
+          description. All other states are represented as a resulting state
+          obtained by applying the $Result$ function.
+
         \paragraph{}
 
-          Another function, the $CopyAtom$ function, takes two arguments:
-          an atom $\hat{\alpha}$ of language ${\cal L}^{*}$ in some state
-          $\sigma$ and another state $\sigma'$. The function returns an
-          equivalent atom of the same type and with the same entities,
-          but in the new state specified.
+          Another function, $CopyAtom$, takes two arguments: an atom
+          $\hat{\alpha}$ of language ${\cal L}^{*}$ at some state $\sigma$ and
+          another state $\sigma'$. The function returns an equivalent atom of
+          the same type and with the same entities, but in the new state
+          specified.
 
           \begin{quote}
             $CopyAtom$($\hat{\alpha}$, $\sigma'$)
@@ -571,12 +562,12 @@ query holds(alice, read, file);
 
         \paragraph{}
 
-          The $TranslateAtom$ function takes an atom $\alpha$ of language
+          The $TransAtom$ function takes an atom $\alpha$ of language
           ${\cal L}$ and an arbitrary state $\sigma$ and returns the equivalent
           atom of language ${\cal L}^{*}$.
  
           \begin{quote}
-            $TranslateAtom$($\alpha$, $\sigma$)
+            $TransAtom$($\alpha$, $\sigma$)
  
             = 
             \begin{math}
@@ -590,10 +581,10 @@ query holds(alice, read, file);
 
         \paragraph{}
 
-          Finally, the $TranslateFact$ function is similar to the
-          $TranslateAtom$ function, but instead of translating an atom, it
-          takes a fact from language ${\cal L}$ and a state and returns the
-          equivalent fact of language ${\cal L}^{*}$.
+          The $TransFact$ function is similar to the $TransAtom$ function, but
+          instead of translating an atom, it takes a fact from language
+          ${\cal L}$ and a state then returns the equivalent fact in language
+          ${\cal L}^{*}$.
 
         \paragraph{Initial Fact Expression.}
 
@@ -606,9 +597,9 @@ query holds(alice, read, file);
           Given an initial fact expression of language ${\cal L}$ that is
           composed of $n$ facts:
 
-          \begin{quote}
-            initially $f_{0}$ \&\& ... \&\& $f_{n}$
-          \end{quote}
+          \begin{alltt}
+  initially \(f\sb{0}\) && ... && \(f\sb{n}\)
+          \end{alltt}
 
           In language ${\cal L}^{*}$, the statement above is represented as:
 
@@ -619,13 +610,8 @@ query holds(alice, read, file);
 
             $\hat{f_{n}}$ $\leftarrow$
 
-            where:
-              \begin{itemize}
-                \item
-                  $\hat{f_{i}}$ $=$ $TranslateFact$($f_{i}$, $S_{0}$)
-                \item
-                  $0$ $\leq$ $i$ $\leq$ $n$
-              \end{itemize}
+            where $\hat{f_{i}}$ $=$ $TransFact$($f_{i}$, $S_{0}$), $0$ $\leq$
+            $i$ $\leq$ $n$
           \end{quote}
 
         \paragraph{Constraint Rules.}
@@ -636,13 +622,11 @@ query holds(alice, read, file);
           language ${\cal L}$, with $m$, $n$, $o$ $\geq$ $0$ may be preresented
           as:
 
-          \begin{quote}
-            always $a_{0}$ \&\& ... \&\& $a_{m}$
-
-            implied by $b_{0}$ \&\& ... \&\& $b_{n}$
-
-            with absence $c_{0}$ \&\& ... \&\& $c_{o}$
-          \end{quote}
+          \begin{alltt}
+  always \(a\sb{0}\) && ... && \(a\sb{m}\)
+  implied by \(b\sb{0}\) && ... && \(b\sb{n}\)
+  with absence \(c\sb{0}\) && ... && \(c\sb{o}\)
+          \end{alltt}
          
           Each fact in the $always$ clause of language ${\cal L}$ corresponds
           to a new rule, where it is the consequent. Each of these new rules
@@ -692,23 +676,17 @@ query holds(alice, read, file);
 
             where:
 
-            \begin{itemize}
-              \item
-                $\hat{a}^{\sigma}_{i}$ $=$ $TranslateFact$($a_{i}$, $\sigma$)
-              \item
-                $\hat{b}^{\sigma}_{j}$ $=$ $TranslateFact$($b_{j}$, $\sigma$)
-              \item
-                $\hat{c}^{\sigma}_{k}$ $=$ $TranslateFact$($c_{k}$, $\sigma$)
-              \item
-                $0$ $\leq$ $i$ $\leq$ $m$
-              \item
-                $0$ $\leq$ $j$ $\leq$ $n$
-              \item
-                $0$ $\leq$ $k$ $\leq$ $o$
-              \item
-                $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$
-            \end{itemize}
-          \end{quote}      
+            $\hat{a}^{\sigma}_{i}$ $=$ $TransFact$($a_{i}$, $\sigma$),
+            $0$ $\leq$ $i$ $\leq$ $m$
+
+            $\hat{b}^{\sigma}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
+            $0$ $\leq$ $j$ $\leq$ $n$
+
+            $\hat{c}^{\sigma}_{k}$ $=$ $TransFact$($c_{k}$, $\sigma$),
+            $0$ $\leq$ $k$ $\leq$ $o$
+
+            $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$
+          \end{quote}
 
         \paragraph{Policy Updates.}
 
@@ -738,17 +716,11 @@ query holds(alice, read, file);
 
             where:
 
-            \begin{itemize}
-              \item
-                $\hat{a}_{i}$ $=$ $TranslateFact$($a_{i}$, $Result$($u$, $\sigma$))
-              \item
-                $\hat{b}_{j}$ $=$ $TranslateFact$($b_{j}$, $\sigma$)
-              \item
-                $0$ $\leq$ $i$ $\leq$ $m$
-              \item
-                $0$ $\leq$ $j$ $\leq$ $n$
+            $\hat{a}_{i}$ $=$ $TransFact$($a_{i}$, $Result$($u$, $\sigma$)),
+            $0$ $\leq$ $i$ $\leq$ $m$
 
-            \end{itemize}
+            $\hat{b}_{j}$ $=$ $TransFact$($b_{j}$, $\sigma$),
+            $0$ $\leq$ $j$ $\leq$ $n$
           \end{quote}
 
         \paragraph{Additional Constraints.}
@@ -989,10 +961,10 @@ query holds(alice, read, file);
 
               $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
 
-              $\forall$($\hat{\alpha}$,$u$), where
-
+              $\forall$($\hat{\alpha}$,$u$), where 
               $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
               $u$ $\in$ $\psi$,
+
               $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Result$($u$, $\sigma$))
             \end{quote}
 
