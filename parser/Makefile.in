@@ -1,11 +1,15 @@
 # Vino Crescini <jcrescin@cit.uws.edu.au>
 
-TOPSRCDIR = ..
+TOPSRCDIR = @top_srcdir@
+CC = @CC@
+LEX = @LEX@
+YACC = @YACC@
+DEBUG = @enable_debug@
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libparser.a
 INCLUDES = parser.h
 
-ifdef DEBUG
+ifeq "$(DEBUG)" "yes"
 CFLAGS += -g -DDEBUG
 else
 CFLAGS += -O2
@@ -16,10 +20,10 @@ all : public
 public : $(TARGETS)
 	@mkdir -p $(TOPSRCDIR)/include
 	@mkdir -p $(TOPSRCDIR)/lib
-	@for i in $(INCLUDES); do \
+	@for i in $(INCLUDES); do                  \
 	ln -sf ../parser/$$i $(TOPSRCDIR)/include; \
 	done
-	@for i in $(TARGETS); do \
+	@for i in $(TARGETS); do               \
 	ln -sf ../parser/$$i $(TOPSRCDIR)/lib; \
 	done
 
@@ -33,19 +37,22 @@ parser.o : y.tab.h y.tab.c
 	$(CC) $(CFLAGS) -o $(@) -c y.tab.c
 
 lex.yy.c : scanner.l
-	flex scanner.l
+	$(LEX) scanner.l
 
 y.tab.c : parser.y
-	bison -y parser.y
+	$(YACC) parser.y
 
 y.tab.h : parser.y
-	bison -yd parser.y
+	$(YACC) -d parser.y
 
 clean :
-	$(RM) $(TARGETS) *.o lex.yy.c y.tab.c y.tab.h
-	@for i in $(INCLUDES); do \
+	$(RM) *.o lex.yy.c y.tab.c y.tab.h
+
+distclean : clean
+	$(RM) $(TARGETS) Makefile
+	@for i in $(INCLUDES); do       \
 	$(RM) $(TOPSRCDIR)/include/$$i; \
 	done
-	@for i in $(TARGETS); do \
+	@for i in $(TARGETS); do    \
 	$(RM) $(TOPSRCDIR)/lib/$$i; \
 	done
