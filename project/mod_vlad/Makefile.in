@@ -14,6 +14,12 @@ LIBS = mod_vlad.so
 OBJECTS = mod_vlad.o policy_p.o policy_s.o util.o admin.o
 TEMP = lex.*.c *.tab.c *.tab.h
 
+.PHONY :    \
+  all       \
+  clean     \
+  distclean \
+  $(NULL)
+
 all : $(LIBS)
 
 mod_vlad.so : $(OBJECTS)
