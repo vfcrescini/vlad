@@ -1,0 +1,28 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+CC = @CC@
+CFLAGS = @CFLAGS@
+LDFLAGS = @LDFLAGS@
+LN_S = @LN_S@
+STRIP = @STRIP@
+PICFLAG = @PICFLAG@
+VERSION = @VERSION@
+LIBS = mod_vlad.so
+
+all : $(LIBS)
+
+mod_vlad.so : mod_vlad.o
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$(@).`echo $(VERSION) | cut -d. -f1` -o $(@) $(^)
+ifdef STRIP
+	strip $(@)
+endif
+                                                                                
+mod_vlad.o : mod_vlad.c
+	$(CC) $(CFLAGS) -DSHARED_MODULE -fPIC -c -o $(@) $(^)
+
+clean :
+	$(RM) mod_vlad.o
+
+distclean : clean
+	$(RM) -r $(LIBS) Makefile config.status config.log autom4te.cache
