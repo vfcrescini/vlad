@@ -139,7 +139,7 @@ void *modvlad_create_query(apr_pool_t *a_p,
 {
   int retval;
   void *atom = NULL;
-  void *exp = NULL;
+  void *texp = NULL;
 
   if (!a_p || !a_subject  || !a_access || !a_object)
     return NULL;
@@ -154,7 +154,7 @@ void *modvlad_create_query(apr_pool_t *a_p,
     return NULL;
   }
 
-  if ((retval = vlad_exp_create(&exp)) != VLAD_OK) {
+  if ((retval = vlad_exp_create(&texp)) != VLAD_OK) {
     ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
@@ -175,7 +175,7 @@ void *modvlad_create_query(apr_pool_t *a_p,
     return NULL;
   }
 
-  if ((retval = vlad_exp_add(exp, atom)) != VLAD_OK) {
+  if ((retval = vlad_exp_add(texp, atom)) != VLAD_OK) {
     ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
                   0,
@@ -185,7 +185,7 @@ void *modvlad_create_query(apr_pool_t *a_p,
     return NULL;
   }
 
-  return exp;
+  return texp;
 }
 
 const char *modvlad_strip_url(apr_pool_t *a_p, const char *a_url)

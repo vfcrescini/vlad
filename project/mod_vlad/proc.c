@@ -187,20 +187,20 @@ static int processreq(apr_pool_t *a_p,
   }
   else if (!strcmp(cmd, "Q")) {
     /* query */
-    void *exp = NULL;
+    void *texp = NULL;
     unsigned char res;
 
-    exp = modvlad_create_query(a_p,
+    texp = modvlad_create_query(a_p,
                                ((const char **)a_req->elts)[2],
                                ((const char **)a_req->elts)[3],
                                ((const char **)a_req->elts)[4]);
 
-    if (!exp) {
+    if (!texp) {
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
       return MODVLAD_FAILURE;
     }
 
-    if (vlad_kb_query_evaluate(a_kb, exp, &res) != VLAD_OK) {
+    if (vlad_kb_query_evaluate(a_kb, texp, &res) != VLAD_OK) {
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
       return MODVLAD_FAILURE;
     }
@@ -215,7 +215,7 @@ static int processreq(apr_pool_t *a_p,
       *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "?");
   
     /* cleanup */
-    vlad_exp_destroy(exp);
+    vlad_exp_destroy(texp);
   }
   else if (!strcmp(cmd, "TT")) {
     /* total number of transformations */
@@ -795,13 +795,13 @@ int modvlad_server_init(apr_pool_t *a_p,
                         const char *a_ufile,
                         const char *a_pfile)
 {
-  void *exp = NULL;
+  void *texp = NULL;
   apr_file_t *polfile = NULL;
 
   if (!a_p || !a_kb || !a_docroot || !a_ufile || !a_pfile)
     return MODVLAD_NULLPTR;
 
-  if (modvlad_init_kb(a_p, a_ufile, a_docroot, a_kb, &exp)) {
+  if (modvlad_init_kb(a_p, a_ufile, a_docroot, a_kb, &texp)) {
     *a_kb = NULL;
     return MODVLAD_FAILURE;
   }
@@ -811,7 +811,7 @@ int modvlad_server_init(apr_pool_t *a_p,
     return MODVLAD_FAILURE;
   }
 
-  if (modvlad_load_kb(a_p, polfile, *a_kb, exp) != MODVLAD_OK) {
+  if (modvlad_load_kb(a_p, polfile, *a_kb, texp) != MODVLAD_OK) {
     *a_kb = NULL;
     return MODVLAD_FAILURE;
   }

@@ -1,5 +1,11 @@
 2004-11-03  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* proc.c :
+	* util.c :
+
+	  - Changed "exp" to "texp" to resolve conflict with a global
+	    definition.
+
 	* Makefile.in :
 	* admin.c :
 	* admin.h :
