@@ -1170,6 +1170,7 @@
           \end{itemize}
 
         \begin{vdefinition}
+          \label{def-trans}
           Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, its
           ${\cal L^{*}}$ translation $Trans$(${\cal D_{L}}$) is an extended
           logic program of language ${\cal L}$ consisting of: (1) initial fact
@@ -1477,16 +1478,6 @@
             % policy updates
             $M_{u}$ $|\psi|$ +
 
-            % transitivity rules
-            \hspace{1em}
-            $|\psi|$ $($$|{\cal E}_{sg}|^{3}$ +
-            $|{\cal E}_{ag}|^{3}$ +
-            $|{\cal E}_{og}|^{3}$$)$ +
-
-            % inertial rules
-            \hspace{1em}
-            $2$ $|{\cal A}|$ $|\psi|$ +
-
             % membership inheritance
             \hspace{1em}
             $2|\psi|$$|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
@@ -1506,8 +1497,129 @@
 
             \hspace{1em}
             $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
+
+            % transitivity rules
+            \hspace{1em}
+            $|\psi|$ $($$|{\cal E}_{sg}|^{3}$ +
+            $|{\cal E}_{ag}|^{3}$ +
+            $|{\cal E}_{og}|^{3}$$)$ +
+
+            % inertial rules
+            \hspace{1em}
+            $2$ $|{\cal A}|$ $|\psi|$ +
           \end{vquote}
         \end{vtheorem}
+
+        \begin{proof}
+          From Definition \ref{def-trans}, it follows that the size of a
+          language ${\cal L}^{*}$ translation is:
+
+          \begin{vquote}
+            $|$$Trans$(${\cal D_{L}}$)$|$ =
+
+            \hspace{1em}
+            $|$${\cal R}_{ini}$$|$ +
+            $|$${\cal R}_{con}$$|$ +
+            $|$${\cal R}_{upd}$$|$ +
+            $|$${\cal R}_{inh}$$|$ +
+            $|$${\cal R}_{tra}$$|$ +
+            $|$${\cal R}_{ine}$$|$
+          \end{vquote}
+
+          where ${\cal R}_{ini}$, ${\cal R}_{con}$, ${\cal R}_{upd}$,
+          ${\cal R}_{inh}$, ${\cal R}_{tra}$, ${\cal R}_{ine}$ are the sets of
+          initial fact rules, constraint rules, policy update rules,
+          inheritance rules, transitivity rules and inertial rules,
+          respectively.
+
+          Assuming that each statement in ${\cal S}_{i}$ contains a single
+          fact, the number of initial fact rules is:
+
+          \begin{vquote}
+            $|$${\cal R}_{ini}$$|$ = $|$${\cal S}_{i}$$|$
+          \end{vquote}
+
+          Each language ${\cal L}$ constraint statement corresponds to $n$
+          rules in language ${\cal L}^{*}$, where $n$ is the number of policy
+          update states times the number of facts in the {\em always} clause of
+          the statement. With $M_{c}$ as the maximal number of facts in the
+          {\em always} clause of any constraint statement, we have:
+
+          \begin{vquote}
+            $|$${\cal R}_{con}$$|$ = $|$${\cal S}_{c}$$|$ $|\psi|$ $M_{c}$
+          \end{vquote}
+
+          For policy update statements, only those that are applied are
+          actually translated to language ${\cal L}^{*}$. With $M_{u}$ as the
+          maximal number of facts in the post condition of any applied policy
+          update statement, we have:
+
+          \begin{vquote}
+            $|$${\cal R}_{con}$$|$ = $|\psi|$ $M_{u}$
+          \end{vquote}
+
+          The number of inheritance rules is the sum of the number of member
+          inheritance rules and the number of subset inheritance rules:
+
+          \begin{vquote}
+            $|$${\cal R}_{inh}$$|$ =
+            $|$${\cal R}_{inh_{m}}$$|$ +
+            $|$${\cal R}_{inh_{s}}$$|$
+          \end{vquote}
+
+          Since the membership inheritance rules show the relationships between
+          every possible combination of single and group entities times the
+          number of states times 2 (for negative facts), we have:
+
+          \begin{vquote}
+            $|$${\cal R}_{inh_{m}}$$|$ =
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ +
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
+          \end{vquote}
+
+          For subset inheritance rules, only the relationships between group
+          entities are considered:
+
+          \begin{vquote}
+            $|$${\cal R}_{inh_{s}}$$|$ =
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ +
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
+          \end{vquote}
+
+          As transitivity rules enumerate every possible combinations of any
+          three group entities, for each entity type, the total number of
+          transitivity rules is shown below:
+
+          \begin{vquote}
+            $|$${\cal R}_{tra}$$|$ =
+            $|\psi|$ $($$|{\cal E}_{sg}|^{3}$ +
+            $|{\cal E}_{ag}|^{3}$ +
+            $|{\cal E}_{og}|^{3}$$)$
+          \end{vquote}
+
+          Finally, a single atom in language ${\cal L}$ corresponds to $n$
+          inertial rules, where $n$ is the number of states times 2 (for
+          negative facts):
+
+          \begin{vquote}
+            $|$${\cal R}_{ine}$$|$ =
+            $2$ $|{\cal A}|$ $|\psi|$
+          \end{vquote}
+        \end{proof}
 
   \section{Domain Consistency Checking and Evaluation}
     \label{sec-cons}
