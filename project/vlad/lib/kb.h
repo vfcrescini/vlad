@@ -47,13 +47,15 @@ class kb {
     int del_seqtab(unsigned int i);
     /* enumerate the sequences in the sequence table, output to f */
     int list_seqtab(FILE *f);
-    /* generate a human-readable general logic program and dump output to f */
-    int generate_nlp(expression *e, FILE *f);
+    /* generate the rules necessary to evaluate queries */
+    int compute_generate(FILE *f);
+    /* generate the query */
+    int query_generate(expression *e, FILE *f);
 #ifdef SMODELS
     /* prepares the kb for queries */
-    int compute();
+    int compute_evaluate();
     /* use wrapper class to evaluate a query */
-    int evaluate_query(expression *e, unsigned char *r);
+    int query_evaluate(expression *e, unsigned char *r);
 #endif
   private :
     symtab *stable;
