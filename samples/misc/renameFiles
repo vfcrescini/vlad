@@ -9,20 +9,21 @@
 
 counter=1
 charlen=5
+tempdir=./.tmp_$$_
 
-mkdir /tmp/__tmp_$$_
+mkdir $tempdir
 
 for tempFile in *
 do
   # get extension
-  extension=${tempFile##*.}
+  extension="${tempFile##*.}"
 
-  if [ ${extension} = ${tempFile} ]
+  if [ "${extension}" = "${tempFile}" ]
   then
     # no extension so just drop the name
     extension=
   else
-    extension=.${extension}
+    extension=".${extension}"
   fi
 
   # pad the name with zeroes
@@ -34,10 +35,10 @@ do
 
   echo "renaming ${tempFile} to ${name}${extension}"
 
-  mv ${tempFile} /tmp/__tmp_$$_/${name}${extension}
+  mv "${tempFile}" $tempdir/${name}${extension}
 
   counter=$[$counter+1]
 done
 
-mv /tmp/__tmp_$$_/* .
-rmdir /tmp/__tmp_$$_
+mv $tempdir/* .
+rmdir $tempdir
