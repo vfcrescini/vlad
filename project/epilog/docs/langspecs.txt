@@ -9,10 +9,11 @@ Language Specifications
 
      1.1.1. Relational Atoms
 
-       A single logical fact stating a relation between a subject and an object. There
-       is no distiction between the subject/object relation and the subject-group/object-
-       group relation. This implies that any given access-right can be used for both
-       subject/object relations and subject-group/object-group relations.
+       A single logical fact stating a relation between a subject and an object.
+       There is no distiction between the subject/object relation and the 
+       subject-group/object-group relation. This implies that any given access-
+       right can be used for both subject/object relations and subject-
+       group/object-group relations.
 
          holds(subject, access-right, object)
 
@@ -23,7 +24,8 @@ Language Specifications
 
      1.1.2. Containment Atoms
 
-       A single logical fact describing a set containment relationship to another set.
+       A single logical fact describing a set containment relationship to
+       another set.
 
          cont(subject-group-1, subject-group-2) 
 
@@ -33,8 +35,8 @@ Language Specifications
 
      1.1.3. Membership Atoms
 
-       A single logical fact describing the membership of a singular subject/object
-       to a subject/object group.
+       A single logical fact describing the membership of a singular 
+       subject/object to a subject/object group.
 
          elt(subject-1, subject-group-1)
 
@@ -47,20 +49,22 @@ Language Specifications
      1.2.1. Conjuction
 
      Atoms can be grouped together with the logical conjunction AND. Note that
-     DISJUNCTIONS are not allowed in this language. The symbol for this conjuction
-     is && (double ampersand, as it is in C).
+     DISJUNCTIONS are not allowed in this language. The symbol for this
+     conjuction is && (double ampersand, as it is in C).
 
        <atom> && <atom> && ...
 
      1.2.2. Negation
 
-       Atoms can be negated with the ! symbol (exclamation-point, as it is in C).
+       Atoms can be negated with the ! symbol (exclamation-point, as it is
+       in C).
      
          ! <atom>
 
      1.2.3. Operator Precedence
 
-       The negation operator has higher precedence than the conjunction operator.
+       The negation operator has higher precedence than the conjunction
+       operator.
 
          ! holds(a1, b1, c1) && ! holds(a2, b2, c2)
 
@@ -68,10 +72,10 @@ Language Specifications
 
          (! holds(a1, b1, c1)) && (! holds(a2, b2, c2))
 
-       Compound statements are always evaluated from left to right. This means the left-
-       most operator (conjuction or negation) is evaluated first. This can be safely
-       ignored since the language contains only 2 operators with different precedence
-       levels.
+       Compound statements are always evaluated from left to right. This means
+       the left-most operator (conjuction or negation) is evaluated first. This
+       can be safely ignored since the language contains only 2 operators with 
+       different precedence levels.
 
          ! holds(a1, b1, c1) && holds(a2, b2, c2) && holds(a3, b3, c3)
 
