@@ -8,8 +8,16 @@ LEX = @LEX@
 YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
+SMODELS = @SMODELS@
 TARGETS = libkb.a
-INCLUDES = atom.h expression.h sequence.h symtab.h consttab.h transtab.h kb.h
+
+ifdef SMODELS
+SMINCLUDES = wrapper.h
+SMOBJECTS = wrapper.o
+endif
+
+INCLUDES = atom.h expression.h sequence.h symtab.h consttab.h transtab.h $(SMINCLUDES) kb.h
+OBJECTS = atom.o expression.o sequence.o symtab.o consttab.o transtab.o $(SMOBJECTS) kb.o
 
 all : copy-includes copy-targets
 
@@ -25,8 +33,8 @@ copy-targets : $(TARGETS)
 	ln -sf ../../../kb/$$i $(DISTDIR)/lib/vlad; \
 	done
 
-libkb.a : atom.o expression.o sequence.o symtab.o consttab.o transtab.o kb.o
-	$(AR) -rcs $(@) atom.o expression.o sequence.o symtab.o consttab.o transtab.o kb.o
+libkb.a : $(OBJECTS)
+	$(AR) -rcs $(@) $(OBJECTS)
 
 atom.o : atom.h atom.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c atom.cpp
@@ -46,11 +54,16 @@ consttab.o : expression.o consttab.h consttab.cpp
 transtab.o : expression.o transtab.h transtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c transtab.cpp
 
-kb.o : expression.o symtab.o consttab.o transtab.o kb.h kb.cpp
+ifdef SMODELS
+wrapper.o : wrapper.h wrapper.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
+endif
+
+kb.o : expression.o symtab.o consttab.o transtab.o $(SM_OBJECTS) kb.h kb.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c kb.cpp
 
 clean :
-	$(RM) *.o
+	$(RM) $(OBJECTS)
 
 distclean : clean
 	$(RM) $(TARGETS) Makefile
