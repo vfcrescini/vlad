@@ -1,0 +1,14 @@
+mod_vlad TODO
+Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+- Use per-server configuration. Currently, the configuration is per-directory
+  because the core module insists that the auth directives (AuthName, AuthType,
+  etc.) be configured on a per-directory basis.
+
+- Support for aliased scripts (ScriptAlias directive) and directories (Alias
+  directive). At the moment, authorization is granted or denied based on the
+  physical locations of resources.
+
+- Add support for transformation sequence manipulation.
+
+- See if module is really thread-safe.
