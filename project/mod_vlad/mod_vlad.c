@@ -18,10 +18,6 @@
 
 #include "util.h"
 
-#ifdef DEBUG
-#define MODVLAD_LOGLEVEL APLOG_NOTICE
-#endif
-
 /* some external functions from the parser & lexer */
 extern void policyparse();
 extern void policy_set_yyinput(int (*a_func)(void *, char *, int), 
@@ -275,6 +271,9 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                             apr_pool_cleanup_null);
 
   /* now for some real initialisation */
+  modvlad_add_users(conf->kb, conf->user_file, a_cmd->pool); 
+
+  /* parse the policy file */
   apr_file_open(&polfile,
                 conf->policy_file,
                 APR_READ,
