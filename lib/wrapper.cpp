@@ -435,6 +435,20 @@ VLAD_EXTERN int vlad_strlist_add(void *a_slist, const char *a_s)
   return tmp_slist->add(a_s);
 }
 
+/* get the i'th string from list */
+VLAD_EXTERN int vlad_strlist_get(void *a_slist, unsigned int a_i, char **a_s)
+{
+  stringlist *tmp_slist = NULL;
+
+  if (a_slist == NULL)
+    return VLAD_NULLPTR;
+
+  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, stringlist *)) == NULL)
+    return VLAD_INVALIDINPUT;
+
+  return tmp_slist->get(a_i, a_s);
+}
+
 /* create an atom */
 VLAD_EXTERN int vlad_atom_create(void **a_atm)
 {
