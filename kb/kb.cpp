@@ -646,7 +646,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
     unsigned int a;
 
     s->get(i, &tmp_ref);
-    ttable->get(tmp_ref->get_name(), tmp_ref->get_ilist(), &tmp_pre, &tmp_post);
+    ttable->replace(tmp_ref->get_name(), tmp_ref->get_ilist(), &tmp_pre, &tmp_post);
     for (j = 0; j < tmp_post->length(); j++) {
        if ((retval = tmp_post->get(j, &tmp_atom)) != VLAD_OK)
          return retval;
@@ -902,7 +902,9 @@ int kb::verify_transref(transref *r)
 {
   int retval;
   unsigned int i;
-  transdef *tdef;
+  stringlist *tmp_vlist;
+  expression *tmp_pr;
+  expression *tmp_po;
 
   if (stage < 5)
     return VLAD_FAILURE;
@@ -911,15 +913,11 @@ int kb::verify_transref(transref *r)
     return VLAD_NULLPTR;
 
   /* retrieve respective trans in transtab */
-  if ((retval = ttable->get(r->get_name(), &tdef)) != VLAD_OK)
+  if ((retval = ttable->get(r->get_name(), &tmp_vlist, &tmp_pr, &tmp_po)) != VLAD_OK)
     return retval;
-  
-  /* check that the name transformation is valid */
-  if (strcmp(r->get_name(), tdef->get_name()))
-    return VLAD_INVALIDINPUT;
 
   /* check that the number of ident listed is the same as the transformation */
-  if (tdef->get_vlist()->length() != r->get_ilist()->length())
+  if (tmp_vlist->length() != r->get_ilist()->length())
     return VLAD_INVALIDINPUT;
 
   /* check that every ident is valid in symtab */

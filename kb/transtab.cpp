@@ -12,12 +12,9 @@
 #include <vlad.h>
 #include <transtab.h>
 
-transdef::transdef(const char *n, stringlist *v, expression *pr, expression *po)
+transdef::transdef()
 {
-  name = (char *) n;
-  vlist = v;
-  precond = pr;
-  postcond = po;
+  initialised = false;
 }
 
 transdef::~transdef()
@@ -42,38 +39,61 @@ bool transdef::cmp(list_item *item)
   if ((tmp = dynamic_cast<transdef *> (item)) == NULL)
     return false;
 
+  /* if both are uninitialised return true. if only one -- false */
+  if (!initialised)
+    return !tmp->initialised;
+
+  if (!tmp->initialised)
+    return false;
+
   /* 
    * here we are only concerned about the name. if the names match,
    * then we consider the transformations equivalent.
    */
 
-  if (tmp->name == NULL && name != NULL)
-    return false;
-  else if (tmp->name != NULL && name == NULL)
-    return false;
-  else if (tmp->name != NULL && name != NULL && strcmp(name, tmp->name))
-    return false;
-
-  return true;
+  return !strcmp(name, tmp->name);
 }
 
-char *transdef::get_name()
+int transdef::init(const char *n, stringlist *v, expression *pr, expression *po)
 {
-  return name;
+  if (initialised) {
+    if (name != NULL)
+      free(name);
+    if (vlist != NULL)
+      delete vlist;
+    if (precond != NULL)
+      delete precond;
+    if (postcond != NULL)
+      delete postcond;
+  }
+
+  if (n == NULL)
+    return VLAD_NULLPTR;
+
+  name = (char *) n;
+  vlist = v;
+  precond = pr;
+  postcond = po; 
+
+  initialised = true;
+
+  return VLAD_OK;
 }
 
-stringlist *transdef::get_vlist()
+int transdef::get(char **n, stringlist **v, expression **pr, expression **po)
 {
-  return vlist;
-}
+  if (!initialised)
+    return VLAD_UNINITIALISED;
 
-expression *transdef::get_precond()
-{
-  return precond;
-}
-expression *transdef::get_postcond()
-{
-  return postcond;
+  if (n == NULL || v == NULL || pr == NULL || po == NULL)
+    return VLAD_NULLPTR;
+
+  *n = name;
+  *v = vlist;
+  *pr = precond;
+  *po = postcond;
+
+  return VLAD_OK;
 }
 
 transtab::transtab() : list(true)
@@ -87,41 +107,49 @@ transtab::~transtab()
 
 int transtab::add(const char *n, stringlist *v, expression *pr, expression *po)
 {
+  int retval;
   transdef *tmp;
 
-  if (n == NULL || v == NULL || pr == NULL || po == NULL)
-    return VLAD_NULLPTR;
-
-  if ((tmp = VLAD_NEW(transdef(n, v, pr, po))) == NULL)
+  if ((tmp = VLAD_NEW(transdef())) == NULL)
     return VLAD_MALLOCFAILED;
+
+  if ((retval = tmp->init(n, v, pr, po)) != VLAD_OK) {
+    delete tmp;
+    return retval;
+  }
 
   return list::add((list_item *) tmp);
 }
 
-int transtab::get(const char *n, transdef **t)
+int transtab::get(const char *n, stringlist **v, expression **pr, expression **po)
 {
   int retval;
   char *name;
   transdef *tmp;
   transdef **list;
-  unsigned int s;
+  unsigned int size;
 
-  if (n == NULL)
+  if (n == NULL || v == NULL || pr == NULL || po == NULL)
     return VLAD_NULLPTR;
 
+  /* create a dummy transdef to search */
   if ((name = VLAD_STRING_MALLOC(n)) == NULL)
     return VLAD_MALLOCFAILED;
 
-  strcpy(name, n); 
+  strcpy(name, n);
 
-  if ((tmp = VLAD_NEW(transdef(name, NULL, NULL, NULL))) == NULL)
+  if ((tmp = VLAD_NEW(transdef())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = list::get((list_item *) tmp, (list_item ***) &list, &s)) != VLAD_OK)
+  if ((retval = tmp->init(name, NULL, NULL, NULL)) != VLAD_OK)
     return retval;
 
-  /* only one */
-  *t = list[0];
+  if ((retval = list::get((list_item *) tmp, (list_item ***) &list, &size)) != VLAD_OK)
+    return retval;
+
+  /* only one. name is already copied and will be deleted with tmp */
+  if ((retval = list[0]->get(&name, v, pr, po)) != VLAD_OK)
+    return retval;
 
   free(list);
   delete tmp;
@@ -130,29 +158,23 @@ int transtab::get(const char *n, transdef **t)
 }
 
 /* replace variables with identifiers in v, then get pr and pp */
-int transtab::get(const char *n, stringlist *ilist, expression **pr, expression **po)
+int transtab::replace(const char *n, stringlist *ilist, expression **pr, expression **po)
 {
   int retval;
-  transdef *tmp_trans;
   expression *tmp_precond;
   expression *tmp_postcond;
+  stringlist *tmp_vlist;
 
   if (n == NULL || ilist == NULL || pr == NULL || po == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = get(n, &tmp_trans)) != VLAD_OK)
+  if ((retval = get(n, &tmp_vlist, &tmp_precond, &tmp_postcond)) != VLAD_OK)
     return retval;
 
-  if ((tmp_precond = tmp_trans->get_precond()) == NULL)
-    return VLAD_FAILURE;
-
-  if ((tmp_postcond = tmp_trans->get_postcond()) == NULL)
-    return VLAD_FAILURE;
-  
-  if ((retval = tmp_precond->replace(tmp_trans->get_vlist(), ilist, pr)) != VLAD_OK)
+  if ((retval = tmp_precond->replace(tmp_vlist, ilist, pr)) != VLAD_OK)
     return retval;
 
-  if ((retval = tmp_postcond->replace(tmp_trans->get_vlist(), ilist, po)) != VLAD_OK)
+  if ((retval = tmp_postcond->replace(tmp_vlist, ilist, po)) != VLAD_OK)
     return retval;
 
   return VLAD_OK;
