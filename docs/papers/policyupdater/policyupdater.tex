@@ -2076,17 +2076,15 @@ query holds(alice, read, file);
           \begin{alltt}
 FUNCTION \(encode\)(\(fact\), \(state\), \(stab\))
   \(h\_off\) =
-    (\(stab.ss.len()\) + \(stab.sg.len()\)) \(\times\)
-    (\(stab.as.len()\) + \(stab.ag.len()\)) \(\times\)
-    (\(stab.os.len()\) + \(stab.og.len()\))
+    \(stab.s.len()\) \(\times\) \(stab.a.len()\) \(\times\) \(stab.o.len()\)
   \(m\_off\) =
     (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
     (\(stab.as.len()\) \(\times\) \(stab.ag.len()\)) +
     (\(stab.os.len()\) \(\times\) \(stab.og.len()\))
   \(s\_off\) =
-    (\(stab.sg.len()\) \(\times\) \(stab.sg.len()\)) +
-    (\(stab.ag.len()\) \(\times\) \(stab.ag.len()\)) +
-    (\(stab.og.len()\) \(\times\) \(stab.og.len()\))
+    (\(stab.sg.len()\))\(\sp{2}\) +
+    (\(stab.ag.len()\))\(\sp{2}\) +
+    (\(stab.og.len()\))\(\sp{2}\)
 
   \(pos\_off\) = \(h\_off\) + \(m\_off\) + \(s\_off\)
 
@@ -2097,9 +2095,8 @@ FUNCTION \(encode\)(\(fact\), \(state\), \(stab\))
       \(o\) = \(stab.o.idx\)(\(fact.holds.obj\))
 
       \(index\) =
-       (\(s\) \(\times\) (\(stab.as.len()\) + \(stab.ag.len()\)) \(\times\)
-            (\(stab.os.len()\) + \(stab.og.len()\))) +
-       (\(a\) \(\times\) (\(stab.os.len()\) + \(stab.og.len()\))) +
+       (\(s\) \(\times\) \(stab.a.len()\) \(\times\) \(stab.o.len()\)) +
+       (\(a\) \(\times\) \(stab.o.len()\)) +
        \(o\)
 
     \(memb\) :
@@ -2154,13 +2151,13 @@ FUNCTION \(encode\)(\(fact\), \(state\), \(stab\))
         \(a\) : 
           \(index\) =
             \(h\_off\) + \(m\_off\) +
-            (\(stab.sg.len()\) \(\times\) \(stab.sg.len()\)) +
+            (\(stab.sg.len()\))\(\sp{2}\) +
             (\(g1\) \(\times\) \(stab.ag.len()\)) + \(g2\)
         \(o\) :
           \(index\) =
             \(h\_off\) + \(m\_off\) +
-            (\(stab.sg.len()\) \(\times\) \(stab.sg.len()\)) +
-            (\(stab.ag.len()\) \(\times\) \(stab.ag.len()\)) +
+            (\(stab.sg.len()\))\(\sp{2}\) +
+            (\(stab.ag.len()\))\(\sp{2}\) +
             (\(g1\) \(\times\) \(stab.og.len()\)) + \(g2\)
       ENDCASE
   ENDCASE
