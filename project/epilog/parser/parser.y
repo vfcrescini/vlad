@@ -24,8 +24,8 @@ int yylex();
 %token EPI_SYM_TRUE
 %token EPI_SYM_FALSE
 %token EPI_SYM_HOLDS
-%token EPI_SYM_ELT
-%token EPI_SYM_CONT
+%token EPI_SYM_MEMB
+%token EPI_SYM_SUBST
 %token EPI_SYM_INITIALLY
 %token EPI_SYM_TRANS
 %token EPI_SYM_CAUSES
@@ -132,8 +132,8 @@ comp_logical_exp :
 
 comp_atom :
   comp_holds
-  | comp_cont
-  | comp_elt
+  | comp_subst
+  | comp_memb
   | logical_const
   ;
 
@@ -141,12 +141,12 @@ comp_holds :
   EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT comp_sub_ident EPI_SYM_COMMA comp_acc_ident EPI_SYM_COMMA comp_obj_ident EPI_SYM_CLOSE_PARENT
   ;
 
-comp_cont :
-  EPI_SYM_CONT EPI_SYM_OPEN_PARENT comp_group_var_ident EPI_SYM_COMMA comp_group_var_ident EPI_SYM_CLOSE_PARENT
+comp_subst :
+  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT comp_group_var_ident EPI_SYM_COMMA comp_group_var_ident EPI_SYM_CLOSE_PARENT
   ;
 
-comp_elt :
-  EPI_SYM_ELT EPI_SYM_OPEN_PARENT comp_single_var_ident EPI_SYM_COMMA comp_group_var_ident EPI_SYM_CLOSE_PARENT
+comp_memb :
+  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT comp_single_var_ident EPI_SYM_COMMA comp_group_var_ident EPI_SYM_CLOSE_PARENT
   ;
 
 ground_exp : 
@@ -166,8 +166,8 @@ ground_logical_exp :
 
 ground_atom :
   ground_holds 
-  | ground_cont 
-  | ground_elt 
+  | ground_subst 
+  | ground_memb 
   | logical_const
   ;
 
@@ -175,40 +175,40 @@ ground_holds :
   EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT ground_sub_ident EPI_SYM_COMMA ground_acc_ident EPI_SYM_COMMA ground_obj_ident EPI_SYM_CLOSE_PARENT
   ;
 
-ground_cont :
-  ground_subject_cont 
-  | ground_access_cont 
-  | ground_object_cont
+ground_subst :
+  ground_subject_subst 
+  | ground_access_subst 
+  | ground_object_subst
   ;
 
-ground_elt :
-  ground_subject_elt 
-  | ground_access_elt 
-  | ground_object_elt
+ground_memb :
+  ground_subject_memb 
+  | ground_access_memb 
+  | ground_object_memb
   ;
 
-ground_subject_cont :
-  EPI_SYM_CONT EPI_SYM_OPEN_PARENT EPI_SYM_G_SUB_IDENT EPI_SYM_COMMA EPI_SYM_G_SUB_IDENT EPI_SYM_CLOSE_PARENT
+ground_subject_subst :
+  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_G_SUB_IDENT EPI_SYM_COMMA EPI_SYM_G_SUB_IDENT EPI_SYM_CLOSE_PARENT
   ;
 
-ground_access_cont :
-  EPI_SYM_CONT EPI_SYM_OPEN_PARENT EPI_SYM_G_ACC_IDENT EPI_SYM_COMMA EPI_SYM_G_ACC_IDENT EPI_SYM_CLOSE_PARENT
+ground_access_subst :
+  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_G_ACC_IDENT EPI_SYM_COMMA EPI_SYM_G_ACC_IDENT EPI_SYM_CLOSE_PARENT
   ;
 
-ground_object_cont :
-  EPI_SYM_CONT EPI_SYM_OPEN_PARENT EPI_SYM_G_OBJ_IDENT EPI_SYM_COMMA EPI_SYM_G_OBJ_IDENT EPI_SYM_CLOSE_PARENT
+ground_object_subst :
+  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_G_OBJ_IDENT EPI_SYM_COMMA EPI_SYM_G_OBJ_IDENT EPI_SYM_CLOSE_PARENT
   ;
 
-ground_subject_elt :
-  EPI_SYM_ELT EPI_SYM_OPEN_PARENT EPI_SYM_S_SUB_IDENT EPI_SYM_COMMA EPI_SYM_G_SUB_IDENT EPI_SYM_CLOSE_PARENT
+ground_subject_memb :
+  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_S_SUB_IDENT EPI_SYM_COMMA EPI_SYM_G_SUB_IDENT EPI_SYM_CLOSE_PARENT
   ;
 
-ground_access_elt :
-  EPI_SYM_ELT EPI_SYM_OPEN_PARENT EPI_SYM_S_ACC_IDENT EPI_SYM_COMMA EPI_SYM_G_ACC_IDENT EPI_SYM_CLOSE_PARENT
+ground_access_memb :
+  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_S_ACC_IDENT EPI_SYM_COMMA EPI_SYM_G_ACC_IDENT EPI_SYM_CLOSE_PARENT
   ;
 
-ground_object_elt :
-  EPI_SYM_ELT EPI_SYM_OPEN_PARENT EPI_SYM_S_OBJ_IDENT EPI_SYM_COMMA EPI_SYM_G_OBJ_IDENT EPI_SYM_CLOSE_PARENT
+ground_object_memb :
+  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_S_OBJ_IDENT EPI_SYM_COMMA EPI_SYM_G_OBJ_IDENT EPI_SYM_CLOSE_PARENT
   ;
 
 comp_sub_ident :

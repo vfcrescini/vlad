@@ -72,9 +72,9 @@ BNF
                         
 <holds>                 : holds
                         
-<element>               : elt
+<member>                : memb
                         
-<containment>           : cont
+<subset>                : subst
                         
 <transform>             : trans
                         
@@ -109,17 +109,17 @@ BNF
                         
 <comp-logical-exp>      : <open-parent> <comp-exp> <close-parent> | <comp-atom>
                         
-<comp-atom>             : <comp-holds> | <comp-cont> | <comp-elt> | 
+<comp-atom>             : <comp-holds> | <comp-subst> | <comp-memb> | 
                           <logical-const>
                         
 <comp-holds>            : <holds> <open-parent> <comp-sub-ident> <comma>
                           <comp-acc-ident> <comma> <comp-obj-ident>
                           <close-parent>
                         
-<comp-cont>             : <containment> <open-parent> <comp-grp-var-ident>
+<comp-subst>            : <subset> <open-parent> <comp-grp-var-ident>
                           <comma> <comp-group-var-ident> <close-parent>
                         
-<comp-elt>              : <element> <open-parent> <comp-single-var-ident>
+<comp-memb>             : <member> <open-parent> <comp-single-var-ident>
                           <comma> <comp-group-var-ident> <close-parent>
                         
 <ground-exp>            : <ground-exp> <logical-op> <ground-boolean-exp> |
@@ -130,35 +130,35 @@ BNF
 <ground-logical-exp>    : <open-parent> <ground-exp> <close-parent> | 
                           <ground-atom>
                         
-<ground-atom>           : <ground-holds> | <ground-cont> | ground-elt> | 
+<ground-atom>           : <ground-holds> | <ground-subst> | ground-memb> | 
                           <logical-const>
                         
 <ground-holds>          : <holds> <open-parent> <ground-sub-ident> <comma>
                           <ground-acc-ident> <comma> <ground-obj-ident>
                           <close-parent>
                         
-<ground-cont>           : <ground-subject-cont> | <ground-access-cont> |
-                          <ground-object-cont>
+<ground-subst>          : <ground-subject-subst> | <ground-access-subst> |
+                          <ground-object-subst>
                         
-<ground-elt>            : <ground-subject-elt> | <ground-access-elt> |
-                          <ground-object-elt>
+<ground-memb>           : <ground-subject-memb> | <ground-access-memb> |
+                          <ground-object-memb>
                         
-<ground-subject-cont>   : <containment> <open-parent> <g-subject-ident>
+<ground-subject-subst>  : <subset> <open-parent> <g-subject-ident>
                           <comma> <g-subject-ident> <close-parent>
                         
-<ground-object-cont>    : <containment> <open-parent> <g-object-ident>
+<ground-object-subst>   : <subset> <open-parent> <g-object-ident>
                           <comma> <g-object-ident> <close-parent>
                         
-<ground-access-cont>    : <containment> <open-parent> <g-access-ident>
+<ground-access-subst>   : <subset> <open-parent> <g-access-ident>
                           <comma> <g-access-ident> <close-parent>
                         
-<ground-subject-elt>    : <element> <open-parent> <s-subject-ident>
+<ground-subject-memb>   : <member> <open-parent> <s-subject-ident>
                           <comma> <g-subject-ident> <close-parent>
                         
-<ground-access-elt>     : <element> <open-parent> <s-access-ident>
+<ground-access-memb>    : <member> <open-parent> <s-access-ident>
                           <comma> <g-access-ident> <close-parent>
                         
-<ground-object-elt>     : <element> <open-parent> <s-object-ident>
+<ground-object-memb>    : <member> <open-parent> <s-object-ident>
                           <comma> <g-object-ident> <close-parent>
                         
 <initial-stmt>          : <initially> <ground-exp> <semicolon>

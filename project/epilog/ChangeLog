@@ -1,3 +1,13 @@
+2002-08-07  Vino Crescini  <vfcrescini@froggy.com>
+
+	* docs/bnf :
+	* docs/langspecs :
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Renamed "elt" or "element" to "memb" or "member" ;
+	    "cont" or "containment" to "subst" or "subset".
+
 2002-07-25  Vino Crescini  <vfcrescini@froggy.com>
 
 	* ChangeLog :

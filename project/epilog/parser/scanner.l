@@ -33,8 +33,8 @@ not                !
 true               true
 false              false
 holds              holds
-element            elt
-containment        cont
+member             memb
+subset             subst
 initially          initially
 transform          trans
 causes             causes
@@ -69,8 +69,8 @@ whitespace         [\t ]+
 {true} return EPI_SYM_TRUE;
 {false} return EPI_SYM_FALSE;
 {holds} return EPI_SYM_HOLDS;
-{element} return EPI_SYM_ELT;
-{containment} return EPI_SYM_CONT;
+{member} return EPI_SYM_MEMB;
+{subset} return EPI_SYM_SUBST;
 {initially} return EPI_SYM_INITIALLY;
 {transform} return EPI_SYM_TRANS;
 {causes} return EPI_SYM_CAUSES;

@@ -47,23 +47,27 @@ Language Specifications
 
          holds(subject, access_right, object)
 
-     1.2.2. Containment Atoms
+     1.2.2. Subset Atoms
 
        A single logical fact describing a set containment relationship to
        another set.
 
-         cont(Subject_1, Subject_2) 
+         subst(Subject_1, Subject_2) 
 
        is read as
 
          "group Subject_1 is contained in group Subject_2"
+
+       or
+
+         "group Subject_1 is a subset of group Subject_2"
 
      1.2.3. Membership Atoms
 
        A single logical fact describing the membership of a singular 
        subject/access-right/object to a subject/access-right/object group.
 
-         elt(subject_1, Subject_1)
+         memb(subject_1, Subject_1)
 
        is read as
 
@@ -114,7 +118,7 @@ Language Specifications
 
     1.3.4. Parentheses
 
-      Parenthesis may be used to enclose atoms and expression.
+      Parenthesis is not allowed to be used to enclose atoms and expression.
 
   1.4. Constant Expressions
 
