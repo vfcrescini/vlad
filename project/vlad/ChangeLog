@@ -1,11 +1,21 @@
 2003-04-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.cpp :
+
+	  - Added all rules in evaluate_query().
+
+	* kb/wrapper.cpp :
+	* kb/wrapper.h :
+
+	  - Enumerated all possible combinations of the different formats
+	    of add_rule().
+
 	* common/numberlist.h :
 	* common/numberlist.cpp :
 
 	  - Removed numberlistlist.
 
-	  - Added purge function.
+	  - Added purge() function.
 
 	* common/vlad.h :
 	* main/vlad.cpp :

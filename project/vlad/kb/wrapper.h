@@ -20,12 +20,22 @@ class wrapper
     int init();
     /* register an atom */
     int add_atom(unsigned int a);
-    /* add rule with constant head */
-    int add_rule_const_head(numberlist *pbody, numberlist *nbody, bool h);
-    /* add rule with constant body */
-    int add_rule_const_body(numberlist *head, bool b);
-    /* add rule with a single head */
-    int add_rule_single_head(unsigned int head, numberlist *pbody, numberlist *nbody);
+    /* constant head & single body */
+    int add_rule_chead_sbody(bool h, unsigned int pb, unsigned int nb);
+    /* constant head & multiple body */
+    int add_rule_chead_mbody(bool h, numberlist *pb, numberlist *nb);
+    /* single head & constant body */
+    int add_rule_shead_cbody(unsigned int h, bool b);
+    /* single head & single body */
+    int add_rule_shead_sbody(unsigned int h, unsigned int pb, unsigned int nb);
+    /* single head & multiple body */
+    int add_rule_shead_mbody(unsigned int h, numberlist *pb, numberlist *nb);
+    /* multiple head & constant body */
+    int add_rule_mhead_cbody(numberlist *h, bool b);
+    /* multiple head & single body */
+    int add_rule_mhead_sbody(numberlist *h, unsigned int pb, unsigned int nb);
+    /* multiple head & multiple body */
+    int add_rule_mhead_mbody(numberlist *h, numberlist *pb, numberlist *nb);
   private :
     Smodels *pr_smod;
     Api *pr_api;
