@@ -1,18 +1,18 @@
 /*
- * atom.c
+ * comp_atom.c
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #include <stdlib.h>
-#include "atom.h"
+#include "comp_atom.h"
 
 /* creates a pointer to an atom of type const */
-int atom_create_const(atom_type **atom, truth_type truth)
+int comp_atom_create_const(comp_atom_type **atom, truth_type truth)
 {
   if (atom == NULL)
     return -1;
 
-  if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
+  if ((*atom = (comp_atom_type *) malloc(sizeof(comp_atom_type))) == NULL)
     return -1;
 
   (*atom)->type = EPI_ATOM_CONST;
@@ -22,11 +22,11 @@ int atom_create_const(atom_type **atom, truth_type truth)
 }
 
 /* creates a pointer to an atom of type holds */
-int atom_create_holds(atom_type **atom,
-                      name_type sub,
-                      name_type acc,
-                      name_type obj,
-                      truth_type truth)
+int comp_atom_create_holds(comp_atom_type **atom,
+                           name_type sub,
+                           name_type acc,
+                           name_type obj,
+                           truth_type truth)
 {
   if (atom == NULL)
     return -1;
@@ -37,7 +37,7 @@ int atom_create_holds(atom_type **atom,
       (!EPI_NAME_IS_OBJECT(obj) && !EPI_NAME_IS_VAR(obj)))
     return -1;
 
-  if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
+  if ((*atom = (comp_atom_type *) malloc(sizeof(comp_atom_type))) == NULL)
     return -1;
 
   (*atom)->type = EPI_ATOM_HOLDS;
@@ -50,10 +50,10 @@ int atom_create_holds(atom_type **atom,
 }
 
 /* creates a pointer to an atom of type memb */
-int atom_create_memb(atom_type **atom,
-                     name_type element,
-                     name_type group,
-                     truth_type truth)
+int comp_atom_create_memb(comp_atom_type **atom,
+                          name_type element,
+                          name_type group,
+                          truth_type truth)
 {
   if (atom == NULL)
     return -1;
@@ -66,7 +66,7 @@ int atom_create_memb(atom_type **atom,
       EPI_NAME_BASETYPE(element) != EPI_NAME_BASETYPE(group)))
     return -1;
 
-  if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
+  if ((*atom = (comp_atom_type *) malloc(sizeof(comp_atom_type))) == NULL)
     return -1;
 
   (*atom)->type = EPI_ATOM_MEMB;
@@ -78,7 +78,7 @@ int atom_create_memb(atom_type **atom,
 }
 
 /* creates a pointer to an atom of type subst */
-int atom_create_subst(atom_type **atom,
+int comp_atom_create_subst(comp_atom_type **atom,
                       name_type group1,
                       name_type group2,
                       truth_type truth)
@@ -93,7 +93,7 @@ int atom_create_subst(atom_type **atom,
        group1.name.ident->type != group2.name.ident->type))
     return -1;
 
-  if ((*atom = (atom_type *) malloc(sizeof(atom_type))) == NULL)
+  if ((*atom = (comp_atom_type *) malloc(sizeof(comp_atom_type))) == NULL)
     return -1;
 
   (*atom)->type = EPI_ATOM_SUBST;
@@ -105,7 +105,7 @@ int atom_create_subst(atom_type **atom,
 }
 
 /* destroys atom structure */
-int atom_destroy(atom_type *atom)
+int comp_atom_destroy(comp_atom_type *atom)
 {
   if (atom == NULL)
     return -1;
@@ -134,7 +134,7 @@ int atom_destroy(atom_type *atom)
 }
 
 /* return 0 if the atom is valid */
-int atom_check(atom_type atom)
+int comp_atom_check(comp_atom_type atom)
 {
   if (EPI_ATOM_IS_CONST(atom))
     return 0;
@@ -192,35 +192,35 @@ int atom_check(atom_type atom)
 }
 
 /* creates a copy of atom1 */
-int atom_copy(atom_type **atom2, atom_type atom1)
+int comp_atom_copy(comp_atom_type **atom2, comp_atom_type atom1)
 {
   if (atom2 == NULL)
     return -1;
 
   if (EPI_ATOM_IS_CONST(atom1))
-    return atom_create_const(atom2, atom1.truth);
+    return comp_atom_create_const(atom2, atom1.truth);
   else if (EPI_ATOM_IS_HOLDS(atom1))
-    return atom_create_holds(atom2,
-                             atom1.atom.holds.subject,
-                             atom1.atom.holds.access,
-                             atom1.atom.holds.object,
-                             atom1.truth);
+    return comp_atom_create_holds(atom2,
+                                  atom1.atom.holds.subject,
+                                  atom1.atom.holds.access,
+                                  atom1.atom.holds.object,
+                                  atom1.truth);
   else if (EPI_ATOM_IS_MEMB(atom1))
-    return atom_create_memb(atom2,
-                            atom1.atom.memb.element,
-                            atom1.atom.memb.group,
-                            atom1.truth);
+    return comp_atom_create_memb(atom2,
+                                 atom1.atom.memb.element,
+                                 atom1.atom.memb.group,
+                                 atom1.truth);
   else if (EPI_ATOM_IS_SUBST(atom1))
-    return atom_create_subst(atom2,
-                             atom1.atom.subst.group1,
-                             atom1.atom.subst.group2,
-                             atom1.truth);
+    return comp_atom_create_subst(atom2,
+                                  atom1.atom.subst.group1,
+                                  atom1.atom.subst.group2,
+                                  atom1.truth);
   else
     return -1;
 }
 
 /* returns 0 if the contents of atom1 and atom2 are identical */
-int atom_compare(atom_type atom1, atom_type atom2)
+int comp_atom_compare(comp_atom_type atom1, comp_atom_type atom2)
 {
   if (atom1.type != atom2.type)
     return -1;

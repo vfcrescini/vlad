@@ -1,3 +1,36 @@
+2002-09-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/expression.h :
+
+	  - Some definitions/macros common between ground and non-ground
+	    atoms/expressions.
+
+	* exp/atom.c :
+	* exp/atom.h :
+	* exp/expression.c :
+	* exp/expression.h :
+	* exp/gnd_atom.h :
+	* exp/gnd_exp.h :
+	* exp/comp_atom.h :
+	* exp/comp_exp.h :
+
+	  - Separated the atom and expression files into ground and comp
+	    non-ground groupings. Very few differences between the two,
+	    but separating them ensures integrity, and this will make it
+	    easier to evaluate policy propositions.
+
+	* ident/ident.h :
+
+	  - Added string macro.
+
+	* exp/Makefile :
+	* parser/parser.y :
+	* parser/scanner.l :
+	* trans/transdef.c :
+	* trans/transdef.h :
+
+	  - Changed to use gnd/comp exp/atom.
+
 2002-09-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* parser/parser.y :

@@ -9,8 +9,10 @@
 #include <stdio.h>
 #include <ident.h>
 #include <name.h>
-#include <atom.h>
-#include <expression.h>
+#include <gnd_atom.h>
+#include <gnd_exp.h>
+#include <comp_atom.h>
+#include <comp_exp.h>
 #include <stringlist.h>
 #include <symtab.h>
 #include <identlist.h>
@@ -28,21 +30,25 @@ int initialise(void);
 int destroy(void);
 #ifdef DEBUG
 int dump_strlist(stringlist_type list);
-int dump_atom(atom_type atom);
-int dump_exp(expression_type exp);
+int dump_gnd_atom(gnd_atom_type atom);
+int dump_gnd_exp(gnd_exp_type exp);
+int dump_comp_atom(comp_atom_type atom);
+int dump_comp_exp(comp_exp_type exp);
 #endif
 
-expression_type initial_exp;
+gnd_exp_type initial_exp;
 FILE *yyerr;
 %}
 
 %union {
   char identifier[128];
   name_type name;
-  atom_type atm;
+  gnd_atom_type gatm;
+  comp_atom_type catm;
+  gnd_exp_type gexp;
+  comp_exp_type cexp;
   transref_type transref;
   translist_type translist;
-  expression_type exp;
   stringlist_type strlist;
   identlist_type ident;
   unsigned int terminal;
@@ -76,22 +82,22 @@ FILE *yyerr;
 %token <terminal> EPI_SYM_IDENT
 %token <identifier> EPI_SYM_IDENTIFIER
 
-%type <exp> is_clause;
-%type <exp> ground_exp
-%type <exp> comp_exp
-%type <atm> logical_atom
-%type <atm> ground_atom_exp
-%type <atm> ground_boolean_atom
-%type <atm> ground_holds_atom
-%type <atm> ground_memb_atom
-%type <atm> ground_subst_atom
-%type <atm> comp_memb_atom
-%type <atm> comp_atom_exp
-%type <atm> comp_boolean_atom
-%type <atm> comp_holds_atom
-%type <atm> comp_memb_atom
-%type <atm> comp_subst_atom
-%type <atm> comp_memb_atom
+%type <gexp> is_clause;
+%type <gexp> ground_exp
+%type <cexp> comp_exp
+%type <gatm> logical_atom
+%type <gatm> ground_atom_exp
+%type <gatm> ground_boolean_atom
+%type <gatm> ground_holds_atom
+%type <gatm> ground_memb_atom
+%type <gatm> ground_subst_atom
+%type <catm> comp_memb_atom
+%type <catm> comp_atom_exp
+%type <catm> comp_boolean_atom
+%type <catm> comp_holds_atom
+%type <catm> comp_memb_atom
+%type <catm> comp_subst_atom
+%type <catm> comp_memb_atom
 %type <strlist> trans_var_def;
 %type <strlist> trans_var_list;
 %type <transref> trans_ref_def;
@@ -118,7 +124,7 @@ destroy :
   {
 #ifdef DEBUG
     fprintf(yyerr, "initial state:\n");
-    dump_exp(initial_exp);
+    dump_gnd_exp(initial_exp);
 #endif
 
     if (destroy() != 0) {
@@ -275,33 +281,33 @@ initial_stmt :
   EPI_SYM_INITIALLY ground_exp EPI_SYM_SEMICOLON {
     unsigned int i;
     unsigned int len;
-    atom_type *tmp_atom = NULL;
+    gnd_atom_type *tmp_atom = NULL;
 
     /* now we have to go through these expressions and see if they're aleady
      * in the initial state expression */
 
-    if (expression_length($2, &len) != 0)
+    if (gnd_exp_length($2, &len) != 0)
       exit_error("internal error");
 
     for (i = 0; i < len; i++) {
-      if (expression_get($2, i, &tmp_atom) != 0) 
+      if (gnd_exp_get($2, i, &tmp_atom) != 0) 
         exit_error("internal error");
 
-      if (expression_find(initial_exp, *tmp_atom) == 0) {
+      if (gnd_exp_find(initial_exp, *tmp_atom) == 0) {
         yywarn("atom already in the initial state");
         continue;
       }
 
-      if (expression_add(&initial_exp, *tmp_atom) != 0) 
+      if (gnd_exp_add(&initial_exp, *tmp_atom) != 0) 
         exit_error("internal error");
 
 #ifdef DEBUG
       fprintf(yyerr, "adding atom to initial state:\n");
-      dump_atom(*tmp_atom);
+      dump_gnd_atom(*tmp_atom);
 #endif
     }
 
-    if (expression_purge(&$2) != 0)
+    if (gnd_exp_purge(&$2) != 0)
       exit_error("internal error");
   }
   ;
@@ -326,9 +332,9 @@ trans_stmt :
     fprintf(yyerr, "  variables:\n");
     dump_strlist($3);
     fprintf(yyerr, "  preconditions:\n");
-    dump_exp($7);
+    dump_comp_exp($7);
     fprintf(yyerr, "  postconditions:\n");
-    dump_exp($5);
+    dump_comp_exp($5);
 #endif
   }
   ;
@@ -337,11 +343,11 @@ policy_stmt :
   is_clause after_clause EPI_SYM_SEMICOLON {
     if (translist_purge(&$2) != 0)
       exit_error("internal error");
-    if (expression_purge(&$1) != 0)
+    if (gnd_exp_purge(&$1) != 0)
       exit_error("internal error");
   }
   | is_clause EPI_SYM_SEMICOLON {
-     if (expression_purge(&$1) != 0)
+     if (gnd_exp_purge(&$1) != 0)
       exit_error("internal error");
   }
   ;
@@ -442,18 +448,18 @@ logical_op :
 
 ground_exp : 
   ground_boolean_atom { 
-    if (expression_init(&$$) != 0) 
+    if (gnd_exp_init(&$$) != 0) 
       exit_error("internal error");
 
-    if (expression_find($$, $1) == 0)
+    if (gnd_exp_find($$, $1) == 0)
       yywarn("atom already declared");
-    else if (expression_add(&$$, $1) != 0)
+    else if (gnd_exp_add(&$$, $1) != 0)
       exit_error("internal error");
   }
   | ground_exp logical_op ground_boolean_atom {
-    if (expression_find($1, $3) == 0)
+    if (gnd_exp_find($1, $3) == 0)
       yywarn("atom already declared");
-    else if (expression_add(&$1, $3) != 0) 
+    else if (gnd_exp_add(&$1, $3) != 0) 
       exit_error("internal error");
 
     $$ = $1;
@@ -507,11 +513,9 @@ ground_holds_atom :
 
     $$.type = EPI_ATOM_HOLDS;
     $$.truth = epi_true;
-
-    if (name_create_ident(subject, &($$.atom.holds.subject)) != 0 ||
-        name_create_ident(access, &($$.atom.holds.access)) != 0 ||
-        name_create_ident(object, &($$.atom.holds.object)) != 0)
-      exit_error("internal error");
+    $$.atom.holds.subject = subject;
+    $$.atom.holds.access = access;
+    $$.atom.holds.object = object;
   }
   ;
 
@@ -532,10 +536,8 @@ ground_subst_atom :
 
     $$.type = EPI_ATOM_SUBST;
     $$.truth = epi_true;
-
-    if (name_create_ident(group1, &($$.atom.subst.group1)) != 0 ||
-        name_create_ident(group2, &($$.atom.subst.group2)) != 0)
-      exit_error("internal error");
+    $$.atom.subst.group1 = group1;
+    $$.atom.subst.group2 = group2;
   }
   ;
 
@@ -559,27 +561,25 @@ ground_memb_atom :
 
     $$.type = EPI_ATOM_MEMB;
     $$.truth = epi_true;
-
-    if (name_create_ident(element, &($$.atom.memb.element)) != 0 ||
-        name_create_ident(group, &($$.atom.memb.group)) != 0)
-      exit_error("internal error");
+    $$.atom.memb.element = element;
+    $$.atom.memb.group = group;
   }
   ;
 
 comp_exp :
   comp_boolean_atom {
-    if (expression_init(&$$) != 0) 
+    if (comp_exp_init(&$$) != 0) 
       exit_error("internal error");
 
-    if (expression_find($$, $1) == 0)
+    if (comp_exp_find($$, $1) == 0)
       yywarn("atom already declared");
-    else if (expression_add(&$$, $1) != 0)
+    else if (comp_exp_add(&$$, $1) != 0)
       exit_error("internal error");
   }
   | comp_exp logical_op comp_boolean_atom {
-    if (expression_find($1, $3) == 0)
+    if (comp_exp_find($1, $3) == 0)
       yywarn("atom already declared");
-    else if (expression_add(&$1, $3) != 0) 
+    else if (comp_exp_add(&$1, $3) != 0) 
       exit_error("internal error");
 
     $$ = $1;
@@ -607,7 +607,8 @@ comp_atom_exp :
     $$ = $1;
   }
   | logical_atom {
-    $$ = $1;
+    $$.truth = $1.truth;
+    $$.type = $1.type;
   }
   ;
 
@@ -817,7 +818,7 @@ int initialise(void)
   if (symtab_init() != 0)
     return -1;
 
-  if (expression_init(&initial_exp) != 0)
+  if (gnd_exp_init(&initial_exp) != 0)
     return -1;
 
   if (transtab_init() != 0)
@@ -836,7 +837,7 @@ int destroy(void)
   if (symtab_purge() != 0)
     return -1;
 
-  if (expression_purge(&initial_exp) != 0)
+  if (gnd_exp_purge(&initial_exp) != 0)
     return -1;
 
   if (transtab_purge() != 0)
@@ -868,7 +869,30 @@ int dump_strlist(stringlist_type list)
   return 0;
 }
 
-int dump_atom(atom_type atom)
+int dump_gnd_atom(gnd_atom_type atom)
+{
+  if (EPI_ATOM_IS_CONST(atom))
+    fprintf(yyerr, "    constant %s\n", atom.truth == 0 ? "true" : "false");
+  else if (EPI_ATOM_IS_HOLDS(atom))
+    fprintf(yyerr, "    %sholds(%s, %s, %s)\n",
+           atom.truth == 0 ? "" : "not ",
+           EPI_IDENT_STRING(atom.atom.holds.subject),
+           EPI_IDENT_STRING(atom.atom.holds.access),
+           EPI_IDENT_STRING(atom.atom.holds.object));
+  else if (EPI_ATOM_IS_MEMB(atom))
+    fprintf(yyerr, "    %smemb(%s, %s)\n", 
+           atom.truth == 0 ? "" : "not ",
+           EPI_IDENT_STRING(atom.atom.memb.element),
+           EPI_IDENT_STRING(atom.atom.memb.group));
+  else if (EPI_ATOM_IS_SUBST(atom))
+    fprintf(yyerr, "    %ssubst(%s, %s)\n", 
+           atom.truth == 0 ? "" : "not ",
+           EPI_IDENT_STRING(atom.atom.subst.group1),
+           EPI_IDENT_STRING(atom.atom.subst.group2));
+  return 0;
+}
+
+int dump_comp_atom(comp_atom_type atom)
 {
   if (EPI_ATOM_IS_CONST(atom))
     fprintf(yyerr, "    constant %s\n", atom.truth == 0 ? "true" : "false");
@@ -891,18 +915,34 @@ int dump_atom(atom_type atom)
   return 0;
 }
 
-int dump_exp(expression_type exp)
+int dump_gnd_exp(gnd_exp_type exp)
 {
   unsigned int i;
   unsigned int len;
-  atom_type *tmp_atom = NULL;
+  gnd_atom_type *tmp_atom = NULL;
 
-  expression_length(exp, &len);
+  gnd_exp_length(exp, &len);
 
   for (i = 0; i < len; i++) {
-    expression_get(exp, i, &tmp_atom);
-    dump_atom(*tmp_atom);
+    gnd_exp_get(exp, i, &tmp_atom);
+    dump_gnd_atom(*tmp_atom);
   }
   return 0;
 }
+
+int dump_comp_exp(comp_exp_type exp)
+{
+  unsigned int i;
+  unsigned int len;
+  comp_atom_type *tmp_atom = NULL;
+
+  comp_exp_length(exp, &len);
+
+  for (i = 0; i < len; i++) {
+    comp_exp_get(exp, i, &tmp_atom);
+    dump_comp_atom(*tmp_atom);
+  }
+  return 0;
+}
+
 #endif

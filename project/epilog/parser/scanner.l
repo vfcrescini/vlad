@@ -12,8 +12,10 @@
 #include <string.h>
 
 #include <name.h>
-#include <atom.h>
-#include <expression.h>
+#include <gnd_atom.h>
+#include <gnd_exp.h>
+#include <comp_atom.h>
+#include <comp_exp.h>
 #include <stringlist.h>
 #include <identlist.h>
 #include <translist.h>

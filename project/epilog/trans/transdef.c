@@ -12,8 +12,8 @@
 int transdef_create(transdef_type **trans,
                     char *name,
                     stringlist_type varlist,
-                    expression_type precond,
-                    expression_type postcond)
+                    comp_exp_type precond,
+                    comp_exp_type postcond)
 {
   if (trans == NULL || name == NULL)
     return -1;
@@ -37,8 +37,8 @@ int transdef_create(transdef_type **trans,
 int transdef_compose(transdef_type *trans,
                      char *name,
                      stringlist_type varlist,
-                     expression_type precond,
-                     expression_type postcond)
+                     comp_exp_type precond,
+                     comp_exp_type postcond)
 {
   if (trans == NULL || name == NULL)
     return -1;
@@ -77,8 +77,8 @@ int transdef_destroy(transdef_type *trans)
    free(trans->name);
 
   if (stringlist_purge(&(trans->varlist)) != 0 ||
-      expression_purge(&(trans->precond)) != 0 ||
-      expression_purge(&(trans->postcond)) != 0)
+      comp_exp_purge(&(trans->precond)) != 0 ||
+      comp_exp_purge(&(trans->postcond)) != 0)
     return -1;
 
   free(trans);
