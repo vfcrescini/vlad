@@ -89,7 +89,7 @@ int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, unsigned short int *ans)
   *ans = EPI_RESULT_TRUE;
 
   for (i = 0; i < simplelist_length(in); i++) {
-    if ((tmp_res = simplelist_get_index(in, i, (void **) &tmp_atom)) != EPI_OK)
+    if ((tmp_res = simplelist_get_index(in, i, (void *) &tmp_atom)) != EPI_OK)
       return tmp_res;
 
     /* check if this atom is explicitly in exp */
@@ -128,7 +128,7 @@ int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, unsigned short int *ans)
 /* gives a reference to the index'th atom in the gnd_exp */
 int gnd_exp_get(gnd_exp_type exp, unsigned int index, gnd_atom_type **atom)
 {
-  return simplelist_get_index(exp, index, (void **) atom);
+  return simplelist_get_index(exp, index, (void *) atom);
 }
 
 /* add an atom into the gnd_exp */
@@ -304,7 +304,7 @@ gnd_atom_type *gnd_exp_get_ref(gnd_atom_type atom, gnd_exp_type exp)
   gnd_exp_type tmp_exp;
 
   if (simplelist_get_data(exp, &tmp_exp, &atom, gnd_exp_compare) == EPI_OK) {
-    simplelist_get_index(tmp_exp, 0, (void **) &tmp_atom);
+    simplelist_get_index(tmp_exp, 0, (void *) &tmp_atom);
     simplelist_purge(&tmp_exp, NULL);
   }
 
@@ -351,7 +351,7 @@ int gnd_exp_get_supergroups(ident_type ident,
 
   /* now go through the resulting list and find their supersets */
   for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+    if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
       return tmp_res;
 
     /* get superset */
@@ -423,7 +423,7 @@ int gnd_exp_get_non_supergroups(ident_type ident,
 
   /* now go through the resulting list and find their non-supersets */
   for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+    if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
       return tmp_res;
 
     /* get non-superset */
@@ -463,7 +463,7 @@ int gnd_exp_get_non_supergroups(ident_type ident,
 
     /* now go through the resulting list and find groups that do not contain them */
     for (i = 0; i < simplelist_length(tmp_exp); i++) {
-      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
         return tmp_res;
       if ((tmp_res = gnd_exp_get_non_supergroups(*(EPI_ATOM_SUBST_GROUP2(*ptr_atom)), list, exp, 1)) != EPI_OK)
        return tmp_res;
@@ -504,7 +504,7 @@ int gnd_exp_get_subgroups(ident_type ident,
   if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2) == EPI_OK) {
     /* now go through the resulting list and find their supersets */
     for (i = 0; i < simplelist_length(tmp_exp); i++) {
-      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
         return tmp_res;
 
       tmp_ident = EPI_ATOM_SUBST_GROUP1(*ptr_atom);
@@ -562,7 +562,7 @@ int gnd_exp_get_non_subgroups(ident_type ident,
   if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2) == EPI_OK) {
     /* now go through the resulting list and find their non-subsets */
     for (i = 0; i < simplelist_length(tmp_exp); i++) {
-      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
         return tmp_res;
 
       /* get non-subset */
@@ -598,7 +598,7 @@ int gnd_exp_get_non_subgroups(ident_type ident,
   if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2) == EPI_OK) {
     /* now go through the resulting list and find groups that do not contain them */
     for (i = 0; i < simplelist_length(tmp_exp); i++) {
-      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
         return tmp_res;
       if ((tmp_res = gnd_exp_get_non_subgroups(*(EPI_ATOM_SUBST_GROUP1(*ptr_atom)), list, exp, 1)) != EPI_OK)
        return tmp_res;
@@ -638,7 +638,7 @@ int gnd_exp_get_elements(ident_type ident,
     if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb_group) == EPI_OK) {
       /* now go through the resulting list and find the elements */
       for (i = 0; i < simplelist_length(tmp_exp); i++) {
-        if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+        if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
           return tmp_res;
   
         /* see if we already have this identifier */
@@ -662,7 +662,7 @@ int gnd_exp_get_elements(ident_type ident,
   if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2) == EPI_OK) {
     /* now go through the resulting list and find the elements */
     for (i = 0; i < simplelist_length(tmp_exp); i++) {
-      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+      if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
         return tmp_res;
 
       /* finally, get the elements of this group */
@@ -706,7 +706,7 @@ int gnd_exp_get_non_elements(ident_type ident,
     if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb_group) == EPI_OK) {
       /* now go through the resulting list and find the elements */
       for (i = 0; i < simplelist_length(tmp_exp); i++) {
-        if ((tmp_res = simplelist_get_index(tmp_exp, i, (void **) &ptr_atom)) != EPI_OK)
+        if ((tmp_res = simplelist_get_index(tmp_exp, i, (void *) &ptr_atom)) != EPI_OK)
           return tmp_res;
 
         /* see if we already have this identifier */

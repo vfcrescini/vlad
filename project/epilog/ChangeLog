@@ -1,5 +1,10 @@
 2005-02-21  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/gnd_exp.c :
+
+	  - Changed pointer casting from (void **) to (void *) to get rid of
+	    type-punning warnings on newer compilers.
+
 	* datastruct/simplelist.c :
 
 	  - Fixed del_data() do properly erase a node.
