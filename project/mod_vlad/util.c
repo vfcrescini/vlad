@@ -167,7 +167,7 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
                   MODVLAD_LOGLEVEL,
                   0,
                   a_p,
-                  "adding subject %s into kb",
+                  "mod_vlad: adding subject %s into kb",
                   user);
 #endif
 
@@ -205,7 +205,7 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
                   MODVLAD_LOGLEVEL,
                   0,
                   a_p,
-                  "adding access-right %s into kb",
+                  "mod_vlad: adding access-right %s into kb",
                   access);
 #endif
 
@@ -258,7 +258,7 @@ static int add_object(apr_pool_t *a_p,
                 MODVLAD_LOGLEVEL,
                 0,
                 a_p,
-                "adding object from %s into kb",
+                "mod_vlad: adding object from %s into kb",
                 realrelpath);
 #endif
 

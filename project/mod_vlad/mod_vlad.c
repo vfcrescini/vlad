@@ -100,19 +100,16 @@ static char *modvlad_get_passwd(request_rec *a_r,
   status = ap_pcfg_openfile(&f, a_r->pool, a_passwd_file);
 
   if (status != APR_SUCCESS) {
-
     ap_log_rerror(APLOG_MARK,
                   APLOG_ERR,
                   status,
                   a_r,
                   "mod_vlad: could not open user file %s",
                   a_passwd_file);
-
     return NULL;
   }
 
   while (!(ap_cfg_getline(l, MAX_STRING_LEN, f))) {
-
     if ((l[0] == '#') || (!l[0]))
       continue;
 
@@ -132,11 +129,11 @@ static char *modvlad_get_passwd(request_rec *a_r,
 
 static int modvlad_authenticate(request_rec *a_r)
 {
+  int retval;
   modvlad_config_rec *conf = NULL;
   const char *sent_passwd;
   char *real_passwd;
-  apr_status_t invalid_passwd;
-  int retval;
+  apr_status_t status;
 
 #ifdef MODVLAD_DEBUG
   ap_log_rerror(APLOG_MARK,
@@ -150,7 +147,7 @@ static int modvlad_authenticate(request_rec *a_r)
                                                      &modvlad_module);
 
   /* first we make sure we are activated */
-  if (!conf->user_file || !conf->policy_file || !conf->kb) {
+  if (!conf || !conf->user_file || !conf->policy_file || !conf->kb) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_NOTICE,
                   0,
@@ -161,6 +158,11 @@ static int modvlad_authenticate(request_rec *a_r)
 
   /* get password from browser */
   if ((retval = ap_get_basic_auth_pw(a_r, &sent_passwd))) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: could not get password from browser");
     return retval;
   }
 
@@ -168,7 +170,6 @@ static int modvlad_authenticate(request_rec *a_r)
   real_passwd = modvlad_get_passwd(a_r, a_r->user, conf->user_file);
 
   if (!real_passwd) {
-
     ap_log_rerror(APLOG_MARK,
                   APLOG_ERR,
                   0,
@@ -183,10 +184,9 @@ static int modvlad_authenticate(request_rec *a_r)
   }
 
   /* now validate the password */
-  invalid_passwd = apr_password_validate(sent_passwd, real_passwd);
+  status = apr_password_validate(sent_passwd, real_passwd);
 
-  if (invalid_passwd != APR_SUCCESS) {
-
+  if (status != APR_SUCCESS) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_ERR,
                   0,
@@ -218,7 +218,7 @@ static int modvlad_authorize(request_rec *a_r)
                                                      &modvlad_module);
 
   /* first we make sure we are activated */
-  if (!conf->user_file || !conf->policy_file || !conf->kb) {
+  if (!conf || !conf->user_file || !conf->policy_file || !conf->kb) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_NOTICE,
                   0,
@@ -234,7 +234,7 @@ static int modvlad_authorize(request_rec *a_r)
                 APLOG_NOTICE,
                 0,
                 a_r,
-                "received request: user=%s access=%s object=%s",
+                "mod_vlad: received request user=%s access=%s object=%s",
                 a_r->user,
                 a_r->method,
                 real_uri);
@@ -245,7 +245,7 @@ static int modvlad_authorize(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "could not create atom: %d",
+                  "mod_vlad: could not create atom: %d",
                   retval);
     return HTTP_INTERNAL_SERVER_ERROR;
   }
@@ -255,7 +255,7 @@ static int modvlad_authorize(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "could not create expression: %d",
+                  "mod_vlad: could not create expression: %d",
                   retval);
     return HTTP_INTERNAL_SERVER_ERROR;
   }
@@ -266,7 +266,7 @@ static int modvlad_authorize(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "could not initialize atom: %d",
+                  "mod_vlad: could not initialize atom: %d",
                   retval);
     return HTTP_INTERNAL_SERVER_ERROR;
   }
@@ -276,7 +276,7 @@ static int modvlad_authorize(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "could not add atom into expression: %d",
+                  "mod_vlad: could not add atom into expression: %d",
                   retval);
     return HTTP_INTERNAL_SERVER_ERROR;
   }
@@ -288,7 +288,7 @@ static int modvlad_authorize(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "could not add atom into expression: %d",
+                  "mod_vlad: could not add atom into expression: %d",
                   retval);
     return HTTP_INTERNAL_SERVER_ERROR;
   }
@@ -307,14 +307,14 @@ static int modvlad_authorize(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "could not add atom into expression: %d",
+                  "mod_vlad: could not add atom into expression: %d",
                   retval);
     return HTTP_INTERNAL_SERVER_ERROR;
   }
 
   fflush(stderr);
 
-  return OK;
+  return DECLINED;
 #endif
 }
 
@@ -337,8 +337,10 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
                                     const char *a_uname,
                                     const char *a_pname)
 {
+  int retval;
   modvlad_config_rec *conf;
   apr_file_t *polfile;
+  apr_status_t status;
   void *const_exp;
 
 #ifdef MODVLAD_DEBUG
@@ -358,23 +360,41 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
     return NULL;
   }
 
-  modvlad_init(a_cmd->pool,
-               a_cmd->server,
-               conf,
-               &const_exp,
-               a_uname,
-               a_pname);
+  /* initialize the module */
+  retval = modvlad_init(a_cmd->pool,
+                        a_cmd->server,
+                        conf,
+                        &const_exp,
+                        a_uname,
+                        a_pname);
+
+  if (retval) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_cmd->pool,
+                  "mod_vlad: error occurred while initializing module");
+    return NULL;
+  }
 
   /* parse the policy file */
-  apr_file_open(&polfile,
-                conf->policy_file,
-                APR_READ,
-                APR_OS_DEFAULT,
-                a_cmd->pool);
+  status = apr_file_open(&polfile,
+                        conf->policy_file,
+                        APR_READ,
+                        APR_OS_DEFAULT,
+                        a_cmd->pool);
+
+  if (status != APR_SUCCESS) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_cmd->pool,
+                  "mod_vlad: error occurred while opening policy file");
+    return NULL;
+  }
 
   /* give the lexer the proper yyinput function */
   policy_set_yyinput(modvlad_apache_yyinput, (void *)polfile);
-
   /* give the parser a kb handle */
   policy_set_kb(conf->kb);
   /* give the parser a handle to the extra constraints expression */
@@ -388,10 +408,26 @@ static const char *modvlad_set_init(cmd_parms *a_cmd,
   /* finally, compute */
 
 #ifdef MODVLAD_DEBUG
-  vlad_kb_compute_generate(conf->kb, stderr);
+  retval = vlad_kb_compute_generate(conf->kb, stderr);
   fflush(stderr);
+  if (retval != VLAD_OK) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_cmd->pool,
+                  "mod_vlad: could not compute kb (%d)",
+                  retval);
+  }
 #else
-  vlad_kb_compute_evaluate(conf->kb);
+  retval = vlad_kb_compute_evaluate(conf->kb);
+  if (retval != VLAD_OK) {
+    ap_log_perror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_cmd->pool,
+                  "mod_vlad: could not compute kb (%d)",
+                  retval);
+  }
 #endif
 
   return NULL;
