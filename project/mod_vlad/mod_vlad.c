@@ -66,7 +66,7 @@ module AP_MODULE_DECLARE_DATA modvlad_module =
 
 static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
 {
-  modvlad_config_rec *conf;
+  modvlad_config_rec *conf = NULL;
 
   if (!a_d)
     return NULL;
@@ -393,6 +393,7 @@ static int modvlad_handler(request_rec *a_r)
       ap_setup_client_block(a_r, REQUEST_CHUNKED_DECHUNK);
       modvlad_generate_header(a_r);
       modvlad_handle_form(a_r, conf);
+      modvlad_generate_form(a_r, conf);
       modvlad_generate_footer(a_r);
       return OK;
     }

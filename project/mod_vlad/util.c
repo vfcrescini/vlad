@@ -261,8 +261,8 @@ static int add_object(apr_pool_t *a_p,
 
   /* add this to the symtab */
   retval = vlad_kb_add_symtab(a_kb,
-                         realrelpath,
-                         VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
+                              realrelpath,
+                              VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
 
   /* if this is not the root dir, then make it a subset of its parent dir */
   if (strcmp(realrelpath, "/")) {
@@ -356,21 +356,21 @@ static const char *get_docroot(apr_pool_t *a_p,
   if (!a_path || !conf)
     return NULL;
 
-  return strcmp("/", a_path) ?
-         apr_pstrdup(a_p, a_path) :
-         apr_pstrdup(a_p, conf->ap_document_root);
+  return apr_pstrdup(a_p,
+                     strcmp("/", a_path) ? a_path : conf->ap_document_root);
 }
 
 /* returns the parent of the given filepath */
 static const char *get_parent(apr_pool_t *a_p, const char *a_path)
 {
-  char tmpstring[5120];
+  char tmpstring[MODVLAD_MAXSTR_LEN];
   int slash = 0;
   int i;
 
   if (a_path == NULL || a_p == NULL)
     return NULL;
 
+  memset(tmpstring, 0, MODVLAD_MAXSTR_LEN);
   strcpy(tmpstring, a_path);
 
   for (i = strlen(a_path); i >= 0; i--) {
@@ -393,12 +393,13 @@ static const char *get_parent(apr_pool_t *a_p, const char *a_path)
 /* strips out the trailing / from a_str */
 static const char *strip_slash(apr_pool_t *a_p, const char *a_str)
 {
-  char tmpstring[5120];
+  char tmpstring[MODVLAD_MAXSTR_LEN];
   int i;
 
   if (a_str == NULL || a_p == NULL)
     return NULL;
 
+  memset(tmpstring, 0, MODVLAD_MAXSTR_LEN);
   strcpy(tmpstring, a_str);
 
   for (i = strlen(a_str) - 1; i >= 0; i--) {
@@ -414,12 +415,13 @@ static const char *strip_slash(apr_pool_t *a_p, const char *a_str)
 /* strips out everything after ? */
 static const char *strip_question(apr_pool_t *a_p, const char *a_str)
 {
-  char tmpstring[5120];
+  char tmpstring[MODVLAD_MAXSTR_LEN];
   int i;
 
   if (a_str == NULL || a_p == NULL)
     return NULL;
 
+  memset(tmpstring, 0, MODVLAD_MAXSTR_LEN);
   strcpy(tmpstring, a_str);
 
   for (i = 0; i < strlen(a_str); i++) {
@@ -437,60 +439,63 @@ int modvlad_parse_args(apr_pool_t *a_p,
                        const char *a_str,
                        apr_table_t **a_tab)
 {
-  char *buf;
-  char *name;
-  char *value;
-  int found;
-  int novalue;
+  char buf[MODVLAD_MAXSTR_LEN];
+  char *ptr = buf;
+  char *name = NULL;
+  char *value = NULL;
+  int found = 0;
+  int novalue = 0;
 
-  if (a_str == NULL || a_tab == NULL)
+  if (!a_str || !a_tab)
    return -1;
 
-  buf = apr_pstrdup(a_p, a_str);
+  memset(buf, 0, MODVLAD_MAXSTR_LEN);
+  strcpy(ptr, a_str);
+
   *a_tab = apr_table_make(a_p, 0);
 
-  while (*buf != '\0') {
-    name = buf;
+  while (*ptr != '\0') {
+    name = ptr;
     found = 0;
     novalue = 0;
-    while (*buf != '\0') {
-      if (*buf == '=') {
-        *buf = '\0';
-        buf++;
+    while (*ptr != '\0') {
+      if (*ptr == '=') {
+        *ptr = '\0';
+        ptr++;
         found = 1;
         break;
       }
-      else if (*buf == '\0' || *buf == '&' || *buf == EOF) {
-        *buf = '\0';
-        buf++;
+      else if (*ptr == '\0' || *ptr == '&' || *ptr == EOF) {
+        *ptr = '\0';
+        ptr++;
         found = 1;
         novalue = 1;
 
         break;
       }
-      buf++;
+      ptr++;
     }
     
     if (!found)
       break;
 
     if (!novalue) {
-      value = buf;
+      value = ptr;
       found = 0;
 
-      while(*buf != '\0') {
-        if (*buf == '&') {
-          *buf = '\0';
-          buf++;
+      while(*ptr != '\0') {
+        if (*ptr == '&') {
+          *ptr = '\0';
+          ptr++;
           found = 1;
           break;
         }
 
-        buf++;
+        ptr++;
       }
 
       if (!found)
-        *buf = '\0';
+        *ptr = '\0';
     }
     else
       value = NULL;

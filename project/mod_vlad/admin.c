@@ -49,10 +49,10 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
   for (i = 0; i < st_len; i++) {
     vlad_kb_get_seqtab(a_conf->kb, i, &st_name, &st_list);
-    ap_rprintf(a_r,
-               "         <li>%s<input type=\"button\" value=\"delete\" onclick=\"aform.delete.value='%d';aform.submit();\"></li>\n",
-               st_name,
-               i);
+    ap_rprintf(a_r, "         <li>\n");
+    ap_rprintf(a_r, "           <input type=\"button\" value=\"delete\" onclick=\"delform.delete.value='%d';delform.submit();\">\n", i);
+    ap_rprintf(a_r, "           %s\n", st_name);
+    ap_rprintf(a_r, "         </li>\n");
   }  
 
   ap_rprintf(a_r, "      </ul>\n");
@@ -68,9 +68,8 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   for (i = 0; i < it_len; i++) {
     vlad_kb_get_symtab(a_conf->kb, i, &it_name);
     ap_rprintf(a_r, "        <li>\n");
-    ap_rprintf(a_r, "          <input type=\"radio\" name=\"tmp\" onclick=\"idform.ident.value='%s';\">%s\n",
-                               it_name,
-                               it_name);
+    ap_rprintf(a_r, "          <input type=\"radio\" onclick=\"idform.ident.value='%s';\">\n", it_name);
+    ap_rprintf(a_r, "          %s\n", it_name);
     ap_rprintf(a_r, "        </li>\n");
   }
 
@@ -94,7 +93,8 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
     ap_rprintf(a_r, "          <br>\n");
 
     for (j = 0; j < arg_len; j++) {
-      ap_rprintf(a_r, "          arg%d <input type=\"text\" name=\"arg%d\" value=\"\" readonly>\n", j, j);
+      ap_rprintf(a_r, "          arg%d\n", j);
+      ap_rprintf(a_r, "          <input type=\"text\" name=\"arg%d\" value=\"\" readonly>\n", j);
       ap_rprintf(a_r, "          <input type=\"button\" value=\"set\" onclick=\"addform%d.arg%d.value=document.idform.ident.value;\">\n", i, j);
     }
 
@@ -107,47 +107,48 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
 
 void modvlad_handle_form(request_rec *a_r, modvlad_config_rec *a_conf)
 {
-  const char *cmd;
-  char buffer[5120];
-  apr_table_t *tab;
+  char buffer[MODVLAD_MAXSTR_LEN];
+  const char *cmd = NULL;
+  apr_table_t *tab = NULL;
 
-  ap_get_client_block(a_r, buffer, 5120);
+  memset(buffer, 0, MODVLAD_MAXSTR_LEN);
+
+  ap_get_client_block(a_r, buffer, MODVLAD_MAXSTR_LEN);
   ap_unescape_url(buffer);
+
   modvlad_parse_args(a_r->pool, buffer, &tab);
 
   cmd = apr_table_get(tab, "command");
 
-  if (!strcmp(cmd, "add")) {
-    int args = atoi(apr_table_get(tab, "args"));
-    unsigned int i;
-    const char *name;
-    void *tref;
-    void *vlist;
+  ap_rprintf(a_r, "    <pre>%s</pre>\n    <br>\n", buffer);
 
+  if (!strcmp(cmd, "add")) {
+    unsigned int i;
+    int args;
+    const char *name = NULL;
+    void *tref = NULL;
+    void *vlist = NULL;
+
+    ap_rprintf(a_r, "    <blink>add</blink>\n    <br>\n");
+
+    args = atoi(apr_table_get(tab, "args"));
     name = apr_table_get(tab, "trans");
 
-    vlad_tref_create(&tref);
     vlad_strlist_create(&vlist);
 
     for (i = 0; i < args; i++) {
-      const char *value;
+      const char *value = NULL;
       value = apr_table_get(tab, apr_psprintf(a_r->pool, "arg%d", i));
       vlad_strlist_add(vlist, value);
     }
 
+    vlad_tref_create(&tref);
     vlad_tref_init(tref, name, vlist);
-
     vlad_kb_add_seqtab(a_conf->kb, tref);
-
-    ap_rprintf(a_r, "added %s\n", name);
   }
   else if (!strcmp(cmd, "delete")) {
-    ap_rprintf(a_r, "delete\n");
+    ap_rprintf(a_r, "    <blink>delete</blink>\n    <br>\n");
   }
   else
-    ap_rprintf(a_r, "error\n");
-
-  ap_rprintf(a_r, "args: %s\n", buffer);
-
-  modvlad_generate_form(a_r, a_conf);
+    ap_rprintf(a_r, "    <blink>error</blink>\n    <br>\n");
 }

@@ -11,26 +11,24 @@
 #include "apr_pools.h"
 
 #ifdef MODVLAD_DEBUG
-#define MODVLAD_LOGLEVEL APLOG_NOTICE
+#define MODVLAD_LOGLEVEL        APLOG_NOTICE
 #endif
 
-#define MODVLAD_DEFAULTACTION HTTP_UNAUTHORIZED
+#define MODVLAD_DEFAULTACTION   HTTP_UNAUTHORIZED
 
-typedef struct {
-  char *user_file;
-  char *policy_file;
-  void *kb;
-  const char *path;
-} modvlad_config_rec;
+#define MODVLAD_ADMIN_USERNAME  "administrator"
+#define MODVLAD_ADMIN_DIRNAME   ".admin"
 
-#define MODVLAD_ACCESS_OPTIONS "OPTIONS"
-#define MODVLAD_ACCESS_GET     "GET"
-#define MODVLAD_ACCESS_HEAD    "HEAD"
-#define MODVLAD_ACCESS_POST    "POST"
-#define MODVLAD_ACCESS_PUT     "PUT"
-#define MODVLAD_ACCESS_DELETE  "DELETE"
-#define MODVLAD_ACCESS_TRACE   "TRACE"
-#define MODVLAD_ACCESS_CONNECT "CONNECT"
+#define MODVLAD_MAXSTR_LEN      5120
+
+#define MODVLAD_ACCESS_OPTIONS  "OPTIONS"
+#define MODVLAD_ACCESS_GET      "GET"
+#define MODVLAD_ACCESS_HEAD     "HEAD"
+#define MODVLAD_ACCESS_POST     "POST"
+#define MODVLAD_ACCESS_PUT      "PUT"
+#define MODVLAD_ACCESS_DELETE   "DELETE"
+#define MODVLAD_ACCESS_TRACE    "TRACE"
+#define MODVLAD_ACCESS_CONNECT  "CONNECT"
 
 #define MODVLAD_ACCESS_ARRAY    \
 {                               \
@@ -45,11 +43,15 @@ typedef struct {
   NULL,                         \
 }
 
-#define MODVLAD_ADMIN_USERNAME  "administrator"
-#define MODVLAD_ADMIN_DIRNAME   ".admin"
+#define MODVLAD_LASTCHAR(X)     (X[strlen(X) > 0 ? strlen(X) - 1 : 0])
+#define MODVLAD_FIRSTCHAR(X)    (X[0])
 
-#define MODVLAD_LASTCHAR(X)  (X[strlen(X) > 0 ? strlen(X) - 1 : 0])
-#define MODVLAD_FIRSTCHAR(X) (X[0])
+typedef struct {
+  char *user_file;
+  char *policy_file;
+  void *kb;
+  const char *path;
+} modvlad_config_rec;
 
 /* a version of yyinput that uses apache apr */
 int modvlad_apache_yyinput(void *a_stream, char *a_buf, int a_max);
