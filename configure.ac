@@ -11,6 +11,7 @@ AC_SUBST(enable_debug)
 AC_CONFIG_FILES(  \
   Makefile        \
   common/Makefile \
+  kb/Makefile     \
   parser/Makefile \
   main/Makefile   \
 )

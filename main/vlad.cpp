@@ -6,9 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <vlad.h>
 #include <getopt.h>
+#include <vlad.h>
 #include <parser.h>
+#include <list.h>
+#include <identifier.h>
+#include <symtab.h>
 
 int main(int argc, char *argv[])
 {

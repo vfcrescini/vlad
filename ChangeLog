@@ -1,3 +1,35 @@
+2003-01-24  Vino Crescini  <jcrescin@cit.uws.ued.au>
+
+	* kb/Makefile.in :
+	* kb/symtab.h :
+	* kb/symtab.cpp :
+	* kb/identifier.h :
+	* kb/identifier.cpp :
+
+	  - Added a class for the symbol table. To be used to store identifier
+	    declarations. Symtab is derived from the list class and uses
+	    the identifier class (which in turn is derived from the abstract
+	    base class list_item).
+
+	* Makefile.in :
+	* configure.ac :
+
+	  - Some changes to generate a Makefile in the kb directory.
+
+	* common/list.cpp :
+	* common/list.h :
+
+	  - Some cleanup.
+
+	  - Added a get function in the list class. Only temporary. This
+	    will be replaced by a function that will retrieve an array
+	    of items that matches instead of just returning the first match.
+
+	* main/Makefile.in :
+	* main/vlad.cpp :
+
+	  - Changes to make the main binary link against the new kb lib.
+
 2003-01-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/list.cpp :

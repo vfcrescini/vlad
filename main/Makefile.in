@@ -27,7 +27,7 @@ CXXFLAGS = $(CFLAGS)
 all : $(TARGETS)
 
 vlad : vlad.o $(TOPSRCDIR)/lib/*
-	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lcommon -lparser $(LEXLIB)
+	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lparser -lkb -lcommon $(LEXLIB)
 	@for i in $(TARGETS); do      \
 	ln -sf main/$$i $(TOPSRCDIR); \
 	done
