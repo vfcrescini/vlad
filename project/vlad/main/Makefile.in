@@ -28,11 +28,11 @@ ifdef SMODELS
 SMLIBS = -lsmodels
 endif
 
-prefix = /tmp/xxx
-exec_prefix = ${prefix}
-bindir = ${exec_prefix}/bin
-libdir = ${exec_prefix}/lib
-includedir = ${prefix}/include
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+includedir = @includedir@
 
 include $(TOPSRCDIR)/rules.mk
 
