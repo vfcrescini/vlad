@@ -406,16 +406,16 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
     switch(tmp_ty) {
       case VLAD_ATOM_CONST :
-        fprintf(f, "%6d = holds(S%d, %c, constant, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1);
+        fprintf(f, "  %d = holds(S%d, %c, constant, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1);
         break;
       case VLAD_ATOM_HOLDS :
-        fprintf(f, "%6d = holds(S%d, %c, holds, %s, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2, tmp3);
+        fprintf(f, "  %d = holds(S%d, %c, holds, %s, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2, tmp3);
         break;
       case VLAD_ATOM_MEMBER :
-          fprintf(f, "%6d = holds(S%d, %c, member, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2);
+          fprintf(f, "  %d = holds(S%d, %c, member, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2);
         break;
       case VLAD_ATOM_SUBSET :
-          fprintf(f, "%6d = holds(S%d, %c, subset, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2);
+          fprintf(f, "  %d = holds(S%d, %c, subset, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2);
         break;
     }
   }
@@ -436,7 +436,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             /* object loop */
             for (n = 0; n < o_len + og_len; n++) {
               fprintf(f, 
-                      "%6d <- %d AND %d\n",
+                      "  %d <- %d AND %d\n",
                       (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (k * (a_len + ag_len) * (o_len + og_len)) + (m * (o_len + og_len)) + n,
                       (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (l * (a_len + ag_len) * (o_len + og_len)) + (m * (o_len + og_len)) + n + o_len,
                       pos_tot + (i * pos_tot * 2) + c_len + h_tot + (l * sg_len) + k);
@@ -453,7 +453,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             /* object loop */
             for (n = 0; n < o_len + og_len; n++) {
               fprintf(f, 
-                      "%6d <- %d AND %d\n",
+                      "  %d <- %d AND %d\n",
                       (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (m * (a_len + ag_len) * (o_len + og_len)) + (l * (o_len + og_len)) + n,
                       (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (m * (a_len + ag_len) * (o_len + og_len)) + (k * (o_len + og_len)) + n + o_len,
                       pos_tot + (i * pos_tot * 2) + c_len + h_tot + (sg_len * sg_len) + (l * sg_len) + k);
@@ -470,7 +470,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
             /* access loop */
             for (n = 0; n < a_len + ag_len; n++) {
               fprintf(f, 
-                      "%6d <- %d AND %d\n",
+                      "  %d <- %d AND %d\n",
                       (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (m * (a_len + ag_len) * (o_len + og_len)) + (n * (o_len + og_len)) + l,
                       (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + (m * (a_len + ag_len) * (o_len + og_len)) + (n * (o_len + og_len)) + k + o_len,
                       pos_tot + (i * pos_tot * 2) + c_len + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (l * og_len) + k);
@@ -498,7 +498,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
               continue;
 
             fprintf(f,
-                    "%6d <- %d AND %d\n",
+                    "  %d <- %d AND %d\n",
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (k * sg_len) + m,
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (k * sg_len) + l,
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (l * sg_len) + m);
@@ -515,7 +515,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
               continue;
 
             fprintf(f,
-                    "%6d <- %d AND %d\n",
+                    "  %d <- %d AND %d\n",
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (k * ag_len) + m,
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (k * ag_len) + l,
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (l * ag_len) + m);
@@ -532,7 +532,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
               continue;
 
             fprintf(f,
-                    "%6d <- %d AND %d\n",
+                    "  %d <- %d AND %d\n",
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (k * og_len) + m,
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (k * og_len) + l,
                     (j ? pos_tot : 0) + (i * pos_tot * 2) + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (l * og_len) + m);
@@ -549,7 +549,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   for (i = 0; i <= ((s == NULL) ? 0 : s->length()); i++) {
     for (j = 0; j < pos_tot; j++) {
       fprintf(f,
-              "%6d <- %d AND %d\n", 
+              "  %d <- %d AND %d\n", 
               pos_tot + (i * pos_tot * 2), 
               j + pos_tot + (i * pos_tot * 2), 
               j + (i * pos_tot * 2));
@@ -563,12 +563,12 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   for (i = 0; i < ((s == NULL) ? 0 : s->length()); i++) {
     for (j = 0; j < pos_tot; j++) {
       fprintf(f, 
-              "%6d <- %d AND NOT %d\n", 
+              "  %d <- %d AND NOT %d\n", 
               j + pos_tot + ((i + 1) * pos_tot * 2),
               j + pos_tot + (i * pos_tot * 2),
               j + ((i + 1) * pos_tot * 2));
       fprintf(f, 
-              "%6d <- %d AND NOT %d\n", 
+              "  %d <- %d AND NOT %d\n", 
               j + ((i + 1) * pos_tot * 2),
               j + (i * pos_tot * 2),
               j + pos_tot + ((i + 1) * pos_tot * 2));
@@ -585,7 +585,60 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
       return retval;
     if ((retval = encode_atom(tmp, 0, &a)) != VLAD_OK)
       return retval;
-    fprintf(f, "%6d <-\n", a);
+    fprintf(f, "  %d <-\n", a);
+  }
+
+  /* constraints */
+  fprintf(f, "Constraints\n");
+
+  for (i = 0; i <= ((s == NULL) ? 0 : s->length()); i++) {
+    for (j = 0; j < ctable->length(); j++) {
+      expression *tmp_e;
+      expression *tmp_c;
+      expression *tmp_n;
+   
+      if ((retval = ctable->get(j, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
+        return retval;
+  
+      /* constaint expression */
+      for (k = 0; k < tmp_e->length(); k++) {
+        atom *tmp_a;
+        unsigned int a;
+        if ((retval = tmp_e->get(k, &tmp_a)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_a, i, &a)) != VLAD_OK)
+          return retval;
+        fprintf(f, "  %d", a);
+      } 
+  
+      fprintf(f, " <-");
+      
+      /* constraint condition */
+      for (k = 0; k < tmp_c->length(); k++) {
+        atom *tmp_a;
+        unsigned int a;
+        if ((retval = tmp_c->get(k, &tmp_a)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_a, i, &a)) != VLAD_OK)
+          return retval;
+  
+        fprintf(f, "  %d", a);
+      }
+  
+      /* constraint negative condition */
+      for (k = 0; k < tmp_n->length(); k++) {
+        atom *tmp_a;
+        unsigned int a;
+        if ((retval = tmp_n->get(k, &tmp_a)) != VLAD_OK)
+          return retval;
+        if ((retval = encode_atom(tmp_a, i, &a)) != VLAD_OK)
+          return retval;
+  
+        fprintf(f, "  NOT %d", a);
+      }
+  
+      fprintf(f, "\n");
+    }
   }
 
   return VLAD_OK;
