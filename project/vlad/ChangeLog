@@ -1,5 +1,7 @@
 2003-12-31  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/consttab.cpp:
+	* lib/consttab.h:
 	* lib/expression.cpp :
 	* lib/expression.h :
 	* lib/numberlist.cpp :
