@@ -10,15 +10,15 @@ all : $(TARGETS)
 main : parser.o scanner.o
 	$(CC) $(CFLAGS) -o$(@) parser.o scanner.o -ll -lsymtab -ldatastruct
 
-scanner.o : lex.yy.c y.tab.h
+scanner.o : y.tab.h lex.yy.c
 	$(CC) $(CFLAGS) -o$(@) -c lex.yy.c
 
 
-parser.o : y.tab.c y.tab.h
+parser.o : y.tab.h y.tab.c
 	$(CC) $(CFLAGS) -o$(@) -c y.tab.c
 
 lex.yy.c : scanner.l
-	$(LEX) scanner.l
+	$(LEX) -p scanner.l
 
 y.tab.c : parser.y
 	$(YACC) parser.y
