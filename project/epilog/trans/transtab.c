@@ -50,7 +50,7 @@ int transtab_get(char *name, transdef_type **trans)
 
   tmp_trans.name = name;
 
-  if (simplelist_get_data(list, (void *) &tmp_trans, &tmp_list, transtab_compare) != 0)
+  if (simplelist_get_data(list, &tmp_list, (void *) &tmp_trans, transtab_compare) != 0)
     return -1;
 
   /* we know that there are no duplicates in this list so either the resulting
