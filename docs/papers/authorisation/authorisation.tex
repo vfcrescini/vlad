@@ -417,12 +417,13 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
       are applied).
 
       Translating the proposed language into an extended logic program requires
-      a stateless set of axioms and propositions. The first step in the 
-      translation is to reduce every atom, which is composed of two to three
-      parameters into a single proposition. This procedure, although does not
-      seem necessary is to allow us to have a simplified representation of
-      propositions. For example, the atoms holds(s1, a1, o$_{1}$) and memb(e1, g1)
-      can be reduced to propositions A and B, respectively.
+      a stateless set of axioms and propositions. The first step involved in
+      the translation is to reduce every atom, which is composed of two to
+      three parameters, into a single proposition. This procedure, although
+      does not seem necessary is to allow us to have a simplified
+      representation of propositions. For example, the atoms holds(s1, a1, 
+      o$_{1}$) and memb(e1, g1) can be reduced to propositions A and B,
+      respectively.
 
       \subsubsection{Adding a State Parameter to the Atoms}
 
@@ -582,7 +583,45 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
 
       Translation to from extended logic program to normal logic program 
       requires one more additional step: to remove all instances of classical 
-      negation. 
+      negation. The easiest way to achieve this is to add yet another parameter
+      into each of the atoms to indicate its truth value in the classical
+      negation sense. To briefly illustrate, the atoms:
+
+      \begin{list}{}{}
+        \item holds(A, S)
+        \item $\lnot$ holds(A, S)
+        \item not holds(A, S)
+        \item not $\lnot$ holds(A, S)
+      \end{list}
+
+      can be represented as
+
+      \begin{list}{}{}
+        \item holds(A, S, T)
+        \item holds(A, S, F)
+        \item not holds(A, S, T)
+        \item not holds(A, S, F)
+      \end{list}
+
+      where T and F are the parameters that indicate whether an atom is
+      classically negated or not, respectively.
+
+      In addition to the extra parameter, a new implication must be added
+      to indicate that the atoms that differ only by their third parameter
+      are complementary:
+
+      \begin{list}{}{}
+        \item false $\leftarrow$ holds(A, S, T) $\land$ holds(A, S, F)
+      \end{list}
+
+      $\forall$ (A, S $\mid$ A $\in$ $\alpha$, S $\in$ $\sigma$)
+
+      where
+
+      \begin{itemize}
+        \item $\alpha$ = set of all atoms in the domain
+        \item $\sigma$ = set of all states in the domain
+      \end{itemize}
 
     \pagebreak
 
