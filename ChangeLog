@@ -1,3 +1,22 @@
+2003-06-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* main/vlad.cpp :
+	* lib/Makefile.in :
+	* main/Makefile :
+	* main/operation.l :
+	* main/operation.y :
+	* main/parser.h :
+	* main/program.l :
+	* main/program.y :
+	* lib/operation.l :
+	* lib/operation.y :
+	* lib/parser.h :
+	* lib/program.l :
+	* lib/program.y :
+
+	  - Now parser is not part of the library. Moved parser and scanner
+	    into main directory.
+
 2003-05-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Makefile.in :

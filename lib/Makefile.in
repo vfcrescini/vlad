@@ -33,7 +33,6 @@ INCLUDES =            \
   transtab.h          \
   $(SMINCLUDES)       \
   kb.h                \
-  parser.h            \
   $(NULL)
 OBJECTS =             \
   list.o              \
@@ -47,16 +46,8 @@ OBJECTS =             \
   transtab.o          \
   $(SMOBJECTS)        \
   kb.o                \
-  program_parser.o    \
-  program_scanner.o   \
-  operation_parser.o  \
-  operation_scanner.o \
   $(NULL)
-TEMP =                \
-  lex.*.cpp           \
-  *.tab.cpp           \
-  *.tab.h             \
-  $(NULL)
+TEMP =
 
 ifdef SMODELS
 SMINCLUDES = wrapper.h
@@ -121,33 +112,3 @@ endif
 
 kb.o : expression.o symtab.o consttab.o transtab.o $(SM_OBJECTS) kb.h kb.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c kb.cpp
-
-operation_scanner.o : operation.tab.h lex.operation.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c lex.operation.cpp
-
-operation_parser.o : operation.tab.h operation.tab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c operation.tab.cpp
-
-program_scanner.o : program.tab.h lex.program.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c lex.program.cpp
-
-program_parser.o : program.tab.h program.tab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c program.tab.cpp
-
-lex.operation.cpp : operation.l
-	$(LEX) -Poperation operation.l && mv -f lex.operation.c $(@)
-
-lex.program.cpp : program.l
-	$(LEX) -Pprogram program.l && mv -f lex.program.c $(@)
-
-operation.tab.cpp : operation.y
-	$(YACC) -b operation -p operation operation.y && mv -f operation.tab.c $(@)
-
-operation.tab.h : operation.y
-	$(YACC) -b operation -p operation -d operation.y
-
-program.tab.cpp : program.y
-	$(YACC) -b program -p program program.y && mv -f program.tab.c $(@)
-
-program.tab.h : program.y
-	$(YACC) -b program -p program -d program.y
