@@ -1,3 +1,11 @@
+2003-06-13  vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/atom.h :
+	* lib/symtab.h :
+	* lib/vlad.h :
+
+	  - Moved macros to vlad.h to allow non-c++ programs to use them.
+
 2003-06-10  vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/Makefile.in :

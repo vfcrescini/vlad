@@ -9,17 +9,6 @@
 #include <vlad/list.h>
 #include <vlad/stringlist.h>
 
-/* atom type */
-#define VLAD_ATOM_HOLDS  1
-#define VLAD_ATOM_MEMBER 2
-#define VLAD_ATOM_SUBSET 3
-
-/* convenience macros */
-#define VLAD_ATOM_TYPE_VALID(X) (((X) >= 0) && ((X) < 4))
-#define VLAD_ATOM_IS_HOLDS(X)   ((X) == VLAD_ATOM_HOLDS)
-#define VLAD_ATOM_IS_MEMBER(X)  ((X) == VLAD_ATOM_MEMBER)
-#define VLAD_ATOM_IS_SUBSET(X)  ((X) == VLAD_ATOM_SUBSET)
-
 /* structure to hold atoms. no checking is done here. values are just stored */
 
 typedef struct

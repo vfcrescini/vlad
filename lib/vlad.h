@@ -32,6 +32,31 @@
 #define VLAD_MAXLEN_NUM      32
 #define VLAD_MAXLEN_IDENT    128
 
+/* identifier type values indicated by the first 2 bits */
+#define VLAD_IDENT_SUBJECT       1
+#define VLAD_IDENT_ACCESS        2
+#define VLAD_IDENT_OBJECT        3
+
+/* identifier group bit indicated by the 3th bit */
+#define VLAD_IDENT_GROUP         4
+
+/* atom type */
+#define VLAD_ATOM_HOLDS  1
+#define VLAD_ATOM_MEMBER 2
+#define VLAD_ATOM_SUBSET 3
+
+/* convenience macros */
+#define VLAD_IDENT_BASETYPE(X)   ((X) & 3)
+#define VLAD_IDENT_IS_SUBJECT(X) (((X) & 3) == VLAD_IDENT_SUBJECT)
+#define VLAD_IDENT_IS_ACCESS(X)  (((X) & 3) == VLAD_IDENT_ACCESS)
+#define VLAD_IDENT_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
+#define VLAD_IDENT_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
+#define VLAD_IDENT_IS_VALID(X)   ((X) > 0 && (X) <= 7)
+#define VLAD_ATOM_TYPE_VALID(X)  (((X) >= 0) && ((X) < 4))
+#define VLAD_ATOM_IS_HOLDS(X)    ((X) == VLAD_ATOM_HOLDS)
+#define VLAD_ATOM_IS_MEMBER(X)   ((X) == VLAD_ATOM_MEMBER)
+#define VLAD_ATOM_IS_SUBSET(X)   ((X) == VLAD_ATOM_SUBSET)
+
 /* error codes */
 
 /* success */
