@@ -33,10 +33,9 @@
 
 NS_IMPL_ISUPPORTS1(gtkEmbedPromptDialog, nsIPromptService)
 
-static bool (*gAlertCB)(int, const char *);
-static bool (*gPromptCB)(int, const char *, const char *, bool *);
-static bool (*gConfirmCB)(int, const char *, bool *);
-static gtkEmbedBrowser **gBrowserArray;
+static bool (*gAlertCB)(nsIDOMWindow *, const char *) = NULL;
+static bool (*gPromptCB)(nsIDOMWindow *, const char *, const char *, bool *) = NULL;
+static bool (*gConfirmCB)(nsIDOMWindow *, const char *, bool *) = NULL;
 
 gtkEmbedPromptDialog::gtkEmbedPromptDialog()
 {
@@ -56,14 +55,12 @@ gtkEmbedPromptDialog::~gtkEmbedPromptDialog()
 
 }
 
-bool gtkEmbedPromptDialog::Init(gtkEmbedBrowser **aBrowserArray,
-                                bool (*aAlertCB)(int, const char *),
-                                bool (*aPromptCB)(int, const char *, const char *, bool *),
-                                bool (*aConfirmCB)(int, const char *, bool *))
+bool gtkEmbedPromptDialog::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
+                                bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
+                                bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *))
 {
   // store our static references so that every
   // instance can have access to it
-  gBrowserArray = aBrowserArray;
   gAlertCB      = aAlertCB;
   gPromptCB     = aPromptCB;
   gConfirmCB    = aConfirmCB;
@@ -82,7 +79,7 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Alert(nsIDOMWindow *aParent,
 #endif
 
   if (gAlertCB)
-    (*gAlertCB)(1, NS_ConvertUCS2toUTF8(aText).get());
+    (*gAlertCB)(aParent, NS_ConvertUCS2toUTF8(aText).get());
 
   return NS_OK;
 }
@@ -99,9 +96,8 @@ NS_IMETHODIMP gtkEmbedPromptDialog::AlertCheck(nsIDOMWindow *aParent,
 #endif
 
   if (gAlertCB)
-    (*gAlertCB)(1, NS_ConvertUCS2toUTF8(aText).get());
+    (*gAlertCB)(aParent, NS_ConvertUCS2toUTF8(aText).get());
 
-  // set the result to false for now
   *aChkBoxValue = false;
 
   return NS_OK;
@@ -117,7 +113,7 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Confirm(nsIDOMWindow *aParent,
 #endif
 
   if (gConfirmCB) 
-    (*gConfirmCB)(1, NS_ConvertUCS2toUTF8(aText).get(), aRetval);
+    (*gConfirmCB)(aParent, NS_ConvertUCS2toUTF8(aText).get(), (bool *) aRetval);
   else
     *aRetval = false;
 
@@ -136,7 +132,7 @@ NS_IMETHODIMP gtkEmbedPromptDialog::ConfirmCheck(nsIDOMWindow *aParent,
 #endif
 
   if (gConfirmCB)
-    (*gConfirmCB)(1, NS_ConvertUCS2toUTF8(aText).get());
+    (*gConfirmCB)(aParent, NS_ConvertUCS2toUTF8(aText).get(), (bool *) aRetval);
   else
     *aRetval = false;
 
@@ -151,12 +147,21 @@ NS_IMETHODIMP gtkEmbedPromptDialog::Prompt(nsIDOMWindow *aParent,
                                             PRBool *aChkBoxValue,
                                             PRBool *aRetval)
 {
+  char *tempReply = NULL;
+  nsString tempString;
+
 #ifdef DEBUG
   fprintf(stderr, "gtkEmbedPromptDialog::Prompt()\n");
 #endif
 
-  if (gPromptCB)
-    (*gPromptCB)(1, NS_ConvertUCS2toUTF8(aText).get(), *aValue, aRetval); 
+  if (gPromptCB) {
+    (*gPromptCB)(aParent, 
+                 NS_ConvertUCS2toUTF8(aText).get(), 
+                 tempReply, 
+                 (bool *) aRetval);
+    tempString.AssignWithConversion(tempReply);
+    *aValue = (PRUnichar *) tempString.GetUnicode();
+  }
   else {
     *aValue  = NULL;
     *aRetval = false;

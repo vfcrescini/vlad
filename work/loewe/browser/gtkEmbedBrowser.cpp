@@ -168,9 +168,9 @@ static void yesNoDialogSend(int, int, int);
 */
 
 // callback functions for dialogs
-static bool alertCB(int, const char *);
-static bool promptCB(int, const char *, const char *, bool *);
-static bool confirmCB(int, const char *, bool *);
+static bool alertCB(nsIDOMWindow *, const char *);
+static bool promptCB(nsIDOMWindow *, const char *, const char *, bool *);
+static bool confirmCB(nsIDOMWindow *, const char *, bool *);
 
 // utility functions
 static void readMessage();
@@ -266,7 +266,7 @@ int main(int argc, char **argv)
   if (!gDialogManager)
     return -1;
 
-  gDialogManager->Init(gBrowserArray, &alertCB, &promptCB, &confirmCB);
+  gDialogManager->Init(&alertCB, &promptCB, &confirmCB);
 
   // open the default window
   gCurrentIndex = 0;
@@ -1303,13 +1303,13 @@ static void memUsageRequest()
 */
 
 // callback functions from the dialogs
-bool alertCB(int aID, const char *aMessage)
+bool alertCB(nsIDOMWindow *aParent, const char *aMessage)
 {
   printf("alert from app: %s\n", aMessage);
   return true;
 }
 
-bool promptCB(int aID, const char *aMessage, const char *aValue, bool *aOK)
+bool promptCB(nsIDOMWindow *aParent, const char *aMessage, const char *aValue, bool *aOK)
 {
   printf("prompt from app\n");
   *aOK = true;
@@ -1317,7 +1317,7 @@ bool promptCB(int aID, const char *aMessage, const char *aValue, bool *aOK)
   return true;
 }
 
-bool confirmCB(int aID, const char *aMessage, bool *aOK)
+bool confirmCB(nsIDOMWindow *aParent, const char *aMessage, bool *aOK)
 {
   printf("confirm from app\n");
   *aOK = true;
@@ -1403,7 +1403,6 @@ static gtkEmbedBrowser *createNewBrowser(guint32 aChromeMask, guint32 aID)
   newBrowser->usedFlag       = true;
   newBrowser->loadingFlag    = false;
   newBrowser->blockedFlag    = false;
-  newBrowser->replyArray     = NULL;
   newBrowser->topLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   newBrowser->topLevelVBox   = gtk_vbox_new(true, 0);
 

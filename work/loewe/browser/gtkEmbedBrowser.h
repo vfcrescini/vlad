@@ -28,6 +28,7 @@
 #include "nsIInterfaceRequestor.h"
 #include "nsICacheService.h"
 #include "nsNetCID.h"
+#include "nsIDOMWindow.h"
 #include "nsIWebBrowser.h"
 #include "nsIWebBrowserFind.h"
 #include "gtkmozembed.h"
@@ -38,7 +39,6 @@ typedef struct _gtkEmbedBrowser {
   bool          usedFlag;
   bool          loadingFlag;
   bool          blockedFlag;
-  char          **replyArray;  // this really shouldn't be here
   nsIWebBrowser *webBrowser;
   GtkWidget     *topLevelWindow;
   GtkWidget     *topLevelVBox;

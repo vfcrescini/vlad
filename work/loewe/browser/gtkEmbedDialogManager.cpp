@@ -46,18 +46,14 @@ gtkEmbedDialogManager::~gtkEmbedDialogManager()
     delete gSSLDialog;
 }
 
-bool gtkEmbedDialogManager::Init(gtkEmbedBrowser **aBrowserArray,
-                                 bool (*aAlertCB)(int, const char *),
-                                 bool (*aPromptCB)(int, const char *, const char *, bool *),
-                                 bool (*aConfirmCB)(int, const char *, bool *))
+bool gtkEmbedDialogManager::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
+                                 bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
+                                 bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *))
 {
   nsCOMPtr<nsIFactory> promptDialog;
   nsCOMPtr<nsIFactory> sslDialog;
   gtkEmbedPromptDialog *promptDialogInstance;
   gtkEmbedSSLDialog    *sslDialogInstance;
-
-  if (!aBrowserArray)
-    return false;
 
   // register our own implementation of nsIPromptService
   if (NS_FAILED(newPromptDialogFactory(getter_AddRefs(promptDialog))))
@@ -80,7 +76,7 @@ bool gtkEmbedDialogManager::Init(gtkEmbedBrowser **aBrowserArray,
                                       true);
 
   // create an instance of each so we can give a static reference
-  // to our callback functions and the browser array
+  // to our callback functions
 
   promptDialogInstance = new gtkEmbedPromptDialog();
   sslDialogInstance    = new gtkEmbedSSLDialog();  
@@ -88,13 +84,11 @@ bool gtkEmbedDialogManager::Init(gtkEmbedBrowser **aBrowserArray,
   if (!promptDialogInstance || !sslDialogInstance)
     return false;
 
-  promptDialogInstance->Init(aBrowserArray, 
-                             aAlertCB,
+  promptDialogInstance->Init(aAlertCB,
                              aPromptCB,
                              aConfirmCB);
 
-  sslDialogInstance->Init(aBrowserArray,
-                          aAlertCB,
+  sslDialogInstance->Init(aAlertCB,
                           aPromptCB, 
                           aConfirmCB);
 

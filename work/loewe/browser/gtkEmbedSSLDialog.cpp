@@ -39,10 +39,9 @@ NS_IMPL_ISUPPORTS8(gtkEmbedSSLDialog, nsINSSDialogs,
                                       nsITokenDialogs,
                                       nsIDOMCryptoDialogs);
 
-static bool (*gAlertCB)(int, const char *);
-static bool (*gPromptCB)(int, const char *, const char *, bool *);
-static bool (*gConfirmCB)(int, const char *, bool *);
-static gtkEmbedBrowser **gBrowserArray;
+static bool (*gAlertCB)(nsIDOMWindow *, const char *) = NULL;
+static bool (*gPromptCB)(nsIDOMWindow *, const char *, const char *, bool *) = NULL;
+static bool (*gConfirmCB)(nsIDOMWindow *, const char *, bool *) = NULL;
 
 gtkEmbedSSLDialog::gtkEmbedSSLDialog()
 {
@@ -60,14 +59,12 @@ gtkEmbedSSLDialog::~gtkEmbedSSLDialog()
 #endif
 }
 
-bool gtkEmbedSSLDialog::Init(gtkEmbedBrowser **aBrowserArray,
-                             bool (*aAlertCB)(int, const char *),
-                             bool (*aPromptCB)(int, const char *, const char *, bool *),
-                             bool (*aConfirmCB)(int, const char *, bool *))
+bool gtkEmbedSSLDialog::Init(bool (*aAlertCB)(nsIDOMWindow *, const char *),
+                             bool (*aPromptCB)(nsIDOMWindow *, const char *, const char *, bool *),
+                             bool (*aConfirmCB)(nsIDOMWindow *, const char *, bool *))
 {
   // store our static references so that every
   // instance can have access to it
-  gBrowserArray = aBrowserArray;
   gAlertCB      = aAlertCB;
   gPromptCB     = aPromptCB;
   gConfirmCB    = aConfirmCB;
