@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
   x->add("3",subject,false);
   x->add("4",subject,false);
   x->add("5",subject,false);
+  x->add("5",subject,false);
 
   fprintf(stderr, "%d\n\n", x->length());
 
