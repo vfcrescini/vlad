@@ -575,7 +575,7 @@
 
           $\sigma_{1}$ = $Res$($u_{0}$, $\sigma_{0}$)
 
-          $\ldots$
+          $\vdots$
 
           $\sigma_{|\psi|}$ = $Res$($u_{|\psi| - 1}$, $\sigma_{|\psi| - 1}$)
         \end{vquote}
@@ -1809,26 +1809,56 @@
     \(k\sb{0}\) && \ldots && \(k\sb{w}\) && !\(l\sb{0}\) && \ldots && !\(l\sb{x}\)
     \end{vverbatim}
 
-    We define the following sets of ground facts:
+    Let $\gamma_{int}$ be an initial fact definition statement, $\gamma_{con}$
+    a constraint definition statement, and $\gamma_{upd}$ a policy update
+    definition statement, where $\gamma_{int}$, $\gamma_{con}$, $\gamma_{upd}$
+    $\in$ ${\cal D}_{\cal L}$. We then define the following set constructor
+    functions:
 
     \begin{vquote}
-      ${\cal F}^{+}_{int}$ = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
+      ${\cal F}^{+}_{int}$($\gamma_{int}$) = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
 
-      ${\cal F}^{-}_{int}$ = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
+      ${\cal F}^{-}_{int}$($\gamma_{int}$) = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
 
-      ${\cal F}^{+}_{con}$ = \{$c_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $o$\}
+      ${\cal F}^{+}_{con}$($\gamma_{upd}$) = \{$c_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $o$\}
 
-      ${\cal F}^{-}_{con}$ = \{$d_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $p$\}
+      ${\cal F}^{-}_{con}$($\gamma_{upd}$) = \{$d_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $p$\}
 
-      ${\cal F}^{+}_{upd}$ = \{$i_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $u$\}
+      ${\cal F}^{+}_{upd}$($\gamma_{con}$) = \{$i_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $u$\}
 
-      ${\cal F}^{-}_{upd}$ = \{$j_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $v$\}
+      ${\cal F}^{-}_{upd}$($\gamma_{con}$) = \{$j_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $v$\}
+    \end{vquote}
+
+    Using these functions, we define the following sets of ground facts:
+
+    \begin{vquote}
+      ${\cal F}^{+}_{int}$ =
+      \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{int}$($\gamma_{int}$), $\gamma_{int}$ $\in$ ${\cal D}_{\cal L}$\}
+                          
+      ${\cal F}^{-}_{int}$ =
+      \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{int}$($\gamma_{int}$), $\gamma_{int}$ $\in$ ${\cal D}_{\cal L}$\}
+                          
+      ${\cal F}^{+}_{con}$ =
+      \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{con}$($\gamma_{con}$), $\gamma_{con}$ $\in$ ${\cal D}_{\cal L}$\}
+                          
+      ${\cal F}^{-}_{con}$ =
+      \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{con}$($\gamma_{con}$), $\gamma_{con}$ $\in$ ${\cal D}_{\cal L}$\}
+                          
+      ${\cal F}^{+}_{upd}$ =
+      \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{upd}$($\gamma_{upd}$), $\gamma_{upd}$ $\in$ ${\cal D}_{\cal L}$\}
+                          
+      ${\cal F}^{-}_{upd}$ =
+      \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{upd}$($\gamma_{upd}$), $\gamma_{upd}$ $\in$ ${\cal D}_{\cal L}$\}
     \end{vquote}
 
     Additionally, we use the complementary set notation
     $\overline{{\cal F}}$ to denote a set containing the negation of
-    facts in set ${\cal F}$, i.e. $\overline{{\cal F}}$ =
-    \{$\lnot\rho$ $\mid$ $\rho$ $\in$ ${\cal F}$\}.
+    facts in set ${\cal F}$.
+
+    \begin{vquote}
+      $\overline{{\cal F}}$ =
+      \{$\lnot\rho$ $\mid$ $\rho$ $\in$ ${\cal F}$\}.
+    \end{vquote}
 
     Let $\gamma$ be an initial, constraint or policy update definition
     statement of language ${\cal L}$. We then define the following functions:
@@ -1961,15 +1991,15 @@
       following form:
 
       \begin{vquote}
-        $\hat{f_{0}}$ $\leftarrow$ $\hdots$, $not$ $\hat{f_{k}}$, $\hdots$
+        $\hat{\rho}_{0}$ $\leftarrow$ $\hdots$, $not$ $\hat{\rho}_{k}$, $\hdots$
 
-        $\hat{f_{1}}$ $\leftarrow$ $\hdots$, $\hat{f_{0}}$, $\hdots$
+        $\hat{\rho}_{1}$ $\leftarrow$ $\hdots$, $\hat{\rho}_{0}$, $\hdots$
 
         $\vdots$
 
-        $\hat{f_{k - 1}}$ $\leftarrow$ $\hdots$, $\hat{f_{k - 2}}$, $\hdots$
+        $\hat{\rho}_{k - 1}$ $\leftarrow$ $\hdots$, $\hat{\rho}_{k - 2}$, $\hdots$
 
-        $\hat{f_{k}}$ $\leftarrow$ $\hdots$, $\hat{f_{k - 1}}$, $\hdots$
+        $\hat{\rho}_{k}$ $\leftarrow$ $\hdots$, $\hat{\rho}_{k - 1}$, $\hdots$
       \end{vquote}
 
       The absence these rules means $Trans$(${\cal D}_{\cal L}$) is an
@@ -1984,9 +2014,9 @@
       of the following form from occurring in $Trans$(${\cal D}_{\cal L}$):
 
       \begin{vquote}
-        $\hat{f^{S_{0}}}$ $\leftarrow$
+        $\hat{\rho}^{S_{0}}$ $\leftarrow$
 
-        $\lnot\hat{f^{S_{0}}}$ $\leftarrow$
+        $\lnot\hat{\rho}^{S_{0}}$ $\leftarrow$
       \end{vquote}
 
       This shows that a subset of the answer set which contains facts from the
@@ -1996,7 +2026,7 @@
       rules of the following form do not occur in $Trans$(${\cal D}_{\cal L}$):
 
       \begin{vquote}
-        $\hat{f}$ $\leftarrow$ $\hdots$, $\lnot\hat{f}$, $\hdots$
+        $\hat{\rho}$ $\leftarrow$ $\hdots$, $\lnot\hat{\rho}$, $\hdots$
       \end{vquote}
 
       This ensures that all constraint rules translated from
@@ -2006,14 +2036,14 @@
       ensures that rules in $Trans$(${\cal D}_{\cal L}$) of the following form:
 
       \begin{vquote}
-        $\hat{f}$ $\leftarrow$ $\hdots$, $\hat{f'}$, $\hdots$
+        $\hat{\rho}$ $\leftarrow$ $\hdots$, $\hat{\rho}'$, $\hdots$
 
-        $\lnot \hat{f}$ $\leftarrow$ $\hdots$, $\hat{f''}$, $\hdots$
+        $\lnot \hat{\rho}$ $\leftarrow$ $\hdots$, $\hat{\rho}''$, $\hdots$
       \end{vquote}
 
       \noindent
-      cannot both affect the answer set as the premises $f'$ and $f''$ are
-      mutually exclusive and therefore only one is true in any given state.
+      cannot both affect the answer set as the premises $\rho'$ and $\rho''$
+      are mutually exclusive and therefore only one is true in any given state.
 
       These guarantee that the answer set do not contain complementary facts,
       and therefore guarantee that the answer set is consistent.
