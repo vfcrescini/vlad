@@ -18,18 +18,29 @@ symtab::~symtab()
 }
 
 /* add symbol in symbol table */
-int symtab::add(const char *n, ident_type t, bool g)
+int symtab::add(const char *n, unsigned char t)
 {
   int retval;
   identifier *ident;
+
+  if (n == NULL)
+    return VLAD_NULLPTR;
+
+  if (t == 0)
+    return VLAD_INVALIDINPUT;
  
   if ((ident = new(nothrow) identifier()) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = ident->init(n, t, g)) != VLAD_OK)
+  if ((retval = ident->init(n, t)) != VLAD_OK)
     return retval;
 
-  return list::add(ident);
+  if ((retval = list::add(ident)) != VLAD_OK) {
+    delete ident;
+    return retval;
+  }
+
+  return VLAD_OK; 
 }
 
 /* delete the symbol n from the table */
@@ -37,12 +48,16 @@ int symtab::del(const char *n)
 {
   int retval;
   identifier ident;
+
+  /* do not accept a wildcard here. del(NULL) == purge() */
+
+  if (n == NULL)
+    return VLAD_NULLPTR;
  
-  if ((retval = ident.init(n, subject_ident, false)) != VLAD_OK)
+  if ((retval = ident.init(n, 0)) != VLAD_OK)
     return retval;
 
-  if ((retval = list::del_d(&ident, true)) != VLAD_OK)
-    return retval;
+  return list::del_d(&ident, true);
 
   return VLAD_OK;
 }
@@ -54,8 +69,11 @@ int symtab::get(const char *n, identifier **i)
   unsigned int size;
   identifier ident;
   identifier **array;
+
+  if (n == NULL)
+    return VLAD_NULLPTR;
  
-  if ((retval = ident.init(n, subject_ident, false)) != VLAD_OK)
+  if ((retval = ident.init(n, 0)) != VLAD_OK)
     return retval;
   
   if ((retval = list::get_d(&ident, (list_item ***) &array, &size)) != VLAD_OK)
@@ -69,17 +87,29 @@ int symtab::get(const char *n, identifier **i)
   return VLAD_OK;
 }
 
+/* get an array of identifiers of a particular type */
+int symtab::get(unsigned char t, identifier ***a, unsigned int *s)
+{
+  int retval;
+  identifier ident;
+
+  if (a == NULL || s == NULL)
+    return VLAD_NULLPTR;
+ 
+  if ((retval = ident.init(NULL, t)) != VLAD_OK)
+    return retval;
+  
+  return list::get_d(&ident, (list_item ***) a, s);
+}
+
 /* return true if symbol is in the table */
 int symtab::find(const char *n)
 {
   int retval;
   identifier ident;
  
-  if ((retval = ident.init(n, subject_ident, false)) != VLAD_OK)
+  if ((retval = ident.init(n, 0)) != VLAD_OK)
     return retval;
   
-  if ((retval = list::find(&ident)) != VLAD_OK)
-    return retval;
-
-  return VLAD_OK;
+  return list::find(&ident);
 }

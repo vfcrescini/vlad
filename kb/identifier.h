@@ -8,12 +8,28 @@
 
 #include <list.h>
 
-typedef enum
-{
-  subject_ident = 0,
-  access_ident = 1,
-  object_ident = 2
-} ident_type;
+/* identifier type values indicated by the first 2 bits */
+#define VLAD_IDENT_SUBJECT            1
+#define VLAD_IDENT_ACCESS             2 
+#define VLAD_IDENT_OBJECT             3
+
+/* identifier group bit indicated by the 3th bit */
+#define VLAD_IDENT_GROUP              4
+
+/* so the type cannot be more than this value */
+#define VLAD_IDENT_TYPEMAX           7
+
+/* some convenience macros */
+#define VLAD_IDENT_IS_SUBJECT(X)      (((X).get_type() & 3) == VLAD_IDENT_SUBJECT)
+#define VLAD_IDENT_IS_ACCESS(X)       (((X).get_type() & 3) == VLAD_IDENT_ACCESS)
+#define VLAD_IDENT_IS_OBJECT(X)       (((X).get_type() & 3) == VLAD_IDENT_OBJECT)
+#define VLAD_IDENT_IS_GROUP(X)        ((X).get_type() & VLAD_IDENT_GROUP)
+#define VLAD_IDENT_BASETYPE(X)        ((X).get_type() & 3)
+#define VLAD_IDENT_TYPE_IS_SUBJECT(X) (((X) & 3) == VLAD_IDENT_SUBJECT)
+#define VLAD_IDENT_TYPE_IS_ACCESS(X)  (((X) & 3) == VLAD_IDENT_ACCESS)
+#define VLAD_IDENT_TYPE_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
+#define VLAD_IDENT_TYPE_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
+#define VLAD_IDENT_STRING(X)          ((X).get_name())
 
 class identifier : public list_item
 {
@@ -21,14 +37,12 @@ class identifier : public list_item
     identifier();
     ~identifier();
     bool cmp(list_item *item);
-    int init(const char *n, ident_type t, bool g);
+    int init(const char *n, unsigned char t);
     const char *get_name();
-    ident_type get_type();
-    bool get_group();
+    unsigned char get_type();
   private :
     char *name;
-    ident_type type;
-    bool group;
+    unsigned char type;
 } ;
 
 #endif
