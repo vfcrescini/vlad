@@ -403,7 +403,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
         stable->get(k, VLAD_IDENT_CONST, &tmp1);
         encode_atom(tmp1, NULL, NULL, VLAD_ATOM_CONST, i, j, &tmp2);
-        fprintf(f, "%6d = state %d %s%s\n", tmp2, i, j ? "" : "!", tmp1);
+        fprintf(f, "%6d = holds(S%d, %c, constant, %s)\n", tmp2, i, j ? 'F' : 'T', tmp1);
       }
       /* holds */
       for (k = 0; k < s_len + sg_len; k++) {
@@ -432,7 +432,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
               stable->get(m - o_len, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp3);
 
             encode_atom(tmp1, tmp2, tmp3, VLAD_ATOM_HOLDS, i, j, &tmp4);
-            fprintf(f, "%6d = state %d %sholds(%s, %s, %s)\n", tmp4, i, j ? "" : "!", tmp1, tmp2, tmp3);
+            fprintf(f, "%6d = holds(S%d, %c, holds, %s, %s, %s)\n", tmp4, i, j ? 'F' : 'T', tmp1, tmp2, tmp3);
           }
         }
       }
@@ -445,7 +445,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp2);
           encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_MEMBER, i, j, &tmp3);
-          fprintf(f, "%6d = state %d %smemb(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+          fprintf(f, "%6d = holds(S%d, %c, member, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
       for (k = 0; k < stable->length(VLAD_IDENT_ACCESS); k++) {
@@ -456,7 +456,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
           encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_MEMBER, i, j, &tmp3);
-          fprintf(f, "%6d = state %d %smemb(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+          fprintf(f, "%6d = holds(S%d, %c, member, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
       for (k = 0; k < stable->length(VLAD_IDENT_OBJECT); k++) {
@@ -467,7 +467,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp2);
           encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_MEMBER, i, j, &tmp3);
-          fprintf(f, "%6d = state %d %smemb(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+          fprintf(f, "%6d = holds(S%d, %c, member, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
       /* subset */
@@ -479,7 +479,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, &tmp2);
           encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp3);
-          fprintf(f, "%6d = state %d %ssubst(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+          fprintf(f, "%6d = holds(S%d, %c, subset, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
       for (k = 0; k < stable->length(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP); k++) {
@@ -490,7 +490,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, &tmp2);
           encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp3);
-          fprintf(f, "%6d = state %d %ssubst(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+          fprintf(f, "%6d = holds(S%d, %c, subset, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
       for (k = 0; k < stable->length(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP); k++) {
@@ -501,7 +501,7 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
           unsigned int tmp3;
           stable->get(l, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, &tmp2);
           encode_atom(tmp1, tmp2, NULL, VLAD_ATOM_SUBSET, i, j, &tmp3);
-          fprintf(f, "%6d = state %d %ssubst(%s, %s)\n", tmp3, i, j ? "" : "!", tmp1, tmp2);
+          fprintf(f, "%6d = holds(S%d, %c, subset, %s, %s)\n", tmp3, i, j ? 'F' : 'T', tmp1, tmp2);
         }
       }
     }
