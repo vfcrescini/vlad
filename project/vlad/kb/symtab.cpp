@@ -11,7 +11,7 @@
 #include <vlad.h>
 #include <symtab.h>
 
-identlist::identlist(unsigned char t) : list(true)
+identlist::identlist(const char *n, unsigned char t) : list(n, true)
 {
   /* if the type is invalid, fall back on subject */
   type = VLAD_IDENT_TYPE_VALID(t) ? t : VLAD_IDENT_SUBJECT;
@@ -132,17 +132,17 @@ int symtab::init()
     delete obj_grp_list;
 
   /* now create them */
-  if ((sub_list = VLAD_NEW(identlist(VLAD_IDENT_SUBJECT))) == NULL)
+  if ((sub_list = VLAD_NEW(identlist("sub", VLAD_IDENT_SUBJECT))) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((acc_list = VLAD_NEW(identlist(VLAD_IDENT_ACCESS))) == NULL)
+  if ((acc_list = VLAD_NEW(identlist("acc", VLAD_IDENT_ACCESS))) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((obj_list = VLAD_NEW(identlist(VLAD_IDENT_OBJECT))) == NULL)
+  if ((obj_list = VLAD_NEW(identlist("obj", VLAD_IDENT_OBJECT))) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((sub_grp_list = VLAD_NEW(identlist(VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP))) == NULL)
+  if ((sub_grp_list = VLAD_NEW(identlist("sub-grp", VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP))) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((acc_grp_list = VLAD_NEW(identlist(VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP))) == NULL)
+  if ((acc_grp_list = VLAD_NEW(identlist("acc-grp", VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP))) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((obj_grp_list = VLAD_NEW(identlist(VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP))) == NULL)
+  if ((obj_grp_list = VLAD_NEW(identlist("obj-grp", VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP))) == NULL)
     return VLAD_MALLOCFAILED;
 
   initialised = true;

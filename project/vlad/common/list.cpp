@@ -4,6 +4,7 @@
  */
 
 #include <cstdlib>
+#include <cstring>
 
 #include <config.h>
 #include <vlad.h>
@@ -22,8 +23,29 @@ list::list()
   unique = true;
   len = 0;
   head = NULL;
+  name = NULL;
 #ifdef DEBUG
   fprintf(stderr, "list is unique\n");
+#endif
+}
+
+list::list(const char *n, bool u)
+{
+  unique = u;
+  len = 0;
+  head = NULL;
+
+  /* name is entirely optional */
+  if (n != NULL) {
+    if ((name = VLAD_STRING_MALLOC(n)) != NULL)
+      strcpy(name, n);
+  }
+
+#ifdef DEBUG
+  fprintf(stderr, 
+          "list %s is %s\n",
+          (name == NULL) ? "" : name,
+          u ? "unique" : "not-unique");
 #endif
 }
 
@@ -32,18 +54,25 @@ list::list(bool u)
   unique = u;
   len = 0;
   head = NULL;
+
 #ifdef DEBUG
-  fprintf(stderr, "list is %s\n", u ? "unique" : "not-unique");
+  fprintf(stderr, 
+          "list %s is %s\n",
+          (name == NULL) ? "" : name,
+          u ? "unique" : "not-unique");
 #endif
 }
 
 list::~list()
 {
   purge(true);
+
 #ifdef DEBUG
-  fprintf(stderr, "list is destroyed\n");
+  fprintf(stderr, "list %s is destroyed\n", (name == NULL) ? "" : name);
 #endif
 
+  if (name != NULL)
+    free(name);
 }
 
 unsigned int list::length()
