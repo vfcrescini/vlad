@@ -26,6 +26,10 @@ VLAD_EXTERN int vlad_kb_init(void *a_kb);
 VLAD_EXTERN int vlad_kb_close_symtab(void *a_kb);
 /* close kb table */
 VLAD_EXTERN int vlad_kb_close_kb(void *a_kb);
+/* check if the identifier of the given type is in the symtab */
+VLAD_EXTERN int vlad_kb_check_symtab(void *a_kb,
+                                     const char *a_n,
+                                     unsigned char a_t);
 /* register an identifier in the kb */
 VLAD_EXTERN int vlad_kb_add_symtab(void *a_kb,
                                    const char *a_n,

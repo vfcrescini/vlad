@@ -24,8 +24,10 @@ class symtab
     int get(unsigned char t, char ***a, unsigned int *s);
     /* return the number of identifiers that are of type t */
     unsigned int length(unsigned char t);
-    /* return true if symbol is in the table */
+    /* return 0 if symbol is in the table */
     int find(const char *s);
+    /* return 0 if symbol of type t is in the table */
+    int find(const char *s, unsigned char t);
     /* give the type of the given identifier */
     int type(const char *s, unsigned char *t);
   private :

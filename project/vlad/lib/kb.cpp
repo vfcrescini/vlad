@@ -146,6 +146,15 @@ int kb::close_symtab()
   return VLAD_OK;
 }
 
+/* checks whether n of type t is in symtab */
+int kb::check_symtab(const char *n, unsigned char t)
+{
+  if (stage < 2)
+    return VLAD_INVALIDOP;
+
+  return stable->find(n, t);
+}
+
 /* after this is called, no further calls to add_inittab(), add_consttab()
  * or add_transtab() is allowed */
 int kb::close_kb()
