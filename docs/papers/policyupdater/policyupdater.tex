@@ -1252,147 +1252,190 @@ query holds(alice, read, file);
         The symbol table is used to store the identifier entities defined in the
         entity identifier declaration section of language ${\cal L}$ programs.
         The symbol table is composed of 6 separate string lists:
- 
-        \begin{itemize}
-          \item
-            Single Subject Entity List ($\cal E_{SS}$)
-          \item
-            Group Subject Entity List ($\cal E_{SG}$)
-          \item
-            Single Access Right Entity List ($\cal E_{AS}$)
-          \item
-            Group Access Right Entity List ($\cal E_{AG}$)
-          \item
-            Single Object Entity List ($\cal E_{OS}$)
-          \item
-            Group Object Entity List ($\cal E_{OG}$)
-        \end{itemize}
+
+        \begin{quote}
+          \begin{tabular}[t]{|l|l|l|}
+            \hline
+            \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+            \hline
+            sub\_single & string list & single subject \\
+            \hline
+            sub\_group & string list & group subject \\
+            \hline
+            acc\_single & string list & single access \\
+            \hline
+            acc\_group & string list & group access right \\
+            \hline
+            obj\_single & string list & single object \\
+            \hline
+            obj\_group & string list & group object \\
+            \hline
+          \end{tabular}
+        \end{quote}
  
         In addition to the above lists, the symbol table also defines 3
-        conceptual pseudo-lists that are concatenations of the above lists:
+        pseudo-lists that are concatenations of the above lists:
  
-        \begin{itemize}
-          \item
-            Subject Entity List ($\cal E_{S}$ = $\cal E_{SS} + \cal E_{SG}$)
-          \item
-            Access Right Entity List ($\cal E_{A}$ = $\cal E_{AS} + \cal E_{AG}$)
-          \item
-            Object Entity List ($\cal E_{O}$ = $\cal E_{OS} + \cal E_{OG}$)
-        \end{itemize}
- 
-        Each entity identifier in the above lists are sorted accoring to their
-        type, and ordered accoring to the order in which they are declared in the
-        program. Each list is indexed by consecutive positive integers starting
-        from zero. Pseudo-lists are ordered in the same manner as the other
-        lists, with the single list elements starting at index 0, and the group
-        list elements offset by the length of the single list.
+        \begin{quote}
+          \begin{tabular}[t]{|l|l|l|}
+            \hline
+            \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+            \hline
+            sub & string list & sub\_single + sub\_group \\
+            \hline
+            acc & string list & acc\_single + acc\_group \\
+            \hline
+            obj & string list & obj\_single + obj\_group \\
+            \hline
+          \end{tabular}
+        \end{quote}
 
-      \subsubsection{Atoms, Facts and Expressions}
+        Each entity identifier are sorted in the above lists accoring to their
+        type, and ordered accoring to the order in which they are declared in
+        the program. Each list is indexed by consecutive positive integers
+        starting from zero. Pseudo-lists are ordered in the same manner as the
+        other lists, with the single list elements starting at index 0, and
+        the group list elements offset by the length of the single list.
+
+      \subsubsection{Policy Base}
+
+        When a language ${\cal L}$ program is parsed, each of the facts, rules
+        and policy updates must be stored into the policy base before they can
+        be translated into language $\cal L^{*}$. The policy base is composed
+        of 4 tables to store the following: initial state facts, constraint
+        rules, policy update definitions and the policy update sequence.
 
         \paragraph{Atoms.}
           The three types of atoms are represented as structures of 2 to 3
           strings, with each string matching an entity identifier in the
           symbol table.
- 
-          \subparagraph{Holds}
-            \begin{itemize}
-              \item
-                Subject Entity Identifier String
-              \item
-                Access Entity Right Identifier String
-              \item
-                Object Entity Identifier String
-            \end{itemize}
- 
-          \subparagraph{Member}
-            \begin{itemize}
-              \item
-                Single Entity Identifier String
-              \item
-                Group Entity Identifier String
-            \end{itemize}
-  
-          \subparagraph{Subset}
-            \begin{itemize}
-              \item
-                Subgroup Entity Identifier String
-              \item
-                Supergroup Entity Identifier String
-            \end{itemize} 
+
+          \subparagraph{Holds Atom.}
+            \begin{quote}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                \hline
+                sub & string & subject entity identifier \\
+                \hline
+                acc & string & access right entity identifier \\
+                \hline
+                obj & string & object entity identifier \\
+                \hline
+              \end{tabular}
+            \end{quote}
+
+          \subparagraph{Member Atom.}
+            \begin{quote}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                \hline
+                element & string & single entity identifier \\
+                \hline
+                group & string & group entity identifier \\
+                \hline
+              \end{tabular}
+            \end{quote}
+
+          \subparagraph{Subset Atom.}
+            \begin{quote}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                \hline
+                group1 & string & subgroup entity identifier \\
+                \hline
+                group2 & string & supergroup entity identifier \\
+                \hline
+              \end{tabular}
+            \end{quote}
 
         \paragraph{Facts.}
-          A fact is a three-element structure composed of a polymorphic type
-          which can be any of the three atom structures above; a type
-          indicator to specify whether the fact is holds, member or subset;
-          and a truth flag, to indicate whether the atom is true or false.
- 
-          \begin{itemize}
-            \item
-              polymorphic atom structure
-            \item
-              atom type indicator (holds$|$member$|$subset)
-            \item
-              truth flag (true$|$false)
-          \end{itemize}
+          Facts are represented as a three-element structure composed of the
+          following: polymorphic type which can be any of the three atom
+          structures above; a type indicator to specify whether the fact is
+          holds, member or subset; and a truth flag, to indicate whether the
+          atom is classically negated or not ({\em true}, if the fact holds
+          and {\em false}, if the fact is classically negated.
+
+          \begin{quote}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+              \hline
+              atom & atom type & polymorphic structure \\
+              \hline
+              type & \{h$|$m$|$s\} & holds, member or subset \\ 
+              \hline
+              truth & boolean & negation indicator \\
+              \hline
+            \end{tabular}
+          \end{quote}
  
         \paragraph{Expressions.}
- 
-          Since an expression is simply a conjunction of facts, they are
+          Since expressions are simply conjunctions of facts, they are
           represented as an unordered list of fact structures.
 
-      \subsubsection{Policy Base Tables}
-
-        When a language ${\cal L}$ program is parsed, each of the facts, rules
-        and policy updates must be stored into the policy base tables before
-        they can be translated into language $\cal L^{*}$. The policy base is
-        composed of 4 tables to store the following: initial state facts,
-        constraint rules, policy update definitions and the policy update
-        sequence.
- 
         \paragraph{Initial State Facts Table.}
           The initial state facts table is represented as a single list of
           fact structures, or an expression. Each fact in all {\em initially}
-          statements are added into the initial state expression.
+          statements are added into the initial state facts table.
  
         \paragraph{Constraint Table.}
           The constraint table is represented as an unordered list of constraint
           structures, with each structure composed of the following:
- 
-          \begin{itemize}
-            \item
-              Expression representing the consequent
-            \item
-              Expression representing the positive premise
-            \item
-              Expression representing the negative premise
-          \end{itemize}
+
+          \begin{quote}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+              \hline
+              exp & expression type & consequent \\
+              \hline
+              pcond & expression type & positive premise \\ 
+              \hline
+              ncond & expression type & negative premise \\
+              \hline
+            \end{tabular}
+          \end{quote}
  
         \paragraph{Policy Update Table.}
           Another list of structures is the policy update table. Each element
-          structure of this table is composed of the following 4 sub elements:
- 
-          \begin{itemize}
-            \item
-              Policy update identifier
-            \item
-              Ordered string list of variable identifier placeholders
-            \item
-              Expression representing the precondition
-            \item
-              Expression representing the postcondition
-          \end{itemize}
+          structure of this table is composed of the following 4 fields:
+
+          \begin{quote}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+              \hline
+              name & string & update identifier \\
+              \hline
+              vlist & ordered string list & variables \\
+              \hline
+              pre & expression type & precondition \\
+              \hline
+              post & expression type & postcondition \\
+              \hline
+            \end{tabular}
+          \end{quote}
  
         \paragraph{Policy Update Sequence Table.}
  
           The policy update sequence table is an ordered list of sequence
           structures, each with the following elements:
  
-          \begin{itemize}
-            \item
-              Polcy update identifier
-            \item
-              Ordered string list of entity identifiers to replace variables
-          \end{itemize}
+          \begin{quote}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+              \hline
+              name & string & update identifier \\ 
+              \hline
+              ilist & ordered string list & identifiers \\
+              \hline
+            \end{tabular}
+          \end{quote}
 
     \subsection{Translation to Normal Logic Program}
 
