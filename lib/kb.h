@@ -15,6 +15,9 @@
 #include <vlad/symtab.h>
 #include <vlad/consttab.h>
 #include <vlad/transtab.h>
+#ifdef SMODELS
+  #include <vlad/wrapper.h>
+#endif
 
 class kb {
   public :
@@ -24,12 +27,9 @@ class kb {
     int init();
     /* after this is called, no further calls to add_symtab() is allowed */
     int close_symtab();
-    /* after this is called, no further calls to add_inittab() is allowed */
-    int close_inittab();
-    /* after this is called, no further calls to add_consttab() is allowed */
-    int close_consttab();
-    /* after this is called, no further calls to add_transtab() is allowed */
-    int close_transtab();
+    /* after this is called, no further calls to add_inittab(), add_consttab()
+     * or add_transtab() is allowed */
+    int close_kb();
     /* register an identifier in the kb */
     int add_symtab(const char *n, unsigned char t);
     /* add an atom into the initial state table */
@@ -50,6 +50,8 @@ class kb {
     /* generate a human-readable general logic program and dump output to f */
     int generate_nlp(expression *e, FILE *f);
 #ifdef SMODELS
+    /* prepares the kb for queries */
+    int compute();
     /* use wrapper class to evaluate a query */
     int evaluate_query(expression *e, unsigned char *r);
 #endif
@@ -59,6 +61,9 @@ class kb {
     consttab *ctable;
     transtab *ttable;
     seqtab *setable;
+#ifdef SMODELS
+    wrapper *smobject;
+#endif
     unsigned int s_len;
     unsigned int a_len;
     unsigned int o_len;

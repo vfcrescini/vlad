@@ -107,7 +107,15 @@ init :
   ;
 
 body :
-  ident_section initial_section constraint_section trans_section
+  ident_section initial_section constraint_section trans_section {
+  int retval;
+    /* after the body, we must close the kb */
+    if ((retval = kbase->close_kb()) != VLAD_OK) {
+      errorcode = retval;
+      fprintf(ferr, "internal error: %d\n", retval);
+      return retval;
+    }
+  }
   ;
 
 destroy :
@@ -136,62 +144,20 @@ ident_section : {
   ;
 
 initial_section : {
-    int retval;
-    /* after the initial section, we must close the init table */
-    if ((retval = kbase->close_inittab()) != VLAD_OK) {
-      errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
-      return retval;
-    }
   }
   | initial_stmt_list {
-    int retval;
-    /* after the initial section, we must close the init table */
-    if ((retval = kbase->close_inittab()) != VLAD_OK) {
-      errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
-      return retval;
-    }
   }
   ;
 
 constraint_section : {
-    int retval;
-    /* after the constraint section, we must close the constraint table */
-    if ((retval = kbase->close_consttab()) != VLAD_OK) {
-      errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
-      return retval;
-    }
   }
   | constraint_stmt_list {
-    int retval;
-    /* after the constraint section, we must close the constraint table */
-    if ((retval = kbase->close_consttab()) != VLAD_OK) {
-      errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
-      return retval;
-    }
   }
   ;
 
 trans_section : {
-     int retval;
-    /* after the transformation section, we must close the trans table */
-    if ((retval = kbase->close_transtab()) != VLAD_OK) {
-      errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
-      return retval;
-    }
   }
   | trans_stmt_list {
-    int retval;
-    /* after the transformation section, we must close the trans table */
-    if ((retval = kbase->close_transtab()) != VLAD_OK) {
-      errorcode = retval;
-      fprintf(ferr, "internal error: %d\n", retval);
-      return retval;
-    }
   }
   ;
 
