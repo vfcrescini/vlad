@@ -43,6 +43,9 @@ int symtab_add(char *name, unsigned short type)
   if (ident_create(&new_ident, name, type) != 0)
     return -1;
 
+  if (simplelist_find_data(list, (void *) new_ident, symtab_compare) == 0)
+    return -1;
+
   return simplelist_add(&list, (void *) new_ident);
 }
 
