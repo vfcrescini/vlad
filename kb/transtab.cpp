@@ -124,8 +124,8 @@ int transtab::add(const char *n, stringlist *v, expression *pr, expression *po)
 int transtab::get(const char *n, stringlist **v, expression **pr, expression **po)
 {
   int retval;
-  char *name;
-  transdef *tmp;
+  char *tmp_name;
+  transdef *tmp_def;
   transdef **list;
   unsigned int size;
 
@@ -133,26 +133,26 @@ int transtab::get(const char *n, stringlist **v, expression **pr, expression **p
     return VLAD_NULLPTR;
 
   /* create a dummy transdef to search */
-  if ((name = VLAD_STRING_MALLOC(n)) == NULL)
+  if ((tmp_name = VLAD_STRING_MALLOC(n)) == NULL)
     return VLAD_MALLOCFAILED;
 
-  strcpy(name, n);
+  strcpy(tmp_name, n);
 
-  if ((tmp = VLAD_NEW(transdef())) == NULL)
+  if ((tmp_def = VLAD_NEW(transdef())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = tmp->init(name, NULL, NULL, NULL)) != VLAD_OK)
+  if ((retval = tmp_def->init(tmp_name, NULL, NULL, NULL)) != VLAD_OK)
     return retval;
 
-  if ((retval = list::get((list_item *) tmp, (list_item ***) &list, &size)) != VLAD_OK)
+  if ((retval = list::get((list_item *) tmp_def, (list_item ***) &list, &size)) != VLAD_OK)
     return retval;
 
   /* only one. name is already copied and will be deleted with tmp */
-  if ((retval = list[0]->get(&name, v, pr, po)) != VLAD_OK)
+  if ((retval = list[0]->get(&tmp_name, v, pr, po)) != VLAD_OK)
     return retval;
 
   free(list);
-  delete tmp;
+  delete tmp_def;
 
   return VLAD_OK;
 }
