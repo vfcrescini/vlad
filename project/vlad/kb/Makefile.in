@@ -8,7 +8,7 @@ YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 TARGETS = libkb.a
-INCLUDES = symtab.h consttab.h atom.h expression.h kb.h
+INCLUDES = atom.h expression.h symtab.h consttab.h transtab.h kb.h
 
 all : public
 
@@ -22,14 +22,8 @@ public : $(TARGETS)
 	ln -sf ../kb/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libkb.a : symtab.o consttab.o atom.o expression.o kb.o
-	$(AR) -rcs $(@) symtab.o consttab.o atom.o expression.o kb.o
-
-symtab.o : symtab.h symtab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
-
-consttab.o : consttab.h consttab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c consttab.cpp
+libkb.a : atom.o expression.o symtab.o consttab.o transtab.o kb.o
+	$(AR) -rcs $(@) atom.o expression.o symtab.o consttab.o transtab.o kb.o
 
 atom.o : atom.h atom.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c atom.cpp
@@ -37,7 +31,16 @@ atom.o : atom.h atom.cpp
 expression.o : atom.o expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
 
-kb.o : atom.h kb.h kb.cpp symtab.o
+symtab.o : symtab.h symtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
+
+consttab.o : expression.o consttab.h consttab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c consttab.cpp
+
+transtab.o : expression.o transtab.h transtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c transtab.cpp
+
+kb.o : expression.o symtab.o consttab.o transtab.o kb.h kb.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c kb.cpp
 
 clean :
