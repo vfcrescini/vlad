@@ -24,6 +24,7 @@ class holds_atom
     holds_atom();
     holds_atom(identifier *s, identifier *a, identifier *o);
     ~holds_atom();
+    bool verify();
     void get(identifier **s, identifier **a, identifier **o);
   private :
     identifier *sub;
@@ -37,6 +38,7 @@ class member_atom
     member_atom();
     member_atom(identifier *e, identifier *g);
     ~member_atom();
+    bool verify();
     void get(identifier **e, identifier **g);
   private :
     identifier *elt;
@@ -49,6 +51,7 @@ class subset_atom
     subset_atom();
     subset_atom(identifier *g1, identifier *g2);
     ~subset_atom();
+    bool verify();
     void get(identifier **g1, identifier **g2);
   private :
     identifier *grp1;
@@ -65,6 +68,9 @@ class atom : public list_item
     int init_subset(identifier *g1, identifier *g2, bool t);
     unsigned char get_type();
     int get(identifier **i1, identifier **i2, identifier **i3, bool *tr, unsigned char *ty);
+    /* verify the integrity of this atom */
+    bool verify();
+    /* implementation of cmp() in list_item class */
     bool cmp(list_item *item);
   private :
     unsigned char type;
