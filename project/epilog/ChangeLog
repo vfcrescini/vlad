@@ -8,6 +8,12 @@
 
 	* exp/gnd_exp.c :
 
+	  - Now the eval function will check elements of groups when
+	    proving subset atoms. G1 is a subset of G2 if all elements
+	    of G1 is also an element of G2. Conversely, if at least
+	    one element of G1 is NOT in G2, then G1 is NOT a subset
+	    of G2.
+
 	  - Fixed the bug that causes the eval function to think that
 	    explicitly defined atoms are automatically logical consequences
 	    of the other atoms. Now the eval_atom function only looks

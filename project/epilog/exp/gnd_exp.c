@@ -908,6 +908,11 @@ int gnd_exp_eval_subst_atom(ident_type group1,
 			    unsigned short int *ans)
 {
   identlist_type tmp_grp;
+  ident_type *ptr_ident;
+  gnd_atom_type tmp_atom;
+  unsigned short int tmp_ans;
+  unsigned int i;
+  unsigned int len;
   int tmp_res;
 
   if (ans == NULL)
@@ -937,6 +942,71 @@ int gnd_exp_eval_subst_atom(ident_type group1,
     identlist_purge(&tmp_grp);
     return EPI_OK;
   }
+
+  identlist_purge(&tmp_grp);
+
+  /* now we check for the elements. if all the elements of group1 is also
+   * in group2 (implied or otherwise), then it group1 is a subset of
+   * group2 */
+
+  if ((tmp_res = gnd_exp_get_elements(group1, &tmp_grp, exp, 1)) != EPI_OK)
+    return tmp_res;
+
+  if ((len = identlist_length(tmp_grp)) == 0)
+    return EPI_OK;
+
+  *ans = EPI_RESULT_TRUE;
+
+  /* now for each element of group1, see if it is also an element of group2 */
+  for (i = 0; i < len; i++) {
+    identlist_get(tmp_grp, i, &ptr_ident);
+
+    /* see if there is an atom that proves that this identifier is an element
+     * of group2 */
+    if ((tmp_res = gnd_atom_create_memb(&tmp_atom, ptr_ident, &group2, EPI_TRUE)) != EPI_OK) {
+      identlist_purge(&tmp_grp);
+      return tmp_res;
+    }
+   
+    if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == EPI_OK)
+      continue;
+
+    EPI_ATOM_NEGATE(tmp_atom);
+
+    if (simplelist_find_data(exp, (void *) &tmp_atom, gnd_exp_compare) == EPI_OK) {
+      identlist_purge(&tmp_grp);
+      *ans = EPI_RESULT_FALSE;
+      return EPI_OK;
+    }
+
+   /* no explicit atoms that say the identifier is (not) an element of group2
+    * so we try to see if it is implied */
+    if ((tmp_res = gnd_exp_eval_memb_atom(*ptr_ident, group2, exp, &tmp_ans)) != EPI_OK) {
+      identlist_purge(&tmp_grp);
+      return tmp_res;
+    }
+
+    switch(tmp_ans) {
+      case EPI_RESULT_FALSE :
+        /* if we find an element of group1 that is not in group2, then group1
+         * cannot be a subset of group2 */
+        identlist_purge(&tmp_grp);
+        *ans = EPI_RESULT_FALSE;
+        return EPI_OK;
+      case EPI_RESULT_UNKNOWN :
+        /* we found an element of group1 that cannot be proven to be an
+         * an element or not an element of group2 so the best answer we
+         * can come up with is an unknown. continue with the list in case
+         * we see a false */
+         *ans = EPI_RESULT_UNKNOWN;
+        break;
+      default :
+    }
+  }
+
+  /* if we've reached the end of the loop, we can conclude that either
+   * all elements of group1 are in group2 or at least one of them couldn't
+   * be proven to be in or out of group2 */
 
   identlist_purge(&tmp_grp);
 

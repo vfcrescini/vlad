@@ -7,8 +7,6 @@ Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 - Check for invalid variables/identifiers in transformation definition.
 
-- Check for elements to prove/disprove group membership.
-
 - Review API of all libs.
 
 - Tons of cleanup.
