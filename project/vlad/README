@@ -5,7 +5,7 @@ Build/Use Instructions
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2003 Apr 15
+Updated: 2003 Apr 29
 -------------------------------------------------------------------------------
 
 1. From the toplevel source directory, run ./configure :
@@ -37,11 +37,27 @@ Updated: 2003 Apr 15
 
      $ make
 
-3. The executable binary will be in dist/bin/vlad. Without a filename 
-   argument, the program will read input from stdin. Debug output as well
-   as errors and warning will be dumped to stderr. Program output will be
-   directed to stdout.
+3. The executable binary will be in dist/bin/vlad. Usage is as follows:
+
+     ./dist/bin/vlad -h|-v|[-e] program-filename [query-filename]
+
+   where:
+
+     program-filename is the name of the file that contains the program.
+     query-filename is the name of the file that contains a list of queries.
+
+   For each query statement in the query file, vLad will print to stdout a
+   normal logic program that models the input program, the translations and
+   the queries. If the -e option is given, vLad will print one of three
+   possible query results:
+
+     TRUE   - query is true
+     FALSE  - query is false
+     ?      - there is no sufficient evidence to conclude that the query is
+              true or false
+
+   Without the query-filename parameter, vLad will read the queries from stdin.
 
    To use the example program in the samples directory :
 
-     $ ./dist/bin/vlad sample/chinese_wall
+     $ ./dist/bin/vlad sample/cwall_prog sample/cwall_query
