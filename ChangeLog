@@ -1,5 +1,10 @@
 2003-03-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/stringlist.h :
+	* common/stringlist.cpp :
+
+	  - Added debug function print().
+
 	* kb/kb.cpp :
 	* kb/kb.h :
 
