@@ -1,3 +1,17 @@
+2003-03-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+
+	  - Fixed add_transtab(). 
+
+	  - verify_atom() now checks both ground and non-ground atoms.
+
+	* kb/transtab.cpp :
+
+	  - cmp() function will now return true if only the name matches.
+
+
 2003-03-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/Makefile.in :
