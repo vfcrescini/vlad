@@ -370,14 +370,20 @@
 
       \paragraph{\bf Evaluation of HTTP Requests.}
 
-        For our purposes, a HTTP request may be described as a tuple:
+        For our purposes, a HTTP request may be described as a simple tuple:
 
         \begin{quote}
-          <user, request-method, requested-resource>.
+          $<$$user$, $request-method$, $requested-resource$$>$
         \end{quote}
 
-Intuitively, such a tuple may be
-        
+        Intuitively, such a tuple may be viewed as a language {\cal L} atom:
+
+        \begin{quote}
+          $holds$($user$, $request_method$, $requested-resource$)
+        \end{quote}
+
+        With language ${\cal L}$ atoms, a query can be generated then passed to
+        the core PolicyUpdater system for evaluation.
 
       \paragraph{\bf Policy Updates by Administrators.}
 
