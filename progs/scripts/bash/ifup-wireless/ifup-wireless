@@ -31,9 +31,17 @@ if [ -n "${ESSID[$2]}" ]; then
   echo "essid:   ${ESSID[$2]}"
   iwconfig ${1} essid ${ESSID[$2]} || exit ${?}
 fi
+if [ -n "${NICK[$2]}" ]; then
+  echo "nick:    ${NICK[$2]}"
+  iwconfig ${1} nick ${NICK[$2]} || exit ${?}
+fi
 if [ -n "${MODE[$2]}" ]; then
   echo "mode:    ${MODE[$2]}"
   iwconfig ${1} mode ${MODE[$2]} || exit ${?}
+fi
+if [ -n "${AP[$2]}" ]; then
+  echo "ap/cell: ${AP[$2]}"
+  iwconfig ${1} ap ${AP[$2]} || exit ${?}
 fi
 if [ -n "${KEY[$2]}" ]; then
   echo "key:     **********"
