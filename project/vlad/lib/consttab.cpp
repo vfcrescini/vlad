@@ -92,6 +92,36 @@ int constraint::get(expression **a_exp, expression **a_cond, expression **a_ncon
   return VLAD_OK;
 }
 
+/* replaces occurences of var with ident. creates a new constraint */
+int constraint::replace(const char *a_var,
+                        const char *a_ident,
+                        constraint **a_constr)
+{
+  int retval;
+  constraint *tmp;
+  expression *exps[3];
+
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_var == NULL || a_ident == NULL || a_constr == NULL)
+    return VLAD_NULLPTR;
+
+  /* replace the individual expressions of this constraint */
+  if ((retval = m_exp->replace(a_var, a_ident, &(exps[0]))) != VLAD_OK)
+    return retval;
+  if ((retval = m_cond->replace(a_var, a_ident, &(exps[1]))) != VLAD_OK)
+    return retval;
+  if ((retval = m_ncond->replace(a_var, a_ident, &(exps[2]))) != VLAD_OK)
+    return retval;
+
+  /* now create a new constraint */
+  if ((tmp = VLAD_NEW(constraint())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  return tmp->init(exps[0], exps[1], exps[2]);
+}
+
 consttab::consttab() : list(true)
 {
 }
