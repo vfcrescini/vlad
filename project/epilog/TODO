@@ -7,6 +7,8 @@ Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 - Check malloc/free.
 
+- Check for invalid variables/identifiers in transformation definition.
+
 - Review API of all libs.
 
 - Tons of cleanup.
