@@ -34,3 +34,23 @@ int expression::find(atom a)
 {
   return list::find(&a);
 }
+
+#ifdef DEBUG
+/* assumimg s has enough memory allocation */
+void expression::print(char *s)
+{
+  unsigned int i;
+  char tmps[128];
+  atom *tmpa;
+
+  strcpy(s, "");
+
+  for (i = 0; i < list::length(); i++) {
+    if (list::get(i, (list_item **) &tmpa) != VLAD_OK)
+      break;
+
+    tmpa->print(tmps);
+    sprintf(s, "%s %s", s, tmps);
+  }
+}
+#endif

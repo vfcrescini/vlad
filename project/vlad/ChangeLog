@@ -1,3 +1,24 @@
+2003-03-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+
+	  - Added negate function.
+
+	  - Added a print function for debugging.
+
+	* kb/expression.cpp :
+	* kb/expression.h :
+
+	  - Added a print function for debugging.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Fresh start. Took out code to encode and decode atoms to and
+	    from an unsigned int.
+
 2003-03-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/Makefile.in :
