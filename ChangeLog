@@ -1,5 +1,22 @@
 2003-03-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/identifier.h :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+	* parser/parser.y :
+
+	  - Modified symtab so that identifiers are stored into 6
+	    separate lists (sub, acc, obj, sub grp, etc). This will
+	    make it easier to perform searches.
+
+	* kb/Makefile.in :
+	* kb/atom.h :
+	* kb/atom.cpp :
+	* kb/atomlist.h :
+	* kb/atomlist.cpp :
+
+	  - Removed unnecessary files.
+
 	* docs/bnf.txt :
 	* parser/parser.y :
 
