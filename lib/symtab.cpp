@@ -13,75 +13,69 @@
 
 symtab::symtab()
 {
-  sub_list = NULL;
-  acc_list = NULL;
-  obj_list = NULL;
-  sub_grp_list = NULL;
-  acc_grp_list = NULL;
-  obj_grp_list = NULL;
-  initialised = false;
+  int i;
+
+  for (i = 0; i < 6; i++)
+    m_lists[i] = NULL;
+
+  m_stage = 0;
 }
 
 symtab::~symtab()
 {
-  if (sub_list != NULL)
-    delete sub_list;
-  if (acc_list != NULL)
-    delete acc_list;
-  if (obj_list != NULL)
-    delete obj_list;
-  if (sub_grp_list != NULL)
-    delete sub_grp_list;
-  if (acc_grp_list != NULL)
-    delete acc_grp_list;
-  if (obj_grp_list != NULL)
-    delete obj_grp_list;
+  int i;
+
+  for (i = 0; i < 6; i++) {
+    if (m_lists[i] != NULL)
+      delete m_lists[i];
+  }
 }
 
+/* initialise synbol table */
 int symtab::init()
 {
-  /* first delete things if we need to */
-  if (sub_list != NULL)
-    delete sub_list;
-  if (acc_list != NULL)
-    delete acc_list;
-  if (obj_list != NULL)
-    delete obj_list;
-  if (sub_grp_list != NULL)
-    delete sub_grp_list;
-  if (acc_grp_list != NULL)
-    delete acc_grp_list;
-  if (obj_grp_list != NULL)
-    delete obj_grp_list;
+  int i;
 
-  /* now create them */
-  if ((sub_list = VLAD_NEW(stringlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((acc_list = VLAD_NEW(stringlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((obj_list = VLAD_NEW(stringlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((sub_grp_list = VLAD_NEW(stringlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((acc_grp_list = VLAD_NEW(stringlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((obj_grp_list = VLAD_NEW(stringlist())) == NULL)
-    return VLAD_MALLOCFAILED;
+  for (i = 0; i < 6; i++) {
+    /* first delete things if we need to */
+    if (m_lists[i] != NULL)
+      delete m_lists[i];
+    /* now create them */
+    if ((m_lists[i] = VLAD_NEW(stringlist())) == NULL)
+      return VLAD_MALLOCFAILED;
+  }
 
-  initialised = true;
+  m_stage = 1;
+
+  return VLAD_OK;
+}
+
+/* after this call no further calls to add are allowed */
+int symtab::close()
+{
+  if (m_stage == 0)
+    return VLAD_UNINITIALISED;
+  m_stage = 2;
 
   return VLAD_OK;
 }
 
 /* add symbol in symbol table */
-int symtab::add(const char *s, unsigned char t)
+int symtab::add(const char *a_s, unsigned char a_t)
 {
   int retval;
 
-  if (!initialised)
+  if (m_stage == 0)
     return VLAD_UNINITIALISED;
+  if (m_stage > 1)
+    return VLAD_INVALIDOP;
 
-  switch(retval = find(s)) {
+  /* ensure that the type is valid */
+  if (a_t >= 6)
+    return VLAD_INVALIDINPUT;
+
+  /* ensure that the identifier is not already used */
+  switch(retval = find(a_s)) {
     case VLAD_NOTFOUND :
       break;
     case VLAD_OK :
@@ -90,360 +84,152 @@ int symtab::add(const char *s, unsigned char t)
       return retval;
   }
 
-  switch(t) {
-    case VLAD_IDENT_SUBJECT :
-      return sub_list->add(s);
-    case VLAD_IDENT_ACCESS :
-      return acc_list->add(s);
-    case VLAD_IDENT_OBJECT :
-      return obj_list->add(s);
-    case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
-      return sub_grp_list->add(s);
-    case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP :
-      return acc_grp_list->add(s);
-    case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
-      return obj_grp_list->add(s);
-  }
-
-  return VLAD_INVALIDINPUT;
-}
-
-/* get the i'th identifier */
-int symtab::get(unsigned int i, char **s)
-{
-  if (!initialised)
-    return VLAD_UNINITIALISED;
-
-  if (i < VLAD_LIST_LENGTH(sub_list))
-    return get(i, VLAD_IDENT_SUBJECT, s);
-  else {
-    i -= VLAD_LIST_LENGTH(sub_list);
-    if (i < VLAD_LIST_LENGTH(acc_list))
-      return get(i, VLAD_IDENT_ACCESS, s);
-    else {
-      i -= VLAD_LIST_LENGTH(acc_list);
-      if (i < VLAD_LIST_LENGTH(obj_list))
-        return get(i, VLAD_IDENT_OBJECT, s);
-      else {
-        i -= VLAD_LIST_LENGTH(obj_list);
-        if (i < VLAD_LIST_LENGTH(sub_grp_list))
-          return get(i, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP, s);
-        else {
-          i -= VLAD_LIST_LENGTH(sub_grp_list);
-          if (i < VLAD_LIST_LENGTH(acc_grp_list))
-            return get(i, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP, s);
-          else {
-            i -= VLAD_LIST_LENGTH(acc_grp_list);
-            if (i < VLAD_LIST_LENGTH(obj_grp_list))
-              return get(i, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP, s);
-            else
-              return VLAD_OUTOFBOUNDS;
-          }
-        }
-      }
-    }
-  }
+  /* now add */
+  return m_lists[a_t]->add(a_s);
 }
 
 /* get the index and type of the identifier based on name */
-int symtab::get(const char *s, unsigned int *i, unsigned char *t)
+int symtab::get(const char *a_s, unsigned int *a_i, unsigned char *a_t)
 {
   int retval;
+  int i;
 
-  if (!initialised)
+  if (m_stage == 0)
     return VLAD_UNINITIALISED;
+  if (m_stage == 1)
+    return VLAD_INVALIDOP;
 
-  if (s == NULL || i == NULL || t == NULL)
+  if (a_s == NULL || a_i == NULL || a_t == NULL)
     return VLAD_NULLPTR;
 
   /* try to get s from all the lists sequentially */
-  if ((retval = sub_list->get(s, i)) != VLAD_NOTFOUND) {
-    if ((retval == VLAD_OK))
-      *t = VLAD_IDENT_SUBJECT;
-    return retval;
-  }
-
-  if ((retval = acc_list->get(s, i)) != VLAD_NOTFOUND) {
-    if ((retval == VLAD_OK))
-      *t = VLAD_IDENT_ACCESS;
-    return retval;
-  }
-
-  if ((retval = obj_list->get(s, i)) != VLAD_NOTFOUND) {
-    if ((retval == VLAD_OK))
-      *t = VLAD_IDENT_OBJECT;
-    return retval;
-  }
-
-  if ((retval = sub_grp_list->get(s, i)) != VLAD_NOTFOUND) {
-    if ((retval == VLAD_OK))
-      *t = VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP;
-    return retval;
-  }
-
-  if ((retval = acc_grp_list->get(s, i)) != VLAD_NOTFOUND) {
-    if ((retval == VLAD_OK))
-      *t = VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP;
-    return retval;
-  }
-
-  if ((retval = obj_grp_list->get(s, i)) != VLAD_NOTFOUND) {
-    if ((retval == VLAD_OK))
-      *t = VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP;
-    return retval;
+  for (i = 0; i < 6; i++) {
+    if ((retval = m_lists[i]->get(a_s, a_i)) != VLAD_NOTFOUND) {
+      if (retval == VLAD_OK)
+        *a_t = i;
+      return retval;
+    }
   }
 
   return VLAD_NOTFOUND;
 }
 
 /* get the ith identifier of type t */
-int symtab::get(unsigned int i, unsigned char t, char **s)
+int symtab::get(unsigned int a_i, unsigned char a_t, char **a_s)
 {
-  if (!initialised)
+  if (m_stage == 0)
     return VLAD_UNINITIALISED;
+  if (m_stage == 1)
+    return VLAD_INVALIDOP;
 
-  switch(t) {
-    case VLAD_IDENT_SUBJECT :
-      return sub_list->get(i, s);
-    case VLAD_IDENT_ACCESS :
-      return acc_list->get(i, s);
-    case VLAD_IDENT_OBJECT :
-      return obj_list->get(i, s);
-    case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
-      return sub_grp_list->get(i, s);
-    case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP :
-      return acc_grp_list->get(i, s);
-    case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
-      return obj_grp_list->get(i, s);
-  }
-  return VLAD_INVALIDINPUT;
+  /* ensure type is valid */
+  if (a_t >= 6)
+    return VLAD_INVALIDINPUT;
+
+  /* now get */
+  return m_lists[a_t]->get(a_i, a_s);
 }
 
 /* get an array of identifiers that matches the given type */
-int symtab::get(unsigned char t, char ***a, unsigned int *s)
+int symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
 {
   int retval;
   unsigned int i;
 
-  if (!initialised)
+  if (m_stage == 0)
     return VLAD_UNINITIALISED;
+  if (m_stage == 1)
+    return VLAD_INVALIDOP;
 
-  if (a == NULL || s == NULL)
+  if (a_a == NULL || a_s == NULL)
     return VLAD_NULLPTR;
 
-  if (VLAD_IDENT_IS_SUBJECT(t)) {
-    unsigned int s_len;
-    unsigned int sg_len;
+  /* make sure type is valid */
+  if (a_t >= 6)
+    return VLAD_INVALIDINPUT;
 
-    s_len = VLAD_LIST_LENGTH(sub_list);
-    sg_len = VLAD_LIST_LENGTH(sub_grp_list);
-    *s = s_len + sg_len;
+  *a_s = length(a_t);
 
-    if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
-      return VLAD_MALLOCFAILED;
+  if ((*a_a = VLAD_ADT_MALLOC(char *, *a_s)) == NULL)
+    return VLAD_MALLOCFAILED;
 
-    /* non-group subject */
-    for (i = 0; i < s_len; i++)
-      if ((retval = sub_list->get(i, &((*a)[i]))) != VLAD_OK)
-        return retval;
-
-    /* group subject */
-    for (i = s_len; i < *s; i++)
-      if ((retval = sub_grp_list->get(i - s_len, &((*a)[i]))) != VLAD_OK)
-        return retval;
-
-    return VLAD_OK;
-  }
-  else if (VLAD_IDENT_IS_ACCESS(t)) {
-    unsigned int a_len;
-    unsigned int ag_len;
-
-    a_len = VLAD_LIST_LENGTH(acc_list);
-    ag_len = VLAD_LIST_LENGTH(acc_grp_list);
-    *s = a_len + ag_len;
-
-    if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
-      return VLAD_MALLOCFAILED;
-
-    /* non-group access */
-    for (i = 0; i < a_len; i++)
-      if ((retval = acc_list->get(i, &((*a)[i]))) != VLAD_OK)
-        return retval;
-
-    /* group access */
-    for (i = a_len; i < *s; i++)
-      if ((retval = acc_grp_list->get(i - a_len, &((*a)[i]))) != VLAD_OK)
-        return retval;
-
-    return VLAD_OK;
-  }
-  else if (VLAD_IDENT_IS_OBJECT(t)) {
-    unsigned int o_len;
-    unsigned int og_len;
-
-    o_len = VLAD_LIST_LENGTH(obj_list);
-    og_len = VLAD_LIST_LENGTH(obj_grp_list);
-    *s = o_len + og_len;
-
-    if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
-      return VLAD_MALLOCFAILED;
-
-    /* non-group object */
-    for (i = 0; i < o_len; i++)
-      if ((retval = obj_list->get(i, &((*a)[i]))) != VLAD_OK)
-        return retval;
-
-    /* group object */
-    for (i = o_len; i < *s; i++)
-      if ((retval = obj_grp_list->get(i - o_len, &((*a)[i]))) != VLAD_OK)
-        return retval;
-    return VLAD_OK;
+  /* this is an array of references */
+  for (i = 0; i < *a_s; i++) {
+    if ((retval = m_lists[a_t]->get(i, &((*a_a)[i]))) != VLAD_OK) {
+      free(*a_a);
+      *a_a = NULL;
+      return retval;
+    }
   }
 
-  return VLAD_INVALIDINPUT;
-}
-
-/* return the total number of indentifers */
-unsigned int symtab::length()
-{
-  if (!initialised)
-    return 0;
-
-  return
-    VLAD_LIST_LENGTH(sub_list) +
-    VLAD_LIST_LENGTH(acc_list) +
-    VLAD_LIST_LENGTH(obj_list) +
-    VLAD_LIST_LENGTH(sub_grp_list) +
-    VLAD_LIST_LENGTH(acc_grp_list) +
-    VLAD_LIST_LENGTH(obj_grp_list);
+  return VLAD_OK;
 }
 
 /* return the number of identifiers that are of type t */
-unsigned int symtab::length(unsigned char t)
+unsigned int symtab::length(unsigned char a_t)
 {
-  if (!initialised)
+  if (m_stage == 0)
     return 0;
 
-  switch(t) {
-    case VLAD_IDENT_SUBJECT :
-      return VLAD_LIST_LENGTH(sub_list);
-    case VLAD_IDENT_ACCESS :
-      return VLAD_LIST_LENGTH(acc_list);
-    case VLAD_IDENT_OBJECT :
-      return VLAD_LIST_LENGTH(obj_list);
-    case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP :
-      return VLAD_LIST_LENGTH(sub_grp_list);
-    case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP :
-      return VLAD_LIST_LENGTH(acc_grp_list);
-    case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP :
-      return VLAD_LIST_LENGTH(obj_grp_list);
-  }
-  return 0;
+  if (a_t >= 6)
+    return 0;
+
+  return VLAD_LIST_LENGTH(m_lists[a_t]);
 }
 
 /* return 0 if symbol is in the table */
-int symtab::find(const char *s)
+int symtab::find(const char *a_s)
 {
   int retval;
+  unsigned int i;
 
-  if (!initialised)
+  if (m_stage == 0)
     return VLAD_UNINITIALISED;
 
-  if (s == NULL)
+  if (a_s == NULL)
     return VLAD_NULLPTR;
 
-  /* try to get n from all the lists sequentially */
-  if ((retval = sub_list->find(s)) != VLAD_NOTFOUND)
-    return retval;
+  for (i = 0; i < 6; i++) {
+    if ((retval = m_lists[i]->find(a_s)) != VLAD_NOTFOUND)
+      return retval;
+  }
 
-  if ((retval = acc_list->find(s)) != VLAD_NOTFOUND)
-    return retval;
-
-  if ((retval = obj_list->find(s)) != VLAD_NOTFOUND)
-    return retval;
-
-  if ((retval = sub_grp_list->find(s)) != VLAD_NOTFOUND)
-    return retval;
-
-  if ((retval = acc_grp_list->find(s)) != VLAD_NOTFOUND)
-    return retval;
-
-  return obj_grp_list->find(s);
+  return VLAD_NOTFOUND;
 }
 
 /* return 0 if symbol of type t is in the table */
-int symtab::find(const char *s, unsigned char t)
+int symtab::find(const char *a_s, unsigned char a_t)
 {
-  if (!initialised)
+  if (m_stage == 0)
     return VLAD_UNINITIALISED;
 
-  if (s == NULL)
+  if (a_s == NULL)
     return VLAD_NULLPTR;
 
-  switch(t) {
-    case VLAD_IDENT_SUBJECT :
-      return sub_list->find(s);
-    case VLAD_IDENT_ACCESS :
-      return acc_list->find(s);
-    case VLAD_IDENT_OBJECT :
-      return obj_list->find(s);
-    case VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP:
-      return sub_grp_list->find(s);
-    case VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP:
-      return acc_grp_list->find(s);
-    case VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP:
-      return obj_grp_list->find(s);
-  }
+  if (a_t >= 6)
+    return VLAD_INVALIDINPUT;
 
-  return VLAD_INVALIDINPUT;
+  return m_lists[a_t]->find(a_s);
 }
 
 /* give the type of the given identifier */
-int symtab::type(const char *s, unsigned char *t)
+int symtab::type(const char *a_s, unsigned char *a_t)
 {
   int retval;
+  unsigned int i;
 
-  if (!initialised)
+  if (m_stage == 0)
     return VLAD_UNINITIALISED;
 
-  if (s == NULL || t == NULL)
+  if (a_s == NULL || a_t == NULL)
     return VLAD_NULLPTR;
 
-  /* try to find s from all the lists sequentially */
-  if ((retval = sub_list->find(s)) != VLAD_NOTFOUND) {
-    if (retval == VLAD_OK)
-      *t = VLAD_IDENT_SUBJECT;
-    return retval;
-  }
-
-  if ((retval = acc_list->find(s)) != VLAD_NOTFOUND) {
-    if (retval == VLAD_OK)
-      *t = VLAD_IDENT_ACCESS;
-    return retval;
-  }
-
-  if ((retval = obj_list->find(s)) != VLAD_NOTFOUND) {
-    if (retval == VLAD_OK)
-      *t = VLAD_IDENT_OBJECT;
-    return retval;
-  }
-
-  if ((retval = sub_grp_list->find(s)) != VLAD_NOTFOUND) {
-    if (retval == VLAD_OK)
-      *t = VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP;
-    return retval;
-  }
-
-  if ((retval = acc_grp_list->find(s)) != VLAD_NOTFOUND) {
-    if (retval == VLAD_OK)
-      *t = VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP;
-    return retval;
-  }
-
-  if ((retval = obj_grp_list->find(s)) != VLAD_NOTFOUND) {
-    if (retval == VLAD_OK)
-      *t = VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP;
-    return retval;
+  for (i = 0; i < 6; i++) {
+    if ((retval = m_lists[i]->find(a_s)) != VLAD_NOTFOUND) {
+      if (retval == VLAD_OK)
+        *a_t = i;
+      return retval;
+    }
   }
 
   return VLAD_NOTFOUND;
