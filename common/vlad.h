@@ -41,6 +41,8 @@
 #define VLAD_NEGIMPLIED     -7
 /* there is something wrong with the input parameters */
 #define VLAD_INVALIDINPUT   -8
+/* method failed because the object was not initialised */
+#define VLAD_UNINITIALISED  -9
 
 /* convenience macro(s) */
 #define VLAD_ADT_MALLOC(X)    ((X *) malloc(sizeof(X)))
