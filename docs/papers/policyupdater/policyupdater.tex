@@ -26,8 +26,18 @@
   \maketitle
 
   \begin{abstract}
-    [text]
+    The {\em PolicyUpdater}\footnotemark system is an access control system
+    that provides policy evaluations as well as dynamic policy updates. These
+    are achieved by the use of a logic-based language ${\cal L}$ to represent
+    the underlying access control policies, constraints and update
+    propositions. The system performs general authorisation query evaluations
+    and conditional policy updates by first translating the language $\cal{L}$
+    to a normal logic program in a form suitable for evaluation using the
+    {\em Stable Model} semantics.
   \end{abstract}
+
+  \footnotetext{PolicyUpdater homepage at \\
+                \tt http://www.cit.uws.edu.au/\~{}jcrescin/PolicyUpdater}
 
   \section{Introduction}
 
@@ -433,7 +443,7 @@ query holds(alice, read, file);
           single access right ${\cal E}_{as}$, group access right
           ${\cal E}_{ag}$, single object ${\cal E}_{os}$ and group object
           ${\cal E}_{og}$. Each entity in set ${\cal E}$ corresponds directly
-          to the \emph{entity identifiers} of language ${\cal L}$.
+          to the {\em entity identifiers} of language ${\cal L}$.
 
           \begin{enumerate}
             \item
@@ -1501,7 +1511,7 @@ query holds(alice, read, file);
         ${\cal L}$ program $P^{\cal L}$ can be translated into an equivalent
         extended logic program $P^{\cal{L^{*}}}$ then translated again into
         an equivalent normal logic program suitable for manipulation using
-        the stable model semantics. However, the implementation of such
+        the {\em Stable Model} semantics. However, the implementation of such
         translations can be greatly simplified by translating language
         ${\cal L}$ programs directly into normal logic programs.
 
@@ -1615,10 +1625,10 @@ query holds(alice, read, file);
 
         Once a normal logic program has been generated from the policy stored
         in the storage structure, a set of answer sets may then be generated
-        by using the stable model semantics with the
-        {\emph smodels}\footnotemark program. Query evaluation then becomes
-        possible by checking whether each fact of a given query holds in each
-        generated answer set of the normal logic program.
+        by using the stable model semantics with the {\em smodels}\footnotemark
+        program. Query evaluation then becomes possible by checking whether
+        each fact of a given query holds in each generated answer set of the
+        normal logic program.
 
         \footnotetext{Smodels [smodels homepage url]}
 
@@ -1827,12 +1837,12 @@ query holds(alice, read, file);
       The expressiveness of language $\cal{L}$ and the effectiveness of the
       PolicyUpdater system can best be demonstrated by a web server
       authorisation application. In this application, PolicyUpdater serves as
-      an authorisation module for the \emph{Apache}\footnotemark web server.
+      an authorisation module for the {\em Apache}\footnotemark web server.
 
-      \footnotetext{Apache Web Server (\tt http://www.apache.org).}
+      \footnotetext{Apache Web Server (\tt http://www.apache.org)}
 
       Although the PolicyUpdater module do not provide the full functionality
-      of Apache's built-in authorisation module \emph{mod\_auth}, it does
+      of Apache's built-in authorisation module {\em mod\_auth}, it does
       provide a flexible logic-based authorisation mechanism.
 
       The PolicyUpdater module works by intercepting all authenticated HTTP
