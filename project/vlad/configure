@@ -2798,7 +2798,7 @@ _ACEOF
 DISTDIR="\$(TOPSRCDIR)/dist"
 
 
-ac_config_files="$ac_config_files Makefile common/Makefile kb/Makefile parser/Makefile main/Makefile"
+ac_config_files="$ac_config_files Makefile lib/Makefile main/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -3272,9 +3272,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-  "common/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/Makefile" ;;
-  "kb/Makefile" ) CONFIG_FILES="$CONFIG_FILES kb/Makefile" ;;
-  "parser/Makefile" ) CONFIG_FILES="$CONFIG_FILES parser/Makefile" ;;
+  "lib/Makefile" ) CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
   "main/Makefile" ) CONFIG_FILES="$CONFIG_FILES main/Makefile" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
