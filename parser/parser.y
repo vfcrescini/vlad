@@ -64,7 +64,7 @@ int yylex(void);
 %token <terminal> VLAD_SYM_ALWAYS
 %token <terminal> VLAD_SYM_CAUSES
 %token <terminal> VLAD_SYM_IF
-%token <terminal> VLAD_SYM_IS
+%token <terminal> VLAD_SYM_QUERY
 %token <terminal> VLAD_SYM_AFTER
 %token <terminal> VLAD_SYM_SUBTYPE
 %token <terminal> VLAD_SYM_OBJTYPE
@@ -535,7 +535,7 @@ trans_var_list :
   ;
 
 query_stmt : 
-  VLAD_SYM_IS expression after_clause VLAD_SYM_SEMICOLON {
+  VLAD_SYM_QUERY expression after_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
     char q[1024];

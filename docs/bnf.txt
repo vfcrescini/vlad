@@ -92,7 +92,7 @@ Updated 2003 Mar 31
                         
 <trans-var-list>        : <identifier> | <trans-var-list> <comma> <identifier>
 
-<query-stmt>            : <is> <expression> <after-clause> <semicolon>
+<query-stmt>            : <query> <expression> <after-clause> <semicolon>
                         
 <after-clause>          : <nil> | <after> <trans-ref-list>
                         
@@ -158,7 +158,7 @@ Updated 2003 Mar 31
                         
 <if>                    : if
                         
-<is>                    : is
+<query>                 : query
                         
 <after>                 : after
 
