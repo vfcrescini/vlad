@@ -3,8 +3,8 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#ifndef __VLAD_VLADLOG_H
-#define __VLAD_VLADLOG_H
+#ifndef __VLAD_VLAD_H
+#define __VLAD_VLAD_H
 
 /* version */
 

@@ -10,21 +10,21 @@
  * accessed given its ordinal index (the order in which it was added to the 
  * list. */
 
-typedef struct vlad_list_node
+typedef struct list_node
 {
   void *data;
-  struct vlad_list_node *next;
-} vlad_list_node;
+  struct list_node *next;
+} list_node;
 
-class vlad_list
+class list
 {
   public :
-    vlad_list();
-    ~vlad_list();
+    list();
+    ~list();
     unsigned int length();
   private :
     unsigned int len;
-    vlad_list_node *list;
+    list_node *head;
     bool initialised;
     void (*fr)(void *);
     bool (*cmp)(void *, void *);

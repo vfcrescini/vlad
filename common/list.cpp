@@ -3,31 +3,31 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
+#include <stdlib.h>
 #include "vlad.h"
 #include "list.h"
-#include <stdlib.h>
 
-vlad_list::vlad_list()
+list::list()
 {
   len = 0;
-  list = NULL;
+  head = NULL;
   fr = NULL;
   cmp = NULL;
   initialised = false;
 }
 
-vlad_list::~vlad_list()
+list::~list()
 {
   purge(true);
 }
 
-unsigned int vlad_list::length()
+unsigned int list::length()
 {
   return len;
 }
 
 /* registers the free and compare function pointers */
-int vlad_list::init(void (*f)(void *), bool (*c)(void *, void *))
+int list::init(void (*f)(void *), bool (*c)(void *, void *))
 {
   if (f == NULL || c == NULL)
     return VLAD_NULLPTR;
@@ -40,9 +40,9 @@ int vlad_list::init(void (*f)(void *), bool (*c)(void *, void *))
 }
 
 /* add pointer to list, assumes memory has been allocated to it */
-int vlad_list::add(void *data)
+int list::add(void *data)
 {
-  vlad_list_node *new_node;
+  list_node *new_node;
 
   if (!initialised)
     return VLAD_UNINITIALISED;
@@ -50,22 +50,22 @@ int vlad_list::add(void *data)
   if (data == NULL)
     return VLAD_NULLPTR;
 
-  if ((new_node = VLAD_ADT_MALLOC(vlad_list_node)) == NULL)
+  if ((new_node = VLAD_ADT_MALLOC(list_node)) == NULL)
     return VLAD_MALLOCFAILED;
 
   new_node->data = data;
-  new_node->next = list;
-  list = new_node;
+  new_node->next = head;
+  head = new_node;
   len++;
  
   return VLAD_OK;
 }
 
 /* deletes index'th data, f = true to free mem or false to not free it */
-int vlad_list::del_i(unsigned int index, bool f)
+int list::del_i(unsigned int index, bool f)
 {  
-  vlad_list_node *prev;
-  vlad_list_node *curr;
+  list_node *prev;
+  list_node *curr;
   unsigned int i; 
 
   if (!initialised)
@@ -75,7 +75,7 @@ int vlad_list::del_i(unsigned int index, bool f)
     return VLAD_OUTOFBOUNDS;
 
   prev = NULL;
-  curr = list;
+  curr = head;
    
   for (i = 0; i < len - index - 1; i++) {
     prev = curr;
@@ -83,7 +83,7 @@ int vlad_list::del_i(unsigned int index, bool f)
   }
 
   if (prev == NULL)
-    list = list->next;
+    head = head->next;
   else
     prev->next = curr->next;
 
@@ -98,11 +98,11 @@ int vlad_list::del_i(unsigned int index, bool f)
 }
 
 /* deletes all the nodes that matches data, f = true to free mem */
-int vlad_list::del_d(void *data, bool f)
+int list::del_d(void *data, bool f)
 {
 
-  vlad_list_node *prev;
-  vlad_list_node *curr;
+  list_node *prev;
+  list_node *curr;
   int found = 0;
 
   if (!initialised)
@@ -112,7 +112,7 @@ int vlad_list::del_d(void *data, bool f)
     return VLAD_NULLPTR;
 
   prev = NULL;
-  curr = list;
+  curr = head;
 
   while (curr != NULL) {
     if (cmp(curr->data, data) == 0) {
@@ -120,7 +120,7 @@ int vlad_list::del_d(void *data, bool f)
       found = 1;
 
       if (prev == NULL)
-        list = list->next;
+        head = head->next;
       else
         prev->next = curr->next;
 
@@ -139,10 +139,10 @@ int vlad_list::del_d(void *data, bool f)
 }
 
 /* gives a reference to the index'th data */
-int vlad_list::get_i(unsigned int index, void **data)
+int list::get_i(unsigned int index, void **data)
 {
   unsigned int i;
-  vlad_list_node *curr;
+  list_node *curr;
 
   if (!initialised)
     return VLAD_UNINITIALISED;  
@@ -153,7 +153,7 @@ int vlad_list::get_i(unsigned int index, void **data)
   if (len <= 0 || index >= len)
    return VLAD_OUTOFBOUNDS;
 
-  curr = list;
+  curr = head;
 
   for (i = 0; i < len - index - 1; i++)
     curr = curr->next;
@@ -164,9 +164,9 @@ int vlad_list::get_i(unsigned int index, void **data)
 }
 
 /* returns 0 if data is in the list */
-int vlad_list::find(void *data)
+int list::find(void *data)
 {
-  vlad_list_node *curr;
+  list_node *curr;
 
   if (!initialised)
     return VLAD_UNINITIALISED;
@@ -174,7 +174,7 @@ int vlad_list::find(void *data)
   if (data == NULL)
     return VLAD_NULLPTR;
   
-  curr = list;
+  curr = head;
 
   while (curr != NULL) {
     if (cmp(curr->data, data) == 0) 
@@ -186,14 +186,14 @@ int vlad_list::find(void *data)
   return VLAD_NOTFOUND;
 }	
 
-/* destroys the list, f = true to free mem */
-void vlad_list::purge(bool f)
+/* destroys the list f = true to free mem */
+void list::purge(bool f)
 {
-  vlad_list_node *curr;
-  vlad_list_node *prev;
+  list_node *curr;
+  list_node *prev;
   
   if (len > 0 && initialised) {
-    curr = list;
+    curr = head;
   
     while (curr != NULL) {
       prev = curr;
@@ -205,7 +205,7 @@ void vlad_list::purge(bool f)
       free(prev);
     }
 
-    list = NULL;
+    head = NULL;
     len = 0;
   }
 }
