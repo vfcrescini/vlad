@@ -82,6 +82,11 @@ public class vcalcdisplay extends Panel {
           state = 0;
           updatedisplay();
           break;
+        case 6 :
+          fvalue = n;
+          state = 0;
+          updatedisplay();
+          break;
       }
     } 
   }
@@ -105,6 +110,7 @@ public class vcalcdisplay extends Panel {
           updatedisplay();
           break;
         case 5 :
+        case 6 :
           op = newop;
           state = 2;
           break;
@@ -116,6 +122,7 @@ public class vcalcdisplay extends Panel {
     switch(state) {
       case 0 :
       case 1 :
+        state = 6;
         break;
       case 2 :
         switch(op) {
@@ -151,6 +158,8 @@ public class vcalcdisplay extends Panel {
         buffer1 = fvalue;
         updatedisplay();       
         break;
+      case 6 :
+        break;
     }
   }
 
@@ -183,6 +192,10 @@ public class vcalcdisplay extends Panel {
         op = '\0';
         state = 1;
         updatedisplay();
+        break;
+      case 6 :
+        decimal = 0;
+        state = 1;
         break;
     }
   }

@@ -12,7 +12,7 @@ State  Description        Action                           Input Text           
 
                           op_buf = operator                +|-|*|/              2
 
-                                                           =                    0
+                                                           =                    6
 ------------------------------------------------------------------------------------------
 1      decimal 1          dec_cnt += 1                     0|1|2|3|4|5|6|7|8|9  1
                           display += (num/(10^dec_cnt))
@@ -21,7 +21,7 @@ State  Description        Action                           Input Text           
 
                           op_buf = operator                +|-|*|/              2
 
-                                                           =                    1
+                                                           =                    6
 ------------------------------------------------------------------------------------------
 2      op correction      buffer1 = display                0|1|2|3|4|5|6|7|8|9  3
                           display = num
@@ -95,4 +95,12 @@ State  Description        Action                           Input Text           
                           res = op_buf(buffer1, buffer2)   =                    5
                           display = res
                           buffer1 = res
+------------------------------------------------------------------------------------------
+6      no op equals       display = num                    0|1|2|3|4|5|6|7|8|9  0
+
+                          dec_cnt = 0                      .                    1
+
+                          op_buf = operator                +|-|*|/              2
+
+                                                           =                    6
 ------------------------------------------------------------------------------------------
