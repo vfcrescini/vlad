@@ -5,15 +5,18 @@ Build/Use Instructions
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
+Updated: 2002 Dec 19
 -------------------------------------------------------------------------------
 
-1. From the toplevel source directory, run make :
+1. From the toplevel source directory, run ./configure, then make :
 
+     $ ./configure
      $ make
 
    For a debug build (lots of output, compiled with -g) :
 
-     $ make DEBUG=1
+     $ ./configure --enable-debug
+     $ make
 
 2. The executable binary will be in the top src directory. Without
    a filename argument, the program will read input from stdin.

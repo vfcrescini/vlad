@@ -1,11 +1,15 @@
 # Vino Crescini <jcrescin@cit.uws.edu.au>
 
-TOPSRCDIR = ..
+TOPSRCDIR = @top_srcdir@
+CC = @CC@
+LEX = @LEX@
+YACC = @YACC@
+DEBUG = @enable_debug@
 CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 LDFLAGS = -L$(TOPSRCDIR)/lib
 TARGETS = vlad
 
-ifdef DEBUG
+ifeq "$(DEBUG)" "yes"
 CFLAGS += -g -DDEBUG
 else
 CFLAGS += -O2
@@ -15,10 +19,10 @@ all : $(TARGETS)
 
 vlad : vlad.o $(TOPSRCDIR)/lib/*
 	$(CC) $(LDFLAGS) -o $(@) vlad.o -lparser -lfl
-	@for i in $(TARGETS); do \
+	@for i in $(TARGETS); do      \
 	ln -sf main/$$i $(TOPSRCDIR); \
 	done
-ifndef DEBUG
+ifeq "$(DEBUG)" "yes"
 	strip $(@)
 endif
 
@@ -26,7 +30,10 @@ vlad.o : vlad.c
 	$(CC) $(CFLAGS) -o $(@) -c vlad.c
 
 clean :
-	$(RM) $(TARGETS) *.o
+	$(RM) *.o
+
+distclean : clean
+	$(RM) $(TARGETS) Makefile
 	@for i in $(TARGETS); do \
-	$(RM) $(TOPSRCDIR)/$$i; \
+	$(RM) $(TOPSRCDIR)/$$i;  \
 	done
