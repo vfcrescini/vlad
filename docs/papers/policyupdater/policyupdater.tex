@@ -346,7 +346,7 @@ always <exp1>
           concerned.
 
           \begin{verbatim}
-/* declare identifiers */
+/* entity identifier definition */
 
 ident sub alice;
 ident acc read, readable;
@@ -397,46 +397,29 @@ query holds(alice, read, comp2);
           \end{verbatim}
         \end{example}
 
-      \subsubsection{Domain Description of Language ${\cal L}$}
-
-        The \emph{domain description} ${\cal D}_{\cal L}$ of language
-        ${\cal L}$ is defined to be a finite set of initial state ground facts,
-        ground constraint rules and policy update definitions.
-
     \subsection{Semantics}
 
       \subsubsection{Domain Description of Language ${\cal L}$}
 
         \begin{definition}
-          The domain of language ${\cal L}$ is as follows:
+          The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
+          defined as follows:
 
           \begin{quote}
             \begin{math}
               {\cal D}_{\cal L} = 
               \begin{cases}
-                \mbox{set of Ground Initial State Facts $\alpha$} \\
-                \mbox{set of Ground Constraint Rules $\beta$} \\
-                \mbox{set of Policy Update Definitions $\gamma$}
+                \mbox{finite set of ground initial state facts} \\
+                \mbox{finite set of ground constraint rules} \\
+                \mbox{finite set of policy update definitions}
               \end{cases}
             \end{math}
           \end{quote}
 
-          \begin{itemize}
-            \item
-              The initial state facts $\alpha$ is an expression, or a
-              conjunction of facts that hold in the initial state.
-            \item
-              The constraint rules $\beta$ are the rules that holds in all
-              states.
-            \item
-              The policy update definitions $\gamma$ contains the name,
-              preconditions and postconditions of all policy updates that
-              can be applied in the policy base.
-          \end{itemize}
         \end{definition}
 
         In addition to the domain ${\cal D}_{\cal L}$, language ${\cal L}$
-        includes one additional ordered set: the sequence list $\psi$.
+        also includes one additional ordered set: the sequence list $\psi$.
 
         \begin{definition}
           The sequence list $\psi$ is an ordered set that contains a sequence 
