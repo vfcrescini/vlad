@@ -45,7 +45,27 @@ class kb {
     transtab *ttable;
     unsigned char stage;
     /* make sure atom a is valid */
-    int kb::verify_atom(atom *a);
+    int kb::verify_atom(atom *a, stringlist *v);
+    /* 
+     * verifies that s, a and o are in the symtab and that
+     * they are of the right  type, or listed in v if v is non-null 
+     */
+     int verify_atom_holds(const char *s,
+                           const char *a,
+                           const char *o,
+                           stringlist *v);
+    /* 
+     * verifies that e and g are in the symtab and that they are of the right 
+     * type, or listed in v if v is non-null
+     */
+    int verify_atom_member(const char *e, const char *g, stringlist *v);
+
+   /* 
+    * verifies that g1 and g2 are in the symtab and that they are of the right 
+    * type, or listed in v if v is non-null
+    */ 
+    int verify_atom_subset(const char *g1, const char *g2, stringlist *v);
+
 } ;
 
 #endif

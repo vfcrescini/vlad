@@ -141,7 +141,7 @@ int kb::add_inittab(atom *a)
     return VLAD_NULLPTR;
 
   /* first check if the atom is valid */
-  if ((retval = verify_atom(a)) != VLAD_OK)
+  if ((retval = verify_atom(a, NULL)) != VLAD_OK)
     return retval;
 
   /* now copy and add to inittab */
@@ -190,7 +190,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
   for (i = 0; i < e->length(); i++) {
     if ((retval = e->get(i, &tmp1)) != VLAD_OK)
       return retval;
-    if ((retval = verify_atom(tmp1)) != VLAD_OK)
+    if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
       return retval;
     if ((tmp2 = VLAD_NEW(atom())) == NULL)
       return VLAD_MALLOCFAILED;
@@ -205,7 +205,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
     for (i = 0; i < c->length(); i++) {
       if ((retval = c->get(i, &tmp1)) != VLAD_OK)
         return retval;
-      if ((retval = verify_atom(tmp1)) != VLAD_OK)
+      if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
         return retval;
       if ((tmp2 = VLAD_NEW(atom())) == NULL)
         return VLAD_MALLOCFAILED;
@@ -221,7 +221,7 @@ int kb::add_consttab(expression *e, expression *c, expression *n)
     for (i = 0; i < n->length(); i++) {
       if ((retval = n->get(i, &tmp1)) != VLAD_OK)
         return retval;
-      if ((retval = verify_atom(tmp1)) != VLAD_OK)
+      if ((retval = verify_atom(tmp1, NULL)) != VLAD_OK)
         return retval;
       if ((tmp2 = VLAD_NEW(atom())) == NULL)
         return VLAD_MALLOCFAILED;
@@ -242,33 +242,94 @@ int kb::add_transtab(const char *n,
                      expression *pr,
                      expression *po)
 {
+  int retval;
+  unsigned int i;
+  char *name;
   stringlist *vlist;
   expression *precond;
   expression *postcond;
 
-  if ((vlist = VLAD_NEW(stringlist(NULL))) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((precond = VLAD_NEW(expression(NULL))) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((postcond = VLAD_NEW(expression(NULL))) == NULL)
-    return VLAD_MALLOCFAILED;
+  /* we only allow this function after consttab is closed */
+  if (stage != 4)
+    return VLAD_FAILURE;
 
   if (n == NULL)
     return VLAD_NULLPTR;
+
+  /* copy name */
+  if ((name = VLAD_STRING_MALLOC(n)) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  strcpy(name, n);
+
+  /* verify and copy varlist */
+  if ((vlist = VLAD_NEW(stringlist(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < v->length(); i++) {
+    char *tmp;
+    if ((retval = v->get(i, &tmp)) != VLAD_OK)
+      return retval;
+    /* check if the variable is already used as an identifier */
+    if ((retval = stable->find(tmp)) != VLAD_NOTFOUND)
+      return (retval == VLAD_OK) ? VLAD_FAILURE : retval;
+      
+    if ((retval = vlist->add(tmp)) != VLAD_OK)
+      return retval;
+  }
+
+  /* verify and copy precondition */
+  if ((precond = VLAD_NEW(expression(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < pr->length(); i++) {
+    atom *tmp1;
+    atom *tmp2;
+    if ((retval = pr->get(i, &tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = verify_atom(tmp1, vlist)))
+      return retval;
+    if ((tmp2 = VLAD_NEW(atom())) == NULL)
+      return VLAD_MALLOCFAILED;
+    if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = precond->add(tmp2)) != VLAD_OK)
+      return retval;
+  }
+
+  /* verify and copy the postcondition */
+  if ((postcond = VLAD_NEW(expression(NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < po->length(); i++) {
+    atom *tmp1;
+    atom *tmp2;
+    if ((retval = po->get(i, &tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = verify_atom(tmp1, vlist)))
+      return retval;
+    if ((tmp2 = VLAD_NEW(atom())) == NULL)
+      return VLAD_MALLOCFAILED;
+    if ((retval = tmp2->init_atom(tmp1)) != VLAD_OK)
+      return retval;
+    if ((retval = postcond->add(tmp2)) != VLAD_OK)
+      return retval;
+  }
+
+  /* if all goes well, add to the trans table */
+  if ((retval = ttable->add(name, vlist, precond, postcond)) != VLAD_OK)
+    return retval;
 
   return VLAD_OK;
 }
 
 /* make sure atom a is valid */
-int kb::verify_atom(atom *a)
+int kb::verify_atom(atom *a, stringlist *v)
 {
   int retval;
   char *tmp1;
   char *tmp2;
   char *tmp3;
-  unsigned char type1;
-  unsigned char type2;
-  unsigned char type3;
 
   /* this function is only valid after the symtab is closed */
   if (stage < 2)
@@ -278,60 +339,210 @@ int kb::verify_atom(atom *a)
     case VLAD_ATOM_CONST :
       /* constants need not be checked */
       break;
-    case VLAD_ATOM_HOLDS : {
-      a->get_holds(&tmp1, &tmp2, &tmp3);
-
-      if ((retval = stable->type(tmp1, &type1)) != VLAD_OK)
+    case VLAD_ATOM_HOLDS :
+      if ((retval = a->get_holds(&tmp1, &tmp2, &tmp3)) != VLAD_OK)
         return retval;
-      if ((retval = stable->type(tmp2, &type2)) != VLAD_OK)
+      return verify_atom_holds(tmp1, tmp2, tmp3, v);
+    case VLAD_ATOM_MEMBER :
+      if ((retval = a->get_member(&tmp1, &tmp2)) != VLAD_OK)
         return retval;
-      if ((retval = stable->type(tmp3, &type3)) != VLAD_OK)
+      return verify_atom_member(tmp1, tmp2, v);
+    case VLAD_ATOM_SUBSET :
+      if ((retval = a->get_subset(&tmp1, &tmp2)) != VLAD_OK)
         return retval;
-
-      if (!VLAD_IDENT_IS_SUBJECT(type1) ||
-          !VLAD_IDENT_IS_ACCESS(type2) ||
-          !VLAD_IDENT_IS_OBJECT(type3))
-
-        return VLAD_INVALIDINPUT;
-
-      break;
-    }
-    case VLAD_ATOM_MEMBER : {
-
-      a->get_member(&tmp1, &tmp2);
-
-      if ((retval = stable->type(tmp1, &type1)) != VLAD_OK)
-        return retval;
-      if ((retval = stable->type(tmp2, &type2)) != VLAD_OK)
-        return retval;
-
-      if (VLAD_IDENT_IS_GROUP(type1) || 
-          !VLAD_IDENT_IS_GROUP(type2) ||
-          VLAD_IDENT_BASETYPE(type1) != VLAD_IDENT_BASETYPE(type2))
-
-        return VLAD_INVALIDINPUT;
-
-      break;
-    }
-    case VLAD_ATOM_SUBSET : {
-      a->get_subset(&tmp1, &tmp2);
-
-      if ((retval = stable->type(tmp1, &type1)) != VLAD_OK)
-        return retval;
-      if ((retval = stable->type(tmp2, &type2)) != VLAD_OK)
-        return retval;
-
-      if (!VLAD_IDENT_IS_GROUP(type1) || 
-          !VLAD_IDENT_IS_GROUP(type2) ||
-          VLAD_IDENT_BASETYPE(type1) != VLAD_IDENT_BASETYPE(type2))
-
-        return VLAD_INVALIDINPUT;
-
-      break;
-    }
+      return verify_atom_subset(tmp1, tmp2, v);
     default :
       return VLAD_INVALIDINPUT;
   }
 
+  return VLAD_OK;
+}
+
+/* 
+ * verifies that s, a and o are in the symtab and that they are of the right 
+ * type, or listed in v if v is non-null
+ */
+int kb::verify_atom_holds(const char *s, 
+                         const char *a, 
+                         const char *o, 
+                         stringlist *v)
+{
+  int retval;
+  unsigned char type;
+
+  if (s == NULL || a == NULL || o == NULL)
+    return VLAD_NULLPTR;
+
+  /* check subject */
+  switch((retval = stable->type(s, &type))) {
+    case VLAD_OK :
+      /* in symtab so check if it is a subject */
+      if (!VLAD_IDENT_IS_SUBJECT(type))
+        return VLAD_INVALIDINPUT;
+      break;
+    case VLAD_NOTFOUND :
+      /* not in symtab */
+      if (v == NULL)
+        return VLAD_INVALIDINPUT;
+      /* if this is a non-ground atom, check in the var list */
+      if ((retval = v->find(s)) != VLAD_OK)
+        return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      break;
+    default :
+      return retval;
+  }
+
+  /* check access */
+  switch((retval = stable->type(a, &type))) {
+    case VLAD_OK :
+      /* in symtab so check if it is an access */
+      if (!VLAD_IDENT_IS_ACCESS(type))
+        return VLAD_INVALIDINPUT;
+      break;
+    case VLAD_NOTFOUND :
+      /* not in symtab */
+      if (v == NULL)
+        return VLAD_INVALIDINPUT;
+      /* if this is a non-ground atom, check in the var list */
+      if ((retval = v->find(a)) != VLAD_OK)
+        return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      break;
+    default :
+      return retval;
+  }
+
+  /* check object */
+  switch((retval = stable->type(o, &type))) {
+    case VLAD_OK :
+      /* in symtab so check if it is an object */
+      if (!VLAD_IDENT_IS_OBJECT(type))
+        return VLAD_INVALIDINPUT;
+      break;
+    case VLAD_NOTFOUND :
+      /* not in symtab */
+      if (v == NULL)
+        return VLAD_INVALIDINPUT;
+      /* if this is a non-ground atom, check in the var list */
+      if ((retval = v->find(o)) != VLAD_OK)
+        return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      break;
+    default :
+      return retval;
+  }
+  
+  return VLAD_OK;
+}
+
+/* 
+ * verifies that e and g are in the symtab and that they are of the right 
+ * type, or listed in v if v is non-null
+ */
+int kb::verify_atom_member(const char *e, const char *g, stringlist *v)
+{
+  int retval;
+  unsigned char type_e;
+  unsigned char type_g;
+
+  if (e == NULL || g == NULL)
+    return VLAD_NULLPTR;
+
+  /* check element */
+  switch((retval = stable->type(e, &type_e))) {
+    case VLAD_OK :
+      /* in symtab so check if it is a non-group */
+      if (VLAD_IDENT_IS_GROUP(type_e))
+        return VLAD_INVALIDINPUT;
+      break;
+    case VLAD_NOTFOUND :
+      /* not in symtab */
+      if (v == NULL)
+        return VLAD_INVALIDINPUT;
+      /* if this is a non-ground atom, check in the var list */
+      if ((retval = v->find(e)) != VLAD_OK)
+        return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      break;
+    default :
+      return retval;
+  }
+
+  /* check group */
+  switch((retval = stable->type(g, &type_g))) {
+    case VLAD_OK :
+      /* in symtab so check if it is a group */
+      if (!VLAD_IDENT_IS_GROUP(type_g))
+        return VLAD_INVALIDINPUT;
+      /* also check if it has the same base type as e */
+      if (VLAD_IDENT_BASETYPE(type_e) != VLAD_IDENT_BASETYPE(type_g))
+        return VLAD_INVALIDINPUT;
+      break;
+    case VLAD_NOTFOUND :
+      /* not in symtab */
+      if (v == NULL)
+        return VLAD_INVALIDINPUT;
+      /* if this is a non-ground atom, check in the var list */
+      if ((retval = v->find(g)) != VLAD_OK)
+        return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      break;
+    default :
+      return retval;
+  }
+  
+  return VLAD_OK;
+}
+
+/* 
+ * verifies that g1 and g2 are in the symtab and that they are of the right 
+ * type, or listed in v if v is non-null
+ */
+int kb::verify_atom_subset(const char *g1, const char *g2, stringlist *v)
+{
+  int retval;
+  unsigned char type_g1;
+  unsigned char type_g2;
+
+  if (g1 == NULL || g2 == NULL)
+    return VLAD_NULLPTR;
+
+  /* check group1 */
+  switch((retval = stable->type(g1, &type_g1))) {
+    case VLAD_OK :
+      /* in symtab so check if it is a group */
+      if (!VLAD_IDENT_IS_GROUP(type_g1))
+        return VLAD_INVALIDINPUT;
+      break;
+    case VLAD_NOTFOUND :
+      /* not in symtab */
+      if (v == NULL)
+        return VLAD_INVALIDINPUT;
+      /* if this is a non-ground atom, check in the var list */
+      if ((retval = v->find(g1)) != VLAD_OK)
+        return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      break;
+    default :
+      return retval;
+  }
+
+  /* check group2 */
+  switch((retval = stable->type(g2, &type_g2))) {
+    case VLAD_OK :
+      /* in symtab so check if it is a group */
+      if (!VLAD_IDENT_IS_GROUP(type_g2))
+        return VLAD_INVALIDINPUT;
+      /* also check if it has the same base type as g1 */
+      if (VLAD_IDENT_BASETYPE(type_g1) != VLAD_IDENT_BASETYPE(type_g2))
+        return VLAD_INVALIDINPUT;
+      break;
+    case VLAD_NOTFOUND :
+      /* not in symtab */
+      if (v == NULL)
+        return VLAD_INVALIDINPUT;
+      /* if this is a non-ground atom, check in the var list */
+      if ((retval = v->find(g2)) != VLAD_OK)
+        return (retval == VLAD_NOTFOUND) ? VLAD_INVALIDINPUT : retval;
+      break;
+    default :
+      return retval;
+  }
+  
   return VLAD_OK;
 }

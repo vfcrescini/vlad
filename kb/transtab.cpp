@@ -42,32 +42,16 @@ bool transdef::cmp(list_item *item)
   if ((tmp = dynamic_cast<transdef *> (item)) == NULL)
     return false;
 
+  /* 
+   * here we are only concerned about the name. if the names match,
+   * then we consider the transformations equivalent.
+   */
+
   if (tmp->name == NULL && name != NULL)
     return false;
   else if (tmp->name != NULL && name == NULL)
     return false;
   else if (tmp->name != NULL && name != NULL && strcmp(name, tmp->name))
-    return false;
-  
-  if (tmp->vtable == NULL && vtable != NULL)
-    return false;
-  else if (tmp->vtable != NULL && vtable == NULL)
-    return false;
-  else if (tmp->vtable != NULL && vtable != NULL && !vtable->cmp(tmp->vtable))
-    return false;
-
-  if (tmp->precond == NULL && precond != NULL)
-    return false;
-  else if (tmp->precond != NULL && precond == NULL)
-    return false;
-  else if (tmp->precond != NULL && precond != NULL && !precond->cmp(tmp->precond))
-    return false;
-
-  if (tmp->postcond == NULL && postcond != NULL)
-    return false;
-  else if (tmp->postcond != NULL && postcond == NULL)
-    return false;
-  else if (tmp->postcond != NULL && postcond != NULL && !postcond->cmp(tmp->postcond))
     return false;
 
   return true;
