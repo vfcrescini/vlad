@@ -11,7 +11,7 @@ int gnd_atomlist_free(void *ptr);
 
 int gnd_atomlist_init(gnd_atomlist_type *list)
 {
-  return indexedlist_init((indexedlist_type *) list);
+  return indexedlist_init(list);
 }
 
 int gnd_atomlist_add(gnd_atomlist_type *list, gnd_atom_type atom)
@@ -27,7 +27,7 @@ int gnd_atomlist_add(gnd_atomlist_type *list, gnd_atom_type atom)
 
   *new_atom = atom;
 
-  return indexedlist_add((indexedlist_type *) list, (void *) new_atom, &index);
+  return indexedlist_add(list, (void *) new_atom, &index);
 }
 
 int gnd_atomlist_remove(gnd_atomlist_type *list, gnd_atom_type atom)
@@ -35,7 +35,7 @@ int gnd_atomlist_remove(gnd_atomlist_type *list, gnd_atom_type atom)
   if (list == NULL)
     return -1;
 
-  return indexedlist_del_data_f((indexedlist_type *) list, 
+  return indexedlist_del_data_f(list, 
                                 &atom,
                                 gnd_atomlist_cmp,
                                 gnd_atomlist_free);
@@ -45,7 +45,7 @@ int gnd_atomlist_isin(gnd_atomlist_type list, gnd_atom_type atom)
 {
   unsigned int index;
 
-  if (indexedlist_get_index((indexedlist_type) list, 
+  if (indexedlist_get_index(list, 
                             (void *) &atom,
                             &index,
                             gnd_atomlist_cmp) < 0)

@@ -9,7 +9,7 @@
 #include <indexedlist.h>
 #include "gnd_atom.h"
 
-typedef indexedlist_type gnd_atomlist_type;
+#define gnd_atomlist_type indexedlist_type
 
 int gnd_atomlist_init(gnd_atomlist_type *list);
 int gnd_atomlist_add(gnd_atomlist_type *list, gnd_atom_type atom);
