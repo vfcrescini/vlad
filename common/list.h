@@ -16,9 +16,11 @@ class list_item
     virtual bool cmp(list_item *item) = 0;
 } ;
 
-/* simple list works like a queue, except the api allows the data to be
+/*
+ * simple list works like a queue, except the api allows the data to be
  * accessed given its ordinal index (the order in which it was added to the 
- * list). */
+ * list). 
+ */
 
 typedef struct list_node
 {
