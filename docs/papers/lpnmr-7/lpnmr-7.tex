@@ -35,56 +35,80 @@
     [text]
 
   \section{Language L}
-    \subsection{Language Elements}
+    \subsection{Language Syntax}
 
-      \subsubsection{Identifier}
-        \begin{verbatim}
-[a-zA-Z]([a-zA-Z0-9_])*
-        \end{verbatim}
-      \subsubsection{Atom}
-        \begin{verbatim}
-holds(<sub-identifier>, <acc-identifier>, <obj-identifier>)
-memb(<singular-identifier>, <group-identifier>)
-subset(<group-identifier>, <group-identifier>)
-        \end{verbatim}
-      \subsubsection{Expression}
-        \begin{verbatim}
-atom1 [&& ...]
-        \end{verbatim}
+      Every statement must end with the semicolon ; terminator. Comments
+      may appear between the C-style comment symbols /* and */.
 
-    \subsection{Initial State Definition}
+      \emph{Identifiers} are used to represent an entity (subject, access
+      right, object), a group of entities or a transformation.
 
-      \begin{verbatim}
-initially <expression>
-      \end{verbatim}
+      \begin{verbatim}[a-zA-Z]([a-zA-Z0-9_])*\end{verbatim}
 
-    \subsection{Constraint Definition}
+      Entity/group identifiers must first be defined before they appear
+      anywhere in the policy base.
 
-      \begin{verbatim}
-always exp1 [implied by exp2 [with absence exp3]]
-      \end{verbatim}
+      \begin{verbatim}ident {sub|acc|obj}[-grp] <identifier>;\end{verbatim}
 
-    \subsection{Policy Manipulation}
+      \emph{Atoms} are the basic logical units that make up the policy base.
+      The Holds atom signifies a binding of a subject, an object and the
+      access right of that subject for that object. The Membership atom binds
+      a singular entity to a group entity of the same type. Similarly, a Subset
+      atom shows the relationship between a group and its supergroup. The
+      negation of an atom is represented in L by prepending the symbol ! to the
+      atom.
 
-      \subsubsection{Definition}
+      \begin{verbatim}[!]holds(<sub-identifier>, <acc-identifier>, <obj-identifier>)
+[!]memb(<singular-identifier>, <group-identifier>)
+[!]subset(<group-identifier>, <group-identifier>)\end{verbatim}
 
-        \begin{verbatim}
-<update-identifier>(<var1>[,...]) causes exp1 if exp2
-        \end{verbatim}
+      \emph{Expressions} are atoms or conjunctions of atoms linked together by
+      the double ampersand characters \&\&.
 
-      \subsubsection{Directives}
+      \begin{verbatim}atom1 [&& atom2 [&& ...]]\end{verbatim}
 
-        \begin{itemize}
-          \item Adding a Transformation into the Sequence
-          \item Remove a Transformation from the Sequence
-          \item Listing the Sequence Table
-        \end{itemize}
+      \emph{Initial State Definition.} This feature of Language L allows the
+      initial facts of the policy base to be set.
 
-    \subsection{Query Directive}
+      \begin{verbatim}initially <expression>;\end{verbatim}
 
-      \begin{verbatim}
-query expression
-      \end{verbatim}
+      \emph{Constraint Definition.} Constraints are the logical rules that must
+      hold in the initial state and any other state of the policy base after
+      any policy update or transformation. The syntax below states that exp1
+      must hold if exp2 is true and that there is no evidence that exp3 is
+      true.
+
+      \begin{verbatim}always exp1 [implied by exp2 [with absence exp3]];\end{verbatim}
+
+      \emph{Policy Manipulation.} A special feature of the Language L allows
+      the policies to be dynamically updated through the process of
+      transformation. The following transformation definition syntax generates
+      a new state by applying exp1 to the current state if and only if exp2 is
+      true in the current state.
+
+      \begin{verbatim}<update-identifier>(<var1>[,...]) causes exp1 if exp2;\end{verbatim}
+
+      The current state of the policy base (the state in which queries will be
+      evaluated) is derived by applying the transformations that are added into
+      the transformation sequence. Below is the syntax for adding a
+      transformation into the sequence.
+
+      \begin{verbatim}seq add <update-identifier>(<var1>[,...]);\end{verbatim}
+
+      Similarly, to remove the n'th transformation from the sequence:
+
+      \begin{verbatim}seq del <n>;\end{verbatim}
+
+      For the sake of completeness, the Language L also has provisions to list
+      the transformations in the sequence.
+
+      \begin{verbatim}seq list;\end{verbatim}
+
+      \emph{Query Directive.} The policy base may be given an expression to be
+      queried. Queries are evaluated after after all transformations in the
+      sequence and all constraints have been applied.
+
+      \begin{verbatim}query expression;\end{verbatim}
 
   \section{Implementation}
 
@@ -141,7 +165,7 @@ query expression
 
         FALSE $\leftarrow$ holds(A, S, T) $\land$ holds(A, S, F)
 
-  \section{Application: Dynamic Access Control System in Web Servers}
+  \section{Conclusion}
 
   \begin{thebibliography}{5}
 
