@@ -375,22 +375,12 @@ query holds(alice, read, file);
 
     \subsection{Semantics}
 
-      [some text to explain translation]
-
       \subsubsection{Domain Description of Language ${\cal L}$}
 
         \begin{definition}
           The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
-          defined as a finite set of the following:
-
-          \begin{itemize}
-            \item
-              ground initial state facts
-            \item
-              constraint rules
-            \item
-              policy update definitions
-          \end{itemize}
+          defined as a finite set of ground initial state facts, constraint
+          rules and policy update definitions.
         \end{definition}
 
         In addition to the domain ${\cal D}_{\cal L}$, language ${\cal L}$
@@ -410,15 +400,25 @@ query holds(alice, read, file);
 
       \subsubsection{Language ${\cal L}^{*}$}
 
-        [Language ${\cal L}^{*}$ is an extended logic program...]
-
-        The $Result$ function takes a policy update reference $u$ and the
-        current state $\sigma$ as input arguments and returns the resulting
-        state $\sigma'$ after $u$ has been applied to $\sigma$.
-
+        In Language ${\cal L}$, the policy base is subject to change, which is
+        triggered by the application of policy updates. Such changes bring
+        forth the concept of policy base states. Conceptually, a state may be
+        thought of as a set of facts and constraints of the policy base at a
+        particular instant. The state transition notation below shows that a
+        new state $PB'$ is generated from the current state $PB$ after the
+        policy update $u$ is applied.
+  
         \begin{quote}
-          $\sigma'$ = $Result$($u$, $\sigma$)
+          $PB$ $\overrightarrow{_{u}}$ $PB'$
         \end{quote}
+
+        Using this definition of a state means that for every policy update
+        applied to the policy base, a new instance of the policy base or a new
+        set of facts and constraints are generated. To avoid having to deal
+        with multiple policy base instances, we introduce an intermediate
+        language, language ${\cal L}^{*}$, which is an extended logic program
+        representation of langauge ${\cal L}$. As such, it is equivalent to
+        language ${\cal L}$ in terms of exressive power.
 
         \paragraph{Entities.}
 
@@ -426,7 +426,8 @@ query holds(alice, read, file);
           single subject ${\cal E}_{ss}$, group subject ${\cal E}_{sg}$,
           single access right ${\cal E}_{as}$, group access right
           ${\cal E}_{ag}$, single object ${\cal E}_{os}$ and group object
-          ${\cal E}_{og}$.
+          ${\cal E}_{og}$. Each entity in set ${\cal E}$ corresponds directly
+          to the \emph{entity identifiers} of language ${\cal L}$.
 
           \begin{enumerate}
             \item
@@ -441,9 +442,18 @@ query holds(alice, read, file);
 
         \paragraph{Atoms.}
 
-          An atom represents a logical relationship of two to three enitites
-          in a particular policy base state. The atom set ${\cal A}^{\sigma}$
-          is the set of all atoms in state $\sigma$.
+          The main difference between language ${\cal L}$ and language
+          ${\cal L}^{*}$ lies in the definition of an atom. Atoms in language
+          ${\cal L}^{*}$ represent a logical replationship of two to three
+          entities, as with atoms of language ${\cal L}$. Furthermore, atoms of
+          language ${\cal L}^{*}$ extends this definition by defining the
+          state of the policy base in which the relationship holds. In this
+          paper, atoms of language ${\cal L}^{*}$ are written with the
+          hat character ($\hat{holds}$, $\hat{memb}$ and $\hat{subst}$) to
+          differentiate from the atoms of language ${\cal L}$.
+
+          The atom set ${\cal A}^{\sigma}$ is the set of all atoms in state
+          $\sigma$. 
 
           \begin{enumerate}
             \item
@@ -472,17 +482,6 @@ query holds(alice, read, file);
           returns a set that contains the entity identifiers that make up the
           atom.
 
-          \begin{quote}
-            \begin{math}
-              Base(\alpha) = 
-              \begin{cases}
-                \mbox{\{$s_{\alpha}$, $a_{\alpha}$, $o_{\alpha}$\}, if $\alpha$ is holds} \\
-                \mbox{\{$m_{\alpha}$, $g_{\alpha}$\}, if $\alpha$ is memb} \\
-                \mbox{\{$g1_{\alpha}$, $g2_{\alpha}$\}, if $\alpha$ is subst}
-              \end{cases}
-            \end{math}
-          \end{quote}
-
         \paragraph{Facts.}
        
           A fact is a logical statement that makes a claim that an atom either
@@ -493,135 +492,149 @@ query holds(alice, read, file);
             $f^{\sigma}$ = $[\lnot]$$\alpha$, $\alpha$ $\in$ ${\cal A}^{\sigma}$
           \end{quote}
 
-        \paragraph{Expressions.}
+        \paragraph{Expressions and Propositions.}
 
-          An expression is a fact in a particular state or a conjunction of
-          facts that may be in different states.
+          Following the standard notation of extended logic programs,
+          expressions or conjunctions of facts are represented as follows:
 
           \begin{quote}
-            $e$ = $f_{0}$ $\land$ ... $\land$ $f_{n}$
+            $f_{0}$, ..., $f_{n}$
 
-            where
-
-            $f_{i}$ = $[\lnot]$$\alpha$
-
-            $\forall$$i$, $\exists$($\alpha$,$\sigma$)
-            such that
-
-            \begin{itemize}
-              \item
-                $0$ $\leq$ $i$ $\leq$ $n$
-              \item
-                $\alpha$ $\in$ ${\cal A}^{\sigma}$
-              \item
-                $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$
-            \end{itemize}
+            where $n$ $>$ $0$
           \end{quote}
 
-        \paragraph{Propositions.}
-
-          In language ${\cal L}^{*}$, propositions state logical facts and
-          rules. A proposition is composed of a fact (the head) and an
-          expression that makes up the body. The proposition below states that
-          fact $f$ holds if all the facts in expression $e$ also hold.
+          Propositions are implications composed of a single fact $c$ as the
+          consequent and an expression $p$ as the premise.
 
           \begin{quote}
-            $f$ $\leftarrow$ $e$
-          \end{quote}
+            $c$ $\leftarrow$ $p_{0}$, ..., $p_{n}$
 
-          A proposition without a body expression states that the head, fact
-          $f$ holds, unconditionally.
-
-          \begin{quote}
-            $f$ $\leftarrow$
+            where $n$ $\geq$ $0$
           \end{quote}
 
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
         \begin{definition}
           Given the domain description ${\cal D}_{\cal L}$ of language
-          ${\cal L}$, the function $trans$(${\cal D}_{\cal L}$) is defined as
-          the extended logic program ${\cal L}^{*}$ translation of language
-          ${\cal L}$.
-
-          The domain description ${\cal D}_{\cal L}$ is said to be
-          {\em consistent} if $trans$(${\cal D}_{\cal L}$) has at least one
-          consistent answer set. 
+          ${\cal L}$, $Translate$(${\cal D}_{\cal L}$) is defined as the
+          extended logic program ${\cal L}^{*}$ translation of language
+          ${\cal L}$. The domain description ${\cal D}_{\cal L}$ is said to be
+          {\em consistent} if and only if $Translate$(${\cal D}_{\cal L}$) has
+          at least one consistent answer set. 
         \end{definition}
+
+        Before we can fully define the \emph{Translate} function, we must first
+        define the following functions:
+
+        \paragraph{}
+
+          The $Result$ function takes a policy update reference $u$ and the
+          current state $\sigma$ as input arguments and returns the resulting
+          state $\sigma'$ after $u$ has been applied to $\sigma$.
+ 
+          \begin{quote}
+            $\sigma'$ = $Result$($u$, $\sigma$)
+          \end{quote}
+
+        \paragraph{}
+
+          The $TranslateAtom$ function takes an atom $\alpha$ of language
+          ${\cal L}$ and an arbitrary state $\sigma$ and returns the equivalent
+          atom of language ${\cal L}^{*}$.
+ 
+          \begin{quote}
+            $TranslateAtom$($\alpha$, $\sigma$)
+ 
+            = 
+            \begin{math}
+              \begin{cases}
+                \mbox{$\hat{holds}$($s$, $a$, $o$, $\sigma$), if $\alpha$ = $holds$($s$, $a$, $o$)} \\
+                \mbox{$\hat{memb}$($e$, $g$, $\sigma$), if $\alpha$ = $memb$($e$, $g$)} \\
+                \mbox{$\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$), if $\alpha$ = $subst$($g_{1}$, $g_{2}$)}
+              \end{cases}
+            \end{math}
+          \end{quote}
+
+        \paragraph{}
+
+          Another function, the $TranslateFact$ function is similar to the
+          $TranslateAtom$ function, but instead of translating an atom, it
+          takes a fact from language ${\cal L}$ and a state and returns the
+          equivalent fact of language ${\cal L}^{*}$.
 
         \paragraph{Initial Fact Expression.}
 
           Translating initial fact expressions of language ${\cal L}$ to
-          language ${\cal L}^{*}$ is a trivial procedure: repleace each atom
-          that makes up the initial fact expression of language ${\cal L}$
+          language ${\cal L}^{*}$ is a trivial procedure: translate each atom
+          that make up the initial fact expression of language ${\cal L}$
           with its corresponding equivalent initial state atom of language
-          ${\cal L}^{*}$. The following shows the formal definition of initial
-          fact expressions of language ${\cal L}^{*}$.
+          ${\cal L}^{*}$. 
+
+          Given an initial fact expression of language ${\cal L}$ that is
+          composed of $n$ facts:
 
           \begin{quote}
-            $f_{0}$ $\land$ .. $\land$ $f_{n}$, $n$ $\geq$ $0$
+            initially $f_{0}$ \&\& ... \&\& $f_{n}$
+          \end{quote}
 
-            where
+          In language ${\cal L}^{*}$, the statement above is represented as:
 
+          \begin{quote}
+            $\hat{f_{0}}$ $\leftarrow$
+
+            ...
+
+            $\hat{f_{n}}$ $\leftarrow$
+
+            where:
               \begin{itemize}
                 \item
-                  $f_{i}$ = $[\lnot]$ $a$
+                  $\hat{f_{i}}$ $=$ $TranslateFact$($f_{i}$, $S_{0}$)
                 \item
-                  $a$ $\in$ ${\cal A}^{S_{0}}$
-                \item
-                  $0$ $\leq$ $i$ $\leq$ $n$
+                  $0$ $<$ $i$ $\leq$ $n$
               \end{itemize}
           \end{quote}
 
         \paragraph{Constraint Rules.}
 
-          Given a constraint in language ${\cal L}$:
+          Each constraint rule in language ${\cal L}$ is expressed as a series
+          of logical rules in language ${\cal L}_{*}$. Each constraint rule
+          in language ${\cal L}$ is translated to $\delta$ rules in language
+          $\cal{L}^{*}$, where $\delta$ = [number of facts in the always
+          clause] $\times$ $\Sigma$.
+
+          Given a constraint in language ${\cal L}$, with $m$ $>$ $0$ and $n$,
+          $o$ $\geq$ $0$:
 
           \begin{quote}
-            always $a_{0}$ $\land$ ... $\land$ $a_{m}$
-            implied by $b_{0}$ $\land$ ... $\land$ $b_{n}$
-            with absence $c_{0}$ $\land$ ... $\land$ $c_{o}$
+            always $a_{0}$ \&\& ... \&\& $a_{m}$
+
+            implied by $b_{0}$ \&\& ... \&\& $b_{n}$
+
+            with absence $c_{0}$ \&\& ... \&\& $c_{o}$
           \end{quote}
          
-          \begin{itemize}
-            \item
-              Each constraint rule in language ${\cal L}$ may be expressed
-              as a logical rule. The expression $a$ in the $always$ clause
-              is the head of the rule, expression $b$ in the $implied$ $by$
-              clause is the positive body, and the expression $c$ in the
-              $with$ $absence$ clause is the negative body.
+          Each fact in the $always$ clause of language ${\cal L}$ corresponds
+          to a new rule, where it is the consequent. Each of these new rules
+          will have expression $b$ in the $implied$ $by$ clause as the positive
+          premise and the expression $c$ in the $with$ $absence$ clause as the
+          negative premise.
 
-              \begin{quote}
-                \begin{math}
-                  \begin{aligned}[t]
-                    a_{0} \land ... \land a_{m} \leftarrow &
-                    b_{0} \land ... \land b_{n} \land \\
-                    & not c_{0} \land ... \land not c_{o}
-                  \end{aligned}
-                \end{math}
-              \end{quote}
-            \item
-              The definition of rules in language ${\cal L}^{*}$ requires
-              rules to have only a single fact in its head. Each rule in the
-              above form corresponds to $m$ equivalent rules, each with a
-              single fact $a_{i}$ ($0$ $\leq$ $i$ $\leq$ $m$) for its head.
+          \begin{quote}
+            $a_{0}$ $\leftarrow$
+            $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$
+            $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
 
-              \begin{quote}
-                $a_{0}$ $\leftarrow$
-                $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$
-                $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
+            ...
 
-                ...
+            $a_{m}$ $\leftarrow$
+            $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$
+            $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
+          \end{quote}
 
-                $a_{m}$ $\leftarrow$
-                $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$
-                $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
-              \end{quote}
-            \item
-              Each rule above corresponds to $\Sigma$ equivalent constraint
-              rules in language ${\cal L}^{*}$, for each state defined by the
-              sequence list $\psi$ plus the initial state.
-          \end{itemize}
+          Each rule above corresponds to $\Sigma$ equivalent constraint
+          rules in language ${\cal L}^{*}$, for each state defined by the
+          sequence list $\psi$ plus the initial state.
 
           Given the method described above for translating constraint rules
           from language ${\cal L}$ to language ${\cal L}^{*}$, a constraint
