@@ -184,6 +184,39 @@ int list::del(list_item *data, bool f)
   return (found ? VLAD_OK : VLAD_NOTFOUND);
 }
 
+/* gives an array of indices of the data given */
+int list::get(list_item *item, unsigned int **array, unsigned int *s)
+{
+  list_node *curr;
+  unsigned int count;
+
+  if (s == NULL || array == NULL || item == NULL)
+    return VLAD_NULLPTR;
+
+  curr = head;
+  *s = 0;
+  *array = NULL;
+  count = 0;
+  
+  while (curr != NULL) {
+    /* if the unique flag is set we stop when we see the first match */
+    if (unique && *s >= 1)
+      break;
+
+    if (curr->data->cmp(item)) {
+
+      if ((*array = (unsigned int *) realloc(*array, sizeof(unsigned int) * (*s + 1))) == NULL)
+        return VLAD_MALLOCFAILED;
+
+      (*array)[*s] = count;
+      (*s)++;
+    }
+    curr = curr->next;
+    count++;
+  }
+  return (*s > 0) ? VLAD_OK : VLAD_NOTFOUND;
+}
+
 /* gives a reference to the index'th data */
 int list::get(unsigned int index, list_item **data)
 {

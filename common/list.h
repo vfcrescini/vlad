@@ -46,6 +46,8 @@ class list
     int del(unsigned int index, bool f);
     /* deletes all the nodes that matches data, f = true to free mem */
     int del(list_item *data, bool f);
+    /* gives an array of indices of the data given */
+    int get(list_item *item, unsigned int **array, unsigned int *s);
     /* gives a reference to the index'th data */
     int get(unsigned int index, list_item **data);
     /* gives a reference to all the nodes that matches item. array + size */
