@@ -312,22 +312,76 @@ expression :
 
 sub_ident_list :
   MODVLAD_SYM_IDENTIFIER {
+    int retval;
+
+    retval = vlad_kb_add_symtab(kbase, $1, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
+
+    if (retval != VLAD_OK) {
+      errcode = VLAD_INVALIDINPUT;
+      policyerror("unable to add subject group identifier");
+      return VLAD_INVALIDINPUT;
+    }
   }
   | sub_ident_list MODVLAD_SYM_COMMA MODVLAD_SYM_IDENTIFIER {
+    int retval;
+
+    retval = vlad_kb_add_symtab(kbase, $3, VLAD_IDENT_SUBJECT | VLAD_IDENT_GROUP);
+
+    if (retval != VLAD_OK) {
+      errcode = VLAD_INVALIDINPUT;
+      policyerror("unable to add subject group identifier");
+      return VLAD_INVALIDINPUT;
+    }
   }
   ;
 
 acc_ident_list :
   MODVLAD_SYM_IDENTIFIER {
+    int retval;
+
+    retval = vlad_kb_add_symtab(kbase, $1, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
+
+    if (retval != VLAD_OK) {
+      errcode = VLAD_INVALIDINPUT;
+      policyerror("unable to add access group identifier");
+      return VLAD_INVALIDINPUT;
+    }
   }
   | acc_ident_list MODVLAD_SYM_COMMA MODVLAD_SYM_IDENTIFIER {
+    int retval;
+
+    retval = vlad_kb_add_symtab(kbase, $3, VLAD_IDENT_ACCESS | VLAD_IDENT_GROUP);
+
+    if (retval != VLAD_OK) {
+      errcode = VLAD_INVALIDINPUT;
+      policyerror("unable to add access group identifier");
+      return VLAD_INVALIDINPUT;
+    }
   }
   ;
 
 obj_ident_list :
   MODVLAD_SYM_IDENTIFIER {
+    int retval;
+
+    retval = vlad_kb_add_symtab(kbase, $1, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
+
+    if (retval != VLAD_OK) {
+      errcode = VLAD_INVALIDINPUT;
+      policyerror("unable to add object group identifier");
+      return VLAD_INVALIDINPUT;
+    }
   }
   | obj_ident_list MODVLAD_SYM_COMMA MODVLAD_SYM_IDENTIFIER {
+    int retval;
+
+    retval = vlad_kb_add_symtab(kbase, $3, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
+
+    if (retval != VLAD_OK) {
+      errcode = VLAD_INVALIDINPUT;
+      policyerror("unable to add object group identifier");
+      return VLAD_INVALIDINPUT;
+    }
   }
   ;
 
