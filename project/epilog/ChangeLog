@@ -1,5 +1,10 @@
 2002-10-20  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* exp/gnd_exp.c :
+
+	  - add function now allows an atom to be replaced by its negation
+	    IF AND ONLY IF it is not implied by any other atom.
+
 	* exp/gnd_atom.h :
 	* exp/gnd_atom.c :
 

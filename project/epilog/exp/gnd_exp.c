@@ -12,6 +12,7 @@ int gnd_exp_cmp_subst_group1(void *p1, void *p2);
 int gnd_exp_cmp_subst_group2(void *p1, void *p2);
 int gnd_exp_cmp_memb_element(void *p1, void *p2);
 int gnd_exp_cmp_memb_group(void *p1, void *p2);
+gnd_atom_type *gnd_exp_get_ref(gnd_atom_type atom, gnd_exp_type exp);
 int gnd_exp_get_supergroups(ident_type ident,
                             identlist_type *list,
                             gnd_exp_type exp);
@@ -126,28 +127,41 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
 {
   gnd_atom_type *new_atom = NULL;
   gnd_atom_type false_atom;
+  gnd_atom_type negated_atom;
+  res_type tmp_res;
 
   if (exp == NULL)
     return -1;
+
+  gnd_atom_create_const(&false_atom, epi_false);
+  gnd_atom_copy(&negated_atom, atom);
+  EPI_ATOM_NEGATE(negated_atom);
   
   /* if an atom is already in simply return success */
   if (gnd_exp_find(*exp, atom) == 0)
     return 0;
 
   /* if the gnd_exp contains a FALSE constant, just return success */
-  false_atom.type = EPI_ATOM_CONST;
-  false_atom.truth = epi_false;
-
   if (gnd_exp_find(*exp, false_atom) == 0)
     return 0;
 
-  /* if the negation of an atom is aleady in, or if the atom is a FALSE
-   * constant, we replace the the whole gnd_exp with a constant false */
-  
-  EPI_ATOM_NEGATE(atom);
-  if ((EPI_ATOM_IS_CONST(atom) && atom.truth == epi_true) ||
-      gnd_exp_find(*exp, atom) == 0) {
+  /* now we check if the atom is a logical consequence of the other
+   * atoms in the expression */
+  if (gnd_exp_eval_atom(atom, *exp, &tmp_res) != 0)
+    return -1;
 
+  /* the negation of the atom is implied by the other atoms in the
+   * expression. this is a conflict */
+  if (tmp_res == epi_res_false)
+    return -1;
+
+  /* if the negation of the atom is already in, but is not implied by
+   * any of the other atoms, we replace it. */
+  if ((new_atom = gnd_exp_get_ref(negated_atom, *exp)) != NULL)
+    EPI_ATOM_NEGATE(*new_atom); 
+  else if ((EPI_ATOM_IS_CONST(atom) && atom.truth == epi_false)) {
+    /* if the atom is a FALSE constant, we replace the whole expression
+     * with a constant false */
     gnd_exp_purge(exp);
 
     if ((new_atom = EPI_GNDATOM_MALLOC) == NULL)
@@ -156,10 +170,9 @@ int gnd_exp_add(gnd_exp_type *exp, gnd_atom_type atom)
       return -1;
   }
   else {
-    if (gnd_atom_copy(&new_atom, atom) != 0)
+    /* all clear. just add this new atom in */
+    if (gnd_atom_dup(&new_atom, atom) != 0)
       return -1;
-
-    EPI_ATOM_NEGATE(*new_atom);
   }
 
   return simplelist_add(exp, (void *) new_atom);
@@ -195,7 +208,7 @@ int gnd_exp_cpy(void *p1, void **p2)
   if (p1 == NULL || p2 == NULL)
     return -1;
 
-  return gnd_atom_copy((gnd_atom_type **) p2, * (gnd_atom_type *) p1);
+  return gnd_atom_dup((gnd_atom_type **) p2, * (gnd_atom_type *) p1);
 }
 
 /* returns 0 if the atoms pointed to by p1 and p2 are both subst and that
@@ -302,6 +315,20 @@ int gnd_exp_cmp_memb_group(void *p1, void *p2)
   return 0;
 }
 
+/* returns a reference to the atom that matches atom, null if not found */
+gnd_atom_type *gnd_exp_get_ref(gnd_atom_type atom, gnd_exp_type exp)
+{
+  gnd_atom_type *tmp_atom = NULL;
+  gnd_exp_type tmp_exp;
+
+  if (simplelist_get_data(exp, &tmp_exp, &atom, gnd_exp_compare) == 0) {
+    simplelist_get_index(tmp_exp, 0, (void **) &tmp_atom);
+    simplelist_purge(&tmp_exp, NULL);
+  }
+
+  return tmp_atom;
+}
+
 /* assumes list has been initialised. gives a list of all identifiers that
  * contains ident */
 int gnd_exp_get_supergroups(ident_type ident,
@@ -318,6 +345,7 @@ int gnd_exp_get_supergroups(ident_type ident,
     return -1;
 
   tmp_atom.truth = epi_true;
+  simplelist_init(&tmp_exp);
 
   if (EPI_IDENT_IS_GROUP(ident)) {
     /* if it is a group, we have to look for subset atoms */
@@ -384,6 +412,7 @@ int gnd_exp_get_non_supergroups(ident_type ident,
    * get all groups that does not contain ident and all groups inside them */
 
   tmp_atom.truth = epi_false;
+  simplelist_init(&tmp_exp);
 
   if (EPI_IDENT_IS_GROUP(ident)) {
     /* if it is a group, we have to look for subset atoms */
@@ -438,18 +467,18 @@ int gnd_exp_get_non_supergroups(ident_type ident,
   EPI_ATOM_SUBST_GROUP1(tmp_atom) = &ident;
 
   /* now search for atoms where in ident is a superset */
-  simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group1);
+  if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group1) == 0) {
 
-  /* now go through the resulting list and find groups that do not contain them */
-  for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
-      return -1;
+    /* now go through the resulting list and find groups that do not contain them */
+    for (i = 0; i < simplelist_length(tmp_exp); i++) {
+      if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
+        return -1;
+      if (gnd_exp_get_non_supergroups(*(EPI_ATOM_SUBST_GROUP2(*ptr_atom)), list, exp) != 0)
+       return -1;
+    }
 
-    if (gnd_exp_get_non_supergroups(*(EPI_ATOM_SUBST_GROUP2(*ptr_atom)), list, exp) != 0)
-     return -1;
+    simplelist_purge(&tmp_exp, NULL);
   }
-
-  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -477,29 +506,29 @@ int gnd_exp_get_subgroups(ident_type ident,
   EPI_ATOM_SUBST_GROUP2(tmp_atom) = &ident;
 
   /* now search for atoms where in ident is a superset */
-  simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2); 
+  if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2) == 0) {
+    /* now go through the resulting list and find their supersets */
+    for (i = 0; i < simplelist_length(tmp_exp); i++) {
+      if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
+        return -1;
 
-  /* now go through the resulting list and find their supersets */
-  for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
-      return -1;
+      tmp_ident = EPI_ATOM_SUBST_GROUP1(*ptr_atom);
 
-    tmp_ident = EPI_ATOM_SUBST_GROUP1(*ptr_atom);
+      /* see if we already have this identifier */
+      if (identlist_find(*list, tmp_ident->name) == 0)
+        continue;
 
-    /* see if we already have this identifier */
-    if (identlist_find(*list, tmp_ident->name) == 0)
-      continue;
+      /* no? so we add it to our list */
+      if (identlist_add(list, tmp_ident) != 0)
+        return -1;
 
-    /* no? so we add it to our list */
-    if (identlist_add(list, tmp_ident) != 0)
-      return -1;
+      /* now see if we can find subsets for this identifier */
+      if (gnd_exp_get_subgroups(*tmp_ident, list, exp) != 0)
+        return -1;
+    }
 
-    /* now see if we can find subsets for this identifier */
-    if (gnd_exp_get_subgroups(*tmp_ident, list, exp) != 0)
-      return -1;
+    simplelist_purge(&tmp_exp, NULL);
   }
-
-  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -530,30 +559,29 @@ int gnd_exp_get_non_subgroups(ident_type ident,
   EPI_ATOM_SUBST_GROUP2(tmp_atom) = &ident;
 
   /* now search for atoms where in ident is a subset */
-  simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2); 
+  if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2) == 0) {
+    /* now go through the resulting list and find their non-subsets */
+    for (i = 0; i < simplelist_length(tmp_exp); i++) {
+      if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
+        return -1;
 
-  /* now go through the resulting list and find their non-subsets */
-  for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
-      return -1;
+      /* get non-subset */
+      tmp_ident = EPI_ATOM_SUBST_GROUP1(*ptr_atom);
 
-    /* get non-subset */
-    tmp_ident = EPI_ATOM_SUBST_GROUP1(*ptr_atom);
+      /* see if we already have this identifier */
+      if (identlist_find(*list, tmp_ident->name) == 0)
+        continue;
 
-    /* see if we already have this identifier */
-    if (identlist_find(*list, tmp_ident->name) == 0)
-      continue;
+      /* no? so we add it to our list */
+      if (identlist_add(list, tmp_ident) != 0)
+        return -1;
 
-    /* no? so we add it to our list */
-    if (identlist_add(list, tmp_ident) != 0)
-      return -1;
-
-    /* now see if we can find groups inside this non-subgroup */
-    if (gnd_exp_get_subgroups(*tmp_ident, list, exp) != 0)
-      return -1;
+      /* now see if we can find groups inside this non-subgroup */
+      if (gnd_exp_get_subgroups(*tmp_ident, list, exp) != 0)
+        return -1;
+    }
+    simplelist_purge(&tmp_exp, NULL);
   }
-
-  simplelist_purge(&tmp_exp, NULL);
 
   /* phase 2: 
    * get all groups (group 1) that are in ident then find all groups (group 2)
@@ -565,18 +593,16 @@ int gnd_exp_get_non_subgroups(ident_type ident,
   EPI_ATOM_SUBST_GROUP2(tmp_atom) = &ident;
 
   /* now search for atoms where in ident is a superset */
-  simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2);
-
-  /* now go through the resulting list and find groups that do not contain them */
-  for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
-      return -1;
-
-    if (gnd_exp_get_non_subgroups(*(EPI_ATOM_SUBST_GROUP1(*ptr_atom)), list, exp) != 0)
-     return -1;
+  if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2) == 0) {
+    /* now go through the resulting list and find groups that do not contain them */
+    for (i = 0; i < simplelist_length(tmp_exp); i++) {
+      if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
+        return -1;
+      if (gnd_exp_get_non_subgroups(*(EPI_ATOM_SUBST_GROUP1(*ptr_atom)), list, exp) != 0)
+       return -1;
+    }
+    simplelist_purge(&tmp_exp, NULL);
   }
-
-  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -603,23 +629,22 @@ int gnd_exp_get_elements(ident_type ident,
   EPI_ATOM_MEMB_GROUP(tmp_atom) = &ident;
 
   /* now search for atoms where in ident is a group */
-  simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb_group);
+  if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb_group) == 0) {
+    /* now go through the resulting list and find the elements */
+    for (i = 0; i < simplelist_length(tmp_exp); i++) {
+      if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
+        return -1;
 
-  /* now go through the resulting list and find the elements */
-  for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
-      return -1;
+      /* see if we already have this identifier */
+      if (identlist_find(*list, EPI_ATOM_MEMB_ELEMENT(*ptr_atom)->name) == 0)
+        continue;
 
-    /* see if we already have this identifier */
-    if (identlist_find(*list, EPI_ATOM_MEMB_ELEMENT(*ptr_atom)->name) == 0)
-      continue;
-
-    /* no? so we add it to our list */
-    if (identlist_add(list, EPI_ATOM_MEMB_ELEMENT(*ptr_atom)) != 0)
-      return -1;
+      /* no? so we add it to our list */
+      if (identlist_add(list, EPI_ATOM_MEMB_ELEMENT(*ptr_atom)) != 0)
+        return -1;
+    }
+    simplelist_purge(&tmp_exp, NULL);
   }
-
-  simplelist_purge(&tmp_exp, NULL);
 
   /* now see if we can find subsets for this identifier */
   tmp_atom.truth = epi_true;
@@ -627,19 +652,18 @@ int gnd_exp_get_elements(ident_type ident,
   EPI_ATOM_SUBST_GROUP2(tmp_atom) = &ident;
 
   /* search for atoms where in this ident is a sub group */
-  simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2);
+  if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_subst_group2) == 0) {
+    /* now go through the resulting list and find the elements */
+    for (i = 0; i < simplelist_length(tmp_exp); i++) {
+      if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
+        return -1;
 
-  /* now go through the resulting list and find the elements */
-  for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
-      return -1;
-
-    /* finally, get the elements of this group */
-    if (gnd_exp_get_elements(*EPI_ATOM_SUBST_GROUP1(*ptr_atom), list, exp) != 0)
-      return -1;
+      /* finally, get the elements of this group */
+      if (gnd_exp_get_elements(*EPI_ATOM_SUBST_GROUP1(*ptr_atom), list, exp) != 0)
+        return -1;
+    }
+    simplelist_purge(&tmp_exp, NULL);
   }
-
-  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -668,23 +692,22 @@ int gnd_exp_get_non_elements(ident_type ident,
   EPI_ATOM_MEMB_GROUP(tmp_atom) = &ident;
 
   /* now search for atoms where in ident is a group */
-  simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb_group);
+  if (simplelist_get_data(exp, &tmp_exp, (void *) &tmp_atom, gnd_exp_cmp_memb_group) == 0) {
+    /* now go through the resulting list and find the elements */
+    for (i = 0; i < simplelist_length(tmp_exp); i++) {
+      if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
+        return -1;
 
-  /* now go through the resulting list and find the elements */
-  for (i = 0; i < simplelist_length(tmp_exp); i++) {
-    if (simplelist_get_index(tmp_exp, i, (void **) &ptr_atom) != 0)
-      return -1;
+      /* see if we already have this identifier */
+      if (identlist_find(*list, EPI_ATOM_MEMB_ELEMENT(*ptr_atom)->name) == 0)
+        continue;
 
-    /* see if we already have this identifier */
-    if (identlist_find(*list, EPI_ATOM_MEMB_ELEMENT(*ptr_atom)->name) == 0)
-      continue;
-
-    /* no? so we add it to our list */
-    if (identlist_add(list, EPI_ATOM_MEMB_ELEMENT(*ptr_atom)) != 0)
-      return -1;
+      /* no? so we add it to our list */
+      if (identlist_add(list, EPI_ATOM_MEMB_ELEMENT(*ptr_atom)) != 0)
+        return -1;
+    }
+    simplelist_purge(&tmp_exp, NULL);
   }
-
-  simplelist_purge(&tmp_exp, NULL);
 
   /* now we need to find the groups that do not contain this set (all
    * elements of those groups will be non-elements of this group) */
@@ -856,7 +879,6 @@ int gnd_exp_eval_subst_atom(ident_type group1,
 
   if (res == NULL)
     return -1;
-
   *res = epi_res_unknown;
   identlist_init(&tmp_grp);
 
