@@ -48,4 +48,4 @@ lpnmr-7.pdf : lpnmr-7.ps
 	$(PSPDF) lpnmr-7.ps $(@)
 
 fig1.eps : fig1.fig
-	$(FIG2DEV) -L eps fig1.fig $(@)
+	$(FIG2DEV) -L eps fig1.fig $(@) || $(FIG2DEV) -L ps fig1.fig $(@)
