@@ -2582,10 +2582,10 @@ fi;
 
 if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
   cat >>confdefs.h <<\_ACEOF
-#define DEBUG 1
+#define DEBUG yes
 _ACEOF
 
-  DEBUG=1
+  DEBUG=yes
 
   VLAD_CFLAGS="-g $VLAD_CFLAGS"
   VLAD_CXXFLAGS="-g $VLAD_CXXFLAGS"
@@ -2637,7 +2637,6 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
-echo $STRIP
 fi
 
 # --with-smodels
@@ -2650,10 +2649,10 @@ fi;
 
 if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
   cat >>confdefs.h <<\_ACEOF
-#define SMODELS 1
+#define SMODELS yes
 _ACEOF
 
-  SMODELS=1
+  SMODELS=yes
 
   if test "x$with_smodels" = "xyes"; then
     echo "$as_me:$LINENO: checking if smodels is installed and usable" >&5
