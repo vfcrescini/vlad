@@ -14,7 +14,7 @@ CXXFLAGS="$CXXFLAGS"
 # set flags
 VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
 VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
-VLAD_LDFLAGS="-L\$(DISTDIR)/lib/vlad"
+VLAD_LDFLAGS="-L\$(DISTDIR)/lib"
 
 # some tests
 AC_PROG_CC

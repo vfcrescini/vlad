@@ -19,6 +19,7 @@ BINS = vlad
 LIBS =
 INCLUDES =
 OBJECTS = vlad.o
+TEMP =
 
 ifdef SMODELS
 SMLIB = -lsmodels
@@ -26,7 +27,7 @@ endif
 
 include $(TOPSRCDIR)/rules.mk
 
-vlad : $(OBJECTS) $(DISTDIR)/lib/vlad/libvlad.a
+vlad : $(OBJECTS) $(DISTDIR)/lib/libvlad.a
 	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIB) -lvlad
 ifndef DEBUG
   ifdef STRIP

@@ -19,9 +19,43 @@ endif
 
 BINS =
 LIBS = libvlad.a
-INCLUDES = vlad.h list.h stringlist.h numberlist.h atom.h expression.h seqtab.h symtab.h consttab.h transtab.h $(SMINCLUDES) kb.h parser.h
-OBJECTS = list.o stringlist.o numberlist.o atom.o expression.o seqtab.o symtab.o consttab.o transtab.o $(SMOBJECTS) kb.o program_parser.o program_scanner.o operation_parser.o operation_scanner.o
-TEMPS = lex.*.cpp *.tab.cpp *.tab.h
+INCLUDES =            \
+  vlad.h              \
+  list.h              \
+  stringlist.h        \
+  numberlist.h        \
+  atom.h              \
+  expression.h        \
+  seqtab.h            \
+  symtab.h            \
+  consttab.h          \
+  transtab.h          \
+  $(SMINCLUDES)       \
+  kb.h                \
+  parser.h            \
+  $(NULL)
+OBJECTS =             \
+  list.o              \
+  stringlist.o        \
+  numberlist.o        \
+  atom.o              \
+  expression.o        \
+  seqtab.o            \
+  symtab.o            \
+  consttab.o          \
+  transtab.o          \
+  $(SMOBJECTS)        \
+  kb.o                \
+  program_parser.o    \
+  program_scanner.o   \
+  operation_parser.o  \
+  operation_scanner.o \
+  $(NULL)
+TEMP =                \
+  lex.*.cpp           \
+  *.tab.cpp           \
+  *.tab.h             \
+  $(NULL)
 
 include $(TOPSRCDIR)/rules.mk
 

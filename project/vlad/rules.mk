@@ -1,5 +1,7 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+.PHONY : copy-includes copy-libs copy-bins all clean distclean
+
 all : copy-includes copy-libs copy-bins
 
 copy-includes : $(INCLUDES)
@@ -12,9 +14,9 @@ endif
 
 copy-libs : $(LIBS)
 ifdef LIBS
-	@mkdir -p $(DISTDIR)/lib/vlad
+	@mkdir -p $(DISTDIR)/lib
 	@for i in $(LIBS); do \
-	(cd $(DISTDIR)/lib/vlad && $(LN_S) -f ../../../$(CURDIR)/$$i $$i); \
+	(cd $(DISTDIR)/lib && $(LN_S) -f ../../$(CURDIR)/$$i $$i); \
 	done
 endif
 
@@ -27,7 +29,7 @@ ifdef BINS
 endif
 
 clean :
-	$(RM) $(OBJECTS) $(TEMPS)
+	$(RM) $(OBJECTS) $(TEMP)
 
 distclean : clean
 	$(RM) $(LIBS) $(BINS) Makefile
@@ -38,7 +40,7 @@ ifdef INCLUDES
 endif
 ifdef LIBS
 	@for i in $(LIBS); do \
-	$(RM) $(DISTDIR)/lib/vlad/$$i; \
+	$(RM) $(DISTDIR)/lib/$$i; \
 	done
 endif
 ifdef BINS
