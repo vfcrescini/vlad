@@ -1,5 +1,11 @@
 2002-09-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Makefile :
+	* test/Makefile :
+	* test/datastruct_test.c :
+
+	  - Removed test program.
+
 	* trans/Makefile :
 	* trans/transdef.c :
 	* trans/transdef.h :
