@@ -239,6 +239,18 @@ static int modvlad_authorize(request_rec *a_r)
                 a_r->method,
                 real_uri);
 
+  /* before going further, make sure the object is in the kb */
+  if (vlad_kb_check_symtab(conf->kb, real_uri, VLAD_IDENT_OBJECT) != VLAD_OK &&
+      vlad_kb_check_symtab(conf->kb, real_uri, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != VLAD_OK) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_NOTICE,
+                  0,
+                  a_r,
+                  "mod_vlad: request for non-existent file %s, declining",
+                  real_uri);
+    return DECLINED;
+  }
+
   /* create stuff we need */
   if ((retval = vlad_atom_create(&atom)) != VLAD_OK) {
     ap_log_rerror(APLOG_MARK,
@@ -288,7 +300,7 @@ static int modvlad_authorize(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "mod_vlad: could not add atom into expression: %d",
+                  "mod_vlad: could not evaluate query: %d",
                   retval);
     return HTTP_INTERNAL_SERVER_ERROR;
   }
@@ -307,7 +319,7 @@ static int modvlad_authorize(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "mod_vlad: could not add atom into expression: %d",
+                  "mod_vlad: could not evaluate query: %d",
                   retval);
     return HTTP_INTERNAL_SERVER_ERROR;
   }
