@@ -56,7 +56,7 @@ g_subject_ident    S|S{alpha_num_uscr_str}
 g_access_ident     A|A{alpha_num_uscr_str}
 g_object_ident     O|O{alpha_num_uscr_str}
 v_ident            v|V|v{alpha_num_uscr_str}|V{alpha_num_uscr_str}
-t_ident            t|t{alpha_num_uscr_str}
+t_ident            t|t{alpha_num_uscr_str}|T{alpha_num_uscr_str}
 whitespace         [\t ]+
 
 %%
