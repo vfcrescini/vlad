@@ -52,6 +52,11 @@ class atom : public list_item
     int init_holds(const char *s, const char *a, const char *o, bool t);
     int init_member(const char *e, const char *g, bool t);
     int init_subset(const char *g1, const char *g2, bool t);
+    void negate();
+#ifdef DEBUG
+    /* assuming s has enough memory allocation */
+    void print(char *s);
+#endif
   private :
     unsigned char type;
     bool truth;

@@ -157,3 +157,42 @@ int atom::init_subset(const char *g1, const char *g2, bool t)
 
   return VLAD_OK;
 }
+
+void atom::negate()
+{
+  truth = truth ? false : true;
+}
+
+#ifdef DEBUG
+/* assuming s has enough memory allocation */
+void atom::print(char *s)
+{
+  switch(type) {
+    case VLAD_ATOM_CONST :
+      sprintf(s, "%s%s", truth ? "" : "!", constant ? "true" : "false");
+      break;
+    case VLAD_ATOM_HOLDS :
+      sprintf(s,
+              "%sholds(%s,%s,%s)",
+              truth ? "" : "!",
+              holds.subject,
+              holds.access,
+              holds.object);
+      break;
+    case VLAD_ATOM_MEMBER :
+      sprintf(s,
+              "%smemb(%s,%s)",
+              truth ? "" : "!",
+              member.element,
+              member.group);
+      break;
+    case VLAD_ATOM_SUBSET :
+      sprintf(s,
+              "%ssubst(%s,%s)",
+              truth ? "" : "!",
+              subset.group1,
+              subset.group2);
+      break;
+  }
+}
+#endif
