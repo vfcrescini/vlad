@@ -8,6 +8,7 @@ LEX = @LEX@
 YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
+LN_S = @LN_S@
 SMODELS = @SMODELS@
 TARGETS = libkb.a
 
@@ -24,13 +25,13 @@ all : copy-includes copy-targets
 copy-includes : $(INCLUDES)
 	@mkdir -p $(DISTDIR)/include/vlad
 	@for i in $(INCLUDES); do \
-	ln -sf ../../../kb/$$i $(DISTDIR)/include/vlad; \
+	(cd $(DISTDIR)/include/vlad && $(LN_S) -f ../../../kb/$$i $$i); \
 	done
 
 copy-targets : $(TARGETS)
 	@mkdir -p $(DISTDIR)/lib/vlad
 	@for i in $(TARGETS); do \
-	ln -sf ../../../kb/$$i $(DISTDIR)/lib/vlad; \
+	(cd $(DISTDIR)/lib/vlad && $(LN_S) -f ../../../kb/$$i $$i); \
 	done
 
 libkb.a : $(OBJECTS)
