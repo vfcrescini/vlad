@@ -28,7 +28,7 @@ OBJECTS =             \
   operation_parser.o  \
   operation_scanner.o \
   $(NULL)
- 
+
 TEMP =                \
   lex.*.cpp           \
   *.tab.cpp           \
@@ -63,9 +63,11 @@ vlad.o : parser.h vlad.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
 
 operation_scanner.o : operation.tab.h lex.operation.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c lex.operation.cpp                                                                                                      
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.operation.cpp
+
 operation_parser.o : operation.tab.h operation.tab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c operation.tab.cpp                                                                                                      
+	$(CXX) $(CXXFLAGS) -o $(@) -c operation.tab.cpp
+
 program_scanner.o : program.tab.h lex.program.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c lex.program.cpp
 
