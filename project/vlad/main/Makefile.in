@@ -11,8 +11,14 @@ CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 LDFLAGS = @LDFLAGS@
 DEBUG = @DEBUG@
+SMODELS = @SMODELS@
 STRIP = @STRIP@
 TARGETS = vlad
+OBJECTS = vlad.o
+
+ifdef SMODELS
+SMLIB = -lsmodels
+endif
 
 all : $(TARGETS)
 	@mkdir -p $(DISTDIR)/bin
@@ -20,8 +26,8 @@ all : $(TARGETS)
 	ln -sf ../../main/$$i $(DISTDIR)/bin; \
 	done
 
-vlad : vlad.o $(DISTDIR)/lib/vlad/*
-	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lparser -lkb -lcommon $(LEXLIB)
+vlad : $(OBJECTS) $(DISTDIR)/lib/vlad/*
+	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIB) -lparser -lkb -lcommon $(LEXLIB)
 ifndef DEBUG
   ifdef STRIP
 	strip $(@)
@@ -32,7 +38,7 @@ vlad.o : vlad.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
 
 clean :
-	$(RM) *.o
+	$(RM) $(OBJECTS)
 
 distclean : clean
 	$(RM) $(TARGETS) Makefile

@@ -1,5 +1,11 @@
 2003-04-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/Makefile.in :
+	* main/Makefile.in :
+	* parser/Makefile.in :
+
+	  - Added OBJECTS variable.
+
 	* kb/wrapper.h :
 	* kb/wrapper.cpp :
 
