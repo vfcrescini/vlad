@@ -59,11 +59,41 @@
       paper, Bai and Varadharajan \cite{BV2} developed another language
       specification to handle sequences of transformations.
 
-    \subsection{Problem}
+    \subsection{Problem and Plan}
 
-    \subsection{Plan}
+      As mentioned above, there has been quite a few studies made in this
+      field. However, most if not all of the work in this field have a very
+      specific, and different, purpose that what is intended in this paper.
+      Those studies that do propose an authorisation system rarely provides
+      enough detail to fully cover the issues involved to implement such a
+      system. Moreover, at the time of writing, there is no known
+      implementation of a logic-based access control system.
+
+      It is therefore the aim of this paper to achieve the following:
+
+      \begin{itemize}
+        \item
+          Formally develop an expressive but implementation-oriented
+          logic-based access control language.
+        \item
+          Identify the issues involved in implementing a program that is
+          driven by the new language.
+        \item
+          Develop an application software package to demonstrate the
+          expressiveness of the new language and the effectiveness of the
+          logic engine implementation.
+          
+      \end{itemize}
 
     \subsection{Organisation of this Paper}
+
+      This paper, while endeavoring to achieve the aims outlined above,
+      discusses the required properties of the new language and its formal
+      definition in the next section. Section 3 describes how the new language
+      can be converted into an equivalent logic program. Section 4 provides
+      a discussion of the implementation issues of both the logic engine and
+      the application program. Finally, an up-to-date progress report can be
+      found at the conclusion section of this paper.
 
     \pagebreak
 
@@ -747,7 +777,7 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
             If everything went well the program should end up with a state,
             or more accurately, a set of atoms and expressions that holds
             true in the final state. The query expression is then check
-            against this final state and an appropriate answer is returned:
+            against this final state and an appropriate answer is retured:
             true, false or unknown.
             
         \end{itemize}
@@ -773,10 +803,10 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
         to store constraints that was not present in the Epilog implementation.
 
         Another major, but subtle difference is the way atoms are stored. In 
-        the Epilog implementation, atoms are stored in memory as records of
-        identifiers and a truth value. This implementations, however, offers
+        the Epilog implmentation, atoms are stored in memory as records of
+        identfiers and a truth value. This implementations, however, offers
         a more robust and efficient method of storing atoms: conceptually,
-        instead of in memory. Each atom is never actually stored in physical
+        instead of in memory. Each atom is never actaully stored in physical
         memory but is really just a number. This number corresponds to the
         unique combination of the indices of the identifiers that it contains.
 
@@ -788,17 +818,20 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
         procedure that this implementation uses for conversion to general
         logic program is outlined in the previous section.
 
+        The implementation is designed to be used with a stable model
+        semantics based engine, smodels \cite{S}.
+
     \subsection{Application Program}
 
-      The application that will be developed for this project is a web site 
-      access control system. Authorisation control for web sites is not 
+      The application that will be developed for this project is a website 
+      access control system. Authorisation control for websites is not 
       something new. Most web servers are run on top of a Unix or Unix-like
-      file system that provides some basic authorisation scheme by directly
+      filesystem that provides some basic authorisation scheme by directly
       manipulating file-access permissions. Some web servers such as Apache
       provide a much better authorisation and authentication scheme with
       the htaccess mechanism.
 
-      The web authorisation system will allow the web site administrator to
+      The web authorisation system will allow the website administrator to
       define high-level abstract objects and subjects from the different web
       pages in his/her site and the users that will access the site. For
       example a web administrator might create an object called Accounting
