@@ -4,6 +4,11 @@
 
 	  - Added true/false string.
 
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Added decode_atom() function
+
 2003-03-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/Makefile.in :

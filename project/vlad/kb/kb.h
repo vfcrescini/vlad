@@ -39,6 +39,13 @@ class kb {
                     unsigned char ty,
                     bool tr,
                     unsigned int *a);
+    /* returns the atom details given the id */
+    int decode_atom(char **n1,
+                    char **n2,
+                    char **n3,
+                    unsigned char *ty,
+                    bool *tr,
+                    unsigned int a);
     /* returns the negation of the given atom */
     int negate_atom(unsigned int in, unsigned int *out);
   private :
@@ -52,6 +59,9 @@ class kb {
     unsigned int h_tot;
     unsigned int m_tot;
     unsigned int s_tot;
+    unsigned int h_index;
+    unsigned int m_index;
+    unsigned int s_index;
     unsigned int pos_tot;
     unsigned int neg_tot;
     bool initialised;
