@@ -1,6 +1,6 @@
 % Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-\documentclass[a4paper]{article}
+\documentclass[a4paper,draft]{article}
 \usepackage[light]{draftcopy}
 \author{Vino Fernando Crescini\\jcrescin@cit.uws.edu.au\\\\Intelligent Systems Laboratory\\School of Computing and Information Technology\\University of Western Sydney}
 \title{Implementing a High-Level Description Language for a Sequence of Transformations of Authorisation Policies}
@@ -523,65 +523,9 @@ is <policy-exp> [after <trans-ident1>([ident1[,...]])[,...]]
           \item $\alpha$ = set of all atoms in the domain
         \end{itemize}
 
-      \subsubsection{Example}
+    \subsection{Conversion to General Logic Program: Removal of Classical Negation}
 
-        The following lists a small program written in the proposed language:
-
-        \begin{verbatim}
-initially holds(s, a, o1), !holds(s, a, o2), !holds(s, a, o3);
-holds(s, a, o2) implies holds(s, a, o3);
-trans causes holds(s, a, o3) if !holds(s, a, o2);
-        \end{verbatim}
-
-        First we represent the atoms with simple propositions:
-
-        \begin{list}{}{}
-          \item A = holds(s, a, o$_{1}$)
-          \item B = holds(s, a, o$_{2}$)
-          \item C = holds(s, a, o$_{3}$)
-        \end{list}
-
-        The equivalent extended logic program is:
-
-        \begin{list}{}{Initial State}
-          \item holds(A, S$_{0}$)
-          \item $\lnot$ holds(B, S$_{0}$)
-          \item $\lnot$ holds(C, S$_{0}$)
-        \end{list}
-
-        \begin{list}{}{Constraint}
-          \item holds(C, S$_{0}$) $\leftarrow$ holds(B, S$_{0}$)
-          \item holds(C, S$_{1}$) $\leftarrow$ holds(B, S$_{1}$)
-        \end{list}
-
-        \begin{list}{}{Transformation}
-          \item holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$)
-        \end{list}
-
-        \begin{list}{}{Inertial Rules}
-          \item
-            holds(A, S$_{1}$) $\leftarrow$ holds(A, S$_{0}$) $\land$ not
-            $\lnot$ holds(A, S$_{1}$)
-          \item
-            $\lnot$ holds(A, S$_{1}$) $\leftarrow$ $\lnot$ holds(A, S$_{0}$) 
-            $\land$ not holds(A, S$_{1}$)
-          \item
-            holds(B, S$_{1}$) $\leftarrow$ holds(B, S$_{0}$) $\land$ not
-            $\lnot$ holds(B, S$_{1}$)
-          \item
-            $\lnot$ holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$) 
-            $\land$ not holds(B, S$_{1}$)
-          \item
-            holds(C, S$_{1}$) $\leftarrow$ holds(C, S$_{0}$) $\land$ not
-            $\lnot$ holds(C, S$_{1}$)
-          \item
-            $\lnot$ holds(C, S$_{1}$) $\leftarrow$ $\lnot$ holds(C, S$_{0}$)
-            $\land$ not holds(C, S$_{1}$)
-        \end{list}
-
-    \subsection{Conversion to Normal Logic Program: Removal of Classical Negation}
-
-      Translation to from extended logic program to normal logic program 
+      Translation to from extended logic program to general logic program 
       requires one more additional step: to remove all instances of classical 
       negation. The easiest way to achieve this is to add yet another parameter
       into each of the atoms to indicate its truth value in the classical
@@ -622,6 +566,116 @@ trans causes holds(s, a, o3) if !holds(s, a, o2);
         \item $\alpha$ = set of all atoms in the domain
         \item $\sigma$ = set of all states in the domain
       \end{itemize}
+
+    \subsection{Example}
+
+      The following lists a small program written in the proposed language:
+
+      \begin{verbatim}
+initially holds(s, a, o1), !holds(s, a, o2), !holds(s, a, o3);
+holds(s, a, o2) implies holds(s, a, o3);
+trans causes holds(s, a, o3) if !holds(s, a, o2);
+      \end{verbatim}
+
+      First we represent the atoms with simple propositions:
+
+      \begin{list}{}{}
+        \item A = holds(s, a, o$_{1}$)
+        \item B = holds(s, a, o$_{2}$)
+        \item C = holds(s, a, o$_{3}$)
+      \end{list}
+
+      \subsubsection{Extended Logic Program}
+
+        \begin{list}{}{Initial State}
+          \item holds(A, S$_{0}$)
+          \item $\lnot$ holds(B, S$_{0}$)
+          \item $\lnot$ holds(C, S$_{0}$)
+        \end{list}
+
+        \begin{list}{}{Constraint}
+          \item holds(C, S$_{0}$) $\leftarrow$ holds(B, S$_{0}$)
+          \item holds(C, S$_{1}$) $\leftarrow$ holds(B, S$_{1}$)
+        \end{list}
+
+        \begin{list}{}{Transformation}
+          \item holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$)
+        \end{list}
+
+        \begin{list}{}{Inertial Rules}
+          \item
+            holds(A, S$_{1}$) $\leftarrow$ holds(A, S$_{0}$) $\land$ not
+            $\lnot$ holds(A, S$_{1}$)
+          \item
+            $\lnot$ holds(A, S$_{1}$) $\leftarrow$ $\lnot$ holds(A, S$_{0}$) 
+            $\land$ not holds(A, S$_{1}$)
+          \item
+            holds(B, S$_{1}$) $\leftarrow$ holds(B, S$_{0}$) $\land$ not
+            $\lnot$ holds(B, S$_{1}$)
+          \item
+            $\lnot$ holds(B, S$_{1}$) $\leftarrow$ $\lnot$ holds(B, S$_{0}$) 
+            $\land$ not holds(B, S$_{1}$)
+          \item
+            holds(C, S$_{1}$) $\leftarrow$ holds(C, S$_{0}$) $\land$ not
+            $\lnot$ holds(C, S$_{1}$)
+          \item
+            $\lnot$ holds(C, S$_{1}$) $\leftarrow$ $\lnot$ holds(C, S$_{0}$)
+            $\land$ not holds(C, S$_{1}$)
+        \end{list}
+
+      \subsubsection{General Logic Program}
+
+
+        \begin{list}{}{Initial State}
+          \item holds(A, S$_{0}$, t)
+          \item holds(B, S$_{0}$, f)
+          \item holds(C, S$_{0}$, f)
+        \end{list}
+
+        \begin{list}{}{Constraint}
+          \item holds(C, S$_{0}$, t) $\leftarrow$ holds(B, S$_{0}$, t)
+          \item holds(C, S$_{1}$, t) $\leftarrow$ holds(B, S$_{1}$, t)
+        \end{list}
+
+        \begin{list}{}{Transformation}
+          \item holds(B, S$_{1}$, t) $\leftarrow$ holds(B, S$_{0}$, f)
+        \end{list}
+
+        \begin{list}{}{Inertial Rules}
+          \item
+            holds(A, S$_{1}$, t) $\leftarrow$ holds(A, S$_{0}$, t) $\land$ not
+            holds(A, S$_{1}$, f)
+          \item
+            holds(A, S$_{1}$, f) $\leftarrow$ holds(A, S$_{0}$, f) $\land$ not
+            holds(A, S$_{1}$, t)
+          \item
+            holds(B, S$_{1}$, t) $\leftarrow$ holds(B, S$_{0}$, t) $\land$ not
+            holds(B, S$_{1}$, f)
+          \item
+            holds(B, S$_{1}$, f) $\leftarrow$ holds(B, S$_{0}$, f) $\land$ not
+            holds(B, S$_{1}$, t)
+          \item
+            holds(C, S$_{1}$, t) $\leftarrow$ holds(C, S$_{0}$, t) $\land$ not
+            holds(C, S$_{1}$, f)
+          \item
+            holds(C, S$_{1}$, f) $\leftarrow$ holds(C, S$_{0}$, f) $\land$ not
+            holds(C, S$_{1}$, t)
+        \end{list}
+
+        \begin{list}{}{Complementary Rules}
+          \item
+            false $\leftarrow$ holds(A, S$_{0}$, t) $\land$ holds(A, S$_{0}$, f)
+          \item
+            false $\leftarrow$ holds(B, S$_{0}$, t) $\land$ holds(B, S$_{0}$, f)
+          \item
+            false $\leftarrow$ holds(C, S$_{0}$, t) $\land$ holds(C, S$_{0}$, f)
+          \item
+            false $\leftarrow$ holds(A, S$_{1}$, t) $\land$ holds(A, S$_{1}$, f)
+          \item
+            false $\leftarrow$ holds(B, S$_{1}$, t) $\land$ holds(B, S$_{1}$, f)
+          \item
+            false $\leftarrow$ holds(C, S$_{1}$, t) $\land$ holds(C, S$_{1}$, f)
+        \end{list}
 
     \pagebreak
 
