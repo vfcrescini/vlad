@@ -69,7 +69,7 @@ int symtab_get(char *name, ident_type **ident)
   if (simplelist_get_index(tmp_list, 0, (void **) ident) != 0)
     return -1;
 	
-  return simplelist_del_index(&tmp_list, 0, NULL) == 0;
+  return simplelist_del_index(&tmp_list, 0, NULL);
 }
 
 /* delete identifier entry based on name */
