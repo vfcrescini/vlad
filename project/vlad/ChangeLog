@@ -6,6 +6,17 @@
 
 	  - Name cleanup.
 
+	* common/list.cpp :
+	* common/list.h :
+
+	  - Added an abstract class to be used as the base class for the
+	    list item.
+
+	  - Converted the list class to store descendants of the list_item
+	    class instead of void pointers. Note that the destructor and
+	    cmp() must be implemented by classes that inherits from this
+	    class.
+
 2003-01-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/Makefile.in :

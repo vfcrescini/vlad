@@ -6,13 +6,23 @@
 #ifndef __VLAD_LIST_H
 #define __VLAD_LIST_H
 
-/* simple list works like a queue, except the api allows the data to be 
+/* abstract class to be used as the items in the list */
+
+class list_item
+{
+  public :
+    list_item();
+    virtual ~list_item();
+    virtual bool cmp(list_item *item) = 0;
+} ;
+
+/* simple list works like a queue, except the api allows the data to be
  * accessed given its ordinal index (the order in which it was added to the 
- * list. */
+ * list). */
 
 typedef struct list_node
 {
-  void *data;
+  list_item *data;
   struct list_node *next;
 } list_node;
 
@@ -25,22 +35,17 @@ class list
   private :
     unsigned int len;
     list_node *head;
-    bool initialised;
-    void (*fr)(void *);
-    bool (*cmp)(void *, void *);
   protected :
-    /* registers the free and compare function pointers */
-    int init(void (*f)(void *), bool (*c)(void *, void *));
     /* add pointer to list, assumes memory has been allocated to it */
-    int add(void *data);
+    int add(list_item *data);
     /* deletes index'th data, f = true to free mem or false to not free it */
     int del_i(unsigned int index, bool f);
     /* deletes all the nodes that matches data, f = true to free mem */
-    int del_d(void *data, bool f);
+    int del_d(list_item *data, bool f);
     /* gives a reference to the index'th data */
-    int get_i(unsigned int index, void **data);
+    int get_i(unsigned int index, list_item **data);
     /* returns 0 if data is in the list */
-    int find(void *data);
+    int find(list_item *data);
     /* destroys the list, f = true to free mem */
     void purge(bool f);
 } ;

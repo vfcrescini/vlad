@@ -11,9 +11,6 @@ list::list()
 {
   len = 0;
   head = NULL;
-  fr = NULL;
-  cmp = NULL;
-  initialised = false;
 }
 
 list::~list()
@@ -26,27 +23,11 @@ unsigned int list::length()
   return len;
 }
 
-/* registers the free and compare function pointers */
-int list::init(void (*f)(void *), bool (*c)(void *, void *))
-{
-  if (f == NULL || c == NULL)
-    return VLAD_NULLPTR;
-  
-  fr = f;
-  cmp = c;
-  initialised = true;
-
-  return VLAD_OK;
-}
-
 /* add pointer to list, assumes memory has been allocated to it */
-int list::add(void *data)
+int list::add(list_item *data)
 {
   list_node *new_node;
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
-  
   if (data == NULL)
     return VLAD_NULLPTR;
 
@@ -68,9 +49,6 @@ int list::del_i(unsigned int index, bool f)
   list_node *curr;
   unsigned int i; 
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
-  
   if (len <= 0 || index >= len)
     return VLAD_OUTOFBOUNDS;
 
@@ -88,7 +66,7 @@ int list::del_i(unsigned int index, bool f)
     prev->next = curr->next;
 
   if (f)
-    fr(curr->data);
+    delete (curr->data);
 
   free(curr);
 
@@ -98,16 +76,13 @@ int list::del_i(unsigned int index, bool f)
 }
 
 /* deletes all the nodes that matches data, f = true to free mem */
-int list::del_d(void *data, bool f)
+int list::del_d(list_item *data, bool f)
 {
 
   list_node *prev;
   list_node *curr;
   int found = 0;
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;
-  
   if (data == NULL)
     return VLAD_NULLPTR;
 
@@ -115,7 +90,7 @@ int list::del_d(void *data, bool f)
   curr = head;
 
   while (curr != NULL) {
-    if (cmp(curr->data, data) == 0) {
+    if (curr->data->cmp(data)) {
 
       found = 1;
 
@@ -125,7 +100,7 @@ int list::del_d(void *data, bool f)
         prev->next = curr->next;
 
       if (f)
-        fr(curr->data);
+        delete (curr->data);
 
       free(curr);
 
@@ -139,14 +114,11 @@ int list::del_d(void *data, bool f)
 }
 
 /* gives a reference to the index'th data */
-int list::get_i(unsigned int index, void **data)
+int list::get_i(unsigned int index, list_item **data)
 {
   unsigned int i;
   list_node *curr;
 
-  if (!initialised)
-    return VLAD_UNINITIALISED;  
-  
   if (data == NULL)
     return VLAD_NULLPTR;
 
@@ -164,12 +136,9 @@ int list::get_i(unsigned int index, void **data)
 }
 
 /* returns 0 if data is in the list */
-int list::find(void *data)
+int list::find(list_item *data)
 {
   list_node *curr;
-
-  if (!initialised)
-    return VLAD_UNINITIALISED;
 
   if (data == NULL)
     return VLAD_NULLPTR;
@@ -177,7 +146,7 @@ int list::find(void *data)
   curr = head;
 
   while (curr != NULL) {
-    if (cmp(curr->data, data) == 0) 
+    if (curr->data->cmp(data)) 
       return VLAD_OK;
 
     curr = curr->next;
@@ -192,7 +161,7 @@ void list::purge(bool f)
   list_node *curr;
   list_node *prev;
   
-  if (len > 0 && initialised) {
+  if (len > 0) {
     curr = head;
   
     while (curr != NULL) {
@@ -200,7 +169,7 @@ void list::purge(bool f)
       curr = curr->next;
 
       if (f)
-        fr(prev->data);
+        delete (prev->data);
 
       free(prev);
     }
