@@ -148,7 +148,7 @@ int list::del(unsigned int index, bool f)
   prev = NULL;
   curr = head;
    
-  for (i = 0; i < len - index - 1; i++) {
+  for (i = 0; i < index; i++) {
     prev = curr;
     curr = curr->next;
   }
@@ -270,7 +270,7 @@ int list::get(unsigned int index, list_item **data)
 
   curr = head;
 
-  for (i = 0; i < len - index - 1; i++)
+  for (i = 0; i < index; i++)
     curr = curr->next;
 
   *data = curr->data;
