@@ -298,17 +298,17 @@ static int processreq(apr_pool_t *a_p,
         *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
         return MODVLAD_FAILURE;
       }
-
-      if (vlad_tref_init(tref, name, slist) != VLAD_OK ||
-          vlad_kb_add_seqtab(a_kb, tref) != VLAD_OK ||
-          vlad_kb_compute_evaluate(a_kb) != VLAD_OK) {
-        *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
-        return MODVLAD_FAILURE;
-      }
-
-      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "SAR");
-      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "0");
     }
+
+    if (vlad_tref_init(tref, name, slist) != VLAD_OK ||
+        vlad_kb_add_seqtab(a_kb, tref) != VLAD_OK ||
+        vlad_kb_compute_evaluate(a_kb) != VLAD_OK) {
+      *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "ERR");
+      return MODVLAD_FAILURE;
+    }
+
+    *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "SAR");
+    *(const char **) apr_array_push(a_rep) = apr_pstrdup(a_rep->pool, "0");
   }
   else if (!strcmp(cmd, "SD")) {
     /* delete from sequence */
