@@ -1753,7 +1753,7 @@ query holds(alice, read, file);
           \begin{verbatim}
   always holds(SS0, write, file)
     implied by
-      holds(SS0, read, file),
+      holds(SS0, read, file) &&
       memb(SS0, write, file)
     with absence
       !holds(SS0, write, file)
@@ -1879,10 +1879,10 @@ query holds(alice, read, file);
           The semantics of language ${\cal L}$ shows that any language
           ${\cal L}$ program $P^{\cal L}$ can be translated into an equivalent
           extended logic program $P^{\cal{L^{*}}}$ then translated again into
-          an equivalent normal logic program for query evaluation. However, the
-          implementation of such translations can be greatly simplified by
-          translating language ${\cal L}$ programs directly into normal logic
-          programs.
+          an equivalent normal logic program suitable for manipulation using
+          the stable model semantics. However, the implementation of such
+          translations can be greatly simplified by translating language
+          ${\cal L}$ programs directly into normal logic programs.
 
           The first and most important step in the translation is to represent
           facts of language ${\cal L}$ into propositional form. Translated
@@ -2089,108 +2089,90 @@ query holds(alice, read, file);
 
           This procedure can also be extended to assign indices to facts in
           states after $S_{0}$. The indices of facts in state $S_{n}$ is offset
-          by the total number of facts in $S_{n - 1}$. To generalize, we define
-          the $encode$ function, which takes a $fact$, a $state$ and the symbol
-          table $stab$ as input:
+          by the total number of facts in $S_{n - 1}$. Given the symbol table
+          $stab$, we generalise the procedure by defining the $encode$
+          function, which takes a $fact$ and a $state$ as input:
 
           \begin{alltt}
-FUNCTION \(encode\)(\(fact\), \(state\), \(stab\))
-  \(h\_off\) =
-    \(stab.s.len()\) \(\times\) \(stab.a.len()\) \(\times\) \(stab.o.len()\)
-  \(m\_off\) =
-    (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
-    (\(stab.as.len()\) \(\times\) \(stab.ag.len()\)) +
-    (\(stab.os.len()\) \(\times\) \(stab.og.len()\))
-  \(s\_off\) =
-    (\(stab.sg.len()\))\(\sp{2}\) +
-    (\(stab.ag.len()\))\(\sp{2}\) +
-    (\(stab.og.len()\))\(\sp{2}\)
-
-  \(pos\_off\) = \(h\_off\) + \(m\_off\) + \(s\_off\)
-
-  CASE \(fact.type\) OF
-    \(holds\) : 
-      \(s\) = \(stab.s.idx\)(\(fact.holds.sub\))
-      \(a\) = \(stab.a.idx\)(\(fact.holds.acc\))
-      \(o\) = \(stab.o.idx\)(\(fact.holds.obj\))
-
-      \(index\) =
-       (\(s\) \(\times\) \(stab.a.len()\) \(\times\) \(stab.o.len()\)) +
-       (\(a\) \(\times\) \(stab.o.len()\)) +
-       \(o\)
-
-    \(memb\) :
-      \(e\_type\) = \(stab.type\)(\(fact.memb.elt\))
-      \(g\_type\) = \(stab.type\)(\(fact.memb.grp\))
-
-      IF \(basetype\)(\(e\_type\)) !=
-         \(basetype\)(\(g\_type\)) OR 
-         \(is\_group\)(\(e\_type\)) OR
-         NOT \(is\_group\)(\(g\_type\)) THEN
-        RETURN -1
-      ENDIF
-
-      \(e\) = \(stab.idx\)(\(fact.memb.elt\), \(e\_type\))
-      \(g\) = \(stab.idx\)(\(fact.memb.grp\), \(g\_type\))
-      
-      CASE \(basetype\)(\(e\_type)\) OF
-        \(s\) : 
-          \(index\) =
-            \(h\_off\) +
-            (\(e\) \(\times\) \(stab.sg.len()\)) + \(g\)
-        \(a\) : 
-          \(index\) =
-            \(h\_off\) +
-            (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
-            (\(e\) \(\times\) \(stab.ag.len()\)) + \(g\)
-        \(o\) :
-          \(index\) =
-            \(h\_off\) +
-            (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
-            (\(stab.as.len()\) \(\times\) \(stab.ag.len()\)) +
-            (\(e\) \(\times\) \(stab.og.len()\)) + \(g\)
-      ENDCASE
-
-    \(subset\) :
-      \(g1\_type\) = \(stab.type\)(\(fact.subst.grp1\))
-      \(g2\_type\) = \(stab.type\)(\(fact.subst.grp2\))
-
-      IF \(g1\_type\) != \(g2\_type\) OR
-         NOT \(is\_group\)(\(g1\_type\)) THEN
-        RETURN -1
-      ENDIF
-
-      \(g1\) = \(stab.idx\)(\(fact.subst.grp1\), \(g1\_type\))
-      \(g2\) = \(stab.idx\)(\(fact.subst.grp2\), \(g2\_type\))
-      
-      CASE \(basetype(g1\_type)\) OF
-        \(s\) : 
-          \(index\) =
-            \(h\_off\) + \(m\_off\) +
-            (\(g1\) \(\times\) \(stab.sg.len()\)) + \(g2\)
-        \(a\) : 
-          \(index\) =
-            \(h\_off\) + \(m\_off\) +
-            (\(stab.sg.len()\))\(\sp{2}\) +
-            (\(g1\) \(\times\) \(stab.ag.len()\)) + \(g2\)
-        \(o\) :
-          \(index\) =
-            \(h\_off\) + \(m\_off\) +
-            (\(stab.sg.len()\))\(\sp{2}\) +
-            (\(stab.ag.len()\))\(\sp{2}\) +
-            (\(g1\) \(\times\) \(stab.og.len()\)) + \(g2\)
-      ENDCASE
-  ENDCASE
-
-  \(index\) += (\(state\) \(\times\) \(pos\_off\) \(\times\) \(2\))
-
-  IF \(fact.truth\) THEN
-    \(index\) += \(pos\_off\)
+FUNCTION \(encode\)(\(fact\), \(state\))
+  IF \(fact.truth\) == \(TRUE\) THEN
+    \(off\) = \(tot_off\) + (\(state\) \(\times\) \(tot_off\) \(\times\) \(2\))
+  ELSE
+    \(off\) = (\(state\) \(\times\) \(tot_off\) \(\times\) \(2\))
   ENDIF
 
-  RETURN \(index\)
+  CASE \(fact.type\) OF
+    \(holds\) :
+      \(s\) = \(stab.index\)(\(fact.holds.sub\))
+      \(a\) = \(stab.index\)(\(fact.holds.acc\))
+      \(o\) = \(stab.index\)(\(fact.holds.obj\))
+      \(id\) = \(encode_holds\)(\(s\), \(a\), \(o\))
+    \(member\) :
+      \(e\) = \(stab.index\)(\(fact.memb.elt\))
+      \(g\) = \(stab.index\)(\(fact.memb.grp\))
+      \(id\) = \(holds_off\) +
+          \(encode_memb\)(\(e\), \(g\), \(stab.type\)(\(e\)))
+    \(subset\) :
+      \(g1\) = \(stab.index\)(\(fact.subst.grp1\))
+      \(g2\) = \(stab.index\)(\(fact.subst.grp2\))
+      \(id\) = \(holds_off\) + \(memb_off\) +
+          \(encode_subst\)(\(g1\), \(g2\), \(stab.type\)(\(g1\)))
+  ENDCASE
+  RETURN \(off\) + \(id\)
+ENDFUNCTION
+
+FUNCTION \(encode_holds\)(\(is\), \(ia\), \(io\))
+  RETURN (\(is\) \(\times\) \(stab.a.len()\) \(\times\) \(stab.o.len()\)) +
+         (\(ia\) \(\times\) \(stab.o.len()\)) + \(io\)
+ENDFUNCTION
+
+FUNCTION \(encode_memb\)(\(ie\), \(ig\), \(type\))
+  CASE \(type\) OF
+    \(subject\) :
+      RETURN (\(ielt\) \(\times\) \(sglen\)) + \(ig\)
+    \(access\) : 
+      RETURN (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
+             (\(ie\) \(\times\) \(stag.ag.len()\)) + \(ig\)
+    \(object\) :
+      RETURN (\(stab.ss.len()\) \(\times\) \(stab.sg.len()\)) +
+             (\(stag.as.len()\) \(\times\) \(stab.ag.len()\)) +
+             (\(ie\) \(\times\) \(stab.og.len()\)) + \(ig\)
+  ENDCASE
+ENDFUNCTION
+
+FUNCTION \(encode_subst\)(\(ig1\), \(ig2\), \(type\))
+  CASE \(type\) OF
+    \(subject\) :
+      RETURN (\(ielt\) \(\times\) \(sglen\)) + \(ig\)
+    \(access\) :
+      RETURN \(stab.sg.len()\)\(\sp{2}\) +
+             (\(ie\) \(\times\) \(stag.ag.len()\)) + \(ig\)
+    \(object\) :
+      RETURN \(stab.sg.len()\)\(\sp{2}\) +
+             \(stag.ag.len()\)\(\sp{2}\) +
+             (\(ie\) \(\times\) \(stab.og.len()\)) + \(ig\)
+  ENDCASE
 ENDFUNCTION
           \end{alltt}
+
+          where:
+
+          \begin{math}
+            \begin{aligned}[t]
+              ho&lds\_off = \\
+              &stab.s.len() \times stab.a.len() \times stab.o.len() \\
+              me&mb\_off = \\
+              &stab.ss.len() \times stab.sg.len() + \\
+              &stab.as.len() \times stab.ag.len() + \\
+              &stab.os.len() \times stab.og.len() \\
+              su&bset\_off = \\
+              &stab.sg.len()\sp{2} + \\
+              &stab.ag.len()\sp{2} + \\
+              &stab.og.len()\sp{2} \\
+              to&t\_off = \\
+              &holds\_off + memb\_off + subst\_off
+            \end{aligned}
+          \end{math}
 
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
