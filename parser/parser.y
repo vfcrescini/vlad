@@ -28,6 +28,7 @@ void add_identifier(const char ident[], unsigned char type);
 %union {
   char identifier[128];
   unsigned int terminal;
+  unsigned int gnd_atom;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -60,6 +61,10 @@ void add_identifier(const char ident[], unsigned char type);
 %token <terminal> VLAD_SYM_ACCGRPTYPE
 %token <terminal> VLAD_SYM_IDENT
 %token <identifier> VLAD_SYM_IDENTIFIER
+%type <gnd_atom> ground_atom 
+%type <gnd_atom> ground_holds_atom 
+%type <gnd_atom> ground_subst_atom 
+%type <gnd_atom> ground_memb_atom 
 
 %start program
 
@@ -336,10 +341,13 @@ ground_boolean_atom :
 
 ground_atom :
   ground_holds_atom {
+    $$ = $1;
   }
   | ground_subst_atom {
+    $$ = $1;
   }
   | ground_memb_atom {
+    $$ = $1;
   }
   | logical_atom {
   }
@@ -347,29 +355,26 @@ ground_atom :
 
 ground_holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+    kbase.get_atom($3, $5, $7, VLAD_ATOM_HOLDS, &$$);
 #ifdef DEBUG
-    unsigned int x;
-    kbase.get_atom($3, $5, $7, VLAD_ATOM_HOLDS, &x);
-    fprintf(stderr, "%4d = holds(%s, %s, %s)\n", x, $3, $5, $7);
+    fprintf(stderr, "%5d = holds(%s, %s, %s)\n", $$, $3, $5, $7);
 #endif
   }
   ;
 
 ground_subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+    kbase.get_atom($3, $5, NULL, VLAD_ATOM_SUBSET, &$$);
 #ifdef DEBUG
-    unsigned int x;
-    kbase.get_atom($3, $5, NULL, VLAD_ATOM_SUBSET, &x);
-    fprintf(stderr, "%4d = subst(%s, %s)\n", x, $3, $5);
+    fprintf(stderr, "%5d = subst(%s, %s)\n", $$, $3, $5);
 #endif
   }
   ;
 ground_memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+    kbase.get_atom($3, $5, NULL, VLAD_ATOM_MEMBER, &$$);
 #ifdef DEBUG
-    unsigned int x;
-    kbase.get_atom($3, $5, NULL, VLAD_ATOM_MEMBER, &x);
-    fprintf(stderr, "%4d = memb(%s, %s)\n", x, $3, $5);
+    fprintf(stderr, "%5d = memb(%s, %s)\n", $$, $3, $5);
 #endif
   }
   ;
