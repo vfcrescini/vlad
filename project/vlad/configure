@@ -799,7 +799,8 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-smodels-src      path to smodels source tree (default is disabled)
+  --with-smodels          enable smodels support: yes or path so smodels
+                          source tree (default is no)
 
 Some influential environment variables:
   CC          C compiler command
@@ -1174,12 +1175,24 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers config.h"
 
 
+# set language
+ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+
+# set vars to itself to prevent the macros from setting default value
 CFLAGS="$CFLAGS"
 CXXFLAGS="$CXXFLAGS"
+
+# set flags
 VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
 VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
 VLAD_LDFLAGS="-L\$(DISTDIR)/lib/vlad"
 
+# some tests
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -1932,11 +1945,11 @@ else
 cat conftest.$ac_ext >&5
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 ac_ext=cc
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -2256,11 +2269,11 @@ if test -n "$ac_declaration"; then
   echo '#endif'             >>confdefs.h
 fi
 
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 for ac_prog in flex lex
@@ -2560,13 +2573,14 @@ echo "${ECHO_T}no, using $LN_S" >&6
 fi
 
 
+# --enable-debug
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
   enableval="$enable_debug"
 
 fi;
 
-if test "$enable_debug" != "" && test "$enable_debug" != "no"; then
+if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
   cat >>confdefs.h <<\_ACEOF
 #define DEBUG 1
 _ACEOF
@@ -2580,41 +2594,151 @@ else
   VLAD_CXXFLAGS="-O2 $VLAD_CXXFLAGS"
 fi
 
+# --enable-strip
 # Check whether --enable-strip or --disable-strip was given.
 if test "${enable_strip+set}" = set; then
   enableval="$enable_strip"
 
 fi;
-if test "$enable_strip" != "" && test "$enable_strip" != "no"; then
+
+if test "x$enable_strip" != "x" && test "x$enable_strip" != "xno"; then
   STRIP=1
 
 fi
 
+# --with-smodels
 
-# Check whether --with-smodels-src or --without-smodels-src was given.
-if test "${with_smodels_src+set}" = set; then
-  withval="$with_smodels_src"
+# Check whether --with-smodels or --without-smodels was given.
+if test "${with_smodels+set}" = set; then
+  withval="$with_smodels"
 
 fi;
 
-if test "$with_smodels_src" != "" && test "$with_smodels_src" != "no"; then
+if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
   cat >>confdefs.h <<\_ACEOF
 #define SMODELS 1
 _ACEOF
 
   SMODELS=1
 
-  if test "$with_smodels_src" == "yes"; then
-    SMODELS_PATH=yes
+  if test "x$with_smodels" = "xyes"; then
+    echo "$as_me:$LINENO: checking if smodels is installed and usable" >&5
+echo $ECHO_N "checking if smodels is installed and usable... $ECHO_C" >&6
+    OLD_LDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS -lsmodels"
+    cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <smodels.h>
+                 #include <api.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+Smodels s;
+                 Api a(&s.program);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+                SMODELS_PATH=yes
 
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+                { { echo "$as_me:$LINENO: error: *** smodels test program failed to compile ***" >&5
+echo "$as_me: error: *** smodels test program failed to compile ***" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+    LDFLAGS="$OLD_LDFLAGS"
   else
-    if ! test -d "$withval"; then
-      { { echo "$as_me:$LINENO: error: *** invalid path: $with_smodels_src ***" >&5
-echo "$as_me: error: *** invalid path: $with_smodels_src ***" >&2;}
+    echo "$as_me:$LINENO: checking if smodels path $with_smodels is valid" >&5
+echo $ECHO_N "checking if smodels path $with_smodels is valid... $ECHO_C" >&6
+    if ! test -d "$with_smodels"; then
+      echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+      { { echo "$as_me:$LINENO: error: *** invalid path: $with_smodels ***" >&5
+echo "$as_me: error: *** invalid path: $with_smodels ***" >&2;}
    { (exit 1); exit 1; }; }
     else
-      SMODELS_PATH=$with_smodels_src
+      echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+      echo "$as_me:$LINENO: checking if smodels in $with_smodels can be used" >&5
+echo $ECHO_N "checking if smodels in $with_smodels can be used... $ECHO_C" >&6
+      OLD_CXXFLAGS="$CXXFLAGS"
+      OLD_LDFLAGS="$LDFLAGS"
+      CXXFLAGS="$CXXFLAGS -I$with_smodels"
+      LDFLAGS="$LDFLAGS -L$with_smodels/.libs -lsmodels"
+      cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <smodels.h>
+                   #include <api.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+Smodels s;
+                   Api a(&s.program);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+                  SMODELS_PATH=$with_smodels
 
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+                  { { echo "$as_me:$LINENO: error: *** smodels test program failed to compile ***" >&5
+echo "$as_me: error: *** smodels test program failed to compile ***" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+      CXXFLAGS="$OLD_CXXFLAGS"
+      LDFLAGS="$OLD_LDFLAGS"
     fi
   fi
 fi

@@ -4,21 +4,29 @@ AC_INIT(vlad,0.3.1,jcrescin@cit.uws.edu.au)
 
 AC_CONFIG_HEADERS(config.h)
 
+# set language
+AC_LANG(C++)
+
+# set vars to itself to prevent the macros from setting default value
 CFLAGS="$CFLAGS"
 CXXFLAGS="$CXXFLAGS"
+
+# set flags
 VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
 VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include"
 VLAD_LDFLAGS="-L\$(DISTDIR)/lib/vlad"
 
+# some tests
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LEX
 AC_PROG_YACC
 AC_PROG_LN_S
 
+# --enable-debug
 AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[enable debugging output & compile with -g (default is disabled)]))
 
-if test "$enable_debug" != "" && test "$enable_debug" != "no"; then
+if test "x$enable_debug" != "x" && test "x$enable_debug" != "xno"; then
   AC_DEFINE(DEBUG,1)
   AC_SUBST(DEBUG,1)
   VLAD_CFLAGS="-g $VLAD_CFLAGS"
@@ -28,23 +36,54 @@ else
   VLAD_CXXFLAGS="-O2 $VLAD_CXXFLAGS"
 fi
 
+# --enable-strip
 AC_ARG_ENABLE(strip,AC_HELP_STRING([--enable-strip],[run strip program (default is disabled)]))
-if test "$enable_strip" != "" && test "$enable_strip" != "no"; then
+
+if test "x$enable_strip" != "x" && test "x$enable_strip" != "xno"; then
   AC_SUBST(STRIP,1)
 fi
 
-AC_ARG_WITH(smodels-src,AC_HELP_STRING([--with-smodels-src],[path to smodels source tree (default is disabled)]))
+# --with-smodels
+AC_ARG_WITH(smodels, AC_HELP_STRING([--with-smodels],[enable smodels support: yes or path so smodels source tree (default is no)]))
 
-if test "$with_smodels_src" != "" && test "$with_smodels_src" != "no"; then
+if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
   AC_DEFINE(SMODELS,1)
   AC_SUBST(SMODELS,1)
-  if test "$with_smodels_src" == "yes"; then
-    AC_SUBST(SMODELS_PATH,[yes])
+  if test "x$with_smodels" = "xyes"; then
+    AC_MSG_CHECKING([if smodels is installed and usable])
+    OLD_LDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS -lsmodels"
+    AC_TRY_LINK([#include <smodels.h>
+                 #include <api.h>],
+                [Smodels s;
+                 Api a(&s.program);],
+                AC_MSG_RESULT([yes])
+                AC_SUBST(SMODELS_PATH,[yes]),
+                AC_MSG_RESULT([no])
+                AC_MSG_ERROR([*** smodels test program failed to compile ***]))
+    LDFLAGS="$OLD_LDFLAGS"
   else
-    if ! test -d "$withval"; then
-      AC_MSG_ERROR([*** invalid path: $with_smodels_src ***])
+    AC_MSG_CHECKING([if smodels path $with_smodels is valid])
+    if ! test -d "$with_smodels"; then
+      AC_MSG_RESULT([no])
+      AC_MSG_ERROR([*** invalid path: $with_smodels ***])
     else
-      AC_SUBST(SMODELS_PATH,[$with_smodels_src])
+      AC_MSG_RESULT([yes])
+      AC_MSG_CHECKING([if smodels in $with_smodels can be used])
+      OLD_CXXFLAGS="$CXXFLAGS"
+      OLD_LDFLAGS="$LDFLAGS"
+      CXXFLAGS="$CXXFLAGS -I$with_smodels"
+      LDFLAGS="$LDFLAGS -L$with_smodels/.libs -lsmodels"
+      AC_TRY_LINK([#include <smodels.h>
+                   #include <api.h>],
+                  [Smodels s;
+                   Api a(&s.program);],
+                  AC_MSG_RESULT([yes])
+                  AC_SUBST(SMODELS_PATH,[$with_smodels]),
+                  AC_MSG_RESULT([no])
+                  AC_MSG_ERROR([*** smodels test program failed to compile ***]))
+      CXXFLAGS="$OLD_CXXFLAGS"
+      LDFLAGS="$OLD_LDFLAGS"
     fi
   fi
 fi

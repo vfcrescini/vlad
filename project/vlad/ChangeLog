@@ -1,3 +1,10 @@
+2003-04-15  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* configure :
+	* configure.ac :
+
+	  - Fixed smodels checking mechanism.
+
 2003-04-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* configure :
