@@ -1,3 +1,12 @@
+2002-08-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+
+	  - Some cleanups.
+
+	  - Ensured that global lists get destroyed before exit, even on
+	    error.
+
 2002-08-23  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* docs/bnf.txt :

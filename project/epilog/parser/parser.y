@@ -21,6 +21,8 @@ extern int yywarn(char *warning);
 int yylex(void);
 
 int add_identifier(char ident[], unsigned short type);
+int initialise(void);
+int destroy(void);
 
 expression_type initial_exp;
 %}
@@ -86,15 +88,20 @@ program :
 
 init :
   {
-    identlist_init();
-    expression_init(&initial_exp);
+    if (initialise() != 0) {
+      yyerror("internal error");
+      destroy();
+      return -1;
+    }
   }
   ;
 
 destroy :
   {
-    identlist_purge();
-    expression_purge(&initial_exp);
+    if (destroy() != 0) {
+      yyerror("internal error");
+      return -1;
+    }
   }
   ;
 
@@ -123,8 +130,7 @@ other_stmt_list :
   ;
 
 ident_stmt :
-  EPI_SYM_IDENT ident_declaration EPI_SYM_SEMICOLON
-  {
+  EPI_SYM_IDENT ident_declaration EPI_SYM_SEMICOLON {
   }
   ;
 
@@ -144,122 +150,139 @@ ident_declaration :
   ;
 
 sub_ident_decl :
-  EPI_SYM_SUBTYPE sub_ident_list
-  {
+  EPI_SYM_SUBTYPE sub_ident_list {
   }
   ;
 
 obj_ident_decl :
-  EPI_SYM_OBJTYPE obj_ident_list
-  {
+  EPI_SYM_OBJTYPE obj_ident_list {
   }
   ;
 
 acc_ident_decl :
-  EPI_SYM_ACCTYPE acc_ident_list
-  {
+  EPI_SYM_ACCTYPE acc_ident_list {
   }
   ;
 
 sub_grp_ident_decl :
-  EPI_SYM_SUBGRPTYPE sub_grp_ident_list
-  {
+  EPI_SYM_SUBGRPTYPE sub_grp_ident_list {
   }
   ;
 
 obj_grp_ident_decl :
-  EPI_SYM_OBJGRPTYPE obj_grp_ident_list
-  {
+  EPI_SYM_OBJGRPTYPE obj_grp_ident_list {
   }
   ;
 
 acc_grp_ident_decl :
-  EPI_SYM_ACCGRPTYPE acc_grp_ident_list
-  {
+  EPI_SYM_ACCGRPTYPE acc_grp_ident_list {
   }
   ;
 
 sub_ident_list :
-  EPI_SYM_IDENTIFIER 
-  {
-    if (add_identifier($1, EPI_IDENT_SUBJECT) != 0)
+  EPI_SYM_IDENTIFIER {
+    if (add_identifier($1, EPI_IDENT_SUBJECT) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_ident_list
-  {
-    if (add_identifier($1, EPI_IDENT_SUBJECT) != 0)
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_ident_list {
+    if (add_identifier($1, EPI_IDENT_SUBJECT) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
   ;
 
 obj_ident_list :
-  EPI_SYM_IDENTIFIER 
-  {
-    if (add_identifier($1, EPI_IDENT_OBJECT) != 0)
+  EPI_SYM_IDENTIFIER {
+    if (add_identifier($1, EPI_IDENT_OBJECT) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_ident_list
-  {
-    if (add_identifier($1, EPI_IDENT_OBJECT) != 0)
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_ident_list {
+    if (add_identifier($1, EPI_IDENT_OBJECT) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
   ;
 
 acc_ident_list :
-  EPI_SYM_IDENTIFIER
-  {
-    if (add_identifier($1, EPI_IDENT_ACCESS) != 0)
+  EPI_SYM_IDENTIFIER {
+    if (add_identifier($1, EPI_IDENT_ACCESS) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_ident_list
-  {
-    if (add_identifier($1, EPI_IDENT_ACCESS) != 0)
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_ident_list {
+    if (add_identifier($1, EPI_IDENT_ACCESS) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
   ;
 
 sub_grp_ident_list :
-  EPI_SYM_IDENTIFIER 
-  {
-    if (add_identifier($1, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0)
+  EPI_SYM_IDENTIFIER {
+    if (add_identifier($1, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_grp_ident_list
-  {
-    if (add_identifier($1, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0)
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_grp_ident_list {
+    if (add_identifier($1, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
   ;
 
 obj_grp_ident_list :
-  EPI_SYM_IDENTIFIER
-  {
-    if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
+  EPI_SYM_IDENTIFIER {
+    if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_grp_ident_list
-  {
-    if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_grp_ident_list {
+    if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
   ;
 
 acc_grp_ident_list :
-  EPI_SYM_IDENTIFIER 
-  {
-    if (add_identifier($1, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0)
+  EPI_SYM_IDENTIFIER {
+    if (add_identifier($1, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_grp_ident_list
-  {
-    if (add_identifier($1, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0)
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_grp_ident_list {
+    if (add_identifier($1, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0) {
+      yyerror("internal error");
+      destroy();
       return -1;
+    }
   }
   ;
 
 initial_stmt : 
-  EPI_SYM_INITIALLY ground_exp EPI_SYM_SEMICOLON
-  {
+  EPI_SYM_INITIALLY ground_exp EPI_SYM_SEMICOLON {
     unsigned int i;
     unsigned int len;
     atom_type *tmp_atom = NULL;
@@ -269,11 +292,13 @@ initial_stmt :
 
     if (expression_length($2, &len) != 0) {
       yyerror("internal error");
+      destroy();
       return -1;
     }
     for (i = 0; i < len; i++) {
       if (expression_get($2, i, &tmp_atom) != 0) {
         yyerror("internal error");
+        destroy();
         return -1;
       }
       if (expression_find(initial_exp, *tmp_atom) == 0) {
@@ -282,6 +307,7 @@ initial_stmt :
       }
       if (expression_add(&initial_exp, *tmp_atom) != 0) {
         yyerror("internal error");
+        destroy();
         return -1;
       }
 
@@ -305,19 +331,18 @@ initial_stmt :
                tmp_atom->atom.subst.group1->name,
                tmp_atom->atom.subst.group2->name);  
 #endif
-
     }
 
     if (expression_purge(&$2) != 0) {
       yyerror("internal error");
+      destroy();
       return -1;
     }
   }
   ;
 
 trans_stmt : 
-  EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON
-  {
+  EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON {
   }
   ;
 
@@ -327,81 +352,70 @@ policy_stmt :
   ;
 
 trans_var_def : 
-  EPI_SYM_OPEN_PARENT EPI_SYM_CLOSE_PARENT 
-  {
+  EPI_SYM_OPEN_PARENT EPI_SYM_CLOSE_PARENT {
   }
-  | EPI_SYM_OPEN_PARENT trans_var_list EPI_SYM_CLOSE_PARENT
-  {
+  | EPI_SYM_OPEN_PARENT trans_var_list EPI_SYM_CLOSE_PARENT {
   }
   ;
 
 trans_var_list : 
-  EPI_SYM_IDENTIFIER 
-  {
+  EPI_SYM_IDENTIFIER {
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA trans_var_list
-  {
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA trans_var_list {
   }
   ;
 
 is_clause : 
-  EPI_SYM_IS ground_exp 
-  {
+  EPI_SYM_IS ground_exp {
   }
   ;
 
 after_clause : 
-  EPI_SYM_AFTER trans_ref_list
-  {
+  EPI_SYM_AFTER trans_ref_list {
   }
   ;
 
 trans_ref_list : 
-  trans_ref_def
-  {
+  trans_ref_def {
   }
-  | trans_ref_def EPI_SYM_COMMA trans_ref_list
-  {
+  | trans_ref_def EPI_SYM_COMMA trans_ref_list {
   }
   ;
 
 trans_ref_def : 
-  EPI_SYM_IDENTIFIER EPI_SYM_OPEN_PARENT trans_ref_ident_list EPI_SYM_CLOSE_PARENT
-  {
+  EPI_SYM_IDENTIFIER EPI_SYM_OPEN_PARENT trans_ref_ident_list EPI_SYM_CLOSE_PARENT {
   }
   ;
 
 trans_ref_ident_list : 
-  EPI_SYM_IDENTIFIER
-  {
+  EPI_SYM_IDENTIFIER {
   }
-  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA trans_ref_ident_list
-  {
+  | EPI_SYM_IDENTIFIER EPI_SYM_COMMA trans_ref_ident_list {
   }
   ;
 
 logical_op :
-  EPI_SYM_AND
-  {
+  EPI_SYM_AND {
   }
   ;
 
 ground_exp : 
-  ground_boolean_atom 
-  { 
+  ground_boolean_atom { 
     if (expression_init(&$$) != 0) {
       yyerror("internal error");
+      destroy();
       return -1;
     }
     if (expression_add(&$$, $1) != 0) {
       yyerror("internal error");
+      destroy();
       return -1;
     }
   }
-  | ground_boolean_atom logical_op ground_exp
-  { 
+  | ground_boolean_atom logical_op ground_exp { 
     if (expression_add(&$3, $1) != 0) {
       yyerror("internal error");
+      destroy();
       return -1;
     }
     $$ = $3;
@@ -409,39 +423,32 @@ ground_exp :
   ;
 
 ground_boolean_atom :
-  ground_atom_exp
-  {
+  ground_atom_exp {
     $$ = $1;
   }
-  | EPI_SYM_NOT ground_atom_exp
-  {
+  | EPI_SYM_NOT ground_atom_exp {
     $$ = $2;
     $$.truth = epi_false;
   }
   ;
 
 ground_atom_exp :
-  ground_holds_atom
-  {
+  ground_holds_atom {
     $$ = $1;
   }
-  | ground_subst_atom
-  {
+  | ground_subst_atom {
     $$ = $1;
   }
-  | ground_memb_atom
-  {
+  | ground_memb_atom {
     $$ = $1;
   }
-  | logical_atom
-  {
+  | logical_atom {
     $$ = $1;
   }
   ;
 
 ground_holds_atom :
-  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
-  {
+  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT {
     ident_type *subject = NULL;
     ident_type *access = NULL;
     ident_type *object = NULL;
@@ -450,21 +457,24 @@ ground_holds_atom :
         identlist_get($5, &access) != 0 ||
         identlist_get($7, &object) != 0) {
       yyerror("undeclared identifier");
+      destroy();
       return -1;
     }
 
     if (!EPI_IDENT_IS_SUBJECT(subject->type)) {
       yyerror("first parameter of holds must be a subject");
+      destroy();
       return -1;
     }
  
     if (!EPI_IDENT_IS_ACCESS(access->type)) {
       yyerror("second parameter of holds must be an access-right");
+      destroy();
       return -1;
     }
-
     if (!EPI_IDENT_IS_OBJECT(object->type)) {
       yyerror("third parameter of holds must be an object");
+      destroy();
       return -1;
     }
 
@@ -477,24 +487,26 @@ ground_holds_atom :
   ;
 
 ground_subst_atom :
-  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
-  {
+  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT {
     ident_type *group1 = NULL;
     ident_type *group2 = NULL;
 
     if (identlist_get($3, &group1) != 0 || 
         identlist_get($5, &group2) != 0) {
       yyerror("undeclared identifier");
+      destroy();
       return -1;
     }
 
     if (!EPI_IDENT_IS_GROUP(group1->type)) {
       yyerror("parameters of subst must be groups");
+      destroy();
       return -1;
     }
  
     if (group1->type != group2->type) {
       yyerror("parameters of subst are of different types");
+      destroy();
       return -1;
     }
 
@@ -506,29 +518,32 @@ ground_subst_atom :
   ;
 
 ground_memb_atom :
-  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
-  {
+  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT {
     ident_type *element = NULL;
     ident_type *group = NULL;
 
     if (identlist_get($3, &element) != 0 || 
         identlist_get($5, &group) != 0) {
       yyerror("undeclared identifier");
+      destroy();
       return -1;
     }
 
     if (EPI_IDENT_IS_GROUP(element->type)) {
       yyerror("first parameter of memb must not be a group");
+      destroy();
       return -1;
     }
  
     if (!EPI_IDENT_IS_GROUP(group->type)) {
       yyerror("second parameter of memb must be a group");
+      destroy();
       return -1;
     }
 
     if (EPI_IDENT_BASETYPE(element->type) != EPI_IDENT_BASETYPE(group->type)) {
       yyerror("parameters of memb are of different types");
+      destroy();
       return -1;
     }
 
@@ -540,64 +555,51 @@ ground_memb_atom :
   ;
 
 comp_exp :
-  comp_boolean_atom
-  {
+  comp_boolean_atom {
   }
-  | comp_boolean_atom logical_op comp_exp
-  {
+  | comp_boolean_atom logical_op comp_exp {
   }
   ;
 
 comp_boolean_atom :
-  comp_atom_exp
-  {
+  comp_atom_exp {
   }
-  | EPI_SYM_NOT comp_atom_exp
-  {
+  | EPI_SYM_NOT comp_atom_exp {
   }
   ;
 
 comp_atom_exp :
-  comp_holds_atom
-  {
+  comp_holds_atom {
   }
-  | comp_subst_atom
-  {
+  | comp_subst_atom {
   }
-  | comp_memb_atom
-  {
+  | comp_memb_atom {
   }
-  | logical_atom
-  {
+  | logical_atom {
   }
   ;
 
 comp_holds_atom :
-  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
-  {
+  EPI_SYM_HOLDS EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT {
   }
   ;
 
 comp_subst_atom :
-  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
-  {
+  EPI_SYM_SUBST EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT {
   }
   ;
 
 comp_memb_atom :
-  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT
-  {
+  EPI_SYM_MEMB EPI_SYM_OPEN_PARENT EPI_SYM_IDENTIFIER EPI_SYM_COMMA EPI_SYM_IDENTIFIER EPI_SYM_CLOSE_PARENT {
   }
   ;
 
 logical_atom : 
-  EPI_SYM_TRUE 
-  {
+  EPI_SYM_TRUE {
     $$.truth = epi_true;
     $$.type = EPI_ATOM_CONST;
   }
-  | EPI_SYM_FALSE
-  {
+  | EPI_SYM_FALSE {
     $$.truth = epi_false;
     $$.type = EPI_ATOM_CONST;
   }
@@ -605,7 +607,8 @@ logical_atom :
 
 %%
 
-int add_identifier(char ident[], unsigned short type) {
+int add_identifier(char ident[], unsigned short type) 
+{
   if (identlist_find(ident) == 0) {
     yyerror("identifier declared more than once");
     return -1;
@@ -630,6 +633,38 @@ int add_identifier(char ident[], unsigned short type) {
     yyerror("internal error");
     return -1;
   }
+
+  return 0;
+}
+
+/* initialise our global lists */
+int initialise(void)
+{
+#ifdef DEBUG
+  printf("initialising global lists\n");
+#endif
+
+  if (identlist_init() != 0)
+    return -1;
+
+  if (expression_init(&initial_exp))
+    return -1;
+
+  return 0;
+}
+
+/* destroy dynamically allocated mem */
+int destroy(void)
+{
+#ifdef DEBUG
+  printf("destroying global lists\n");
+#endif
+
+  if (identlist_purge() != 0)
+    return -1;
+
+  if (expression_purge(&initial_exp) != 0)
+    return -1;
 
   return 0;
 }
