@@ -1,5 +1,9 @@
-
 2003-10-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/vlad.h :
+	* common/list.h :
+
+	  - VLAD_NOTUNIQUE is a duplicate of VLAD_DUPLICATE (stupid).
 
 	* kb/identifier.cpp :
 	* kb/identifier.h :

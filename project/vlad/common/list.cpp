@@ -62,7 +62,7 @@ int list::add(list_item *data)
   /* if the unique flag is set, ensure that data is not already in */
   if (unique) {
     if ((retval = find(data)) == VLAD_OK)
-      return VLAD_NOTUNIQUE;
+      return VLAD_DUPLICATE;
     else if (retval != VLAD_NOTFOUND)
       return retval;
   }
