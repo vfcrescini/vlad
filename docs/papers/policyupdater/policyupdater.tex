@@ -1245,7 +1245,9 @@ query holds(alice, read, file);
 
       As a program of language ${\cal L}$ is parsed, each statement containing
       entity declarations, facts, constraint rules and policy updates must
-      be stored in a buffer before the translation process is started.
+      be stored in a buffer structure before the translation process is
+      started. This buffer structure is composed of the symbol table and the
+      policy base.
 
       \subsubsection{Symbol Table}
 
@@ -1442,6 +1444,9 @@ query holds(alice, read, file);
       \subsubsection{Grounding of Constraint Variables}
 
       \subsubsection{Representing Facts in Propositional Form}
+
+        The next step in the translation of language ${\cal L}$ to a normal
+        logic program is to represent each fact in propositional form.
 
         Given the symbol table $st$, we first enumerate all facts defined
         in the policy base:
