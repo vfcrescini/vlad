@@ -5,8 +5,10 @@
 
 #include <stdlib.h>
 #include <string.h>
+
+#include <config.h>
 #include <vlad.h>
-#include "identifier.h"
+#include <identifier.h>
 
 identifier::identifier()
 {

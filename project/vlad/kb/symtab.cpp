@@ -5,8 +5,10 @@
 
 #include <stdlib.h>
 #include <new.h>
+
+#include <config.h>
 #include <vlad.h>
-#include "symtab.h"
+#include <symtab.h>
 
 symtab::symtab() : list::list(true)
 {
