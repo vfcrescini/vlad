@@ -129,7 +129,9 @@ int simplelist_del_data(simplelist_type *list,
   curr = list->list;
 
   while (curr != NULL) {
+    
     if (cmp(curr->data, data) == 0) {
+      simplelist_node *ptmp;
 
       found = 1;
 
@@ -138,15 +140,20 @@ int simplelist_del_data(simplelist_type *list,
       else
         prev->next = curr->next;
 
-      if (fr != NULL)
-        fr(curr->data);
+      ptmp = curr;
+      curr = curr->next;
 
-      free(curr);
+      if (fr != NULL)
+        fr(ptmp->data);
+
+      free(ptmp);
 
       (list->length)--;
     }
-    prev = curr;
-    curr = curr->next;
+    else {
+      prev = curr;
+      curr = curr->next;
+    }
   }
 
   return (found ? EPI_OK : EPI_NOTFOUND);
