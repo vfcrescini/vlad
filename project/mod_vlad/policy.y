@@ -205,12 +205,34 @@ initial_stmt :
 constraint_stmt :
   MODVLAD_SYM_ALWAYS expression impliedby_clause withabsence_clause 
   MODVLAD_SYM_SEMICOLON {
+    int retval;
+
+    if ((retval = vlad_kb_add_consttab(kbase, $2, $3, $4)) != VLAD_OK) {
+      errcode = retval;
+      policyerror("could not add constraint into constraint table");
+      return retval;
+    }
+
+    vlad_exp_destroy($2);
+    vlad_exp_destroy($3);
+    vlad_exp_destroy($4);
   }
   ;
 
 trans_stmt :
   MODVLAD_SYM_IDENTIFIER trans_var_def MODVLAD_SYM_CAUSES expression
   if_clause MODVLAD_SYM_SEMICOLON {
+    int retval;
+
+    if ((retval = vlad_kb_add_transtab(kbase, $1, $2, $5, $4)) != VLAD_OK) {
+      errcode = retval;
+      policyerror("could not add transformaton into trans table");
+      return retval;
+    }
+
+    vlad_strlist_destroy($2);
+    vlad_exp_destroy($5);
+    vlad_exp_destroy($4);
   }
   ;
 
@@ -224,28 +246,36 @@ group_def_stmt :
   ;
 
 impliedby_clause : {
+    $$ = NULL;
   }
   | MODVLAD_SYM_IMPLIED MODVLAD_SYM_BY expression {
+    $$ = $3;
   }
   ;
 
 withabsence_clause : {
+    $$ = NULL;
   }
   | MODVLAD_SYM_WITH MODVLAD_SYM_ABSENCE expression {
+    $$ = $3;
   }
   ;
 
 trans_var_def :
   MODVLAD_SYM_OPEN_PARENT MODVLAD_SYM_CLOSE_PARENT {
+    $$ = NULL;
   }
   |
   MODVLAD_SYM_OPEN_PARENT trans_var_list MODVLAD_SYM_CLOSE_PARENT {
+    $$ = $2;
   }
   ;
 
 if_clause : {
+    $$ = NULL;
   }
   | MODVLAD_SYM_IF expression {
+    $$ = $2;
   }
   ;
 
@@ -303,8 +333,28 @@ obj_ident_list :
 
 trans_var_list :
   MODVLAD_SYM_IDENTIFIER {
+    int retval;
+
+    if ((retval = vlad_strlist_create(&($$))) != VLAD_OK) {
+      errcode = retval;
+      policyerror("could not create a stringlist instance");
+      return retval;
+    }
+
+    if ((retval = vlad_strlist_add($$, $1)) != VLAD_OK) {
+      errcode = retval;
+      policyerror("could not add variable into var list");
+      return retval;
+    }
   }
   | trans_var_list MODVLAD_SYM_COMMA MODVLAD_SYM_IDENTIFIER {
+    int retval;
+
+    if ((retval = vlad_strlist_add($$, $3)) != VLAD_OK) {
+      errcode = retval;
+      policyerror("could not add variable into var list");
+      return retval;
+    }
   }
   ;
 
