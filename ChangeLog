@@ -7,6 +7,9 @@
 	* kb/transtab.cpp :
 	* kb/transtab.h :
 
+	  - Added transformation rules in generate_nlp(). And thus, we now
+	    begin the lengthy process of cleaning up.
+
 	  - Added replace() functions to replace instances of variables with
 	    identifiers.
 
