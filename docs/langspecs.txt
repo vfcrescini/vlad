@@ -4,7 +4,7 @@ Language Specifications
 
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
-Started 2002 Dec 8
+Started 2002 Dec 08
 -------------------------------------------------------------------------------
 
 1. Expressions
