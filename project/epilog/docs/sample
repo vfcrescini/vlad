@@ -15,7 +15,10 @@ initially memb(s1,S1) && !subst(S1,S2);
 initially true;
 
 trans something1(var1, var2, var3) causes holds(var1, a1, var2) if memb(var1, S1) && subst(S1, var3);
-trans something2(var3) causes holds(s1, a1, var3) && holds(s2, a1, var3) if true;
+trans something2(variable) causes holds(s1, a1, variable) && holds(s2, a1, variable) if true;
 
 /* /* nested comment */
 /* comment1 */   /* comment2 */
+
+is holds(s1, a1, o1);
+is holds(s1, a1, O1) after something2(O1);
