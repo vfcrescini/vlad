@@ -1,9 +1,12 @@
 2003-07-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* mod_vlad.h :
+
+	  - Added basic error codes.
+
 	* config.h.in :
 	* configure :
 	* configure.ac :
-	* mod_vlad.h :
 
 	  - Added a config.h in for variables version and debug.
 

@@ -30,6 +30,7 @@
 
 #define MODVLAD_MAXSTR_LEN      5120
 
+/* access-rights (http methods) */
 #define MODVLAD_ACCESS_OPTIONS  "OPTIONS"
 #define MODVLAD_ACCESS_GET      "GET"
 #define MODVLAD_ACCESS_HEAD     "HEAD"
@@ -52,6 +53,21 @@
   NULL                          \
 }
 
+/* error codes */
+/* success */
+#define MODVLAD_OK              0
+/* general failure code */
+#define MODVLAD_FAILURE         -1
+/* null pointer input */
+#define MODVLAD_NULLPTR         -2
+/* failed memory allocation */
+#define MODVLAD_MALLOCFAILED    -3
+/* input is invalid */
+#define MODVLAD_INVALIDINPUT    -4
+/* buffer capacity exceeded */
+#define MODVLAD_BUFFEROVERFLOW  -5
+
+/* convenience marcos */
 #define MODVLAD_LASTCHAR(X)     (X[strlen(X) > 0 ? strlen(X) - 1 : 0])
 #define MODVLAD_FIRSTCHAR(X)    (X[0])
 
