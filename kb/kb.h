@@ -33,12 +33,12 @@ class kb {
     /* register an identifier in the kb */
     int add_ident(const char *n, unsigned char t);
     /* gives an atom id based on the identifiers already given */
-    int get_atom(const char *n1,
-                 const char *n2,
-                 const char *n3,
-                 unsigned char ty,
-                 bool tr,
-                 unsigned int *a);
+    int encode_atom(const char *n1,
+                    const char *n2,
+                    const char *n3,
+                    unsigned char ty,
+                    bool tr,
+                    unsigned int *a);
     /* returns the negation of the given atom */
     int negate_atom(unsigned int in, unsigned int *out);
   private :

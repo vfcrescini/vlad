@@ -92,12 +92,12 @@ int kb::add_ident(const char *n, unsigned char t)
 }
 
 /* gives an atom id based on the identifiers already given */
-int kb::get_atom(const char *n1,
-                 const char *n2,
-                 const char *n3,
-                 unsigned char ty,
-                 bool tr,
-                 unsigned int *a)
+int kb::encode_atom(const char *n1,
+                    const char *n2,
+                    const char *n3,
+                    unsigned char ty,
+                    bool tr,
+                    unsigned int *a)
 {
   int retval;
 
