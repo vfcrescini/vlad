@@ -1,22 +1,67 @@
+Crescini - Zou Nuptials
+2005 May 21
+
+Bridal Entourage
+
+  Groom                   Vino Fernando Crescini
+  Bride                   Jane Zou
+
+  Groom's Parents         Mr. & Mrs. Dino Crescini
+  Bride's Parents         Mr. & Mrs. Long Qing Zou
+
+  Principal Sponsors      Mr. & Mrs. Hermie Colina
+
+  Secondary Sponsors
+
+    Candle                Mr. & Mrs. Solomon Asalemo
+    Cord                  Mr. & Mrs. Michael Zarate
+    Veil                  (XXX fix me)
+
+  Best Man                Raki Crescini
+  Groom's Men             Roy (XXX fix me)
+
+  Maid of Honour          Vianca Cresini
+  Bride's Maid            Roy's Sister (XXX fix me)
+
+  Ring Bearer             Lorenzo Asalemo
+  Flower Girl             Salina Huang
+
 Gathering Together
+
+  (Ushers show guests to their seats)
+
+  (Hand out wedding booklets as guests arrive)
 
 Entrance Rite
 
   Entrance Song
 
+  (Bridal entourage enters)
+
+Introductory Rite
+
   Greeting
+
+    Dearly beloved, we are gathered here today... ?? (XXX fix me)
+
+  Penitential Rite
+
+    (XXX fix me)
 
   Opening Prayer
 
-    Father,
-    Hear our prayers for Vino and Jane,
-    who today are united in marriage before your altar.
-    Give them your blessing,
-    and strengthen their love for each other.
+    Preist:
 
-    We ask this through our Lord Jesus Christ, your Son, 
-    who lives and reigns with you and the Holy Spirit,
-    one God, for ever and ever.
+      Father, hear our prayers for Vino and Jane, who today are united in
+      marriage before your altar. Give them your blessing, and strengthen
+      their love for each other.
+
+      We ask this through our Lord Jesus Christ, your Son, who lives and reigns
+      with you and the Holy Spirit, one God, for ever and ever.
+
+    All:
+
+      Amen.
 
 Liturgy of the Word
 
@@ -142,12 +187,12 @@ Liturgy of the Sacrament
     eyes. You know that these elements are mingled in every life and are to be
     expected in your own. And so, not knowing what is before you, but trusting
     in God's companionship, you take each other through the best and worst of
-    what lies ahead, until death. Join your hands, and commit yourselves to each
-    other forever.
+    what lies ahead, until death. Join your hands, and commit yourselves to
+    each other forever.
 
   Giving of Consent
 
-    Priest asks the bridegroom:
+    Priest to the Bridegroom:
 
     Vino, do you take Jane to be your wife? Do you promise to be true to her in
     good times and in bad, in sickness and in health, to love her and honour
@@ -191,3 +236,27 @@ Liturgy of the Sacrament
 
     Vino, take this ring as a symbol of my love and fidelity. In the name of
     the Father, and of the Son, and of the Holy Spirit.
+
+Liturgy of the Eucharist
+
+  Preparation of the Gifts
+
+  Prayer over the Gifts
+
+  Eucharistic Prayer
+
+  Lord's Prayer
+
+  Nuptial Blessing
+
+  Sign of Peace
+
+  Communion
+
+  Prayer after Communion
+
+Conclusion
+
+  Solemn Blessing
+
+  Signing the Register
