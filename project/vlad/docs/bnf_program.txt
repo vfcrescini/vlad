@@ -1,158 +1,166 @@
 -------------------------------------------------------------------------------
 VLAD: V Logic-based Access-control Database
-BNF Program
+BNF for Program
 
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started 2002 Dec 08
-Updated 2003 Apr 29
+Updated 2003 May 05
 -------------------------------------------------------------------------------
 
-<start>                 : <program>
+<start>                  : <program>
 
-<program>               : <init> <body> <destroy>
+<program>                : <init> <body> <destroy>
 
-<init>                  : <nil>
+<init>                   : <nil>
 
-<body>                  : <ident-section> <initial-section> 
-                          <constraint-section> <trans-section> 
+<body>                   : <ident-section> <initial-section>
+                           <constraint-section> <trans-section>
 
-<destroy>               : <nil>
+<destroy>                : <nil>
 
-<ident-section>         : <nil> | <ident-stmt-list>
+<ident-section>          : <nil> | <ident-stmt-list>
 
-<initial-section>       : <nil> | <inital-stmt-list>
+<initial-section>        : <nil> | <inital-stmt-list>
 
-<constraint-section>    : <nil> | <constraint-stmt-list>
+<constraint-section>     : <nil> | <constraint-stmt-list>
 
-<trans-section>         : <nil> | <trans-stmt-list>
+<trans-section>          : <nil> | <trans-stmt-list>
 
-<ident-stmt-list>       : <ident-stmt> | <ident-stmt-list> <ident-stmt> 
+<ident-stmt-list>        : <ident-stmt> | <ident-stmt-list> <ident-stmt>
 
-<initial-stmt-list>     : <initial-stmt> | <initial-stmt-list> <initial-stmt>
+<initial-stmt-list>      : <initial-stmt> | <initial-stmt-list> <initial-stmt>
 
-<constraint-stmt-list>  : <constraint-stmt> | <constraint-stmt-list>
-                          <constraint-stmt>
+<constraint-stmt-list>   : <constraint-stmt> | <constraint-stmt-list>
+                           <constraint-stmt>
 
-<trans-stmt-list>       : <trans-stmt> | <trans-stmt-list> <trans-stmt>
+<trans-stmt-list>        : <trans-stmt> | <trans-stmt-list> <trans-stmt>
 
-<ident-stmt>            : <ident> <ident-declaration> <semicolon>
-                       
-<ident-declaration>     : <sub-ident-decl> | <obj-ident-decl> | acc-ident-decl> |
-                          <sub-grp-ident-decl> | <obj-grp-ident-decl> |
-                          <acc-grp-ident-decl>
+<ident-stmt>             : <ident> <ident-declaration> <semicolon>
 
-<sub-ident-decl>        : <sub-type> <sub-ident-list>
+<ident-declaration>      : <sub-ident-decl> | <obj-ident-decl> | acc-ident-decl> |
+                           <sub-grp-ident-decl> | <obj-grp-ident-decl> |
+                           <acc-grp-ident-decl>
 
-<acc-ident-decl>        : <acc-type> <acc-ident-list>
+<sub-ident-decl>         : <sub-type> <sub-ident-list>
 
-<obj-ident-decl>        : <obj-type> <obj-ident-list>
+<acc-ident-decl>         : <acc-type> <acc-ident-list>
 
-<sub-grp-ident-decl>    : <sub-grp-type> <sub-grp-ident-list>
+<obj-ident-decl>         : <obj-type> <obj-ident-list>
 
-<acc-grp-ident-decl>    : <acc-grp-type> <acc-grp-ident-list>
+<sub-grp-ident-decl>     : <sub-grp-type> <sub-grp-ident-list>
 
-<obj-grp-ident-decl>    : <obj-grp-type> <obj-grp-ident-list>
+<acc-grp-ident-decl>     : <acc-grp-type> <acc-grp-ident-list>
 
-<sub-ident-list>        : <identifier> | <sub-ident-list> <comma> <identifier>
+<obj-grp-ident-decl>     : <obj-grp-type> <obj-grp-ident-list>
 
-<obj-ident-list>        : <identifier> | <obj-ident-list> <comma> <identifier>
+<sub-ident-list>         : <identifier> | <sub-ident-list> <comma> <identifier>
 
-<acc-ident-list>        : <identifier> | <acc-ident-list> <comma> <identifier>
+<obj-ident-list>         : <identifier> | <obj-ident-list> <comma> <identifier>
 
-<sub-grp-ident-list>    : <identifier> | <sub-grp-ident-list> <comma> <identifier>
+<acc-ident-list>         : <identifier> | <acc-ident-list> <comma> <identifier>
 
-<obj-grp-ident-list>    : <identifier> | <obj-grp-ident-list> <comma> <identifier>
+<sub-grp-ident-list>     : <identifier> | <sub-grp-ident-list> <comma> <identifier>
 
-<acc-grp-ident-list>    : <identifier> | <acc-grp-ident-list> <comma> <identifier>
+<obj-grp-ident-list>     : <identifier> | <obj-grp-ident-list> <comma> <identifier>
 
-<initial-stmt>          : <initially> <expression> <semicolon>
+<acc-grp-ident-list>     : <identifier> | <acc-grp-ident-list> <comma> <identifier>
 
-<constraint-stmt>       : <always> <expression> <implied-clause> <with-clause>
-                          <semicolon>
+<initial-stmt>           : <initially> <expression> <semicolon>
 
-<implied-clause>        : <nil> | <implied> <by> <expression>
+<constraint-stmt>        : <always> <expression> <implied-clause> <with-clause>
+                           <semicolon>
 
-<with-clause>           : <nil> | <with> <absence> <expression>
-                        
-<with-clause>           : <nil> | <with> <absence> <expression>
+<implied-clause>         : <nil> | <implied> <by> <expression>
 
-<trans-stmt>            : <identifier> <trans-var-def> <causes> <expression> 
-                          <if-clause> <semicolon>
+<with-clause>            : <nil> | <with> <absence> <expression>
 
-<if-clause>             : <nil> | <if> <expression>
+<with-clause>            : <nil> | <with> <absence> <expression>
 
-<trans-var-def>         : <open-parent> <close-parent> |
-                          <open-parent> <trans-var-list> <close-parent> 
-                        
-<trans-var-list>        : <identifier> | <trans-var-list> <comma> <identifier>
+<trans-stmt>             : <identifier> <trans-var-def> <causes> <expression>
+                           <if-clause> <semicolon>
 
-<expression>            : <expression> <logical-op> <boolean-atom> |
-                          <boolean-atom>
-                        
-<boolean-atom>          : <not> <atom> | <atom>
-                        
-<atom>                  : <holds-atom> | <subst-atom> | <memb-atom>
-                        
-<holds-atom>            : <holds> <open-parent> <identfier> <comma>
-                          <identifier> <comma> <identifier> <close-parent>
- 
-<subst-atom>            : <subset> <open-parent> <identifier>
-                          <comma> <identifier> <close-parent>
-                        
-<memb-atom>             : <member> <open-parent> <identifier>
-                          <comma> <identifier> <close-parent>
+<if-clause>              : <nil> | <if> <expression>
 
-<logical-op>            : <and>
-                        
-<identifier>            : [a-zA-Z][a-zA-Z0-9_]{0,127}
-                        
-<and>                   : &&
-                        
-<not>                   : !
-                        
-<holds>                 : holds
-                        
-<member>                : memb
-                        
-<subset>                : subst
-                        
-<initially>             : initially
-                        
-<causes>                : causes
+<trans-var-def>          : <open-parent> <close-parent> |
+                           <open-parent> <trans-var-list> <close-parent>
 
-<implied>               : implied
+<trans-var-list>         : <identifier> | <trans-var-list> <comma> <identifier>
 
-<by>                    : by
+<expression>             : <expression> <logical-op> <boolean-atom> |
+                           <boolean-atom>
 
-<with>                  : with
+<boolean-atom>           : <not> <atom> | <atom>
 
-<absence>               : absence
+<atom>                   : <holds-atom> | <subst-atom> | <memb-atom>
 
-<always>                : always
-                        
-<if>                    : if
-                        
-<ident>                 : ident
+<holds-atom>             : <holds> <open-parent> <identfier> <comma>
+                           <identifier> <comma> <identifier> <close-parent>
 
-<sub-type>              : sub
+<subst-atom>             : <subset> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
 
-<obj-type>              : obj
+<memb-atom>              : <member> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
 
-<acc-type>              : acc
+<logical-op>             : <and>
 
-<sub-grp-type>          : sub-grp
+<identifier>             : <alpha> <alphanumstr>{0,127}
 
-<obj-grp-type>          : obj-grp
+<and>                    : &&
 
-<acc-grp-type>          : acc-grp
-                        
-<underscore>            : _
+<not>                    : !
 
-<open-parent>           : (
+<holds>                  : holds
 
-<close-parent>          : )
+<member>                 : memb
 
-<comma>                 : ,
-                        
-<semicolon>             : ;
+<subset>                 : subst
+
+<initially>              : initially
+
+<causes>                 : causes
+
+<implied>                : implied
+
+<by>                     : by
+
+<with>                   : with
+
+<absence>                : absence
+
+<always>                 : always
+
+<if>                     : if
+
+<ident>                  : ident
+
+<sub-type>               : sub
+
+<obj-type>               : obj
+
+<acc-type>               : acc
+
+<sub-grp-type>           : sub-grp
+
+<obj-grp-type>           : obj-grp
+
+<acc-grp-type>           : acc-grp
+
+<open-parent>            : (
+
+<close-parent>           : )
+
+<comma>                  : ,
+
+<semicolon>              : ;
+
+<underscore>             : _
+
+<digit>                  : [0-9]
+
+<number>                 : <digit> | <number> <digit>
+
+<alpha>                  : [a-zA-Z]
+
+<alphanum>               : <alpha> | <digit> | <underscore>
