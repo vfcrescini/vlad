@@ -103,15 +103,7 @@ Started 2002 Dec 08
 
       Parenthesis is not allowed to be used to enclose atoms and expressions.
 
-  1.4. Constant Expressions
-
-    The following symbols may be used:
-
-      true
-
-      false
-
-  1.5. Variables
+  1.4. Variables
 
    Variables are only permitted to occur on transformation proposition
    statements. They must be in the form:
@@ -149,7 +141,7 @@ Started 2002 Dec 08
 
       <trans-identifier>([<var1>[,<var2>][,...]]])
       causes <post-condition-expression>
-      if <pre-condition-expression>
+      [if <pre-condition-expression>]
 
     where:
 
@@ -187,16 +179,10 @@ Started 2002 Dec 08
     respectively.
 
     The case where the pre-condition is an empty-set (ie. the transformation
-    has no pre-condition) does not have to be a special case:
+    has no pre-condition) is represented by ommitting the if clause:
 
       <trans-identifier>()
       causes <post-condition-expression> 
-
-    is equivalent to:
-
-      <trans-identifier>()
-      causes <post-condition-expression> 
-      if true
 
   2.4. Query Statement
 
@@ -224,23 +210,17 @@ Started 2002 Dec 08
       <expression1> implies <expression2> with absence <expression3>
 
     states that expression2 holds if expression1 is true and the truth 
-    value of expression3 is unknown. Obviously, if expression3 is the 
-    constant "true" or "false" then the constraint will not be applied, 
-    regardless of the truth-value of exression1.
+    value of expression3 is unknown. 
 
     If the "with absence" clause is ommitted, then expression2 is applied
     if and only if expression1 is true:
 
       <expression1> implies <expression2>
 
-    A special case of the above is when expression1 is the constant "true".
-    In this case, expression2 is always applied. The statement below:
+    A special case of the above is when expression1 is the empty set.
+    In this case, expression2 is always applied:
 
       always <expression2>
-
-    is equivalent to
-
-      true implies <expression2>
 
 3. Comments
 

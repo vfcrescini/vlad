@@ -27,8 +27,6 @@ comma              \,
 semicolon          ;
 and                &&
 not                !
-true               true
-false              false
 holds              holds
 member             memb
 subset             subst
@@ -66,10 +64,6 @@ everything         .
 <INITIAL>{and} return VLAD_SYM_AND;
 
 <INITIAL>{not} return VLAD_SYM_NOT;
-
-<INITIAL>{true} return VLAD_SYM_TRUE;
-
-<INITIAL>{false} return VLAD_SYM_FALSE;
 
 <INITIAL>{holds} return VLAD_SYM_HOLDS;
 

@@ -112,8 +112,7 @@ Updated 2003 Mar 31
                         
 <boolean-atom>          : <not> <atom> | <atom>
                         
-<atom>                  : <holds-atom> | <subst-atom> | <memb-atom> |
-                          <logical-atom>
+<atom>                  : <holds-atom> | <subst-atom> | <memb-atom>
                         
 <holds-atom>            : <holds> <open-parent> <identfier> <comma>
                           <identifier> <comma> <identifier> <close-parent>
@@ -124,15 +123,9 @@ Updated 2003 Mar 31
 <memb-atom>             : <member> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
 
-<logical-atom>          : <true> | <false>
-                        
 <logical-op>            : <and>
                         
 <identifier>            : [a-zA-Z][a-zA-Z0-9_]{0,127}
-
-<true>                  : true
-                        
-<false>                 : false
                         
 <and>                   : &&
                         

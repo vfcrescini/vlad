@@ -49,7 +49,6 @@ class kb {
     expression *itable;
     consttab *ctable;
     transtab *ttable;
-    unsigned int c_len;
     unsigned int s_len;
     unsigned int a_len;
     unsigned int o_len;
@@ -85,12 +84,10 @@ class kb {
     /* make sure transref is valid */
     int verify_transref(char *n, stringlist *il);
     /* functions for encoding atoms */
-    int encode_const(const char *c, unsigned int *n);
     int encode_holds(const char *s, const char *a, const char *o, unsigned int *n);
     int encode_member(const char *e, const char *g, unsigned int *n);
     int encode_subset(const char *g1, const char *g2, unsigned int *n);
     /* functions for decoding atoms */
-    int decode_const(char **c, unsigned int n);
     int decode_holds(char **s, char **a, char **o, unsigned int n);
     int decode_member(char **e, char **g, unsigned int n);
     int decode_subset(char **g1, char **g2, unsigned int n);

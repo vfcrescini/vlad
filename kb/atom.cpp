@@ -14,10 +14,12 @@
 
 atom::atom()
 {
-  type = 0;
+  type = VLAD_ATOM_HOLDS;
+  holds.subject = NULL;
+  holds.access = NULL;
+  holds.object = NULL;
   truth = true;
-  constant = NULL;
-  initialised = false;	
+  initialised = false;
 }
 
 atom::~atom()
@@ -47,10 +49,6 @@ bool atom::cmp(list_item *item)
     return false;
 
   switch(type) {
-    case VLAD_ATOM_CONST :
-      return 
-        (truth == tmp->truth && !strcmp(constant, tmp->constant)) ||
-        (truth != tmp->truth && strcmp(constant, tmp->constant));
     case VLAD_ATOM_HOLDS :
       return 
         (truth == tmp->truth) &&
@@ -84,8 +82,6 @@ int atom::get(char **n1, char **n2, char **n3, unsigned char *ty, bool *tr)
   *tr = truth;
 
   switch(type) {
-    case VLAD_ATOM_CONST :
-      return get_const(n1);
     case VLAD_ATOM_HOLDS :
       return get_holds(n1, n2, n3);
     case VLAD_ATOM_MEMBER :
@@ -94,24 +90,8 @@ int atom::get(char **n1, char **n2, char **n3, unsigned char *ty, bool *tr)
       return get_subset(n1, n2);
   }
 
-  /* type will never be anything but the 4 above so this will never happen */
+  /* type will never be anything but the 3 above so this will never happen */
   return VLAD_FAILURE;
-}
-
-int atom::get_const(char **c)
-{
-  if (!initialised)
-    return VLAD_UNINITIALISED;
-
-  if (c == NULL)
-    return VLAD_NULLPTR;
-
-  if (type != VLAD_ATOM_CONST)
-    return VLAD_FAILURE;
-
-  *c = constant;
-
-  return VLAD_OK;
 }
 
 int atom::get_holds(char **s, char **a, char **o)
@@ -169,8 +149,6 @@ int atom::get_subset(char **g1, char **g2)
 int atom::init(char *n1, char *n2, char *n3, unsigned char ty, bool tr)
 {
   switch(ty) {
-    case VLAD_ATOM_CONST :
-      return init_const(n1, tr);
     case VLAD_ATOM_HOLDS :
       return init_holds(n1, n2, n3, tr);
     case VLAD_ATOM_MEMBER :
@@ -179,34 +157,6 @@ int atom::init(char *n1, char *n2, char *n3, unsigned char ty, bool tr)
       return init_subset(n1, n2, tr);
   }
   return VLAD_INVALIDINPUT;
-}
-
-int atom::init_const(char *c, bool t)
-{
-  if (c == NULL)
-    return VLAD_NULLPTR;
-
-  reset();
-
-  type = VLAD_ATOM_CONST;
-  truth = t;
-
-  if (!strcmp(c, VLAD_ATOM_TRUE)) {
-    if ((constant = VLAD_STRING_MALLOC(VLAD_ATOM_TRUE)) == NULL)
-      return VLAD_MALLOCFAILED;
-    strcpy(constant, VLAD_ATOM_TRUE);
-  }
-  else if (!strcmp(c, VLAD_ATOM_FALSE)) {
-    if ((constant = VLAD_STRING_MALLOC(VLAD_ATOM_FALSE)) == NULL)
-      return VLAD_MALLOCFAILED;
-    strcpy(constant, VLAD_ATOM_FALSE);
-  }
-  else
-    return VLAD_INVALIDINPUT;
-
-  initialised = true;
-
-  return VLAD_OK;
 }
 
 int atom::init_holds(const char *s, const char *a, const char *o, bool t)
@@ -297,8 +247,6 @@ int atom::copy(atom **a)
     return VLAD_MALLOCFAILED;
 
   switch(type) {
-    case VLAD_ATOM_CONST :
-      return (*a)->init_const(constant, truth);
     case VLAD_ATOM_HOLDS :
       return (*a)->init_holds(holds.subject, holds.access, holds.object, truth);
     case VLAD_ATOM_MEMBER :
@@ -336,9 +284,6 @@ int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
    */
 
   switch(type) {
-    case VLAD_ATOM_CONST :
-      /* nothing to replace in constants */
-      return (*a)->init_const(constant, truth);
     case VLAD_ATOM_HOLDS : {
       char *tmp_s;
       char *tmp_a;
@@ -426,9 +371,6 @@ void atom::print(char *s)
 {
   if (initialised) {
     switch(type) {
-      case VLAD_ATOM_CONST :
-        sprintf(s, "%s%s", truth ? "" : "!", constant);
-        break;
       case VLAD_ATOM_HOLDS :
         sprintf(s,
                 "%sholds(%s,%s,%s)",
@@ -460,10 +402,6 @@ int atom::reset()
 {
   if (initialised) {
     switch(type) {
-      case VLAD_ATOM_CONST :
-        if (constant != NULL)
-          free(constant);
-        break;
       case VLAD_ATOM_HOLDS :
         if (holds.subject != NULL)
           free(holds.subject); 

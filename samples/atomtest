@@ -10,8 +10,6 @@ ident sub-grp sg1, sg2, sg3;
 ident acc-grp ag1, ag2, ag3, ag4;
 ident obj-grp og1, og2, og3, og4, og5;
 
-initially false;
-initially true;
 initially holds(s1,a1,o1);
 initially holds(s1,a1,o2);
 initially holds(s1,a1,o3);
@@ -594,11 +592,6 @@ initially subst(og5, og2);
 initially subst(og5, og3);
 initially subst(og5, og4);
 initially subst(og5, og5);
-
-/*
-initially !false;
-initially !true;
-*/
 
 initially !holds(s1,a1,o1);
 initially !holds(s1,a1,o2);

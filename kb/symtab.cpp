@@ -20,8 +20,6 @@ symtab::symtab()
   sub_grp_list = NULL;
   acc_grp_list = NULL;
   obj_grp_list = NULL;
-  t_const = NULL;
-  f_const = NULL;
   initialised = false;
 }
 
@@ -39,10 +37,6 @@ symtab::~symtab()
     delete acc_grp_list;
   if (obj_grp_list != NULL)
     delete obj_grp_list;
-  if (t_const != NULL)
-    free(t_const); 
-  if (f_const != NULL)
-    free(f_const);
 }
 
 int symtab::init()
@@ -60,10 +54,6 @@ int symtab::init()
     delete acc_grp_list;
   if (obj_grp_list != NULL)
     delete obj_grp_list;
-  if (t_const != NULL)
-    free(t_const); 
-  if (f_const != NULL)
-    free(f_const);
 
   /* now create them */
   if ((sub_list = VLAD_NEW(stringlist())) == NULL)
@@ -78,14 +68,6 @@ int symtab::init()
     return VLAD_MALLOCFAILED;
   if ((obj_grp_list = VLAD_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((t_const = VLAD_STRING_MALLOC(VLAD_CONST_TRUE)) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((f_const = VLAD_STRING_MALLOC(VLAD_CONST_FALSE)) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* strcpy never fails */
-  strcpy(t_const, VLAD_CONST_TRUE);
-  strcpy(f_const, VLAD_CONST_FALSE);
 
   initialised = true;
 
@@ -110,7 +92,6 @@ int symtab::add(const char *s, unsigned char t)
   }
 
   switch(t) { 
-    /* of course, we do not allow the constants to be added */
     case VLAD_IDENT_SUBJECT :
       return sub_list->add(s);
     case VLAD_IDENT_ACCESS :
@@ -138,19 +119,6 @@ int symtab::get(const char *s, unsigned int *i, unsigned char *t)
 
   if (s == NULL || i == NULL || t == NULL)
     return VLAD_NULLPTR;
-
-  /* first see if they are constants */
-  if (!strcmp(s, VLAD_CONST_FALSE)) {
-    *t = VLAD_IDENT_CONST;
-    *i = 0;
-    return VLAD_OK;
-  }
-
-  if (!strcmp(s, VLAD_CONST_TRUE)) {
-    *t = VLAD_IDENT_CONST;
-    *i = 1;
-    return VLAD_OK;
-  }
 
   /* try to get s from all the lists sequentially */
   if ((retval = sub_list->get(s, i)) != VLAD_NOTFOUND) {
@@ -199,16 +167,6 @@ int symtab::get(unsigned int i, unsigned char t, char **s)
     return VLAD_UNINITIALISED;
 
   switch(t) { 
-    case VLAD_IDENT_CONST :
-      if (i == 0) {
-        *s = f_const;
-        return VLAD_OK;
-      }
-      if (i == 1) {
-        *s = t_const;
-        return VLAD_OK;
-      }
-      return VLAD_INVALIDINPUT;
     case VLAD_IDENT_SUBJECT :
       return sub_list->get(i, s);
     case VLAD_IDENT_ACCESS :
@@ -237,19 +195,7 @@ int symtab::get(unsigned char t, char ***a, unsigned int *s)
   if (a == NULL || s == NULL)
     return VLAD_NULLPTR;
 
-  if (VLAD_IDENT_IS_CONST(t)) {
-
-    *s = 2;
-
-    if ((*a = VLAD_ADT_MALLOC(char *, *s)) == NULL)
-      return VLAD_MALLOCFAILED;
-
-    (*a)[0] = f_const;
-    (*a)[1] = t_const;
-
-    return VLAD_OK;
-  }
-  else if (VLAD_IDENT_IS_SUBJECT(t)) {
+  if (VLAD_IDENT_IS_SUBJECT(t)) {
     unsigned int s_len;
     unsigned int sg_len;
 
@@ -328,8 +274,6 @@ unsigned int symtab::length(unsigned char t)
     return 0;
 
   switch(t) { 
-    case VLAD_IDENT_CONST :
-      return 2;
     case VLAD_IDENT_SUBJECT :
       return sub_list->length();
     case VLAD_IDENT_ACCESS :
@@ -386,17 +330,6 @@ int symtab::type(const char *s, unsigned char *t)
 
   if (s == NULL || t == NULL)
     return VLAD_NULLPTR;
-
-  /* first see if they are constants */
-  if (!strcmp(s, VLAD_CONST_FALSE)) {
-    *t = VLAD_IDENT_CONST;
-    return VLAD_OK;
-  }
-
-  if (!strcmp(s, VLAD_CONST_TRUE)) {
-    *t = VLAD_IDENT_CONST;
-    return VLAD_OK;
-  }
 
   /* try to find s from all the lists sequentially */
   if ((retval = sub_list->find(s)) != VLAD_NOTFOUND) {

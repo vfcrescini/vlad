@@ -19,7 +19,6 @@ kb::kb()
   ctable = NULL;
   ttable = NULL;
   stage = 0;
-  c_len = 0;
   s_len = 0;
   a_len = 0;
   o_len = 0;
@@ -97,7 +96,6 @@ int kb::close_symtab()
   /* first get some needed values */
   
   /* get list lengths */
-  c_len = stable->length(VLAD_IDENT_CONST);
   s_len = stable->length(VLAD_IDENT_SUBJECT);
   a_len = stable->length(VLAD_IDENT_ACCESS);
   o_len = stable->length(VLAD_IDENT_OBJECT); 
@@ -111,7 +109,7 @@ int kb::close_symtab()
   s_tot = (sg_len * sg_len) + (ag_len * ag_len) + (og_len * og_len);
   
   /* total +ve atoms */
-  pos_tot = h_tot + m_tot + s_tot + c_len;
+  pos_tot = h_tot + m_tot + s_tot;
 
   stage = 2;
   
@@ -403,9 +401,6 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
       return retval;
 
     switch(tmp_ty) {
-      case VLAD_ATOM_CONST :
-        fprintf(f, "  %d = holds(S%d, %c, constant, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1);
-        break;
       case VLAD_ATOM_HOLDS :
         fprintf(f, "  %d = holds(S%d, %c, holds, %s, %s, %s)\n", i, tmp_s, tmp_tr ? 'T' : 'F', tmp1, tmp2, tmp3);
         break;
@@ -586,9 +581,6 @@ int kb::verify_atom(atom *a, stringlist *v)
     return retval;
 
   switch(ty) {
-    case VLAD_ATOM_CONST :
-      /* constants need not be checked */
-      break;
     case VLAD_ATOM_HOLDS :
       return verify_atom_holds(tmp1, tmp2, tmp3, v);
     case VLAD_ATOM_MEMBER :
@@ -832,21 +824,6 @@ int kb::verify_transref(char *n, stringlist *il)
   return VLAD_OK;
 }
 
-int kb::encode_const(const char *c, unsigned int *n)
-{
-  int retval;
-  unsigned int c_index;
-  unsigned char c_type;
-
-  /* get from symbol table */
-  if ((retval = stable->get(c, &c_index, &c_type)) != VLAD_OK)
-    return retval;
-
-  *n = c_index;
-
-  return VLAD_OK;
-}
-
 int kb::encode_holds(const char *s, const char *a, const char *o, unsigned int *n)
 {
   int retval;
@@ -941,11 +918,6 @@ int kb::encode_subset(const char *g1, const char *g2, unsigned int *n)
       return VLAD_FAILURE;
   }
   return VLAD_OK;
-}
-
-int kb::decode_const(char **c, unsigned int n)
-{
-  return stable->get(n, VLAD_IDENT_CONST, c);
 }
 
 int kb::decode_holds(char **s, char **a, char **o, unsigned int n)
@@ -1055,24 +1027,19 @@ int kb::encode_atom(atom *a, unsigned int s, unsigned int *n)
 
   /* get the unsigned, unstated id of the atom */
   switch(ty) {
-    case VLAD_ATOM_CONST :
-      if ((retval = encode_const(tmp1, &num)) != VLAD_OK)
-        return retval;
-      break;
     case VLAD_ATOM_HOLDS :
       if ((retval = encode_holds(tmp1, tmp2, tmp3, &num)) != VLAD_OK)
         return retval;
-      num = num + c_len;
       break;
     case VLAD_ATOM_MEMBER :
       if ((retval = encode_member(tmp1, tmp2, &num)) != VLAD_OK)
         return retval;
-      num = num + c_len + h_tot;
+      num = num + h_tot;
       break;
     case VLAD_ATOM_SUBSET :
       if ((retval = encode_subset(tmp1, tmp2, &num)) != VLAD_OK)
         return retval;
-      num = num + c_len + h_tot + m_tot;
+      num = num + h_tot + m_tot;
       break;
     default :
       return VLAD_INVALIDINPUT;
@@ -1112,28 +1079,22 @@ int kb::decode_atom(atom **a, unsigned int *s, unsigned int n)
   n = n % pos_tot;
 
   /* now get the type and the atom details */
-  if (n < c_len) {
-    ty = VLAD_ATOM_CONST;
-
-    if ((retval = decode_const(&tmp1, n)) != VLAD_OK)
-      return retval;
-  }
-  else if (n < c_len + h_tot) {
+  if (n < h_tot) {
     ty = VLAD_ATOM_HOLDS;
 
-    if ((retval = decode_holds(&tmp1, &tmp2, &tmp3, n - c_len)) != VLAD_OK)
+    if ((retval = decode_holds(&tmp1, &tmp2, &tmp3, n)) != VLAD_OK)
       return retval;
   }
-  else if (n < c_len + h_tot + m_tot) {
+  else if (n < h_tot + m_tot) {
     ty = VLAD_ATOM_MEMBER;
 
-    if ((retval = decode_member(&tmp1, &tmp2, n - (c_len + h_tot))) != VLAD_OK)
+    if ((retval = decode_member(&tmp1, &tmp2, n - h_tot)) != VLAD_OK)
       return retval;
   }
   else {
     ty = VLAD_ATOM_SUBSET;
 
-    if ((retval = decode_subset(&tmp1, &tmp2, n - (c_len + h_tot + m_tot))) != VLAD_OK)
+    if ((retval = decode_subset(&tmp1, &tmp2, n - (h_tot + m_tot))) != VLAD_OK)
       return retval;
   }
 
@@ -1187,9 +1148,9 @@ int kb::generate_inheritance(unsigned int state_tot,
         for (i_sub = 0; i_sub < s_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + (i_sub * sg_len) + i_group;
+              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + ((i_group + s_len) * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + (i_sub * sg_len) + i_group;
               if ((retval = (*l1)->add(param1)) != VLAD_OK)
                 return retval;
               if ((retval = (*l2)->add(param2)) != VLAD_OK)
@@ -1205,9 +1166,9 @@ int kb::generate_inheritance(unsigned int state_tot,
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj;
-              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group;
+              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + ((i_group + a_len) * (o_len + og_len)) + i_obj;
+              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (i_acc * sg_len) + i_group;
               if ((retval = (*l1)->add(param1)) != VLAD_OK)
                 return retval;
               if ((retval = (*l2)->add(param2)) != VLAD_OK)
@@ -1223,9 +1184,9 @@ int kb::generate_inheritance(unsigned int state_tot,
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len; i_obj++) {
-              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
-              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + c_len + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len;
-              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group;
+              unsigned int param1 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_obj;
+              unsigned int param2 = (i_state * pos_tot * 2) + (i_truth ? pos_tot : 0) + (i_sub * (a_len + ag_len) * (o_len + og_len)) + (i_acc * (o_len + og_len)) + i_group + o_len;
+              unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_obj * og_len) + i_group;
               if ((retval = (*l1)->add(param1)) != VLAD_OK)
                 return retval;
               if ((retval = (*l2)->add(param2)) != VLAD_OK)
@@ -1278,9 +1239,9 @@ int kb::generate_transitivity(unsigned int state_tot,
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
-          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (i_grp1 * sg_len) + i_grp3;
-          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2;
-          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (i_grp2 * sg_len) + i_grp3;
+          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp3;
+          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp1 * sg_len) + i_grp2;
+          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (i_grp2 * sg_len) + i_grp3;
           if ((retval = (*l1)->add(param1)) != VLAD_OK)
             return retval;
           if ((retval = (*l2)->add(param2)) != VLAD_OK)
@@ -1297,9 +1258,9 @@ int kb::generate_transitivity(unsigned int state_tot,
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
-          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp3;
-          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp2;
-          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (i_grp2 * sg_len) + i_grp3;
+          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp3;
+          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp1 * sg_len) + i_grp2;
+          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (i_grp2 * sg_len) + i_grp3;
           if ((retval = (*l1)->add(param1)) != VLAD_OK)
             return retval;
           if ((retval = (*l2)->add(param2)) != VLAD_OK)
@@ -1316,9 +1277,9 @@ int kb::generate_transitivity(unsigned int state_tot,
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
-          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp3;
-          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp2;
-          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + c_len + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp2 * sg_len) + i_grp3;
+          unsigned int param1 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp3;
+          unsigned int param2 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp1 * sg_len) + i_grp2;
+          unsigned int param3 = (i_state * pos_tot * 2) + pos_tot + h_tot + m_tot + (sg_len * sg_len) + (ag_len * ag_len) + (i_grp2 * sg_len) + i_grp3;
           if ((retval = (*l1)->add(param1)) != VLAD_OK)
             return retval;
           if ((retval = (*l2)->add(param2)) != VLAD_OK)
