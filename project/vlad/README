@@ -5,12 +5,17 @@ Build/Use Instructions
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2003 Jan 24
+Updated: 2003 Feb 12
 -------------------------------------------------------------------------------
 
 1. From the toplevel source directory, run ./configure, then make :
 
      $ ./configure
+     $ make
+
+   To minimise disk-footprint size :
+
+     $ ./configure --enable-strip
      $ make
 
    For a debug build (lots of output, compiled with -g) :
@@ -25,4 +30,4 @@ Updated: 2003 Jan 24
 
    To use the sample program in example :
 
-     $ ./vlad example/sample
+     $ ./vlad sample/chinese_wall
