@@ -49,7 +49,45 @@ int main(int argc, char *argv[])
   yyout = stdout;
   yyerr = stderr;
 
+#if 1
   yyparse();
+#else
+  symtab *x;
+  identifier *y;
+
+  x = new symtab();
+  x->add("1",subject,false);
+  x->add("2",subject,false);
+  x->add("3",subject,false);
+  x->add("4",subject,false);
+  x->add("5",subject,false);
+
+  printf("%d\n\n", x->length());
+
+  x->get("5", &y);
+  printf("%s\n", y->get_name());
+  x->get("4", &y);
+  printf("%s\n", y->get_name());
+  x->get("3", &y);
+  printf("%s\n", y->get_name());
+  x->get("2", &y);
+  printf("%s\n", y->get_name());
+  x->get("1", &y);
+  printf("%s\n\n", y->get_name());
+
+  x->del("3");
+  
+  x->get("5", &y);
+  printf("%s\n", y->get_name());
+  x->get("4", &y);
+  printf("%s\n", y->get_name());
+  x->get("3", &y);
+  printf("%s\n", y->get_name());
+  x->get("2", &y);
+  printf("%s\n", y->get_name());
+  x->get("1", &y);
+  printf("%s\n\n", y->get_name());
+#endif
 
   return 0;
 }
