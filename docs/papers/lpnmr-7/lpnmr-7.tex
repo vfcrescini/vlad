@@ -114,33 +114,88 @@
 
     \subsection{Language L to Extended Logic Program}
 
-      \subsubsection{Integration of Set Theory}
+      \subsubsection{Integration of Set Theory.}
 
-        \begin{itemize}
-          \item
-            Inheritance Rules for Members of Groups
+        Since entities in Language L may be singular or groups, certain rules
+        must be added to ensure that set theory holds.
 
-            holds(M, P) $\leftarrow$ holds(G, P) $\land$ M $\in$ G
-          \item
-            Inheritance Rules for Subgroups
+        \emph{Inheritance Rules for Members of Groups.} Ensures that members
+        inherit all the properties of groups of which it is a member.
 
-            holds(S1, P) $\leftarrow$ holds(S2, P) $\land$ S1 $\subseteq$ S2
-          \item
-            Transitivity Rule
+        \begin{equation}
+          holds(M, P) \leftarrow holds(G, P) \land M \in G
+        \end{equation}
 
-            S1 $\subseteq$ S3 $\leftarrow$ S1 $\subseteq$ S2 $\land$ S2 $\subseteq$ S3
-        \end{itemize}
+        \emph{Inheritance Rules for Subgroups.} Similarly, groups inherit all
+        properties of its supergroup.
 
-      \subsubsection{State Handling Mechanism}
+        \begin{equation}
+          holds(S1, P) \leftarrow holds(S2, P) \land S1 \subseteq S2
+        \end{equation}
 
-        \begin{itemize}
-          \item
-            Initial State
-          \item
-            Constraints
-          \item
-            Transformations
-        \end{itemize}
+        \emph{Transitivity Rule.} If S1 is a subset of S2 and S2 is a subset
+        of S3, then S1 is a subset of S3.
+
+        \begin{equation}
+          S1 \subseteq S3 \leftarrow S1 \subseteq S2 \land S2 \subseteq S3
+        \end{equation}
+
+      \subsubsection{State Handling Mechanism.}
+
+        An undesirable side-effect of providing dynamic update capabilities to
+        Language L is the presence of states in the policy base. To translate
+        the language into an extended logic program, the states need to be
+        flattened to produce a stateless policy base. This flattening
+        procedure can easily be achieved by treating the state as a property
+        of each atom. Unfortunately, the procedure itself is not as straight-
+        forward as one would expect. Each of the elements of Language L will
+        have a different procedure for flattening the states.
+
+        \emph{Initial State.} Initial state expressions are the easiest to
+        translate since the additional state property is fixed to the initial
+        state 0. The atom holds(sub, acc, obj) in the initial state is
+        translated to holds(sub, acc, obj, 0).
+
+        \begin{equation}
+          \forall\{A | A \in set of all atoms\} holds(A, 0)
+        \end{equation}
+
+        \emph{Constraint Rules.} As with the initial state expressions, every
+        atom in every constraint rule will be given a new state property.
+        However, since constraint rules apply to all states in the policy
+        base, each constraint rule will be repeated for every state.
+        Constraints of the form "A implied by B with absence C" is translated
+        to:
+
+        \begin{equation}
+          \forall\{S | S \in set of all states\}
+          holds(A, S) \leftarrow holds(B, S) not holds(C, S)
+        \end{equation}
+
+        \emph{Transformation.} Given the most basic form of a transformation,
+        "T causes A if B", a transformation T, a state S before transformation
+        T is applied and a function Res that returns the state after
+        transformation T is applied to state S:
+
+        \begin{equation}
+          holds(A, Res(T, S)) \leftarrow holds(B, S)
+        \end{equation}
+ 
+        In addition to the above rule, we also expect atoms that are not
+        affected by the transformation to be carried over to the next state.
+        The following rules must be applied to ensure that this property is
+        held:
+
+        \begin{equation}
+          holds(A, Res(T, S)) \leftarrow holds(A, S) \land not \lnot holds(A, Res(T, S))
+        \end{equation}
+        \begin{equation}
+          \lnot holds(A, Res(T, S)) \leftarrow \lnot holds(A, S) \land not holds(A, Res(T, S))
+        \end{equation}
+
+        where T is the transformation, S is the state before transformation
+        T is applied, A is all the atoms in the domain and Res is a function
+        that returns the state after transformation T is applied to state S.
 
     \subsection{Extended Logic Program to Normal Logic Program}
 
