@@ -65,20 +65,14 @@ int yylex(void);
 %token <terminal> VLAD_SYM_ACCGRPTYPE
 %token <terminal> VLAD_SYM_IDENT
 %token <identifier> VLAD_SYM_IDENTIFIER
-%type <atm> ground_atom 
-%type <atm> ground_boolean_atom 
-%type <atm> ground_holds_atom 
-%type <atm> ground_subst_atom 
-%type <atm> ground_memb_atom 
+%type <atm> atom 
+%type <atm> boolean_atom 
+%type <atm> holds_atom 
+%type <atm> subst_atom 
+%type <atm> memb_atom 
 %type <atm> logical_atom 
-%type <exp> ground_exp
+%type <exp> expression
 %type <exp> with_clause
-%type <atm> comp_atom 
-%type <atm> comp_boolean_atom 
-%type <atm> comp_holds_atom 
-%type <atm> comp_subst_atom 
-%type <atm> comp_memb_atom
-%type <exp> comp_exp
 %type <exp> if_clause
 %type <varlist> trans_var_list
 %type <varlist> trans_var_def
@@ -334,7 +328,7 @@ acc_grp_ident_list :
   ;
 
 initial_stmt : 
-  VLAD_SYM_INITIALLY ground_exp VLAD_SYM_SEMICOLON {
+  VLAD_SYM_INITIALLY expression VLAD_SYM_SEMICOLON {
     int retval;
     unsigned int i;
     atom *a;
@@ -376,7 +370,7 @@ constraint_stmt :
   ;
 
 implies_stmt :
-  ground_exp VLAD_SYM_IMPLIES ground_exp with_clause VLAD_SYM_SEMICOLON {
+  expression VLAD_SYM_IMPLIES expression with_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
     char e[1024];
@@ -413,13 +407,13 @@ implies_stmt :
 with_clause : {
     $$ = NULL;
   }
-  | VLAD_SYM_WITH VLAD_SYM_ABSENCE ground_exp {
+  | VLAD_SYM_WITH VLAD_SYM_ABSENCE expression {
     $$ = $3;
   }
   ;
 
 always_stmt :
-  VLAD_SYM_ALWAYS ground_exp VLAD_SYM_SEMICOLON {
+  VLAD_SYM_ALWAYS expression VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
     char e[1024];
@@ -443,7 +437,7 @@ always_stmt :
   ;
 
 trans_stmt : 
-  VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES comp_exp if_clause VLAD_SYM_SEMICOLON {
+  VLAD_SYM_IDENTIFIER trans_var_def VLAD_SYM_CAUSES expression if_clause VLAD_SYM_SEMICOLON {
     int retval;
 #ifdef DEBUG
     char v[1024];
@@ -486,7 +480,7 @@ trans_stmt :
 if_clause : {
     $$ = NULL;
   }
-  | VLAD_SYM_IF comp_exp {
+  | VLAD_SYM_IF expression {
     $$ = $2;
   }
   ;
@@ -525,7 +519,7 @@ trans_var_list :
   ;
 
 query_stmt : 
-  VLAD_SYM_IS ground_exp after_clause VLAD_SYM_SEMICOLON {
+  VLAD_SYM_IS expression after_clause VLAD_SYM_SEMICOLON {
     delete $2;
   }
   ;
@@ -564,8 +558,8 @@ logical_op :
   }
   ;
 
-ground_exp : 
-  ground_boolean_atom { 
+expression : 
+  boolean_atom { 
     int retval;
 
     if (($$ = VLAD_NEW(expression(NULL))) == NULL) {
@@ -576,7 +570,7 @@ ground_exp :
     if ((retval = $$->add($1)) != VLAD_OK)
       return retval;
   }
-  | ground_exp logical_op ground_boolean_atom {
+  | expression logical_op boolean_atom {
     int retval;
     switch ((retval = $$->add($3))) {
       case VLAD_OK :
@@ -589,24 +583,24 @@ ground_exp :
   }
   ;
 
-ground_boolean_atom :
-  ground_atom {
+boolean_atom :
+  atom {
     $$ = $1;
   }
-  | VLAD_SYM_NOT ground_atom {
+  | VLAD_SYM_NOT atom {
     $$ = $2;
     $$->negate();
   }
   ;
 
-ground_atom :
-  ground_holds_atom {
+atom :
+  holds_atom {
     $$ = $1;
   }
-  | ground_subst_atom {
+  | subst_atom {
     $$ = $1;
   }
-  | ground_memb_atom {
+  | memb_atom {
     $$ = $1;
   }
   | logical_atom {
@@ -614,7 +608,7 @@ ground_atom :
   }
   ;
 
-ground_holds_atom :
+holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
@@ -628,98 +622,7 @@ ground_holds_atom :
   }
   ;
 
-ground_subst_atom :
-  VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
-    int retval;
-
-    if (($$ = VLAD_NEW(atom())) == NULL) {
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    }
-
-    if ((retval = $$->init_subset($3, $5, true)) != VLAD_OK)
-      return retval;
-  }
-  ;
-ground_memb_atom :
-  VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
-    int retval;
-
-    if (($$ = VLAD_NEW(atom())) == NULL) {
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    }
-
-    if ((retval = $$->init_member($3, $5, true)) != VLAD_OK)
-      return retval;
-  }
-  ;
-
-comp_exp :
-  comp_boolean_atom {
-    int retval;
-
-    if (($$ = VLAD_NEW(expression(NULL))) == NULL) {
-      fprintf(stderr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    }
-
-    if ((retval = $$->add($1)) != VLAD_OK)
-      return retval;
-  }
-  | comp_exp logical_op comp_boolean_atom {
-    int retval;
-    switch ((retval = $$->add($3))) {
-      case VLAD_OK :
-      case VLAD_DUPLICATE :
-        /* we simply ignore duplicates */
-        break;
-      default :
-        return retval;
-    }
-  }
-  ;
-
-comp_boolean_atom :
-  comp_atom {
-    $$ = $1;
-  }
-  | VLAD_SYM_NOT comp_atom {
-    $$ = $2;
-    $$->negate();
-  }
-  ;
-
-comp_atom :
-  comp_holds_atom {
-    $$ = $1;
-  }
-  | comp_subst_atom {
-    $$ = $1;
-  }
-  | comp_memb_atom {
-    $$ = $1;
-  }
-  | logical_atom {
-    $$ = $1;
-  }
-  ;
-
-comp_holds_atom :
-  VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
-    int retval;
-
-    if (($$ = VLAD_NEW(atom())) == NULL) {
-      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
-      return VLAD_MALLOCFAILED;
-    }
-
-    if ((retval = $$->init_holds($3, $5, $7, true)) != VLAD_OK)
-      return retval;
-  }
-  ;
-
-comp_subst_atom :
+subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
@@ -733,7 +636,7 @@ comp_subst_atom :
   }
   ;
 
-comp_memb_atom :
+memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 

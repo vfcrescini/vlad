@@ -1,5 +1,12 @@
 2003-03-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* docs/bnf.txt :
+	* parser/parser.y :
+
+	  - Since the difference between a ground and a non-ground atom /
+	    expression do not exist at parse time, they are now combined
+	    together.
+
 	* common/list.cpp :
 
 	  - Fixed get() and del() to make sure that data is retrieved/deleted
