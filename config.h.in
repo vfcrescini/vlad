@@ -7,9 +7,10 @@
 
 #define VERSION "0.0.0"
 #undef DEBUG
+#undef SMODELS
 
 #ifdef DEBUG
-  #include <stdio.h>
+  #include <cstdio>
 #endif
 
 #endif
