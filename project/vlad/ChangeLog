@@ -1,3 +1,18 @@
+2003-03-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+
+	  - Changed printf() to fprintf(stderr).
+
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+	* kb/kb.cpp :
+
+	  - Constants true and false are now "built-in" the symbol table.
+	    This is to avoid allocating new memory for the constants. Now
+	    memory is allocated once for these and only a reference is passed
+	    around.
+
 2003-03-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.cpp :
