@@ -454,8 +454,8 @@ static int modvlad_postconfig(apr_pool_t *a_pconf,
     return OK;
 
   /* create pipes */
-  apr_file_pipe_create(&(conf->pipe_svr[1]), &(conf->pipe_cli[0]), a_pconf);
-  apr_file_pipe_create(&(conf->pipe_cli[1]), &(conf->pipe_svr[0]), a_pconf);
+  apr_file_pipe_create(&(conf->pipe_cli[0]), &(conf->pipe_svr[1]), a_pconf);
+  apr_file_pipe_create(&(conf->pipe_svr[0]), &(conf->pipe_cli[1]), a_pconf);
 
   /* create mutex */
   if (apr_proc_mutex_create(&(conf->mutex),
