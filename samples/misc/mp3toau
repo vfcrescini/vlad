@@ -25,9 +25,9 @@ then
   exit 0
 fi
 
-ls -1 *.mp3 | while read filename
+for filename in *.mp3
 do
   count=$[$count + 1]
-  echo ${filename} -> ${1}/${count}.au
+  echo "${filename} -> ${1}/${count}.au"
   ${mpgprog} -sq "${filename}" > ${1}/${count}.au
 done
