@@ -1430,30 +1430,7 @@ query holds(alice, read, file);
         Each of the tables and lists used in the system inherits from a
         generic ordered and indexed list implementation. Each node in this list
         holds a generic data type that can be used to store strings, an
-        arbitrary data type or another list type. As the linked-list structure
-        will be used as a base class for all other tables and lists, the
-        following methods are defined:
-
-        \begin{itemize}
-          \item
-            $list.len()$
-            returns the number of elements in $list$.
-          \item
-            $list$.$find$($item$)
-            returns true if $item$ is in $list$.
-          \item
-            $list$.$index$($item$)
-            returns the index of $item$ in $list$.
-          \item
-            $list$.$get$($index$)
-            returns the $index$'th item in $list$.
-          \item
-            $list$.$add$($item$)
-            adds $item$ at the end of $list$.
-          \item
-            $list$.$del$($index$)
-            deletes the $index$'th item from $list$.
-        \end{itemize}
+        arbitrary data type or another list type. 
 
         \paragraph{Symbol Table.}
 
@@ -1481,54 +1458,18 @@ query holds(alice, read, file);
             \end{tabular}
           \end{quote}
 
-          In addition to the above lists, the symbol table also defines 3
-          pseudo-lists that are concatenations of the above lists:
-
-          \begin{quote}
-            \begin{tabular}[t]{|l|l|l|}
-              \hline
-              \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-              \hline
-              $s$ & string list & $ss$ $+$ $sg$ \\
-              \hline
-              $a$ & string list & $as$ $+$ $ag$ \\
-              \hline
-              $o$ & string list & $os$ $+$ $og$ \\
-              \hline
-            \end{tabular}
-          \end{quote}
-
           Each entity identifier are sorted in the above lists accoring to
           their type, and ordered accoring to the order in which they are
           declared in the program. Each list is indexed by consecutive
-          positive integers starting from zero. Pseudo-lists are ordered in
-          the same manner as the other lists, with the single list elements
-          starting at index 0, and the group list elements offset by the
-          length of the single list.
-
-          In addition to the data structure, the symbol table also provides
-          the following functions:
-
-          \begin{itemize}
-            \item
-              $find(identifier, type)$ returns true if $identifier$ of type
-              $type$ is stored in the symbol table.
-            \item
-              $type(identifier)$ returns the type of $identifier$ (one of
-              $\{ss|as|os|sg|ag|og\}$).
-            \item
-              $index(identifier, type)$ returns the index of the given
-              identifier with the given type.
-          \end{itemize}
+          positive integers starting from zero. 
 
         \paragraph{Policy Base.}
 
           When a language ${\cal L}$ program is parsed, each of the facts,
-          rules and policy updates must be stored into the policy base before
-          they can be translated into language $\cal L^{*}$. The policy base is
-          composed of 4 tables to store the following: initial state facts,
-          constraint rules, policy update definitions and the policy update
-          sequence.
+          rules and policy updates must first be stored into the policy base. 
+          The policy base is composed of 4 tables to store the following:
+          initial state facts, constraint rules, policy update definitions and
+          the policy update sequence.
 
           \subparagraph{Atoms.}
 
@@ -1536,45 +1477,29 @@ query holds(alice, read, file);
             strings, with each string matching an entity identifier in the
             symbol table.
 
-            \begin{itemize}
-              \item
-                Holds \\
-                \begin{tabular}[t]{|l|l|l|}
-                  \hline
-                  \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-                  \hline
-                  $sub$ & string & subject entity identifier \\
-                  \hline
-                  $acc$ & string & access right entity identifier \\
-                  \hline
-                  $obj$ & string & object entity identifier \\
-                  \hline
-                \end{tabular}
-
-              \item
-                Member \\
-                \begin{tabular}[t]{|l|l|l|}
-                  \hline
-                  \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-                  \hline
-                  $elt$ & string & single entity identifier \\
-                  \hline
-                  $grp$ & string & group entity identifier \\
-                  \hline
-                \end{tabular}
-
-              \item
-                Subset \\
-                \begin{tabular}[t]{|l|l|l|}
-                  \hline
-                  \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-                  \hline
-                  $grp1$ & string & subgroup entity identifier \\
-                  \hline
-                  $grp2$ & string & supergroup entity identifier \\
-                  \hline
-                \end{tabular}
-              \end{itemize}
+            \begin{quote}
+              \begin{tabular}[t]{|l|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type} & \textbf{Description} & \\
+                \hline
+                $sub$ & string & subject entity & {\multirow{3}{*}{\begin{sideways}hol\end{sideways}}} \\
+                \cline{1-3}
+                $acc$ & string & access right entity & \\
+                \cline{1-3}
+                $obj$ & string & object entity & \\
+                \hline
+                \hline
+                $elt$ & string & single entity & {\multirow{2}{*}{\begin{sideways}mem\end{sideways}}} \\
+                \cline{1-3}
+                $grp$ & string & group entity & \\
+                \hline
+                \hline
+                $grp1$ & string & subgroup entity & {\multirow{2}{*}{\begin{sideways}sub\end{sideways}}} \\
+                \cline{1-3}
+                $grp2$ & string & supergroup entity & \\
+                \hline
+              \end{tabular}
+            \end{quote}
 
           \subparagraph{Facts.}
 
