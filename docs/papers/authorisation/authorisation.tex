@@ -43,15 +43,15 @@
       A much better approach is the logic-based system where instead of
       storing each individual rules into a database, a generalized set of
       facts and constraints are stored into the policy base. There have been
-      quite a few developments in this field. In their paper, Woo and Lam [3]
-      describes a logic-based specification for policy bases. Bai and
-      Varadharajan [1] went a few steps further by developing a high-level
-      language for the transformation of the policy base from one state to
-      another. A transformation, in this sense, is the process of adding,
-      removing or modifying a rule in the policy base. Their approach also
-      handles conflict resolution within a transformation. In another paper,
-      Bai and Varadharajan [2] developed another language specification to
-      handle sequences of transformations.
+      quite a few developments in this field. In their paper, Woo and Lam
+      \cite{WL} describes a logic-based specification for policy bases. Bai and
+      Varadharajan \cite{BV1} went a few steps further by developing a
+      high-level language for the transformation of the policy base from one
+      state to another. A transformation, in this sense, is the process of
+      adding, removing or modifying a rule in the policy base. Their approach
+      also handles conflict resolution within a transformation. In another
+      paper, Bai and Varadharajan \cite{BV2} developed another language
+      specification to handle sequences of transformations.
 
     \subsection{Problem}
 
@@ -87,6 +87,11 @@
 
     \pagebreak
 
-  \section{References}
+  \begin{thebibliography}{}
+    \bibitem[1]{BV1}Y. Bai and V. Varadharajan, On Transformation of Authorization Policies. School of Computing and Information Technology, University of Western Sydney, 1997.
+    \bibitem[2]{BV2}Y. Bai and V. Varadharajan, On Sequence of Authorization Policy Transformations. School of Computing and Information Technology, University of Western Sydney, 1997.
+    \bibitem[3]{WL}.Y.C. Woo and S.S. Lam, Authorization in Distributed systems: A Formal Approach. Proceedings of IEEE Symposium on Research in Security and Privacy, 1992.
+    \bibitem[4]{RN}S. Russell and P. Norvig, Artificial Intelligence - A Modern Approach. Prentice Hall, 1995.
+  \end{thebibliography}
 
 \end{document}
