@@ -1,9 +1,8 @@
 # Vino Crescini <jcrescin@cit.uws.edu.au>
 
 TOPSRCDIR = ..
-CFLAGS = -O2 -Wall -ansi -I $(TOPSRCDIR)/include -L $(TOPSRCDIR)/lib
+CFLAGS = -O2 -Wall -ansi -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libparser.a
-INCLUDES =
 
 all : public
 
@@ -37,9 +36,6 @@ y.tab.h : parser.y
 
 clean :
 	$(RM) $(TARGETS) *.o lex.yy.c y.tab.c y.tab.h
-	@for i in $(INCLUDES); do \
-	$(RM) $(TOPSRCDIR)/include/$$i; \
-	done
 	@for i in $(TARGETS); do \
 	$(RM) $(TOPSRCDIR)/lib/$$i; \
 	done
