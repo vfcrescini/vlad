@@ -1528,9 +1528,19 @@ query holds(alice, read, file);
               $type(identifier)$ returns the type of $identifier$ (one of
               $\{ss|as|os|sg|ag|og\}$).
             \item
-              $idx(identifier, type)$ returns the index of the given identifier
-              with the given type.
+              $index(identifier, type)$ returns the index of the given
+              identifier with the given type.
           \end{itemize}
+
+          The following values of the symbol table $stab$ is defined below to
+          simplify references to them in the next sections:
+
+          \begin{itemize}
+            \item $|{\theta}_{x}|$ = $stab.x.len()$
+            \item ${\theta}_{x}[i]$ = $stab.x.get(i)$
+          \end{itemize}
+
+          where $x$ $\in$ $\{s,a,o,ss,as,os,sg,ag,og\}$, $0$ $\leq$ $i$ $<$ $|{\theta}_{x}|$
 
         \paragraph{Policy Base.}
 
@@ -1876,9 +1886,9 @@ query holds(alice, read, file);
 
           Consistent conversion of relational facts to and from this form
           requires a systematic representation of facts. Given the symbol table
-          $s$, we first enumerate all possible positive facts of state $S_{0}$
-          derived from the all possible combinations of all entity identifiers
-          defined in the $s$:
+          $\theta$, we first enumerate all possible positive facts of state
+          $S_{0}$ derived from the all possible combinations of all entity
+          identifiers defined in $\theta$:
 
           \begin{tabular}[t]{|l|l|l|l|l|}
             \hline
@@ -1889,103 +1899,81 @@ query holds(alice, read, file);
             \multicolumn{2}{|l|}{\textbf{}} \\
             \hline
             % holds line 1
-            $s.s[0]$ &
-            $s.a[0]$ &
-            $s.o[0]$ &
-            \multicolumn{2}{|c|}{\multirow{3}{*}{\begin{sideways}Holds\end{sideways}}} \\
+            ${\theta}_{s}[0]$ &
+            ${\theta}_{a}[0]$ &
+            ${\theta}_{o}[0]$ &
+            \multicolumn{2}{|c|}{\multirow{3}{*}{\begin{sideways}holds\end{sideways}}} \\
             % holds line 2
             \vdots & \vdots & \vdots & \multicolumn{2}{|c|}{} \\
             % holds line 3
-            $s.s[l_{s} - 1]$ &
-            $s.a[l_{a} - 1]$ &
-            $s.o[l_{o} - 1]$ &
+            ${\theta}_{s}[|{\theta}_{s}|{-1}]$ &
+            ${\theta}_{a}[|{\theta}_{a}|{-1}]$ &
+            ${\theta}_{o}[|{\theta}_{o}|{-1}]$ &
             \multicolumn{2}{|c|}{} \\
             \hline
             % sub memb line 1
-            $s.ss[0]$ &
-            $s.sg[0]$ &
+            ${\theta}_{s_s}[0]$ &
+            ${\theta}_{s_g}[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}sub\end{sideways}} &
-            \multirow{9}{*}{\begin{sideways}Member\end{sideways}} \\
+            \multirow{9}{*}{\begin{sideways}member\end{sideways}} \\
             % sub memb line 2
             \vdots & \vdots & & & \\
             % sub memb line 3
-            $s.ss[l_{s_{s}} - 1]$ & $s.sg[l_{s_{g}} - 1]$ & & & \\
+            ${\theta}_{s_s}[|{\theta}_{s_s}|{-1}]$ & ${\theta}_{s_g}[|{\theta}_{s_g}|{-1}]$ & & & \\
             \cline{1-4}
             % acc memb line 1
-            $s.as[0]$ &
-            $s.ag[0]$ &
+            ${\theta}_{as}[0]$ &
+            ${\theta}_{ag}[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}acc\end{sideways}} & \\
             % acc memb line 2
             \vdots & \vdots & & & \\
             % acc memb line 3
-            $s.as[l_{a_{s}} - 1]$ & $s.ag[l_{a_{g}} - 1]$ & & & \\
+            ${\theta}_{a_s}[|{\theta}_{a_s}|{-1}]$ & ${\theta}_{a_g}[|{\theta}_{a_g}|{-1}]$ & & & \\
             \cline{1-4}
             % obj memb line 1
-            $s.os[0]$ &
-            $s.og[0]$ &
+            ${\theta}_{o_s}[0]$ &
+            ${\theta}_{o_g}[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}obj\end{sideways}} & \\
             % obj memb line 2
             \vdots & \vdots & & & \\
             % obj memb line 3
-            $s.os[l_{o_{s}} - 1]$ & $s.og[l_{o_{g}} - 1]$ & & & \\
+            ${\theta}_{o_s}[|{\theta}_{o_s}|{-1}]$ & ${\theta}_{o_g}[|{\theta}_{o_g}|{-1}]$ & & & \\
             \hline
             % sub subs line 1
-            $s.sg[0]$ &
-            $s.sg[0]$ &
+            ${\theta}_{s_g}[0]$ &
+            ${\theta}_{s_g}[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}sub\end{sideways}} &
-            \multirow{9}{*}{\begin{sideways}Subset\end{sideways}} \\
+            \multirow{9}{*}{\begin{sideways}subset\end{sideways}} \\
             % sub subs line 2
             \vdots & \vdots & & & \\
             % sub subs line 3
-            $s.sg[l_{s_{g}} - 1]$ & $s.sg[l_{s_{g}} - 1]$ & & & \\
+            ${\theta}_{s_g}[|{\theta}_{s_g}|{-1}]$ & ${\theta}_{s_g}[|{\theta}_{s_g}|{-1}]$ & & & \\
             \cline{1-4}
             % acc subs line 1
-            $s.ag[0]$ &
-            $s.ag[0]$ &
+            ${\theta}_{a_g}[0]$ &
+            ${\theta}_{a_g}[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}acc\end{sideways}} & \\
             % acc subs line 2
             \vdots & \vdots & & & \\
             % acc subs line 3
-            $s.ag[l_{a_{g}} - 1]$ & $s.ag[l_{a_{g}} - 1]$ & & & \\
+            ${\theta}_{a_g}[|{\theta}_{a_g}|{-1}]$ & ${\theta}_{a_g}[|{\theta}_{a_g}|{-1}]$ & & & \\
             \cline{1-4}
             % obj subs line 1
-            $s.og[0]$ &
-            $s.og[0]$ &
+            ${\theta}_{o_g}[0]$ &
+            ${\theta}_{o_g}[0]$ &
             &
             \multirow{3}{*}{\begin{sideways}obj\end{sideways}} & \\
             % obj subs line 2
             \vdots & \vdots & & & \\
             % obj subs line 3
-            $s.og[l_{o_{g}} - 1]$ & $s.og[l_{o_{g}} - 1]$ & & & \\
+            ${\theta}_{o_g}[|{\theta}_{o_g}|{-1}]$ & ${\theta}_{o_g}[|{\theta}_{o_g}|{-1}]$ & & & \\
             \hline
           \end{tabular}
-
-          \begin{quote}
-            where
-
-            $l_{s}$ = $s.s.len()$
-
-            $l_{a}$ = $s.a.len()$
-
-            $l_{o}$ = $s.o.len()$
-
-            $l_{s_{s}}$ = $s.ss.len()$
-
-            $l_{a_{s}}$ = $s.as.len()$
-
-            $l_{o_{s}}$ = $s.os.len()$
-
-            $l_{s_{g}}$ = $s.sg.len()$
-
-            $l_{a_{g}}$ = $s.ag.len()$
-
-            $l_{o_{g}}$ = $s.og.len()$
-          \end{quote}
 
           The enumerated facts in the table above are the positive facts of
           state $S_{0}$. Note that the order in which the facts are enumerated
@@ -1993,62 +1981,68 @@ query holds(alice, read, file);
           access right member fact:
 
           \begin{quote}
-            $memb(s.as[l_{a_{s}} - 1], s.ag[l_{a_{g}} - 1], S_{0}, true)$
+            $memb({\theta}_{a_s}[|{\theta}_{a_s}| - 1], {\theta}_{a_g}[|{\theta}_{a_g}| - 1], S_{0}, true)$
           \end{quote}
 
-          The index $i^{S^{+}_{0}}_{m_{a}}$ can be derived by considering the
+          The index $i$ of the fact above can be derived by considering the
           enumerated order of this fact from the table above, and the fixed
           order of the symbol table:
 
           \begin{quote}
             \begin{math}
               \begin{aligned}[t]
-                i^{S^{+}_{0}}_{m_{a}} = & (l_{s} \times l_{a} \times l_{o}) + \\
-                & (l_{s_{s}} \times l_{s_{g}}) + \\
-                & (l_{a_{s}} \times l_{a_{g}}) - 1
+                i =& (|{\theta}_{s}| \times |{\theta}_{a}| \times |{\theta}_{o}|) + \\
+                & (|{\theta}_{s_s}| \times |{\theta}_{s_g}|) + \\
+                & (|{\theta}_{a_s}| \times |{\theta}_{a_g}|) - 1
               \end{aligned}
             \end{math}
           \end{quote}
 
           Note that in state $S_{0}$, the indices of positive member facts are
           offset by the total number of positive holds facts
-          ($l_{s} \times l_{a} \times l_{o}$) and the indices of positive
-          access right member facts are offset by the total number of positive
-          holds facts ($l_{s} \times l_{a} \times l_{o}$) plus the total number
-          of positive subject member facts ($l_{s_{s}} \times l_{s_{g}}$).
+          ($|{\theta}_{s}| \times |{\theta}_{a}| \times |{\theta}_{o}|$) and
+          the indices of positive access right member facts are offset by the
+          total number of positive holds facts ($|{\theta}_{s}| \times
+          |{\theta}_{a}| \times |{\theta}_{o}|$) plus the total number of
+          positive subject member facts ($|{\theta}_{s_s}| \times
+          |{\theta}_{s_g}|$).
 
           This offsetting procedure can be extended to assign indices for both
           positive and negative facts of states $S_{0}$ and after. The index of
-          a negative fact of state $S_{0}$ is offset by $T^{S^{+}_{0}}$, the
+          a negative fact of state $S_{0}$ is offset by $T^{+}_{S_{0}}$, the
           total number of positive facts in state $S_{0}$. For example, given
           the first negative subject subset fact:
 
           \begin{quote}
-            $subst(s.sg[0], s.sg[0], S_{0}, false)$
+            $subst({\theta}_{s_g}[0], {\theta}_{s_g}[0], S_{0}, false)$
           \end{quote}
 
-          is assigned the index $i^{S^{-}_{0}}_{s_{s}}$, where:
+          is assigned the index $i$, where:
 
           \begin{quote}
             \begin{math}
               \begin{aligned}[t]
-                i^{S^{-}_{0}}_{s_{s}} = & T^{S^{+}_{0}} + \\
-                & (l_{s} \times l_{a} \times l_{o}) + \\
-                & (l_{s_{s}} \times l_{s_{g}}) + (l_{a_{s}} \times l_{a_{g}}) + (l_{o_{s}} \times l_{o_{g}})
+                i = & T^{+}_{S_{0}} + \\
+                & (|{\theta}_{s}| \times |{\theta}_{a}| \times |{\theta}_{o}|) + \\
+                & (|{\theta}_{s_s}| \times |{\theta}_{s_g}|) + \\
+                & (|{\theta}_{a_s}| \times |{\theta}_{a_g}|) + \\
+                & (|{\theta}_{o_s}| \times |{\theta}_{o_g}|)
               \end{aligned}
             \end{math}
           \end{quote}
           \begin{quote}
             \begin{math}
               \begin{aligned}[t]
-                T^{S^{+}_{0}} = & (l_{s} \times l_{a} \times l_{o}) + \\
-                & (l_{s_{s}} \times l_{s_{g}}) + (l_{a_{s}} \times l_{a_{g}}) + (l_{o_{s}} \times l_{o_{g}}) + \\
-                & (l_{s_{g}})^{2} + (l_{a_{g}})^{2} + (l_{o_{g}})^{2}
+                T^{+}_{S_{0}} = & (|{\theta}_{s}| \times |{\theta}_{a}| \times |{\theta}_{o})| + \\
+                & (|{\theta}_{s_s}| \times |{\theta}_{s_g}|) + \\
+                & (|{\theta}_{a_s}| \times |{\theta}_{a_g}|) + \\
+                & (|{\theta}_{o_s}| \times |{\theta}_{o_g}|) + \\
+                & (|{\theta}_{s_g}|)^{2} + (|{\theta}_{a_g}|)^{2} + (|{\theta}_{o_g}|)^{2}
               \end{aligned}
             \end{math}
           \end{quote}
 
-          This procedure can also be extended to assign indices to facts in
+          This procedure can be further extended to assign indices to facts in
           states after $S_{0}$. The indices of facts in state $S_{n}$ is offset
           by the total number of facts in $S_{n - 1}$. Given the symbol table
           $stab$, we generalise the procedure by defining the $encode$
