@@ -36,6 +36,7 @@ INCLUDES = \
   $(SMINCLUDES) \
   $(WRAPINCLUDES) \
   kb.h \
+  polbase.h \
   $(NULL)
 OBJECTS = \
   list.o \
@@ -50,6 +51,7 @@ OBJECTS = \
   $(SMOBJECTS) \
   $(WRAPOBJECTS) \
   kb.o \
+  polbase.o \
   $(NULL)
 TEMPS1 =
 TEMPS2 = \
@@ -129,3 +131,6 @@ endif
 
 kb.o : expression.h symtab.h consttab.h transtab.h $(SMINCLUDES) kb.h kb.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c kb.cpp
+
+polbase.o : symtab.o polbase.h polbase.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp
