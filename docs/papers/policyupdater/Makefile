@@ -6,7 +6,7 @@ PSPDF=ps2pdf
 FIG2DEV=fig2dev
 
 LATEX_SRCS=policyupdater
-XFIG_SRCS=system
+XFIG_SRCS=system list
 
 CLASS=
 STYLE=latex8.sty
@@ -26,11 +26,11 @@ all : eps dvi ps pdf
 all : eps dvi ps pdf
 
 clean :
-	$(foreach file,$(LATEX_SRCS),$(RM) $(file).log $(file).aux $(file).cb)
+	$(RM) $(foreach file,$(LATEX_SRCS),$(file).log $(file).aux $(file).cb)
 
 distclean : clean
-	$(foreach file,$(LATEX_SRCS),$(RM) $(file).dvi $(file).ps $(file).pdf)
-	$(foreach file,$(XFIG_SRCS),$(RM) $(file).eps)
+	$(RM) $(foreach file,$(LATEX_SRCS),$(file).dvi $(file).ps $(file).pdf)
+	$(RM) $(foreach file,$(XFIG_SRCS),$(file).eps)
 
 eps : $(patsubst %,%.eps,$(XFIG_SRCS))
 

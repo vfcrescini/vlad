@@ -337,7 +337,7 @@ always <exp1>
           The following language ${\cal L}$ program code listing shows a simple
           rule-based document access control system scenario.
 
-          In this example, the subject $alice$ initially is a member of the
+          In this example, the subject $alice$ is initially a member of the
           subject group $sudents$, which is holds a $read$ access right for the
           object $file$. The constraint states that if the $grp$ group
           has $read$ access for $file$, and no other information is present to
@@ -457,7 +457,12 @@ query holds(alice, read, file);
         the final state $S_{|\psi|}$ is defined as follows:
 
         \begin{quote}
-          $S_{|\psi|}$ = $Result$($u_{|\psi| - 1}$, $Result$(..., $Result$($u_{0}$, $S_{0}$)))
+          \begin{math}
+            \begin{aligned}[t]
+              S_{|\psi|} = Result&(u_{|\psi| - 1}, Result(..., \\
+              &Result(u_{0}, S_{0})))
+            \end{aligned}
+          \end{math}
         \end{quote}
 
         \paragraph{Entities.}
@@ -518,7 +523,7 @@ query holds(alice, read, file);
               ${\cal A}^{\sigma}_{so} = \{\forall (g1, g2 \in {\cal E}_{og}), \hat{subst}(g1, g2, \sigma)\}$
           \end{enumerate}
 
-        \paragraph{Facts, Expressions and Propositions.}
+        \paragraph{Facts.}
        
           A fact is a logical statement that makes a claim that an atom either
           holds or does not hold at a particular state. The following is the
@@ -526,24 +531,6 @@ query holds(alice, read, file);
 
           \begin{quote}
             $f^{\sigma}$ = $[\lnot]$$\alpha$, $\alpha$ $\in$ ${\cal A}^{\sigma}$
-          \end{quote}
-
-          Expressions are conjunctions of facts represented in language
-          ${\cal L}^{*}$ as follows:
-
-          \begin{quote}
-            $f_{0}$, ..., $f_{n}$
-
-            where $n$ $\geq$ $0$
-          \end{quote}
-
-          Propositions are implications composed of a single fact $c$ as the
-          consequent and an expression $p$ as the premise.
-
-          \begin{quote}
-            $c$ $\leftarrow$ $p_{0}$, ..., $p_{n}$
-
-            where $n$ $\geq$ $0$
           \end{quote}
 
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
@@ -1143,8 +1130,8 @@ query holds(alice, read, file);
               Initial State Facts
 
               \begin{math}
-                \hat{memb}(alice, grp, S_{0}) \\
-                \hat{holds}(grp, read, file,S_{0})
+                \hat{memb}(alice, grp, S_{0}) \leftarrow \\
+                \hat{holds}(grp, read, file,S_{0}) \leftarrow
               \end{math}
 
             \item
@@ -1316,7 +1303,7 @@ query holds(alice, read, file);
 
           \noindent if and only if for every atom $\alpha$ in $\phi$, $\alpha$
           $\in$ ${\cal A}^{|\psi|}$, [$\lnot$] $\alpha$ is in every answer
-          set of $trans$(${\cal D}_{\cal L}$)
+          set of $Trans$(${\cal D}_{\cal L}$)
         \end{definition}
 
     \begin{example}
@@ -1338,15 +1325,57 @@ query holds(alice, read, file);
       \end{center}
     \end{figure}
 
+      \subsubsection{Parsers}
+
+        \paragraph{Policy Parser.}
+
+        \paragraph{Update Parser.}
+
+        \paragraph{Query Parser.}
+
       \subsubsection{Data Structures}
 
         As a program of language ${\cal L}$ is parsed, each statement
         containing entity declarations, facts, constraint rules and policy
-        updates must be stored in a buffer structure before the translation
-        process is started. This buffer structure is composed of the symbol
-        table, the policy base and the policy update sequence.
+        updates must be stored into a structure before the translation process
+        is started. This structure is composed of the symbol table, the policy
+        base and the policy update sequence table.
 
-        [generic list structure]
+        Each of the tables and lists used in the system is extended from a
+        generic ordered and indexed list implementation. Each node in this list
+        holds a generic data type that can be used to store strings, an
+        arbitrary data type or another list type. As shown in figure \ref{fig-2},
+        data elements are indexed in the same order they were added into the
+        list.
+
+        \begin{figure}[ht]
+          \begin{center}
+            \epsfig{file=list.eps}
+            \caption{Generic Indexed Linked-List}
+            \label{fig-2}
+          \end{center}
+        \end{figure}
+
+        As the linked-list structure will be used as a base class for all other
+        tables and lists, the following methods are defined:
+
+        \begin{itemize}
+          \item
+            $list.length()$
+            returns the number of elements in $list$.
+          \item
+            $list$.$find$($item$)
+            returns true if $item$ is in $list$.
+          \item
+            $list$.$get$($index$)
+            returns the $index$'th item in $list$.
+          \item
+            $list$.$add$($item$)
+            adds $item$ at the end of $list$.
+          \item
+            $list$.$delete$($index$)
+            deletes the $index$'th item from $list$.
+        \end{itemize}
 
         \paragraph{Symbol Table.}
 
@@ -1460,8 +1489,8 @@ query holds(alice, read, file);
             following: polymorphic type which can be any of the three atom
             structures above; a type indicator to specify whether the fact is
             holds, member or subset; and a truth flag, to indicate whether the
-            atom is classically negated or not ({\em true}, if the fact holds
-            and {\em false}, if the classical negation of the fact holds.
+            atom is classically negated or not ({\em true} if the fact holds
+            and {\em false} if the classical negation of the fact holds.
 
             \begin{quote}
               \begin{tabular}[t]{|l|l|l|}
@@ -1544,8 +1573,6 @@ query holds(alice, read, file);
               \hline
             \end{tabular}
           \end{quote}
-
-      \subsubsection{Parser}
 
     \subsection{Algorithms}
 
