@@ -82,9 +82,9 @@
 
         \noindent \textbf{\emph{Atoms}}
  
-          Atoms are composed of a relation plus two or more entity or
-          identifiers represent a logical relationship between the entities.
-          There are three types of atoms:
+          Atoms are composed of a relation plus 2 to 3 entity identifiers
+          that represent a logical relationship between the entities. There are
+          three types of atoms:
 
           \begin{itemize}
             \item
@@ -286,7 +286,7 @@ always <exp1>
 
         Conceptually, a state may be thought of as a set of facts and
         constraints of the policy base at a particular instant. However, the
-        semantics of Language $\cal{L}$ gives a more formal and less tangible
+        semantics of Language ${\cal L}$ gives a more formal and less tangible
         definition of state.
 
         \begin{definition}
@@ -300,30 +300,38 @@ always <exp1>
         set $PB'$ after the policy update $U$ is applied.
 
         \begin{definition}
+          The ordered sequence set ${\cal S}$ contains all the policy updates
+          to be applied. The number of states in the domain is $|{\cal S}|$ + 
+          1.
+        \end{definition}
+
+        \begin{definition}
           
-          Atom
+          The atom set $\cal{A}$ is the set of all atoms in the domain. Each
+          atom represents a logical relationship in a particular state of the
+          policy base.
 
           \begin{enumerate}
             \item
               ${\cal A} = {\cal A}_{H} \cup {\cal A}_{M} \cup {\cal A}_{S}$
             \item
-              ${\cal A}_{H} = \{\forall (s \in {\cal E}_{S}, a \in {\cal E}_{A}, o \in {\cal E}_{O}) \mid holds(s, a, o) \}$
+              ${\cal A}_{H} = \{\forall (s \in {\cal E}_{S}, a \in {\cal E}_{A}, o \in {\cal E}_{O}), holds(s, a, o) \}$
             \item
               ${\cal A}_{M} = {\cal A}_{MS} \cup {\cal A}_{MA} \cup {\cal A}_{MO}$
             \item
               ${\cal A}_{S} = {\cal S}_{SS} \cup {\cal S}_{SA} \cup {\cal A}_{SO}$
             \item
-              ${\cal A}_{MS} = \{\forall (e \in {\cal E}_{SS}, g \in {\cal E}_{SG}) \mid memb(e, g)\}$
+              ${\cal A}_{MS} = \{\forall (e \in {\cal E}_{SS}, g \in {\cal E}_{SG}), memb(e, g)\}$
             \item
-              ${\cal A}_{MA} = \{\forall (e \in {\cal E}_{AS}, g \in {\cal E}_{AG}) \mid memb(e, g)\}$
+              ${\cal A}_{MA} = \{\forall (e \in {\cal E}_{AS}, g \in {\cal E}_{AG}), memb(e, g)\}$
             \item
-              ${\cal A}_{MO} = \{\forall (e \in {\cal E}_{OS}, g \in {\cal E}_{OG}) \mid memb(e, g)\}$
+              ${\cal A}_{MO} = \{\forall (e \in {\cal E}_{OS}, g \in {\cal E}_{OG}), memb(e, g)\}$
             \item
-              ${\cal A}_{SS} = \{\forall (g1, g2 \in {\cal E}_{SG}) \mid subst(g1, g2)\}$
+              ${\cal A}_{SS} = \{\forall (g1, g2 \in {\cal E}_{SG}), subst(g1, g2)\}$
             \item
-              ${\cal A}_{SA} = \{\forall (g1, g2 \in {\cal E}_{AG}) \mid subst(g1, g2)\}$
+              ${\cal A}_{SA} = \{\forall (g1, g2 \in {\cal E}_{AG}), subst(g1, g2)\}$
             \item
-              ${\cal A}_{SO} = \{\forall (g1, g2 \in {\cal E}_{OG}) \mid subst(g1, g2)\}$
+              ${\cal A}_{SO} = \{\forall (g1, g2 \in {\cal E}_{OG}), subst(g1, g2)\}$
           \end{enumerate}
 
         \end{definition} 
