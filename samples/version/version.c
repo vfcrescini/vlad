@@ -47,7 +47,7 @@ int main(int aCount, char *aArray[])
 
     // mask 'n shift
     printf("%lu.%lu.%lu\n",
-           (number & VERSION_BASE_3) >> (VERSION_BASE_LEN * 2),
+           (number & VERSION_BASE_3) >> (VERSION_BASE_LEN << 1),
            (number & VERSION_BASE_2) >> VERSION_BASE_LEN,
            number & VERSION_BASE_1);
   } 
@@ -63,7 +63,7 @@ int main(int aCount, char *aArray[])
     // compose number
     printf("%lu\n",
            (unsigned long)
-           (base3 << (VERSION_BASE_LEN * 2)) +
+           (base3 << (VERSION_BASE_LEN << 1)) +
            (base2 << VERSION_BASE_LEN) +
            base1); 
   } 
@@ -95,7 +95,7 @@ int indecrange(int aInt)
 
 int innumrange(unsigned long int aInt)
 {
-  return (aInt & ~((VERSION_BASE << (VERSION_BASE_LEN * 2)) - 1)) ? 0 : 1;
+  return (aInt & ~((VERSION_BASE << (VERSION_BASE_LEN << 1)) - 1)) ? 0 : 1;
 }
 
 int extract(char *aString, int *aBase3, int *aBase2, int *aBase1)
