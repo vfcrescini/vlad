@@ -620,8 +620,6 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
   /* transformation rules */
   fprintf(f, "Transformation Rules\n");
 
-  fprintf(f, " ");
-
   /* state loop */
   for (i = 0; i < tot_trans; i++) {
     unsigned int i_exp;
@@ -637,6 +635,8 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
 
     if ((retval = ttable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
       return retval;
+    
+    fprintf(f, " ");
 
     /* postcondition loop */
     for (i_exp = 0; i_exp < (tmp_post ? tmp_post->length() : 0); i_exp++) {
@@ -657,9 +657,10 @@ int kb::generate_nlp(expression *e, sequence *s, FILE *f)
         return retval;
       fprintf(f, " %d", tmp_num);
     }
+
+    fprintf(f, "\n");
   }
 
-  fprintf(f, "\n");
 
   return VLAD_OK;
 }
