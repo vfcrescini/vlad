@@ -87,7 +87,7 @@ int stringlist_compare(void *p1, void *p2)
   if (p1 == NULL || p2 == NULL)
     return -1;
 
-  return strcmp((char *) p1, (char *) p2);
+  return strcmp((char *) p1, (char *) p2) ? -1 : 0;
 }
 
 /* free memory */

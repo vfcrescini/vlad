@@ -154,6 +154,7 @@ int simplelist_get_data(simplelist_type list,
                         int (*cmp)(void *, void*))
 {
   simplelist_node *curr;
+  char notfound = -1;
 
   if (list.length <= 0 ||
       data == NULL ||
@@ -167,14 +168,15 @@ int simplelist_get_data(simplelist_type list,
   curr = list.list;
 
   while (curr != NULL) {
-    if (!cmp(curr->data, data)) {
+    if (cmp(curr->data, data) == 0) {
+      notfound = 0;
       if (simplelist_add(res, curr->data) != 0)
         return -1;
     }
     curr = curr->next;
   }
 
-  return -1;
+  return notfound;
 }
 
 /* returns 0 if data is in the list, uses cmp to compare pointers */
