@@ -9,7 +9,7 @@
 #include <getopt.h>
 #include <parser.h>
 
-#define EPI_VERSION "snapshot-2002-09-18"
+#define EPI_VERSION "0.9.0"
 
 int main(int argc, char *argv[])
 {

@@ -1,5 +1,10 @@
 2002-10-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* VERSION :
+	* main/epilog.c :
+
+	  - Updated version to 0.9.0.
+
 	* main/Makefile :
 
 	  - Now makes a symlink to executable in top directory.
