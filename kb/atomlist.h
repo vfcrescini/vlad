@@ -18,8 +18,8 @@ class atomlist : public list
     int add(atom *a);
     /* del atom from list */
     int del(atom *a);
-    /* get reference of atom that matches in */
-    int get(atom *in, atom **out);
+    /* get reference of atom that matches in (may have wildcards) */
+    int get(atom *in, atom ***out, unsigned int *s);
     /* few more interfaces for adding atoms */
     int add_holds(identifier *s, identifier *a, identifier *o, bool t);
     int add_member(identifier *e, identifier *g, bool t);
