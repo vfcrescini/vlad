@@ -1,0 +1,10 @@
+
+2002-03-15  <vino@igelaus.com.au>
+
+	* ChangeLog :
+
+	  - ChangeLog started.
+
+	* hwaddr.c :
+
+	  - Device name is now a command line parameter.
