@@ -32,9 +32,9 @@ include $(TOPSRCDIR)/rules.mk
 
 vlad : $(OBJECTS)
 ifdef STATIC
-	$(CXX) $(LDFLAGS) -static -o $(@) vlad.o $(SMLIBS) -lvlad
+	$(CXX) $(LDFLAGS) -static -o $(@) vlad.o -lvlad $(SMLIBS)
 else
-	$(CXX) $(LDFLAGS) -o $(@) vlad.o $(SMLIBS) -lvlad
+	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lvlad $(SMLIBS)
 endif
 ifndef DEBUG
   ifdef STRIP
