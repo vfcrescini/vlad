@@ -1,3 +1,14 @@
+2003-04-23  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/wrapper.h :
+	* kb/wrapper.cpp :
+	* kb/kb.cpp :
+
+	  - Refined the wrapper api by using stdarg. This eliminates the need
+	    to use the numlist in almost all cases.
+
+	  - Cleanup.
+
 2003-04-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/vlad.h :
