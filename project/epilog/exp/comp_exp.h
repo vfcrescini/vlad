@@ -7,6 +7,9 @@
 #define __EPI_COMP_EXP_H
 
 #include <simplelist.h>
+#include <stringlist.h>
+#include <identlist.h>
+#include "gnd_exp.h"
 #include "comp_atom.h"
 
 #define comp_exp_type simplelist_type
@@ -25,6 +28,12 @@ int comp_exp_get(comp_exp_type exp, unsigned int index, comp_atom_type **atom);
 
 /* add an atom into the expression */
 int comp_exp_add(comp_exp_type *exp, comp_atom_type atom);
+
+/* replaces all variable instances in the comp expression with ground atoms */
+int comp_exp_replace(comp_exp_type comp,
+                     gnd_exp_type *ground,
+                     stringlist_type varlist,
+                     identlist_type identlist);
 
 /* delete an atom from the expression */
 int comp_exp_del(comp_exp_type *exp, comp_atom_type atom);

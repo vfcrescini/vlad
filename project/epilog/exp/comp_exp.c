@@ -4,8 +4,18 @@
  */
 
 #include <stdlib.h>
+#include "gnd_atom.h"
+#include "comp_atom.h"
 #include "comp_exp.h"
 
+int comp_exp_replace_atom(comp_atom_type comp,
+                          gnd_atom_type *ground,
+                          stringlist_type varlist,
+                          identlist_type identlist);
+int comp_exp_get_ident(name_type name,
+                       ident_type **ident,
+                       stringlist_type varlist,
+                       identlist_type identlist);
 int comp_exp_compare(void *p1, void *p2);
 int comp_exp_destroy(void *p);
 
@@ -74,6 +84,43 @@ int comp_exp_add(comp_exp_type *exp, comp_atom_type atom)
   return simplelist_add(exp, (void *) new_atom);
 }
 
+/* replaces all variable instances in the comp expression with ground atoms */
+int comp_exp_replace(comp_exp_type comp,
+                     gnd_exp_type *ground,
+                     stringlist_type varlist,
+                     identlist_type identlist)
+{
+  unsigned int i;
+  unsigned int len;
+  gnd_atom_type *tmp_gnd_atom = NULL;
+  comp_atom_type *tmp_comp_atom = NULL;
+
+  if (ground == NULL)
+    return -1;
+
+  if (gnd_exp_init(ground) != 0)
+    return -1;
+
+  if (comp_exp_length(comp, &len) != 0)
+    return -1;
+
+  for (i = 0; i < len; i++) {
+    if (comp_exp_get(comp, i, &tmp_comp_atom) != 0)
+      return -1;
+
+    if (comp_exp_replace_atom(*tmp_comp_atom,
+                              tmp_gnd_atom,
+                              varlist,
+                              identlist) != 0)
+      return -1;
+
+    if (gnd_exp_add(ground, *tmp_gnd_atom) != 0)
+      return -1;
+  }
+
+  return 0;
+}
+
 /* delete an atom from the expression */
 int comp_exp_del(comp_exp_type *exp, comp_atom_type atom)
 {
@@ -103,6 +150,101 @@ int comp_exp_purge(comp_exp_type *exp)
       return -1;
 
   return 0;
+}
+
+/* replace variables in comp with actual identifiers from identlist */
+int comp_exp_replace_atom(comp_atom_type comp,
+                          gnd_atom_type *ground,
+                          stringlist_type varlist,
+                          identlist_type identlist)
+{
+  if (ground == NULL)
+    return -1;
+
+  ground->type = comp.type;
+  ground->truth = comp.truth;
+
+  if (EPI_ATOM_IS_HOLDS(comp)) {
+    if (comp_exp_get_ident(comp.atom.holds.subject,
+                           &(ground->atom.holds.subject),
+                           varlist,
+                           identlist) != 0)
+      return -1;
+    if (comp_exp_get_ident(comp.atom.holds.access,
+                           &(ground->atom.holds.access),
+                           varlist,
+                           identlist) != 0)
+      return -1;
+    if (comp_exp_get_ident(comp.atom.holds.object,
+                           &(ground->atom.holds.object),
+                           varlist,
+                           identlist) != 0)
+      return -1;
+
+    return 0;
+  }
+
+  if (EPI_ATOM_IS_MEMB(comp)) {
+    if (comp_exp_get_ident(comp.atom.memb.element,
+                           &(ground->atom.memb.element),
+                           varlist,
+                           identlist) != 0)
+      return -1;
+    if (comp_exp_get_ident(comp.atom.memb.group,
+                           &(ground->atom.memb.group),
+                           varlist,
+                           identlist) != 0)
+      return -1;
+
+    return 0;
+  }
+
+  if (EPI_ATOM_IS_SUBST(comp)) {
+    if (comp_exp_get_ident(comp.atom.subst.group1,
+                           &(ground->atom.subst.group1),
+                           varlist,
+                           identlist) != 0)
+      return -1;
+    if (comp_exp_get_ident(comp.atom.subst.group2,
+                           &(ground->atom.subst.group2),
+                           varlist,
+                           identlist) != 0)
+      return -1;
+
+    return 0;
+  }
+
+  if (EPI_ATOM_IS_CONST(comp))
+   return 0;
+
+  return -1;
+}
+
+/* if name is an identifier, simply copy, if variable, replace */
+int comp_exp_get_ident(name_type name,
+                       ident_type **ident,
+                       stringlist_type varlist,
+                       identlist_type identlist)
+{
+  unsigned int tmp_index;
+
+  if (ident == NULL)
+    return -1;
+
+  if (EPI_NAME_IS_VAR(name)) {
+    if (stringlist_index(varlist, EPI_NAME_STRING(name), &tmp_index) != 0)
+      return -1;
+    if (identlist_get(identlist, tmp_index, ident) != 0)
+      return -1;
+
+    return 0;
+  }
+  if (EPI_NAME_IS_IDENT(name)) {
+    *ident = name.name.ident;
+    return 0;
+  }
+
+  return -1;
 }
 
 /* returns 0 if the ATOMS pointed to by p1 and p2 are equivalent */

@@ -1,3 +1,13 @@
+2002-09-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/comp_exp.c :
+	* exp/comp_exp.h :
+
+	  - Added a replace function that takes a non-ground expression,
+	    a list of variables and a list of replacement identifiers and
+	    gives a ground expression where the variables are replaced
+	    with the corresponding identifier.
+
 2002-09-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* datastruct/simplelist.c :
