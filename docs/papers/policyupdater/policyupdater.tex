@@ -1984,27 +1984,6 @@ query holds(alice, read, file);
           $subset$ atoms are offset by the number of $holds$ atoms plus the
           number of $member$ atoms.
 
-          The following 2 functions show how to compute the index of an atom
-          and how to derive an atom given an index.
-
-          \begin{verbatim}
-FUNCTION encode(atom a)
-  CASE a.type OF
-    'h' : 
-    'm' :
-    's' :
-  ENDCASE
-  RETURN index
-ENDFUNCTION
-          \end{verbatim}
-
-          \begin{verbatim}
-FUNCTION decode(index)
-  RETURN atom
-ENDFUNCTION
-          \end{verbatim}
-
-
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
       \subsubsection{Query Evaluation}
