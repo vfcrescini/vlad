@@ -24,22 +24,22 @@ int isnum(char *);
 int extract(char *, int *, int *, int *);
 void help(char *);
 
-int main(int aCount, char *aArray[])
+int main(int aCount, char *aArgs[])
 {
   unsigned long int number = 0;
   int base1 = 0;
   int base2 = 0;
   int base3 = 0;
 
-  if (aCount == 2 && !strcmp(aArray[1], "-h"))
-    help(aArray[0]);
-  else if (aCount == 3 && !strcmp(aArray[1], "-n")) {
+  if (aCount == 2 && !strcmp(aArgs[1], "-h"))
+    help(aArgs[0]);
+  else if (aCount == 3 && !strcmp(aArgs[1], "-n")) {
     // check if its valid
-    if (!isnum(aArray[2]))
+    if (!isnum(aArgs[2]))
       return -1;
 
     // convert string -> unsigned lomg
-    number = strtoul(aArray[2], NULL, 10);
+    number = strtoul(aArgs[2], NULL, 10);
 
     // check if within range
     if (!innumrange(number))
@@ -51,9 +51,9 @@ int main(int aCount, char *aArray[])
            (number & VERSION_BASE_2) >> VERSION_BASE_LEN,
            number & VERSION_BASE_1);
   } 
-  else if (aCount == 3 && !strcmp(aArray[1], "-d")) {
+  else if (aCount == 3 && !strcmp(aArgs[1], "-d")) {
     // extract numbers
-    if (!extract(aArray[2], &base3, &base2, &base1))
+    if (!extract(aArgs[2], &base3, &base2, &base1))
       return -1;
 
     // check if valid
@@ -68,7 +68,7 @@ int main(int aCount, char *aArray[])
            base1); 
   } 
   else {
-    help(aArray[0]);
+    help(aArgs[0]);
     return -2;
   }
 
