@@ -759,137 +759,133 @@ query holds(alice, read, file);
 
             \begin{enumerate}
               \item
+                Subject Group Membership Inheritance
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{holds}(s_{s}, a, o, \sigma) \leftarrow &
                     \hat{holds}(s_{g}, a, o, \sigma), \\
+                    & \hat{memb}(s_{s}, s_{g}, \sigma) \\
+                    \lnot \hat{holds}(s_{s}, a, o, \sigma) \leftarrow &
+                    \lnot \hat{holds}(s_{g}, a, o, \sigma), \\
                     & \hat{memb}(s_{s}, s_{g}, \sigma)
                   \end{aligned}
                 \end{math}
 
-                $\forall (s_{s}, s_{g}, a, o, \sigma)$ where:
+                $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$), where
 
-                \begin{itemize}
-                  \item
-                    $s_{s} \in {\cal E}_{ss}$
-                  \item
-                    $s_{g} \in {\cal E}_{sg}$
-                  \item
-                    $a \in {\cal E}_{a}$
-                  \item
-                    $o \in {\cal E}_{o}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
+                $s_{s} \in {\cal E}_{ss}$,
+                $s_{g} \in {\cal E}_{sg}$,
+                $a \in {\cal E}_{a}$,
+                $o \in {\cal E}_{o}$,
+                $0 \leq \sigma \leq \Sigma$
+
               \item
+                Access Right Group Membership Inheritance
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{holds}(s, a_{s}, o, \sigma) \leftarrow &
                     \hat{holds}(s, a_{g}, o, \sigma), \\
+                    & \hat{memb}(a_{s}, a_{g}, \sigma) \\
+                    \lnot \hat{holds}(s, a_{s}, o, \sigma) \leftarrow &
+                    \lnot \hat{holds}(s, a_{g}, o, \sigma), \\
                     & \hat{memb}(a_{s}, a_{g}, \sigma)
                   \end{aligned}
                 \end{math}
 
-                $\forall (s, a_{s}, a_{g}, o, \sigma)$ where:
+                $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$), where
 
-                \begin{itemize}
-                  \item
-                    $s \in {\cal E}_{s}$
-                  \item
-                    $a_{s} \in {\cal E}_{as}$
-                  \item
-                    $a_{g} \in {\cal E}_{ag}$
-                  \item
-                    $o \in {\cal E}_{o}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
+                $s \in {\cal E}_{s}$,
+                $a_{s} \in {\cal E}_{as}$,
+                $a_{g} \in {\cal E}_{ag}$,
+                $o \in {\cal E}_{o}$,
+                $0 \leq \sigma \leq \Sigma$
+
               \item
+                Object Group Membership Inheritance
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{holds}(s, a, o_{s}, \sigma) \leftarrow &
                     \hat{holds}(s, a, o_{g}, \sigma), \\
+                    & \hat{memb}(o_{s}, o_{g}, \sigma) \\
+                    \lnot \hat{holds}(s, a, o_{s}, \sigma) \leftarrow &
+                    \lnot \hat{holds}(s, a, o_{g}, \sigma), \\
                     & \hat{memb}(o_{s}, o_{g}, \sigma)
                   \end{aligned}
                 \end{math}
 
-                $\forall (s, a, o_{s}, o_{g}, \sigma)$ where:
+                $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$) where:
 
-                \begin{itemize}
-                  \item
-                    $s \in {\cal E}_{s}$
-                  \item
-                    $a \in {\cal E}_{a}$
-                  \item
-                    $o_{s} \in {\cal E}_{os}$
-                  \item
-                    $o_{g} \in {\cal E}_{og}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
+                $s \in {\cal E}_{s}$,
+                $a \in {\cal E}_{a}$,
+                $o_{s} \in {\cal E}_{os}$,
+                $o_{g} \in {\cal E}_{og}$,
+                $0 \leq \sigma \leq \Sigma$
+
               \item
+                Subject Group Subset Inheritance
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{holds}(s_{g1}, a, o, \sigma) \leftarrow &
                     \hat{holds}(s_{g2}, a, o, \sigma), \\
+                    & \hat{subst}(s_{g1}, s_{g2}, \sigma) \\
+                    \lnot \hat{holds}(s_{g1}, a, o, \sigma) \leftarrow &
+                    \lnot \hat{holds}(s_{g2}, a, o, \sigma), \\
                     & \hat{subst}(s_{g1}, s_{g2}, \sigma)
                   \end{aligned}
                 \end{math}
 
-                $\forall (s_{g1}, s_{g2}, a, o, \sigma)$ where:
+                $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$), where
 
-                \begin{itemize}
-                  \item
-                    $s_{g1}, s_{g2} \in {\cal E}_{sg}$
-                  \item
-                    $a \in {\cal E}_{a}$
-                  \item
-                    $o \in {\cal E}_{o}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
+                $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
+                $a \in {\cal E}_{a}$,
+                $o \in {\cal E}_{o}$,
+                $0 \leq \sigma \leq \Sigma$
+
               \item
+                Access Right Group Subset Inheritance
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{holds}(s, a_{g1}, o, \sigma) \leftarrow &
                     \hat{holds}(s, a_{g2}, o, \sigma), \\
+                    & \hat{subst}(a_{g1}, a_{g2}, \sigma) \\
+                    \lnot \hat{holds}(s, a_{g1}, o, \sigma) \leftarrow &
+                    \lnot \hat{holds}(s, a_{g2}, o, \sigma), \\
                     & \hat{subst}(a_{g1}, a_{g2}, \sigma)
                   \end{aligned}
                 \end{math}
 
-                $\forall (s, a_{g1}, a_{g2}, o, \sigma)$ where:
+                $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$), where
 
-                \begin{itemize}
-                  \item
-                    $s \in {\cal E}_{s}$
-                  \item
-                    $a_{g1}, a_{g2} \in {\cal E}_{ag}$
-                  \item
-                    $o \in {\cal E}_{o}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
-                \item
+                $s \in {\cal E}_{s}$,
+                $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
+                $o \in {\cal E}_{o}$,
+                $0 \leq \sigma \leq \Sigma$
+
+              \item
+                Object Group Subset Inheritance
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{holds}(s, a, o_{g1}, \sigma) \leftarrow &
                     \hat{holds}(s, a, o_{g2}, \sigma), \\
+                    & \hat{subst}(o_{g1}, o_{g2}, \sigma) \\
+                    \lnot \hat{holds}(s, a, o_{g1}, \sigma) \leftarrow &
+                    \lnot \hat{holds}(s, a, o_{g2}, \sigma), \\
                     & \hat{subst}(o_{g1}, o_{g2}, \sigma)
                   \end{aligned}
                 \end{math}
 
-                $\forall (s, a, o_{g1}, o_{g2}, \sigma)$ where:
+                $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$), where
 
-                \begin{itemize}
-                  \item
-                    $s \in {\cal E}_{s}$
-                  \item
-                    $a \in {\cal E}_{a}$
-                  \item
-                    $o_{g1}, o_{g2} \in {\cal E}_{og}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
+                $s \in {\cal E}_{s}$,
+                $a \in {\cal E}_{a}$,
+                $o_{g1}, o_{g2} \in {\cal E}_{og}$,
+                $0 \leq \sigma \leq \Sigma$
             \end{enumerate}
 
           \subparagraph{Transitivity Rules.}
@@ -901,6 +897,8 @@ query holds(alice, read, file);
 
             \begin{enumerate}
               \item
+                Subject Group Transitivity
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{subst}(sg_{1}, sg_{3}, \sigma) \leftarrow &
@@ -909,15 +907,14 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall (sg_{1}, sg_{2}, sg_{3}, \sigma)$ where:
+                $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$), where
 
-                \begin{itemize}
-                  \item
-                    $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
+                $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
+                $0 \leq \sigma \leq \Sigma$
+
               \item
+                Access Right Group Transitivity
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{subst}(ag_{1}, ag_{3}, \sigma) \leftarrow &
@@ -926,15 +923,14 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall (ag_{1}, ag_{2}, ag_{3}, \sigma)$ where:
+                $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$), where
 
-                \begin{itemize}
-                  \item
-                    $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
+                $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
+                $0 \leq \sigma \leq \Sigma$
+
               \item
+                Object Group Transitivity
+
                 \begin{math}
                   \begin{aligned}[t]
                     \hat{subst}(og_{1}, og_{3}, \sigma) \leftarrow &
@@ -943,14 +939,10 @@ query holds(alice, read, file);
                   \end{aligned}
                 \end{math}
 
-                $\forall (og_{1}, og_{2}, og_{3}, \sigma)$ where:
+                $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$), where
 
-                \begin{itemize}
-                  \item
-                    $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$
-                  \item
-                    $0 \leq \sigma \leq \Sigma$
-                \end{itemize}
+                $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
+                $0 \leq \sigma \leq \Sigma$
             \end{enumerate}
 
           \subparagraph{Inertial Rules.}
@@ -966,19 +958,12 @@ query holds(alice, read, file);
 
               $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
 
-              $\forall$($\hat{\alpha}$,$u$) where:
+              $\forall$($\hat{\alpha}$,$u$), where
 
-              \begin{itemize}
-                \item
-                  $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$
-                \item
-                  $u$ $\in$ $\psi$
-                \item
-                  $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Result$($u$, $\sigma$))
-              \end{itemize}
+              $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
+              $u$ $\in$ $\psi$,
+              $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Result$($u$, $\sigma$))
             \end{quote}
-
-        \paragraph{Conflict Resolution.}
 
         \begin{example}
           [Language ${\cal L}$ program in Example1 translated into
