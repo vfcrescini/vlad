@@ -11,7 +11,11 @@
 #undef VLAD_WRAPPER
 
 #ifdef VLAD_DEBUG
-  #include <cstdio>
+  #ifdef __cplusplus
+    #include <cstdio>
+  #else
+    #include <stdio.h>
+  #endif
 #endif
 
 #endif
