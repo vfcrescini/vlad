@@ -436,6 +436,56 @@ acc_grp_ident_list :
 
 initial_stmt : 
   VLAD_SYM_INITIALLY ground_exp VLAD_SYM_SEMICOLON {
+    unsigned int i;
+    unsigned int tmp;
+    int retval;
+#ifdef DEBUG
+    char *n1;
+    char *n2;
+    char *n3;
+    unsigned char ty;
+    bool tr;
+#endif
+
+
+    /*
+     * we must, unfortunetly, go through the expression and add them one
+     * at a time to ensure uniqueness and integrity.
+     */
+
+    for (i = 0; i < $2->length(); i++) {
+      if ((retval = $2->getn(i, &tmp)) != VLAD_OK)
+        return retval;
+
+      if ((retval != kbase.add_init_atom(tmp)) != VLAD_OK)
+        return retval;
+
+#ifdef DEBUG
+    if ((retval = kbase.decode_atom(&n1, &n2, &n3, &ty, &tr, tmp)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
+      return retval;
+    }
+
+    switch(ty) {
+      case VLAD_ATOM_CONST :
+        printf("added [%d] %s to initial state\n", tmp, n1);
+        break;
+      case VLAD_ATOM_HOLDS :
+        printf("added [%d] holds(%s,%s,%s) to initial state\n", tmp, n1, n2, n3);
+        break;
+      case VLAD_ATOM_MEMBER :
+        printf("added [%d] memb(%s,%s) to initial state\n", tmp, n1, n2);
+        break;
+      case VLAD_ATOM_SUBSET :
+        printf("added [%d] subst(%s,%s) to initial state\n", tmp, n1, n2);
+        break;
+    }
+#endif
+    }
+
+
+    /* after adding, clean up */
+    delete $2;
   }
   ;
 
@@ -446,16 +496,20 @@ constraint_stmt :
 
 implies_stmt :
   ground_exp VLAD_SYM_IMPLIES ground_exp with_clause VLAD_SYM_SEMICOLON {
+    delete $1;
+    delete $3;
   }
   ;
 
 with_clause :
   | VLAD_SYM_WITH VLAD_SYM_ABSENCE ground_exp {
+    delete $3;
   }
   ;
 
 always_stmt :
   VLAD_SYM_ALWAYS ground_exp VLAD_SYM_SEMICOLON {
+    delete $2;
   }
   ;
 
@@ -485,6 +539,7 @@ trans_var_list :
 
 query_stmt : 
   VLAD_SYM_IS ground_exp after_clause VLAD_SYM_SEMICOLON {
+    delete $2;
   }
   ;
 
@@ -525,7 +580,7 @@ logical_op :
 ground_exp : 
   ground_boolean_atom { 
     int retval;
-    if (($$ = VLAD_NEW(numberlist("ground exp"))) == NULL) {
+    if (($$ = VLAD_NEW(numberlist(NULL))) == NULL) {
       fprintf(stderr, "memory overflow\n");
       return VLAD_MALLOCFAILED;
     }
@@ -536,7 +591,6 @@ ground_exp :
     int retval;
     switch ((retval = $$->add($3))) {
       case VLAD_OK :
-        break;
       case VLAD_DUPLICATE :
         /* we simply ignore duplicates */
         break;
@@ -548,75 +602,15 @@ ground_exp :
 
 ground_boolean_atom :
   ground_atom {
-#ifdef DEBUG
-    char *n1;
-    char *n2;
-    char *n3;
-    unsigned char ty;
-    bool tr;
-    int retval;
-#endif
-
     $$ = $1;
-
-#ifdef DEBUG
-    if ((retval = kbase.decode_atom(&n1, &n2, &n3, &ty, &tr, $1)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
-      return retval;
-    }
-
-    switch(ty) {
-      case VLAD_ATOM_CONST :
-        printf("%5d %s\n", $1, n1);
-        break;
-      case VLAD_ATOM_HOLDS :
-        printf("%5d holds(%s,%s,%s)\n", $1, n1, n2, n3);
-        break;
-      case VLAD_ATOM_MEMBER :
-        printf("%5d memb(%s,%s)\n", $1, n1, n2);
-        break;
-      case VLAD_ATOM_SUBSET :
-        printf("%5d subst(%s,%s)\n", $1, n1, n2);
-        break;
-    }
-#endif
   }
   | VLAD_SYM_NOT ground_atom {
-#ifdef DEBUG
-    char *n1;
-    char *n2;
-    char *n3;
-    unsigned char ty;
-    bool tr;
-#endif
     int retval;
 
     if ((retval = kbase.negate_atom($2, &$$)) != VLAD_OK) {
       fprintf(stderr, "internal error: %d", retval);
       return retval;
     }
-
-#ifdef DEBUG
-    if ((retval = kbase.decode_atom(&n1, &n2, &n3, &ty, &tr, $$)) != VLAD_OK) {
-      fprintf(stderr, "internal error: %d", retval);
-      return retval;
-    }
-
-    switch(ty) {
-      case VLAD_ATOM_CONST :
-        printf("%5d %s\n", $$, n1);
-        break;
-      case VLAD_ATOM_HOLDS :
-        printf("%5d holds(%s,%s,%s)\n", $$, n1, n2, n3);
-        break;
-      case VLAD_ATOM_MEMBER :
-        printf("%5d memb(%s,%s)\n", $$, n1, n2);
-        break;
-      case VLAD_ATOM_SUBSET :
-        printf("%5d subst(%s,%s)\n", $$, n1, n2);
-        break;
-    }
-#endif
   }
   ;
 

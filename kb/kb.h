@@ -32,6 +32,8 @@ class kb {
     int close();
     /* register an identifier in the kb */
     int add_ident(const char *n, unsigned char t);
+    /* add an atom into the initial state list */
+    int add_init_atom(unsigned int a);
     /* gives an atom id based on the identifiers already given */
     int encode_atom(const char *n1,
                     const char *n2,
@@ -50,6 +52,7 @@ class kb {
     int negate_atom(unsigned int in, unsigned int *out);
   private :
     symtab *stable;
+    numberlist *istate;
     unsigned int s_len;
     unsigned int a_len;
     unsigned int o_len;
