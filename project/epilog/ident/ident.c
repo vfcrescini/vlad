@@ -1,4 +1,5 @@
-/* ident.c
+/* 
+ * ident.c
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
