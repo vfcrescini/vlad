@@ -1,5 +1,10 @@
 2002-08-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* symtab/Makefile :
+	* symtab/ident_type.h :
+
+	  - Added identifier types definition.
+
 	* kb/atom_type.h
 	* kb/gnd_atom.c
 	* kb/gnd_atom.h

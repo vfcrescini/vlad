@@ -3,7 +3,7 @@
 TOPSRCDIR = ..
 CFLAGS = -O2 -Wall -ansi -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libsymtab.a
-INCLUDES = symtab.h
+INCLUDES = symtab.h ident_type.h
 
 all : public
 
