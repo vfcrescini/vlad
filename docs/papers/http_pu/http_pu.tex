@@ -3,7 +3,7 @@
 \pagestyle{plain}
 
 \begin{document}
-  \title{HTTP Authorisation with PolicyUpdater:}
+  \title{Web Server Authorisation with PolicyUpdater:}
   \subtitle{A Logic-Based Access-Control System}
 
   \author{Vino Fernando Crescini \and Yan Zhang}
@@ -272,9 +272,26 @@
 
     \subsection{Query Evaluation}
 
-  \section{HTTP Authorisation with PolicyUpdater}
+  \section{Web Server Access Control}
 
-    \subsection{HTTP Authorisation Scheme}
+    The Apache web server provides a rudimentary access control scheme as
+    provided by its {\em mod\_auth} and {\em mod\_access} modules
+    \cite{AP,LAU}. With this built-in access control system, Apache allows 
+    administrator-defined policies to be enforced with every HTTP request
+    made by clients. 
+
+    The diagram in figure [something] illustrates how access control is
+    enforced in a simplified HTTP request. (1) client makes a {\em GET}
+    request for file $f$; (2) the access control modules check if a policy is
+    associated with the resource; (3) the modules evaluates the policy and
+    decides whether to allow or deny the request; (4) if the request is
+    allowed, it is then passed on to other request handlers for processing;
+    and (5) eventually, the transaction is completed by sending the requested
+    file $f$ back to the client.
+
+    add: http request methods
+
+    add: details of apache policy description.
 
     \subsection{Integration of PolicyUpdater}
 
@@ -290,7 +307,14 @@
 
     \subsection{Limitations and Future Work}
 
-  \begin{thebibliography}{5}
+  \begin{thebibliography}{3}
+    \bibitem{AP}
+      Apache Software Foundation,
+      Authentication, Authorization and Access Control.
+      http://httpd.apache.org/docs/howto/auth.html.
+    \bibitem{LAU}
+      Laurie, B., Laurie, P.,
+      Apache: The Definitive Guide (3rd Edition).
+      {\em O'Reilly \& Associates Inc.}, 2003.
   \end{thebibliography}
-
 \end{document}
