@@ -8,7 +8,7 @@
 
 /* version */
 
-#define EPI_VERSION         "0.9.6"
+#define EPI_VERSION         "0.9.7"
 
 /* query result codes */
 
