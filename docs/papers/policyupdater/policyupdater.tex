@@ -633,6 +633,7 @@
         \begin{vquote}
           $CopyAtom$($\hat{\alpha}$, $\sigma'$)
 
+          \hspace{1em}
           =
           \begin{math}
             \begin{cases}
@@ -650,6 +651,7 @@
         \begin{vquote}
           $TransAtom$($\alpha$, $\sigma$)
 
+          \hspace{1em}
           =
           \begin{math}
             \begin{cases}
@@ -685,11 +687,16 @@
           \begin{vquote}
             $\hat{f_{0}}$ $\leftarrow$
 
-            $\ldots$
+            $\vdots$
 
             $\hat{f_{n}}$ $\leftarrow$
+          \end{vquote}
 
-            where $\hat{f_{i}}$ $=$ $TransFact$($f_{i}$, $S_{0}$),
+          \begin{vquote}
+            where
+
+            $\hat{f_{i}}$ $=$ $TransFact$($f_{i}$, $S_{0}$),
+
             $0$ $\leq$ $i$ $\leq$ $n$
           \end{vquote}
 
@@ -738,7 +745,7 @@
             $b_{0}$, \ldots, $b_{n}$,
             $not$ $c_{0}$, \ldots, $not$ $c_{o}$
 
-            $\ldots$
+            $\vdots$
 
             $a_{m}$ $\leftarrow$
             $b_{0}$, \ldots, $b_{n}$,
@@ -755,24 +762,26 @@
             $\hat{b}^{S_{0}}_{0}$, \ldots, $\hat{b}^{S_{0}}_{n}$,
             $not$ $\hat{c}^{S_{0}}_{0}$, \ldots, $not$ $\hat{c}^{S_{0}}_{o}$
 
-            $\ldots$
+            $\vdots$
 
             $\hat{a}^{S_{|\psi|}}_{0}$ $\leftarrow$
             $\hat{b}^{S_{|\psi|}}_{0}$, \ldots, $\hat{b}^{S_{|\psi|}}_{n}$,
             $not$ $\hat{c}^{S_{|\psi|}}_{0}$, \ldots, $not$ $\hat{c}^{S_{|\psi|}}_{o}$
 
-            $\ldots$
+            $\vdots$
 
             $\hat{a}^{S_{0}}_{m}$ $\leftarrow$
             $\hat{b}^{S_{0}}_{0}$, \ldots, $\hat{b}^{S_{0}}_{n}$,
             $not$ $\hat{c}^{S_{0}}_{0}$, \ldots, $not$ $\hat{c}^{S_{0}}_{o}$
 
-            $\ldots$
+            $\vdots$
 
             $\hat{a}^{S_{|\psi|}}_{m}$ $\leftarrow$
             $\hat{b}^{S_{|\psi|}}_{0}$, \ldots, $\hat{b}^{S_{|\psi|}}_{n}$,
             $not$ $\hat{c}^{S_{|\psi|}}_{0}$, \ldots, $not$ $\hat{c}^{S_{|\psi|}}_{o}$
+          \end{vquote}
 
+          \begin{vquote}
             where
 
             $\hat{a}^{\sigma}_{i}$ $=$ $TransFact$($a_{i}$, $\sigma$),
@@ -863,7 +872,9 @@
             $\ldots$
 
             $\hat{a}_{m}$ $\leftarrow$ $\hat{b}_{0}$, \ldots, $\hat{b}_{n}$
+          \end{vquote}
 
+          \begin{vquote}
             where
 
             $\hat{a}_{i}$ $=$ $TransFact$($a_{i}$, $Res$($u$, $\sigma$)),
@@ -942,149 +953,166 @@
                 \item
                   Subject Group Membership Inheritance
 
-                  $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$)
- 
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{holds}&(s_{s}, a, o, \sigma) \leftarrow \\
-                      & \hat{holds}(s_{g}, a, o, \sigma), \\
-                      & \hat{memb}(s_{s}, s_{g}, \sigma), \\
-                      & not \lnot \hat{holds}(s_{s}, a, o, \sigma) \\
-                      \lnot \hat{holds}&(s_{s}, a, o, \sigma) \leftarrow \\
-                      & \lnot \hat{holds}(s_{g}, a, o, \sigma), \\
-                      & \hat{memb}(s_{s}, s_{g}, \sigma)
-                    \end{aligned}
-                  \end{math}
+                  \begin{vquote}
+                    $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$),
+                    where
 
-                  where
+                    $s_{s} \in {\cal E}_{ss}$,
+                    $s_{g} \in {\cal E}_{sg}$,
+                    $a \in {\cal E}_{a}$,
+                    $o \in {\cal E}_{o}$,
+                    $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                  \end{vquote}
 
-                  $s_{s} \in {\cal E}_{ss}$,
-                  $s_{g} \in {\cal E}_{sg}$,
-                  $a \in {\cal E}_{a}$,
-                  $o \in {\cal E}_{o}$,
-                  $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
- 
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{holds}&(s_{s}, a, o, \sigma) \leftarrow \\
+                        & \hat{holds}(s_{g}, a, o, \sigma), \\
+                        & \hat{memb}(s_{s}, s_{g}, \sigma), \\
+                        & not \lnot \hat{holds}(s_{s}, a, o, \sigma) \\
+                        \lnot \hat{holds}&(s_{s}, a, o, \sigma) \leftarrow \\
+                        & \lnot \hat{holds}(s_{g}, a, o, \sigma), \\
+                        & \hat{memb}(s_{s}, s_{g}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote}
                 \item
                   Access Right Group Membership Inheritance
  
-                  $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$)
-
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{holds}&(s, a_{s}, o, \sigma) \leftarrow \\
-                      & \hat{holds}(s, a_{g}, o, \sigma), \\
-                      & \hat{memb}(a_{s}, a_{g}, \sigma), \\
-                      & not \lnot \hat{holds}(s, a_{s}, o, \sigma) \\
-                      \lnot \hat{holds}&(s, a_{s}, o, \sigma) \leftarrow \\
-                      & \lnot \hat{holds}(s, a_{g}, o, \sigma), \\
-                      & \hat{memb}(a_{s}, a_{g}, \sigma)
-                    \end{aligned}
-                  \end{math}
-
-                  where
+                  \begin{vquote}
+                    $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$),
+                    where
  
-                  $s \in {\cal E}_{s}$,
-                  $a_{s} \in {\cal E}_{as}$,
-                  $a_{g} \in {\cal E}_{ag}$,
-                  $o \in {\cal E}_{o}$,
-                  $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
- 
-                \item
+                    $s \in {\cal E}_{s}$,
+                    $a_{s} \in {\cal E}_{as}$,
+                    $a_{g} \in {\cal E}_{ag}$,
+                    $o \in {\cal E}_{o}$,
+                    $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{holds}&(s, a_{s}, o, \sigma) \leftarrow \\
+                        & \hat{holds}(s, a_{g}, o, \sigma), \\
+                        & \hat{memb}(a_{s}, a_{g}, \sigma), \\
+                        & not \lnot \hat{holds}(s, a_{s}, o, \sigma) \\
+                        \lnot \hat{holds}&(s, a_{s}, o, \sigma) \leftarrow \\
+                        & \lnot \hat{holds}(s, a_{g}, o, \sigma), \\
+                        & \hat{memb}(a_{s}, a_{g}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote}
+
+                 \item
                   Object Group Membership Inheritance
  
-                  $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$)
+                  \begin{vquote}
+                    $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$),
+                    where
 
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{holds}&(s, a, o_{s}, \sigma) \leftarrow \\
-                      & \hat{holds}(s, a, o_{g}, \sigma), \\
-                      & \hat{memb}(o_{s}, o_{g}, \sigma), \\
-                      & not \lnot \hat{holds}(s, a, o_{s}, \sigma) \\
-                      \lnot \hat{holds}&(s, a, o_{s}, \sigma) \leftarrow \\
-                      & \lnot \hat{holds}(s, a, o_{g}, \sigma), \\
-                      & \hat{memb}(o_{s}, o_{g}, \sigma)
-                    \end{aligned}
-                  \end{math}
+                    $s \in {\cal E}_{s}$,
+                    $a \in {\cal E}_{a}$,
+                    $o_{s} \in {\cal E}_{os}$,
+                    $o_{g} \in {\cal E}_{og}$,
+                    $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                  \end{vquote}
 
-                  where
- 
-                  $s \in {\cal E}_{s}$,
-                  $a \in {\cal E}_{a}$,
-                  $o_{s} \in {\cal E}_{os}$,
-                  $o_{g} \in {\cal E}_{og}$,
-                  $S_{0}{\leq}{\sigma}{\leq}S_{|\psi|}$
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{holds}&(s, a, o_{s}, \sigma) \leftarrow \\
+                        & \hat{holds}(s, a, o_{g}, \sigma), \\
+                        & \hat{memb}(o_{s}, o_{g}, \sigma), \\
+                        & not \lnot \hat{holds}(s, a, o_{s}, \sigma) \\
+                        \lnot \hat{holds}&(s, a, o_{s}, \sigma) \leftarrow \\
+                        & \lnot \hat{holds}(s, a, o_{g}, \sigma), \\
+                        & \hat{memb}(o_{s}, o_{g}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote}
  
                 \item
                   Subject Group Subset Inheritance
  
-                  $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$)
+                  \begin{vquote}
+                    $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$),
+                    where
 
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{holds}&(s_{g1}, a, o, \sigma) \leftarrow \\
-                      & \hat{holds}(s_{g2}, a, o, \sigma), \\
-                      & \hat{subst}(s_{g1}, s_{g2}, \sigma), \\
-                      & not \lnot \hat{holds}(s_{g1}, a, o, \sigma) \\
-                      \lnot \hat{holds}&(s_{g1}, a, o, \sigma) \leftarrow \\
-                      & \lnot \hat{holds}(s_{g2}, a, o, \sigma), \\
-                      & \hat{subst}(s_{g1}, s_{g2}, \sigma)
-                    \end{aligned}
-                  \end{math}
+                    $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
+                    $a \in {\cal E}_{a}$,
+                    $o \in {\cal E}_{o}$,
+                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  \end{vquote}
  
-                  where
- 
-                  $s_{g1}, s_{g2} \in {\cal E}_{sg}$,
-                  $a \in {\cal E}_{a}$,
-                  $o \in {\cal E}_{o}$,
-                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{holds}&(s_{g1}, a, o, \sigma) \leftarrow \\
+                        & \hat{holds}(s_{g2}, a, o, \sigma), \\
+                        & \hat{subst}(s_{g1}, s_{g2}, \sigma), \\
+                        & not \lnot \hat{holds}(s_{g1}, a, o, \sigma) \\
+                        \lnot \hat{holds}&(s_{g1}, a, o, \sigma) \leftarrow \\
+                        & \lnot \hat{holds}(s_{g2}, a, o, \sigma), \\
+                        & \hat{subst}(s_{g1}, s_{g2}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote} 
  
                 \item
                   Access Right Group Subset Inheritance
  
-                  $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$)
+                  \begin{vquote}
+                    $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$),
+                    where
+  
+                    $s \in {\cal E}_{s}$,
+                    $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
+                    $o \in {\cal E}_{o}$,
+                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  \end{vquote}
 
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{holds}&(s, a_{g1}, o, \sigma) \leftarrow \\
-                      & \hat{holds}(s, a_{g2}, o, \sigma), \\
-                      & \hat{subst}(a_{g1}, a_{g2}, \sigma), \\
-                      & not \lnot \hat{holds}(s, a_{g1}, o, \sigma) \\
-                      \lnot \hat{holds}&(s, a_{g1}, o, \sigma) \leftarrow \\
-                      & \lnot \hat{holds}(s, a_{g2}, o, \sigma), \\
-                      & \hat{subst}(a_{g1}, a_{g2}, \sigma)
-                    \end{aligned}
-                  \end{math}
-
-                  where
- 
-                  $s \in {\cal E}_{s}$,
-                  $a_{g1}, a_{g2} \in {\cal E}_{ag}$,
-                  $o \in {\cal E}_{o}$,
-                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{holds}&(s, a_{g1}, o, \sigma) \leftarrow \\
+                        & \hat{holds}(s, a_{g2}, o, \sigma), \\
+                        & \hat{subst}(a_{g1}, a_{g2}, \sigma), \\
+                        & not \lnot \hat{holds}(s, a_{g1}, o, \sigma) \\
+                        \lnot \hat{holds}&(s, a_{g1}, o, \sigma) \leftarrow \\
+                        & \lnot \hat{holds}(s, a_{g2}, o, \sigma), \\
+                        & \hat{subst}(a_{g1}, a_{g2}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote}
  
                 \item
                   Object Group Subset Inheritance
  
-                  $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$)
-
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{holds}&(s, a, o_{g1}, \sigma) \leftarrow \\
-                      & \hat{holds}(s, a, o_{g2}, \sigma), \\
-                      & \hat{subst}(o_{g1}, o_{g2}, \sigma), \\
-                      & not \lnot \hat{holds}(s, a, o_{g1}, \sigma) \\
-                      \lnot \hat{holds}&(s, a, o_{g1}, \sigma) \leftarrow \\
-                      & \lnot \hat{holds}(s, a, o_{g2}, \sigma), \\
-                      & \hat{subst}(o_{g1}, o_{g2}, \sigma)
-                    \end{aligned}
-                  \end{math}
-
-                  where
+                  \begin{vquote}
+                    $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$),
+                    where
  
-                  $s \in {\cal E}_{s}$,
-                  $a \in {\cal E}_{a}$,
-                  $o_{g1}, o_{g2} \in {\cal E}_{og}$,
-                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+                    $s \in {\cal E}_{s}$,
+                    $a \in {\cal E}_{a}$,
+                    $o_{g1}, o_{g2} \in {\cal E}_{og}$,
+                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{holds}&(s, a, o_{g1}, \sigma) \leftarrow \\
+                        & \hat{holds}(s, a, o_{g2}, \sigma), \\
+                        & \hat{subst}(o_{g1}, o_{g2}, \sigma), \\
+                        & not \lnot \hat{holds}(s, a, o_{g1}, \sigma) \\
+                        \lnot \hat{holds}&(s, a, o_{g1}, \sigma) \leftarrow \\
+                        & \lnot \hat{holds}(s, a, o_{g2}, \sigma), \\
+                        & \hat{subst}(o_{g1}, o_{g2}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote}
               \end{enumerate}
 
             \item
@@ -1098,57 +1126,66 @@
                 \item
                   Subject Group Transitivity
  
-                  $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$)
-
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{subst}&(sg_{1}, sg_{3}, \sigma) \leftarrow \\
-                      & \hat{subst}(sg_{1}, sg_{2}, \sigma), \\
-                      & \hat{subst}(sg_{2}, sg_{3}, \sigma)
-                    \end{aligned}
-                  \end{math}
-
-                  where
+                  \begin{vquote}
+                    $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\sigma$),
+                    where
  
-                  $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
-                  $S_{0} \leq \sigma \leq S_{|\psi|}$
+                    $sg_{1}, sg_{2}, sg_{3} \in {\cal E}_{sg}$,
+                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{subst}&(sg_{1}, sg_{3}, \sigma) \leftarrow \\
+                        & \hat{subst}(sg_{1}, sg_{2}, \sigma), \\
+                        & \hat{subst}(sg_{2}, sg_{3}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote}
  
                 \item
                   Access Right Group Transitivity
+
+                  \begin{vquote} 
+                    $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$),
+                    where
+  
+                    $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
+                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  \end{vquote}
+
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{subst}&(ag_{1}, ag_{3}, \sigma) \leftarrow \\
+                        & \hat{subst}(ag_{1}, ag_{2}, \sigma), \\
+                        & \hat{subst}(ag_{2}, ag_{3}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote}
  
-                  $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\sigma$) 
-
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{subst}&(ag_{1}, ag_{3}, \sigma) \leftarrow \\
-                      & \hat{subst}(ag_{1}, ag_{2}, \sigma), \\
-                      & \hat{subst}(ag_{2}, ag_{3}, \sigma)
-                    \end{aligned}
-                  \end{math}
-
-                  where
- 
-                  $ag_{1}, ag_{2}, ag_{3} \in {\cal E}_{ag}$,
-                  $S_{0} \leq \sigma \leq S_{|\psi|}$
-
                 \item
                   Object Group Transitivity
  
-                  $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$) 
+                  \begin{vquote}
+                    $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\sigma$),
+                    where
+  
+                    $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
+                    $S_{0} \leq \sigma \leq S_{|\psi|}$
+                  \end{vquote}
 
-                  \begin{math}
-                    \begin{aligned}[t]
-                      \hat{subst}&(og_{1}, og_{3}, \sigma) \leftarrow \\
-                      & \hat{subst}(og_{1}, og_{2}, \sigma), \\
-                      & \hat{subst}(og_{2}, og_{3}, \sigma)
-                    \end{aligned}
-                  \end{math}
-
-                  where
- 
-                  $og_{1}, og_{2}, og_{3} \in {\cal E}_{og}$,
-                  $S_{0} \leq \sigma \leq S_{|\psi|}$
-              \end{enumerate}
+                  \begin{vquote}
+                    \begin{math}
+                      \begin{aligned}[t]
+                        \hat{subst}&(og_{1}, og_{3}, \sigma) \leftarrow \\
+                        & \hat{subst}(og_{1}, og_{2}, \sigma), \\
+                        & \hat{subst}(og_{2}, og_{3}, \sigma)
+                      \end{aligned}
+                    \end{math}
+                  \end{vquote}
+               \end{enumerate}
 
             \item
               {\em Inertial rules.}
@@ -1159,15 +1196,18 @@
               are expressed as follows:
  
               \begin{vquote}
+                $\forall$($\hat{\alpha}$,$u$) $\exists$$\hat{\alpha}'$,
+                where
+
+                $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
+                $u$ $\in$ $\psi$,
+                $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
+              \end{vquote}
+
+              \begin{vquote}
                 $\hat{\alpha}'$ $\leftarrow$ $\hat{\alpha}$, $not$ $\lnot$ $\hat{\alpha}'$
  
                 $\lnot$ $\hat{\alpha}'$ $\leftarrow$ $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
- 
-                $\forall$($\hat{\alpha}$,$u$), where
-                $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
-                $u$ $\in$ $\psi$,
- 
-                $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
               \end{vquote}
           \end{itemize}
 
@@ -1181,8 +1221,8 @@
           above.
 
           The domain description ${\cal D_{L}}$ of language ${\cal L}$ is said
-          to be {\em consistent} if and only if the language ${\cal L^{*}}$
-          translation $Trans$(${\cal D_{L}}$) has a consistent answer set.
+          to be {\em consistent} if and only if the translation
+          $Trans$(${\cal D_{L}}$) has a consistent answer set.
         \end{vdefinition}
 
         \begin{vexample}
@@ -1194,257 +1234,307 @@
             \item
               Initial Fact Rules
 
-              $\hat{memb}(alice, grp2, S_{0}) \leftarrow$
+              \begin{vquote}
+                $\hat{memb}(alice, grp2, S_{0}) \leftarrow$
 
-              $\hat{holds}(grp1, read, file,S_{0}) \leftarrow$
+                $\hat{holds}(grp1, read, file,S_{0}) \leftarrow$
 
-              $\hat{subst}(grp2, grp1, S_{0}) \leftarrow$
+                $\hat{subst}(grp2, grp1, S_{0}) \leftarrow$
+              \end{vquote}
 
             \item
               Constraint Rules
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % constraints (S0)
-                  \hat{holds}&(grp1, write, file, S_{0}) \leftarrow \\
-                  & \hat{holds}(grp1, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp3, write, file, S_{0}) \\
-                  % constraints (S1)
-                  \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp1, read, file, S_{1}), \\
-                  & not \lnot \hat{holds}(grp3, write, file, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % constraints (S0)
+                    \hat{holds}&(grp1, write, file, S_{0}) \leftarrow \\
+                    & \hat{holds}(grp1, read, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp3, write, file, S_{0}) \\
+                    % constraints (S1)
+                    \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(grp1, read, file, S_{1}), \\
+                    & not \lnot \hat{holds}(grp3, write, file, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
             \item
               Policy Update Rules
 
-              \begin{math}
-                \lnot \hat{holds}(grp1, read, file, S_{1}) \leftarrow
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \lnot \hat{holds}(grp1, read, file, S_{1}) \leftarrow
+                \end{math}
+              \end{vquote}
 
             \item
               Inheritance Rules
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inheritance rules (positive, read, S0)
-                  \hat{holds}&(alice, read, file, S_{0}) \leftarrow \\
-                  & \hat{holds}(grp1, read, file, S_{0}), \\
-                  & \hat{memb}(alice, grp1, S_{0}), \\
-                  & not \lnot \hat{holds}(alice, read, file, S_{0}) \\
-                  % inheritance rules (negative, read, S0)
-                  \lnot \hat{holds}&(alice, read, file, S_{0}) \leftarrow \\
-                  & \lnot \hat{holds}(grp1, read, file, S_{0}), \\
-                  & \hat{memb}(alice, grp1, S_{0})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inheritance rules (positive, read, S0)
+                    \hat{holds}&(alice, read, file, S_{0}) \leftarrow \\
+                    & \hat{holds}(grp1, read, file, S_{0}), \\
+                    & \hat{memb}(alice, grp1, S_{0}), \\
+                    & not \lnot \hat{holds}(alice, read, file, S_{0}) \\
+                    % inheritance rules (negative, read, S0)
+                    \lnot \hat{holds}&(alice, read, file, S_{0}) \leftarrow \\
+                    & \lnot \hat{holds}(grp1, read, file, S_{0}), \\
+                    & \hat{memb}(alice, grp1, S_{0})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inheritance rules (positive, write, S0)
-                  \hat{holds}&(alice, write, file, S_{0}) \leftarrow \\
-                  & \hat{holds}(grp1, write, file, S_{0}), \\
-                  & \hat{memb}(alice, grp1, S_{0}), \\
-                  & not \lnot \hat{holds}(alice, write, file, S_{0}) \\
-                  % inheritance rules (negative, write, S0)
-                  \lnot \hat{holds}&(alice, write, file, S_{0}) \leftarrow \\
-                  & \lnot \hat{holds}(grp1, write, file, S_{0}), \\
-                  & \hat{memb}(alice, grp1, S_{0})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inheritance rules (positive, write, S0)
+                    \hat{holds}&(alice, write, file, S_{0}) \leftarrow \\
+                    & \hat{holds}(grp1, write, file, S_{0}), \\
+                    & \hat{memb}(alice, grp1, S_{0}), \\
+                    & not \lnot \hat{holds}(alice, write, file, S_{0}) \\
+                    % inheritance rules (negative, write, S0)
+                    \lnot \hat{holds}&(alice, write, file, S_{0}) \leftarrow \\
+                    & \lnot \hat{holds}(grp1, write, file, S_{0}), \\
+                    & \hat{memb}(alice, grp1, S_{0})
+                  \end{aligned}
+                \end{math}
+               \end{vquote}
 
-              $\ldots$
+              \begin{vquote}
+                \hspace{5em}$\vdots$
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inheritance rules (positive, read, S1)
-                  \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp3, read, file, S_{1}), \\
-                  & \hat{memb}(alice, grp3, S_{1}), \\
-                  & not \lnot \hat{holds}(alice, read, file, S_{1}) \\
-                  % inheritance rules (negative, read, S1)
-                  \lnot \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp3, read, file, S_{1}), \\
-                  & \hat{memb}(alice, grp3, S_{1})
-                \end{aligned}
-              \end{math}
-
-              \begin{math}
-                \begin{aligned}[t]
-                  % inheritance rules (positive, write, S1)
-                  \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp3, write, file, S_{1}), \\
-                  & \hat{memb}(alice, grp3, S_{1}), \\
-                  & not \lnot \hat{holds}(alice, write, file, S_{1}) \\
-                  % inheritance rules (negative, write, S1)
-                  \lnot \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp3, write, file, S_{1}), \\
-                  & \hat{memb}(alice, grp3, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inheritance rules (positive, read, S1)
+                    \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(grp3, read, file, S_{1}), \\
+                    & \hat{memb}(alice, grp3, S_{1}), \\
+                    & not \lnot \hat{holds}(alice, read, file, S_{1}) \\
+                    % inheritance rules (negative, read, S1)
+                    \lnot \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
+                    & \lnot \hat{holds}(grp3, read, file, S_{1}), \\
+                    & \hat{memb}(alice, grp3, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
+ 
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inheritance rules (positive, write, S1)
+                    \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(grp3, write, file, S_{1}), \\
+                    & \hat{memb}(alice, grp3, S_{1}), \\
+                    & not \lnot \hat{holds}(alice, write, file, S_{1}) \\
+                    % inheritance rules (negative, write, S1)
+                    \lnot \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
+                    & \lnot \hat{holds}(grp3, write, file, S_{1}), \\
+                    & \hat{memb}(alice, grp3, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
             \item
               Transitivity Rules
 
-              \begin{math}
-                \begin{aligned}[t]
-                  \hat{subst}&(grp1, grp1, S_{0}) \leftarrow \\
-                  & \hat{subst}(grp1, grp1, S_{0}), \\
-                  & \hat{subst}(grp1, grp1, S_{0})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    \hat{subst}&(grp1, grp1, S_{0}) \leftarrow \\
+                    & \hat{subst}(grp1, grp1, S_{0}), \\
+                    & \hat{subst}(grp1, grp1, S_{0})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              $\ldots$
+              \begin{vquote}
+                \hspace{5em}$\vdots$
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
-                  & \hat{subst}(grp3, grp3, S_{1}), \\
-                  & \hat{subst}(grp3, grp3, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
+                    & \hat{subst}(grp3, grp3, S_{1}), \\
+                    & \hat{subst}(grp3, grp3, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
             \item
               Inertial Rules
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule holds(alice, read, file)
-                  \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(alice, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(alice, read, file, S_{1}) \\
-                  % inertial rule !holds(alice, read, file)
-                  \lnot \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(alice, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(alice, read, file, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule holds(alice, read, file)
+                    \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(alice, read, file, S_{0}), \\
+                    & not \lnot \hat{holds}(alice, read, file, S_{1}) \\
+                    % inertial rule !holds(alice, read, file)
+                    \lnot \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
+                    & \lnot \hat{holds}(alice, read, file, S_{0}), \\
+                    & not \lnot \hat{holds}(alice, read, file, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule holds(alice, write, file)
-                  \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(alice, write, file, S_{0}), \\
-                  & not \lnot \hat{holds}(alice, write, file, S_{1}) \\
-                  % inertial rule !holds(alice, write, file)
-                  \lnot \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(alice, write, file, S_{0}), \\
-                  & not \lnot \hat{holds}(alice, write, file, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule holds(alice, write, file)
+                    \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(alice, write, file, S_{0}), \\
+                    & not \lnot \hat{holds}(alice, write, file, S_{1}) \\
+                    % inertial rule !holds(alice, write, file)
+                    \lnot \hat{holds}&(alice, write, file, S_{1}) \leftarrow \\
+                    & \lnot \hat{holds}(alice, write, file, S_{0}), \\
+                    & not \lnot \hat{holds}(alice, write, file, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule holds(grp1, read, file)
-                  \hat{holds}&(grp1, read, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp1, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp1, read, file, S_{1}) \\
-                  % inertial rule !holds(grp1, read, file)
-                  \lnot \hat{holds}&(grp1, read, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp1, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp1, read, file, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule holds(grp1, read, file)
+                    \hat{holds}&(grp1, read, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(grp1, read, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp1, read, file, S_{1}) \\
+                    % inertial rule !holds(grp1, read, file)
+                    \lnot \hat{holds}&(grp1, read, file, S_{1}) \leftarrow \\
+                    & \lnot \hat{holds}(grp1, read, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp1, read, file, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              $\ldots$
+              \begin{vquote}
+                \hspace{5em}$\vdots$
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule holds(grp3, read, file)
-                  \hat{holds}&(grp3, read, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp3, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp3, read, file, S_{1}) \\
-                  % inertial rule !holds(grp3, read, file)
-                  \lnot \hat{holds}&(grp3, read, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp3, read, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp3, read, file, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule holds(grp3, read, file)
+                    \hat{holds}&(grp3, read, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(grp3, read, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp3, read, file, S_{1}) \\
+                    % inertial rule !holds(grp3, read, file)
+                    \lnot \hat{holds}&(grp3, read, file, S_{1}) \leftarrow \\
+                    & \lnot \hat{holds}(grp3, read, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp3, read, file, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule holds(grp1, write, file)
-                  \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp1, write, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp1, write, file, S_{1}) \\
-                  % inertial rule !holds(grp1, write, file)
-                  \lnot \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp1, write, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp1, write, file, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule holds(grp1, write, file)
+                    \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(grp1, write, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp1, write, file, S_{1}) \\
+                    % inertial rule !holds(grp1, write, file)
+                    \lnot \hat{holds}&(grp1, write, file, S_{1}) \leftarrow \\
+                    & \lnot \hat{holds}(grp1, write, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp1, write, file, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              $\ldots$
+              \begin{vquote}
+                \hspace{5em}$\vdots$
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule holds(grp3, write, file)
-                  \hat{holds}&(grp3, write, file, S_{1}) \leftarrow \\
-                  & \hat{holds}(grp3, write, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp3, write, file, S_{1}) \\
-                  % inertial rule !holds(grp3, write, file)
-                  \lnot \hat{holds}&(grp3, write, file, S_{1}) \leftarrow \\
-                  & \lnot \hat{holds}(grp3, write, file, S_{0}), \\
-                  & not \lnot \hat{holds}(grp3, write, file, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule holds(grp3, write, file)
+                    \hat{holds}&(grp3, write, file, S_{1}) \leftarrow \\
+                    & \hat{holds}(grp3, write, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp3, write, file, S_{1}) \\
+                    % inertial rule !holds(grp3, write, file)
+                    \lnot \hat{holds}&(grp3, write, file, S_{1}) \leftarrow \\
+                    & \lnot \hat{holds}(grp3, write, file, S_{0}), \\
+                    & not \lnot \hat{holds}(grp3, write, file, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule memb(alice, grp1)
-                  \hat{memb}&(alice, grp1, S_{1}) \leftarrow \\
-                  & \hat{memb}(alice, grp1, S_{0}), \\
-                  & not \lnot \hat{memb}(alice, grp1, S_{1}) \\
-                  % inertial rule !memb(alice, grp1)
-                  \lnot \hat{memb}&(alice, grp1, S_{1}) \leftarrow \\
-                  & \lnot \hat{memb}(alice, grp1, S_{0}), \\
-                  & not \hat{memb}(alice, grp1, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule memb(alice, grp1)
+                    \hat{memb}&(alice, grp1, S_{1}) \leftarrow \\
+                    & \hat{memb}(alice, grp1, S_{0}), \\
+                    & not \lnot \hat{memb}(alice, grp1, S_{1}) \\
+                    % inertial rule !memb(alice, grp1)
+                    \lnot \hat{memb}&(alice, grp1, S_{1}) \leftarrow \\
+                    & \lnot \hat{memb}(alice, grp1, S_{0}), \\
+                    & not \hat{memb}(alice, grp1, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              $\ldots$
+              \begin{vquote}
+                \hspace{5em}$\vdots$
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule memb(alice, grp3)
-                  \hat{memb}&(alice, grp3, S_{1}) \leftarrow \\
-                  & \hat{memb}(alice, grp3, S_{0}), \\
-                  & not \lnot \hat{memb}(alice, grp3, S_{1}) \\
-                  % inertial rule !memb(alice, grp3)
-                  \lnot \hat{memb}&(alice, grp3, S_{1}) \leftarrow \\
-                  & \lnot \hat{memb}(alice, grp3, S_{0}), \\
-                  & not \hat{memb}(alice, grp3, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule memb(alice, grp3)
+                    \hat{memb}&(alice, grp3, S_{1}) \leftarrow \\
+                    & \hat{memb}(alice, grp3, S_{0}), \\
+                    & not \lnot \hat{memb}(alice, grp3, S_{1}) \\
+                    % inertial rule !memb(alice, grp3)
+                    \lnot \hat{memb}&(alice, grp3, S_{1}) \leftarrow \\
+                    & \lnot \hat{memb}(alice, grp3, S_{0}), \\
+                    & not \hat{memb}(alice, grp3, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule subst(grp1, grp1)
-                  \hat{subst}&(grp1, grp1, S_{1}) \leftarrow \\
-                  & \hat{subst}(grp1, grp1, S_{0}), \\
-                  & not \lnot \hat{subst}(grp1, grp1, S_{1}) \\
-                  % inertial rule !subst(grp1, grp1)
-                  \lnot \hat{subst}&(grp1, grp1, S_{1}) \leftarrow \\
-                  & \lnot \hat{memb}(grp1, grp1, S_{0}), \\
-                  & not \hat{memb}(grp1, grp1, S_{1})
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule subst(grp1, grp1)
+                    \hat{subst}&(grp1, grp1, S_{1}) \leftarrow \\
+                    & \hat{subst}(grp1, grp1, S_{0}), \\
+                    & not \lnot \hat{subst}(grp1, grp1, S_{1}) \\
+                    % inertial rule !subst(grp1, grp1)
+                    \lnot \hat{subst}&(grp1, grp1, S_{1}) \leftarrow \\
+                    & \lnot \hat{memb}(grp1, grp1, S_{0}), \\
+                    & not \hat{memb}(grp1, grp1, S_{1})
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
 
-              $\ldots$
+              \begin{vquote}
+                \hspace{5em}$\vdots$
+              \end{vquote}
 
-              \begin{math}
-                \begin{aligned}[t]
-                  % inertial rule subst(grp3, grp3)
-                  \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
-                  & \hat{subst}(grp3, grp3, S_{0}), \\
-                  & not \lnot \hat{subst}(grp3, grp3, S_{1}) \\
-                  % inertial rule !subst(grp3, grp3)
-                  \lnot \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
-                  & \lnot \hat{memb}(grp3, grp3, S_{0}), \\
-                  & not \hat{memb}(grp3, grp3, S_{1}) \\
-                \end{aligned}
-              \end{math}
+              \begin{vquote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    % inertial rule subst(grp3, grp3)
+                    \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
+                    & \hat{subst}(grp3, grp3, S_{0}), \\
+                    & not \lnot \hat{subst}(grp3, grp3, S_{1}) \\
+                    % inertial rule !subst(grp3, grp3)
+                    \lnot \hat{subst}&(grp3, grp3, S_{1}) \leftarrow \\
+                    & \lnot \hat{memb}(grp3, grp3, S_{0}), \\
+                    & not \hat{memb}(grp3, grp3, S_{1}) \\
+                  \end{aligned}
+                \end{math}
+              \end{vquote}
           \end{enumerate}
         \end{vexample}
 
@@ -1642,20 +1732,20 @@
 
     \begin{vverbatim}
   initially
-    \(a\sb{0}\) &&\ldots&& \(a\sb{n}\) && !\(b\sb{0}\) &&\ldots&& !\(b\sb{m}\)
-
-  always
-    \(c\sb{0}\) &&\ldots&& \(c\sb{o}\) && !\(d\sb{0}\) &&\ldots&& !\(d\sb{p}\)
-    implied by
-    \(e\sb{0}\) &&\ldots&& \(e\sb{q}\) && !\(f\sb{0}\) &&\ldots&& !\(f\sb{r}\)
-    with absence
-    \(g\sb{0}\) &&\ldots&& \(g\sb{s}\) && !\(h\sb{0}\) &&\ldots&& !\(h\sb{t}\)
-
-  update()
-    causes
-    \(i\sb{0}\) &&\ldots&& \(i\sb{u}\) && !\(j\sb{0}\) &&\ldots&& !\(j\sb{v}\)
-    if
-    \(k\sb{0}\) &&\ldots&& \(k\sb{w}\) && !\(l\sb{0}\) &&\ldots&& !\(l\sb{x}\)
+    \(a\sb{0}\) && \ldots && \(a\sb{n}\) && !\(b\sb{0}\) && \ldots && !\(b\sb{m}\)
+                                                                   
+  always                                                           
+    \(c\sb{0}\) && \ldots && \(c\sb{o}\) && !\(d\sb{0}\) && \ldots && !\(d\sb{p}\)
+    implied by                                                     
+    \(e\sb{0}\) && \ldots && \(e\sb{q}\) && !\(f\sb{0}\) && \ldots && !\(f\sb{r}\)
+    with absence                                                   
+    \(g\sb{0}\) && \ldots && \(g\sb{s}\) && !\(h\sb{0}\) && \ldots && !\(h\sb{t}\)
+                                                                   
+  update()                                                         
+    causes                                                         
+    \(i\sb{0}\) && \ldots && \(i\sb{u}\) && !\(j\sb{0}\) && \ldots && !\(j\sb{v}\)
+    if                                                             
+    \(k\sb{0}\) && \ldots && \(k\sb{w}\) && !\(l\sb{0}\) && \ldots && !\(l\sb{x}\)
     \end{vverbatim}
 
     We define the following sets of ground facts:
@@ -1688,9 +1778,9 @@
       =
       \begin{math}
         \begin{cases}
-          \mbox{\{$a_{0}$, \ldots, $a_{n}$, $\lnot$$b_{0}$, \ldots, $\lnot$$b_{m}$\}, if $\gamma$ is init.} \\
-          \mbox{\{$c_{0}$, \ldots, $c_{o}$, $\lnot$$d_{0}$, \ldots, $\lnot$$d_{p}$\}, if $\gamma$ is const.} \\
-          \mbox{\{$i_{0}$, \ldots, $i_{u}$, $\lnot$$j_{0}$, \ldots, $\lnot$$j_{v}$\}, if $\gamma$ is upd.}
+          \mbox{\{$a_{0}$, \ldots, $a_{n}$, $\lnot$$b_{0}$, \ldots, $\lnot$$b_{m}$\}, if $\gamma$ is initially} \\
+          \mbox{\{$c_{0}$, \ldots, $c_{o}$, $\lnot$$d_{0}$, \ldots, $\lnot$$d_{p}$\}, if $\gamma$ is constraint} \\
+          \mbox{\{$i_{0}$, \ldots, $i_{u}$, $\lnot$$j_{0}$, \ldots, $\lnot$$j_{v}$\}, if $\gamma$ is update}
         \end{cases}
       \end{math}
     \end{vquote}
@@ -1701,9 +1791,9 @@
       =
       \begin{math}
         \begin{cases}
-          \mbox{$\emptyset$, if $\gamma$ is init.} \\
-          \mbox{\{$g_{0}$, \ldots, $g_{s}$, $\lnot$$h_{0}$, \ldots, $\lnot$$h_{t}$\}, if $\gamma$ is const.} \\
-          \mbox{$\emptyset$, if $\gamma$ is upd.}
+          \mbox{$\emptyset$, if $\gamma$ is initially} \\
+          \mbox{\{$g_{0}$, \ldots, $g_{s}$, $\lnot$$h_{0}$, \ldots, $\lnot$$h_{t}$\}, if $\gamma$ is constraint} \\
+          \mbox{$\emptyset$, if $\gamma$ is update}
         \end{cases}
       \end{math}
     \end{vquote}
@@ -1714,9 +1804,9 @@
       =
       \begin{math}
         \begin{cases}
-          \mbox{$\emptyset$, if $\gamma$ is init.} \\
-          \mbox{\{$e_{0}$, \ldots, $e_{q}$, $\lnot$$f_{0}$, \ldots, $\lnot$$f_{r}$\}, if $\gamma$ is const.} \\
-          \mbox{\{$k_{0}$, \ldots, $k_{w}$, $\lnot$$l_{0}$, \ldots, $\lnot$$l_{x}$\}, if $\gamma$ is upd.}
+          \mbox{$\emptyset$, if $\gamma$ is initially} \\
+          \mbox{\{$e_{0}$, \ldots, $e_{q}$, $\lnot$$f_{0}$, \ldots, $\lnot$$f_{r}$\}, if $\gamma$ is constraint} \\
+          \mbox{\{$k_{0}$, \ldots, $k_{w}$, $\lnot$$l_{0}$, \ldots, $\lnot$$l_{x}$\}, if $\gamma$ is update}
         \end{cases}
       \end{math}
     \end{vquote}
@@ -1999,7 +2089,8 @@
           \begin{vquote}
             \begin{math}
               \begin{aligned}[t]
-                FALSE \leftarrow & holds(alice, exec, file, true), \\
+                FALSE & \leftarrow \\
+                & holds(alice, exec, file, true), \\
                 & holds(alice, exec, file, false)
               \end{aligned}
             \end{math}
@@ -2180,12 +2271,12 @@
 
       \begin{itemize}
         \item
-          {\em Generating entity identifier definitions}. Subject entities are
+          {\em Generating entity identifier definitions.} Subject entities are
           taken from the authentication (password) table; access rights are
           hard-coded built-ins; and the list of objects are generated by
           traversing the document root for files and directories.
         \item
-          {\em Generating additional constraints}. Additional constraints are
+          {\em Generating additional constraints.} Additional constraints are
           generated to preserve the relationship between groups and elements.
           This is useful to model the assertion that unless explicitly stated,
           users holding particular access rights to a directory automatically
