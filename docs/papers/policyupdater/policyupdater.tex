@@ -1418,14 +1418,73 @@
           \end{enumerate}
         \end{vexample}
 
-        From the above example, it is observed that given a domain description
-        ${\cal D_{L}}$, $Trans$(${\cal D_{L}}$) may contain much more rules
-        than the original statements in ${\cal D_{L}}$. However, in our full
-        paper \cite{CRE}, we have shown that with finite domains, the size of
-        $Trans$(${\cal D_{L}}$) is in fact only polynomially larger than the
-        size of ${\cal D_{L}}$. Therefore, from a computational viewpoint,
-        computing the answer sets of $Trans$(${\cal D_{L}}$) is always
-        feasible.
+        From the above example, it may be observed that given a domain
+        description ${\cal D_{L}}$, the language ${\cal L^{*}}$ translation
+        $Trans$(${\cal D_{L}}$) may contain more rules than the original
+        statements in ${\cal D_{L}}$. However, as the theorem below defines the
+        maximum number of rules generated in a translation
+        $Trans$(${\cal D_{L}}$), it shows that the size of a translated
+        domain $|$$Trans$(${\cal D_{L}}$)$|$ is only polynomially larger
+        than the size of the given domain $|$${\cal D_{L}}$$|$. Therefore, from
+        a computational viewpoint, computing the answer sets of
+        $Trans$(${\cal D_{L}}$) is always feasible.
+
+        \begin{vtheorem}{Translation Size}
+          \label{the-size}
+          Given a domain description ${\cal D_{L}}$; the sets ${\cal S}_{i}$,
+          ${\cal S}_{c}$ and ${\cal S}_{u}$ containing the initially,
+          constraint and policy update statements in ${\cal D_{L}}$,
+          respectively; the set of all entities ${\cal E}$ in ${\cal D_{L}}$,
+          including its subsets ${\cal E}_{s}$, ${\cal E}_{a}$, ${\cal E}_{s}$,
+          ${\cal E}_{ss}$, ${\cal E}_{as}$, ${\cal E}_{os}$, ${\cal E}_{sg}$,
+          ${\cal E}_{ag}$, ${\cal E}_{og}$; the set ${\cal A}$ containing all
+          the atoms in ${\cal D_{L}}$; the maximum number of atoms $M_{c}$ in
+          the $always$ clause of all statements in ${\cal S}_{c}$; the
+          maximum number of atoms $M_{u}$ in the post condition of all
+          statements in ${\cal S}_{u}$; and finally the sequence list $\psi$.
+
+         \begin{vquote}
+            $|$$Trans$(${\cal D_{L}}$)$|$ =
+
+            \hspace{1em}
+            % initially
+            $|{\cal S}_{i}|$ +
+            % constraints
+            $M_{c}$ $|\psi|$ +
+            % policy updates
+            $M_{u}$ $|\psi|$ +
+
+            % transitivity rules
+            \hspace{1em}
+            $|\psi|$ $($$|{\cal E}_{sg}|^{3}$ +
+            $|{\cal E}_{ag}|^{3}$ +
+            $|{\cal E}_{og}|^{3}$$)$ +
+
+            % inertial rules
+            \hspace{1em}
+            $2$ $|{\cal A}|$ $|\psi|$ +
+
+            % membership inheritance
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ +
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
+
+            % subset inheritance
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ +
+
+            \hspace{1em}
+            $2|\psi|$$|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
+          \end{vquote}
+        \end{vtheorem}
 
   \section{Domain Consistency Checking and Evaluation}
     \label{sec-cons}
@@ -1588,13 +1647,8 @@
     \begin{vtheorem}{Domain Consistency}
       \label{the-cons}
       A {\em normal} domain description of language ${\cal L}$ is also
-      {\em consistent} \footnotemark.
+      {\em consistent}.
     \end{vtheorem}
-
-    \footnotetext{
-      The proof of this theorem is presented in the full version of this paper
-      \cite{CRE}.
-    }
 
     Basically, only consistent domain descriptions can be evaluated in terms
     of user queries. For this reason, Theorem \ref{the-cons} may be used to
@@ -2284,11 +2338,6 @@
       In {\em Proceedings of KR2000, 7th International Conference on Principles
       of Knowledge Representation and Reasoning},
       pp. 121-132, Kaufmann, 2000.
-
-    \bibitem{CRE}
-      Crescini, V. F., Zhang, Y.,
-      {\em PolicyUpdater - A System for Dynamic Access Control}.
-      (manuscript) 2004.
 
     \bibitem{HAL}
       Halpern, J. Y., Weissman, V.,
