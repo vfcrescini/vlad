@@ -2,7 +2,6 @@
  * structure.h
  * Vino Crescini
  * 7 December 2000
- *
  */
 
 #include <stdlib.h>
@@ -10,25 +9,28 @@
 #ifndef __STRUCTURE_H
 #define __STRUCTURE_H
 
-class structure {
-	public :
-		structure();
-		~structure();
+class structure 
+{
+  public :
 
-		void setItem(int i);
-		void setNext(structure *s);
-		void setPrev(structure *s);
+    structure();
+    ~structure();
 
-		int getItem();
-		structure *getNext();
-		structure *getPrev();
+    void setItem(int i);
+    void setNext(structure *s);
+    void setPrev(structure *s);
 
-		void setStructure(int i, structure *n, structure *p);
+    int getItem();
+    structure *getNext();
+    structure *getPrev();
 
-	private :
-		int item;
-		structure *next;
-		structure *prev;
+    void setStructure(int i, structure *n, structure *p);
+
+  private :
+  
+    int item;
+    structure *next;
+    structure *prev;
 };
 
 #endif
