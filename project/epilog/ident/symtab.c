@@ -14,9 +14,9 @@ void symtab_destroy(void *p);
 static simplelist_type list;
 
 /* initialise list */
-void symtab_init(void)
+int symtab_init(void)
 {
-  simplelist_init(&list);
+  return simplelist_init(&list);
 }
 
 /* return 0 if name is already in the list */
@@ -25,7 +25,7 @@ int symtab_find(char *name)
   ident_type tmp_ident;
 
   if ((tmp_ident.name = name) == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   return simplelist_find_data(list,
                               (void *) &tmp_ident,
@@ -35,16 +35,17 @@ int symtab_find(char *name)
 /* add identifier */
 int symtab_add(char *name, unsigned short type)
 {
+  int tmp_res;
   ident_type *new_ident = NULL;
   
-  if (name == NULL)
-    return -1;
+  if ((tmp_res = ident_create(&new_ident, name, type)) != EPI_OK)
+    return tmp_res;
 
-  if (ident_create(&new_ident, name, type) != 0)
-    return -1;
+  if ((tmp_res = simplelist_find_data(list, (void *) new_ident, symtab_compare)) == EPI_OK)
+    return EPI_DUPLICATE;
 
-  if (simplelist_find_data(list, (void *) new_ident, symtab_compare) == 0)
-    return -1;
+  if (tmp_res != EPI_NOTFOUND)
+    return tmp_res;
 
   return simplelist_add(&list, (void *) new_ident);
 }
@@ -54,24 +55,25 @@ int symtab_get(char *name, ident_type **ident)
 {
   simplelist_type tmp_list;
   ident_type tmp_ident;
+  int tmp_res;
 
   if (name == NULL || ident == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   tmp_ident.name = name;
   
-  if (simplelist_get_data(list, &tmp_list, (void *) &tmp_ident, symtab_compare) != 0)
-    return -1;
+  if ((tmp_res = simplelist_get_data(list, &tmp_list, (void *) &tmp_ident, symtab_compare)) != EPI_OK)
+    return tmp_res;
 
   /* we know that there are no duplicates in this list so either the resulting
    * list is empty or the identifier we're looking for is the first and only
    * entry. */
-  if (simplelist_get_index(tmp_list, 0, (void **) ident) != 0)
-    return -1;
+  if ((tmp_res = simplelist_get_index(tmp_list, 0, (void **) ident)) != EPI_OK)
+    return tmp_res;
 
   simplelist_purge(&tmp_list, NULL);
 
-  return 0;
+  return EPI_OK;
 }
 
 /* delete identifier entry based on name */
@@ -80,7 +82,7 @@ int symtab_del(char *name)
   ident_type tmp_ident;
 
   if (name == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   tmp_ident.name = name;
 

@@ -11,20 +11,20 @@
 int ident_create(ident_type **ident, char *name, unsigned short type)
 {
   if (ident == NULL || name == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   if ((*ident = (ident_type *) malloc(sizeof(ident_type))) == NULL)
-    return -1;
+    return EPI_MALLOCFAILED;
 
   if (((*ident)->name = (char *) malloc(sizeof(char) * (strlen(name) + 1))) == NULL) {
     free(*ident);
-    return -1;
+    return EPI_MALLOCFAILED;
   }
 
   strcpy((*ident)->name, name);
   (*ident)->type = type;
 
-  return 0;
+  return EPI_OK;
 }
 
 /* free ident struct, including allocated space for name */

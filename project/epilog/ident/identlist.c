@@ -11,9 +11,9 @@ int identlist_compare(void *p1, void *p2);
 void identlist_destroy(void *p);
 
 /* initialise list */
-void identlist_init(identlist_type *list)
+int identlist_init(identlist_type *list)
 {
-  simplelist_init(list);
+  return simplelist_init(list);
 }
 
 /* gives the number of identifiers in the list */
@@ -28,7 +28,7 @@ int identlist_find(identlist_type list, char *name)
   ident_type tmp_ident;
 
   if ((tmp_ident.name = name) == NULL)
-    return -1;
+    return EPI_NULLPTR;
 
   return simplelist_find_data(list,
                               (void *) &tmp_ident,
@@ -38,27 +38,18 @@ int identlist_find(identlist_type list, char *name)
 /* add identifier */
 int identlist_add(identlist_type *list, ident_type *ident)
 {
-  if (list == NULL || ident == NULL)
-    return -1;
-
   return simplelist_add(list, (void *) ident);
 }
 
 /* get identifier structure based on index */
 int identlist_get(identlist_type list, unsigned int index, ident_type **ident)
 {
-  if (ident == NULL)
-    return -1;
-
   return simplelist_get_index(list, index, (void **) ident);
 }
 
 /* delete identifier entry based on index but not free the indentifier */
 int identlist_del(identlist_type *list, unsigned int index)
 {
-  if (list == NULL)
-    return -1;
-
   return simplelist_del_index(list, index, NULL);
 }
 

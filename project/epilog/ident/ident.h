@@ -3,6 +3,8 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
+#include <epilog.h>
+
 #ifndef __EPI_IDENT_H
 #define __EPI_IDENT_H
 

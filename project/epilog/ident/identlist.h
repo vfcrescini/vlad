@@ -17,7 +17,7 @@
 #define identlist_type simplelist_type
 
 /* initialise list */
-void identlist_init(identlist_type *list);
+int identlist_init(identlist_type *list);
 
 /* gives the number of identifiers in the list */
 unsigned int identlist_length(identlist_type list);
