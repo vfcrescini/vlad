@@ -20,8 +20,7 @@ int indexedlist_init(indexedlist_type *list)
 }
 
 /* add the data in. we leave it to the calling function to allocate
- * memory for the data. no duplicate checking
- */
+ * memory for the data. no duplicate checking */
 int indexedlist_add(indexedlist_type *list, 
                     void *data, 
                     unsigned int *index)
@@ -92,7 +91,6 @@ int indexedlist_get_index(indexedlist_type list,
   return -1; 
 }
 
-
 /* 
  * delete a node that matches the contents of data must provide a cmp function
  * that returns 0 if the contents match. 
@@ -122,6 +120,8 @@ int indexedlist_del_data(indexedlist_type *list,
 
       /* we leave it to the calling function to free the data pointer */
       free(curr);
+
+      (list->length)--;
 
       return 0;
     }
@@ -156,6 +156,8 @@ int indexedlist_del_index(indexedlist_type *list, unsigned int index)
         return -1;
 
       free(curr);
+
+      (list->length)--;
 
       return 0;
     }
@@ -198,6 +200,8 @@ int indexedlist_del_data_f(indexedlist_type *list,
       f(curr->data);
       free(curr);
 
+      (list->length)--;
+
       return 0;
     }
     prev = curr;
@@ -233,6 +237,8 @@ int indexedlist_del_index_f(indexedlist_type *list,
 
       f(curr->data);
       free(curr);
+
+      (list->length)--;
 
       return 0;
     }

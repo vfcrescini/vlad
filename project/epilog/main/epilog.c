@@ -4,16 +4,19 @@
  */
 
 #include <stdio.h>
-#include <symtab.h>
 #include <parser.h>
+#include <identlist.h>
 
 int main()
 {
   yyin = stdin;
   yyout = stdout;
 
-  symtab_init();
+  identlist_init();
+  
   yyparse();
+
+  identlist_purge();
 
   return 0;
 }

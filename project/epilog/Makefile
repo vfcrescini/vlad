@@ -1,6 +1,9 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
-DIRS = datastruct symtab kb parser main
+DIRS = datastruct ident parser main
+ifdef DEBUG
+DIRS += test
+endif
 
 all :
 	@set -e && for i in $(DIRS); do \

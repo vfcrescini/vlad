@@ -8,11 +8,9 @@
 %s COMMENT
 
 %{
+#include <stdlib.h>
+#include <string.h>
 #include "y.tab.h"
-
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 
 extern YYSTYPE yylval;
 unsigned int line_no = 1;
@@ -101,11 +99,12 @@ everything         .
 <INITIAL>{acc_type} return EPI_SYM_ACCTYPE;
 
 <INITIAL>{identifier} {
-#ifdef DEBUG
-  printf("identifier: %s\n", yytext);
-#endif
- yylval.identifier = yytext;
- return EPI_SYM_IDENTIFIER;
+  if ((yylval.identifier = (char *) malloc(sizeof(char) * strlen(yytext))) == NULL)
+    yylval.identifier = NULL;
+  else
+    strcpy(yylval.identifier, yytext);
+
+  return EPI_SYM_IDENTIFIER;
 }
 
 <INITIAL>{begin_comment} {

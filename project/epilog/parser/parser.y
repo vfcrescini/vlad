@@ -5,11 +5,8 @@
 
 %{
 #include <stdlib.h>
-/*
-#include <symtab.h>
-#include <gnd_atom.h>
-#include <gnd_atomlist.h>
-*/
+#include <ident.h>
+#include <identlist.h>
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -17,6 +14,7 @@
 
 int yylex();
 extern int yyerror(char *error);
+int add_identifier(char *ident, unsigned short type);
 %}
 
 %union {
@@ -50,14 +48,14 @@ extern int yyerror(char *error);
 %token <terminal> EPI_SYM_OBJGRPTYPE
 %token <terminal> EPI_SYM_ACCGRPTYPE
 %token <terminal> EPI_SYM_IDENT
-%token <terminal> EPI_SYM_IDENTIFIER
+%token <identifier> EPI_SYM_IDENTIFIER
 
 %start program
 
 %%
 
 program : 
-  first_part
+  first_part 
   | last_part
   |
   ;
@@ -140,54 +138,78 @@ acc_grp_ident_decl :
 sub_ident_list :
   EPI_SYM_IDENTIFIER 
   {
+    if (add_identifier($1, EPI_IDENT_SUBJECT) != 0)
+      return -1;
   }
   | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_ident_list
   {
+    if (add_identifier($1, EPI_IDENT_SUBJECT) != 0)
+      return -1;
   }
   ;
 
 obj_ident_list :
   EPI_SYM_IDENTIFIER 
   {
+    if (add_identifier($1, EPI_IDENT_OBJECT) != 0)
+      return -1;
   }
   | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_ident_list
   {
+    if (add_identifier($1, EPI_IDENT_OBJECT) != 0)
+      return -1;
   }
   ;
 
 acc_ident_list :
   EPI_SYM_IDENTIFIER
   {
+    if (add_identifier($1, EPI_IDENT_ACCESS) != 0)
+      return -1;
   }
   | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_ident_list
   {
+    if (add_identifier($1, EPI_IDENT_ACCESS) != 0)
+      return -1;
   }
   ;
 
 sub_grp_ident_list :
   EPI_SYM_IDENTIFIER 
   {
+    if (add_identifier($1, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0)
+      return -1;
   }
   | EPI_SYM_IDENTIFIER EPI_SYM_COMMA sub_grp_ident_list
   {
+    if (add_identifier($1, EPI_IDENT_SUBJECT | EPI_IDENT_GROUP) != 0)
+      return -1;
   }
   ;
 
 obj_grp_ident_list :
   EPI_SYM_IDENTIFIER
   {
+    if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
+      return -1;
   }
   | EPI_SYM_IDENTIFIER EPI_SYM_COMMA obj_grp_ident_list
   {
+    if (add_identifier($1, EPI_IDENT_OBJECT | EPI_IDENT_GROUP) != 0)
+      return -1;
   }
   ;
 
 acc_grp_ident_list :
   EPI_SYM_IDENTIFIER 
   {
+    if (add_identifier($1, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0)
+      return -1;
   }
   | EPI_SYM_IDENTIFIER EPI_SYM_COMMA acc_grp_ident_list
   {
+    if (add_identifier($1, EPI_IDENT_ACCESS | EPI_IDENT_GROUP) != 0)
+      return -1;
   }
   ;
 
@@ -329,3 +351,39 @@ logical_const :
   ;
 
 %%
+
+int add_identifier(char *ident, unsigned short type) {
+  if (ident == NULL) {
+    yyerror("memory overflow");
+    return -1;
+  }
+  if (identlist_find(ident) == 0) {
+    yyerror("identifier declared more than once");
+    return -1;
+  }
+  
+#ifdef DEBUG
+  if (EPI_IDENT_IS_SUBJECT(type) && ! EPI_IDENT_IS_GROUP(type))
+    printf("declared subject identifier %s\n", ident);
+  else if (EPI_IDENT_IS_OBJECT(type) && ! EPI_IDENT_IS_GROUP(type))
+    printf("declared object identifier %s\n", ident);
+  else if (EPI_IDENT_IS_ACCESS(type) && ! EPI_IDENT_IS_GROUP(type))
+    printf("declared access identifier %s\n", ident); 
+  if (EPI_IDENT_IS_SUBJECT(type) && EPI_IDENT_IS_GROUP(type))
+    printf("declared subject-group identifier %s\n", ident);
+  else if (EPI_IDENT_IS_OBJECT(type) && EPI_IDENT_IS_GROUP(type))
+    printf("declared object-group identifier %s\n", ident);
+  else if (EPI_IDENT_IS_ACCESS(type) && EPI_IDENT_IS_GROUP(type))
+    printf("declared access-group identifier %s\n", ident);   
+#endif
+
+  if (identlist_add(ident, EPI_IDENT_SUBJECT) != 0) {
+    yyerror("memory overflow");
+    free(ident);
+    return -1;
+  }
+
+  free(ident);
+
+  return 0;
+}
