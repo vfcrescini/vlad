@@ -18,16 +18,22 @@
 
 void modvlad_generate_header(request_rec *a_r)
 {
+  if (!a_r)
+    return;
+
   ap_rprintf(a_r, "%s\n", MODVLAD_XML_HEADER);
   ap_rprintf(a_r, "%s\n", MODVLAD_DOCTYPE_HEADER);
   ap_rprintf(a_r, "%s\n", MODVLAD_MISC_HEADER);
   ap_rprintf(a_r, "<html>\n  <body>\n");
-  ap_rprintf(a_r, "    <h1>mod_vlad Administration</h1>\n");
+  ap_rprintf(a_r, "    <h1>mod_vlad %s Administration</h1>\n", MODVLAD_VERSION);
   ap_rprintf(a_r, "    <h2>Transformation Sequence Manipulator</h2>\n");
 }
 
 void modvlad_generate_footer(request_rec *a_r)
 {
+  if (!a_r)
+    return;
+
   ap_rprintf(a_r, "  </body>\n</html>\n");
 }
 
@@ -38,10 +44,13 @@ void modvlad_generate_form(request_rec *a_r, modvlad_config_rec *a_conf)
   unsigned int slen;
   unsigned int tlen;
   unsigned int ilen;
-  
   const char *uri = NULL;
 
-  uri = ap_construct_url(a_r->pool, a_r->uri, a_r);
+  if (!a_r || !a_conf)
+    return;
+
+  if (!(uri = ap_construct_url(a_r->pool, a_r->uri, a_r)))
+    return;
 
   ap_rprintf(a_r, "    <h3>Current Sequence</h3>\n");
   ap_rprintf(a_r, "    <form name=\"delform\" method=\"POST\" action=\"%s\">\n", uri);
