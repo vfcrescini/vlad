@@ -16,6 +16,11 @@ class transref : public list_item
     transref(const char *n, stringlist *i);
     ~transref();
     bool cmp(list_item *item);
+    char *get_name();
+    stringlist *get_ilist();
+#ifdef DEBUG
+    void print(char *s);
+#endif
   private :
     char *name;
     stringlist *ilist;
@@ -28,6 +33,10 @@ class transreflist : public list
      ~transreflist();
      /* add pre-malloc'ed transref */
      int add(transref *t);
+     int get(unsigned int i, transref **t);
+#ifdef DEBUG
+    void print(char *s);
+#endif
 } ;
 
 class query : public list_item

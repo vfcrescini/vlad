@@ -15,7 +15,7 @@
 transdef::transdef(const char *n, stringlist *v, expression *pr, expression *po)
 {
   name = (char *) n;
-  vtable = v;
+  vlist = v;
   precond = pr;
   postcond = po;
 }
@@ -24,8 +24,8 @@ transdef::~transdef()
 {
   if (name != NULL)
     free(name);
-  if (vtable != NULL)
-    delete vtable;
+  if (vlist != NULL)
+    delete vlist;
   if (precond != NULL)
     delete precond;
   if (postcond != NULL)
@@ -57,6 +57,16 @@ bool transdef::cmp(list_item *item)
   return true;
 }
 
+char *transdef::get_name()
+{
+  return name;
+}
+
+stringlist *transdef::get_vlist()
+{
+  return vlist;
+}
+
 transtab::transtab(const char *n) : list(n, true)
 {
 }
@@ -77,4 +87,35 @@ int transtab::add(const char *n, stringlist *v, expression *pr, expression *po)
     return VLAD_MALLOCFAILED;
 
   return list::add((list_item *) tmp);
+}
+
+int transtab::get(const char *n, transdef **t)
+{
+  int retval;
+  char *name;
+  transdef *tmp;
+  transdef **list;
+  unsigned int s;
+
+  if (n == NULL)
+    return VLAD_NULLPTR;
+
+  if ((name = VLAD_STRING_MALLOC(n)) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  strcpy(name, n); 
+
+  if ((tmp = VLAD_NEW(transdef(name, NULL, NULL, NULL))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  if ((retval = list::get((list_item *) tmp, (list_item ***) &list, &s)) != VLAD_OK)
+    return retval;
+
+  /* only one */
+  *t = list[0];
+
+  free(list);
+  delete tmp;
+
+  return VLAD_OK;
 }

@@ -53,6 +53,30 @@ bool transref::cmp(list_item *item)
   return true;
 }
 
+char *transref::get_name()
+{
+  return name;
+}
+
+stringlist *transref::get_ilist()
+{
+  return ilist;
+}
+
+#ifdef DEBUG
+void transref::print(char *s)
+{
+  char tmps[1024];
+
+  strcpy(tmps, "");
+
+  if (ilist != NULL)
+    ilist->print(tmps);
+
+  sprintf(s, "%s(%s)", name, tmps);
+}
+#endif
+
 transreflist::transreflist(const char *n) : list(n, false)
 {
 }
@@ -70,6 +94,30 @@ int transreflist::add(transref *t)
 
   return list::add((list_item *) t);
 }
+
+int transreflist::get(unsigned int i, transref **t)
+{
+  return list::get(i, (list_item **) t);
+}
+
+#ifdef DEBUG
+void transreflist::print(char *s)
+{
+  unsigned int i;
+  char tmps[1024];
+  transref *tmpr;
+
+  strcpy(s, "");
+
+  for (i = 0; i < list::length(); i++) {
+    if (list::get(i, (list_item **) &tmpr) != VLAD_OK)
+      break;
+
+    tmpr->print(tmps);
+    sprintf(s, "%s %s", s, tmps);
+  }
+}
+#endif
 
 query::query(expression *p, transreflist *r)
 {
