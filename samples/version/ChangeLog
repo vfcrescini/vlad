@@ -8,3 +8,7 @@
 	* version.c (innumrange) :
 
 	  - Changed multiplication operations to left-shifts.
+
+	* Makefile : 
+
+	  - Added Makefile
