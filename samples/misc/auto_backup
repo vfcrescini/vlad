@@ -21,49 +21,50 @@
 
 
 # keep this many backlogs (>=0)
-backlog=3
+backlog=7
 
 # the space-delimited list of paths to backup (full-paths)
 source_dirs="/var/lib/cvs"
 
 # the directory in which backup archives are stored (full-path)
-backup_dir="/usr/local/tmp/backup/x"
+backup_dir="/usr/local/tmp/backup"
 
 # command line for tar and gzip to read and write to and from stdout and stdin
 tar_cmd="tar -c -p -s --same-owner --numeric-owner"
 gzip_cmd="gzip -9"
 
+# prefix for each backup archive
+prefix="bak-"
+
 # first and foremost, ensure that backup_dir is writable and readable
-if  [ ! -d ${backup_dir} ] || [ ! -r ${backup_dir} ] || [ ! -w ${backup_dir} ]; then
+if \
+  [ ! -d "${backup_dir}" ] || \
+  [ ! -r "${backup_dir}" ] || \
+  [ ! -w "${backup_dir}" ]; then
   exit -1
 fi
 
 # now do it
 for i in ${source_dirs}; do
   # ignore those that do not have sufficient priviledges
-  if [ -d ${i} ] && [ -r ${i} ] && [ -x ${i} ]; then
-    cd ${i}
-
-    # compose the prefix
-    # do this just in case $PWD doesn't get set
-    pwd="`pwd`"
+  if [ -d "${i}" ] && [ -r "${i}" ] && [ -x "${i}" ]; then
     # remove leading /
-    pwd="${pwd#/}"
+    srcdir="${i#/}"
     # convert / to _
-    prefix="`echo ${pwd} | tr [/] [_]`"
+    name="${prefix}`echo ${srcdir} | tr [/] [_]`"
 
     # rotate the backups
     count=${backlog}
     while [ ${count} -ge 0 ]; do
       if [ ${count} -eq ${backlog} ]; then
         # delete oldest one
-        rm -f "${backup_dir}/${prefix}-${count}.tar.gz"
+        rm -f "${backup_dir}/${name}-${count}.tar.gz"
       else
         # shift the rest: there should only be one of each count
-        if [ -f "${backup_dir}/${prefix}-${count}.tar.gz" ]; then
+        if [ -f "${backup_dir}/${name}-${count}.tar.gz" ]; then
           mv -f \
-            "${backup_dir}/${prefix}-${count}.tar.gz" \
-            "${backup_dir}/${prefix}-$((${count}+1)).tar.gz"
+            "${backup_dir}/${name}-${count}.tar.gz" \
+            "${backup_dir}/${name}-$((${count}+1)).tar.gz"
         fi
       fi
       # decrement
@@ -71,7 +72,7 @@ for i in ${source_dirs}; do
     done
 
     # now tar it up and compress
-    ${tar_cmd} . | ${gzip_cmd} > "${backup_dir}/${prefix}-0.tar.gz"
+    ${tar_cmd} . | ${gzip_cmd} > "${backup_dir}/${name}-0.tar.gz"
   fi
 done
 
