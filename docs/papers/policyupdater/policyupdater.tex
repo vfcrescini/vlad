@@ -1733,7 +1733,7 @@ query holds(alice, read, file);
     generic data type that can be used to store strings, an arbitrary data
     type or another list type.
 
-    \subsection{Symbol Table.}
+    \subsection{Symbol Table}
 
       The symbol table is used to store the identifier entities defined in
       the entity identifier declaration section of language ${\cal L}$
@@ -1764,7 +1764,7 @@ query holds(alice, read, file);
       declared in the program. Each list is indexed by consecutive
       positive integers starting from zero.
 
-    \subsection{Policy Base.}
+    \subsection{Policy Base}
 
       When a language ${\cal L}$ program is parsed, each of the facts,
       rules and policy updates must first be stored into the policy base.
@@ -1772,7 +1772,7 @@ query holds(alice, read, file);
       initial state facts, constraint rules, policy update definitions and
       the policy update sequence.
 
-      \subsubsection{Atoms.}
+      \subsubsection{Atoms}
 
         The three types of atoms (subject, access right and object) are
         represented as structures of 2 to 3 strings, with each string
@@ -1802,7 +1802,7 @@ query holds(alice, read, file);
           \end{tabular}
         \end{quote}
 
-      \subsubsection{Facts.}
+      \subsubsection{Facts}
 
         Facts are represented as a three-element structure composed of the
         following: polymorphic type which can be any of the three atom
@@ -1825,18 +1825,18 @@ query holds(alice, read, file);
           \end{tabular}
         \end{quote}
 
-      \subsubsection{Expressions.}
+      \subsubsection{Expressions}
 
         Since expressions are simply conjunctions of facts, they are
         represented as a list of fact structures.
 
-      \subsubsection{Initial state facts table.}
+      \subsubsection{Initial State Facts Table}
 
         The initial state facts table is represented as a single list of
         fact structures, or an expression. Each fact in all {\em initially}
         statements are added into the initial state facts table.
 
-      \subsubsection{Constraint table.}
+      \subsubsection{Constraint Table}
 
         The constraint table is represented as a list of constraint
         structures, with each structure composed of the following:
@@ -1855,7 +1855,7 @@ query holds(alice, read, file);
           \end{tabular}
         \end{quote}
 
-      \subsubsection{Policy update definition table.}
+      \subsubsection{Policy Update Definition Table}
 
         Another list of structures is the policy update table. Each element
         structure of this table is composed of the following 4 fields:
@@ -1876,7 +1876,7 @@ query holds(alice, read, file);
           \end{tabular}
         \end{quote}
 
-    \subsection{Policy Update Sequence Table.}
+    \subsection{Policy Update Sequence Table}
 
       The policy update sequence table is an ordered list of sequence
       structures, each with the following elements:
