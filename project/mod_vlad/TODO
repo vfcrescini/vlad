@@ -9,7 +9,4 @@ Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
   directive). At the moment, authorization is granted or denied based on the
   physical locations of resources.
 
-- Fix configuration so that data is shared between all threads. At the moment,
-  a different vlad kb is kept for each thread.
-
 - Locking mechanism to allow multiple admins to administer at the same time.
