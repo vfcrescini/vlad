@@ -54,19 +54,19 @@
 
           \begin{itemize}
             \item
-              $Entity$ $Identifiers$ represent constant entities that make up a
-              logical atom. They are divided further into three types, with
-              each type again divided into the $singular$ $entity$ and $group$
-              $entity$ categories:
+              {\em Entity Identifiers} represent constant entities that make up
+              a logical atom. They are divided further into three types, with
+              each type again divided into the {\em singular entity} and
+              {\em group entity} categories:
 
               \begin{itemize}
                 \item
-                  $Subjects$: privilege holders (e.g. alice, lecturers,
+                  {\em Subjects}: privilege holders (e.g. alice, lecturers,
                   students).
                 \item
-                  $Access Rights$: privilege (e.g. read, write, own).
+                  {\em Access Rights}: privilege (e.g. read, write, own).
                 \item
-                  $Objects$: privilege entities (e.g. file, database,
+                  {\em Objects}: privilege entities (e.g. file, database,
                   directory).
               \end{itemize}
 
@@ -78,7 +78,7 @@
               \begin{verbatim}[a-z]([a-zA-Z0-9_]{0,127}\end{verbatim}
 
             \item
-              $Policy$ $Update$ $Identifiers$ are used for the sole purpose of
+              {\em Policy Update Identifiers} are used for the sole purpose of
               naming a policy update. These identifier names are then used as
               labels to refer to policy update definitions and directives. As
               labels, identifiers of this class occupies a different namespace
@@ -88,7 +88,7 @@
               \begin{verbatim}[a-z]([a-zA-Z0-9_]{0,127}\end{verbatim}
  
             \item
-              $Variable$ $Identifiers$ are used as entity identifier
+              {\em Variable Identifiers} are used as entity identifier
               place-holers, and as such, are subject to the entity identifier
               types. Variable identifiers are prefixed with 1 or 2 upper-case
               characters to distinguish them from entity identifiers, followed
@@ -143,20 +143,20 @@
 
           \begin{itemize}
             \item
-              $Holds$. An atom of this type states that the subject identifier
-              $sub$ holds the access right identifier $acc$ for the object
-              identifier $obj$.
+              {\em Holds.} An atom of this type states that the subject
+              identifier $sub$ holds the access right identifier $acc$
+              for the object identifier $obj$.
          
               \begin{verbatim}holds(<sub>, <acc>, <obj>)\end{verbatim}
             \item
-              $Membership$. This type of atom states that the singular
+              {\em Membership.} This type of atom states that the singular
               identifier $elt$ is a member or element of the group identifier
               $grp$. It is important to note that identifiers $elt$ and $grp$
               must be of the same base type (e.g. subject and subject group).
          
               \begin{verbatim}memb(<elt>, <grp>)\end{verbatim}
             \item
-              $Subset$. The subset atom states that the group identifiers
+              {\em $Subset$.} The subset atom states that the group identifiers
               $grp1$ and $grp2$ are of the same types and that group $grp1$ is
               a subset of the group $grp2$.
 
@@ -164,7 +164,7 @@
           \end{itemize}
 
           Atoms that contain no variables, i.e. composed entirely of entity
-          identifiers, are called $ground$ $atoms$.
+          identifiers, are called {\em ground atoms}.
 
         \paragraph{Facts.}
           A fact makes a claim that the relationship represented by an atom or
@@ -175,8 +175,8 @@
           \begin{verbatim}[!]<holds_atm>|<memb_atm>|<subst_atm>\end{verbatim}
 
           Note that facts may be made up of atoms that contain variable
-          identifiers. Facts with no variable occurences are called $ground$
-          $facts$.
+          identifiers. Facts with no variable occurences are called
+          {\em ground facts}.
  
         \paragraph{Expressions.}
           An expression is either a fact, or a logical conjunction of facts,
@@ -184,8 +184,8 @@
 
           \begin{verbatim}<fact1> [&& <fact2> [&& ...]]\end{verbatim}
 
-          Expressions that are made up of only ground facts are called $ground$
-          $expressions$.
+          Expressions that are made up of only ground facts are called
+          {\em ground expressions}.
 
       \subsubsection{Definition Statements}
 
@@ -216,7 +216,7 @@
 
           The constraint syntax below shows that for any state of the policy
           base, expression $exp1$ holds if expression $exp2$ is true and there
-          is no evidence that $exp3$ is true. The $with$ $absence$ clause
+          is no evidence that $exp3$ is true. The {\em with absence} clause
           allows constraints to behave like default propositions, where the
           absence of proof that an expression holds implies that the default
           expression holds.
