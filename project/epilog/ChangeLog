@@ -1,3 +1,17 @@
+2002-10-19  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/simplelist.c :
+	* datastruct/simplelist.h :
+	* datastruct/stringlist.c :
+	* exp/comp_exp.c :
+	* exp/gnd_exp.c :
+	* ident/identlist.c :
+	* ident/symtab.c :
+	* trans/translist.c :
+	* trans/transtab.c :
+
+	  - Added a purge function in simplelist.
+
 2002-10-15  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* datastruct/stringlist.c :

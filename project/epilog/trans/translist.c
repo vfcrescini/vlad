@@ -46,13 +46,7 @@ int translist_get(translist_type list,
 /* empty the list along with its members */
 void translist_purge(translist_type *list)
 {
-  unsigned int i;
-  
-  if (list != NULL) {    
-    for (i = 0; i < simplelist_length(*list); i++)
-      simplelist_del_index(list, 0, translist_destroy);
-  }
-  simplelist_init(list);
+  simplelist_purge(list, translist_destroy);
 }
 
 /* free memory */

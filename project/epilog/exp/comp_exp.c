@@ -138,13 +138,7 @@ int comp_exp_del(comp_exp_type *exp, comp_atom_type atom)
 /* delete all atoms from this expression */
 void comp_exp_purge(comp_exp_type *exp)
 {
-  unsigned int i;
-
-  if (exp != NULL) {
-    for (i = 0; i < simplelist_length(*exp); i++)
-      simplelist_del_index(exp, 0, comp_exp_destroy);
-  }
-  simplelist_init(exp);
+  simplelist_purge(exp, comp_exp_destroy);
 }
 
 /* replace variables in comp with actual identifiers from identlist */

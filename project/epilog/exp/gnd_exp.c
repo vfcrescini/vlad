@@ -44,7 +44,6 @@ int gnd_exp_eval_subst_atom(ident_type group1,
                             ident_type group2,
                             gnd_exp_type exp,
                             res_type *res);
-void gnd_exp_purge_list(gnd_exp_type *exp, int flag);
 int gnd_exp_compare(void *p1, void *p2);
 void gnd_exp_destroy(void *p);
 
@@ -173,7 +172,7 @@ int gnd_exp_copy(gnd_exp_type exp1, gnd_exp_type *exp2)
 /* delete all atoms from this gnd_exp */
 void gnd_exp_purge(gnd_exp_type *exp)
 {
-  gnd_exp_purge_list(exp, 1);
+  simplelist_purge(exp, gnd_exp_destroy);
 }
 
 /* makes a duplicate (with malloc) of the atom pointed by p1 to p2 */
@@ -347,7 +346,7 @@ int gnd_exp_get_supergroups(ident_type ident,
       return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -413,7 +412,7 @@ int gnd_exp_get_non_supergroups(ident_type ident,
       return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   /* phase 2: 
    * get all groups (group 1) that contain ident then find all groups (group 2)
@@ -436,7 +435,7 @@ int gnd_exp_get_non_supergroups(ident_type ident,
      return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -486,7 +485,7 @@ int gnd_exp_get_subgroups(ident_type ident,
       return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -540,7 +539,7 @@ int gnd_exp_get_non_subgroups(ident_type ident,
       return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   /* phase 2: 
    * get all groups (group 1) that are in ident then find all groups (group 2)
@@ -563,7 +562,7 @@ int gnd_exp_get_non_subgroups(ident_type ident,
      return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -606,7 +605,7 @@ int gnd_exp_get_elements(ident_type ident,
       return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   /* now see if we can find subsets for this identifier */
   tmp_atom.truth = epi_true;
@@ -626,7 +625,7 @@ int gnd_exp_get_elements(ident_type ident,
       return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   return 0;
 }
@@ -671,7 +670,7 @@ int gnd_exp_get_non_elements(ident_type ident,
       return -1;
   }
 
-  gnd_exp_purge_list(&tmp_exp, 0);
+  simplelist_purge(&tmp_exp, NULL);
 
   /* now we need to find the groups that do not contain this set (all
    * elements of those groups will be non-elements of this group) */
@@ -937,22 +936,6 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
   }
 
   return 0;
-}
-
-/* if flag is non-zero, delete all atoms from this gnd_exp. if zero,
- * keeps the atoms but destroys the list */
-void gnd_exp_purge_list(gnd_exp_type *exp, int flag)
-{
-  unsigned int i;
-  void (*df)(void *);
-
-  if (exp != NULL) {
-    df = (flag == 0) ? NULL : gnd_exp_destroy;
-  
-    for (i = 0; i < simplelist_length(*exp); i++)
-      simplelist_del_index(exp, 0, df);
-  }
-  simplelist_init(exp);
 }
 
 /* returns 0 if the ATOMS pointed to by p1 and p2 are equivalent */

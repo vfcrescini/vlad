@@ -71,13 +71,7 @@ int stringlist_del(stringlist_type *list, char *string)
 /* delete all strings from this stringlist */
 void stringlist_purge(stringlist_type *list)
 {
-  unsigned int i;
-
-  if (list != NULL) {
-    for (i = 0; i < simplelist_length(*list); i++)
-      simplelist_del_index(list, 0, stringlist_destroy);
-  }
-  simplelist_init(list);
+  simplelist_purge(list, stringlist_destroy);
 }
 
 /* returns 0 if the strings pointed to by p1 and p2 are equivalent */

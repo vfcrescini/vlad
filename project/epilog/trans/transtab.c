@@ -145,11 +145,7 @@ int transtab_transform(gnd_exp_type kb, transref_type tr, gnd_exp_type *res)
 /* empty the list */
 void transtab_purge(void)
 {
-  unsigned int i;
-  
-  for (i = 0; i < simplelist_length(list); i++)
-    simplelist_del_index(&list, 0, transtab_destroy);
-  simplelist_init(&list);
+  simplelist_purge(&list, transtab_destroy);
 }
 
 /* compare ONLY THE NAME component of p1 and p2 */

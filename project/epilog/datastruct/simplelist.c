@@ -265,3 +265,27 @@ int simplelist_copy(simplelist_type l1,
 
   return 0;
 }
+
+/* destroys the list. uses the fr function to free the nodes */
+void simplelist_purge(simplelist_type *list, void (*fr)(void *))
+{
+  simplelist_node *curr;
+  simplelist_node *prev;
+
+  if (list != NULL) {
+    curr = list->list;
+
+    while (curr != NULL) {
+      prev = curr;
+      curr = curr->next;
+
+      if (fr != NULL)
+        fr(prev->data);
+
+      free(prev);
+    }
+
+    list->list = NULL;
+    list->length = 0;
+  }
+}

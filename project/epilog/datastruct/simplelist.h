@@ -72,4 +72,8 @@ int simplelist_find_data(simplelist_type list,
 int simplelist_copy(simplelist_type l1,
                     simplelist_type *l2,
                     int (*cpy)(void *, void **));
+
+/* destroys the list. uses the fr function to free the nodes */
+void simplelist_purge(simplelist_type *list, void (*fr)(void *));
+
 #endif
