@@ -29,7 +29,11 @@
 #define MODVLAD_MUTEX_PATH      "/tmp/mod_vlad.lock"
 
 #define MODVLAD_MAXSTR_LEN      5120
+#define MODVLAD_MAXMSG_LEN      2048
 #define MODVLAD_MAXID           999999
+
+#define MODVLAD_DELIMITER       '\004'
+#define MODVLAD_TERMINATOR      '\002'
 
 /* access-rights (http methods) */
 #define MODVLAD_ACCESS_OPTIONS  "OPTIONS"
