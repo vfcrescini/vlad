@@ -364,6 +364,22 @@ VLAD_EXTERN int vlad_atom_destroy(void *a_atm)
   return VLAD_OK;
 }
 
+/* negate an atom */
+VLAD_EXTERN int vlad_atom_negate(void *a_atm)
+{
+  atom *tmp_atm = NULL;
+
+  if (a_atm == NULL)
+    return VLAD_NULLPTR;
+
+  if ((tmp_atm = static_cast<atom *>(a_atm)) == NULL)
+    return VLAD_INVALIDINPUT;
+
+  tmp_atm->negate();
+
+  return VLAD_OK;
+}
+
 /* initialise atoms */
 VLAD_EXTERN int vlad_atom_init_holds(void *a_atm,
                                      const char *a_s,
@@ -468,7 +484,7 @@ VLAD_EXTERN int vlad_exp_get(void *a_exp, unsigned int a_i, void **a_atm)
 {
   int retval;
   expression *tmp_exp = NULL;
-  atom *tmp_atom;
+  atom *tmp_atom = NULL;
 
   if (a_exp == NULL || a_atm == NULL)
     return VLAD_NULLPTR;
