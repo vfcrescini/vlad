@@ -1,6 +1,28 @@
 2003-04-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/kb.cpp :
+	* kb/wrapper.cpp :
+	* kb/wrapper.h :
+
+	  - Added debug code.
+
+	  - Replaced the redundant add_rule_*() functions with add_rule() and
+	    add_axiom().
+
+	  - Stopped using CHOICERULE as they encourage the result of more than
+	    one stable model. Multiple heads are now just repeated:
+
+	    a, b, c :- x, y, z.
+
+	    is now
+
+	    a :- x, y, z.
+	    b :- x, y, z.
+	    c :- x, y, z.
+
+2003-04-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
 
 	  - Added all rules in evaluate_query().
 
