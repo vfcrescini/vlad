@@ -1,5 +1,5 @@
 /*
- * wrapper.cpp
+ * smwrap.cpp
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -12,16 +12,16 @@
 
 #include <config.h>
 #include <vlad/vlad.h>
-#include <vlad/wrapper.h>
+#include <vlad/smwrap.h>
 
-wrapper::wrapper()
+smwrap::smwrap()
 {
   pr_smod = NULL;
   pr_api = NULL;
   pr_stage = 0;
 }
 
-wrapper::~wrapper()
+smwrap::~smwrap()
 {
   if (pr_smod != NULL)
     delete pr_smod;
@@ -29,7 +29,7 @@ wrapper::~wrapper()
     delete pr_api;
 }
 
-int wrapper::init()
+int smwrap::init()
 {
   Atom *tmp_atom;
 
@@ -65,7 +65,7 @@ int wrapper::init()
 }
 
 /* after this no more calls to add_atom() are allowed */
-int wrapper::close_atom()
+int smwrap::close_atom()
 {
   if (pr_stage != 1)
     return VLAD_INVALIDOP;
@@ -82,7 +82,7 @@ int wrapper::close_atom()
 }
 
 /* after this no more calls to add_rule_*() are allowed */
-int wrapper::close_rule()
+int smwrap::close_rule()
 {
   if (pr_stage != 2)
     return VLAD_INVALIDOP;
@@ -108,7 +108,7 @@ int wrapper::close_rule()
 }
 
 /* register an atom */
-int wrapper::add_atom(unsigned int a_atom)
+int smwrap::add_atom(unsigned int a_atom)
 {
   Atom *tmp_atom;
   char tmp_name[VLAD_MAXLEN_NUM];
@@ -126,7 +126,7 @@ int wrapper::add_atom(unsigned int a_atom)
 }
 
 /* add an axiom (always true or always false) */
-int wrapper::add_axiom(bool a_tr, unsigned int a_count, ...)
+int smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
 {
   unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
@@ -175,7 +175,7 @@ int wrapper::add_axiom(bool a_tr, unsigned int a_count, ...)
 }
 
 /* add rule: variable argument list */
-int wrapper::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int a_head, ...)
+int smwrap::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int a_head, ...)
 {
   unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
@@ -216,7 +216,7 @@ int wrapper::add_rule(unsigned int a_pcount, unsigned int a_ncount, unsigned int
 }
 
 /* add rule: numberlist */
-int wrapper::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbody)
+int smwrap::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nbody)
 {
   int retval;
   unsigned int i;
@@ -260,7 +260,7 @@ int wrapper::add_rule(unsigned int a_head, numberlist *a_pbody, numberlist *a_nb
 }
 
 /* return true, false or unknown */
-int wrapper::ask(unsigned int a_atom, char *a_result)
+int smwrap::ask(unsigned int a_atom, char *a_result)
 {
   char tmp_name[VLAD_MAXLEN_NUM];
 

@@ -50,8 +50,8 @@ OBJECTS =             \
 TEMP =
 
 ifdef SMODELS
-SMINCLUDES = wrapper.h
-SMOBJECTS = wrapper.o
+SMINCLUDES = smwrap.h
+SMOBJECTS = smwrap.o
 SMLIBS = -lsmodels
 endif
 
@@ -106,8 +106,8 @@ seqtab.o : stringlist.o expression.o seqtab.h seqtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
 
 ifdef SMODELS
-wrapper.o : wrapper.h wrapper.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
+smwrap.o : smwrap.h smwrap.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c smwrap.cpp
 endif
 
 kb.o : expression.o symtab.o consttab.o transtab.o $(SM_OBJECTS) kb.h kb.cpp

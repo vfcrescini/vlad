@@ -1,23 +1,23 @@
 /*
- * wrapper.h
+ * smwrap.h
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#ifndef __VLAD_WRAPPER_H
-#define __VLAD_WRAPPER_H
+#ifndef __VLAD_SMWRAP_H
+#define __VLAD_SMWRAP_H
 
-/* class wrapper for the smodels library */
+/* class smwrap for the smodels library */
 
 #include <vlad/numberlist.h>
 #include <smodels.h>
 #include <api.h>
 #include <atomrule.h>
 
-class wrapper
+class smwrap
 {
   public :
-    wrapper();
-    ~wrapper();
+    smwrap();
+    ~smwrap();
     int init();
     /* after this no more calls to add_atom() are allowed */
     int close_atom();

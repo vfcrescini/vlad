@@ -16,7 +16,7 @@
 #include <vlad/consttab.h>
 #include <vlad/transtab.h>
 #ifdef SMODELS
-  #include <vlad/wrapper.h>
+  #include <vlad/smwrap.h>
 #endif
 
 class kb {
@@ -54,7 +54,7 @@ class kb {
 #ifdef SMODELS
     /* prepares the kb for queries */
     int compute_evaluate();
-    /* use wrapper class to evaluate a query */
+    /* use smwrap class to evaluate a query */
     int query_evaluate(expression *e, unsigned char *r);
 #endif
   private :
@@ -64,7 +64,7 @@ class kb {
     transtab *ttable;
     seqtab *setable;
 #ifdef SMODELS
-    wrapper *smobject;
+    smwrap *smobject;
 #endif
     unsigned int s_len;
     unsigned int a_len;
