@@ -1,66 +1,80 @@
-class queue {
-	private structure head;
-	private structure tail;
-	private int size;
+/*
+ * queue.java
+ * Vino Crescini
+ * 16 April 2001 
+ */
 
-	public queue() {
-		init();
-	}
+class queue 
+{
+  private structure head;
+  private structure tail;
+  private int size;
 
-	public void init() {
-		head = null;
-		tail = null;
-		size = 0;
-	}
+  public queue()
+  {
+    init();
+  }
 
-	public int size() {
-		return size;
-	}
+  public void init()
+  {
+    head = null;
+    tail = null;
+    size = 0;
+  }
 
-	public boolean enqueue(int item) {
-		structure tempNode = new structure(item, null, null);
+  public int size() 
+  {
+    return size;
+  }
 
-		if (tempNode == null)
-			return false;
+  public boolean enqueue(int item) 
+  {
+    structure tempNode = new structure(item, null, null);
 
-		size++;
+    if (tempNode == null)
+      return false;
 
-		if (head == null && tail == null) {
-			head = tempNode;
-			tail = tempNode;
-		}
-		else {
-			tail.setNext(tempNode);
-			tempNode.setPrev(tail);
-			tail = tempNode;
-		}
+    size++;
+
+    if (head == null && tail == null) {
+      head = tempNode;
+      tail = tempNode;
+    }
+    else {
+      tail.setNext(tempNode);
+      tempNode.setPrev(tail);
+      tail = tempNode;
+    }
 			
-		return true;
-	}	
+    return true;
+  }	
 	
-	public boolean dequeue() {
-		size--;
-		head = head.getNext();
+  public boolean dequeue()
+  {
+    size--;
+    head = head.getNext();
 
-		return true;
-	}	
+    return true;
+  }	
 
-	public int front() {
-		if (head != null)
-			return head.getItem();
-		else
-			return 0;
-	}
+  public int front() 
+  {
+    if (head != null)
+      return head.getItem();
+    else
+      return 0;
+  }
 
-	public int back() {
-		if (tail != null)
-			return tail.getItem();
-		else
-			return 0;
-	}
+  public int back() 
+  {
+    if (tail != null)
+      return tail.getItem();
+    else
+      return 0;
+  }
 	
-	public int length() {
-		return size;
-	}
-
+  public int length() 
+  {
+    return size;
+  }
 }
