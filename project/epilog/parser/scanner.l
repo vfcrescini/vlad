@@ -16,8 +16,7 @@
 #include <expression.h>
 #include <stringlist.h>
 #include <identlist.h>
-#include <transdeflist.h>
-#include <transreflist.h>
+#include <translist.h>
 
 #include "y.tab.h"
 

@@ -12,9 +12,10 @@
 #include <atom.h>
 #include <expression.h>
 #include <stringlist.h>
+#include <symtab.h>
 #include <identlist.h>
-#include <transdeflist.h>
-#include <transreflist.h>
+#include <transtab.h>
+#include <translist.h>
 
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
@@ -32,8 +33,6 @@ int dump_exp(expression_type exp);
 #endif
 
 expression_type initial_exp;
-identlist_type identifier_list;
-transdeflist_type transform_list;
 FILE *yyerr;
 %}
 
@@ -42,7 +41,7 @@ FILE *yyerr;
   name_type name;
   atom_type atm;
   transref_type transref;
-  transreflist_type transreflist;
+  translist_type translist;
   expression_type exp;
   stringlist_type strlist;
   identlist_type ident;
@@ -96,8 +95,8 @@ FILE *yyerr;
 %type <strlist> trans_var_def;
 %type <strlist> trans_var_list;
 %type <transref> trans_ref_def;
-%type <transreflist> trans_ref_list;
-%type <transreflist> after_clause;
+%type <translist> trans_ref_list;
+%type <translist> after_clause;
 %type <ident> trans_ref_ident_list;
 
 %start program
@@ -311,13 +310,13 @@ trans_stmt :
   EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON {
     transdef_type tmp_transdef;
 
-    if (transdeflist_find(transform_list, $2) == 0)
+    if (transtab_find($2) == 0)
       exit_error("trans identifier already declared");
 
     if (transdef_compose(&tmp_transdef, $2, $3, $5, $7) != 0)
       exit_error("internal_error");
 
-    if (transdeflist_add_trans(&transform_list, tmp_transdef) != 0)
+    if (transtab_add(tmp_transdef) != 0)
       exit_error("internal error");
 
 #ifdef DEBUG
@@ -336,7 +335,7 @@ trans_stmt :
 
 policy_stmt : 
   is_clause after_clause EPI_SYM_SEMICOLON {
-    if (transreflist_purge(&$2) != 0)
+    if (translist_purge(&$2) != 0)
       exit_error("internal error");
     if (expression_purge(&$1) != 0)
       exit_error("internal error");
@@ -359,7 +358,7 @@ trans_var_def :
 
 trans_var_list : 
   EPI_SYM_IDENTIFIER {
-    if (identlist_find(identifier_list, $1) == 0) 
+    if (symtab_find($1) == 0)
       exit_error("variable name already declared as an identiifer");
 
     if (stringlist_init(&$$) != 0)
@@ -369,7 +368,7 @@ trans_var_list :
       exit_error("internal error");
   }
   | trans_var_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
-    if (identlist_find(identifier_list, $3) == 0)
+    if (symtab_find($3) == 0)
       exit_error("variable name already declared as an identiifer");
 
     if (stringlist_add(&$1, $3) != 0)
@@ -393,13 +392,13 @@ after_clause :
 
 trans_ref_list : 
   trans_ref_def {
-    if (transreflist_init(&$$) != 0)
+    if (translist_init(&$$) != 0)
       exit_error("internal error");
-    if (transreflist_add(&$$, $1) != 0)
+    if (translist_add(&$$, $1) != 0)
       exit_error("internal error");
   }
   | trans_ref_list EPI_SYM_COMMA trans_ref_def {
-    if (transreflist_add(&$1, $3) != 0)
+    if (translist_add(&$1, $3) != 0)
       exit_error("internal error");
     $$ = $1;
   }
@@ -407,7 +406,7 @@ trans_ref_list :
 
 trans_ref_def : 
   EPI_SYM_IDENTIFIER EPI_SYM_OPEN_PARENT trans_ref_ident_list EPI_SYM_CLOSE_PARENT {
-    if (transdeflist_find(transform_list, $1) != 0)
+    if (transtab_find($1) != 0)
       exit_error("transformation not declared");
     if (transref_compose(&$$, $1, $3) != 0)
       exit_error("internal error");
@@ -420,17 +419,17 @@ trans_ref_ident_list :
 
     if (identlist_init(&$$) != 0)
       exit_error("internal error");
-    if (identlist_get(identifier_list, $1, &tmp_ident) != 0)
+    if (symtab_get($1, &tmp_ident) != 0)
       exit_error("identifier not declared");
-    if (identlist_add_ref(&$$, tmp_ident) != 0)
+    if (identlist_add(&$$, tmp_ident) != 0)
       exit_error("internal error");
   }
   | trans_ref_ident_list EPI_SYM_COMMA EPI_SYM_IDENTIFIER {
     ident_type *tmp_ident = NULL;
 
-    if (identlist_get(identifier_list, $3, &tmp_ident) != 0)
+    if (symtab_get($3, &tmp_ident) != 0)
       exit_error("identifier not declared");
-    if (identlist_add_ref(&$1, tmp_ident) != 0)
+    if (identlist_add(&$1, tmp_ident) != 0)
       exit_error("internal error");
     $$ = $1;
   }
@@ -492,9 +491,9 @@ ground_holds_atom :
     ident_type *access = NULL;
     ident_type *object = NULL;
 
-    if (identlist_get(identifier_list, $3, &subject) != 0 || 
-        identlist_get(identifier_list, $5, &access) != 0 ||
-        identlist_get(identifier_list, $7, &object) != 0) 
+    if (symtab_get($3, &subject) != 0 || 
+        symtab_get($5, &access) != 0 ||
+        symtab_get($7, &object) != 0) 
       exit_error("undeclared identifier");
 
     if (!EPI_IDENT_IS_SUBJECT(*subject)) 
@@ -521,8 +520,8 @@ ground_subst_atom :
     ident_type *group1 = NULL;
     ident_type *group2 = NULL;
 
-    if (identlist_get(identifier_list, $3, &group1) != 0 || 
-        identlist_get(identifier_list, $5, &group2) != 0) 
+    if (symtab_get($3, &group1) != 0 || 
+        symtab_get($5, &group2) != 0) 
       exit_error("undeclared identifier");
 
     if (!EPI_IDENT_IS_GROUP(*group1)) 
@@ -545,8 +544,8 @@ ground_memb_atom :
     ident_type *element = NULL;
     ident_type *group = NULL;
 
-    if (identlist_get(identifier_list, $3, &element) != 0 || 
-        identlist_get(identifier_list, $5, &group) != 0) 
+    if (symtab_get($3, &element) != 0 || 
+        symtab_get($5, &group) != 0) 
       exit_error("undeclared identifier");
 
     if (EPI_IDENT_IS_GROUP(*element)) 
@@ -621,13 +620,13 @@ comp_holds_atom :
     $$.type = EPI_ATOM_HOLDS;
     $$.truth = epi_true;
 
-    if (identlist_get(identifier_list, $3, &subject) != 0)
+    if (symtab_get($3, &subject) != 0)
       subject = NULL;
      
-    if (identlist_get(identifier_list, $5, &access) != 0)
+    if (symtab_get($5, &access) != 0)
       access = NULL;
 
-    if (identlist_get(identifier_list, $7, &object) != 0)
+    if (symtab_get($7, &object) != 0)
       object = NULL;
 
     if (subject != NULL) {
@@ -679,10 +678,10 @@ comp_subst_atom :
     $$.type = EPI_ATOM_SUBST;
     $$.truth = epi_true;
 
-    if (identlist_get(identifier_list, $3, &group1) != 0)
+    if (symtab_get($3, &group1) != 0)
       group1 = NULL;
      
-    if (identlist_get(identifier_list, $5, &group2) != 0)
+    if (symtab_get($5, &group2) != 0)
       group2 = NULL;
 
     if (group1 != NULL && group2 != NULL) {
@@ -726,10 +725,10 @@ comp_memb_atom :
     $$.type = EPI_ATOM_MEMB;
     $$.truth = epi_true;
 
-    if (identlist_get(identifier_list, $3, &element) != 0)
+    if (symtab_get($3, &element) != 0)
       element = NULL;
      
-    if (identlist_get(identifier_list, $5, &group) != 0)
+    if (symtab_get($5, &group) != 0)
       group = NULL;
 
     if (element != NULL && group != NULL) {
@@ -778,9 +777,9 @@ logical_atom :
 
 %%
 
-int add_identifier(char ident[], unsigned short type) 
+int add_identifier(char ident[], unsigned short type)
 {
-  if (identlist_find(identifier_list, ident) == 0) {
+  if (symtab_find(ident) == 0) {
     yyerror("identifier declared more than once");
     return -1;
   }
@@ -800,7 +799,7 @@ int add_identifier(char ident[], unsigned short type)
     fprintf(yyerr, "declared access-group identifier %s\n", ident); 
 #endif
 
-  if (identlist_add_new(&identifier_list, ident, type) != 0) {
+  if (symtab_add(ident, type) != 0) {
     yyerror("internal error");
     return -1;
   }
@@ -815,13 +814,13 @@ int initialise(void)
   fprintf(yyerr, "initialising global lists\n");
 #endif
 
-  if (identlist_init(&identifier_list) != 0)
+  if (symtab_init() != 0)
     return -1;
 
   if (expression_init(&initial_exp) != 0)
     return -1;
 
-  if (transdeflist_init(&transform_list) != 0)
+  if (transtab_init() != 0)
     return -1;
 
   return 0;
@@ -834,13 +833,13 @@ int destroy(void)
   fprintf(yyerr, "destroying global lists\n");
 #endif
 
-  if (identlist_purge_all(&identifier_list) != 0)
+  if (symtab_purge() != 0)
     return -1;
 
   if (expression_purge(&initial_exp) != 0)
     return -1;
 
-  if (transdeflist_purge_all(&transform_list) != 0)
+  if (transtab_purge() != 0)
     return -1;
 
   return 0;

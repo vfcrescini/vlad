@@ -1,5 +1,10 @@
 2002-09-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Changes to make the changes below work.
+
 	* Makefile :
 	* test/Makefile :
 	* test/datastruct_test.c :
