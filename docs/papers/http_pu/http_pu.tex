@@ -1,0 +1,212 @@
+\documentclass{llncs}
+
+\pagestyle{plain}
+
+\begin{document}
+  \title{HTTP Authorisation with PolicyUpdater:}
+  \subtitle{A Logic-Based Access-Control System}
+
+  \author{Vino Fernando Crescini \and Yan Zhang}
+
+  \institute{School of Computing and Information Technology\\
+             University of Western Sydney\\
+             Penrith South DC, NSW 1797, Australia \\
+             E-Mail: \{jcrescin,yan\}@cit.uws.edu.au}
+
+  \maketitle
+
+  \begin{abstract}
+    [text]
+  \end{abstract}
+
+  \section{Introduction}
+
+  \section{PolicyUpdater System}
+
+    \subsection{Language ${\cal L}$}
+
+      Language ${\cal L}$ is a first-order logic language...
+
+      \subsubsection{Syntax}
+
+        \paragraph{Identifiers.}
+          As the most basic unit of language ${\cal L}$,
+          identifiers are used to represent the different components of the
+          language. There are three main classes of identifiers:
+
+          \begin{itemize}
+            \item
+              {\em Entity Identifiers} represent constant entities that make
+              up an atom. They are divided further into three types, with each
+              type again divided into the {\em singular} and {\em group} entity
+              catogories:
+ 
+              \begin{itemize}
+                \item {\em Subjects}. e.g. bob, administrators, users.
+ 
+                \item {\em Access Rights}. e.g. read, write, own.
+ 
+                \item {\em Objects}. e.g. file, directory, database.
+              \end{itemize}
+ 
+            \item
+              {\em Policy Update Identifiers} are used as name handles or
+              labels for policy update definitions and directives. e.g.
+              $grant\_read$, $revoke\_write$.
+ 
+            \item
+              {\em Variable Identifiers} are used as placeholders to represent
+              defined entity identifiers.
+          \end{itemize}
+ 
+          The following regular expression shows the syntax of Entity and
+          Policy Update Identifiers:
+ 
+          \begin{verbatim}[a-z]([a-zA-Z0-9_]){0,127}\end{verbatim}
+ 
+          Variable Identifiers in consrast, are prefixed with an upper-case
+          character:
+ 
+          \begin{verbatim}[A-Z]([a-zA-Z0-9_]){0,127}\end{verbatim}
+
+        \paragraph{Atoms.}
+          An atom is composed of a relation with 2 to 3 entity or variable
+          identifiers that represent a logical relationship between the
+          entities. There are three types of atoms:
+
+          \begin{itemize}
+            \item
+              {\em Holds.} Atoms of this type states that the subject
+              identifier $sub$ holds the access right identifier $acc$ for the
+              object identifier $obj$.
+
+              \begin{verbatim}holds(<sub>,<acc>.<obj>)\end{verbatim}
+
+            \item
+              {\em Membership.} This type of atom states that the singular
+              identifier $elt$ is a member or element of the group identifier
+              $grp$. It is important to note that identifiers $elt$ and $grp$
+              must be of the same base type (e.g. subject singular and subject
+              group).
+
+              \begin{verbatim}memb(<elt>, <grp>)\end{verbatim}
+
+            \item
+              {\em Subset.} The subset atom states that the group identifiers
+              $grp1$ and $grp2$ are of the same types and that group $grp1$ is
+              a subset of the group $grp2$.
+
+              \begin{verbatim}subst(<grp1>, <grp2>)\end{verbatim}
+          \end{itemize}
+
+          Atoms that contain no variables, i.e. composed entirely of entity
+          identifiers, are called {\em ground atoms}.
+
+        \paragraph{Facts.}
+
+          A fact makes a claim that the relationship represented by an atom or
+          its negation holds in the current context. Facts are negated by the
+          use of the negation operator ($!$). The following shows the formal
+          syntax of a fact:
+
+          \begin{verbatim}[!]<holds_atm>|<memb_atm>|<subst_atm>\end{verbatim}
+
+          Note that facts may be made up of atoms that contain variable
+          identifiers. Facts with no variable occurrences are called
+          {\em ground facts}.
+
+        \paragraph{Expressions.}
+          An expression is either a fact, or a logical conjunction of facts,
+          separated by the double-ampersand characters $\&\&$.
+
+          \begin{verbatim}<fact1> [&& <fact2> [&& ...]]\end{verbatim}
+
+          Expressions that are made up of only ground facts are called
+          {\em ground expressions}.
+
+        \paragraph{Entity Identifier Definition.}
+
+          All entity identifiers (subjects, access rights, objects and groups)
+          must first be declared before any other statements to define the
+          entity domain of the policy base. The following entity declaration
+          syntax illustrates how to define one or more entity identifiers of a
+          particular type.
+
+          \begin{verbatim}ident sub|acc|obj[-grp] <e_id>[, ...]];\end{verbatim}
+
+        \paragraph{Initial Fact Definition.}
+
+          The initial facts of the policy base, those that hold before any
+          policy updates are performed, are defined by using the following
+          definition syntax:
+
+          \begin{verbatim}initially <ground-exp>;\end{verbatim}
+
+        \paragraph{Constraint Definition.}
+
+          Constraints are logical rules that hold regardless of any changes
+          that may occur when the policy base is updated. The constraint rules
+          are true in the initial state and remains true after any policy
+          update.
+
+          The constraint syntax below shows that for any state of the policy
+          base, expression $exp1$ holds if expression $exp2$ is true and there
+          is no evidence that $exp3$ is true. The $with$ $absence$ clause
+          allows constraints to behave like default propositions, where the
+          absence of proof of an expression implies that the expression holds.
+
+          It is important to note that the expressions $exp1$, $exp2$ and
+          $exp3$ are non-ground expressions, which means identifiers within
+          them may be variables.
+
+          \begin{verbatim}always <exp1>
+  [implied by <exp2>
+  [with absence <exp3>]];\end{verbatim}
+
+        \paragraph{Policy Update Definition.}
+
+          Before a policy update can be applied, it must first be defined by
+          using the following syntax:
+
+          \begin{verbatim}<up_id>([<var_id>[, ...]])
+  causes <exp1>
+  if <exp2>;\end{verbatim}
+
+          $up\_id$ is the policy update identifier to be used in referencing
+          this policy update. The optional $var\_id$ list are the variable
+          identifiers occurring the expressions $exp1$ and $exp2$ and will
+          eventually be replaced by entity identifiers when the update is
+          referenced. The postcondition expression $exp1$ is an expression that
+          will hold in the state after this update is applied. The expression
+          $exp2$ is a precondition expression that must hold in the current
+          state before this update is applied.
+
+          It is important to note that a policy update definition will have no
+          effect on the policy base until it is applied by one of the
+          directives described in the following section.
+
+        \paragraph{Policy Update Directives.}
+
+        The policy update sequence list contains a list of references to
+        defined policy updates in the domain. The policy updates in the
+        sequence list are applied to the current state of the policy base one
+        at a time to produce a policy base state upon which queries can be
+        evaluated.
+
+        The following four directives are the policy sequence manipulation
+        features of language $\cal{L}$.
+
+      \subsubsection{Semantics}
+
+    \subsection{Policy Updates}
+
+    \subsection{Query Evaluation}
+
+  \section{HTTP Authorisation with PolicyUpdater}
+
+  \section{Conclusion}
+
+  \begin{thebibliography}{5}
+  \end{thebibliography}
+
+\end{document}
