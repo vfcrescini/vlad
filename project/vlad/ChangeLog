@@ -1,5 +1,10 @@
 2003-04-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Cleanup.
+
 	* common/list.cpp :
 	* common/list.h :
 
