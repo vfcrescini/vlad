@@ -3,10 +3,10 @@
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-#include <epilog.h>
-
 #ifndef __EPI_SIMPLELIST_H
 #define __EPI_SIMPLELIST_H
+
+#include <epilog.h>
 
 /* simple list works like a queue, except the api allows the data
  * to be accessed given its ordinal index (the order in which it was
