@@ -256,7 +256,71 @@ always <exp1>
 
     \subsection{Semantics}
 
-      \subsubsection{Entity Semantics}
+      \subsubsection{Domain Definition of Language ${\cal L}$}
+
+        \begin{definition}
+          The domain of Language ${\cal L}$ is as follows:
+
+          \begin{quote}
+            \begin{math}
+              {\cal D}_{\cal L} = 
+              \begin{cases}
+                \mbox{set of Initial State Facts $\alpha$} \\
+                \mbox{set of Constraint Rules $\beta$} \\
+                \mbox{set of Policy Update Definitions $\gamma$}
+              \end{cases}
+            \end{math}
+          \end{quote}
+
+          \begin{itemize}
+            \item
+              The initial state facts $\alpha$ is an expression, or a
+              conjunction of facts that hold in the initial state.
+            \item
+              The constraint rules $\beta$ are the rules that holds in all
+              states.
+            \item
+              The policy update definitions $\gamma$ contains the name,
+              preconditions and postconditions of all policy updates that
+              can be applied in the policy base.
+          \end{itemize}
+        \end{definition}
+
+        In addition to the domain ${\cal D}_{\cal L}$, Language ${\cal L}$
+        includes one additional ordered set: the sequence list $\psi$.
+
+        \begin{definition}
+          The sequence list $\psi$ is an ordered set that contains a sequence 
+          of references to policy update definitions from set $\gamma$. Each
+          policy update reference consists of the policy update identifier and
+          a set of zero or more entities from set ${\cal E}$ to replace the
+          variable placeholders in the policy update definitions.
+        \end{definition}
+
+        Given the domain ${\cal D}_{\cal L}$, a query expression may be
+        evaluated against the state of the policy base derived after a sequence
+        of policy updates from the sequence list $\psi$ are applied.
+
+        \begin{definition}
+          A query expression $\omega$ is said to hold in the policy base
+          $PB_{{\cal D}_{\cal L}}$ with the sequence list $\psi$ if and only
+          if:
+
+          \begin{quote}
+            $PB_{{\cal D}_{\cal L}}$ $\models$ $\omega$ after $\psi$
+          \end{quote}
+          
+        \end{definition}
+
+      \subsubsection{Translating Language ${\cal L}$ into ${\cal L}^{*}$}
+
+        The Elements of Language ${\cal L}$ must first be expressed as a Normal
+        Logic Program before logical operations such as querying and updating
+        can be performed. The Language ${\cal L}^{*}$ is a direct translation
+        of Language ${\cal L}$, and as such, it contains the same elements and
+        has an equivalent expressive power.
+
+      \subsubsection{Entity Definition of Language ${\cal L}^{*}$}
 
         \begin{definition}
 
@@ -294,7 +358,7 @@ always <exp1>
         applied to the policy base, a new instance of the policy base or a new 
         set of facts and constraints are generated. To avoid having to deal
         with multiple instances of the policy base, the semantics of language
-        ${\cal L}$ uses a simpler and less tangible definition of a state:
+        ${\cal L}^{*}$ uses a simpler and less tangible definition of a state:
 
         \begin{definition}
           State is a property of atoms in the policy base used to differentiate
@@ -302,7 +366,13 @@ always <exp1>
           from the atoms that hold after the application.
         \end{definition}
 
-      \subsubsection{Atom Definition}
+      \subsubsection{Atoms, Facts and Expressions}
+
+        The principal difference between Language ${\cal L}$ and Language
+        ${\cal L}^{*}$ lies in the definition of atoms. Atoms in Language
+        ${\cal L}^{*}$ includes an additional state parameter $\sigma$, thereby
+        limiting the scope of the atom to a particular state in the policy
+        base.
 
         \begin{definition}
           An atom represents a logical relationship of two to three entities
@@ -334,19 +404,23 @@ always <exp1>
 
         \end{definition} 
 
-      \subsubsection{Domain Definition of Language ${\cal L}$}
+        \begin{definition}
+          A fact is a logical statement that makes a claim that an atom either
+          holds or does not hold in a particular state $\sigma$. The following
+          is the formal definition of a fact:
+
+          \begin{quote}
+            $f^{\sigma}$ = [$\lnot$] $a$, $a$ $\in$ ${\cal A}^{\sigma}$
+          \end{quote}
+        \end{definition}
 
         \begin{definition}
-          The domain of Language ${\cal L}$ is as follows:
+          An expression is a fact or a conjunction of facts of a particular
+          state $\sigma$.
 
-          \begin{math}
-            {\cal D}_{\cal L} = 
-            \begin{cases}
-              \mbox{set of Initial State Facts $\alpha$} \\
-              \mbox{set of Constraint Rules $\beta$} \\
-              \mbox{set of Policy Update Definitions $\gamma$}
-            \end{cases}
-          \end{math}
+          \begin{quote}
+            $e^{\sigma}$ = $f^{\sigma}_{0}$ $\land$ ... $\land$ $f^{\sigma}_{n}$, $n$ $\geq$ $0$
+          \end{quote}
         \end{definition}
 
       \subsubsection{Translating Language ${\cal L}$ into the Normal Logic Program ${\cal L^{*}}$}
