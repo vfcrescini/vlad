@@ -34,7 +34,7 @@
     evaluated through the \emph{Smodels} program.
   \end{abstract}
 
-  \footnotetext{Homepage at http://www.cit.uws.edu.au/$\sim$jcrescin/projects/PolicyUpdater}
+  \footnotetext{Homepage at \tt http://www.cit.uws.edu.au/{\homedir}jcrescin/projects/PolicyUpdater}
 
   \section{Introduction}
 
@@ -50,10 +50,10 @@
 
     Recent advances in the field have produced a number of different approaches
     to logic-based access control systems. Bertino, et. al. \cite{BER} proposed
-    such a system based on ordered logic. Jajodia, et. al. \cite{JAJ} on the 
-    other hand, proposed a general access control framework that features
-    handling of multiple policies. Another significant work is the system
-    proposed by Bai and Varadharajan \cite{BAI}. Their system's key
+    such a system based on ordered logic with ordered domains. Jajodia, et. al.
+    \cite{JAJ} on the other hand, proposed a general access control framework
+    that features handling of multiple policies. Another significant work is
+    the system proposed by Bai and Varadharajan \cite{BAI}. Their system's key
     characteristic is the ability to dynamically update the otherwise static
     policy base. These systems, effective as they are, lack the details
     necessary to address the issues involved in the implementation of such
@@ -71,14 +71,14 @@
     \emph{Identifiers} are elements of the language $\cal{L}$ used to represent
     an entity (subject, access-right, or object), a group of entities or an
     update. \emph{Atoms} are the basic logical units that make up the
-    policy base. The Holds atom denotes a binding of a subject, an object
-    and the access-right of that subject for that object. The Membership
-    atom binds a singular entity to a group entity of the same type.
-    Similarly, a Subset atom shows the relationship between a group and
-    its supergroup. The negation of an atom is represented in $\cal{L}$ by
-    prepending the exclamation symbol \emph{!} to the atom. \emph{Expressions}
-    are atoms or conjunctions of atoms linked together by the double ampersand
-    characters \&\&.
+    policy base. The \emph{Holds} atom denotes a binding of a subject,
+    an object and the access-right of that subject for that object.
+    The \emph{Membership} atom binds a singular entity to a group entity of
+    the same type. Similarly, a \emph{Subset} atom shows the relationship
+    between a group and its supergroup. The negation of an atom is represented
+    in $\cal{L}$ by prepending the exclamation symbol $!$ to the atom.
+    \emph{Expressions} are atoms or conjunctions of atoms linked together by
+    the double ampersand characters $\&\&$.
 
     \begin{verbatim}
 [!]holds(<sub-identifier>, <acc-identifier>, <obj-identifier>)
@@ -103,18 +103,18 @@
     \noindent
     \emph{Constraint Definition.} Constraints are the logical rules that must
     hold in the initial state and any other state of the policy base after
-    any policy update. The syntax below states that exp1 must hold if exp2 is 
-    true and that there is no evidence that exp3 is true.
+    any policy update. The syntax below states that $exp1$ must hold if
+    $exp2$ is true and that there is no evidence that $exp3$ is true.
 
     \begin{verbatim}always exp1 [implied by exp2 [with absence exp3]];\end{verbatim}
 
     \noindent
     \emph{Policy Update Definition.} The following policy update definition
     statement defines a policy update which, when applied, will generate a new
-    state by applying exp1 to the current state if and only if exp2 is true in
-    the current state. The variable parameters that may occur in any of the
-    expressions allow identifiers to be set dynamically when the update is
-    applied.
+    state by applying $exp1$ to the current state if and only if $exp2$ is
+    true in the current state. The variable parameters that may occur in any
+    of the expressions allow identifiers to be set dynamically when the update
+    is applied.
 
     \begin{verbatim}<update-identifier>([<var1>[,...]]) causes exp1 if exp2;\end{verbatim}
 
@@ -134,8 +134,8 @@ seq list;
     \noindent
     \emph{Query Directive.} Queries are evaluated after all the policy
     updates in the sequence and all the defined constraints have been
-    applied. Query directives are always answered by either \emph{true},
-    \emph{false}, or \emph{unknown}.
+    applied. Query directives are always answered by either $true$,
+    $false$, or $unknown$.
 
   \section{Implementation Issues}
 
@@ -150,44 +150,46 @@ seq list;
       \item
         Subgroups inherit all properties held by their super groups.
       \item
-        Subset relation is transitive: if S1 is a subset of S2 and S2 is a
-        subset of S3, then S1 is a subset of S3.
+        Subset relation is transitive: if $S1$ is a subset of $S2$ and $S2$ is
+        a subset of $S3$, then $S1$ is a subset of $S3$.
     \end{enumerate}
 
     \noindent
     \emph{Domain Description Translation.} To translate the language into a
     normal logic program, the states need to be flattened to produce a
-    stateless policy base. This flattening procedure can be achieved by
-    treating the state as a property of each atom.
+    stateless policy base. This flattening procedure is achieved by treating
+    the state as a property of each atom.
 
     \begin{enumerate}
       \item
-        For all initial state atoms A, holds(A, 0).
+        For all initial state atoms $A$: $holds(A, 0)$.
       \item
-        For all constraints of the form "Always A implied by B with
-        absence C", for all states S, holds(A, S) $\leftarrow$ holds(B, S)
-        $\land$ not holds(C, S).
+        Given a constraint of the form "Always A implied by B with
+        absence C", for all states $S$:
+        $holds(A, S)$ $\leftarrow$ $holds(B, S)$ $\land$ $not$ $holds(C, S)$.
       \item
-        Given an update "U causes A if B", holds(A, Res(U, S)) $\leftarrow$
-        holds(B, S).
+        Given an update "U causes A if B":
+        $holds(A, Res(U, S))$ $\leftarrow$ $holds(B, S)$.
       \item
-        Given an update "U causes A if B", holds(A, Res(U, S)) $\leftarrow$
-        holds(A, S) $\land$ not $\lnot$ holds(A, Res(U, S)).
+        Given an update "U causes A if B":
+        $holds(A, Res(U, S))$ $\leftarrow$ $holds(A, S)$ $\land$ $not$ $\lnot$
+        $holds(A, Res(U, S))$.
       \item
-        Given an update "U causes A if B", $\lnot$ holds(A, Res(U, S))
-        $\leftarrow$ $\lnot$ holds(A, S) $\land$ not holds(A, Res(U, S)).
+        Given an update "U causes A if B":
+        $\lnot$ $holds(A, Res(U, S))$ $\leftarrow$ $\lnot$ $holds(A, S)$
+        $\land$ $not$ $holds(A, Res(U, S))$.
     \end{enumerate}
 
     Rule 1 shows that initial state expressions are easily translated since
     the additional state property is fixed to the initial state 0. The atom
-    holds(sub, acc, obj) in the initial state is translated to holds(sub,
-    acc, obj, 0). Rule 2 states that every atom in a constraint rule will be
+    $holds(sub, acc, obj)$ in the initial state is translated to $holds(sub,
+    acc, obj, 0)$. Rule 2 states that every atom in a constraint rule must be
     given a new state property. However, since constraint rules apply to all
-    states in the policy base, an instance of each constraint rules must be
-    copied for every state.
+    states in the policy base, an instance of each constraint rules is copied
+    for every state.
 
-    For the policy update Rules 3, 4 and 5, the \emph{Res} function returns
-    the resulting state after update U is applied to state S. Rules 4 and
+    For the policy update Rules 3, 4 and 5, the $Res$ function returns
+    the resulting state after update $U$ is applied to state $S$. Rules 4 and
     5 preserves the inertial property of policy updates that require all atoms
     that are not affected by the update to be carried over to the next state.
 
@@ -220,19 +222,19 @@ seq list;
     facts, constraints and update propositions in the policy base make up the
     domain of language $\cal{L}$.
 
-    Figure \ref{fig-1} shows how the PolicyUpdate module work within a typical
-    HTTP request. (1) User S makes a HTTP request A for file O and is
+    Figure \ref{fig-1} shows how the PolicyUpdater module work within a typical
+    HTTP request. (1) User $S$ makes a HTTP request $A$ for file $O$ and is
     authenticated by Apache through the Basic HTTP Authentication Scheme. (2)
-    Once properly authenticated, Apache passes the request tuple {S, A, O} to
-    the PolicyUpdater module. (3) PolicyUpdater then queries the policy base
-    to verify the atom holds(S, A, O) and returns a reply (4) back to Apache.
+    Once properly authenticated, Apache passes the request tuple $\{S, A, O\}$
+    to the PolicyUpdater module. (3) PolicyUpdater then queries the policy base
+    to verify the atom $holds(S, A, O)$ and returns a reply (4) back to Apache.
     If the request is allowed, as determined by the module in the policy base,
-    Apache accepts and honors the request A to the file O (5) and sends the
-    results back to the user (6). Optionally, an Administrator, once properly
+    Apache accepts and honors the request $A$ to the file $O$ (5) and sends the
+    results back to user $S$ (6). Optionally, an Administrator, once properly
     authenticated can dynamically update the policy (7) by altering the
     update sequence in the policy base.
 
-    \footnotetext{Apache Web Server (http://www.apache.org).}
+    \footnotetext{Apache Web Server (\tt http://www.apache.org).}
 
   \vspace{-0.5cm}
 
