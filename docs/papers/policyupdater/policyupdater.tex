@@ -647,10 +647,11 @@
 
           A fact is a logical statement that makes a claim that an atom either
           holds or does not hold at a particular state. The following is the
-          formal definition of fact $f$ in state $\sigma$:
+          formal definition of fact $\hat{\rho}$ in state $\sigma$:
 
           \begin{vquote}
-            $f^{\sigma}$ = $[\lnot]$$\alpha$, $\alpha$ $\in$ ${\cal A}^{\sigma}$
+            $\hat{\rho}^{\sigma}$ =
+            $[\lnot]$$\hat{\alpha}$, $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$
           \end{vquote}
 
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
@@ -717,23 +718,23 @@
           composed of $n$ facts:
 
           \begin{vverbatim}
-  \(f\sb{0}\) && \ldots && \(f\sb{n}\)
+  \(\rho\sb{0}\) && \ldots && \(\rho\sb{n}\)
           \end{vverbatim}
 
           In language ${\cal L}^{*}$, the statement above is translated to:
 
           \begin{vquote}
-            $\hat{f_{0}}$ $\leftarrow$
+            $\hat{\rho}_{0}$ $\leftarrow$
 
             $\vdots$
 
-            $\hat{f_{n}}$ $\leftarrow$
+            $\hat{\rho}_{n}$ $\leftarrow$
           \end{vquote}
 
           \begin{vquote}
             where
 
-            $\hat{f_{i}}$ $=$ $TransFact$($f_{i}$, $S_{0}$),
+            $\hat{\rho}_{i}$ $=$ $TransFact$($\rho_{i}$, $S_{0}$),
 
             $0$ $\leq$ $i$ $\leq$ $n$
           \end{vquote}
@@ -845,6 +846,14 @@
             $m$ $|\psi|$
           \end{quote}
 
+          \begin{quote}
+            where
+
+            $m$ is the number of facts in the $always$ clause
+
+            $|\psi|$ is the number of states
+          \end{quote}
+
           The example below shows how the following language ${\cal L}$ code
           fragment is translated to language ${\cal L}^{*}$:
 
@@ -933,10 +942,10 @@
             $0$ $\leq$ $j$ $\leq$ $n$
           \end{vquote}
 
-          Intuitively, the number of language ${\cal L}^{*}$ rules generated
-          in the translation is $m$, which is the number of facts in the
-          postcondition expression of a given language ${\cal L}$ policy update
-          rule.
+          Intuitively, given a language ${\cal L}$ policy update definition,
+          the number of language ${\cal L}^{*}$ rules generated in the
+          translation is $m$, which is the number of facts in the
+          postcondition expression.
 
           For example, given the following 2 language ${\cal L}$ policy update
           definitions:
@@ -1672,16 +1681,16 @@
             $|$$Trans$(${\cal D_{L}}$)$|$ =
 
             \hspace{1em}
-            $|$${\cal R}_{int}$$|$ +
-            $|$${\cal R}_{con}$$|$ +
-            $|$${\cal R}_{upd}$$|$ +
-            $|$${\cal R}_{inh}$$|$ +
-            $|$${\cal R}_{tra}$$|$ +
-            $|$${\cal R}_{ine}$$|$
+            $|$${\cal F}_{int}$$|$ +
+            $|$${\cal F}_{con}$$|$ +
+            $|$${\cal F}_{upd}$$|$ +
+            $|$${\cal F}_{inh}$$|$ +
+            $|$${\cal F}_{tra}$$|$ +
+            $|$${\cal F}_{ine}$$|$
           \end{vquote}
 
-          where ${\cal R}_{int}$, ${\cal R}_{con}$, ${\cal R}_{upd}$,
-          ${\cal R}_{inh}$, ${\cal R}_{tra}$, ${\cal R}_{ine}$ are the sets of
+          where ${\cal F}_{int}$, ${\cal F}_{con}$, ${\cal F}_{upd}$,
+          ${\cal F}_{inh}$, ${\cal F}_{tra}$, ${\cal F}_{ine}$ are the sets of
           initial fact rules, constraint rules, policy update rules,
           inheritance rules, transitivity rules and inertial rules,
           respectively.
@@ -1691,7 +1700,7 @@
           rules generated in the translation is:
 
           \begin{vquote}
-            $|$${\cal R}_{int}$$|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
+            $|$${\cal F}_{int}$$|$ $\leq$ $M_{i}$ $|$${\cal S}_{i}$$|$
           \end{vquote}
 
           Each language ${\cal L}$ constraint statement in ${\cal S}_{c}$
@@ -1702,7 +1711,7 @@
           statement, we have:
 
           \begin{vquote}
-            $|$${\cal R}_{con}$$|$ $\leq$ $M_{c}$ $|$${\cal S}_{c}$$|$ $|\psi|$
+            $|$${\cal F}_{con}$$|$ $\leq$ $M_{c}$ $|$${\cal S}_{c}$$|$ $|\psi|$
           \end{vquote}
 
           For policy update statements, only those that are applied are
@@ -1711,7 +1720,7 @@
           applied policy update statement, we have:
 
           \begin{vquote}
-            $|$${\cal R}_{con}$$|$ $\leq$ $M_{u}$ $|\psi|$
+            $|$${\cal F}_{con}$$|$ $\leq$ $M_{u}$ $|\psi|$
           \end{vquote}
 
           The total number of inheritance rules generated in the translation is
@@ -1719,9 +1728,9 @@
           subset inheritance rules:
 
           \begin{vquote}
-            $|$${\cal R}_{inh}$$|$ =
-            $|$${\cal R}_{inh_{m}}$$|$ +
-            $|$${\cal R}_{inh_{s}}$$|$
+            $|$${\cal F}_{inh}$$|$ =
+            $|$${\cal F}_{inh_{m}}$$|$ +
+            $|$${\cal F}_{inh_{s}}$$|$
           \end{vquote}
 
           Since the membership inheritance rules show the relationships between
@@ -1729,7 +1738,7 @@
           number of states times 2 (for negative facts), we have:
 
           \begin{vquote}
-            $|$${\cal R}_{inh_{m}}$$|$ =
+            $|$${\cal F}_{inh_{m}}$$|$ =
 
             \hspace{1em}
             $2|\psi|$$|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
@@ -1745,7 +1754,7 @@
           entities are considered:
 
           \begin{vquote}
-            $|$${\cal R}_{inh_{s}}$$|$ =
+            $|$${\cal F}_{inh_{s}}$$|$ =
 
             \hspace{1em}
             $2|\psi|$$|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ +
@@ -1762,7 +1771,7 @@
           transitivity rules is shown below:
 
           \begin{vquote}
-            $|$${\cal R}_{tra}$$|$ =
+            $|$${\cal F}_{tra}$$|$ =
             $|\psi|$ $($$|{\cal E}_{sg}|^{3}$ +
             $|{\cal E}_{ag}|^{3}$ +
             $|{\cal E}_{og}|^{3}$$)$
@@ -1773,7 +1782,7 @@
           negative facts):
 
           \begin{vquote}
-            $|$${\cal R}_{ine}$$|$ =
+            $|$${\cal F}_{ine}$$|$ =
             $2$ $|{\cal A}|$ $|\psi|$
           \end{vquote}
         \end{vproof}
