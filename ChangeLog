@@ -1,3 +1,15 @@
+2003-03-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/Makefile.in :
+	* kb/kb.h :
+	* kb/atom.h :
+	* kb/atom.cpp :
+	* kb/expression.h :
+	* kb/expression.cpp :
+
+	  - Added generic atom and expression classes to be used to
+	    store both ground and non-ground expressions.
+
 2003-03-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/list.h :
