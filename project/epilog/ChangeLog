@@ -5,6 +5,12 @@
 
 	  - Modified atom checks to allow variables in identifiers.
 
+	* exp/compexp.h :
+	* exp/compatom.h :
+
+	  - Structures for complex (non-ground) terms. Includes ground
+	    expression plus a variable list.
+
 	* ident/ident.h:
 
 	  - Added variable type.
