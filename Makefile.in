@@ -16,4 +16,4 @@ distclean :
 	@set -e && for i in $(DIRS); do \
 	$(MAKE) -C $$i distclean;       \
 	done
-	$(RM) -r include lib Makefile config.status config.log autom4te.cache
+	$(RM) -r include lib Makefile config.h config.status config.log autom4te.cache

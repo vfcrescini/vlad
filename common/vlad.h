@@ -6,14 +6,6 @@
 #ifndef __VLAD_VLAD_H
 #define __VLAD_VLAD_H
 
-#ifdef DEBUG
-  #include <stdio.h>
-#endif
-
-/* version */
-
-#define VLAD_VERSION         "0.0.4"
-
 /* query result codes */
 
 #define VLAD_RESULT_TRUE     0

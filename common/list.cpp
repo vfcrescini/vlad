@@ -5,8 +5,10 @@
 
 #include <stdlib.h>
 #include <new.h>
-#include "vlad.h"
-#include "list.h"
+
+#include <config.h>
+#include <vlad.h>
+#include <list.h>
 
 list_item::list_item()
 {

@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+
+#include <config.h>
 #include <vlad.h>
 #include <parser.h>
 #include <list.h>
@@ -22,7 +24,7 @@ int main(int argc, char *argv[])
   while ((option = getopt(argc, argv, "vh")) != -1) {
     switch(option) {
       case 'v' :
-        fprintf(stdout, "vLad %s\n", VLAD_VERSION);
+        fprintf(stdout, "vLad %s\n", VERSION);
         return 0;
       case 'h' :
         fprintf(stdout, "Usage: %s [-v|-h|filename]\n", argv[0]);
