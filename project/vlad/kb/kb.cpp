@@ -86,6 +86,20 @@ int kb::get_atom(const char *n1,
   memb_len = (s_len * sg_len) + (a_len * ag_len) + (o_len * og_len);
 
   switch(t) {
+    case VLAD_ATOM_CONST : {
+      if (n1 != NULL) {
+        if (!strcmp("false", n1))
+          *a = 0;
+        else if (!strcmp("true", n1))
+          *a = 1;
+        else
+          return VLAD_NOTFOUND;
+      }
+      else
+        return VLAD_NULLPTR;
+
+      break;
+    } 
     case VLAD_ATOM_HOLDS : {
       unsigned int s_index;
       unsigned int a_index;
@@ -117,7 +131,7 @@ int kb::get_atom(const char *n1,
       hs = VLAD_IDENT_TYPE_IS_GROUP(s_type) ? s_index + s_len : s_index;
       ha = VLAD_IDENT_TYPE_IS_GROUP(a_type) ? a_index + a_len : a_index;
       ho = VLAD_IDENT_TYPE_IS_GROUP(o_type) ? o_index + o_len : o_index;
-      *a = (hs * (a_len + ag_len) * (o_len + og_len)) + (ha * (o_len + og_len)) + ho + 1;
+      *a = (hs * (a_len + ag_len) * (o_len + og_len)) + (ha * (o_len + og_len)) + ho + 2;
 
       break;
     }
@@ -141,13 +155,13 @@ int kb::get_atom(const char *n1,
       /* now compute */
       switch(VLAD_IDENT_TYPE_BASETYPE(e_type)) {
         case VLAD_IDENT_SUBJECT :
-          *a = holds_len + (e_index * sg_len) + g_index + 1;
+          *a = holds_len + (e_index * sg_len) + g_index + 2;
           break;
         case VLAD_IDENT_ACCESS :
-          *a = holds_len + (s_len * sg_len) + (e_index * ag_len) + g_index + 1;
+          *a = holds_len + (s_len * sg_len) + (e_index * ag_len) + g_index + 2;
           break;
         case VLAD_IDENT_OBJECT :
-          *a = holds_len + (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index + 1;
+          *a = holds_len + (s_len * sg_len) + (a_len * ag_len) + (e_index * og_len) + g_index + 2;
           break;
         default :
           /* this should never happen */
@@ -175,13 +189,13 @@ int kb::get_atom(const char *n1,
       /* now we compute */
       switch(VLAD_IDENT_TYPE_BASETYPE(g1_type)) {
         case VLAD_IDENT_SUBJECT :
-          *a = holds_len + memb_len + (g1_index * sg_len) + g2_index + 1;
+          *a = holds_len + memb_len + (g1_index * sg_len) + g2_index + 2;
           break;
         case VLAD_IDENT_ACCESS :
-          *a = holds_len + memb_len + (sg_len * sg_len) + (g1_index * ag_len) + g2_index + 1;
+          *a = holds_len + memb_len + (sg_len * sg_len) + (g1_index * ag_len) + g2_index + 2;
           break;
         case VLAD_IDENT_OBJECT :
-          *a = holds_len + memb_len + (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index + 1;
+          *a = holds_len + memb_len + (sg_len * sg_len) + (ag_len * ag_len) + (g1_index * og_len) + g2_index + 2;
           break;
         default :
           /* this should never happen */
