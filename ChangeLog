@@ -5,6 +5,8 @@
 
 	  - Now generate_nlp() generates a list of possible atoms.
 
+	  - Added inheritance and transitivity rules.
+
 	* kb/symab.h :
 	* kb/symtab.cpp :
 
