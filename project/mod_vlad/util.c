@@ -241,6 +241,10 @@ static int add_object(apr_pool_t *a_p,
                              !strcmp(realrelpath, "/") ? "" : realrelpath,
                              NULL);
 
+  /* we have to ignore the admin trigger */
+  if (!strcmp(realrelpath, MODVLAD_ADMIN_DIRNAME))
+    return 0;
+
 #ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
                 MODVLAD_LOGLEVEL,
@@ -289,8 +293,10 @@ static int add_object(apr_pool_t *a_p,
   while (apr_dir_read(&dinfo, APR_FINFO_NAME | APR_FINFO_TYPE, pdir) == APR_SUCCESS) {
     const char *tmppath;
 
-    /* ignore . and .. */
-    if (!strcmp(".", dinfo.name) || !strcmp("..", dinfo.name))
+    /* ignore ".", ".." and the admin trigger */
+    if (!strcmp(".", dinfo.name) || 
+        !strcmp("..", dinfo.name) ||
+        !strcmp(MODVLAD_ADMIN_DIRNAME, dinfo.name))
       continue;
 
     /* append the current dir with the relative path */

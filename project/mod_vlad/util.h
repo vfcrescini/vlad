@@ -1,6 +1,6 @@
 /*
  * util.h
- * Vino Crescini  <jcrescin@cit.uws.edu.au
+ * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
 #ifndef __MODVLAD_UTIL_H
@@ -44,6 +44,9 @@ typedef struct {
   MODVLAD_ACCESS_CONNECT,       \
   NULL,                         \
 }
+
+#define MODVLAD_ADMIN_USERNAME  "administrator"
+#define MODVLAD_ADMIN_DIRNAME   ".admin"
 
 #define MODVLAD_LASTCHAR(X)  (X[strlen(X) > 0 ? strlen(X) - 1 : 0])
 #define MODVLAD_FIRSTCHAR(X) (X[0])

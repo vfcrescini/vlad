@@ -18,6 +18,7 @@
 #include <vlad/wrapper.h>
 
 #include "util.h"
+#include "admin.h"
 
 /* some external functions from the parser & lexer */
 extern void policyparse();
@@ -33,6 +34,7 @@ static char *modvlad_get_passwd(request_rec *a_r,
                                 char *a_passwd_file);
 static int modvlad_authenticate(request_rec *a_r);
 static int modvlad_authorize(request_rec *a_r);
+static int modvlad_handler(request_rec *a_r);
 static void modvlad_register_hooks (apr_pool_t *a_p);
 static const char *modvlad_set_init(cmd_parms *a_cmd,
                                     void *a_config,
@@ -209,7 +211,9 @@ static int modvlad_authorize(request_rec *a_r)
   modvlad_config_rec *conf = NULL;
   void *atom = NULL;
   void *exp = NULL;
-  const char *real_uri;
+  const char *realuri;
+  const char *filepath;
+  const char *rootpath;
 #ifndef MODVLAD_DEBUG
   unsigned char qres;
 #endif
@@ -228,7 +232,9 @@ static int modvlad_authorize(request_rec *a_r)
   }
 
   /* clean url */
-  real_uri = modvlad_strip_url(a_r->pool, a_r->uri);
+  realuri = modvlad_strip_url(a_r->pool, a_r->uri);
+  filepath = apr_pstrdup(a_r->pool, realuri);
+  apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
 
   ap_log_rerror(APLOG_MARK,
                 APLOG_NOTICE,
@@ -237,17 +243,25 @@ static int modvlad_authorize(request_rec *a_r)
                 "mod_vlad: received request user=%s access=%s object=%s",
                 a_r->user,
                 a_r->method,
-                real_uri);
+                realuri);
+
+  /* check for .admin requests */
+  if ((!strcmp(a_r->method, MODVLAD_ACCESS_GET) || !strcmp(a_r->method, MODVLAD_ACCESS_POST)) &&
+      !strcmp(a_r->user, MODVLAD_ADMIN_USERNAME) &&
+      !strcmp(filepath, MODVLAD_ADMIN_DIRNAME)) {
+
+    return OK;
+  }
 
   /* before going further, make sure the object is in the kb */
-  if (vlad_kb_check_symtab(conf->kb, real_uri, VLAD_IDENT_OBJECT) != VLAD_OK &&
-      vlad_kb_check_symtab(conf->kb, real_uri, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != VLAD_OK) {
+  if (vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT) != VLAD_OK &&
+      vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != VLAD_OK) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_NOTICE,
                   0,
                   a_r,
                   "mod_vlad: request for non-existent file %s, declining",
-                  real_uri);
+                  realuri);
     return DECLINED;
   }
 
@@ -272,7 +286,7 @@ static int modvlad_authorize(request_rec *a_r)
     return HTTP_INTERNAL_SERVER_ERROR;
   }
 
-  retval = vlad_atom_init_holds(atom, a_r->user, a_r->method, real_uri, 1);
+  retval = vlad_atom_init_holds(atom, a_r->user, a_r->method, realuri, 1);
   if (retval != VLAD_OK) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_ERR,
@@ -330,6 +344,65 @@ static int modvlad_authorize(request_rec *a_r)
 #endif
 }
 
+static int modvlad_handler(request_rec *a_r)
+{
+  modvlad_config_rec *conf;
+  const char *filepath;
+  const char *rootpath;
+
+#ifdef MODVLAD_DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_r->pool,
+                "modvlad_handler: %s %s %s",
+                a_r->user,
+                a_r->method,
+                a_r->uri);
+#endif
+
+  conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
+                                                     &modvlad_module);
+
+  /* first we make sure we are activated */
+  if (!conf || !conf->user_file || !conf->policy_file || !conf->kb) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_NOTICE,
+                  0,
+                  a_r,
+                  "mod_vlad: declining handler");
+    return DECLINED;
+  }
+
+  filepath = apr_pstrdup(a_r->pool, modvlad_strip_url(a_r->pool, a_r->uri));
+  apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
+
+  /* we only accept if the request is (administrator, GET/POST, *.admin) */
+  if (!strcmp(a_r->user, MODVLAD_ADMIN_USERNAME) &&
+      !strcmp(filepath, MODVLAD_ADMIN_DIRNAME)) {
+
+    if (!strcmp(a_r->method, MODVLAD_ACCESS_GET)) {
+      ap_set_content_type(a_r, "text/html");
+      modvlad_generate_header(a_r);
+      modvlad_generate_form(a_r, conf);
+      modvlad_generate_footer(a_r);
+      return OK;
+    }
+    else if (!strcmp(a_r->method, MODVLAD_ACCESS_POST)) {
+      ap_set_content_type(a_r, "text/html");
+      modvlad_generate_header(a_r);
+      modvlad_handle_form(a_r, conf);
+      modvlad_generate_footer(a_r);
+      return OK;
+    }
+
+    /* all other methods should fail */
+    return DECLINED;
+  }
+
+  return DECLINED;
+}
+
 static void modvlad_register_hooks(apr_pool_t *a_p)
 {
 #ifdef MODVLAD_DEBUG
@@ -342,6 +415,7 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
 
   ap_hook_check_user_id(modvlad_authenticate, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_auth_checker(modvlad_authorize, NULL, NULL, APR_HOOK_FIRST);
+  ap_hook_handler(modvlad_handler, NULL, NULL, APR_HOOK_FIRST);
 }
 
 static const char *modvlad_set_init(cmd_parms *a_cmd,
