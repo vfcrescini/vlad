@@ -844,23 +844,17 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
     unsigned int i_grp;
     /* subject groups */
     for (i_grp = 0; i_grp < sg_len; i_grp++) {
-      unsigned int tmp_num;
-      tmp_num = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp, i_grp);
-      if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
+      if ((retval = wrap->add_axiom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp, i_grp), true)) != VLAD_OK)
         return retval;
     }
     /* access groups */
     for (i_grp = 0; i_grp < ag_len; i_grp++) {
-      unsigned int tmp_num;
-      tmp_num = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp, i_grp);
-      if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
+      if ((retval = wrap->add_axiom(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp, i_grp), true)) != VLAD_OK)
         return retval;
     }
     /* object groups */
     for (i_grp = 0; i_grp < og_len; i_grp++) {
-      unsigned int tmp_num;
-      tmp_num = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp, i_grp);
-      if ((retval = wrap->add_axiom(tmp_num, true)) != VLAD_OK)
+      if ((retval = wrap->add_axiom(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp, i_grp), true)) != VLAD_OK)
         return retval;
     }
   }
@@ -887,22 +881,15 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
             continue;
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
               numberlist *tmp_list;
 
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_grp2 + s_len, i_acc, i_obj);
-              tmp_num3 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2);
+              tmp_list->add(compute_holds(i, i_truth, i_grp2 + s_len, i_acc, i_obj));
+              tmp_list->add(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2));
 
-              tmp_list->add(tmp_num2);
-              tmp_list->add(tmp_num3);
-
-              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+              if ((retval = wrap->add_rule(compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj), tmp_list, NULL)) != VLAD_OK)
                 return retval;
 
               delete tmp_list;
@@ -917,22 +904,15 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
             continue;
           for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
               numberlist *tmp_list;
 
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_sub, i_grp2 + a_len, i_obj);
-              tmp_num3 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2);
+              tmp_list->add(compute_holds(i, i_truth, i_sub, i_grp2 + a_len, i_obj));
+              tmp_list->add(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2));
 
-              tmp_list->add(tmp_num2);
-              tmp_list->add(tmp_num3);
-
-              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+              if ((retval = wrap->add_rule(compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj), tmp_list, NULL)) != VLAD_OK)
                 return retval;
 
               delete tmp_list;
@@ -947,22 +927,15 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
             continue;
           for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
             for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
               numberlist *tmp_list;
 
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len); 
-              tmp_num2 = compute_holds(i, i_truth, i_sub, i_acc, i_grp2 + o_len);
-              tmp_num3 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2);
+              tmp_list->add(compute_holds(i, i_truth, i_sub, i_acc, i_grp2 + o_len));
+              tmp_list->add(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2));
 
-              tmp_list->add(tmp_num2);
-              tmp_list->add(tmp_num3);
-
-              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+              if ((retval = wrap->add_rule(compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len), tmp_list, NULL)) != VLAD_OK)
                 return retval;
 
               delete tmp_list;
@@ -978,22 +951,15 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         for (i_sub = 0; i_sub < s_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
               numberlist *tmp_list;
 
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj);
-              tmp_num3 = compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1);
+              tmp_list->add(compute_holds(i, i_truth, i_grp1 + s_len, i_acc, i_obj));
+              tmp_list->add(compute_member(i, true, VLAD_IDENT_SUBJECT, i_sub, i_grp1));
 
-              tmp_list->add(tmp_num2);
-              tmp_list->add(tmp_num3);
-
-              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+              if ((retval = wrap->add_rule(compute_holds(i, i_truth, i_sub, i_acc, i_obj), tmp_list, NULL)) != VLAD_OK)
                 return retval;
 
               delete tmp_list;
@@ -1006,22 +972,15 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len + og_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
               numberlist *tmp_list;
 
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj);
-              tmp_num3 = compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1);
+              tmp_list->add(compute_holds(i, i_truth, i_sub, i_grp1 + a_len, i_obj));
+              tmp_list->add(compute_member(i, true, VLAD_IDENT_ACCESS, i_acc, i_grp1));
 
-              tmp_list->add(tmp_num2);
-              tmp_list->add(tmp_num3);
-
-              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+              if ((retval = wrap->add_rule(compute_holds(i, i_truth, i_sub, i_acc, i_obj), tmp_list, NULL)) != VLAD_OK)
                 return retval;
 
               delete tmp_list;
@@ -1034,22 +993,15 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         for (i_sub = 0; i_sub < s_len + sg_len; i_sub++) {
           for (i_acc = 0; i_acc < a_len + ag_len; i_acc++) {
             for (i_obj = 0; i_obj < o_len; i_obj++) {
-              unsigned int tmp_num1;
-              unsigned int tmp_num2;
-              unsigned int tmp_num3;
               numberlist *tmp_list;
 
               if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
                 return VLAD_MALLOCFAILED;
 
-              tmp_num1 = compute_holds(i, i_truth, i_sub, i_acc, i_obj);
-              tmp_num2 = compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len);
-              tmp_num3 = compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1);
+              tmp_list->add(compute_holds(i, i_truth, i_sub, i_acc, i_grp1 + o_len));
+              tmp_list->add(compute_member(i, true, VLAD_IDENT_OBJECT, i_obj, i_grp1));
 
-              tmp_list->add(tmp_num2);
-              tmp_list->add(tmp_num3);
-
-              if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+              if ((retval = wrap->add_rule(compute_holds(i, i_truth, i_sub, i_acc, i_obj), tmp_list, NULL)) != VLAD_OK)
                 return retval;
 
               delete tmp_list;
@@ -1074,9 +1026,6 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         if (i_grp1 == i_grp2)
           continue;
         for (i_grp3 = 0; i_grp3 < sg_len; i_grp3++) {
-          unsigned int tmp_num1;
-          unsigned int tmp_num2;
-          unsigned int tmp_num3;
           numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
@@ -1086,14 +1035,10 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
             return VLAD_MALLOCFAILED;
 
-          tmp_num1 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp3);
-          tmp_num2 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2);
-          tmp_num3 = compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp2, i_grp3);
+          tmp_list->add(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2));
+          tmp_list->add(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp2, i_grp3));
 
-          tmp_list->add(tmp_num2);
-          tmp_list->add(tmp_num3);
-
-          if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+          if ((retval = wrap->add_rule(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp3), tmp_list, NULL)) != VLAD_OK)
             return retval;
 
           delete tmp_list;
@@ -1107,9 +1052,6 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         if (i_grp1 == i_grp2)
           continue;
         for (i_grp3 = 0; i_grp3 < ag_len; i_grp3++) {
-          unsigned int tmp_num1;
-          unsigned int tmp_num2;
-          unsigned int tmp_num3;
           numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
@@ -1119,14 +1061,10 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
             return VLAD_MALLOCFAILED;
 
-          tmp_num1 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp3);
-          tmp_num2 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2);
-          tmp_num3 = compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp2, i_grp3);
+          tmp_list->add(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp2));
+          tmp_list->add(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp2, i_grp3));
 
-          tmp_list->add(tmp_num2);
-          tmp_list->add(tmp_num3);
-
-          if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+          if ((retval = wrap->add_rule(compute_subset(i, true, VLAD_IDENT_ACCESS, i_grp1, i_grp3), tmp_list, NULL)) != VLAD_OK)
             return retval;
 
           delete tmp_list;
@@ -1140,9 +1078,6 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
         if (i_grp1 == i_grp2)
           continue;
         for (i_grp3 = 0; i_grp3 < og_len; i_grp3++) {
-          unsigned int tmp_num1;
-          unsigned int tmp_num2;
-          unsigned int tmp_num3;
           numberlist *tmp_list;
 
           /* ignore if any 2 are the same */
@@ -1152,14 +1087,10 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
           if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
             return VLAD_MALLOCFAILED;
 
-          tmp_num1 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp3);
-          tmp_num2 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2);
-          tmp_num3 = compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp2, i_grp3);
+          tmp_list->add(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp2));
+          tmp_list->add(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp2, i_grp3));
 
-          tmp_list->add(tmp_num2);
-          tmp_list->add(tmp_num3);
-
-          if ((retval = wrap->add_rule(tmp_num1, tmp_list, NULL)) != VLAD_OK)
+          if ((retval = wrap->add_rule(compute_subset(i, true, VLAD_IDENT_OBJECT, i_grp1, i_grp3), tmp_list, NULL)) != VLAD_OK)
             return retval;
 
           delete tmp_list;
@@ -1195,22 +1126,10 @@ int kb::evaluate_query(expression *e, sequence *s, unsigned char *r)
   for (i = 0; i < VLAD_LIST_LENGTH(s); i++) {
     unsigned int i_atom;
     for (i_atom = 0; i_atom < pos_tot; i_atom++) {
-      unsigned int tmp_num1;
-      unsigned int tmp_num2;
-      unsigned int tmp_num3;
-
-      tmp_num1 = compute_atom(i + 1, true, i_atom);
-      tmp_num2 = compute_atom(i, true, i_atom);
-      tmp_num3 = compute_atom(i + 1, false, i_atom);
-
-      if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+      if ((retval = wrap->add_rule(compute_atom(i + 1, true, i_atom), compute_atom(i, true, i_atom), compute_atom(i + 1, false, i_atom))) != VLAD_OK)
         return retval;
 
-      tmp_num1 = compute_atom(i + 1, false, i_atom);
-      tmp_num2 = compute_atom(i, false, i_atom);
-      tmp_num3 = compute_atom(i + 1, true, i_atom);
-
-      if ((retval = wrap->add_rule(tmp_num1, tmp_num2, tmp_num3)) != VLAD_OK)
+      if ((retval = wrap->add_rule(compute_atom(i + 1, false, i_atom), compute_atom(i, false, i_atom), compute_atom(i + 1, true, i_atom))) != VLAD_OK)
         return retval;
     }
   }
