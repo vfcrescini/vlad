@@ -8,13 +8,15 @@ Started: 2002 Dec 08
 Updated: 2002 Dec 19
 -------------------------------------------------------------------------------
 
-1. From the toplevel source directory, run ./configure, then make :
+1. From the toplevel source directory, run autoconf, ./configure, then make :
 
+     $ autoconf
      $ ./configure
      $ make
 
    For a debug build (lots of output, compiled with -g) :
 
+     $ autoconf
      $ ./configure --enable-debug
      $ make
 
