@@ -1,0 +1,21 @@
+EPILOG Build/Use Instructions
+
+Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+Started: 2002 Aug 29
+
+1. From the toplevel source directory, run make :
+
+     $ make
+
+   For a debug build (lots of output, compiled with -g) :
+
+     $ make DEBUG=1
+
+2. The executable binary will be in main/epilog. At the moment,
+   the program will read all input from stdin, dump all debug
+   info (also errors/warnings) in stderr and all output to stdout.
+
+   To use the sample program in docs :
+
+     $ ./main/epilog < docs/sample
