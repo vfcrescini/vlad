@@ -179,7 +179,7 @@ Started 2002 Dec 08
     respectively.
 
     The case where the pre-condition is an empty-set (ie. the transformation
-    has no pre-condition) is represented by ommitting the if clause:
+    has no pre-condition) is represented by omitting the if clause:
 
       <trans-identifier>()
       causes <post-condition-expression> 
@@ -212,7 +212,7 @@ Started 2002 Dec 08
     states that expression2 holds if expression1 is true and the truth 
     value of expression3 is unknown. 
 
-    If the "with absence" clause is ommitted, then expression2 is applied
+    If the "with absence" clause is omitted, then expression2 is applied
     if and only if expression1 is true:
 
       <expression1> implies <expression2>
