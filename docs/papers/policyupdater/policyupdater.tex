@@ -1199,6 +1199,8 @@
                     $s_{g1}$, $s_{g2}$ $\in$ ${\cal E}_{sg}$,
                     $a$ $\in$ ${\cal E}_{a}$,
                     $o$ $\in$ ${\cal E}_{o}$,
+                    $s_{g1}$ $\neq$ $s_{g2}$,
+
                     $S_{0}$ $\leq$ $\sigma$ $\leq S_{|\psi|}$
                   \end{vquote}
 
@@ -1235,6 +1237,8 @@
                     $s$ $\in$ ${\cal E}_{s}$,
                     $a_{g1}$, $a_{g2}$ $\in$ ${\cal E}_{ag}$,
                     $o$ $\in$ ${\cal E}_{o}$,
+                    $a_{g1}$ $\neq$ $a_{g2}$,
+
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
 
@@ -1271,16 +1275,19 @@
                     $s$ $\in$ ${\cal E}_{s}$,
                     $a$ $\in$ ${\cal E}_{a}$,
                     $o_{g1}$, $o_{g2}$ $\in$ ${\cal E}_{og}$,
+                    $o_{g1}$ $\neq$ $o_{g2}$,
+
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
               \end{enumerate}
 
             \item
               {\em Transitivity rules.}
-              Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of
-              $G'$ and $G'$ is a subset of $G''$, then $G$ must also be a
-              subset of $G''$. The following rules ensure that the transitive
-              property of subject, access right and object groups hold:
+              Given three distinct groups $G$, $G'$ and $G''$. If $G$ is a
+              subset of $G'$ and $G'$ is a subset of $G''$, then $G$ must also
+              be a subset of $G''$. The following rules ensure that the
+              transitive property of subject, access right and object groups
+              hold:
 
               \begin{enumerate}
                 \item
@@ -1304,6 +1311,8 @@
                     where
 
                     $sg_{1}$, $sg_{2}$, $sg_{3}$ $\in$ ${\cal E}_{sg}$,
+                    $sg_{1}$ $\neq$ $sg_{2}$ $\neq$ $sg_{3}$,
+
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
 
@@ -1328,6 +1337,8 @@
                     where
 
                     $ag_{1}$, $ag_{2}$, $ag_{3}$ $\in$ ${\cal E}_{ag}$,
+                    $ag_{1}$ $\neq$ $ag_{2}$ $\neq$ $ag_{3}$,
+
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
 
@@ -1352,6 +1363,8 @@
                     where
 
                     $og_{1}$, $og_{2}$, $og_{3}$ $\in$ ${\cal E}_{og}$,
+                    $og_{1}$ $\neq$ $og_{2}$ $\neq$ $og_{3}$,
+
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
                \end{enumerate}
@@ -2626,57 +2639,7 @@
          \end{vquote}
 
          \begin{vquote}
-           % inheritance rules (positive, write, S0)
-           $\hat{holds}(alice, write, file, S_{0})$ $\leftarrow$
-
-           \hspace{1em}
-           $\hat{holds}(grp1, write, file, S_{0})$,
-
-           \hspace{1em}
-          $\hat{memb}(alice, grp1, S_{0})$,
-
-           \hspace{1em}
-           $not$ $\lnot\hat{holds}(alice, write, file, S_{0})$
-         \end{vquote}
-
-         \begin{vquote}
-           % inheritance rules (negative, write, S0)
-           $\lnot \hat{holds}(alice, write, file, S_{0})$ $\leftarrow$
-
-           \hspace{1em}
-           $\lnot \hat{holds}(grp1, write, file, S_{0})$,
-
-           \hspace{1em}
-          $\hat{memb}(alice, grp1, S_{0})$
-         \end{vquote}
-
-         \begin{vquote}
            \hspace{2em}$\vdots$
-         \end{vquote}
-
-         \begin{vquote}
-           % inheritance rules (positive, read, S1)
-           $\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
-
-           \hspace{1em}
-           $\hat{holds}(grp3, read, file, S_{1})$,
-
-           \hspace{1em}
-           $\hat{memb}(alice, grp3, S_{1})$,
-
-           \hspace{1em}
-           $not$ $\lnot\hat{holds}(alice, read, file, S_{1})$
-         \end{vquote}
-
-         \begin{vquote}
-           % inheritance rules (negative, read, S1)
-           $\lnot\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
-
-           \hspace{1em}
-           $\lnot\hat{holds}(grp3, read, file, S_{1})$,
-
-           \hspace{1em}
-           $\hat{memb}(alice, grp3, S_{1})$
          \end{vquote}
 
          \begin{vquote}
@@ -2704,15 +2667,26 @@
            $\hat{memb}(alice, grp3, S_{1})$
          \end{vquote}
 
-       \item
-         Transitivity Rules
-
          \begin{vquote}
-           $\hat{subst}(grp1, grp1, S_{0})$ $\leftarrow$
+           % inheritance rules (subset positive, read, S0)
+           $\hat{holds}(grp1, read, file, S_{0})$ $\leftarrow$
 
            \hspace{1em}
-           $\hat{subst}(grp1, grp1, S_{0})$,
-           $\hat{subst}(grp1, grp1, S_{0})$
+           $\hat{holds}(grp2, read, file, S_{0})$,
+
+           \hspace{1em}
+           $\hat{subst}(grp1, grp2, S_{0})$
+         \end{vquote}
+
+         \begin{vquote}
+           % inheritance rules (subset negative, read, S0)
+           $\lnot \hat{holds}(grp1, read, file, S_{0})$ $\leftarrow$
+
+           \hspace{1em}
+           $\lnot \hat{holds}(grp2, read, file, S_{0})$,
+
+           \hspace{1em}
+           $\hat{subst}(grp1, grp2, S_{0})$
          \end{vquote}
 
          \begin{vquote}
@@ -2720,11 +2694,68 @@
          \end{vquote}
 
          \begin{vquote}
-           $\hat{subst}(grp3, grp3, S_{1})$ $\leftarrow$
+           % inheritance rules (subset positive, write, S1)
+           $\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
 
            \hspace{1em}
-           $\hat{subst}(grp3, grp3, S_{1})$,
-           $\hat{subst}(grp3, grp3, S_{1})$
+           $\hat{holds}(grp2, write, file, S_{1})$,
+
+           \hspace{1em}
+           $\hat{subst}(grp3, grp2, S_{1})$
+         \end{vquote}
+
+         \begin{vquote}
+           % inheritance rules (subset negative, write, S1)
+           $\lnot \hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+
+           \hspace{1em}
+           $\lnot \hat{holds}(grp2, write, file, S_{1})$,
+
+           \hspace{1em}
+           $\hat{subst}(grp3, grp2, S_{1})$
+         \end{vquote}
+
+       \item
+         Transitivity Rules
+
+         \begin{vquote}
+           $\hat{subst}(grp1, grp3, S_{0})$ $\leftarrow$
+
+           \hspace{1em}
+           $\hat{subst}(grp1, grp2, S_{0})$,
+           $\hat{subst}(grp2, grp3, S_{0})$
+         \end{vquote}
+
+         \begin{vquote}
+           \hspace{2em}$\vdots$
+         \end{vquote}
+
+         \begin{vquote}
+           $\hat{subst}(grp3, grp1, S_{0})$ $\leftarrow$
+
+           \hspace{1em}
+           $\hat{subst}(grp3, grp2, S_{0})$,
+           $\hat{subst}(grp2, grp1, S_{0})$
+         \end{vquote}
+
+         \begin{vquote}
+           $\hat{subst}(grp1, grp3, S_{1})$ $\leftarrow$
+
+           \hspace{1em}
+           $\hat{subst}(grp1, grp2, S_{1})$,
+           $\hat{subst}(grp2, grp3, S_{1})$
+         \end{vquote}
+
+         \begin{vquote}
+           \hspace{2em}$\vdots$
+         \end{vquote}
+
+         \begin{vquote}
+           $\hat{subst}(grp3, grp1, S_{1})$ $\leftarrow$
+
+           \hspace{1em}
+           $\hat{subst}(grp3, grp2, S_{1})$,
+           $\hat{subst}(grp2, grp1, S_{1})$
          \end{vquote}
 
        \item
