@@ -483,32 +483,32 @@
 
       \begin{vdefinition}
         \label{def-ans}
-        Given an extended logic program $\Pi$ composed of ground facts and
+        Given an extended logic program $\pi$ composed of ground facts and
         rules that do not have the negation-as-failure operator $not$ and a set
-        ${\cal F}$ of all ground facts in $\Pi$. A set $S$ is then said to be
-        an answer set of $\Pi$ if it is the smallest set that satisfies the
+        ${\cal F}$ of all ground facts in $\pi$. A set $\lambda$ is then said to
+        be an answer set of $\pi$ if it is the smallest set that satisfies the
         following conditions:
 
         \begin{enumerate}
           \item
             For any rule of the form $\rho_{0}$ $\leftarrow$ $\rho_{1}$,
-            $\hdots$, $\rho_{n}$ where $n$ $>$ 1, if $\rho_{1}$, $\hdots$,
-            $\rho_{n}$ $\in$ $S$, then
-            $\rho_{0}$ $\in$ $S$.
+            $\hdots$, $\rho_{n}$ where $n$ $\geq$ 1, if $\rho_{1}$, $\hdots$,
+            $\rho_{n}$ $\in$ $\lambda$, then
+            $\rho_{0}$ $\in$ $\lambda$.
           \item
-            If $S$ contains a pair of complementary facts (i.e. a fact and
-            its negation), then $S$ = ${\cal F}$.
+            If $\lambda$ contains a pair of complementary facts (i.e. a fact and
+            its negation), then $\lambda$ = ${\cal F}$.
         \end{enumerate}
 
-        For a ground extended logic program $\Pi$ that is composed of rules
-        that may have the negation-as-failure operator $not$, a set $S$ is the
-        answer set of $\Pi$ if and only if $S$ is the answer set of $\Pi'$,
-        where $\Pi'$ is obtained from $\Pi$ by deleting the following:
+        For a ground extended logic program $\pi$ that is composed of rules
+        that may have the negation-as-failure operator $not$, a set $\lambda$ is
+        the answer set of $\pi$ if and only if $\lambda$ is the answer set of
+        $\pi'$, where $\pi'$ is obtained from $\pi$ by deleting the following:
 
         \begin{enumerate}
           \item
             Each rule that contains a fact of the form $not$ $\rho$ in its body
-            where $\rho$ $\in$ $S$.
+            where $\rho$ $\in$ $\lambda$.
           \item
             All facts of the form $not$ $\rho$ in the bodies of the remaining
             rules.
@@ -872,37 +872,37 @@
           follows:
 
           \begin{vquote}
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, read, data, S_{0}) \leftarrow \\
-                 & \hat{memb}(alice, admin, S_{0}), \\
-                 & not \lnot \hat{holds}(alice, own, data, S_{0})
-              \end{aligned}
-            \end{math}
+            $\hat{holds}$($alice$, $read$, $data$, $S_{0}$) $\leftarrow$
 
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, write, data, S_{0}) \leftarrow \\
-                 & \hat{memb}(alice, admin, S_{0}), \\
-                 & not \lnot \hat{holds}(alice, own, data, S_{0})
-              \end{aligned}
-            \end{math}
+            \hspace{1em}
+            $\hat{memb}$($alice$, $admin$, $S_{0}$),
 
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, read, data, S_{1}) \leftarrow \\
-                 & \hat{memb}(alice, admin, S_{1}), \\
-                 & not \lnot \hat{holds}(alice, own, data, S_{1})
-              \end{aligned}
-            \end{math}
+            \hspace{1em}
+            $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{0}$)
 
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, write, data, S_{1}) \leftarrow \\
-                 & \hat{memb}(alice, admin, S_{1}), \\
-                 & not \lnot \hat{holds}(alice, own, data, S_{1})
-              \end{aligned}
-            \end{math}
+            $\hat{holds}$($alice$, $write$, $data$, $S_{0}$) $\leftarrow$
+
+            \hspace{1em}
+            $\hat{memb}$($alice$, $admin$, $S_{0}$),
+
+            \hspace{1em}
+            $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{0}$)
+
+            $\hat{holds}$($alice$, $read$, $data$, $S_{1}$) $\leftarrow$
+
+            \hspace{1em}
+            $\hat{memb}$($alice$, $admin$, $S_{1}$),
+
+            \hspace{1em}
+            $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{1}$)
+
+            $\hat{holds}$($alice$, $write$, $data$, $S_{1}$) $\leftarrow$
+
+            \hspace{1em}
+            $\hat{memb}$($alice$, $admin$, $S_{1}$),
+
+            \hspace{1em}
+            $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{1}$)
           \end{vquote}
 
         \paragraph{Policy Update Rules.}
@@ -965,19 +965,15 @@
           in language ${\cal L}^{*}$ as:
 
           \begin{vquote}
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, read, file, S_{1}) \leftarrow \\
-                & \hat{memb}(alice, readers, S_{0})
-              \end{aligned}
-            \end{math}
+            $\hat{holds}$($alice$, $read$, $file$, $S_{1}$) $\leftarrow$
 
-            \begin{math}
-              \begin{aligned}[t]
-                \hat{holds}&(alice, write, file, S_{2}) \leftarrow \\
-                & \hat{memb}(alice, writers, S_{1})
-              \end{aligned}
-            \end{math}
+            \hspace{1em}
+            $\hat{memb}$($alice$, $readers$, $S_{0}$)
+
+            $\hat{holds}$($alice$, $write$, $file$, $S_{2}$) $\leftarrow$
+
+            \hspace{1em}
+            $\hat{memb}$($alice$, $writers$, $S_{1}$)
           \end{vquote}
 
         \paragraph{Additional Constraints.}
@@ -1960,7 +1956,7 @@
       \begin{enumerate}
         \item
           \label{def-norm-1}
-          ${\cal F}^{+}_{int}$ $\cap$ ${\cal F}^{-}_{int}$ = $\emptyset$
+          ${\cal F}^{+}_{int}$ $\cap$ ${\cal F}^{-}_{int}$ = $\emptyset$.
         \item
           \label{def-norm-2}
           For any two constraint statements $\gamma$ and $\gamma'$ in
@@ -2071,12 +2067,28 @@
       in sequence list $\psi$ have been applied}, denoted as
 
       \begin{vquote}
-        ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\},
+        ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\}
       \end{vquote}
 
-      \noindent if and only if for every atom [$\lnot$]$\alpha$ in $\phi$,
-      where $\alpha$ $\in$ ${\cal A}^{|\psi|}$, [$\lnot$]$\alpha$ is in
-      every answer set of $Trans$(${\cal D}_{\cal L}$).
+      \noindent
+      if and only if
+
+      \begin{vquote}
+        $\forall$ ($\rho$, $\lambda$),
+        $\hat{\rho}$ $\in$ $\lambda$
+
+      \end{vquote}
+
+      \begin{vquote}
+        where
+
+        $\rho$ $\in$ $\phi$,
+        $\lambda$ $\in$ $\Lambda$,
+
+        $\hat{\rho}$ = $TransFact$($\rho$, $S_{|\psi|}$),
+
+        $\Lambda$ = answer sets of $Trans$(${\cal D}_{\cal L}$)
+      \end{vquote}
     \end{vdefinition}
 
     Definition \ref{def-eval} shows that given a finite list of policy updates
@@ -2095,14 +2107,10 @@
       results of each query $\phi$:
 
       \begin{vquote}
-        \begin{math}
-          \begin{aligned}[t]
-            &\phi_{0} = holds(grp1, write, file) : TRUE \\
-            &\phi_{1} = holds(grp1, read, file) : FALSE \\
-            &\phi_{2} = holds(alice, write, file) : TRUE \\
-            &\phi_{3} = holds(alice, read, file) : FALSE
-          \end{aligned}
-        \end{math}
+        $\phi_{0}$ = $holds$($grp1$, $write$, $file$) : $TRUE$ \\
+        $\phi_{1}$ = $holds$($grp1$, $read$, $file$) : $FALSE$ \\
+        $\phi_{2}$ = $holds$($alice$, $write$, $file$) : $TRUE$ \\
+        $\phi_{3}$ = $holds$($alice$, $read$, $file$) : $FALSE$
       \end{vquote}
     \end{vexample}
 
@@ -2272,13 +2280,11 @@
           For consistency, the following constraint is added:
 
           \begin{vquote}
-            \begin{math}
-              \begin{aligned}[t]
-                FALSE & \leftarrow \\
-                & holds(alice, exec, file, true), \\
-                & holds(alice, exec, file, false)
-              \end{aligned}
-            \end{math}
+            $FALSE$ $\leftarrow$
+
+            \hspace{1em}
+            holds(alice, exec, file, true),
+            holds(alice, exec, file, false)
           \end{vquote}
 
         \paragraph{Representing Facts in Propositional Form.}
