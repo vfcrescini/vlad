@@ -16,6 +16,10 @@
 #include <vlad/vlad.h>
 #include <vlad/wrapper.h>
 
+#ifdef DEBUG
+#define MODVLAD_LOGLEVEL APLOG_NOTICE
+#endif
+
 typedef struct {
   char *user_file;
   char *policy_file;
@@ -41,13 +45,13 @@ static const command_rec modvlad_auth_cmds[] =
 {
   AP_INIT_TAKE1("VladUserFile",
                  modvlad_set_user_file,
-                 NULL,
+                 (void *)APR_OFFSETOF(modvlad_config_rec, user_file),
                  OR_AUTHCFG,
                 "authentication/user file (htpasswd)"),
 
   AP_INIT_TAKE1("VladPolicyFile",
                 modvlad_set_policy_file,
-                NULL,
+                (void *)APR_OFFSETOF(modvlad_config_rec, policy_file),
                 OR_AUTHCFG,
                 "authorization/policy file"),
 
@@ -69,7 +73,14 @@ static void *modvlad_create_dir_config(apr_pool_t *a_p, char *a_d)
 {
   modvlad_config_rec *conf;
 
-  fprintf(stderr, "modvlad_create_dir_config %s\n", a_d);
+#ifdef DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_p,
+                "modvlad_create_dir_config: %s",
+                a_d);
+#endif
 
   if (a_d == NULL)
     return NULL;
@@ -91,8 +102,6 @@ static char *modvlad_get_passwd(request_rec *a_r,
   char l[MAX_STRING_LEN];
   const char *rpw, *w;
   apr_status_t status;
-
-  fprintf(stderr, "modvlad_get_passwd\n");
 
   status = ap_pcfg_openfile(&f, a_r->pool, a_passwd_file);
 
@@ -135,8 +144,13 @@ static int modvlad_authenticate(request_rec *a_r)
   apr_status_t invalid_passwd;
   int retval;
 
-  fprintf(stderr, "authenticate\n");
-  fflush(stderr);
+#ifdef DEBUG
+  ap_log_rerror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_r,
+                "modvlad_authenticate");
+#endif
 
   conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
                                                      &modvlad_module);
@@ -156,7 +170,8 @@ static int modvlad_authenticate(request_rec *a_r)
 
   if (!real_passwd) {
 
-    ap_log_rerror(APLOG_MARK, APLOG_ERR,
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
                   0,
                   a_r,
                   "user %s not found: %s",
@@ -177,7 +192,7 @@ static int modvlad_authenticate(request_rec *a_r)
                   APLOG_ERR,
                   0,
                   a_r,
-                  "use %s: authentication failure for \"%s\": %s",
+                  "user %s: authentication failure for \"%s\": %s",
                   "Password Mismatch",
                   a_r->user,
                   a_r->uri);
@@ -197,25 +212,33 @@ static int modvlad_authorize(request_rec *a_r)
   conf = (modvlad_config_rec *) ap_get_module_config(a_r->per_dir_config,
                                                      &modvlad_module);
 
-  fprintf(stderr, "authorize\n");
-  fflush(stderr);
-  fprintf(stderr, "uri: %s\n", a_r->uri);
-  fprintf(stderr, "unparsed_uri: %s\n", a_r->unparsed_uri);
-  fprintf(stderr, "filename: %s\n", a_r->filename);
-  fprintf(stderr, "path_info: %s\n", a_r->path_info);
-  fprintf(stderr, "args: %s\n", a_r->args);
-  fprintf(stderr, "hostname: %s\n", a_r->hostname);
-  fprintf(stderr, "method: %s\n", a_r->method);
-  fprintf(stderr, "docroot: %s\n", ap_document_root(a_r));
-  fprintf(stderr, "policy_file: %s\n", conf->policy_file);
-  fflush(stderr);
+#ifdef DEBUG
+  ap_log_rerror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_r,
+                "modvlad_authorize\n\turi: %s\n\tfilename: %s\n\tpath-info: %s\n\targs: %s\n\thostname: %s\n\tmethod: %s\n\tdocroot: %s",
+                a_r->uri,
+                a_r->filename,
+                a_r->path_info,
+                a_r->args,
+                a_r->hostname,
+                a_r->method,
+                ap_document_root(a_r));
+#endif
 
   return OK;
 }
 
 static void modvlad_register_hooks(apr_pool_t *a_p)
 {
-  fprintf(stderr, "modvlad_register_hooks\n");
+#ifdef DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_p,
+                "modvlad_register_hooks");
+#endif
 
   ap_hook_check_user_id(modvlad_authenticate, NULL, NULL, APR_HOOK_FIRST);
   ap_hook_auth_checker(modvlad_authorize, NULL, NULL, APR_HOOK_FIRST);
@@ -225,20 +248,28 @@ static const char *modvlad_set_user_file(cmd_parms *a_cmd,
                                          void *a_config,
                                          const char *a_fname)
 {
-  fprintf(stderr, "modvlad_set_user_file\n");
+#ifdef DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_cmd->pool,
+                "modvlad_set_user_file");
+#endif
 
-  ((modvlad_config_rec *) a_config)->user_file = (char *) a_fname;
-
-  return NULL;
+  return ap_set_file_slot(a_cmd, a_config, a_fname);
 }
 
 static const char *modvlad_set_policy_file(cmd_parms *a_cmd,
                                            void *a_config,
                                            const char *a_fname)
 {
-  fprintf(stderr, "modvlad_set_policy_file\n");
+#ifdef DEBUG
+  ap_log_perror(APLOG_MARK,
+                MODVLAD_LOGLEVEL,
+                0,
+                a_cmd->pool,
+                "modvlad_set_policy_file");
+#endif
 
-  ((modvlad_config_rec *) a_config)->policy_file = (char *) a_fname;
-
-  return NULL;
+  return ap_set_file_slot(a_cmd, a_config, a_fname);
 }
