@@ -8,6 +8,7 @@
 
 #include <list.h>
 
+/* a number */
 class number : public list_item
 {
   public :
@@ -21,19 +22,30 @@ class number : public list_item
     unsigned int num;
 } ;
 
-class numberlist : public list
+/* a list of numbers */
+class numberlist : public list_item, list
 {
   public :
     numberlist();
     ~numberlist();
+    /* compare list with this list */
+    bool cmp(list_item *item);
     /* add a number in the list */
     int add(unsigned int n);
-    /* get the index of the number */
-    int geti(unsigned int n, unsigned int *i);
-    /* get the ith number in the list */
-    int getn(unsigned int i, unsigned int *n);
-    /* return true if number is in the list */
-    int find(unsigned int n);
+    /* get the i'th number in the list */
+    int get(unsigned int i, unsigned int *n);
+} ;
+
+/* a list of number lists */
+class numberlistlist : public list
+{
+  public :
+    numberlistlist();
+    ~numberlistlist();
+    /* add a number list to this list */
+    int add(numberlist *l);
+    /* get the i'th number list in this list */
+    int get(unsigned int i, numberlist **l);
 } ;
 
 #endif

@@ -1,5 +1,11 @@
 2003-04-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/numberlist.cpp :
+	* common/numberlist.h :
+
+	  - Added another class: numberlistlist, which is simply a list of
+	    lists of numbers.
+
 	* kb/atom.cpp :
 	* kb/consttab.cpp :
 	* kb/sequence.cpp :
