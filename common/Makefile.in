@@ -5,7 +5,12 @@ CC = @CC@
 LEX = @LEX@
 YACC = @YACC@
 DEBUG = @enable_debug@
-CFLAGS = -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
+CFLAGS = -ansi                         \
+         -Wall                         \
+         -Wstrict-prototypes           \
+         -I$(TOPSRCDIR)/include        \
+         -L$(TOPSRCDIR)/lib            \
+         $(NULL)
 INCLUDES = vlad.h
 
 ifeq "$(DEBUG)" "yes"
@@ -13,6 +18,8 @@ CFLAGS += -g -DDEBUG
 else
 CFLAGS += -O2 
 endif
+
+CXXFLAGS = $(CFLAGS)
 
 all : public
 
