@@ -256,6 +256,83 @@ always <exp1>
 
         \begin{verbatim}query <exp>;\end{verbatim} 
 
+      \begin{example}
+        The following language L program code listing shows the chinese-wall
+        example.  The main function of this program is to ensure that the
+        subject $alice$ is denied $read$ access to any object in one group if
+        she already holds $read$ to the other group.
+
+        In this example, the two objects $db1$ and $db2$ are members of the
+        groups $comp1$ and $comp2$, respectively. The policy updates
+        $req\_read\_comp1$ and $req\_read\_comp2$ both grant $read$ access
+        to the given subject for the given object and automatically revokes
+        the subject's right to read objects from the other group. The policy
+        updates can only be applied if their respective preconditions have
+        been met, i.e. that the given subject has $readable$ access for the
+        given object and that the given object is a member of the group
+        concerned.
+        \begin{verbatim}
+
+/* declare identifiers */
+
+ident sub alice;
+ident acc read, readable;
+ident obj db1, db2;
+ident obj-grp comp1, comp2;
+
+/* initial fact definitions */
+
+initially
+  holds(alice, readable, comp1) &&
+  holds(alice, readable, comp2);
+
+/* constraint definitions */
+
+always memb(db1, comp1);
+always memb(db2, comp2);
+
+/* policy update definitions */
+
+req_read_comp1(SUB, OBJ)
+  causes
+    holds(SUB, read, OBJ) &&
+    !holds(SUB, readable, comp2)
+  if
+    memb(OBJ, comp1) &&
+    holds(SUB, readable, comp1);
+
+req_read_comp2(SUB, OBJ)
+  causes
+    holds(SUB, read, OBJ) &&
+    !holds(SUB, readable, comp1)
+  if
+    memb(OBJ, comp2) &&
+    holds(SUB, readable, comp2);
+
+/* sequence manipluation */
+
+seq add req_read_comp1(alice, db1);
+seq add req_read_comp2(alice, db2);
+compute;
+
+/* query */
+
+query holds(alice, read, db1);
+query holds(alice, read, db2);
+query holds(alice, read, comp1);
+query holds(alice, read, comp2);
+        \end{verbatim}
+
+        The result should be:
+
+        \begin{verbatim}
+TRUE
+?
+TRUE
+FALSE
+        \end{verbatim}
+      \end{example}
+
     \subsection{Semantics}
 
       \subsubsection{Domain Definition of Language ${\cal L}$}
@@ -738,7 +815,7 @@ always <exp1>
 
     \subsection{Example}
 
-    \subsection{Properties}
+  \section{Semantic Properties}
 
   \section{Implementation}
 
