@@ -6,6 +6,9 @@
 
 	  - Added OBJECTS variable.
 
+	  - Now vlad is linked against smodels (if configured with
+	    --with-smodels).
+
 	* kb/wrapper.h :
 	* kb/wrapper.cpp :
 
