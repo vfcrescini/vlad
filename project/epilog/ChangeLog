@@ -9,8 +9,12 @@
 
 	  - Some cleanups.
 
-	  - indexedlist_add() will no longer check for double entries. this
+	  - indexedlist_add() will no longer check for double entries. This
 	    is now left for the calling function to do.
 
 	  - Added 2 functions to allow the data pointers to be freed before
 	    deletion.
+
+	* symtab/symtab.c :
+
+	  - Changed to reflect modifications to indexedlist.
