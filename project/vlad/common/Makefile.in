@@ -8,7 +8,7 @@ YACC = @YACC@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 TARGETS = libcommon.a
-INCLUDES = vlad.h list.h stringlist.h
+INCLUDES = vlad.h list.h stringlist.h numberlist.h
 
 all : public
 
@@ -22,14 +22,17 @@ public : $(TARGETS)
 	ln -sf ../common/$$i $(TOPSRCDIR)/lib; \
 	done
 
-libcommon.a : list.o stringlist.o
-	$(AR) -rcs $(@) list.o stringlist.o
+libcommon.a : list.o stringlist.o numberlist.o
+	$(AR) -rcs $(@) list.o stringlist.o numberlist.o
 
 list.o : list.h list.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c list.cpp
 
 stringlist.o : stringlist.h stringlist.cpp list.o
 	$(CXX) $(CXXFLAGS) -o $(@) -c stringlist.cpp
+
+numberlist.o : numberlist.h numberlist.cpp list.o
+	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
 
 clean :
 	$(RM) *.o

@@ -1,5 +1,12 @@
 2003-03-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/Makefile.in :
+	* common/numberlist.h :
+	* common/numberlist.cpp :
+
+	  - Added a number list class to be used initially as ground
+	    expressions.
+
 	* samples/atomtest :
 
 	  - Added negative atoms.
