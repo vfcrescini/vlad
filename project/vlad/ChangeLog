@@ -9,6 +9,8 @@
 	* kb/kb.h :
 	* kb/kb.cpp :
 	* parser/parser.y :
+        * kb/transtab.h :
+	* kb/transtab.cpp :
 	* kb/consttab.h :
 	* kb/consttab.cpp :
 
