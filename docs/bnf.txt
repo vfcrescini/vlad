@@ -5,6 +5,7 @@ BNF
 Vino Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started 2002 Dec 08
+Updated 2003 Mar 31
 -------------------------------------------------------------------------------
 
 <start>                 : <program>
@@ -70,28 +71,28 @@ Started 2002 Dec 08
 
 <acc-grp-ident-list>    : <identifier> | <acc-grp-ident-list> <comma> <identifier>
 
-<initial-stmt>          : <initially> <ground-exp> <semicolon>
+<initial-stmt>          : <initially> <expression> <semicolon>
 
 <constraint-stmt>       : <implies-stmt> | <always-stmt>
                         
-<implies-stmt>          : <ground-exp> <implies> <ground-exp> <with-clause> 
+<implies-stmt>          : <expression> <implies> <expression> <with-clause> 
                           <semicolon>
 
-<with-clause>           : <nil> | <with> <absence> <ground-exp>
+<with-clause>           : <nil> | <with> <absence> <expression>
 
-<always-stmt>           : <always> <ground-exp> <semicolon>
+<always-stmt>           : <always> <expression> <semicolon>
 
-<trans-stmt>            : <identifier> <trans-var-def> <causes> <comp-exp> 
+<trans-stmt>            : <identifier> <trans-var-def> <causes> <expression> 
                           <if-clause> <semicolon>
 
-<if-clause>             : <nil> | <if> <comp-exp>
+<if-clause>             : <nil> | <if> <expression>
 
 <trans-var-def>         : <open-parent> <close-parent> |
                           <open-parent> <trans-var-list> <close-parent> 
                         
 <trans-var-list>        : <identifier> | <trans-var-list> <comma> <identifier>
 
-<query-stmt>            : (is> <ground-exp> <after-clause> <semicolon>
+<query-stmt>            : <is> <expression> <after-clause> <semicolon>
                         
 <after-clause>          : <nil> | <after> <trans-ref-list>
                         
@@ -106,38 +107,21 @@ Started 2002 Dec 08
 <trans-ref-ident-list>  : <identifier> | <trans-ref-ident-list> <comma> 
                           <identifier>
 
-<ground-exp>            : <ground-exp> <logical-op> <ground-boolean-atom> |
-                          <ground-boolean-atom>
+<expression>            : <expression> <logical-op> <boolean-atom> |
+                          <boolean-atom>
                         
-<ground-boolean-atom>   : <not> <ground-atom> | <ground-atom>
+<boolean-atom>          : <not> <atom> | <atom>
                         
-<ground-atom>           : <ground-holds-atom> | <ground-subst-atom> | 
-                          <ground-memb-atom> | <logical-atom>
+<atom>                  : <holds-atom> | <subst-atom> | <memb-atom> |
+                          <logical-atom>
                         
-<ground-holds-atom>     : <holds> <open-parent> <identfier> <comma>
+<holds-atom>            : <holds> <open-parent> <identfier> <comma>
                           <identifier> <comma> <identifier> <close-parent>
  
-<ground-subst-atom>     : <subset> <open-parent> <identifier>
+<subst-atom>            : <subset> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
                         
-<ground-memb-atom>      : <member> <open-parent> <identifier>
-                          <comma> <identifier> <close-parent>
-
-<comp-exp>              : <comp-exp> <logical-op> <comp-boolean-atom> |
-                          <comp-boolean-atom>
-
-<comp-boolean-atom>     : <not> <comp-atom> | <comp-atom>
-
-<comp-atom>             : <comp-holds-atom> | <comp-subst-atom> |
-                          <comp-memb-atom> | <logical-atom>
-
-<comp-holds-atom>       : <holds> <open-parent> <identfier> <comma>
-                          <identifier> <comma> <identifier> <close-parent>
- 
-<comp-subst-atom>       : <subset> <open-parent> <identifier>
-                          <comma> <identifier> <close-parent>
-                        
-<comp-memb-atom>        : <member> <open-parent> <identifier>
+<memb-atom>             : <member> <open-parent> <identifier>
                           <comma> <identifier> <close-parent>
 
 <logical-atom>          : <true> | <false>
