@@ -1,3 +1,12 @@
+2003-05-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Makefile.in :
+	* rules.mk :
+	* lib/Makefile.in :
+	* main/Makefile.in :
+
+	  - Added install and uninstall rules.
+
 2003-05-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* rules.mk :

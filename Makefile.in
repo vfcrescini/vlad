@@ -9,6 +9,16 @@ all :
 	$(MAKE) -C $$i all;             \
 	done
 
+install :
+	@set -e && for i in $(DIRS); do \
+        $(MAKE) -C $$i install;         \
+        done
+
+uninstall :
+	@set -e && for i in $(DIRS); do \
+        $(MAKE) -C $$i uninstall;       \
+        done
+
 clean :
 	@set -e && for i in $(DIRS); do \
 	$(MAKE) -C $$i clean;           \
