@@ -239,6 +239,7 @@ trans_stmt :
 if_clause :
   | VLAD_SYM_IF comp_exp {
   }
+  ;
 
 trans_var_def : 
   VLAD_SYM_OPEN_PARENT VLAD_SYM_CLOSE_PARENT {
