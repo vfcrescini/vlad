@@ -43,12 +43,14 @@ for i in ${source_dirs}; do
   # ignore those that do not have sufficient priviledges
   if [ -d ${i} ] && [ -r ${i} ] && [ -x ${i} ]; then
     cd ${i}
+
     # compose the prefix
     # do this just in case $PWD doesn't get set
     pwd="`pwd`"
-
+    # remove leading /
+    pwd="${pwd#/}"
     # convert / to _
-    prefix="backup-`echo ${pwd} | tr [/] [_]`"
+    prefix="`echo ${pwd} | tr [/] [_]`"
 
     # rotate the backups
     count=${backlog}
