@@ -26,8 +26,8 @@ VLAD_EXTERN int vlad_kb_init(void *a_kb);
 VLAD_EXTERN int vlad_kb_close_symtab(void *a_kb);
 /* close kb table */
 VLAD_EXTERN int vlad_kb_close_kb(void *a_kb);
-/* gives the length of the symtab */
-VLAD_EXTERN int vlad_kb_length_symtab(void *a_kb, unsigned int *a_len);
+/* returns the length of the symtab */
+VLAD_EXTERN unsigned int vlad_kb_length_symtab(void *a_kb);
 /* gets the i'th identifier from symtab */
 VLAD_EXTERN int vlad_kb_get_symtab(void *a_kb,
                                    unsigned int a_index,
@@ -53,8 +53,8 @@ VLAD_EXTERN int vlad_kb_add_transtab(void *a_kb,
                                      void *a_v,
                                      void *a_pr,
                                      void *a_po);
-/* gives the length of the transformation table */
-VLAD_EXTERN int vlad_kb_length_transtab(void *a_kb, unsigned int *a_len);
+/* returns the length of the transformation table */
+VLAD_EXTERN unsigned int vlad_kb_length_transtab(void *a_kb);
 /* gives the i'th entry in the transformation table */
 VLAD_EXTERN int vlad_kb_get_transtab(void *a_kb,
                                      unsigned int a_index,
@@ -68,8 +68,8 @@ VLAD_EXTERN int vlad_kb_add_seqtab(void *a_kb, void *a_tr);
 VLAD_EXTERN int vlad_kb_del_seqtab(void *a_kb, unsigned int a_i);
 /* enumerate the sequences in the sequence table, output to f */
 VLAD_EXTERN int vlad_kb_list_seqtab(void *a_kb, FILE *a_fs);
-/* gives the length of the sequence table */
-VLAD_EXTERN int vlad_kb_length_seqtab(void *a_kb, unsigned int *a_len);
+/* returns the length of the sequence table */
+VLAD_EXTERN unsigned int vlad_kb_length_seqtab(void *a_kb);
 /* gives the i'th entry in the sequence table */
 VLAD_EXTERN int vlad_kb_get_seqtab(void *a_kb,
                                    unsigned int a_index,
