@@ -753,9 +753,18 @@ query holds(alice, read, file);
             holds all access rights contained in the access right group for
             that object.
 
+            In a situation where a particular property is to be inherited by
+            an entity from a group of which it is a member or subset, and the
+            contained entity already holds the negation of that property, a
+            conflict is encountered. This conflict is resolved by giving
+            negative facts higher precedence over its positive counterpart:
+            by allowing member or subset entities to inherit its parent group's
+            properties only if the entities do not already hold the negation of
+            those properties.
+
             The following are the inheritance constriant rules to allow the
             properties held by a group to propagate to its members and
-            subsets.
+            subsets that do not already hold the negation of the properties.
 
             \begin{enumerate}
               \item
@@ -765,7 +774,8 @@ query holds(alice, read, file);
                   \begin{aligned}[t]
                     \hat{holds}(s_{s}, a, o, \sigma) \leftarrow &
                     \hat{holds}(s_{g}, a, o, \sigma), \\
-                    & \hat{memb}(s_{s}, s_{g}, \sigma) \\
+                    & \hat{memb}(s_{s}, s_{g}, \sigma), \\
+                    & not \lnot \hat{holds}(s_{s}, a, o, \sigma) \\
                     \lnot \hat{holds}(s_{s}, a, o, \sigma) \leftarrow &
                     \lnot \hat{holds}(s_{g}, a, o, \sigma), \\
                     & \hat{memb}(s_{s}, s_{g}, \sigma)
@@ -787,7 +797,8 @@ query holds(alice, read, file);
                   \begin{aligned}[t]
                     \hat{holds}(s, a_{s}, o, \sigma) \leftarrow &
                     \hat{holds}(s, a_{g}, o, \sigma), \\
-                    & \hat{memb}(a_{s}, a_{g}, \sigma) \\
+                    & \hat{memb}(a_{s}, a_{g}, \sigma), \\
+                    & not \lnot \hat{holds}(s, a_{s}, o, \sigma) \\
                     \lnot \hat{holds}(s, a_{s}, o, \sigma) \leftarrow &
                     \lnot \hat{holds}(s, a_{g}, o, \sigma), \\
                     & \hat{memb}(a_{s}, a_{g}, \sigma)
@@ -809,7 +820,8 @@ query holds(alice, read, file);
                   \begin{aligned}[t]
                     \hat{holds}(s, a, o_{s}, \sigma) \leftarrow &
                     \hat{holds}(s, a, o_{g}, \sigma), \\
-                    & \hat{memb}(o_{s}, o_{g}, \sigma) \\
+                    & \hat{memb}(o_{s}, o_{g}, \sigma), \\
+                    & not \lnot \hat{holds}(s, a, o_{s}, \sigma) \\
                     \lnot \hat{holds}(s, a, o_{s}, \sigma) \leftarrow &
                     \lnot \hat{holds}(s, a, o_{g}, \sigma), \\
                     & \hat{memb}(o_{s}, o_{g}, \sigma)
@@ -831,7 +843,8 @@ query holds(alice, read, file);
                   \begin{aligned}[t]
                     \hat{holds}(s_{g1}, a, o, \sigma) \leftarrow &
                     \hat{holds}(s_{g2}, a, o, \sigma), \\
-                    & \hat{subst}(s_{g1}, s_{g2}, \sigma) \\
+                    & \hat{subst}(s_{g1}, s_{g2}, \sigma), \\
+                    & not \lnot \hat{holds}(s_{g1}, a, o, \sigma) \\
                     \lnot \hat{holds}(s_{g1}, a, o, \sigma) \leftarrow &
                     \lnot \hat{holds}(s_{g2}, a, o, \sigma), \\
                     & \hat{subst}(s_{g1}, s_{g2}, \sigma)
@@ -852,7 +865,8 @@ query holds(alice, read, file);
                   \begin{aligned}[t]
                     \hat{holds}(s, a_{g1}, o, \sigma) \leftarrow &
                     \hat{holds}(s, a_{g2}, o, \sigma), \\
-                    & \hat{subst}(a_{g1}, a_{g2}, \sigma) \\
+                    & \hat{subst}(a_{g1}, a_{g2}, \sigma), \\
+                    & not \lnot \hat{holds}(s, a_{g1}, o, \sigma) \\
                     \lnot \hat{holds}(s, a_{g1}, o, \sigma) \leftarrow &
                     \lnot \hat{holds}(s, a_{g2}, o, \sigma), \\
                     & \hat{subst}(a_{g1}, a_{g2}, \sigma)
@@ -873,7 +887,8 @@ query holds(alice, read, file);
                   \begin{aligned}[t]
                     \hat{holds}(s, a, o_{g1}, \sigma) \leftarrow &
                     \hat{holds}(s, a, o_{g2}, \sigma), \\
-                    & \hat{subst}(o_{g1}, o_{g2}, \sigma) \\
+                    & \hat{subst}(o_{g1}, o_{g2}, \sigma), \\
+                    & not \lnot \hat{holds}(s, a, o_{g1}, \sigma) \\
                     \lnot \hat{holds}(s, a, o_{g1}, \sigma) \leftarrow &
                     \lnot \hat{holds}(s, a, o_{g2}, \sigma), \\
                     & \hat{subst}(o_{g1}, o_{g2}, \sigma)
