@@ -8,13 +8,13 @@
 
 #include <cstdio>
 
-#include <atom.h>
-#include <expression.h>
-#include <stringlist.h>
-#include <sequence.h>
-#include <symtab.h>
-#include <consttab.h>
-#include <transtab.h>
+#include <vlad/atom.h>
+#include <vlad/expression.h>
+#include <vlad/stringlist.h>
+#include <vlad/sequence.h>
+#include <vlad/symtab.h>
+#include <vlad/consttab.h>
+#include <vlad/transtab.h>
 
 class kb {
   public :

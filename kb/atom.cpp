@@ -9,8 +9,8 @@
 #include <new>
 
 #include <config.h>
-#include <vlad.h>
-#include <atom.h>
+#include <vlad/vlad.h>
+#include <vlad/atom.h>
 
 atom::atom()
 {

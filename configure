@@ -1174,9 +1174,9 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers config.h"
 
 
-VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(INCLUDEDIR) -L\$(LIBDIR)"
-VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(INCLUDEDIR) -L\$(LIBDIR)"
-VLAD_LDFLAGS="-L\$(LIBDIR) $LDFLAGS"
+VLAD_CFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
+VLAD_CXXFLAGS="-ansi -Wall -Wstrict-prototypes -I\$(TOPSRCDIR) -I\$(DISTDIR)/include -L\$(DISTDIR)/lib/vlad"
+VLAD_LDFLAGS="-L\$(DISTDIR)/lib/vlad $LDFLAGS"
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -2628,12 +2628,6 @@ _ACEOF
 
 DISTDIR="\$(TOPSRCDIR)/dist"
 
-BINDIR="\$(DISTDIR)/bin"
-
-INCLUDEDIR="\$(DISTDIR)/include/vlad"
-
-LIBDIR="\$(DISTDIR)/lib/vlad"
-
 
 ac_config_files="$ac_config_files Makefile common/Makefile kb/Makefile parser/Makefile main/Makefile"
 
@@ -3215,9 +3209,6 @@ s,@STRIP@,$STRIP,;t t
 s,@SMODELS@,$SMODELS,;t t
 s,@SMODELS_PATH@,$SMODELS_PATH,;t t
 s,@DISTDIR@,$DISTDIR,;t t
-s,@BINDIR@,$BINDIR,;t t
-s,@INCLUDEDIR@,$INCLUDEDIR,;t t
-s,@LIBDIR@,$LIBDIR,;t t
 CEOF
 
 _ACEOF

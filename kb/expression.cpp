@@ -9,8 +9,8 @@
 #include <new>
   
 #include <config.h>
-#include <vlad.h>
-#include <expression.h>
+#include <vlad/vlad.h>
+#include <vlad/expression.h>
 
 expression::expression() : list(true)
 {

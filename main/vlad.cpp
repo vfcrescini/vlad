@@ -10,8 +10,8 @@
 #include <getopt.h>
 
 #include <config.h>
-#include <vlad.h>
-#include <parser.h>
+#include <vlad/vlad.h>
+#include <vlad/parser.h>
 
 int main(int argc, char *argv[])
 {

@@ -7,8 +7,8 @@
 #include <cstring>
 
 #include <config.h>
-#include <vlad.h>
-#include <list.h>
+#include <vlad/vlad.h>
+#include <vlad/list.h>
 
 list_item::list_item()
 {

@@ -6,7 +6,7 @@
 #ifndef __VLAD_SYMTAB_H
 #define __VLAD_SYMTAB_H
 
-#include <stringlist.h>
+#include <vlad/stringlist.h>
 
 /* identifier type values indicated by the first 2 bits */
 #define VLAD_IDENT_SUBJECT       1

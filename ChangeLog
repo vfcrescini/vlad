@@ -1,5 +1,37 @@
 2003-04-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* configure :
+	* configure.ac :
+	* common/Makefile.in :
+	* common/list.cpp :
+	* common/numberlist.cpp :
+	* common/numberlist.h :
+	* common/stringlist.cpp :
+	* common/stringlist.h :
+	* kb/Makefile.in :
+	* kb/atom.cpp :
+	* kb/atom.h :
+	* kb/consttab.cpp :
+	* kb/consttab.h :
+	* kb/expression.cpp :
+	* kb/expression.h :
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* kb/sequence.cpp :
+	* kb/sequence.h :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+	* kb/transtab.cpp :
+	* kb/transtab.h :
+	* main/Makefile.in :
+	* main/vlad.cpp :
+	* parser/Makefile.in :
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Changed include statements to have the prefix vlad/* to prevent
+	    inclusion of other header files of the same name.
+
 	* Makefile.in :
 	* configure :
 	* configure.ac :

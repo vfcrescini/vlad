@@ -9,8 +9,8 @@
 #include <new>
 
 #include <config.h>
-#include <vlad.h>
-#include <kb.h>
+#include <vlad/vlad.h>
+#include <vlad/kb.h>
 
 kb::kb()
 {

@@ -6,8 +6,8 @@
 #ifndef __VLAD_CONSTTAB_H
 #define __VLAD_CONSTTAB_H
 
-#include <list.h>
-#include <expression.h>
+#include <vlad/list.h>
+#include <vlad/expression.h>
 
 /* consttab list is simply a list of expression/condition pairs */
 

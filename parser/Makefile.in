@@ -2,9 +2,6 @@
 
 TOPSRCDIR = @top_srcdir@
 DISTDIR = @DISTDIR@
-BINDIR = @BINDIR@
-INCLUDEDIR = @INCLUDEDIR@
-LIBDIR = @LIBDIR@
 CC = @CC@
 CXX = @CXX@
 LEX = @LEX@
@@ -17,15 +14,15 @@ INCLUDES = parser.h
 all : copy-includes copy-targets
 
 copy-includes : $(INCLUDES)
-	@mkdir -p $(INCLUDEDIR)
+	@mkdir -p $(DISTDIR)/include/vlad
 	@for i in $(INCLUDES); do \
-	ln -sf ../../../parser/$$i $(INCLUDEDIR); \
+	ln -sf ../../../parser/$$i $(DISTDIR)/include/vlad; \
 	done
 
 copy-targets : $(TARGETS)
-	@mkdir -p $(LIBDIR)
+	@mkdir -p $(DISTDIR)/lib/vlad
 	@for i in $(TARGETS); do \
-	ln -sf ../../../parser/$$i $(LIBDIR); \
+	ln -sf ../../../parser/$$i $(DISTDIR)/lib/vlad; \
 	done
 
 libparser.a : parser.o scanner.o 
@@ -52,8 +49,8 @@ clean :
 distclean : clean
 	$(RM) $(TARGETS) Makefile
 	@for i in $(INCLUDES); do \
-	$(RM) $(INCLUDEDIR)/$$i; \
+	$(RM) $(DISTDIR)/include/vlad/$$i; \
 	done
 	@for i in $(TARGETS); do \
-	$(RM) $(LIBDIR)/$$i; \
+	$(RM) $(DISTDIR)/lib/vlad/$$i; \
 	done

@@ -6,8 +6,8 @@
 #ifndef __VLAD_ATOM_H
 #define __VLAD_ATOM_H
 
-#include <list.h>
-#include <stringlist.h>
+#include <vlad/list.h>
+#include <vlad/stringlist.h>
 
 /* atom type */
 #define VLAD_ATOM_HOLDS  1

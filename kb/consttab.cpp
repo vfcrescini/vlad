@@ -8,8 +8,8 @@
 #include <new>
 
 #include <config.h>
-#include <vlad.h>
-#include <consttab.h>
+#include <vlad/vlad.h>
+#include <vlad/consttab.h>
 
 constraint::constraint()
 {
