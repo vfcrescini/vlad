@@ -28,6 +28,7 @@ INCLUDES = \
   stringlist.h \
   numberlist.h \
   atom.h \
+  fact.h \
   expression.h \
   seqtab.h \
   symtab.h \
@@ -43,6 +44,7 @@ OBJECTS = \
   stringlist.o \
   numberlist.o \
   atom.o \
+  fact.o \
   expression.o \
   seqtab.o \
   symtab.o \
@@ -103,6 +105,9 @@ numberlist.o : list.h numberlist.h numberlist.cpp
 
 atom.o : atom.h atom.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c atom.cpp
+
+fact.o : fact.h fact.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c fact.cpp
 
 expression.o : list.h atom.h expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp

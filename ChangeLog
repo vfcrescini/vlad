@@ -1,3 +1,12 @@
+2003-12-31  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/Makefile.in :
+	* lib/fact.cpp :
+	* lib/fact.h :
+
+	  - Renamed atoms to facts.
+
+
 2003-12-30  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/symtab.cpp :
