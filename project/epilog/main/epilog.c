@@ -8,7 +8,7 @@
 #include <identlist.h>
 #include <expression.h>
 
-int main()
+int main(int argc, char *argv[])
 {
   yyin = stdin;
   yyout = stdout;

@@ -9,7 +9,7 @@
 #include "ident.h"
 
 /* initialise list */
-int identlist_init();
+int identlist_init(void);
 
 /* return 0 if name is already used */
 int identlist_find(char *name);
@@ -24,6 +24,6 @@ int identlist_get(char *name, ident_type **ident);
 int identlist_del(char *name);
 
 /* delete all entries */
-int identlist_purge();
+int identlist_purge(void);
 	       
 #endif

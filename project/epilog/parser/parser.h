@@ -19,7 +19,7 @@ extern unsigned int line_no;
 expression_type initial_exp;
 
 /* available function */
-extern int yyparse();
+extern int yyparse(void);
 
 /* function to be called with error */
 int yyerror(char *error);

@@ -14,7 +14,7 @@ typedef struct index_node
 
 typedef struct index_node *index_type;
 
-int index_init();
+int index_init(index_type *index);
 int index_add(index_type *index, unsigned int num);
 int index_get(index_type *index, unsigned int *num);
 

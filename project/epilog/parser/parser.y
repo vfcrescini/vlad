@@ -15,9 +15,10 @@
 
 extern expression_type initial_exp;
 
-int yylex();
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
+
+int yylex(void);
 
 int add_identifier(char ident[], unsigned short type);
 %}

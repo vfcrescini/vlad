@@ -1,7 +1,7 @@
 # Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 TOPSRCDIR = ..
-CFLAGS = -O2 -Wall -ansi -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
+CFLAGS = -O2 -ansi -Wall -Wstrict-prototypes -I$(TOPSRCDIR)/include -L$(TOPSRCDIR)/lib
 TARGETS = libexp.a
 INCLUDES = atom.h expression.h
 

@@ -1,4 +1,19 @@
 2002-08-19  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* datastruct/Makefile :
+	* datastruct/index.h :
+	* exp/Makefile :
+	* ident/Makefile :
+	* ident/identlist.c :
+	* ident/identlist.h :
+	* main/Makefile :
+	* main/epilog.c :
+	* parser/Makefile :
+	* parser/parser.h :
+	* parser/parser.y :
+
+	  - Fixes for strict prototypes.
+
 	* exp/atom.c :
 
 	  - Fixed macros. They return non-zero if true.

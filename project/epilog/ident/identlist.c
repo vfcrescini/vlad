@@ -14,7 +14,7 @@ int identlist_destroy(void *p);
 static simplelist_type list;
 
 /* initialise list */
-int identlist_init()
+int identlist_init(void)
 {
   return simplelist_init(&list);
 }
@@ -99,7 +99,7 @@ int identlist_del(char *name)
 }
 
 /* delete all entries */
-int identlist_purge()
+int identlist_purge(void)
 {
   unsigned int len;
   unsigned int i;
