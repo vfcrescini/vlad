@@ -60,7 +60,7 @@
             up an atom. They are divided further into three types, with each
             type again divided into the {\em singular} and {\em group} entity
             categories:
- 
+
             \begin{itemize}
               \item
                 {\em Subjects}. e.g. bob, administrators, users.
@@ -74,21 +74,21 @@
             {\bf Policy Update Identifiers} are used as name handles or labels
             for policy update definitions and directives. e.g. $grant\_read$,
             $revoke\_write$.
- 
+
           \vspace{1mm}
           \item
             {\bf Variable Identifiers} are used as place holders to represent
             defined entity identifiers.
         \end{itemize}
- 
+
         The following regular expression shows the syntax of Entity and
         Policy Update Identifiers:
- 
+
         \begin{verbatim}[a-z]([a-zA-Z0-9_/]){0,127}\end{verbatim}
- 
+
         Variable Identifiers in contrast, are prefixed with an upper-case
         character:
- 
+
         \begin{verbatim}[A-Z]([a-zA-Z0-9_]){0,127}\end{verbatim}
 
       \subsubsection{Atoms.}
@@ -229,7 +229,7 @@
             directive statement:
 
             \begin{verbatim}seq add <up_id>([<e_id>[, ...]]);\end{verbatim}
-                                                                              
+
             \noindent where $up\_id$ is the identifier of a defined policy
             update and the $e\_id$ list is a comma-separated list of entity
             identifiers that will replace the variable identifiers that occur
@@ -240,12 +240,12 @@
             {\bf Listing the updates in the sequence.} The following
             directive may be used to list the current contents of the policy
             update sequence list.
-                                                                              
+
             \begin{verbatim}seq list;\end{verbatim}
-                                                                              
+
             This directive is answered with an ordinal list of policy
             updates in the form:
-                                                                              
+
             \begin{verbatim}<n> <up_id>([e_id[, ...]])\end{verbatim}
 
             \noindent where $n$ is the ordinal index of the policy update
@@ -262,7 +262,7 @@
             removed. Note that removing a policy update reference from the
             sequence list may change the ordinal index of other update
             references.
-                                                                
+
             \begin{verbatim}seq del <n>;\end{verbatim}
 
           \vspace{1mm}
@@ -298,7 +298,7 @@
       stable models $S$ of the policy, PolicyUpdater can then perform query
       evaluations by checking to see if the query expression holds in set $S$.
 
-      \footnotetext{Smodels from http://www.tcs.hut.fi/Software/smodels}
+      \footnotetext{Smodels from {\tt http://www.tcs.hut.fi/Software/smodels/}}
 
       Without policy updates, the translation of language ${\cal L}$ into a
       normal logic program is a straightforward procedure: simply express each
@@ -319,12 +319,12 @@
       may not necessarily apply to another state, and there is no means to
       distinguish between two states.
 
-      PolicyUpdater solves the problem described above by redefining atoms:
-      instead of just binding entities in a relation, atoms now represent
-      a relationship in a particular state. This is achieved by adding a state
-      parameter on every atom. The initial state, or the state before any
-      policy update is applied, is assigned state $S_{0}$. States after $S_{0}$
-      is defined by the following function:
+      PolicyUpdater solves the problem that is described above by redefining
+      atoms: instead of just binding entities in a relation, atoms now
+      represent a relationship in a particular state. This is achieved by
+      adding a state parameter on every atom. The initial state, or the state
+      before any policy update is applied, is assigned state $S_{0}$. States
+      after $S_{0}$ is defined by the following function:
 
       \begin{quote}
         $S'$ = $update$($S$, $U$)
@@ -363,7 +363,7 @@
     modules \cite{AP,LAU}. With this built-in access control system, Apache
     provides the standard HTTP {\em Basic} and {\em Digest} authentication
     schemes \cite{HTTP2}, as well as an authorisation system to enforce
-    administrator-defined policies. Such policies may be defined as per-request
+    access control policies. Such policies may be defined as per-request
     rules with HTTP request methods ({\em GET}, {\em POST}, etc.) \cite{HTTP1}
     as access rights; users and hosts as subjects and the resources in the
     server's document root as objects.
@@ -421,29 +421,58 @@
         The policy description in the policy base is written in language
         ${\cal L'}$, which is syntactically and semantically similar to
         language ${\cal L}$ except for the lack of entity identifier
-        definitions. As users are mapped as the only subjects in the system,
-        and since the only valid users in the system are those that appear in
-        the authentication (password) table, then the subject entity
-        identifiers can be derived from that table. Access rights are
-        hard-coded: they are the HTTP request methods. Finally, the objects
-        are the resources themselves: assuming that the document root is a
-        hierarchy of directories and files, each of these are mapped as a
-        unique object of language ${\cal L'}$.
+        definitions. Entity identifiers need not be explicitly defined in
+        the policy definition:
+
+        \begin{itemize}
+          \item
+            {\bf Subjects} of the access control policies are the users. Since
+            all users must first be authenticated, the password table used
+            in authentication may also be used to extract the list of subjects.
+          \vspace{1mm}
+          \item
+            {\bf Access Rights} of the policies are built in: they are the
+            HTTP request methods as defined by the HTTP 1.1 standard
+            \cite{HTTP1} (i.e. OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE
+            and CONNECT).
+          \vspace{1mm}
+          \item
+            {\bf Objects} are the resources available in the server themselves.
+            Assuming that the document root is a hierarchy of directories and
+            files, each of these are mapped as a unique object of language
+            ${\cal L'}$.
+        \end{itemize}
+
+        Like language ${\cal L}$, language ${\cal L'}$ allows the definition of
+        initial state facts, constraint rules and policy update definitions.
 
       \paragraph{\bf Mapping the Policies to Language ${\cal L}$.}
 
         As mentioned above, one task of the PolicyUpdater module is to generate
-        a language ${\cal L}$ policy to be evaluated by the core PolicyUpdater
-        system. In addition to generating the entity identifier definitions
-        from the password table and the document root, the module also
-        generates additional constraints to preserve the relationship between
-        groups and elements. This is useful to model the assertion that unless
-        explicitly stated, users holding particular access rights to a
-        directory automatically hold those access rights to every file in
-        that directory (recursively, if with subdirectories). The PolicyUpdater
-        module achieves this assertion by generating a non-conditional
-        constraint that states that each file (object) is a member of the
-        directory (object group) in which it is contained.
+        a language ${\cal L}$ policy from the given language ${\cal L'}$ to be
+        evaluated by the core PolicyUpdater system. This process is outlined
+        below:
+
+        \begin{itemize}
+          \item
+            {\bf Generating entity identifier definitions}. As mentioned in the
+            previous section, subjects are extracted from the authentication
+            (password) table; access rights are hard-coded built-ins; and
+            the list of objects are generated by traversing the document root
+            for files and directories.
+          \vspace{1mm}
+          \item
+            {\bf Generating additional constraints}. The module also generates
+            additional constraints to preserve the relationship between groups
+            and elements. This is useful to model the assertion that unless
+            explicitly stated, users holding particular access rights to a
+            directory automatically hold those access rights to every file in
+            that directory (recursively, if with subdirectories). The
+            PolicyUpdater module achieves this assertion by generating
+            non-conditional constraint rules that state that each file
+            (object) is a member of the directory (object group) in which it
+            is contained.
+        \end{itemize}
 
         All other language ${\cal L'}$ statements (initial state definitions,
         constraint definitions and policy update definitions) are already in
@@ -451,32 +480,40 @@
 
       \paragraph{\bf Evaluation of HTTP Requests.}
 
-        For our purposes, a HTTP request may be described as a simple tuple:
+        A HTTP request may be represented as a simplified tuple:
 
         \begin{quote}
           $<$$user$, $request\_method$, $requested\_resource$$>$
         \end{quote}
 
-        \noindent Intuitively, such a tuple may be expressed as a language
-        {\cal L} atom:
+        $user$ is the authenticated username that made the request (subject);
+        $request\_method$ is any of the standard HTTP request methods (access
+        right); and $requested\_resource$ is the resource associated with the
+        request (object). Intuitively, such a tuple may be expressed as a
+        language ${\cal L}$ atom:
 
         \begin{quote}
-        \begin{verbatim}holds(user, request_method, requested_resource)\end{verbatim}
+          \begin{verbatim}holds(user, request_method, requested_resource)\end{verbatim}
         \end{quote}
 
-        \noindent With language ${\cal L}$ atoms, a query can be generated
-        then passed to the core PolicyUpdater system for evaluation:
+        With each request expressed as language ${\cal L}$ atoms, a language
+        ${\cal L}$ query statement can be composed to check if the request is
+        to be honoured:
 
         \begin{quote}
           \begin{verbatim}query holds(user, request_method, requested_resource);\end{verbatim}
         \end{quote}
+
+        Once the query statement is composed, it is then sent by the
+        PolicyUpdater module to the core PolicyUpdater system for evaluation
+        against the policy base.
 
       \paragraph{\bf Policy Updates by Administrators.}
 
         After being properly authenticated, an administrator can perform policy
         updates through the use of a special interface generated by the
         PolicyUpdater module. This interface lists all the predefined policy
-        updates that are allowed, as defined in the policy description in 
+        updates that are allowed, as defined in the policy description in
         language ${\cal L'}$, as well as all the policy updates that have been
         previously applied and are in effect. As with the core PolicyUpdater
         system, administrators are allowed only the following operations:
@@ -488,21 +525,21 @@
             policy updates are predefined within the policy base themselves.
           \vspace{1mm}
           \item
-            Revert to a previous state of the policy base by removing a 
-            previously applied policy update from the policy base. 
+            Revert to a previous state of the policy base by removing a
+            previously applied policy update from the policy base.
         \end{itemize}
 
   \section{Conclusion}
 
-    In this paper, we have presented a logic-based approach for web server
+    In this paper, we have presented a logic based approach for web server
     access control systems.
 
   \begin{thebibliography}{5}
     \bibitem{AP}
       Apache Software Foundation,
       Authentication, Authorization and Access Control.
-      In {\em Apache HTTP Server Version 2.1 Documentation}.
-      {\tt http://httpd.apache.org/docs-2.1}, 2004.
+      In {\em Apache HTTP Server 2.1 Documentation}.
+      {\tt http://httpd.apache.org/docs-2.1/}, 2004.
     \bibitem{LAU}
       Laurie, B., Laurie, P.,
       {\em Apache: The Definitive Guide} (3rd Edition).
@@ -524,6 +561,6 @@
       {\em Research Report A35},
       Helsinki University of Technology, Digital Systems Laboratory,
       Finland, 1995.
-      
+
   \end{thebibliography}
 \end{document}
