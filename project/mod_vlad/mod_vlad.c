@@ -30,10 +30,17 @@ extern void policy_set_yyinput(int (*a_func)(void *, char *, int),
 /* some static functions */
 static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s);
 static char *modvlad_get_passwd(request_rec *a_r,
-                                char *a_user,
-                                char *a_passwd_file);
-static int modvlad_authenticate(request_rec *a_r);
-static int modvlad_authorize(request_rec *a_r);
+                                const char *a_user,
+                                const char *a_filename);
+static int modvlad_check_passwd(request_rec *a_r,
+                                const char *a_user,
+                                const char *a_passwd,
+                                const char *a_filename);
+static void *modvlad_create_query(request_rec *a_r,
+                                  const char *a_subject,
+                                  const char *a_access,
+                                  const char *a_object);
+static int modvlad_access(request_rec *a_r);
 static int modvlad_handler(request_rec *a_r);
 static void modvlad_register_hooks (apr_pool_t *a_p);
 static const char *modvlad_set_init(cmd_parms *a_cmd,
@@ -86,15 +93,18 @@ static void *modvlad_create_config(apr_pool_t *a_p, server_rec *a_s)
 }
 
 static char *modvlad_get_passwd(request_rec *a_r,
-                                char *a_user,
-                                char *a_passwd_file)
+                                const char *a_user,
+                                const char *a_filename)
 {
   ap_configfile_t *f;
   char l[MAX_STRING_LEN];
   const char *rpw, *w;
   apr_status_t status;
 
-  status = ap_pcfg_openfile(&f, a_r->pool, a_passwd_file);
+  if (!a_r || !a_user || !a_filename)
+    return NULL;
+
+  status = ap_pcfg_openfile(&f, a_r->pool, a_filename);
 
   if (status != APR_SUCCESS) {
     ap_log_rerror(APLOG_MARK,
@@ -102,7 +112,7 @@ static char *modvlad_get_passwd(request_rec *a_r,
                   status,
                   a_r,
                   "mod_vlad: could not open user file %s",
-                  a_passwd_file);
+                  a_filename);
     return NULL;
   }
 
@@ -124,47 +134,19 @@ static char *modvlad_get_passwd(request_rec *a_r,
   return NULL;
 }
 
-static int modvlad_authenticate(request_rec *a_r)
+static int modvlad_check_passwd(request_rec *a_r,
+                                const char *a_user,
+                                const char *a_passwd,
+                                const char *a_filename)
 {
-  int retval;
-  modvlad_config_rec *conf = NULL;
-  const char *sent_passwd;
-  char *real_passwd;
+  const char *real_passwd;
   apr_status_t status;
 
-#ifdef MODVLAD_DEBUG
-  ap_log_rerror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
-                0,
-                a_r,
-                "modvlad_authenticate");
-#endif
+  if (!a_r || !a_user  || !a_passwd || !a_filename)
+    return -1;
 
-  conf = (modvlad_config_rec *) ap_get_module_config(a_r->server->module_config,
-                                                     &modvlad_module);
-
-  /* first we make sure we are activated */
-  if (!conf || !conf->user_file || !conf->policy_file || !conf->kb) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_NOTICE,
-                  0,
-                  a_r,
-                  "mod_vlad: declining authentication request");
-    return DECLINED;
-  }
-
-  /* get password from browser */
-  if ((retval = ap_get_basic_auth_pw(a_r, &sent_passwd))) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_NOTICE,
-                  0,
-                  a_r,
-                  "mod_vlad: could not get password from browser");
-    return retval;
-  }
-
-  /* get the password from the file */
-  real_passwd = modvlad_get_passwd(a_r, a_r->user, conf->user_file);
+  /* try to get real password from file */
+  real_passwd = modvlad_get_passwd(a_r, a_user, a_filename);
 
   if (!real_passwd) {
     ap_log_rerror(APLOG_MARK,
@@ -174,14 +156,11 @@ static int modvlad_authenticate(request_rec *a_r)
                   "mod_vlad: invalid user: user=\"%s\" uri=\"%s\"",
                   a_r->user,
                   a_r->uri);
-
-    ap_note_basic_auth_failure(a_r);
-
-    return HTTP_UNAUTHORIZED;
+    return -1;
   }
 
   /* now validate the password */
-  status = apr_password_validate(sent_passwd, real_passwd);
+  status = apr_password_validate(a_passwd, real_passwd);
 
   if (status != APR_SUCCESS) {
     ap_log_rerror(APLOG_MARK,
@@ -191,73 +170,25 @@ static int modvlad_authenticate(request_rec *a_r)
                   "mod_vlad: password mismatch: user=\"%s\" uri=\"%s\"",
                   a_r->user,
                   a_r->uri);
-
-    ap_note_basic_auth_failure(a_r);
-
-    return HTTP_UNAUTHORIZED;
+    return -1;
   }
 
-  return OK;
+  /* hey it checked out so return 0 */
+  return 0;
 }
 
-static int modvlad_authorize(request_rec *a_r)
+static void *modvlad_create_query(request_rec *a_r,
+                                  const char *a_subject,
+                                  const char *a_access,
+                                  const char *a_object)
 {
   int retval;
-  modvlad_config_rec *conf = NULL;
   void *atom = NULL;
   void *exp = NULL;
-  const char *realuri;
-  const char *filepath;
-  const char *rootpath;
-#ifndef MODVLAD_DEBUG
-  unsigned char qres;
-#endif
 
-  conf = (modvlad_config_rec *) ap_get_module_config(a_r->server->module_config,
-                                                     &modvlad_module);
+  if (!a_r || !a_subject  || !a_access || !a_object)
+    return NULL;
 
-  /* first we make sure we are activated */
-  if (!conf || !conf->user_file || !conf->policy_file || !conf->kb) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_NOTICE,
-                  0,
-                  a_r,
-                  "mod_vlad: declining authorization request");
-    return DECLINED;
-  }
-
-  /* clean url */
-  realuri = modvlad_strip_url(a_r->pool, a_r->uri);
-  filepath = apr_pstrdup(a_r->pool, realuri);
-  apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
-
-  ap_log_rerror(APLOG_MARK,
-                APLOG_NOTICE,
-                0,
-                a_r,
-                "mod_vlad: received request user=%s access=%s object=%s",
-                a_r->user,
-                a_r->method,
-                realuri);
-
-  /* if we are admin, unconditionally allow access to all resources for all 
-     methods*/
-  if (!strcmp(a_r->user, MODVLAD_ADMIN_USERNAME))
-    return OK;
-
-  /* before going further, make sure the object is in the kb */
-  if (vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT) != VLAD_OK &&
-      vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != VLAD_OK) {
-    ap_log_rerror(APLOG_MARK,
-                  APLOG_NOTICE,
-                  0,
-                  a_r,
-                  "mod_vlad: request for non-existent file %s, declining",
-                  realuri);
-    return DECLINED;
-  }
-
-  /* create stuff we need */
   if ((retval = vlad_atom_create(&atom)) != VLAD_OK) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_ERR,
@@ -265,7 +196,7 @@ static int modvlad_authorize(request_rec *a_r)
                   a_r,
                   "mod_vlad: could not create atom: %d",
                   retval);
-    return HTTP_INTERNAL_SERVER_ERROR;
+    return NULL;
   }
 
   if ((retval = vlad_exp_create(&exp)) != VLAD_OK) {
@@ -275,10 +206,10 @@ static int modvlad_authorize(request_rec *a_r)
                   a_r,
                   "mod_vlad: could not create expression: %d",
                   retval);
-    return HTTP_INTERNAL_SERVER_ERROR;
+    return NULL;
   }
 
-  retval = vlad_atom_init_holds(atom, a_r->user, a_r->method, realuri, 1);
+  retval = vlad_atom_init_holds(atom, a_subject, a_access, a_object, 1);
   if (retval != VLAD_OK) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_ERR,
@@ -286,7 +217,7 @@ static int modvlad_authorize(request_rec *a_r)
                   a_r,
                   "mod_vlad: could not initialize atom: %d",
                   retval);
-    return HTTP_INTERNAL_SERVER_ERROR;
+    return NULL;
   }
   
   if ((retval = vlad_exp_add(exp, atom)) != VLAD_OK) {
@@ -296,8 +227,101 @@ static int modvlad_authorize(request_rec *a_r)
                   a_r,
                   "mod_vlad: could not add atom into expression: %d",
                   retval);
+    return NULL;
+  }
+
+  return exp;
+}
+
+static int modvlad_access(request_rec *a_r)
+{
+  int retval;
+  unsigned char qres;
+  const char *authline = NULL;
+  const char *passwd = NULL;
+  const char *realuri = NULL;
+  const char *filepath = NULL;
+  const char *rootpath = NULL;
+  modvlad_config_rec *conf = NULL;
+  void *exp;
+
+  ap_log_perror(APLOG_MARK,
+                APLOG_NOTICE,
+                0,
+                a_r->pool,
+                "mod_vlad: checking for request subject=%s access=%s object=%s",
+                a_r->user,
+                a_r->method,
+                a_r->uri);
+
+  if (!a_r) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: check access request is NULL");
     return HTTP_INTERNAL_SERVER_ERROR;
   }
+
+  conf = (modvlad_config_rec *) ap_get_module_config(a_r->server->module_config,
+                                                     &modvlad_module);
+
+  if (!conf) {
+    ap_log_rerror(APLOG_MARK,
+                  APLOG_ERR,
+                  0,
+                  a_r,
+                  "mod_vlad: conf is null");
+    return HTTP_INTERNAL_SERVER_ERROR;
+  }
+
+  /* parse the incoming header to get the authorization line */
+  if ((authline = apr_table_get(a_r->headers_in, "Authorization"))) {
+    ap_getword(a_r->pool, &authline, ' ');
+    while (*authline == ' ' || *authline == '\t')
+      authline++;
+    passwd = ap_pbase64decode(a_r->pool, authline);
+    a_r->ap_auth_type = "Basic";
+    a_r->user = ap_getword_nulls(a_r->pool, &passwd, ':');
+  }
+
+  /* if there is no authorization, or if the given password does not match 
+     we send a http authorization header */
+  if (!a_r->ap_auth_type ||
+      strcmp(a_r->ap_auth_type, "Basic") ||
+      modvlad_check_passwd(a_r, a_r->user, passwd, conf->user_file)) {
+    a_r->ap_auth_type = apr_pstrdup(a_r->pool, "Basic");
+    apr_table_set(a_r->err_headers_out,
+                  "WWW-Authenticate",
+                  apr_pstrcat(a_r->pool,
+                              "Basic realm=\"",
+                              MODVLAD_REALM,
+                              "\""));
+    return HTTP_UNAUTHORIZED;
+  }
+
+  /* user authenticated, now we check for authorization */
+
+  /* clean url */
+  realuri = modvlad_strip_url(a_r->pool, a_r->uri);
+  filepath = apr_pstrdup(a_r->pool, realuri);
+  apr_filepath_root(&rootpath, &filepath, 0, a_r->pool);
+
+  /* if user is admin, unconditionally allow access to all resources for
+     all methods*/
+  if (!strcmp(a_r->user, MODVLAD_ADMIN_USERNAME))
+    return OK;
+
+  /* before going further, make sure the object is in the kb */
+  if (vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT) != VLAD_OK &&
+      vlad_kb_check_symtab(conf->kb, realuri, VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP) != VLAD_OK) {
+    return HTTP_NOT_FOUND;
+  }
+
+  /* compose query expression */
+  exp = modvlad_create_query(a_r, a_r->user, a_r->method, realuri);
+  if (!exp)
+    return HTTP_INTERNAL_SERVER_ERROR;
 
   /* finally, make the query */
 #ifndef MODVLAD_DEBUG
@@ -313,10 +337,34 @@ static int modvlad_authorize(request_rec *a_r)
 
   switch(qres) {
     case VLAD_RESULT_TRUE :
+      ap_log_rerror(APLOG_MARK,
+                    APLOG_NOTICE,
+                    0,
+                    a_r,
+                    "mod_vlad: accepting request subject=%s access=%s object=%s",
+                    a_r->user,
+                    a_r->method,
+                    realuri);
       return OK;
     case VLAD_RESULT_FALSE :
+      ap_log_rerror(APLOG_MARK,
+                    APLOG_NOTICE,
+                    0,
+                    a_r,
+                    "mod_vlad: rejecting request subject=%s access=%s object=%s",
+                    a_r->user,
+                    a_r->method,
+                    realuri);
       return MODVLAD_DENYACTION;
     default :
+      ap_log_rerror(APLOG_MARK,
+                    APLOG_NOTICE,
+                    0,
+                    a_r,
+                    "mod_vlad: using default action on request subject=%s access=%s object=%s",
+                    a_r->user,
+                    a_r->method,
+                    realuri);
       return MODVLAD_DEFAULTACTION;
   }
 #else
@@ -332,37 +380,44 @@ static int modvlad_authorize(request_rec *a_r)
 
   fflush(stderr);
 
-  return DECLINED;
+  ap_log_rerror(APLOG_MARK,
+                APLOG_NOTICE,
+                0,
+                a_r,
+                "mod_vlad: using default action on request subject=%s access=%s object=%s",
+                a_r->user,
+                a_r->method,
+                realuri);
 #endif
+
+  return MODVLAD_DEFAULTACTION;
 }
 
 static int modvlad_handler(request_rec *a_r)
 {
-  modvlad_config_rec *conf;
-  const char *filepath;
-  const char *rootpath;
+  modvlad_config_rec *conf = NULL;
+  const char *filepath = NULL;
+  const char *rootpath = NULL;
 
-#ifdef MODVLAD_DEBUG
   ap_log_perror(APLOG_MARK,
-                MODVLAD_LOGLEVEL,
+                APLOG_NOTICE,
                 0,
                 a_r->pool,
-                "modvlad_handler: %s %s %s",
+                "mod_vlad: handling request subject=%s access=%s object=%s",
                 a_r->user,
                 a_r->method,
                 a_r->uri);
-#endif
 
   conf = (modvlad_config_rec *) ap_get_module_config(a_r->server->module_config,
                                                      &modvlad_module);
 
   /* first we make sure we are activated */
-  if (!conf || !conf->user_file || !conf->policy_file || !conf->kb) {
+  if (!conf || !conf->kb) {
     ap_log_rerror(APLOG_MARK,
                   APLOG_NOTICE,
                   0,
                   a_r,
-                  "mod_vlad: declining handler");
+                  "mod_vlad: kb uninitialized, declining");
     return DECLINED;
   }
 
@@ -406,9 +461,9 @@ static void modvlad_register_hooks(apr_pool_t *a_p)
                 a_p,
                 "modvlad_register_hooks");
 #endif
-  ap_hook_check_user_id(modvlad_authenticate, NULL, NULL, APR_HOOK_FIRST);
-  ap_hook_auth_checker(modvlad_authorize, NULL, NULL, APR_HOOK_FIRST);
+
   ap_hook_handler(modvlad_handler, NULL, NULL, APR_HOOK_FIRST);
+  ap_hook_access_checker(modvlad_access, NULL, NULL, APR_HOOK_FIRST);
 }
 
 static const char *modvlad_set_init(cmd_parms *a_cmd,
