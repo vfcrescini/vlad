@@ -34,7 +34,3 @@ Request_Access_Company2(X, Y)
   if
     memb(Y, Company2) &&
     holds(X, Accessible, Company2);
-
-/* queries */
-query holds(S, Accessible, Object2) after Request_Access_Company1(S, Object1);
-query holds(S, Accessible, Object1) after Request_Access_Company2(S, Object2);
