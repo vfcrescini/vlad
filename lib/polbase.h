@@ -138,7 +138,10 @@ class polbase {
     /* gives a unique id based on the fact given */
     int encode_fact(fact *a_fact, unsigned int a_state, unsigned int *a_id);
     /* gives entities based on the holds id given */
-    int decode_holds(unsigned int a_id, char **a_sub, char **a_acc, char **a_obj);
+    int decode_holds(unsigned int a_id,
+                     char **a_sub,
+                     char **a_acc,
+                     char **a_obj);
     /* gives entities based on the member id given */
     int decode_memb(unsigned int a_id, char **a_elt, char **a_grp);
     /* gives entities based on the subset id given */

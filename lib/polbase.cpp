@@ -462,10 +462,10 @@ int polbase::list_seqtab(FILE *a_file)
                                                                                   /* we only allow this function after kb is closed */
   if (m_stage < 3)
     return VLAD_INVALIDOP;
-                                                                               
+
   if (a_file == NULL)
     return VLAD_NULLPTR;
-                                                                               
+
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
     /* get the update ref */
     if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
@@ -483,7 +483,7 @@ int polbase::list_seqtab(FILE *a_file)
     }
     fprintf(a_file, ")\n");
   }
-                                                                               
+
   return VLAD_OK;
 }
 
@@ -1217,7 +1217,10 @@ int polbase::encode_fact(fact *a_fact,
 }
 
 /* gives the entities based on the holds id */
-int polbase::decode_holds(unsigned int a_id, char **a_sub, char **a_acc, char **a_obj)
+int polbase::decode_holds(unsigned int a_id,
+                          char **a_sub,
+                          char **a_acc,
+                          char **a_obj)
 {
   int retval;
   unsigned int index[3];
