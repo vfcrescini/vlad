@@ -35,17 +35,22 @@
 #define VLAD_MAXLEN_IDENT        128
 
 /* identifier types */
-#define VLAD_IDENT_SUB_SING      0
-#define VLAD_IDENT_ACC_SING      1
-#define VLAD_IDENT_OBJ_SING      2
+#define VLAD_IDENT_SUB_SIN       0
+#define VLAD_IDENT_ACC_SIN       1
+#define VLAD_IDENT_OBJ_SIN       2
 #define VLAD_IDENT_SUB_GRP       3
 #define VLAD_IDENT_ACC_GRP       4
 #define VLAD_IDENT_OBJ_GRP       5
+#define VLAD_IDENT_FIRST         VLAD_IDENT_SUB_SIN
+#define VLAD_IDENT_MID           VLAD_IDENT_SUB_GRP
+#define VLAD_IDENT_LAST          VLAD_IDENT_OBJ_GRP
 
 /* atom type */
-#define VLAD_ATOM_HOLDS          1
-#define VLAD_ATOM_MEMBER         2
-#define VLAD_ATOM_SUBSET         3
+#define VLAD_ATOM_HOLDS          0
+#define VLAD_ATOM_MEMBER         1
+#define VLAD_ATOM_SUBSET         2
+#define VLAD_ATOM_FIRST          VLAD_ATOM_HOLDS
+#define VLAD_ATOM_LAST           VLAD_ATOM_SUBSET
 
 /* error codes */
 
@@ -79,13 +84,13 @@
 /* convenience macros */
 #define VLAD_LIST_LENGTH(X)      (((X) == NULL) ? 0 : (X)->length())
 #define VLAD_LIST_ITEMCMP(X,Y)   (((X) == NULL) ? ((Y) == NULL) : (((Y) == NULL) ? false : ((X)->cmp(Y))))
-#define VLAD_IDENT_BASETYPE(X)   ((X) & 3)
-#define VLAD_IDENT_IS_SUBJECT(X) (((X) & 3) == VLAD_IDENT_SUBJECT)
-#define VLAD_IDENT_IS_ACCESS(X)  (((X) & 3) == VLAD_IDENT_ACCESS)
-#define VLAD_IDENT_IS_OBJECT(X)  (((X) & 3) == VLAD_IDENT_OBJECT)
-#define VLAD_IDENT_IS_GROUP(X)   ((X) & VLAD_IDENT_GROUP)
-#define VLAD_IDENT_IS_VALID(X)   ((X) > 0 && (X) <= 7)
-#define VLAD_ATOM_TYPE_VALID(X)  (((X) >= 0) && ((X) < 4))
+#define VLAD_IDENT_BASETYPE(X)   ((VLAD_IDENT_IS_GROUP(X)) ? ((X) - VLAD_IDENT_MID) : (X))
+#define VLAD_IDENT_IS_SUBJECT(X) (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_SUB_SIN)
+#define VLAD_IDENT_IS_ACCESS(X)  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_ACC_SIN)
+#define VLAD_IDENT_IS_OBJECT(X)  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_OBJ_SIN)
+#define VLAD_IDENT_IS_GROUP(X)   ((X) >= VLAD_IDENT_MID)
+#define VLAD_IDENT_IS_VALID(X)   ((X) >= VLAD_IDENT_FIRST && (X) <= VLAD_IDENT_LAST)
+#define VLAD_ATOM_TYPE_VALID(X)  (((X) >= VLAD_ATOM_FIRST && (X) <= VLAD_ATOM_LAST)
 #define VLAD_ATOM_IS_HOLDS(X)    ((X) == VLAD_ATOM_HOLDS)
 #define VLAD_ATOM_IS_MEMBER(X)   ((X) == VLAD_ATOM_MEMBER)
 #define VLAD_ATOM_IS_SUBSET(X)   ((X) == VLAD_ATOM_SUBSET)

@@ -1,3 +1,17 @@
+2003-12-30  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+	* lib/vlad.h :
+
+	  - Cleanups.
+
+	* lib/Makefile.in :
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+ 
+	  - Added a policy base class. intended as a rewrite of the kb class.
+
 2003-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/symtab.cpp :
