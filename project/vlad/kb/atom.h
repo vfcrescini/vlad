@@ -7,6 +7,7 @@
 #define __VLAD_ATOM_H
 
 #include <list.h>
+#include <stringlist.h>
 
 /* atom type */
 #define VLAD_ATOM_CONST  0
@@ -59,6 +60,7 @@ class atom : public list_item
     int init_holds(const char *s, const char *a, const char *o, bool t);
     int init_member(const char *e, const char *g, bool t);
     int init_subset(const char *g1, const char *g2, bool t);
+    int replace(stringlist *vlist, stringlist *ilist, atom **a);
     void negate();
 #ifdef DEBUG
     /* assuming s has enough memory allocation */

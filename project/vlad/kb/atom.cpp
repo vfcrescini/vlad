@@ -240,6 +240,100 @@ int atom::init_subset(const char *g1, const char *g2, bool t)
   return VLAD_OK;
 }
 
+int atom::replace(stringlist *vlist, stringlist *ilist, atom **a)
+{
+  int retval;
+  unsigned int index;
+
+  if (vlist == NULL || ilist == NULL || a == NULL)
+    return VLAD_NULLPTR;
+
+  if (vlist->length() != ilist->length())
+    return VLAD_INVALIDINPUT;
+
+  if ((*a = VLAD_NEW(atom())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  switch(type) {
+    case VLAD_ATOM_CONST :
+      /* nothing to replace in constants */
+      return (*a)->init_atom(this);
+    case VLAD_ATOM_HOLDS : {
+      char *tmp_s;
+      char *tmp_a;
+      char *tmp_o;
+
+      /* subject */
+      if ((retval = vlist->get(holds.subject, &index)) == VLAD_NOTFOUND)
+        tmp_s = holds.subject;
+      else if (retval == VLAD_OK)
+        ilist->get(index, &tmp_s);
+      else
+        return retval;
+      /* access */
+      if ((retval = vlist->get(holds.access, &index)) == VLAD_NOTFOUND)
+        tmp_a = holds.access;
+      else if (retval == VLAD_OK)
+        ilist->get(index, &tmp_a);
+      else
+        return retval;
+      /* object */
+      if ((retval = vlist->get(holds.object, &index)) == VLAD_NOTFOUND)
+        tmp_o = holds.object;
+      else if (retval == VLAD_OK)
+        ilist->get(index, &tmp_o);
+      else
+        return retval;
+
+      return (*a)->init_holds(tmp_s, tmp_a, tmp_o, truth);
+    }
+    case VLAD_ATOM_MEMBER : {
+      char *tmp_e;
+      char *tmp_g;
+
+      /* element */
+      if ((retval = vlist->get(member.element, &index)) == VLAD_NOTFOUND)
+        tmp_e = member.element;
+      else if (retval == VLAD_OK)
+        ilist->get(index, &tmp_e);
+      else
+        return retval;
+      /* group */
+      if ((retval = vlist->get(member.group, &index)) == VLAD_NOTFOUND)
+        tmp_g = member.group;
+      else if (retval == VLAD_OK)
+        ilist->get(index, &tmp_g);
+      else
+        return retval;
+
+      return (*a)->init_member(tmp_e, tmp_g, truth);
+    }
+    case VLAD_ATOM_SUBSET : {
+      char *tmp_g1;
+      char *tmp_g2;
+
+      /* group1 */
+      if ((retval = vlist->get(subset.group1, &index)) == VLAD_NOTFOUND)
+        tmp_g1 = subset.group1;
+      else if (retval == VLAD_OK)
+        ilist->get(index, &tmp_g1);
+      else
+        return retval;
+      /* group2 */
+      if ((retval = vlist->get(subset.group2, &index)) == VLAD_NOTFOUND)
+        tmp_g2 = subset.group2;
+      else if (retval == VLAD_OK)
+        ilist->get(index, &tmp_g2);
+      else
+        return retval;
+
+      return (*a)->init_subset(tmp_g1, tmp_g2, truth);
+    }
+  }
+
+  return VLAD_INVALIDINPUT;
+}
+
 void atom::negate()
 {
   truth = truth ? false : true;

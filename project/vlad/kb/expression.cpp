@@ -44,6 +44,31 @@ int expression::get(unsigned int i, atom **a)
   return list::get(i, (list_item **) a);
 }
 
+int expression::replace(stringlist *vlist, stringlist *ilist, expression **e)
+{
+  int retval;
+  unsigned int i;
+  atom *old_atom;
+  atom *new_atom;
+
+  if (e == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*e = VLAD_NEW(expression())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < list::length(); i++) {
+    if ((retval = get(i, &old_atom)) != VLAD_OK)
+      return retval;
+    if ((retval = old_atom->replace(vlist, ilist, &new_atom)) != VLAD_OK)
+      return retval;
+    if ((retval = (*e)->add(new_atom)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
 #ifdef DEBUG
 /* assumimg s has enough memory allocation */
 void expression::print(char *s)
