@@ -468,16 +468,16 @@ initial_stmt :
 
     switch(ty) {
       case VLAD_ATOM_CONST :
-        printf("added [%d] %s to initial state\n", tmp, n1);
+        fprintf(stderr, "added [%d] %s%s to initial state\n", tmp, tr ? "" : "!", n1);
         break;
       case VLAD_ATOM_HOLDS :
-        printf("added [%d] holds(%s,%s,%s) to initial state\n", tmp, n1, n2, n3);
+        fprintf(stderr, "added [%d] %sholds(%s,%s,%s) to initial state\n", tmp, tr ? "" : "!",  n1, n2, n3);
         break;
       case VLAD_ATOM_MEMBER :
-        printf("added [%d] memb(%s,%s) to initial state\n", tmp, n1, n2);
+        fprintf(stderr, "added [%d] %smemb(%s,%s) to initial state\n", tmp, tr ? "" : "!", n1, n2);
         break;
       case VLAD_ATOM_SUBSET :
-        printf("added [%d] subst(%s,%s) to initial state\n", tmp, n1, n2);
+        fprintf(stderr, "added [%d] %ssubst(%s,%s) to initial state\n", tmp, tr ? "" : "!", n1, n2);
         break;
     }
 #endif
