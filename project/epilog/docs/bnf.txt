@@ -1,52 +1,104 @@
-# Vino Crescini
-# 96067084
+Vino Crescini
+2002 July 08
 
 BNF
 
 
-<letter>           : <small-caps> | <large-caps>
-                   
-<small-caps>       : a | b | c | d | e | f | g | h | i | j | k | l | m | n |
-                     o | p | q | r | s | t | u | v | w | x | y | z
-                   
-<large-caps>       : A | B | C | D | E | F | G | H | I | J | K | L | M | N |
-                     O | P | Q | R | S | T | U | V | W | X | Y | Z
-                   
-<alpha>            : <letter> | <letter> <alpha>
-                   
-<digit>            : 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-                   
-<alpha-num>        : <letter> | <digit> | <letter> <alpha-num> | <digit> <alpha-num>
-                   
-<identifier>       : <letter> <alpha-num>
-                   
-<and>              : and
-                   
-<or>               : or
-                   
-<sholds>           : sholds
-                   
-<gholds>           : gholds
-                   
-<element>          : element
-                   
-<containment>      : conain
-                   
-<tranform>         : trans
-                   
-<open-bracket>     : (
-                   
-<close-bracket>    : )
-                   
-<comma>            : ,
-                   
-<semicolon>        : ;
-                   
-<program>          : <statement> <semicolon> | <statement> <semicolon> <program>
-                   
-<statement>        : <query-statement> | <domain-statement>
+<underscore>           : _
 
-<query-statement>  : <query> <open-bracket> <ground-fact> <comma> <trans-series> <bracket-close>
+<alpha>                : <small-caps> | <large-caps>
 
+<small-caps>           : a | b | c | d | e | f | g | h | i | j | k | l | m | n |
+                         o | p | q | r | s | t | u | v | w | x | y | z
 
+<large-caps>           : A | B | C | D | E | F | G | H | I | J | K | L | M | N |
+                         O | P | Q | R | S | T | U | V | W | X | Y | Z
 
+<digit>                : 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+<alpha-num>            : <alpha> | <digit>
+
+<alpha-num-uscr>       : <alpha-num> | <underscore>
+
+<alpha-num-uscr-str>   : <alpha-num-uscr> | <alpha-num-uscr> <alpha-num-uscr-str>
+
+<s-subject-ident>      : s | s <alpha-num-uscr-str>
+
+<s-access-ident>       : a | a <alpha-num-uscr-str>
+
+<s-object-ident >      : o | o <alpha-num-uscr-str>
+
+<g-subject-ident>      : S | S <alpha-num-uscr-str>
+
+<g-access-ident>       : A | A <alpha-num-uscr-str>
+
+<g-object-ident >      : O | O <alpha-num-uscr-str>
+
+<var-identifier>       : v | v <alpha-num-uscr-str>
+
+<and>                  : &&
+
+<not>                  : !
+
+<holds>                : holds
+
+<element>              : elt
+
+<containment>          : cont
+
+<transform>            : trans
+
+<open-bracket>         : (
+
+<close-bracket>        : )
+
+<comma>                : ,
+
+<semicolon>            : ;
+
+<subject-identifier>   : <s-subject-ident> | <S-subject-ident>
+
+<access-identifier>    : <a-access-ident> | <A-subject-ident>
+
+<object-identifier>    : <o-access-ident> | <O-access-ident>
+
+<ground-exp>           : <ground-exp> <logical-op> <ground-boolean-exp> |
+                         <ground-boolean-exp>
+
+<logical-op>           : <and>
+
+<ground-boolean-exp>   : <not> <ground-logical-exp> | <ground-logical-exp>
+
+<ground-logical-exp>   : <ground-exp> | <ground-atom>
+
+<ground-atom>          : <ground-holds> | <ground-cont> | ground-elt>
+
+<ground-holds>         : <holds> <open-bracket> <subject-identifier> <comma>
+                         <access-identifier> <comma> <object-identifier>
+                         <close-bracket>
+
+<ground-cont>          : <ground-subject-cont> | <ground-access-cont> |
+                         <ground-object-cont>
+
+<ground-subject-cont>  : <containment> <open-bracket> <g-subject-ident>
+                         <comma> <g-subject-ident> <close-bracket>
+
+<ground-object-cont>   : <containment> <open-bracket> g-object-ident>
+                         <comma> <g-object-ident> <close-bracket>
+
+<ground-access-cont>   : <containment> <open-bracket> <g-access-ident>
+                         <comma> <g-access-ident> <close-bracket>
+
+<ground-elt>           : <ground-subject-elt> | <ground-access-elt> |
+                         <ground-object-elt>
+
+<ground-subject-elt>   : <element> <open-bracket> <s-subject-ident>
+                         <comma> <g-subject-ident> <close-bracket>
+
+<ground-access-elt>    : <element> <open-bracket> <s-access-ident>
+                         <comma> <g-access-ident> <close-bracket>
+
+<ground-object-elt>    : <element> <open-bracket> <s-object-ident>
+                         <comma> <g-object-ident> <close-bracket>
+
+<initial-stmt>         : <initially> <ground-exp>
