@@ -12,7 +12,6 @@
 #include "y.tab.h"
 #include "symtab.h"
 
-/* some declarations to get rid of those ugly warnings */
 #ifdef YY_FLEX_LEX_COMPAT
 #undef YY_USES_REJECT
 #undef YY_NEED_STRLEN
