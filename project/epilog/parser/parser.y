@@ -13,6 +13,8 @@
 #include <name.h>
 #include <atom.h>
 #include <expression.h>
+#include <trans.h>
+#include <translist.h>
 
 extern int yyerror(char *error);
 extern int yywarn(char *warning);
@@ -24,12 +26,14 @@ void exit_error(char *message);
 int initialise(void);
 int destroy(void);
 #ifdef DEBUG
+int dump_strlist(stringlist_type list);
 int dump_atom(atom_type atom);
 int dump_exp(expression_type exp);
 #endif
 
 expression_type initial_exp;
 identlist_type identifier_list;
+translist_type transform_list;
 FILE *yyerr;
 %}
 
@@ -37,6 +41,7 @@ FILE *yyerr;
   char identifier[128];
   name_type name;
   atom_type atm;
+  trans_type trans;
   expression_type exp;
   stringlist_type strlist;
   unsigned int terminal;
@@ -87,6 +92,7 @@ FILE *yyerr;
 %type <atm> comp_memb_atom
 %type <strlist> trans_var_def;
 %type <strlist> trans_var_list;
+%type <trans> trans_stmt;
 
 %start program
 
@@ -147,9 +153,17 @@ ident_stmt :
   ;
 
 other_stmt :
-  initial_stmt 
-  | trans_stmt 
-  | policy_stmt
+  initial_stmt {
+  }
+  | trans_stmt {
+    if (translist_find(transform_list, $1.name) == 0)
+      exit_error("trans identifier already declared");
+
+    if (translist_add_trans(&transform_list, $1) != 0)
+      exit_error("internal error");
+  }
+  | policy_stmt {
+  }
   ;
 
 ident_declaration :
@@ -294,51 +308,20 @@ initial_stmt :
 
 trans_stmt : 
   EPI_SYM_TRANS EPI_SYM_IDENTIFIER trans_var_def EPI_SYM_CAUSES comp_exp EPI_SYM_IF comp_exp EPI_SYM_SEMICOLON {
-    unsigned int len = 0;
-    unsigned int i;
-    char *temp_string = NULL;
-    atom_type *tmp_atom = NULL;
-
-    if (stringlist_length($3, &len) != 0) 
-      exit_error("internal error");
+    if (trans_compose(&$$, $2, $3, $5, $7) != 0)
+      exit_error("internal_error");
 
 #ifdef DEBUG
-    fprintf(yyerr, "transformation declaration: %s\n", $2);
+    fprintf(yyerr, "transformation declaration\n");
+    fprintf(yyerr, "  name:\n");
+    fprintf(yyerr, "    %s\n", $2);
     fprintf(yyerr, "  variables:\n");
+    dump_strlist($3);
+    fprintf(yyerr, "  preconditions:\n");
+    dump_exp($7);
+    fprintf(yyerr, "  postconditions:\n");
+    dump_exp($5);
 #endif
-
-    for (i = 0; i < len; i++) {
-      if (stringlist_get($3, i, &temp_string) != 0)
-        exit_error("internal error");
-#ifdef DEBUG
-      fprintf(yyerr, "  %s\n", temp_string);
-#endif
-    }
-#ifdef DEBUG
-      fprintf(yyerr, "  postconditions:\n");
-#endif
-    expression_length($5, &len);
-
-    for (i = 0; i < len; i++) {
-      expression_get($5, i, &tmp_atom);
-#ifdef DEBUG
-      dump_atom(*tmp_atom);
-#endif     
-    }
-#ifdef DEBUG
-      fprintf(yyerr, "  preconditions:\n");
-#endif
-    expression_length($7, &len);
-
-    for (i = 0; i < len; i++) {
-      expression_get($7, i, &tmp_atom);
-#ifdef DEBUG
-      dump_atom(*tmp_atom);
-#endif
-    }
-
-    if (stringlist_purge(&$3) != 0)
-      exit_error("internal error");
   }
   ;
 
@@ -790,7 +773,10 @@ int initialise(void)
   if (identlist_init(&identifier_list) != 0)
     return -1;
 
-  if (expression_init(&initial_exp))
+  if (expression_init(&initial_exp) != 0)
+    return -1;
+
+  if (translist_init(&transform_list) != 0)
     return -1;
 
   return 0;
@@ -809,6 +795,9 @@ int destroy(void)
   if (expression_purge(&initial_exp) != 0)
     return -1;
 
+  if (translist_purge_all(&transform_list) != 0)
+    return -1;
+
   return 0;
 }
 
@@ -820,23 +809,38 @@ void exit_error(char *message)
 }
 
 #ifdef DEBUG
+int dump_strlist(stringlist_type list)
+{
+  unsigned int i;
+  unsigned int len;
+  char *tmp_string = NULL;
+
+  stringlist_length(list, &len);
+
+  for (i = 0; i < len; i++) {
+    stringlist_get(list, i, &tmp_string);
+    fprintf(yyerr, "    %s\n", tmp_string);
+  }
+  return 0;
+}
+
 int dump_atom(atom_type atom)
 {
   if (EPI_ATOM_IS_CONST(atom))
-    fprintf(yyerr, "  constant %s\n", atom.truth == 0 ? "true" : "false");
+    fprintf(yyerr, "    constant %s\n", atom.truth == 0 ? "true" : "false");
   else if (EPI_ATOM_IS_HOLDS(atom))
-    fprintf(yyerr, "  %sholds(%s, %s, %s)\n",
+    fprintf(yyerr, "    %sholds(%s, %s, %s)\n",
            atom.truth == 0 ? "" : "not ",
            EPI_NAME_STRING(atom.atom.holds.subject),
            EPI_NAME_STRING(atom.atom.holds.access),
            EPI_NAME_STRING(atom.atom.holds.object));
   else if (EPI_ATOM_IS_MEMB(atom))
-    fprintf(yyerr, "  %smemb(%s, %s)\n", 
+    fprintf(yyerr, "    %smemb(%s, %s)\n", 
            atom.truth == 0 ? "" : "not ",
            EPI_NAME_STRING(atom.atom.memb.element),
            EPI_NAME_STRING(atom.atom.memb.group));
   else if (EPI_ATOM_IS_SUBST(atom))
-    fprintf(yyerr, "  %ssubst(%s, %s)\n", 
+    fprintf(yyerr, "    %ssubst(%s, %s)\n", 
            atom.truth == 0 ? "" : "not ",
            EPI_NAME_STRING(atom.atom.subst.group1),
            EPI_NAME_STRING(atom.atom.subst.group2));

@@ -15,6 +15,8 @@
 #include <name.h>
 #include <atom.h>
 #include <expression.h>
+#include <trans.h>
+#include <translist.h>
 
 #include "y.tab.h"
 

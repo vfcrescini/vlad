@@ -1,9 +1,29 @@
+2002-09-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+	* parser/scanner.l :
+	* trans/Makefile :
+	* trans/trans.c :
+	* trans/trans.h :
+
+	  - All transformation declarations are now stored in the
+	    trans list.
+
+	  - Cleanup.
+
+	* trans/translist.c :
+	* trans/translist.h :
+
+	  - List of trans structures.
+
 2002-09-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* trans/trans.c :
 	* trans/trans.h :
 
-	  - Created structure to hold tranformation definitions.
+	  - Created structure to hold tranformation definitions. Holds
+	    a list of variables, precondition expression and postcondition
+	    expression.
 
 	* Makefile :
 	* main/Makefile :

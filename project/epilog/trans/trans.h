@@ -25,8 +25,21 @@ int trans_create(trans_type **trans,
                  expression_type precond, 
                  expression_type postcond);
 
+/* same as above, but does not allocate new mem for the trans_type struct */
+int trans_compose(trans_type *trans, 
+                  char *name, 
+	          stringlist_type varlist,
+                  expression_type precond, 
+                  expression_type postcond);
+
+/* creates a copy of trans1 */
+int trans_copy(trans_type **trans2, trans_type trans1);
+
 /* frees this trans and the name */
 int trans_destroy(trans_type *trans);
+
+/* frees this trans and all its members */
+int trans_destroy_all(trans_type *trans);
 
 /* returns 0 if the two are equivalent */
 int trans_compare(trans_type t1, trans_type t2);
