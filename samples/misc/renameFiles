@@ -7,22 +7,29 @@
 # rename all the files 
 # in a directory to numbers
 
-counter=$[1]
+counter=1
 
-mkdir ./__tmp_$$_
+mkdir /tmp/__tmp_$$_
 
-for tempFile in *
+ls -1 | sort | while read tempFile
 do
   # get extension
-
   extension=${tempFile##*.}
 
-  echo "renaming $tempFile to $counter.$extension"
+  if [ ${extension} = ${tempFile} ]
+  then
+    # no extension so just drop the name
+    extension=
+  else
+    extension=.${extension}
+  fi
 
-  mv "$tempFile" ./__tmp_$$_/$counter.$extension
+  echo "renaming ${tempFile} to ${counter}${extension}"
+
+  mv ${tempFile} /tmp/__tmp_$$_/${counter}${extension}
 
   counter=$[$counter+1]
 done
 
-mv ./__tmp_$$_/* .
-rmdir ./__tmp_$$_
+mv /tmp/__tmp_$$_/* .
+rmdir /tmp/__tmp_$$_
