@@ -82,7 +82,6 @@ class fact : public list_item
      * is ground.
      */
     int verify(symtab *a_stab, stringlist *a_vlist, bool a_gndflag);
-
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */
     void print(char *a_str);
