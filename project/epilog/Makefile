@@ -2,7 +2,7 @@
 # 2002 May 30
 
 DIRS = parser
-CFLAGS = -O3 -Wall -ansi
+CFLAGS = -O3 -Wall
 
 all :
 	@for i in $(DIRS); do                     \

@@ -5,6 +5,7 @@
  *
  */
 
+#include <stdio.h>
 #include "symbols.h"
 
 %}
@@ -70,7 +71,7 @@ sholds {
 
 %%
 
-main() 
+int main()
 {
-  yylex();
+  return yylex();
 }
