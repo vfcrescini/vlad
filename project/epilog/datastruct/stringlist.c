@@ -48,7 +48,7 @@ int stringlist_add(stringlist_type *list, char *string)
   if (list == NULL || string == NULL)
     return EPI_NULLPTR;
 
-  if ((new_string = (char *) malloc(sizeof(char) * (strlen(string) + 1))) == NULL)
+  if ((new_string = EPI_STRING_MALLOC(string)) == NULL)
     return EPI_MALLOCFAILED;
 
   strcpy(new_string, string);

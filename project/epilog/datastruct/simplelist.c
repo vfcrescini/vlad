@@ -60,7 +60,7 @@ int simplelist_add(simplelist_type *list, void *data)
   if (list == NULL || data == NULL)
     return EPI_NULLPTR;
 
-  if ((new_node = (simplelist_node *) malloc(sizeof(simplelist_node))) == NULL)
+  if ((new_node = EPI_ADT_MALLOC(simplelist_node)) == NULL)
     return EPI_MALLOCFAILED;
 
   new_node->data = data;
@@ -201,7 +201,7 @@ int simplelist_get_data(simplelist_type list,
     if (cmp(curr->data, data) == 0) {
       found = 1;
 
-      if ((new = (simplelist_node *) malloc(sizeof(simplelist_node))) == NULL)
+      if ((new = EPI_ADT_MALLOC(simplelist_node)) == NULL)
         return EPI_MALLOCFAILED;
     
       new->data = curr->data;
@@ -264,7 +264,7 @@ int simplelist_copy(simplelist_type l1,
     
     /* we have to attach the new node at the end of the list to
      * preserve the original order */
-    if ((new = (simplelist_node *) malloc(sizeof(simplelist_node))) == NULL)
+    if ((new = EPI_ADT_MALLOC(simplelist_node)) == NULL)
       return EPI_MALLOCFAILED;
 
     if (last == NULL)

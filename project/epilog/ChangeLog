@@ -1,5 +1,10 @@
 2002-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* datastruct/simplelist.c :
+	* datastruct/stringlist.c :
+
+	  - Used global malloc macro.
+
 	* common/epilog.h :
 
 	  - Added malloc macros.
