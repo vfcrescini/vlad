@@ -1456,23 +1456,23 @@ update()
 
         \begin{itemize}
           \item
-            $\Upsilon^{+}_{int}$ = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
+            ${\cal F}^{+}_{int}$ = \{$a_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $n$\}
           \item
-            $\Upsilon^{-}_{int}$ = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
+            ${\cal F}^{-}_{int}$ = \{$b_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $m$\}
           \item
-            $\Upsilon^{+}_{con}$ = \{$c_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $o$\}
+            ${\cal F}^{+}_{con}$ = \{$c_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $o$\}
           \item
-            $\Upsilon^{-}_{con}$ = \{$d_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $p$\}
+            ${\cal F}^{-}_{con}$ = \{$d_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $p$\}
           \item
-            $\Upsilon^{+}_{upd}$ = \{$i_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $u$\}
+            ${\cal F}^{+}_{upd}$ = \{$i_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $u$\}
           \item
-            $\Upsilon^{-}_{upd}$ = \{$j_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $v$\}
+            ${\cal F}^{-}_{upd}$ = \{$j_{z}$ $\mid$ $0$ $\leq$ $z$ $\leq$ $v$\}
         \end{itemize}
 
-        Additionally, we use the complementary notation
-        $\overline{\Upsilon}$ to denote a set containing the negation of
-        facts of set $\Upsilon$, i.e. $\overline{\Upsilon}$ =
-        \{$\lnot\upsilon$ $\mid$ $\upsilon$ $\in$ $\Upsilon$\}.
+        Additionally, we use the complementary set notation
+        $\overline{{\cal F}}$ to denote a set containing the negation of
+        facts of set ${\cal F}$, i.e. $\overline{{\cal F}}$ =
+        \{$\lnot\rho$ $\mid$ $\rho$ $\in$ ${\cal F}$\}.
 
         Let $\gamma$ be an initial, constraint or update definition statement of
         language ${\cal L}$. We then define $Eff$($\gamma$) to be the set
@@ -1487,20 +1487,20 @@ update()
 
         \begin{vdefinition}
           Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
-          two ground facts $\delta$ and $\delta'$ are {\bf mutually exclusive} 
+          two ground facts $\rho$ and $\rho'$ are {\bf mutually exclusive} 
           in ${\cal D_{L}}$ if:
           \begin{vquote}
-            $\delta$ $\in$ \{$\Upsilon^{+}_{int}$ $\cup$
-            $\overline{\Upsilon^{-}_{int}}$ $\cup$ $\Upsilon^{+}_{con}$ $\cup$
-            $\overline{\Upsilon^{-}_{con}}$ $\cup$ $\Upsilon^{+}_{upd}$ $\cup$
-            $\overline{\Upsilon^{-}_{upd}}$\}
+            $\rho$ $\in$ \{${\cal F}^{+}_{int}$ $\cup$
+            $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
+            $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
+            $\overline{{\cal F}^{-}_{upd}}$\}
 
             implies
 
-            $\delta'$ $\not\in$ \{$\Upsilon^{+}_{int}$ $\cup$
-            $\overline{\Upsilon^{-}_{int}}$ $\cup$ $\Upsilon^{+}_{con}$ $\cup$
-            $\overline{\Upsilon^{-}_{con}}$ $\cup$ $\Upsilon^{+}_{upd}$ $\cup$
-            $\overline{\Upsilon^{-}_{upd}}$\}
+            $\rho'$ $\not\in$ \{${\cal F}^{+}_{int}$ $\cup$
+            $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
+            $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
+            $\overline{{\cal F}^{-}_{upd}}$\}
           \end{vquote}
         \end{vdefinition}
 
@@ -1523,7 +1523,7 @@ update()
           be {\bf normal} if it satisfies all of the following conditions:
           \begin{enumerate}
             \item
-              $\Upsilon^{+}_{int}$ $\cap$ $\Upsilon^{-}_{int}$ = $\emptyset$
+              ${\cal F}^{+}_{int}$ $\cap$ ${\cal F}^{-}_{int}$ = $\emptyset$
             \item
               For all constraint statements $\gamma$ in ${\cal D_{L}}$,
               $\overline{Eff(\gamma)}$ $\cap$ $Pre(\gamma)$ = $\emptyset$.
@@ -1533,9 +1533,9 @@ update()
               $\emptyset$.
             \item
               For any two complementary statements $\gamma$ and $\gamma'$ in
-              ${\cal D_{L}}$, there exists a pair of ground expression $\eta$
-              $\in$ $\gamma$ and $\eta'$ $\in$ $\gamma'$ such that $\eta$ and
-              $\eta'$ are mutually exclusive.
+              ${\cal D_{L}}$, there exists a pair of ground expression $\epsilon$
+              $\in$ $\gamma$ and $\epsilon'$ $\in$ $\gamma'$ such that $\epsilon$ and
+              $\epsilon'$ are mutually exclusive.
           \end{enumerate}
         \end{vdefinition}
 
