@@ -38,7 +38,28 @@ bool constraint::cmp(list_item *item)
   if ((tmp = dynamic_cast<constraint *> (item)) == NULL)
     return false; 
 
-  return tmp->exp->cmp(exp) && tmp->cond->cmp(cond) && tmp->ncond->cmp(ncond);
+  if (tmp->exp == NULL && exp != NULL)
+    return false;
+  else if (tmp->exp != NULL && exp == NULL)
+    return false;
+  else if (tmp->exp != NULL && exp != NULL && !exp->cmp(tmp->exp))
+    return false;
+
+  if (tmp->cond == NULL && cond != NULL)
+    return false;
+  else if (tmp->cond != NULL && cond == NULL)
+    return false;
+  else if (tmp->cond != NULL && cond != NULL && !cond->cmp(tmp->cond))
+    return false;
+
+  if (tmp->ncond == NULL && ncond != NULL)
+    return false;
+  else if (tmp->ncond != NULL && ncond == NULL)
+    return false;
+  else if (tmp->ncond != NULL && ncond != NULL && !ncond->cmp(tmp->ncond))
+    return false;
+
+  return true;
 }
 
 consttab::consttab() : list("consttab", true)
