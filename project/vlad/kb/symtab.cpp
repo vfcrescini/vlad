@@ -58,7 +58,7 @@ int identlist::get(const char *n, identifier **i)
   if ((retval = ident.init(n, type)) != VLAD_OK)
     return retval;
   
-  if ((retval = list::get_d(&ident, (list_item ***) &array, &size)) != VLAD_OK)
+  if ((retval = list::get(&ident, (list_item ***) &array, &size)) != VLAD_OK)
     return retval;
 
   /* there should be exactly one in the array */
@@ -72,7 +72,7 @@ int identlist::get(const char *n, identifier **i)
 /* get the ith identifier of the list */
 int identlist::get(unsigned int i, identifier **id)
 {
-  return list::get_i(i, (list_item **) id);
+  return list::get(i, (list_item **) id);
 }
 
 /* return true if symbol is in the list */

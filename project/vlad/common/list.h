@@ -41,13 +41,13 @@ class list
     /* add pointer to list, assumes memory has been allocated to it */
     int add(list_item *data);
     /* deletes index'th data, f = true to free mem or false to not free it */
-    int del_i(unsigned int index, bool f);
+    int del(unsigned int index, bool f);
     /* deletes all the nodes that matches data, f = true to free mem */
-    int del_d(list_item *data, bool f);
+    int del(list_item *data, bool f);
     /* gives a reference to the index'th data */
-    int get_i(unsigned int index, list_item **data);
+    int get(unsigned int index, list_item **data);
     /* gives a reference to all the nodes that matches item. array + size */
-    int get_d(list_item *item, list_item ***data, unsigned int *s);
+    int get(list_item *item, list_item ***data, unsigned int *s);
     /* returns 0 if data is in the list */
     int find(list_item *data);
     /* destroys the list, f = true to free mem */
