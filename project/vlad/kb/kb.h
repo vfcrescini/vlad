@@ -82,7 +82,7 @@ class kb {
      */ 
     int verify_atom_subset(const char *g1, const char *g2, stringlist *v);
     /* make sure transref is valid */
-    int verify_transref(transref *r);
+    int verify_transref(char *n, stringlist *il);
     /* functions for encoding atoms */
     int encode_const(const char *c, unsigned int *n);
     int encode_holds(const char *s, const char *a, const char *o, unsigned int *n);

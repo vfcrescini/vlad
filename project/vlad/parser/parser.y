@@ -600,6 +600,7 @@ trans_ref_list :
 
 trans_ref_def : 
   VLAD_SYM_IDENTIFIER VLAD_SYM_OPEN_PARENT trans_ref_ident_args VLAD_SYM_CLOSE_PARENT {
+    int retval;
     char *name;
 
     /* first allocate memory for the name */
@@ -611,10 +612,15 @@ trans_ref_def :
     strcpy(name, $1);
  
     /* then add the entire thing into a transref */
-    if (($$ = VLAD_NEW(transref(name, $3))) == NULL) {
+    if (($$ = VLAD_NEW(transref())) == NULL) {
       fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
-    }   
+    }
+
+    if ((retval = $$->init(name, $3)) != VLAD_OK) {
+      fprintf(yyerr, "internal error: %d\n", retval);
+      return retval;
+    }
   }
   ;
 

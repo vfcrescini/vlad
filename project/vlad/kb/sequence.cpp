@@ -12,10 +12,9 @@
 #include <vlad.h>
 #include <sequence.h>
 
-transref::transref(const char *n, stringlist *i)
+transref::transref()
 {
-  name = (char *) n;
-  ilist = i;
+  initialised = false;	
 }
 
 transref::~transref()
@@ -36,31 +35,46 @@ bool transref::cmp(list_item *item)
   if ((tmp = dynamic_cast<transref *> (item)) == NULL)
     return false;
 
-  if (tmp->name == NULL && name != NULL)
-    return false;
-  else if (tmp->name != NULL && name == NULL)
-    return false;
-  else if (tmp->name != NULL && name != NULL && strcmp(name, tmp->name))
+  /* if both are uninitialised return true. if only one -- false */
+  if (!initialised)
+    return !tmp->initialised;
+
+  if (!tmp->initialised)
     return false;
 
-  if (tmp->ilist == NULL && ilist != NULL)
+  if (strcmp(name, tmp->name))
     return false;
-  else if (tmp->ilist != NULL && ilist == NULL)
-    return false;
-  else if (tmp->ilist != NULL && ilist != NULL && !ilist->cmp(tmp->ilist))
+
+  if (!ilist->cmp(tmp->ilist))
     return false;
 
   return true;
 }
 
-char *transref::get_name()
+int transref::init(const char *n, stringlist *il)
 {
-  return name;
+  if (n == NULL || il == NULL)
+    return VLAD_NULLPTR;
+
+  name = (char *) n;
+  ilist = il;
+  initialised = true;
+
+  return VLAD_OK;
 }
 
-stringlist *transref::get_ilist()
+int transref::get(char **n, stringlist **il)
 {
-  return ilist;
+  if (n == NULL || il == NULL)
+    return VLAD_NULLPTR;
+
+  if (!initialised)
+    return VLAD_UNINITIALISED;
+
+  *n = name;
+  *il = ilist;
+
+  return VLAD_OK;
 }
 
 #ifdef DEBUG
@@ -68,12 +82,14 @@ void transref::print(char *s)
 {
   char tmps[1024];
 
-  strcpy(tmps, "");
+  if (initialised) {
+    strcpy(tmps, "");
 
-  if (ilist != NULL)
-    ilist->print(tmps);
+    if (ilist != NULL)
+      ilist->print(tmps);
 
-  sprintf(s, "%s(%s)", name, tmps);
+    sprintf(s, "%s(%s)", name, tmps);
+  }
 }
 #endif
 
@@ -95,9 +111,34 @@ int sequence::add(transref *t)
   return list::add((list_item *) t);
 }
 
-int sequence::get(unsigned int i, transref **t)
+/* add pre-malloc'ed name and ilist */
+int sequence::add(const char *n, stringlist *il)
 {
-  return list::get(i, (list_item **) t);
+  int retval;
+  transref *tmp_ref;
+
+  if ((tmp_ref = VLAD_NEW(transref())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  if ((retval = tmp_ref->init(n, il)) != VLAD_OK)
+    return retval;
+
+  return list::add((list_item *) tmp_ref);
+}
+
+/* get i'th name and ilist */
+int sequence::get(unsigned int i, char **n, stringlist **il)
+{
+  int retval;
+  transref *tmp_ref;
+
+  if (n == NULL || il == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = list::get(i, (list_item **) &tmp_ref)) != VLAD_OK)
+    return retval;
+
+  return tmp_ref->get(n, il);
 }
 
 #ifdef DEBUG
@@ -113,6 +154,7 @@ void sequence::print(char *s)
     if (list::get(i, (list_item **) &tmpr) != VLAD_OK)
       break;
 
+    strcpy(tmps, "");
     tmpr->print(tmps);
     sprintf(s, "%s %s", s, tmps);
   }

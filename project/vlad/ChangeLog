@@ -1,3 +1,13 @@
+2003-04-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* kb/sequence.cpp :
+	* kb/sequence.h :
+	* parser/parser.y :
+
+	  - Cleanup of sequence.
+
 2003-04-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* kb/atom.cpp :
