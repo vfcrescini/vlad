@@ -6,6 +6,8 @@
 #ifndef __MODVLAD_UTIL_H
 #define __MODVLAD_UTIL_H
 
+#include <stdarg.h>
+
 #include "httpd.h"
 #include "apr_pools.h"
 #include "apr_file_io.h"

@@ -53,32 +53,34 @@ int modvlad_init_kb(apr_pool_t *a_p,
                     void **a_kb,
                     void **a_exp)
 {
-  if (!a_p || !a_exp || !a_kb || !a_userfile || !a_docroot)
+  int retval;
+
+  if (!a_p || !a_userfile || !a_docroot || !a_kb || !a_exp)
     return -1;
 
   /* create and init kb */
-  if (vlad_kb_create(a_kb) != VLAD_OK)
-    return -2;
+  if ((retval = vlad_kb_create(a_kb)) != VLAD_OK)
+    return retval;
 
-  if (vlad_kb_init(*a_kb) != VLAD_OK)
-    return -3;
+  if ((retval = vlad_kb_init(*a_kb)) != VLAD_OK)
+    return retval;
 
   /* create an expression for those extra constraints */
-  if (vlad_exp_create(a_exp) != VLAD_OK)
-    return -4;
+  if ((retval = vlad_exp_create(a_exp)) != VLAD_OK)
+    return retval;
 
   /* register the kb to be destroyed with this pool */
   apr_pool_cleanup_register(a_p,
                             *a_kb,
-			    vlad_kb_destroy,
-			    vlad_kb_destroy);
+                            vlad_kb_destroy,
+                            vlad_kb_destroy);
 
-  if (add_subject(a_p, *a_kb, a_userfile))
-    return -5;
-  if (add_access(a_p, *a_kb))
-    return -6;
-  if (add_object(a_p, *a_kb, *a_exp, a_docroot, NULL))
-    return -7;
+  if ((retval = add_subject(a_p, *a_kb, a_userfile)) != VLAD_OK)
+    return retval;
+  if ((retval = add_access(a_p, *a_kb)) != VLAD_OK)
+    return retval;
+  if ((retval = add_object(a_p, *a_kb, *a_exp, a_docroot, NULL)) != VLAD_OK)
+    return retval;
 
   return 0;
 }
@@ -312,7 +314,7 @@ static int add_subject(apr_pool_t *a_p, void *a_kb, const char *a_fname)
                     "mod_vlad: could not add user \"%s\" to kb: error %d",
                     user,
                     retval);
-      return -1;
+      return retval;
     }
   }
 
@@ -348,7 +350,7 @@ static int add_access(apr_pool_t *a_p, void *a_kb)
                     "mod_vlad: could not add access \"%s\" to kb: error %d",
                     access,
                     retval);
-      return -1;
+      return retval;
     }
   }
 
@@ -375,6 +377,7 @@ static int add_object(apr_pool_t *a_p,
   /* realrelpath is / or path relative to basepath */
   realrelpath = apr_pstrdup(a_p,
                             (!a_relpath || !strcmp(a_relpath, "")) ? "/" : a_relpath);
+
   /* realfullpath is basepath/realrelpath */
   realfullpath = apr_pstrcat(a_p,
                              a_basepath,
@@ -382,7 +385,7 @@ static int add_object(apr_pool_t *a_p,
                              !strcmp(realrelpath, "/") ? "" : realrelpath,
                              NULL);
 
-  /* we have to ignore the admin trigger */
+  /* we have to ignore the special admin resource */
   if (!strcmp(realrelpath, MODVLAD_ADMIN_DIRNAME))
     return 0;
 
@@ -403,21 +406,6 @@ static int add_object(apr_pool_t *a_p,
                               realrelpath,
                               VLAD_IDENT_OBJECT | VLAD_IDENT_GROUP);
 
-  /* if this is not the root dir, then make it a subset of its parent dir */
-  if (strcmp(realrelpath, "/")) {
-    const char *parent = get_parent(a_p, realrelpath);
-    void *tmp_atom = NULL;
-
-    if (vlad_atom_create(&tmp_atom) != VLAD_OK)
-      return -1;
-
-    if (vlad_atom_init_subset(tmp_atom, realrelpath, parent, 1) != VLAD_OK)
-      return -1;
-
-    if (vlad_exp_add(a_exp, tmp_atom) != VLAD_OK)
-      return -1;
-  }
-
   if (retval != VLAD_OK) {
     ap_log_perror(APLOG_MARK,
                   APLOG_ERR,
@@ -426,7 +414,22 @@ static int add_object(apr_pool_t *a_p,
                   "mod_vlad: could not add object \"%s\" to kb: error %d",
                   realrelpath,
                   retval);
-    return -1;
+    return retval;
+  }
+
+  /* if this is not the root dir, then make it a subset of its parent dir */
+  if (strcmp(realrelpath, "/")) {
+    const char *parent = get_parent(a_p, realrelpath);
+    void *tmp_atom = NULL;
+
+    if ((retval = vlad_atom_create(&tmp_atom)) != VLAD_OK)
+      return retval;
+
+    if ((retval = vlad_atom_init_subset(tmp_atom, realrelpath, parent, 1)) != VLAD_OK)
+      return retval;
+
+    if ((retval = vlad_exp_add(a_exp, tmp_atom)) != VLAD_OK)
+      return retval;
   }
 
   while (apr_dir_read(&dinfo, APR_FINFO_NAME | APR_FINFO_TYPE, pdir) == APR_SUCCESS) {
@@ -459,21 +462,21 @@ static int add_object(apr_pool_t *a_p,
                       "mod_vlad: could not add object \"%s\" to kb: error %d",
                       tmppath,
                       retval);
-        return -1;
+        return retval;
       }
 
       /* now add an atom into the extra constraint expression */
-      if (vlad_atom_create(&tmp_atom) != VLAD_OK)
-        return -1;
-      if (vlad_atom_init_member(tmp_atom, tmppath, realrelpath, 1) != VLAD_OK)
-        return -1;
-      if (vlad_exp_add(a_exp, tmp_atom) != VLAD_OK)
-        return -1;
+      if ((retval = vlad_atom_create(&tmp_atom)) != VLAD_OK)
+        return retval;
+      if ((retval = vlad_atom_init_member(tmp_atom, tmppath, realrelpath, 1)) != VLAD_OK)
+        return retval;
+      if ((retval = vlad_exp_add(a_exp, tmp_atom)) != VLAD_OK)
+        return retval;
     }
     else {
       /* now recurse */
-      if (add_object(a_p, a_kb, a_exp, a_basepath, tmppath) != 0)
-        return -1;
+      if ((retval = add_object(a_p, a_kb, a_exp, a_basepath, tmppath)) != 0)
+        return retval;
     }
   }
 
