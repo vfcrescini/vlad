@@ -82,6 +82,45 @@ void holds_atom::get(identifier **s, identifier **a, identifier **o)
     *o = obj;
 }
 
+bool holds_atom::cmp(list_item *item)
+{
+  atom *tmp_atom = NULL; 
+  holds_atom *tmp_holds = NULL;
+  identifier *s = NULL;
+  identifier *a = NULL;
+  identifier *o = NULL;
+
+  /* if this atom has any NULL identifier, a segfault will occur */
+
+  /* NULL means match all */
+  if (item == NULL)
+    return true;
+  
+  /* check type and truth value */
+  if (!VLAD_ATOM_IS_HOLDS(*(tmp_atom = dynamic_cast<atom *> (item))))
+    return false;
+
+  if (get_truth() != tmp_atom->get_truth())
+    return false;
+
+  /* now get the identifiers and compare them */
+  tmp_holds = dynamic_cast<holds_atom *> (tmp_atom);
+  
+  tmp_holds->get(&s, &a, &o);
+
+  /* treat NULL identifiers as wildcards */
+  if (s != NULL && !sub->cmp(s))
+    return false;
+
+  if (a != NULL && !acc->cmp(a))
+    return false;
+
+  if (o != NULL && !obj->cmp(o))
+    return false;
+
+  return true;
+}
+
 member_atom::member_atom()
 {
   elt = NULL;
@@ -119,6 +158,41 @@ void member_atom::get(identifier **e, identifier **g)
     *e = elt;
   if (g != NULL)
     *g = grp;
+}
+
+bool member_atom::cmp(list_item *item)
+{
+  atom *tmp_atom = NULL; 
+  member_atom *tmp_member = NULL;
+  identifier *e = NULL;
+  identifier *g = NULL;
+
+  /* if this atom has any NULL identifier, a segfault will occur */
+
+  /* NULL means match all */
+  if (item == NULL)
+    return true;
+  
+  /* check type and truth value */
+  if (!VLAD_ATOM_IS_MEMBER(*(tmp_atom = dynamic_cast<atom *> (item))))
+    return false;
+
+  if (get_truth() != tmp_atom->get_truth())
+    return false;
+
+  /* now get the identifiers and compare them */
+  tmp_member = dynamic_cast<member_atom *> (tmp_atom);
+  
+  tmp_member->get(&e, &g);
+
+  /* treat NULL identifiers as wildcards */
+  if (e != NULL && !elt->cmp(e))
+    return false;
+
+  if (g != NULL && !grp->cmp(g))
+    return false;
+
+  return true;
 }
 
 subset_atom::subset_atom()
@@ -162,9 +236,34 @@ void subset_atom::get(identifier **g1, identifier **g2)
 
 bool subset_atom::cmp(list_item *item)
 {
-  atom *tmp = dynamic_cast<atom *> (item);
+  atom *tmp_atom = NULL; 
+  subset_atom *tmp_subset = NULL;
+  identifier *g1 = NULL;
+  identifier *g2 = NULL;
 
-  if (!VLAD_ATOM_IS_SUBSET(*tmp))
+  /* if this atom has any NULL identifier, a segfault will occur */
+
+  /* NULL means match all */
+  if (item == NULL)
+    return true;
+  
+  /* check type and truth value */
+  if (!VLAD_ATOM_IS_SUBSET(*(tmp_atom = dynamic_cast<atom *> (item))))
+    return false;
+
+  if (get_truth() != tmp_atom->get_truth())
+    return false;
+
+  /* now get the identifiers and compare them */
+  tmp_subset = dynamic_cast<subset_atom *> (tmp_atom);
+  
+  tmp_subset->get(&g1, &g2);
+
+  /* treat NULL identifiers as wildcards */
+  if (g1 != NULL && !grp1->cmp(g1))
+    return false;
+
+  if (g2 != NULL && !grp2->cmp(g2))
     return false;
 
   return true;
