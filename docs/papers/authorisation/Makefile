@@ -3,7 +3,7 @@
 all : authorisation.dvi
 
 clean :
-	$(RM) authorisation.dvi authorisation.aux authorisation.toc
+	$(RM) authorisation.dvi authorisation.aux authorisation.toc authorisation.log
 
 authorisation.dvi : authorisation.tex
 	latex authorisation.tex
