@@ -16,8 +16,8 @@ SMINCLUDES = wrapper.h
 SMOBJECTS = wrapper.o
 endif
 
-INCLUDES = atom.h expression.h sequence.h symtab.h consttab.h transtab.h $(SMINCLUDES) kb.h
-OBJECTS = atom.o expression.o sequence.o symtab.o consttab.o transtab.o $(SMOBJECTS) kb.o
+INCLUDES = atom.h expression.h seqtab.h symtab.h consttab.h transtab.h $(SMINCLUDES) kb.h
+OBJECTS = atom.o expression.o seqtab.o symtab.o consttab.o transtab.o $(SMOBJECTS) kb.o
 
 all : copy-includes copy-targets
 
@@ -42,8 +42,8 @@ atom.o : atom.h atom.cpp
 expression.o : atom.o expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
 
-sequence.o : sequence.h sequence.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c sequence.cpp
+seqtab.o : seqtab.h seqtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
 
 symtab.o : symtab.h symtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp

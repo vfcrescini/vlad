@@ -19,14 +19,14 @@ int main(int argc, char *argv[])
   int retval;
 #ifdef SMODELS
   char *arglist = "vhe";
-  char *helpstring = "-v|-h|[-e] program-filename [query-filename]";
+  char *helpstring = "-v|-h|[-e] program-filename [operation-filename]";
 #else
   char *arglist = "vh";
-  char *helpstring = "-v|-h|program-filename [query-filename]";
+  char *helpstring = "-v|-h|program-filename [operation-filename]";
 #endif
   int option;
   FILE *programin = NULL;
-  FILE *queryin = NULL;
+  FILE *operationin = NULL;
   kb *kbase = NULL;
   unsigned char mode = VLAD_MODE_GENERATE;
 
@@ -62,10 +62,10 @@ int main(int argc, char *argv[])
     return VLAD_OPENFAILED;
   }
 
-  /* now get query file details */
+  /* now get operation file details */
   if (optind + 1 >= argc || argv[optind + 1] == NULL || !strcmp(argv[optind + 1], "-"))
-    queryin = stdin;
-  else if ((queryin = fopen(argv[optind + 1], "r")) == NULL) {
+    operationin = stdin;
+  else if ((operationin = fopen(argv[optind + 1], "r")) == NULL) {
     fprintf(stderr, "unable to open for reading: %s\n", argv[optind + 1]);
     return VLAD_OPENFAILED;
   }
@@ -82,18 +82,18 @@ int main(int argc, char *argv[])
   /* first initialise the parsers */
   if ((retval = program_init(programin, stdout, stderr, kbase)) != VLAD_OK)
     return retval;
-  if ((retval = query_init(queryin, stdout, stderr, kbase, mode)) != VLAD_OK)
+  if ((retval = operation_init(operationin, stdout, stderr, kbase, mode)) != VLAD_OK)
     return retval;
 
   /* then parse */
   if ((retval = program_parse()) != VLAD_OK)
     return retval;
-  if ((retval = query_parse()) != VLAD_OK)
+  if ((retval = operation_parse()) != VLAD_OK)
     return retval;
 
   /* cleanup */
   fclose(programin);
-  fclose(queryin);
+  fclose(operationin);
   delete kbase;
 
   return VLAD_OK;

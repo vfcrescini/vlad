@@ -10,7 +10,7 @@ CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 TARGETS = libparser.a
 INCLUDES = parser.h
-OBJECTS = program_parser.o program_scanner.o query_parser.o query_scanner.o
+OBJECTS = program_parser.o program_scanner.o operation_parser.o operation_scanner.o
 
 all : copy-includes copy-targets
 
@@ -29,11 +29,11 @@ copy-targets : $(TARGETS)
 libparser.a : $(OBJECTS)
 	$(AR) -rcs $(@) $(OBJECTS)
 
-query_scanner.o : query.tab.h lex.query.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c lex.query.cpp
+operation_scanner.o : operation.tab.h lex.operation.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.operation.cpp
 
-query_parser.o : query.tab.h query.tab.cpp
-	$(CXX) $(CXXFLAGS) -o $(@) -c query.tab.cpp
+operation_parser.o : operation.tab.h operation.tab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c operation.tab.cpp
 
 program_scanner.o : program.tab.h lex.program.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c lex.program.cpp
@@ -41,17 +41,17 @@ program_scanner.o : program.tab.h lex.program.cpp
 program_parser.o : program.tab.h program.tab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c program.tab.cpp
 
-lex.query.cpp : query.l
-	$(LEX) -Pquery query.l && mv -f lex.query.c $(@)
+lex.operation.cpp : operation.l
+	$(LEX) -Poperation operation.l && mv -f lex.operation.c $(@)
 
 lex.program.cpp : program.l
 	$(LEX) -Pprogram program.l && mv -f lex.program.c $(@)
 
-query.tab.cpp : query.y
-	$(YACC) -b query -p query query.y && mv -f query.tab.c $(@)
+operation.tab.cpp : operation.y
+	$(YACC) -b operation -p operation operation.y && mv -f operation.tab.c $(@)
 
-query.tab.h : query.y
-	$(YACC) -b query -p query -d query.y
+operation.tab.h : operation.y
+	$(YACC) -b operation -p operation -d operation.y
 
 program.tab.cpp : program.y
 	$(YACC) -b program -p program program.y && mv -f program.tab.c $(@)

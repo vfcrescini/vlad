@@ -1,5 +1,5 @@
 /*
- * sequence.cpp
+ * seqtab.cpp
  * Vino Crescini  <jcrescin@cit.uws.edu.au>
  */
 
@@ -10,7 +10,7 @@
 
 #include <config.h>
 #include <vlad/vlad.h>
-#include <vlad/sequence.h>
+#include <vlad/seqtab.h>
 
 transref::transref()
 {
@@ -93,17 +93,17 @@ void transref::print(char *s)
 }
 #endif
 
-sequence::sequence() : list(false)
+seqtab::seqtab() : list(false)
 {
 }
 
-sequence::~sequence()
+seqtab::~seqtab()
 {
   purge(true);
 }
 
 /* add pre-malloc'ed transref */
-int sequence::add(transref *t)
+int seqtab::add(transref *t)
 {
   if (t == NULL)
     return VLAD_NULLPTR;
@@ -112,7 +112,7 @@ int sequence::add(transref *t)
 }
 
 /* add pre-malloc'ed name and ilist */
-int sequence::add(const char *n, stringlist *il)
+int seqtab::add(const char *n, stringlist *il)
 {
   int retval;
   transref *tmp_ref;
@@ -126,8 +126,14 @@ int sequence::add(const char *n, stringlist *il)
   return list::add((list_item *) tmp_ref);
 }
 
+/* delete i'th item */
+int seqtab::del(unsigned int i)
+{
+  return list::del(i, true);
+}
+
 /* get i'th name and ilist */
-int sequence::get(unsigned int i, char **n, stringlist **il)
+int seqtab::get(unsigned int i, char **n, stringlist **il)
 {
   int retval;
   transref *tmp_ref;
@@ -142,7 +148,7 @@ int sequence::get(unsigned int i, char **n, stringlist **il)
 }
 
 #ifdef DEBUG
-void sequence::print(char *s)
+void seqtab::print(char *s)
 {
   unsigned int i;
   char tmps[VLAD_MAXLEN_STR];
