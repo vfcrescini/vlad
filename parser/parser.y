@@ -534,11 +534,17 @@ query_stmt :
 #ifdef SMODELS
     case VLAD_MODE_EVALUATE : {
       unsigned char res;
-      if ((retval = kbase.evaluate_query($2, $3, &res)) != VLAD_OK) {
-        fprintf(yyerr, "internal error: %d\n", retval);
-        return retval;
+      switch(retval = kbase.evaluate_query($2, $3, &res)) {
+        case VLAD_OK :
+          fprintf(yyout, "%s\n", VLAD_RESULT_STRING(res));
+          break;
+        case VLAD_NOMODEL :
+          fprintf(yyout, "conflict encountered: could not evaluate query\n");
+          return VLAD_NOMODEL;
+        default :
+          fprintf(yyerr, "internal error: %d\n", retval);
+          return retval;
       }
-      fprintf(yyout, "%s\n", VLAD_RESULT_STRING(res));
       break;
     }
 #endif
