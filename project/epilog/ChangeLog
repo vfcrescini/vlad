@@ -1,3 +1,12 @@
+2002-10-20  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* exp/gnd_exp.c :
+
+	  - eval_atom function now only checks if the atom is a logical
+	    consequence of the other atoms in the expression. It no
+	    longer checks if the atom is explicitly stated in the
+	    expression.
+
 2002-10-19  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* datastruct/simplelist.c :

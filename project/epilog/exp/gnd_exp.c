@@ -65,8 +65,8 @@ int gnd_exp_find(gnd_exp_type exp, gnd_atom_type atom)
   return simplelist_find_data(exp, (void *) &atom, gnd_exp_compare);
 }
 
-/* gives true, false or unknown depending on the derivability of the expression
- * in to exp */
+/* gives true, false or unknown depending on whether the expression or its
+ * negation is in, or is a logical consequence of the other expression. */
 int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, res_type *res)
 {
   unsigned int i;
@@ -82,6 +82,20 @@ int gnd_exp_eval(gnd_exp_type in, gnd_exp_type exp, res_type *res)
     if (simplelist_get_index(in, i, (void **) &tmp_atom) != 0)
       return -1;
 
+    /* check if this atom is explicitly in exp */
+    if (simplelist_find_data(exp, (void *) tmp_atom, gnd_exp_compare) == 0)
+      continue;
+
+    /* now check if the negation of this atom is explicitly in exp */
+    EPI_ATOM_NEGATE(*tmp_atom); 
+    if (simplelist_find_data(exp, (void *) tmp_atom, gnd_exp_compare) == 0) {
+      EPI_ATOM_NEGATE(*tmp_atom); 
+      *res = epi_res_false;
+      return 0;
+    }
+    EPI_ATOM_NEGATE(*tmp_atom);
+  
+    /* now we check to see if the atom is a consequence of the other atoms */
     if (gnd_exp_eval_atom(*tmp_atom, exp, &tmp_res) != 0)
       return -1;
 
@@ -874,27 +888,13 @@ int gnd_exp_eval_subst_atom(ident_type group1,
 }
 
 /* gives true, false or unknown depending on whether atom or its negation 
- * is in or can be derived from expression, or not. */
+ * can be derived from expression, or not. */
 int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
 {
   if (res == NULL)
     return -1;
 
   *res = epi_res_unknown;
-
-  /* check if this atom is explicitly in exp */
-  if (simplelist_find_data(exp, (void *) &atom, gnd_exp_compare) == 0) {
-    *res = epi_res_true;
-    return 0;
-  }
-
-  /* now check if the negation of this atom is explicitly in exp */
-  EPI_ATOM_NEGATE(atom); 
-  if (simplelist_find_data(exp, (void *) &atom, gnd_exp_compare) == 0) {
-    *res = epi_res_false;
-    return 0;
-  }
-  EPI_ATOM_NEGATE(atom); 
 
   if (EPI_ATOM_IS_HOLDS(atom)) {
     if (gnd_exp_eval_holds_atom(*(EPI_ATOM_HOLDS_SUBJECT(atom)),
@@ -928,11 +928,8 @@ int gnd_exp_eval_atom(gnd_atom_type atom, gnd_exp_type exp, res_type *res)
       *res = (*res == atom.truth) ? epi_res_true : epi_res_false;
   }
   else if (EPI_ATOM_IS_CONST(atom)) {
-    /* a false constant would have been captured in the negative find above, 
-     * and so will a true constant, if true is explicitly in the expression.
-     * however, true is always implied in every exression that is not false,
-     * so we have to return a true result here. */
-    *res = epi_res_true;
+    /* true is implied on any expression that is not false */
+    *res = (atom.truth == epi_true) ? epi_res_true : epi_res_false;
   }
 
   return 0;
