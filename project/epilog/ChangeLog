@@ -1,5 +1,16 @@
 2003-10-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* docs/sample :
+	* example/sample :
+	* example/geography:
+	
+	  - Moved test files to example directory.
+
+	* exp/gnd_exp.c :
+
+	  - Added get_subgroups, get_non_subgroups, get_supergroups,
+	    get_non_supergroups, get_elements and get_non_elements functions.
+
 	* exp/expression.h :
 	* exp/comp_atom.h :
 	* exp/gnd_atom.h :
