@@ -21,26 +21,36 @@
 # Started: 2002 Aug 11
 # Updated: 2003 Dec 01 
 
-unset VERBOSE
+progname="check_cvs"
+progver="1.0"
+
+unset verbose
 
 while [ ${#} -ge 1 ]; do
-  if [ ${1} = "-v" ]; then
-    VERBOSE="1"
-  fi
-  if [ ${1} = "-h" ]; then
-    echo "$0 [-h|-v]"
+  if [ "${1}" = "-h" ]; then
+    echo "usage: ${progname} [options]"
+    echo "options:"
+    echo "  -h        print this usage and exit"
+    echo "  -v        verbose output"
+    echo "  -V        print version and exit"
+    echo ""
+    exit 0
+  elif [ "${1}" = "-v" ]; then
+    verbose="1"
+  elif [ "${1}" = "-V" ]; then
+    echo "${progname} ${progver}"
     exit 0
   fi
   shift 1
 done
 
 # modified
-cvs diff --brief 2>&1 | grep "Index:" | cut -d ' ' -f 2 | ( [ -n "${VERBOSE}" ] && while read i; do echo "M ${i}"; done || cat )
+cvs diff --brief 2>&1 | grep "Index:" | cut -d ' ' -f 2 | ( [ -n "${verbose}" ] && while read i; do echo "M ${i}"; done || cat )
 
 # added
-cvs diff --brief 2>&1 | grep "is a new entry," | cut -d ' ' -f 3 | ( [ -n "${VERBOSE}" ] && while read i; do echo "A ${i}"; done || cat )
+cvs diff --brief 2>&1 | grep "is a new entry," | cut -d ' ' -f 3 | ( [ -n "${verbose}" ] && while read i; do echo "A ${i}"; done || cat )
 
 # removed
-cvs diff --brief 2>&1 | grep "was removed," | cut -d ' ' -f 3 | ( [ -n "${VERBOSE}" ] && while read i; do echo "R ${i}"; done || cat )
+cvs diff --brief 2>&1 | grep "was removed," | cut -d ' ' -f 3 | ( [ -n "${verbose}" ] && while read i; do echo "R ${i}"; done || cat )
 
 exit 0
