@@ -36,6 +36,8 @@
 
     \subsection{Syntax}
 
+      [language statements, statement terminators, and comments]
+
       \subsubsection{Components of Language $\cal{L}$}
 
         \noindent \textbf{\emph{Identifiers}}
@@ -120,9 +122,45 @@
 
           \begin{verbatim}<fact1> [&& <fact2> [&& ...]]\end{verbatim}
 
+      \subsubsection{Identifier Entity Declaration}
+
+        All entity identifiers (subjects, access-rights, objects and groups)
+        must first be declared before any other statements to define the
+        entity domain of the policy base. The following entity declaration
+        syntax illustrates how to define one or more entity identifiers of a
+        particular type.
+
+        \begin{verbatim}ident sub|acc|obj[-grp] <name>[, ...]];\end{verbatim}
+
+        where $name$ is restricted to the formal identifier syntax.
+
       \subsubsection{Initial State Definition}
 
+        The initial facts in the policy base can be defined by the following
+        syntax:
+
+        \begin{verbatim}initially <expression>;\end{verbatim}
+
+        where $expression$ is restricted to the formal expression syntax.
+
       \subsubsection{Constraint Definition}
+
+        Constraints are logical rules that holds regardless of any changes
+        that may occur when the policy base is updated. The constraint rules
+        are true in the initial state and remains true after any policy update.
+
+        The constraint syntax below shows that for any state of the policy
+        base, expression $exp1$ holds if expression $exp2$ is true and there
+        is no evidence that $exp3$ is true.
+
+        Note that the conditional clauses $implied$ $by$ and $with$ $absence$
+        are optional.
+
+\begin{verbatim}
+always <exp1>
+  [implied by <exp2>
+  [with absence <exp3>]];
+\end{verbatim}
 
       \subsubsection{Policy Update Definition}
 
