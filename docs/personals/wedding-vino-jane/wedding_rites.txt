@@ -18,10 +18,10 @@ Bridal Entourage
     Veil                  (XXX fix me)
 
   Best Man                Raki Crescini
-  Groom's Men             Roy (XXX fix me)
+  Groom's Men             Roy Zhang
 
   Maid of Honour          Vianca Cresini
-  Bride's Maid            Roy's Sister (XXX fix me)
+  Bride's Maid            Suki Zhang
 
   Ring Bearer             Lorenzo Asalemo
   Flower Girl             Salina Huang
@@ -634,4 +634,31 @@ Conclusion
 
   Solemn Blessing
 
-  Signing the Register
+    Priest:
+
+      May God, the Almighty Father, give you his joy and bless you.
+
+    All:
+
+      Amen.
+
+    Priest:
+
+      May the only Son of God have mercy on you and help you in good times
+      and in bad.
+
+    All:
+
+      Amen.
+
+    Priest:
+
+      May the Holy Spirit of God always fill your hearts with his love.
+
+    All:
+
+      Amen.
+
+    Priest:
+
+      May Almighty God bless you, the Father, the Son, and the Holy Spirit.
