@@ -380,23 +380,22 @@ query holds(alice, read, file);
 
       \subsubsection{Domain Description of Language ${\cal L}$}
 
-        The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
-        defined as follows:
+        \begin{definition}
+          The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$ is
+          defined as a finite set of the following:
 
-        \begin{quote}
-          \begin{math}
-            {\cal D}_{\cal L} = 
-            \begin{cases}
-              \mbox{finite set of ground initial state facts} \\
-              \mbox{finite set of ground constraint rules} \\
-              \mbox{finite set of policy update definitions}
-            \end{cases}
-          \end{math}
-        \end{quote}
+          \begin{itemize}
+            \item
+              ground initial state facts
+            \item
+              ground constraint rules
+            \item
+              policy update definitions
+          \end{itemize}
+        \end{definition}
 
         In addition to the domain ${\cal D}_{\cal L}$, language ${\cal L}$
-        also includes one additional ordered set: the sequence list $\psi$.
-
+        also includes an additional ordered set: the sequence list $\psi$.
         The sequence list $\psi$ is an ordered set that contains a sequence of
         references to policy update definitions. Each policy update reference
         consists of the policy update identifier and a series of zero or more
@@ -470,6 +469,21 @@ query holds(alice, read, file);
               ${\cal A}^{\sigma}_{so} = \{\forall (g1, g2 \in {\cal E}_{og}), subst(g1, g2, \sigma)\}$
           \end{enumerate}
 
+          The function $base$ accepts an atom $a$ as an input argument and
+          returns a set that contains the entity identifiers that make up the
+          atom.
+
+          \begin{quote}
+            \begin{math}
+              base(a) = 
+              \begin{cases}
+                \mbox{\{$s_{a}$, $a_{a}$, $o_{a}$\}, if $a$ is holds} \\
+                \mbox{\{$m_{a}$, $g_{a}$\}, if $a$ is memb} \\
+                \mbox{\{$g1_{a}$, $g2_{a}$\}, if $a$ is subst}
+              \end{cases}
+            \end{math}
+          \end{quote}
+
         \paragraph{Facts.}
        
           A fact is a logical statement that makes a claim that an atom either
@@ -488,10 +502,21 @@ query holds(alice, read, file);
           \begin{quote}
             $e$ = $f_{0}$ $\land$ ... $\land$ $f_{n}$
 
-            where $f_{i}$ = $[\lnot]$$a$,
+            where
 
-            $\forall$$i$ ($0$ $\leq$ $i$ $\leq$ $n$),
-            $\exists$$a,\sigma$ ($a$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$)
+            $f_{i}$ = $[\lnot]$$a$
+
+            $\forall$$i$, $\exists$($a$,$\sigma$)
+            such that
+
+            \begin{itemize}
+              \item
+                $0$ $\leq$ $i$ $\leq$ $n$
+              \item
+                $a$ $\in$ ${\cal A}^{\sigma}$
+              \item
+                $0$ $\leq$ $\sigma$ $\leq$ $\Sigma$
+            \end{itemize}
           \end{quote}
 
         \paragraph{Propositions.}
@@ -499,7 +524,7 @@ query holds(alice, read, file);
           In language ${\cal L}^{*}$, propositions state logical facts and
           rules. A proposition is composed of a fact (the head) and an
           expression that makes up the body. The proposition below states that
-          fact $f$ holds if all the facts in expression $e$ also holds.
+          fact $f$ holds if all the facts in expression $e$ also hold.
 
           \begin{quote}
             $f$ $\leftarrow$ $e$
@@ -514,120 +539,173 @@ query holds(alice, read, file);
 
       \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
 
-        \paragraph{Initial State Expression.}
+        \begin{definition}
+          Given the domain description ${\cal D}_{\cal L}$ of language
+          ${\cal L}$, the function $trans$(${\cal D}_{\cal L}$) is defined as
+          the extended logic program ${\cal L}^{*}$ translation of language
+          ${\cal L}$.
 
-          To translate the initial state expressions of language ${\cal L}$ to
-          language ${\cal L}^{*}$, the state parameter $\sigma$ of every atom
-          in the expression is replaced by the initial state $S_{0}$.
+          The domain description ${\cal D}_{\cal L}$ is said to be $consistent$
+          if $trans$(${\cal D}_{\cal L}$) has at least one consistent answer
+          set. 
+        \end{definition}
 
-          \begin{definition}
-            An initial state expression is of the form:
+        \paragraph{Initial Fact Expression.}
 
-            \begin{quote}
-              $f_{0}$ $\land$ .. $\land$ $f_{n}$, $n$ $\geq$ $0$
+          Translating initial fact expressions of language ${\cal L}$ to
+          language ${\cal L}^{*}$ is a trivial procedure: repleace each atom
+          that makes up the initial fact expression of language ${\cal L}$
+          with its corresponding equivalent initial state atom of language
+          ${\cal L}^{*}$. The following shows the formal definition of initial
+          fact expressions of language ${\cal L}^{*}$.
 
-              where $f_{i}$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{S_{0}}$, $0$ $\leq$ $i$ $\leq$ $n$
-            \end{quote}
+          \begin{quote}
+            $f_{0}$ $\land$ .. $\land$ $f_{n}$, $n$ $\geq$ $0$
 
-          \end{definition}
+            where
 
-        \paragraph{Constraints.}
+              \begin{itemize}
+                \item
+                  $f_{i}$ = $[\lnot]$ $a$
+                \item
+                  $a$ $\in$ ${\cal A}^{S_{0}}$
+                \item
+                  $0$ $\leq$ $i$ $\leq$ $n$
+              \end{itemize}
+          \end{quote}
 
-          Constraints in ${\cal L}$ is in the form:
+        \paragraph{Constraint Rules.}
+
+          Given a constraint in language ${\cal L}$:
 
           \begin{quote}
             always $a_{0}$ $\land$ ... $\land$ $a_{m}$
             implied by $b_{0}$ $\land$ ... $\land$ $b_{n}$
-            with absence $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
-
-            where $m$, $n$, $o$ $\geq$ $0$
+            with absence $c_{0}$ $\land$ ... $\land$ $c_{o}$
           \end{quote}
+         
+          \begin{itemize}
+            \item
+              Each constraint rule in language ${\cal L}$ may be expressed
+              as a logical rule. The expression $a$ in the $always$ clause
+              is the head of the rule, expression $b$ in the $implied$ $by$
+              clause is the positive body, and the expression $c$ in the
+              $with$ $absence$ clause is the negative body.
 
-          To translate a constraint from language ${\cal L}$ to language
-          ${\cal L}^{*}$, an instance of the constraint rule must be defined
-          for each state $S_{0}$ to $S_{\Sigma}$.
+              \begin{quote}
+                \begin{math}
+                  \begin{aligned}[t]
+                    a_{0} \land ... \land a_{m} \leftarrow &
+                    b_{0} \land ... \land b_{n} \land \\
+                    & not c_{0} \land ... \land not c_{o}
+                  \end{aligned}
+                \end{math}
+              \end{quote}
+            \item
+              The definition of rules in language ${\cal L}^{*}$ requires
+              rules to have only a single fact in its head. Each rule in the
+              above form corresponds to $m$ equivalent rules, each with a
+              single fact $a_{i}$ ($0$ $\leq$ $i$ $\leq$ $m$) for its head.
 
-          \begin{definition}
-            A constraint is of the form:
+              \begin{quote}
+                $a_{0}$ $\leftarrow$
+                $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$
+                $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
 
-            \begin{quote}
-              $a_{0}$ $\land$ ... $\land$ $a_{m}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$ $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
+                ...
 
-              where:
+                $a_{m}$ $\leftarrow$
+                $b_{0}$ $\land$ ... $\land$ $b_{n}$ $\land$
+                $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{o}$
+              \end{quote}
+            \item
+              Each rule above corresponds to $\Sigma$ equivalent constraint
+              rules in language ${\cal L}^{*}$, for each state defined by the
+              sequence list $\psi$ plus the initial state.
+          \end{itemize}
 
-              \begin{itemize}
-                \item
-                  $a_{i}$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $i$ $\leq$ $m$
-                \item
-                  $b_{j}$ = $[\lnot]$ $b$, $b$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $j$ $\leq$ $n$
-                \item
-                  $c_{k}$ = $[\lnot]$ $c$, $c$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $k$ $\leq$ $o$
-                \item
-                  $\sigma$ = $S_{l}$, $0$ $\leq$ $l$ $\leq$ $\Sigma$
+          Given the method described above for translating constraint rules
+          from language ${\cal L}$ to language ${\cal L}^{*}$, a constraint
+          rule in language ${\cal L}^{*}$ is defined as follows:
+
+          \begin{quote}
+            $a$ $\leftarrow$
+            $b_{0}$ $\land$ ... $\land$ $b_{m}$ $\land$
+            $not$ $c_{0}$ $\land$ ... $\land$ $not$ $c_{n}$
+
+            where:
+
+            \begin{itemize}
+              \item
+                $a$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{\sigma}$
+              \item
+                $b_{i}$ = $[\lnot]$ $b$, $b$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $i$ $\leq$ $m$
+              \item
+                $c_{j}$ = $[\lnot]$ $c$, $c$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $j$ $\leq$ $n$
+              \item
+                $\sigma$ = $S_{k}$, $0$ $\leq$ $k$ $\leq$ $\Sigma$
               \end{itemize}
-
-            \end{quote}
-
-          \end{definition}
+          \end{quote}
 
         \paragraph{Policy Updates.}
 
           With all variable occurences grounded to entity identifiers, a
-          policy update $U$ is of the form:
+          policy update $u$, as defined by language ${\cal L}$ is in the form:
 
           \begin{quote}
-            $U$: $a_{0}$ $\land$ ... $\land$ $a_{m}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$
-
-            where $m$, $n$ $\geq$ $0$
+            $u$ causes $a_{0}$ $\land$ ... $\land$ $a_{m}$ if $b_{0}$ $\land$ ... $\land$ $b_{n}$
           \end{quote}
 
           In language ${\cal L}^{*}$, a distinction must be made between the
-          atoms before $U$ is applied and the atoms after $U$ has been applied.
-          Furthermore, such distinction is also needed in the above rule to
-          state that all facts $a_{i}$ ($0$ $\leq$ $i$ $\leq$ $m$) holds in
+          atoms before $u$ is applied and the atoms after $u$ has been applied.
+          Furthermore, such distinction is also needed to represent a rule that
+          states that all facts $a_{i}$ ($0$ $\leq$ $i$ $\leq$ $m$) hold in
           the resulting state if all facts $b_{j}$ ($0$ $\leq$ $j$ $\leq$ $n$)
           hold in the current state.
 
-          \begin{definition}
-            A policy update rule $U$ applied to the current state $\sigma$ is
-            expressed as:
+          Formally, a policy update $u$ applied to the current state $\sigma$,
+          with a postcondition expression $a_{0}$ $\land$ ... $\land$ $a_{n}$
+          and a precondition expression $b_{0}$ $\land$ ... $\land$ $b_{m}$, 
+          is expressed in language ${\cal L}^{*}$ as follows:
 
-            \begin{quote}
-              $a_{0}$ $\land$ ... $\land$ $a_{m}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$
+          \begin{quote}
+            $a_{0}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$
 
-              where:
+            ...
 
-              \begin{itemize}
-                \item
-                  $a_{i}$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{\sigma'}$, $0$ $\leq$ $i$ $\leq$ $m$
-                \item
-                  $b_{j}$ = $[\lnot]$ $b$, $b$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $j$ $\leq$ $n$
-                \item
-                  $\sigma'$ = $Res$($U$, $\sigma$)
-              \end{itemize}
-            \end{quote}
-          \end{definition}
+            $a_{m}$ $\leftarrow$ $b_{0}$ $\land$ ... $\land$ $b_{n}$
 
-      \subsubsection{Additional Constraints}
+            where:
 
-        In addition to the above translations, there are a few other implicit
-        constraints implied by language ${\cal L}$ that needs to be explicitly
-        stated in language ${\cal L}^{*}$.
+            \begin{itemize}
+              \item
+                $a_{i}$ = $[\lnot]$ $a$, $a$ $\in$ ${\cal A}^{\sigma'}$, $0$ $\leq$ $i$ $\leq$ $m$
+              \item
+                $b_{j}$ = $[\lnot]$ $b$, $b$ $\in$ ${\cal A}^{\sigma}$, $0$ $\leq$ $j$ $\leq$ $n$
+              \item
+                $\sigma'$ = $result$($u$, $\sigma$)
+            \end{itemize}
+          \end{quote}
 
-        \paragraph{Inheritance Rules.}
+        \paragraph{Additional Constraints.}
 
-          All properties held by a group is inherited by all the members and
-          subsets of that group. This rule is easy to apply for subject group
-          entities. However, careful attention must be given to access right
-          and object groups. Subjects holding an access right for an object
-          group means that subject also holds that access right for all objects
-          in the object group. Similarly, a subject holding an access right
-          group for a particular object implies that the subject holds
-          all access rights contained in the access right group for that
-          object.
+          In addition to the above translations, there are a few other implicit
+          constraint rules implied by language ${\cal L}$ that needs to be
+          explicitly defined in language ${\cal L}^{*}$.
 
-          \begin{definition}
-            The following are the inheritance constrant rules to allow the
+          \subparagraph{Inheritance Rules.}
+
+            All properties held by a group is inherited by all the members and
+            subsets of that group. This rule is easy to apply for subject group
+            entities. However, careful attention must be given to access right
+            and object groups. A subject holding an access right for an object
+            group implies that that subject also holds that access right for
+            all objects in the object group. Similarly, a subject holding an
+            access right group for a particular object implies that the subject
+            holds all access rights contained in the access right group for
+            that object.
+
+            The following are the inheritance constriant rules to allow the
             properties held by a group to propagate to its members and
             subsets.
 
@@ -643,11 +721,18 @@ query holds(alice, read, file);
 
                 $\forall (s_{s}, s_{g}, a, o, \sigma)$ where:
 
-                $s_{s} \in {\cal A}^{\sigma}_{ss}$,
-                $s_{g} \in {\cal A}^{\sigma}_{sg}$,
-                $a \in {\cal A}^{\sigma}_{a}$,
-                $o \in {\cal A}^{\sigma}_{o}$,
-                $0 \leq \sigma \leq \Sigma$
+                \begin{itemize}
+                  \item
+                    $s_{s} \in {\cal A}^{\sigma}_{ss}$
+                  \item
+                    $s_{g} \in {\cal A}^{\sigma}_{sg}$
+                  \item
+                    $a \in {\cal A}^{\sigma}_{a}$
+                  \item
+                    $o \in {\cal A}^{\sigma}_{o}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
@@ -659,11 +744,18 @@ query holds(alice, read, file);
 
                 $\forall (s, a_{s}, a_{g}, o, \sigma)$ where:
 
-                $s \in {\cal A}^{\sigma}_{s}$,
-                $a_{s} \in {\cal A}^{\sigma}_{as}$,
-                $a_{g} \in {\cal A}^{\sigma}_{ag}$,
-                $o \in {\cal A}^{\sigma}_{o}$,
-                $0 \leq \sigma \leq \Sigma$
+                \begin{itemize}
+                  \item
+                    $s \in {\cal A}^{\sigma}_{s}$
+                  \item
+                    $a_{s} \in {\cal A}^{\sigma}_{as}$
+                  \item
+                    $a_{g} \in {\cal A}^{\sigma}_{ag}$
+                  \item
+                    $o \in {\cal A}^{\sigma}_{o}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
@@ -675,11 +767,18 @@ query holds(alice, read, file);
 
                 $\forall (s, a, o_{s}, o_{g}, \sigma)$ where:
 
-                $s \in {\cal A}^{\sigma}_{s}$,
-                $a \in {\cal A}^{\sigma}_{a}$,
-                $o_{s} \in {\cal A}^{\sigma}_{os}$,
-                $o_{g} \in {\cal A}^{\sigma}_{og}$,
-                $0 \leq \sigma \leq \Sigma$
+                \begin{itemize}
+                  \item
+                    $s \in {\cal A}^{\sigma}_{s}$
+                  \item
+                    $a \in {\cal A}^{\sigma}_{a}$
+                  \item
+                    $o_{s} \in {\cal A}^{\sigma}_{os}$
+                  \item
+                    $o_{g} \in {\cal A}^{\sigma}_{og}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
@@ -691,10 +790,16 @@ query holds(alice, read, file);
 
                 $\forall (s_{g1}, s_{g2}, a, o, \sigma)$ where:
 
-                $s_{g1}, s_{g2} \in {\cal A}^{\sigma}_{sg}$,
-                $a \in {\cal A}^{\sigma}_{a}$,
-                $o \in {\cal A}^{\sigma}_{o}$,
-                $0 \leq \sigma \leq \Sigma$
+                \begin{itemize}
+                  \item
+                    $s_{g1}, s_{g2} \in {\cal A}^{\sigma}_{sg}$
+                  \item
+                    $a \in {\cal A}^{\sigma}_{a}$
+                  \item
+                    $o \in {\cal A}^{\sigma}_{o}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
@@ -706,11 +811,17 @@ query holds(alice, read, file);
 
                 $\forall (s, a_{g1}, a_{g2}, o, \sigma)$ where:
 
-                $s \in {\cal A}^{\sigma}_{s}$,
-                $a_{g1}, a_{g2} \in {\cal A}^{\sigma}_{ag}$,
-                $o \in {\cal A}^{\sigma}_{o}$,
-                $0 \leq \sigma \leq \Sigma$
-              \item
+                \begin{itemize}
+                  \item
+                    $s \in {\cal A}^{\sigma}_{s}$
+                  \item
+                    $a_{g1}, a_{g2} \in {\cal A}^{\sigma}_{ag}$
+                  \item
+                    $o \in {\cal A}^{\sigma}_{o}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
+                \item
                 \begin{math}
                   \begin{aligned}[t]
                     holds(s, a, o_{g1}, \sigma) \leftarrow &
@@ -721,21 +832,24 @@ query holds(alice, read, file);
 
                 $\forall (s, a, o_{g1}, o_{g2}, \sigma)$ where:
 
-                $s \in {\cal A}^{\sigma}_{s}$,
-                $a \in {\cal A}^{\sigma}_{a}$,
-                $o_{g1}, o_{g2} \in {\cal A}^{\sigma}_{og}$,
-                $0 \leq \sigma \leq \Sigma$
+                \begin{itemize}
+                  \item
+                    $s \in {\cal A}^{\sigma}_{s}$
+                  \item
+                    $a \in {\cal A}^{\sigma}_{a}$
+                  \item
+                    $o_{g1}, o_{g2} \in {\cal A}^{\sigma}_{og}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
             \end{enumerate}
-          \end{definition}
 
-        \paragraph{Transitivity Rules.}
+          \subparagraph{Transitivity Rules.}
 
-          Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of $G'$
-          and $G'$ is a subset of $G''$, then $G$ must also be a subset of
-          $G''$.
-
-          \begin{definition}
-            A subset of a set is also a subset of its superset's superset.
+            Given three groups $G$, $G'$ and $G''$. If $G$ is a subset of $G'$
+            and $G'$ is a subset of $G''$, then $G$ must also be a subset of
+            $G''$. The following rules ensure that the transitive property of
+            subject, access right and object groups hold:
 
             \begin{enumerate}
               \item
@@ -749,8 +863,12 @@ query holds(alice, read, file);
 
                 $\forall (sg_{1}, sg_{2}, sg_{3}, \sigma)$ where:
 
-                $sg_{1}, sg_{2}, sg_{3} \in {\cal A}^{\sigma}_{sg}$,
-                $0 \leq \sigma \leq \Sigma$
+                \begin{itemize}
+                  \item
+                    $sg_{1}, sg_{2}, sg_{3} \in {\cal A}^{\sigma}_{sg}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
@@ -762,8 +880,12 @@ query holds(alice, read, file);
 
                 $\forall (ag_{1}, ag_{2}, ag_{3}, \sigma)$ where:
 
-                $ag_{1}, ag_{2}, ag_{3} \in {\cal A}^{\sigma}_{ag}$,
-                $0 \leq \sigma \leq \Sigma$
+                \begin{itemize}
+                  \item
+                    $ag_{1}, ag_{2}, ag_{3} \in {\cal A}^{\sigma}_{ag}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
               \item
                 \begin{math}
                   \begin{aligned}[t]
@@ -775,35 +897,71 @@ query holds(alice, read, file);
 
                 $\forall (og_{1}, og_{2}, og_{3}, \sigma)$ where:
 
-                $og_{1}, og_{2}, og_{3} \in {\cal A}^{\sigma}_{og}$,
-                $0 \leq \sigma \leq \Sigma$
-
+                \begin{itemize}
+                  \item
+                    $og_{1}, og_{2}, og_{3} \in {\cal A}^{\sigma}_{og}$
+                  \item
+                    $0 \leq \sigma \leq \Sigma$
+                \end{itemize}
             \end{enumerate}
-          \end{definition}
 
-        \paragraph{Inertial Rules.}
+          \subparagraph{Inertial Rules.}
 
-          Intuitively, all facts in the current state that are not affected by
-          a policy update should be carried over to the next state after the
-          update. In language ${\cal L}^{*}$, this rule must be explicitly
-          stated as a constraint.
+            Intuitively, all facts in the current state that are not affected
+            by a policy update should be carried over to the next state after
+            the update. In language ${\cal L}^{*}$, this rule must be
+            explicitly stated as a constraint.
 
-          \begin{definition}
-            A fact $F$ that holds in state $\sigma$ should also hold in state
-            $\sigma'$, given $\sigma'$ = $Res$($U$, $\sigma$), if fact $F$ is
-            not affected by the application of update $U$.
+            Formally, the intertial rules are expressed as follows:
 
-            \begin{enumerate}
-              \item
-                \begin{math} 
-                  \begin{aligned}
-                    x 
-                  \end{aligned}
-                \end{math}
-            \end{enumerate}
-          \end{definition}
+            \begin{quote}
+              $a'$ $\leftarrow$ $a$ $\land$ $not$ $\lnot$ $a'$
 
-    \subsection{Example}
+              $\lnot$ $a'$ $\leftarrow$ $\lnot$ $a$ $\land$ $not$ $a'$
+
+              $\forall$($a$,$u$) where:
+
+              \begin{itemize}
+                \item
+                  $u$ $\in$ $\psi$
+                \item
+                  $a$ $\in$ ${\cal A}^{\sigma}$
+                \item
+                  $a'$ $\in$ ${\cal A}^{\sigma'}$
+                \item
+                  $\sigma'$ = $result$($u$, $\sigma$)
+                \item
+                  $base$($a$) = $base$($a'$)
+              \end{itemize}
+            \end{quote}
+
+        \begin{example}
+          [Language ${\cal L}$ program in Example1 translated into
+          ${\cal L}^{*}$.]
+
+        \end{example}
+
+      \subsection{Evaluation}
+
+        \begin{definition}
+          Given a consistent domain description ${\cal D}_{\cal L}$, ground
+          query expression $\phi$ and a finite sequence list $\psi$, we say the
+          query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
+          in the sequence list $\phi$ has been applied:
+
+          \begin{quote}
+            ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\}
+          \end{quote}
+
+          \noindent if and only if for every atom $a$ in $\phi$, $a$ $\in$
+          ${\cal A}^{\Sigma}$, [$\lnot$] $a$ holds in every answer set of
+          $trans$(${\cal D}_{\cal L}$)
+        \end{definition}
+
+    \begin{example}
+      [a full example (translation + result)]
+
+    \end{example}
 
   \section{Semantic Properties}
 
