@@ -65,7 +65,7 @@ int list_add(list_type *list, void *data, unsigned int *index)
   // find the right node
   tmp_node = list->list;
   while (tmp_node != NULL) {
-    if (tmp_node->index - tmp_index > 1)
+    if ((!prv_node && tmp_node->index == 1) || tmp_node->index - tmp_index > 1)
       break;
     tmp_index = tmp_node->index;
     prv_node  = tmp_node;
@@ -75,16 +75,17 @@ int list_add(list_type *list, void *data, unsigned int *index)
   // see if the node is to be inserted at the
   // beginning or elsewhere
   if (prv_node != NULL) {
-    new_node->next = prv_node->next;
-    prv_node->next = new_node;
+    new_node->index = tmp_index + 1;
+    new_node->next  = prv_node->next;
+    prv_node->next  = new_node;
   }
   else {
-    list->list     = new_node;
-    new_node->next = tmp_node;
+    new_node->index = 0;
+    new_node->next  = tmp_node;
+    list->list      = new_node;
   }
 
   new_node->data  = data;
-  new_node->index = tmp_index;
   list->size      = list->size + 1;
   *index          = new_node->index;
 
