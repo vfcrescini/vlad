@@ -79,7 +79,7 @@ init : {
     int retval;
 
     if ((retval = kbase.init()) != VLAD_OK) {
-      fprintf(stderr, "failed to initialise knowledge base\n");
+      fprintf(stderr, "failed to initialise knowledge base: %d\n", retval);
       return retval;
     }
   }
@@ -97,14 +97,18 @@ body :
 ident_section : {
     int retval;
     /* after the ident section, we must close the symbol table */
-    if ((retval = kbase.close()) != VLAD_OK)
+    if ((retval = kbase.close()) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
       return retval;
+    }
   }
   | ident_stmt_list {
     int retval;
     /* after the ident section, we must close the symbol table */
-    if ((retval = kbase.close()) != VLAD_OK)
+    if ((retval = kbase.close()) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d\n", retval);
       return retval;
+    }
   }
   ;
 
@@ -208,7 +212,7 @@ sub_ident_list :
       fprintf(yyerr, "memory overflow\n");
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -226,7 +230,7 @@ sub_ident_list :
       fprintf(yyerr, "memory overflow\n");
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -244,10 +248,10 @@ obj_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $1);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -262,10 +266,10 @@ obj_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $3);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -283,10 +287,10 @@ acc_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $1);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -301,10 +305,10 @@ acc_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $3);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -322,10 +326,10 @@ sub_grp_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $1);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -340,10 +344,10 @@ sub_grp_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $3);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -361,10 +365,10 @@ obj_grp_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $1);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -379,10 +383,10 @@ obj_grp_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $3);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -400,10 +404,10 @@ acc_grp_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $1);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -418,10 +422,10 @@ acc_grp_ident_list :
       fprintf(yyerr, "identifier %s already declared\n", $3);
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
-      fprintf(yyerr, "memory overflow\n");
+      fprintf(yyerr, "memory overflow: %d\n", VLAD_MALLOCFAILED);
       return VLAD_MALLOCFAILED;
     default :
-      fprintf(yyerr, "internal error\n");
+      fprintf(yyerr, "internal error: %d\n", VLAD_FAILURE);
       return VLAD_FAILURE;
     }
   }
@@ -524,15 +528,74 @@ ground_exp :
 
 ground_boolean_atom :
   ground_atom {
-    $$ = $1;
 #ifdef DEBUG
+    char *n1;
+    char *n2;
+    char *n3;
+    unsigned char ty;
+    bool tr;
+    int retval;
+#endif
+
+    $$ = $1;
+
+#ifdef DEBUG
+    if ((retval = kbase.decode_atom(&n1, &n2, &n3, &ty, &tr, $1)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
+      return retval;
+    }
+
+    switch(ty) {
+      case VLAD_ATOM_CONST :
+        printf("%5d %s\n", $1, n1);
+        break;
+      case VLAD_ATOM_HOLDS :
+        printf("%5d holds(%s,%s,%s)\n", $1, n1, n2, n3);
+        break;
+      case VLAD_ATOM_MEMBER :
+        printf("%5d memb(%s,%s)\n", $1, n1, n2);
+        break;
+      case VLAD_ATOM_SUBSET :
+        printf("%5d subst(%s,%s)\n", $1, n1, n2);
+        break;
+    }
 #endif
   }
   | VLAD_SYM_NOT ground_atom {
-    int retval;
-    if ((retval = kbase.negate_atom($1, &$$)) != VLAD_OK)
-      return retval;
 #ifdef DEBUG
+    char *n1;
+    char *n2;
+    char *n3;
+    unsigned char ty;
+    bool tr;
+#endif
+    int retval;
+
+    if ((retval = kbase.negate_atom($2, &$$)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
+      return retval;
+    }
+
+#ifdef DEBUG
+    if ((retval = kbase.decode_atom(&n1, &n2, &n3, &ty, &tr, $$)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
+      return retval;
+    }
+
+    switch(ty) {
+      case VLAD_ATOM_CONST :
+        printf("%5d %s\n", $$, n1);
+        break;
+      case VLAD_ATOM_HOLDS :
+        printf("%5d holds(%s,%s,%s)\n", $$, n1, n2, n3);
+        break;
+      case VLAD_ATOM_MEMBER :
+        printf("%5d memb(%s,%s)\n", $$, n1, n2);
+        break;
+      case VLAD_ATOM_SUBSET :
+        printf("%5d subst(%s,%s)\n", $$, n1, n2);
+        break;
+    }
 #endif
   }
   ;
@@ -556,6 +619,7 @@ ground_holds_atom :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
     if ((retval = kbase.encode_atom($3, $5, $7, VLAD_ATOM_HOLDS, true, &$$)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
       return retval;
     }
   }
@@ -564,15 +628,19 @@ ground_holds_atom :
 ground_subst_atom :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
-    if ((retval = kbase.encode_atom($3, $5, NULL, VLAD_ATOM_SUBSET, true, &$$)) != VLAD_OK)
+    if ((retval = kbase.encode_atom($3, $5, NULL, VLAD_ATOM_SUBSET, true, &$$)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
       return retval;
+    }
   }
   ;
 ground_memb_atom :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
-    if ((retval = kbase.encode_atom($3, $5, NULL, VLAD_ATOM_MEMBER, true, &$$)) != VLAD_OK)
+    if ((retval = kbase.encode_atom($3, $5, NULL, VLAD_ATOM_MEMBER, true, &$$)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
       return retval;
+    }
   }
   ;
 
@@ -619,14 +687,17 @@ comp_memb_atom :
 logical_atom : 
   VLAD_SYM_TRUE {
     int retval;
-    if ((retval = kbase.encode_atom("true", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK)
+    if ((retval = kbase.encode_atom("true", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
       return retval;
+    }
   }
   | VLAD_SYM_FALSE {
     int retval;
-    if ((retval = kbase.encode_atom("false", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK)
+    if ((retval = kbase.encode_atom("false", NULL, NULL, VLAD_ATOM_CONST, true, &$$)) != VLAD_OK) {
+      fprintf(stderr, "internal error: %d", retval);
       return retval;
+    }
   }
   ;
-
 %%

@@ -1,3 +1,15 @@
+2003-03-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
+
+	  - negate_atom() now works properly.
+
+	  - Fixed decode_atom().
+
+	* parser/parser.y :
+
+	  - Added debug code to print out encoded and decoded ground atoms.
+
 2003-03-06  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
 	* common/vlad.h :
