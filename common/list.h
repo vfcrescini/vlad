@@ -31,12 +31,14 @@ class list
   public :
     list();
     list(bool u);
+    list(const char *n, bool u);
     virtual ~list();
     unsigned int length();
   private :
     unsigned int len;
     bool unique;
     list_node *head;
+    char *name;
   protected :
     /* add pointer to list, assumes memory has been allocated to it */
     int add(list_item *data);

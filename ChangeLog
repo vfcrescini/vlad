@@ -1,5 +1,13 @@
 2003-03-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
 
+	* common/list.cpp :
+	* common/list.h :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+
+	  - Added provisions for lists to have a name, entirely optional
+	    but useful for debugging.
+
 	* kb/symtab.cpp :
 
 	  - Fixed bug that allows identifiers of the same name to be entered.

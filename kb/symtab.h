@@ -11,7 +11,7 @@
 class identlist : public list
 {
   public :
-    identlist(unsigned char t);
+    identlist(const char *n, unsigned char t);
     ~identlist();
     /* add an identifier in the list */
     int add(const char *n);
