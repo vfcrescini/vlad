@@ -1,3 +1,9 @@
+2005-04-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/kb.cpp :
+
+	  - Small typo fix in compute_generate(), in the inheritance rules.
+
 2005-04-06  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* VERSION :

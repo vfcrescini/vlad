@@ -640,7 +640,7 @@ int kb::compute_generate(FILE *f)
             fprintf(f, " %s\n    ", VLAD_STR_AND);
             print_atom(compute_subset(i, true, VLAD_IDENT_SUBJECT, i_grp1, i_grp2), f);
             fprintf(f, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
-            print_atom(compute_holds(i, true, i_grp1 + s_len, i_acc, i_obj), f); 
+            print_atom(compute_holds(i, false, i_grp1 + s_len, i_acc, i_obj), f); 
             fprintf(f, "\n");
 
             fprintf(f, "  ");
