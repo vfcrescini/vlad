@@ -2111,7 +2111,7 @@
         simplified by translating language ${\cal L}$ programs directly into
         normal logic programs.
 
-        \paragraph{Removal of Classical Negation.}
+        \paragraph{Removing Classical Negation.}
 
           In order to remove classical negation from facts of language
           ${\cal L}$, each classically negated fact $\lnot$$\rho$ is replaced
@@ -2226,13 +2226,343 @@
         \paragraph{Generating the Normal Logic Program from the Policy Base.}
 
           With the language ${\cal L}$ policy elements stored into the storage
-          structure (see Appendix \ref{app-store}), a normal logic program can
-          then be generated for evaluation. Using the translation methods
-          described in Section \ref{subsec-semantics} and the method for
-          eliminating classical negation, each initial state expression,
-          constraint rule and policy update becomes a set of simple logical
-          rules. By applying the $Encode$ function above for each fact in each
-          of these rules, a normal logic program is generated.
+          structures (see Appendix \ref{app-store}), a normal logic program can
+          then be generated for evaluation. The following algorithms generate
+          a normal logic program, given the Symbol Table $Ts$, Initial
+          State Facts Table $Ti$, Constraint Rules Table $Tc$, Policy
+          Update Definition Table $Tu$, and Policy Update Sequence Table
+          $Tq$:
+
+          \begin{vverbatim}
+FUNCTION GenNLP(Ts, Ti, Tc, Tu, Tq)
+  TransInitStateRules(Ti)
+  TransConstRules(Tc, Tq)
+  TransUpdateRules(Tu, Tq)
+  GenInherRules(Ts, Tq)
+  GenTransRules(Ts, Tq)
+  GenInertRules(Ts, Tq)
+  GenIdentRules(Ts, Tq)
+  GenConsiRules(Ts, Tq)
+ENDFUNCTION
+          \end{vverbatim}
+
+          The first three $Trans*()$ functions above perform a direct
+          translation of language ${\cal L}$ statements to normal logic
+          program. The remaining five $Gen*()$ functions generate additional
+          constraint rules. In the following algorithms, we use the following
+          rule constructor functions to generate normal logic program rules:
+
+          \begin{itemize}
+            \item
+              $RuleBegin()$ marks the beginning of a new rule.
+            \item
+              $RuleHead(\alpha, \tau)$ generates the consequent of the rule.
+              $\alpha$ is a numeric representation of an atom (e.g. returned by
+              the $Encode()$ function) and $\tau$ is either $T$ or $F$,
+              indicating whether the atom is positive or negative
+              (negation-as-failure).
+            \item
+              $RuleBody(\alpha, \tau)$ generates the premise of the rule. The
+              parameters of this function is the same as that of the
+              function $RuleHead()$.
+            \item
+              $RuleEnd()$ marks the end of a rule.
+          \end{itemize}
+
+          \begin{vverbatim}
+FUNCTION TransInitStateRules(Ti)
+  FOR i = 0 to Len(Ti) DO
+    a = Encode(Ti[i].atm, 0, Ti[i].tr)
+    RuleBegin()
+    RuleHead(a, T)
+    RuleBody(T, T)
+    RuleEnd()
+  ENDDO
+
+ENDFUNCTION
+          \end{vverbatim}
+
+          \begin{vverbatim}
+FUNCTION TransConstRules(Tc, Tq)
+  FOR i = 0 to Len(Tq) DO
+    FOR j = 0 to Len(Tc) DO
+      RuleBegin()
+      FOR k = 0 to Len(Tc[j].exp) DO
+        a = Encode(Tc[j].exp[k].atm,
+                   i,
+                   Tc[j].exp[k].tr)
+        RuleHead(a)
+      ENDDO 
+      FOR k = 0 to Len(Tc[j].pcond) DO
+        a = Encode(Tc[j].pcond[k].atm,
+                   i,
+                   Tc[j].pcond[k].tr)
+        RuleHead(a, T)
+      ENDDO
+      FOR k = 0 to Len(Tc[j].ncond) DO
+        a = Encode(Tc[j].ncond[k].atm,
+                   i,
+                   Tc[j].ncond[k].tr)
+        RuleHead(a, F)
+      ENDDO
+      RuleEnd()
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{vverbatim}
+
+          \begin{vverbatim}
+FUNCTION TransUpdateRules(Tu, Tq)
+  FOR i = 0 to Len(Tq) DO
+    FOR j = 0 to Len(Tu) DO
+      GroundUpdate(Tu[j], Tq)
+      RuleBegin()
+      FOR k = 0 to Len(Tu[j].post) DO
+        a = Encode(Tu[j].post[k].atm,
+                   i + 1,
+                   Tu[j].post[k].tr)
+        RuleHead(a, T)
+      ENDDO
+      FOR k = 0 to Len(Tu[j].pre) DO
+        a = Encode(Tu[j].pre[k].atm,
+                   i,
+                   Tu[j].pre[k].tr)
+        RuleBody(a, T)
+      ENDDO
+      RuleEnd()
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{vverbatim}
+
+          The function $GroundUpdate()$ above simply replaces all occurences
+          of variables in all the facts in the given policy update statement
+          with the corresponding entities in the given policy update sequence
+          table.
+
+          \begin{vverbatim}
+FUNCTION GenInherRules(Ts, Tq)
+  GenSubSubstInherRules(Ts, Tq)
+  GenAccSubstInherRules(Ts, Tq)
+  GenObjSubstInherRules(Ts, Tq)
+  GenSubMembInherRules(Ts, Tq)
+  GenAccMembInherRules(Ts, Tq)
+  GenObjMembInherRules(Ts, Tq)
+ENDFUNCTION
+          \end{vverbatim}
+
+          \begin{vverbatim}
+FUNCTION GenSubSubstInherRules(Ts, Tq)
+  FOR i = 0 to Len(Tq) DO
+    FOR j = 0 to Len(Ts.sg) DO
+      FOR k = 0 to Len(Ts.sg) DO
+        IF Ts.sg[j] != Ts.sg[k] THEN
+          FOR l = 0 to Len(Ts.a) DO
+            FOR m = 0 to Len(Ts.o) DO
+              RuleBegin()
+              ahlds.sub = Ts.sg[j] 
+              ahlds.acc = Ts.ag[l]
+              ahlds.obj = Ts.og[m]
+              a = Encode(ahlds, i, T) 
+              RuleHead(a, T)
+              ahlds.sub = Ts.sg[k]
+              ahlds.acc = Ts.ag[l]
+              ahlds.obj = Ts.og[m]
+              a = Encode(ahlds, i, T) 
+              RuleBody(a, T)
+              asubst.grp1 = Ts.sg[j]
+              asubst.grp2 = Ts.sg[k]
+              a = Encode(asubst, i, T)
+              RuleBody(a, T)
+              ahlds.sub = Ts.sg[j]
+              ahlds.acc = Ts.ag[l]
+              ahlds.obj = Ts.og[m]
+              a = Encode(ahlds, i, F)
+              RuleBody(a, F)
+              RuleEnd()
+
+              RuleBegin()
+              ahlds.sub = Ts.sg[j]
+              ahlds.acc = Ts.ag[l]
+              ahlds.obj = Ts.og[m]
+              a = Encode(ahlds, i, F) 
+              RuleHead(a, T)
+              ahlds.sub = Ts.sg[k]
+              ahlds.acc = Ts.ag[l]
+              ahlds.obj = Ts.og[m]
+              a = Encode(ahlds, i, F)
+              RuleBody(a, T)
+              asubst.grp1 = Ts.sg[j]
+              asubst.grp2 = Ts.sg[k]
+              a = Encode(asubst, i, T)
+              RuleBody(a, T)
+              RuleEnd()
+            ENDDO
+          ENDDO
+        ENDIF
+      ENDDO
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{vverbatim}
+
+          The function $GenSubSubstInherRules()$ above generates the
+          subject subset inheritance rules. Similar techniques are used for
+          the generation of other subset and membership inheritance rules and
+          are therefore omitted.
+
+          The function below generates all the transitivity rules. As similar
+          techniques are used to generate the subject, access right and and
+          object transitivity rules, only the function that generates the
+          subject transitivity rules is shown.
+
+          \begin{vverbatim}
+FUNCTION GenTransRules(Ts, Tq)
+  GenSubTransRules(Ts, Tq)
+  GenAccTransRules(Ts, Tq)
+  GenObjTransRules(Ts, Tq)
+ENDFUNCTION
+          \end{vverbatim}
+
+          \begin{vverbatim}
+FUNCTION GenSubTransRules(Ts, Tq)
+  FOR i = 0 to Len(Tq) DO
+    FOR j = 0 to Len(Ts.sg) DO
+      FOR k = 0 to Len(Ts.sg) DO
+        FOR l = 0 to Len(Ts.sg) DO
+          IF j != k AND
+             j != l AND
+             k != l THEN
+            RuleBegin()
+            asubst.grp1 = Ts.sg[j]
+            asubst.grp2 = Ts.sg[l]
+            a = Encode(asubst, i, T)
+            RuleHead(a, T)
+            asubst.grp1 = Ts.sg[j]
+            asubst.grp2 = Ts.sg[k]
+            a = Encode(asubst, i, T)
+            RuleBody(a, T)
+            asubst.grp1 = Ts.sg[k]
+            asubst.grp2 = Ts.sg[l]
+            a = Encode(asubst, i, T)
+            RuleBody(a, T)
+            RuleEnd()
+          ENDIF
+        ENDDO
+      ENDDO
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{vverbatim}
+
+          Inertial rules are generated by the function below. As the algorithm
+          to generate holds, membership and subset inertial rules are similar
+          to each other, only the function that generates holds inertial rules
+          is shown.
+
+          \begin{vverbatim}
+FUNCTION GenInertRules(Ts, Tq)
+  GenHldsInertRules(Ts, Tq)
+  GenMembInertRules(Ts, Tq)
+  GenSubsInertRules(Ts, Tq)
+ENDFUNCTION
+          \end{vverbatim}
+
+          \begin{vverbatim}
+FUNCTION GenHldsInertRules(Ts, Tq)
+  FOR i = 0 to Len(Tq) DO
+    FOR j = 0 to Len(Ts.s) DO
+      FOR k = 0 to Len(Ts.a) DO
+        FOR l = 0 to Len(Ts.o) DO
+          ahlds.sub = Ts.s[j]
+          ahlds.acc = Ts.a[k]
+          ahlds.obj = Ts.o[l]
+
+          RuleBegin()
+          a = Encode(ahlds, i + 1, T)
+          RuleHead(a, T)
+          a = Encode(ahlds, i, T)
+          RuleBody(a, T)
+          a = Encode(ahlds, i + 1, F)
+          RuleBody(a, F)
+          RuleEnd()
+          
+          RuleBegin()
+          a = Encode(ahlds, i + 1, F)
+          RuleHead(a, T)
+          a = Encode(ahlds, i, F)
+          RuleBody(a, T)
+          a = Encode(ahlds, i + 1, T)
+          RuleBody(a, F)
+          RuleEnd()
+        ENDDO
+      ENDDO 
+    ENDDO 
+  ENDDO
+ENDFUNCTION
+          \end{vverbatim}
+
+          The function $GenIdentRules()$ shown below generates the identity
+          rules. As with the other rule types, only the function that generates
+          the subject identity rules is shown.
+
+          \begin{vverbatim}
+FUNCTION GenIdentRules(Ts, Tq)
+  GenSubIdentRules(Ts, Tq)
+  GenAccIdentRules(Ts, Tq)
+  GenObjIdentRules(Ts, Tq)
+ENDFUNCTION
+          \end{vverbatim}
+
+          \begin{vverbatim}
+FUNCTION GenSubIdentRules(Ts, Tq)
+  FOR i = 0 to Len(Tq) DO
+    FOR j = 0 to Len(Ts.sg) DO
+      asubst.grp1 = Ts.sg[j]
+      asubst.grp2 = Ts.sg[j]
+      a = Encode(asubst, i, T)
+      RuleBegin()
+      RuleHead(a, T)
+      RuleBody(T, T)
+      RuleEnd()
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{vverbatim}
+
+          The last two functions below shows the algorithm to generate the
+          consistency rules.
+
+          \begin{vverbatim}
+FUNCTION GenConsiRules(Ts, Tq)
+  GenHldsConsiRules(Ts, Tq)
+  GenMembConsiRules(Ts, Tq)
+  GenSubsConsiRules(Ts, Tq)
+ENDFUNCTION
+          \end{vverbatim}
+
+          \begin{vverbatim}
+FUNCTION GenHldsConsiRules(Ts, Tq)
+  FOR i = 0 to Len(Tq) DO
+    FOR j = 0 to Len(Ts.s) DO
+      FOR k = 0 to Len(Ts.a) DO
+        FOR l = 0 to Len(Ts.o) DO
+          ahlds.sub = Ts.s[j]
+          ahlds.acc = Ts.a[k]
+          ahlds.obj = Ts.o[l]
+          RuleBegin()
+          RuleHead(F, T)
+          a = Encode(ahlds, i, T)
+          RuleBody(a, T)
+          a = Encode(ahlds, i, F)
+          RuleBody(a, T)
+          RuleEnd()
+        ENDDO
+      ENDDO 
+    ENDDO 
+  ENDDO
+ENDFUNCTION
+          \end{vverbatim}
 
       \subsubsection{Query Evaluation.}
 
