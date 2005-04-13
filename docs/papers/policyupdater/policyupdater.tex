@@ -2271,7 +2271,7 @@ ENDFUNCTION
 
           \begin{vverbatim}
 FUNCTION TransInitStateRules(Ti)
-  FOR i = 0 to Len(Ti) DO
+  FOR i = 0 TO Len(Ti) DO
     a = Encode(Ti[i].atm, 0, Ti[i].tr)
     RuleBegin()
     RuleHead(a, T)
@@ -2284,22 +2284,22 @@ ENDFUNCTION
 
           \begin{vverbatim}
 FUNCTION TransConstRules(Tc, Tq)
-  FOR i = 0 to Len(Tq) DO
-    FOR j = 0 to Len(Tc) DO
+  FOR i = 0 TO Len(Tq) DO
+    FOR j = 0 TO Len(Tc) DO
       RuleBegin()
-      FOR k = 0 to Len(Tc[j].exp) DO
+      FOR k = 0 TO Len(Tc[j].exp) DO
         a = Encode(Tc[j].exp[k].atm,
                    i,
                    Tc[j].exp[k].tr)
         RuleHead(a)
       ENDDO 
-      FOR k = 0 to Len(Tc[j].pcond) DO
+      FOR k = 0 TO Len(Tc[j].pcond) DO
         a = Encode(Tc[j].pcond[k].atm,
                    i,
                    Tc[j].pcond[k].tr)
         RuleHead(a, T)
       ENDDO
-      FOR k = 0 to Len(Tc[j].ncond) DO
+      FOR k = 0 TO Len(Tc[j].ncond) DO
         a = Encode(Tc[j].ncond[k].atm,
                    i,
                    Tc[j].ncond[k].tr)
@@ -2313,17 +2313,17 @@ ENDFUNCTION
 
           \begin{vverbatim}
 FUNCTION TransUpdateRules(Tu, Tq)
-  FOR i = 0 to Len(Tq) DO
-    FOR j = 0 to Len(Tu) DO
+  FOR i = 0 TO Len(Tq) DO
+    FOR j = 0 TO Len(Tu) DO
       GroundUpdate(Tu[j], Tq)
       RuleBegin()
-      FOR k = 0 to Len(Tu[j].post) DO
+      FOR k = 0 TO Len(Tu[j].post) DO
         a = Encode(Tu[j].post[k].atm,
                    i + 1,
                    Tu[j].post[k].tr)
         RuleHead(a, T)
       ENDDO
-      FOR k = 0 to Len(Tu[j].pre) DO
+      FOR k = 0 TO Len(Tu[j].pre) DO
         a = Encode(Tu[j].pre[k].atm,
                    i,
                    Tu[j].pre[k].tr)
@@ -2353,12 +2353,12 @@ ENDFUNCTION
 
           \begin{vverbatim}
 FUNCTION GenSubSubstInherRules(Ts, Tq)
-  FOR i = 0 to Len(Tq) DO
-    FOR j = 0 to Len(Ts.sg) DO
-      FOR k = 0 to Len(Ts.sg) DO
+  FOR i = 0 TO Len(Tq) DO
+    FOR j = 0 TO Len(Ts.sg) DO
+      FOR k = 0 TO Len(Ts.sg) DO
         IF Ts.sg[j] != Ts.sg[k] THEN
-          FOR l = 0 to Len(Ts.a) DO
-            FOR m = 0 to Len(Ts.o) DO
+          FOR l = 0 TO Len(Ts.a) DO
+            FOR m = 0 TO Len(Ts.o) DO
               RuleBegin()
               ahlds.sub = Ts.sg[j] 
               ahlds.acc = Ts.ag[l]
@@ -2426,10 +2426,10 @@ ENDFUNCTION
 
           \begin{vverbatim}
 FUNCTION GenSubTransRules(Ts, Tq)
-  FOR i = 0 to Len(Tq) DO
-    FOR j = 0 to Len(Ts.sg) DO
-      FOR k = 0 to Len(Ts.sg) DO
-        FOR l = 0 to Len(Ts.sg) DO
+  FOR i = 0 TO Len(Tq) DO
+    FOR j = 0 TO Len(Ts.sg) DO
+      FOR k = 0 TO Len(Ts.sg) DO
+        FOR l = 0 TO Len(Ts.sg) DO
           IF j != k AND
              j != l AND
              k != l THEN
@@ -2470,10 +2470,10 @@ ENDFUNCTION
 
           \begin{vverbatim}
 FUNCTION GenHldsInertRules(Ts, Tq)
-  FOR i = 0 to Len(Tq) DO
-    FOR j = 0 to Len(Ts.s) DO
-      FOR k = 0 to Len(Ts.a) DO
-        FOR l = 0 to Len(Ts.o) DO
+  FOR i = 0 TO Len(Tq) DO
+    FOR j = 0 TO Len(Ts.s) DO
+      FOR k = 0 TO Len(Ts.a) DO
+        FOR l = 0 TO Len(Ts.o) DO
           ahlds.sub = Ts.s[j]
           ahlds.acc = Ts.a[k]
           ahlds.obj = Ts.o[l]
@@ -2516,8 +2516,8 @@ ENDFUNCTION
 
           \begin{vverbatim}
 FUNCTION GenSubIdentRules(Ts, Tq)
-  FOR i = 0 to Len(Tq) DO
-    FOR j = 0 to Len(Ts.sg) DO
+  FOR i = 0 TO Len(Tq) DO
+    FOR j = 0 TO Len(Ts.sg) DO
       asubst.grp1 = Ts.sg[j]
       asubst.grp2 = Ts.sg[j]
       a = Encode(asubst, i, T)
@@ -2543,10 +2543,10 @@ ENDFUNCTION
 
           \begin{vverbatim}
 FUNCTION GenHldsConsiRules(Ts, Tq)
-  FOR i = 0 to Len(Tq) DO
-    FOR j = 0 to Len(Ts.s) DO
-      FOR k = 0 to Len(Ts.a) DO
-        FOR l = 0 to Len(Ts.o) DO
+  FOR i = 0 TO Len(Tq) DO
+    FOR j = 0 TO Len(Ts.s) DO
+      FOR k = 0 TO Len(Ts.a) DO
+        FOR l = 0 TO Len(Ts.o) DO
           ahlds.sub = Ts.s[j]
           ahlds.acc = Ts.a[k]
           ahlds.obj = Ts.o[l]
