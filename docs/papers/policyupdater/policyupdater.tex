@@ -2356,7 +2356,7 @@ FUNCTION GenSubSubstInherRules(Ts, Tq)
   FOR i = 0 TO Len(Tq) DO
     FOR j = 0 TO Len(Ts.sg) DO
       FOR k = 0 TO Len(Ts.sg) DO
-        IF Ts.sg[j] != Ts.sg[k] THEN
+        IF NOT Ts.sg[j] = Ts.sg[k] THEN
           FOR l = 0 TO Len(Ts.a) DO
             FOR m = 0 TO Len(Ts.o) DO
               RuleBegin()
@@ -2430,9 +2430,9 @@ FUNCTION GenSubTransRules(Ts, Tq)
     FOR j = 0 TO Len(Ts.sg) DO
       FOR k = 0 TO Len(Ts.sg) DO
         FOR l = 0 TO Len(Ts.sg) DO
-          IF j != k AND
-             j != l AND
-             k != l THEN
+          IF NOT j = k AND
+             NOT j = l AND
+             NOT k = l THEN
             RuleBegin()
             asubst.grp1 = Ts.sg[j]
             asubst.grp2 = Ts.sg[l]
