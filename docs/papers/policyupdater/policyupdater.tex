@@ -2582,7 +2582,59 @@ ENDFUNCTION
         holds in every answer set, then it is evaluated to be false. A fact
         or its negation that does not hold in every answer set is neither true
         nor false, in which case the system concludes that the truth value of
-        the fact is unknown.
+        the fact is unknown. The algorithm below shows how, given a state $S$,
+        a query expression $Qe$ can be evaluated against a list of stable
+        models $SM$, where each element in $SM$ is a list of facts.
+
+        \begin{vverbatim}
+FUNCTION EvaluateExp(Qe, SM, S)
+  result = T
+  FOR i = 0 TO Len(Qe) DO
+    rv = EvaluateFact(Qe[i], SM, S)
+    IF rv == F THEN
+      RETURN F
+    ELSE IF rv == U THEN
+      result = U
+    ENDIF
+  ENDDO
+  RETURN result
+ENDFUNCTION
+        \end{vverbatim}
+
+        The algorithm above attempts to evaluate each fact in the query
+        expression. The function $EvaluateFact()$ shown below evaluates a
+        single fact $Qf$ in state $S$, against a list of stable models $SM$.
+
+        \begin{vverbatim}
+FUNCTION EvaluateFact(Qf, SM, S)
+  a = Encode(Qf.atm, S, Qf.tr)
+  IF IsFactIn(SM, a) THEN
+    RETURN T
+  ELSE
+    a = Encode(Qf.atm, S, NOT Qf.tr)
+    IF IsFactIn(a, SM) THEN
+      RETURN F
+    ELSE
+      RETURN U
+    ENDIF
+  ENDIF
+ENDFUNCTION
+        \end{vverbatim}
+
+        The function $IsFactIn()$ below simply returns a boolean value to
+        indicate whether the given fact index $Fi$ (as returned by the
+        $Encode()$ function) is present in every stable model in $SM$.
+
+        \begin{vverbatim}
+FUNCTION IsFactIn(Fi, SM)
+  FOR i = 0 TO Len(SM) DO
+    IF NOT IsIn(SM[i], Fi) THEN
+      RETURN F
+    ENDIF
+  ENDDO
+  RETURN T
+ENDFUNCTION
+        \end{vverbatim}
 
   \section{Case Study: Web Server Application}
     \label{sec-case}
