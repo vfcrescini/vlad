@@ -5,7 +5,7 @@ Build/Use Instructions
 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2003 Jul 16
+Updated: 2005 Apr 15
 -------------------------------------------------------------------------------
 
 REQUIREMENTS :
@@ -39,6 +39,11 @@ BUILD INSTRUCTIONS :
       --enable-debug
 
         Compile with -g and enable printing of debug messages.
+
+      --enable-time
+
+        Enables the -t timer option that dumps the elapsed time in seconds of
+        the compute and query operations.
 
       --enable-static
 

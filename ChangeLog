@@ -1,3 +1,19 @@
+2005-04-15  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* main/operation.y :
+	* main/parser.h :
+	* main/vlad.cpp :
+
+	  - Added a -t option in the main program to measure the time it takes
+	    for the compute and query operations to complete.
+
+	* README :
+	* configure :
+	* configure.ac :
+	* lib/config.h.in :
+
+	  - Added an --enable-timer option to enable the timer function.
+
 2005-04-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/kb.cpp :

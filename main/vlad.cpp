@@ -29,21 +29,29 @@
 #include <vlad/vlad.h>
 #include "parser.h"
 
+void print_usage(FILE *a_stream);
+
 int main(int argc, char *argv[])
 {
   int retval;
-#ifdef VLAD_SMODELS
-  char *arglist = "vhe";
-  char *helpstring = "-v|-h|[-e] program-filename [operation-filename]";
-#else
-  char *arglist = "vh";
-  char *helpstring = "-v|-h|program-filename [operation-filename]";
-#endif
+  char arglist[5];
   int curr_opt;
   FILE *programin = NULL;
   FILE *operationin = NULL;
   kb *kbase = NULL;
   unsigned char mode = VLAD_MODE_GENERATE;
+#ifdef VLAD_TIMER
+  unsigned char timer = 0;
+#endif
+
+  /* compose arglist */
+  strcpy(arglist, "vh");
+#ifdef VLAD_SMODELS
+  strcat(arglist, "e");
+#endif
+#ifdef VLAD_TIMER
+  strcat(arglist, "t");
+#endif
 
   opterr = 0;
 
@@ -55,27 +63,32 @@ int main(int argc, char *argv[])
         fprintf(stdout, "by Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>\n");
         return VLAD_OK;
       case 'h' :
-        fprintf(stdout, "usage: %s %s\n", argv[0], helpstring);
+        print_usage(stdout);
         return VLAD_OK;;
 #ifdef VLAD_SMODELS
       case 'e' :
 	mode = VLAD_MODE_EVALUATE;
 	break;
 #endif
+#ifdef VLAD_TIMER
+      case 't' :
+        timer = 1;
+        break;
+#endif
       default :
-        fprintf(stderr, "usage: %s %s\n", argv[0], helpstring);
+        print_usage(stderr);
         return VLAD_FAILURE;
     }
   }
 
   /* get program file details */
   if (argv[optind] == NULL || !strcmp(argv[optind], "-")) {
-    fprintf(stderr, "usage: %s %s\n", argv[0], helpstring);
+    print_usage(stderr);
     return VLAD_FAILURE;
   }
 
   if ((programin = fopen(argv[optind], "r")) == NULL) {
-    fprintf(stderr, "Unable to open for reading: %s\n", argv[optind]);
+    fprintf(stderr, "unable to open for reading: %s\n", argv[optind]);
     return VLAD_OPENFAILED;
   }
 
@@ -99,7 +112,22 @@ int main(int argc, char *argv[])
   /* first initialise the parsers */
   if ((retval = program_init(programin, stdout, stderr, kbase)) != VLAD_OK)
     return retval;
-  if ((retval = operation_init(operationin, stdout, stderr, kbase, mode)) != VLAD_OK)
+
+#ifdef VLAD_TIMER
+  retval = operation_init(operationin,
+                          stdout,
+                          stderr,
+                          kbase,
+                          mode,
+                          timer);
+#else
+  retval = operation_init(operationin,
+                          stdout,
+                          stderr,
+                          kbase,
+                          mode);
+#endif
+  if (retval != VLAD_OK)
     return retval;
 
   /* then parse */
@@ -114,4 +142,20 @@ int main(int argc, char *argv[])
   delete kbase;
 
   return VLAD_OK;
+}
+
+void print_usage(FILE *a_stream)
+{
+  if (a_stream == NULL)
+    return;
+
+  fprintf(a_stream, "usage: vlad [options] program-filename [operation-filename]\n");
+  fprintf(a_stream, "  -v     display version number\n");
+  fprintf(a_stream, "  -h     display this message\n");
+#ifdef VLAD_SMODELS
+  fprintf(a_stream, "  -e     if configured with --with-smodels, evaluate queries\n");
+#endif
+#ifdef VLAD_TIMER
+  fprintf(a_stream, "  -t     if configured with --enable-timer, display computation time\n");
+#endif
 }
