@@ -1,5 +1,12 @@
 2005-04-15  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* VERSION :
+	* configure :
+	* configure.ac :
+
+	  - Incremented version to 1.0.4.
+
+
 	* main/operation.y :
 	* main/parser.h :
 	* main/vlad.cpp :
