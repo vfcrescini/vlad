@@ -27,7 +27,20 @@
 
 /* parsers must first be initialised to be used */
 int program_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb);
-int operation_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m);
+#ifdef VLAD_TIMER
+int operation_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   kb *a_kb,
+                   unsigned char a_m,
+                   unsigned char a_t);
+#else
+int operation_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   kb *a_kb,
+                   unsigned char a_m);
+#endif
 
 /* it is important that these functions are used instead of the externally
  * available yyparse() functions */

@@ -28,6 +28,12 @@
 #include <vlad/vlad.h>
 #include <vlad/kb.h>
 
+#ifdef VLAD_TIMER
+  #include <sys/time.h>
+#endif
+
+#define VLAD_TIME_DIFF(X,Y) ((Y).tv_sec + ((Y).tv_usec / 1000000.0)) - ((X).tv_sec + ((X).tv_usec / 1000000.0))
+
 /* vars defined from the scanner */
 extern int operationlineno;
 
@@ -37,6 +43,9 @@ static FILE *fout = NULL;
 static FILE *ferr = NULL;
 static kb *kbase = NULL;
 static unsigned char mode = VLAD_MODE_GENERATE;
+#ifdef VLAD_TIMER
+static unsigned char timer = 0;
+#endif
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
 
@@ -50,7 +59,20 @@ int operationerror(char *error);
 int operationlex();
 
 /* available functions */
-int operation_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m);
+#ifdef VLAD_TIMER
+int operation_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   kb *a_kb,
+                   unsigned char a_m,
+                   unsigned char a_t);
+#else
+int operation_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   kb *a_kb,
+                   unsigned char a_m);
+#endif
 int operation_parse();
 
 #ifdef YYBYACC
@@ -132,10 +154,19 @@ query_stmt :
 #ifdef VLAD_SMODELS
     unsigned char res;
 #endif
+#ifdef VLAD_TIMER
+    struct timeval tv1;
+    struct timeval tv2;
+#endif
+
 #ifdef VLAD_DEBUG
     char q[VLAD_MAXLEN_STR];
 #endif
 
+#ifdef VLAD_TIMER
+    if (timer)
+      gettimeofday(&tv1, NULL);
+#endif
   switch(mode) {
     case VLAD_MODE_GENERATE : {
       switch(retval = kbase->query_generate($2, fout)) {
@@ -183,6 +214,14 @@ query_stmt :
     fprintf(ferr, "  expression: %s\n", q);
 #endif
 
+#ifdef VLAD_TIMER
+    if (timer) {
+      if (gettimeofday(&tv2, NULL))
+        return VLAD_FAILURE;
+      fprintf(ferr, "%f\n", VLAD_TIME_DIFF(tv1, tv2));
+    }
+#endif
+
     /* cleanup */
     delete $2;
   }
@@ -190,6 +229,15 @@ query_stmt :
 
 compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
     int retval;
+#ifdef VLAD_TIMER
+    struct timeval tv1;
+    struct timeval tv2;
+#endif
+
+#ifdef VLAD_TIMER
+    if (timer)
+      gettimeofday(&tv1, NULL);
+#endif
 
     switch(mode) {
       case VLAD_MODE_GENERATE :
@@ -223,6 +271,13 @@ compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
         operationerror("invalid mode");
         return VLAD_FAILURE;
     }
+#ifdef VLAD_TIMER
+    if (timer) {
+      if (gettimeofday(&tv2, NULL))
+        return VLAD_FAILURE;
+      fprintf(ferr, "%f\n", VLAD_TIME_DIFF(tv1, tv2));
+    }
+#endif
   }
   ;
 
@@ -458,7 +513,21 @@ int operationerror(char *error)
   return 0;
 }
 
-int operation_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char a_m)
+
+#ifdef VLAD_TIMER
+int operation_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   kb *a_kb,
+                   unsigned char a_m,
+                   unsigned char a_t)
+#else
+int operation_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   kb *a_kb,
+                   unsigned char a_m)
+#endif
 {
   int retval;
 
@@ -476,6 +545,9 @@ int operation_init(FILE *a_in, FILE *a_out, FILE *a_err, kb *a_kb, unsigned char
   ferr = a_err;
   kbase = a_kb;
   mode = a_m;
+#ifdef VLAD_TIMER
+  timer = a_t;
+#endif
   initialised = true;
 
   return VLAD_OK;
