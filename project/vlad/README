@@ -87,7 +87,7 @@ USAGE :
 
   The executable binary will be in dist/bin/vlad. Usage is as follows:
 
-    ./dist/bin/vlad -h|-v|[-e] program-filename [query-filename]
+    ./dist/bin/vlad -h|-v|[-e][-t] program-filename [query-filename]
 
   where:
 
@@ -105,6 +105,10 @@ USAGE :
              or false.
 
   Without the query-filename parameter, vLad will read the queries from stdin.
+
+  The -t option will cause the program to dump the total computation time 
+  (in seconds) used by the compute and query directives. The time values are
+  written to stderr. 
 
   To use the example program in the samples directory :
 
