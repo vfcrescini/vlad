@@ -2635,6 +2635,89 @@ FUNCTION IsFactIn(Fi, SM)
 ENDFUNCTION
         \end{vverbatim}
 
+    \subsection{Implementation Results}
+
+      In this sub-section, we investigate the effects of domain size over
+      computation time. The following tests were conducted with the latest
+      version of PolicyUpdater\footnotemark running on an AMD Athlon
+      XP 2000+ machine with 512 MB of RAM, running Debian GNU/Linux 3.0r5
+      with a plain Linux 2.4.30 kernel.
+
+      \footnotetext{\
+        At the time of writing, the latest version of PolicyUpdater is vlad\
+        1.0.4.\
+      }
+
+      \begin{vquote}
+        \begin{tabular}[t]{|r|r|r|r|r|r|r|r|}
+          \hline 
+          &
+          \textbf{$S_{E_{s}}$} &
+          \textbf{$S_{E_{g}}$} &
+          \textbf{$S_{I}$} &
+          \textbf{$S_{C}$} &
+          \textbf{$S_{U}$} &
+          \textbf{$S_{S}$} &
+          \textbf{$S_{Q}$} \\
+          \hline 
+          1 & 4 & 3 & 3 & 1 & 1 & 1 & 4 \\
+          \hline 
+          2 & 24 & 23 & 3 & 1 & 1 & 1 & 4 \\
+          \hline 
+          3 & 104 & 3 & 3 & 1 & 1 & 1 & 4 \\
+          \hline 
+          4 & 4 & 103 & 3 & 1 & 1 & 1 & 4 \\
+          \hline
+          5 & 24 & 23 & 103 & 1 & 1 & 1 & 4 \\
+          \hline
+          6 & 24 & 23 & 3 & 101 & 1 & 1 & 4 \\
+          \hline
+          7 & 24 & 23 & 3 & 1 & 101 & 1 & 4 \\
+          \hline
+          8 & 24 & 23 & 3 & 1 & 101 & 101 & 4 \\
+          \hline
+          9 & 24 & 23 & 3 & 1 & 1 & 1 & 104 \\
+          \hline
+          10 & 24 & 23 & 103 & 1 & 101 & 101 & 4 \\
+          \hline
+          11 & 24 & 23 & 3 & 101 & 101 & 101 & 4 \\
+          \hline
+        \end{tabular}
+      \end{vquote}
+
+      \begin{vquote}
+        \begin{tabular}[t]{|r|r|r|}
+          \hline 
+          &
+          \textbf{$T_{C}$} &
+          \textbf{$T_{Q}$} \\
+          \hline 
+          1 & 0.000794 & 0.000472 \\
+          \hline 
+          2 & 0.261828  & 0.600932 \\
+          \hline 
+          3 & 0.072069 & 0.157254 \\
+          \hline 
+          4 & 14.017335 & 32.109291 \\
+          \hline 
+          5 & 0.595487 & 0.599161 \\
+          \hline 
+          6 & 0.265750 & 0.595487 \\
+          \hline 
+          7 & 0.269249 & 0.610381 \\
+          \hline 
+          8 & 15.315347 & 32.111353 \\ 
+          \hline 
+          9 & 0.259679 & 21.531298 \\
+          \hline 
+          10 & 15.375953 & 32.537575 \\
+          \hline 
+          11 & 15.889154 & 33.246048 \\
+          \hline 
+
+        \end{tabular}
+      \end{vquote}
+
   \section{Case Study: Web Server Application}
     \label{sec-case}
 
