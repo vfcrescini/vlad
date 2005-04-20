@@ -2648,6 +2648,13 @@ ENDFUNCTION
         1.0.4.\
       }
 
+      The table below shows the domain size for each test case. $S_{E_{s}}$ and
+      $S_{E_{g}}$ is the number of singular and group entities, respectively;
+      $S_{I}$ is the number of initial state facts; $S_{C}$ is the number of
+      constraint rules; $S_{U}$ is the number of policy update definitions;
+      $S_{S}$ is the number of policy updates in the sequence list; and
+      $S_{Q}$ is the number of facts to be queried.
+
       \begin{vquote}
         \begin{tabular}[t]{|r|r|r|r|r|r|r|r|}
           \hline 
@@ -2685,6 +2692,25 @@ ENDFUNCTION
         \end{tabular}
       \end{vquote}
 
+      The language L code listing in Example \ref{ex-1} is used in the first
+      test case. In the second test case, the same code is used with an
+      additional 20 new singular entities and 20 new group entities. Test
+      cases 3 and 4 are similar to test case 1, except 100 new
+      singular and group entities were added, respectively. Test cases 5 and 6
+      are similar to test case 2, except 100 new initial state facts and
+      constraint rules were added, respectively. In test case 7, 100 new policy
+      update definitions were added, and in test case 8, these policy update
+      defintions were applied. Test case 9 is similar to test case 2, but this
+      one tries to evaluate 100 additional query facts. Finally, test case 11
+      is a combination of test cases 6 and 8.
+
+      The table below shows the execution times of each test case. $T_{C}$ is
+      the total time (in seconds) spent by the system to translate the language
+      L statements to a normal logic program and to generate the answer sets.
+      $T_{Q}$ is the total time (in seconds) used by the system to evaluate
+      all the queries. To increase result accuracy, each test was conducted 10
+      times. The figures below show the average computation times.
+      
       \begin{vquote}
         \begin{tabular}[t]{|r|r|r|}
           \hline 
@@ -2700,15 +2726,15 @@ ENDFUNCTION
           \hline 
           4 & 14.017335 & 32.109291 \\
           \hline 
-          5 & 0.595487 & 0.599161 \\
+          5 & 0.309517 & 0.698068 \\
           \hline 
-          6 & 0.265750 & 0.595487 \\
+          6 & 0.306517 & 0.694729 \\
           \hline 
-          7 & 0.269249 & 0.610381 \\
+          7 & 0.304570 & 0.696636 \\
           \hline 
           8 & 15.315347 & 32.111353 \\ 
           \hline 
-          9 & 0.259679 & 21.531298 \\
+          9 & 0.301429 & 25.147113 \\
           \hline 
           10 & 15.375953 & 32.537575 \\
           \hline 
@@ -2717,6 +2743,43 @@ ENDFUNCTION
 
         \end{tabular}
       \end{vquote}
+
+      As shown above, the first two execution times are minimal when the
+      domain size is small. Test 3 shows that having a large number of singular
+      entities have a measurable, but insignificant effect on computation time.
+      However, test 4 shows that an increase in the number of group entities
+      have a great impact on computation speed. This is to be expected, as
+      Section \ref{subsec-semantics} shows that the number of group entities
+      directly affect the number of transitivity, inheritance and identity
+      rules generated in the translation.
+
+      Comparing test 2 with tests 5 and 6, where the number of initial state
+      facts and constraint rules are increased by 100, respectively, we observe
+      that that there is a slight increase in the times required to perform the
+      computation and query evaluation. One would expect that an increase in
+      the number of constraint rules will have more impact in execution times
+      than an increase in initial state facts. However, in test 6, the
+      computation times were low because only one policy update is actually
+      applied.
+
+      Test 7 shows that increasing the number of policy update definitions
+      has little impact on the computation times. However, as test 8 shows,
+      if these policy updates are actually applied to the policy base,
+      computation time increases dramatically.
+
+      Test case 9 shows that evaluating 100 additional queries has little
+      effect on translation and computation time, but obviously affects
+      evaluation time.
+
+      Test case 10 shows the combined effects of an increased number of policy
+      updates and initial state facts. As expected, the times are only slightly
+      larger than the times in test case 8, where only the number of policy
+      updates were increased. This is due to the fact that initial state facts
+      are translated directly into normal logic program rules. Test case 11,
+      on the other hand, shows a significant increase in both computation and
+      evaluation times. This is expected, as the translation of a single
+      constraint rule results in a constraint rule in every policy update
+      state.
 
   \section{Case Study: Web Server Application}
     \label{sec-case}
