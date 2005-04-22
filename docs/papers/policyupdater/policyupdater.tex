@@ -2227,7 +2227,7 @@
 
           With the language ${\cal L}$ policy elements stored into the storage
           structures (see Appendix \ref{app-store}), a normal logic program can
-          then be generated for evaluation. The following algorithms generate
+          then be generated for evaluation. The following algorithm generates
           a normal logic program, given the Symbol Table $Ts$, Initial
           State Facts Table $Ti$, Constraint Rules Table $Tc$, Policy
           Update Definition Table $Tu$, and Policy Update Sequence Table
@@ -2692,24 +2692,24 @@ ENDFUNCTION
         \end{tabular}
       \end{vquote}
 
-      The language L code listing in Example \ref{ex-1} is used in the first
-      test case. In the second test case, the same code is used with an
-      additional 20 new singular entities and 20 new group entities. Test
-      cases 3 and 4 are similar to test case 1, except 100 new
-      singular and group entities were added, respectively. Test cases 5 and 6
-      are similar to test case 2, except 100 new initial state facts and
-      constraint rules were added, respectively. In test case 7, 100 new policy
-      update definitions were added, and in test case 8, these policy update
-      defintions were applied. Test case 9 is similar to test case 2, but this
-      one tries to evaluate 100 additional query facts. Finally, test case 11
-      is a combination of test cases 6 and 8.
+      The language {\cal L} code listing in Example \ref{ex-1} is used in the
+      first test case. In the second test case, the same code is used with 20
+      new singular entities and 20 new group entities. Test cases 3 and 4 are
+      similar to test case 1, except 100 new singular and group entities were
+      added, respectively. Test cases 5 and 6 are similar to test case 2,
+      except 100 new initial state facts and constraint rules were added,
+      respectively. In test case 7, 100 new policy update definitions were
+      added, and in test case 8, these policy update defintions were applied.
+      Test case 9 is similar to test case 2, but this one tries to evaluate 100
+      additional query facts. Finally, test case 11 is a combination of test
+      cases 6 and 8.
 
       The table below shows the execution times of each test case. $T_{C}$ is
       the total time (in seconds) spent by the system to translate the language
-      L statements to a normal logic program and to generate the answer sets.
-      $T_{Q}$ is the total time (in seconds) used by the system to evaluate
-      all the queries. To increase result accuracy, each test was conducted 10
-      times. The figures below show the average computation times.
+      {\cal L} statements to a normal logic program and to generate the answer
+      sets. $T_{Q}$ is the total time (in seconds) used by the system to
+      evaluate all the queries. To increase result accuracy, each test was
+      conducted 10 times. The figures in the table below are the averages.
       
       \begin{vquote}
         \begin{tabular}[t]{|r|r|r|}
@@ -2759,7 +2759,7 @@ ENDFUNCTION
       computation and query evaluation. One would expect that an increase in
       the number of constraint rules will have more impact in execution times
       than an increase in initial state facts. However, in test 6, the
-      computation times were low because only one policy update is actually
+      computation times were low because only one policy update was actually
       applied.
 
       Test 7 shows that increasing the number of policy update definitions
@@ -2775,8 +2775,8 @@ ENDFUNCTION
       updates and initial state facts. As expected, the times are only slightly
       larger than the times in test case 8, where only the number of policy
       updates were increased. This is due to the fact that initial state facts
-      are translated directly into normal logic program rules. Test case 11,
-      on the other hand, shows a significant increase in both computation and
+      are translated directly into normal logic program rules. On the other
+      hand, test case 11 shows a significant increase in both computation and
       evaluation times. This is expected, as the translation of a single
       constraint rule results in a constraint rule in every policy update
       state.
