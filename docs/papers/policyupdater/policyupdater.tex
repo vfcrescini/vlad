@@ -2843,7 +2843,7 @@ ENDFUNCTION
   \section{Future Research and Extension}
     \label{sec-future}
 
-    An obvious limitation of language ${\cal L}$, and therefore the
+    An obvious limitation of language ${\cal L}$, and therefore of the
     PolicyUpdater system is its inability to express time-dependent
     authorisations. Consider the following authorisation rule:
 
@@ -2865,12 +2865,20 @@ ENDFUNCTION
       $holds$($bob$, $read$, $f1$, $900$, $1700$)
     \end{vquote}
 
-    To be more specific, the temporal domain can be defined as a positive
-    number that represents the number of seconds since 12 midnight, 01 Jan 1970
-    (i.e. UNIX epoch).
+    The atom above may be interpreted to mean that the authorisation holds for
+    all times between 9:00 AM and 5:00 PM, inclusive. In this example, time
+    granularity, or the smallest unit of time that can be expressed is one
+    minute. Of course, a more general approach is to use the domain of positive
+    integers. With this approach, the system can handle different granularities
+    of time, where the choice of what time unit each discrete value is
+    interpreted as is left to the application. For example, if the temporal
+    values are defined to be the number of seconds since 12 midnight, 01 Jan
+    1970 (i.e. the UNIX epoch), then the atom below states that the
+    authorisation holds at an interval starting at 9:00 AM, 18 March 1976 and
+    ending at 5:00 PM, 18 March 1976:
 
     \begin{vquote}
-      $holds$($bob$, $read$, $f1$, $1127602800$, $1127631600$)
+      $holds$($bob$, $read$, $f1$, $195951600$, $195980400$)
     \end{vquote}
 
     While this approach gives the language enough expressive power to represent
@@ -2886,9 +2894,9 @@ ENDFUNCTION
     Such authorisation rule might arise in a scenario where the access right
     $write$ to file $f1$ can only be granted in some time after the $read$
     access right to file $f2$ has been granted and revoked. This example shows
-    that the specific times at which the $read$ and $write$ access rights are
-    granted are not as important as the relationship between the times
-    themselves. This authorisation rule may be represented as follows:
+    that the specific times at which authorisations hold are not as important
+    as the relationship between the times themselves. This authorisation rule
+    may be represented as follows:
 
     \begin{vquote}
       $holds$($alice$, $write$, $f1$, $i_{1}$)
@@ -2901,8 +2909,26 @@ ENDFUNCTION
     The example above states that $alice$ holds a $write$ access right to file
     $f1$ at some time interval $i_{1}$, $bob$ holds a $read$ access right to
     file $f2$ at some time interval $i_{2}$, and that the interval $i_{1}$
-    occurs at some time after the interval $i_{1}$.
+    occurs at some time after the interval $i_{1}$. As mentioned earlier, the
+    actual values of the time interval variables $i_{1}$ and $i_{2}$ is not as
+    important as the fact that the interval $i_{1}$ occurs after interval
+    $i_{2}$.
 
+    Allen \cite{AL} found that a total of 13 possible disjoint relations may
+    exist between any two temporal intervals: $before$, $after$, $during$,
+    $contains$, $meets$, $met$ $by$, $starts$, $started$ $by$, $finishes$,
+    $finished$ $by$ and $equals$. Furthermore, as each of these temporal
+    interval relations are disjoint, he proposed an algebra to represent a
+    network of interval relations, which may be composed of partial or
+    disjunctive interval relation information.
+
+    At the time of writing, the authors are working on a new authorisation
+    language ${\cal L}^{T}$, an extension of language ${\cal L}$ with
+    provisions to (1) express authorisation rules that hold only on specified
+    time intervals, and to (2) allow the representation of temporal interval
+    relations either under Allen's full interval algebra or one of its
+    sub algebras.
+   
   \section{Conclusion}
     \label{sec-conclusion}
 
