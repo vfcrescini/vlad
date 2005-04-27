@@ -122,9 +122,10 @@
     outlines the underlying mechanisms and some implementation results that
     shows the relationship between input size and execution time. The case
     study presented in Section \ref{sec-case} shows a typical application of
-    the PolicyUpdater system: an access control system for web servers. In
-    Section \ref{sec-conclusion}, the concluding remarks address some
-    possible extensions to this system.
+    the PolicyUpdater system: an access control system for web servers. Section
+    \ref{sec-future} outlines the issues involved in extending the system to
+    include temporal authorisations. Section \ref{sec-conclusion} contains a
+    summary of the paper.
 
     The PolicyUpdater system was originally introduced in the conference
     proceedings paper \cite{CR1}. Another conference proceedings paper
@@ -2839,6 +2840,69 @@ ENDFUNCTION
           previously applied policy update from the policy base.
       \end{itemize}
 
+  \section{Future Research and Extension}
+    \label{sec-future}
+
+    An obvious limitation of language ${\cal L}$, and therefore the
+    PolicyUpdater system is its inability to express time-dependent
+    authorisations. Consider the following authorisation rule:
+
+    \begin{vquote}
+      $Bob$ holds $read$ access to file $f1$ between $9:00$ $AM$ and $5:00$
+      $PM$.
+    \end{vquote}
+
+    The authorisation information above can be broken down into two parts: an
+    authorisation part, i.e. "Bob holds read access to file $f1$", and a
+    temporal part, i.e. "between 9:00 AM and 5:00 PM". As language ${\cal L}$
+    can already express authorisations, we focus our attention to the temporal
+    part. A naive attempt to extend language ${\cal L}$ to express time may
+    involve adding two extra parameters to each authorisation atom to represent
+    the starting and ending time points of the interval. For example, the
+    authorisation rule above can be represented as:
+
+    \begin{vquote}
+      $holds$($bob$, $read$, $f1$, $900$, $1700$)
+    \end{vquote}
+
+    To be more specific, the temporal domain can be defined as a positive
+    number that represents the number of seconds since 12 midnight, 01 Jan 1970
+    (i.e. UNIX epoch).
+
+    \begin{vquote}
+      $holds$($bob$, $read$, $f1$, $1127602800$, $1127631600$)
+    \end{vquote}
+
+    While this approach gives the language enough expressive power to represent
+    authorisations bound by literal time values, it is by no means expressive
+    enough to model relationships between the temporal intervals themselves.
+    This deficiency is shown in the example below:
+
+    \begin{vquote}
+      $Alice$ holds a $write$ access right to file $f1$ after $Bob$ holds a
+      $read$ access right to file $f2$.
+    \end{vquote}
+
+    Such authorisation rule might arise in a scenario where the access right
+    $write$ to file $f1$ can only be granted in some time after the $read$
+    access right to file $f2$ has been granted and revoked. This example shows
+    that the specific times at which the $read$ and $write$ access rights are
+    granted are not as important as the relationship between the times
+    themselves. This authorisation rule may be represented as follows:
+
+    \begin{vquote}
+      $holds$($alice$, $write$, $f1$, $i_{1}$)
+
+      $holds$($bob$, $read$, $f2$, $i_{2}$)
+
+      $after$($i_{1}$, $i_{2}$)
+    \end{vquote}
+
+    The example above states that $alice$ holds a $write$ access right to file
+    $f1$ at some time interval $i_{1}$, $bob$ holds a $read$ access right to
+    file $f2$ at some time interval $i_{2}$, and that the interval $i_{1}$
+    occurs at some time after the interval $i_{1}$.
+
   \section{Conclusion}
     \label{sec-conclusion}
 
@@ -2856,15 +2920,14 @@ ENDFUNCTION
     dynamic policy updates. Furthermore, most of these approaches rarely
     address implementation issues. To the best of our knowledge, the
     PolicyUpdater system is the first fully implemented logic based access
-    control system with a comprehensive web server security application.
-
-    One possible future extension to this work is the integration of temporal
-    logic to language ${\cal L}$ to allow time properties to be expressed in
-    access control policies. Such extension will be useful in access control
-    systems such as e-commerce applications where authorisations are granted
-    or denied based on policies that are time dependent.
+    control system implemented in a web server security application.
 
   \begin{thebibliography}{5}
+    \bibitem{AL}
+      Allen, J. F.
+      Maintaining Knowledge about Temporal Intervals.
+      {\em Communications of the ACM},
+      Vol. 26, No. 11, pp. 832-843, ACM, 1983.
     \bibitem{AP}
       Apache Software Foundation,
       Authentication, Authorization and Access Control.
