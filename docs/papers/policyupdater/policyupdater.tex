@@ -118,9 +118,9 @@
     and some examples. In Section \ref{sec-cons}, the issues of consistency and
     query evaluation are addressed. The implementation, as discussed in Section
     \ref{sec-implement}, gives an overview of the PolicyUpdater system as
-    a whole, its internal and external components, and most importantly, an
-    outline of the underlying mechanisms responsible for processing of language
-    ${\cal L}$ policies for query evaluation and dynamic updates. The case
+    a whole, its internal and external components, a few algorithms that
+    outlines the underlying mechanisms and some implementation results that
+    shows the relationship between input size and execution time. The case
     study presented in Section \ref{sec-case} shows a typical application of
     the PolicyUpdater system: an access control system for web servers. In
     Section \ref{sec-conclusion}, the concluding remarks address some
@@ -2543,7 +2543,7 @@ ENDFUNCTION
 
     \subsection{Implementation Results}
 
-      In this sub-section, we investigate the effects of domain size over
+      In this subsection, we investigate the effects of domain size over
       computation time. The following tests were conducted with the latest
       version of PolicyUpdater\footnotemark running on an AMD Athlon
       XP 2000+ machine with 512 MB of RAM, running Debian GNU/Linux 3.0r5
