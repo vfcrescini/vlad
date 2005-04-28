@@ -2922,12 +2922,12 @@ ENDFUNCTION
     network of interval relations, which may be composed of partial or
     disjunctive interval relation information.
 
-    At the time of writing, the authors are working on a new authorisation
-    language ${\cal L}^{T}$, an extension of language ${\cal L}$ with
-    provisions to (1) express authorisation rules that hold only on specified
-    time intervals, and to (2) allow the representation of temporal interval
-    relations either under Allen's full interval algebra or one of its
-    sub algebras.
+    At the time of writing, the authors of this paper are working on a new
+    authorisation language ${\cal L}^{T}$, an extension of language ${\cal L}$
+    with provisions to (1) express authorisation rules that hold only on
+    specified time intervals, and to (2) allow the representation of temporal
+    interval relations either under Allen's full interval algebra or one of its
+    subalgebras \cite{KRO}.
 
   \section{Conclusion}
     \label{sec-conclusion}
@@ -2939,7 +2939,7 @@ ENDFUNCTION
     and querying of access control policies. As we have shown, language
     ${\cal L}$ is expressive enough to represent constraints and default rules.
 
-    The case study in Section \ref{sec-case} demonstrates how the PolicyUpdater
+    The case study in Section \ref{sec-case} demonstrated how the PolicyUpdater
     system can be adapted to be used in a real-world web server authorisation
     application. As mentioned earlier, while other logic based access control
     approaches have been proposed recently, most of these cannot deal with
@@ -2947,6 +2947,9 @@ ENDFUNCTION
     address implementation issues. To the best of our knowledge, the
     PolicyUpdater system is the first fully implemented logic based access
     control system implemented in a web server security application.
+
+    Finally, Section \ref{sec-future} briefly cited the issues involved in
+    extending the system to support time-bound authorisation rules.
 
   \begin{thebibliography}{5}
     \bibitem{AL}
@@ -3030,6 +3033,13 @@ ENDFUNCTION
       Flexible Support for Multiple Access Control Policies.
       {\em ACM Transactions on Database Systems},
       Vol. 29, No. 2, pp. 214-260, ACM, 2001.
+
+    \bibitem{KRO}
+      Krokhin, A., Jeavons, P., Jonsson, P.,
+      Reasoning about Temporal Relations: The Tractable Subalgebras of
+      Allen's Interval Algebra.
+      {\em Journal of the ACM},
+      Vol. 50, No. 5, pp. 591-640, ACM, 2003.
 
     \bibitem{LAU}
       Laurie, B., Laurie, P.,
