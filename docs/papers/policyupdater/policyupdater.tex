@@ -2555,49 +2555,53 @@ ENDFUNCTION
         1.0.4.\
       }
 
-      The table below shows the domain size for each test case. $S_{E_{s}}$ and
-      $S_{E_{g}}$ is the number of singular and group entities, respectively;
-      $S_{I}$ is the number of initial state facts; $S_{C}$ is the number of
-      constraint rules; $S_{U}$ is the number of policy update definitions;
-      $S_{S}$ is the number of policy updates in the sequence list; and
-      $S_{Q}$ is the number of facts to be queried.
+      Table \ref{tab-1} shows the domain size for each test case. $S_{E_{s}}$
+      and $S_{E_{g}}$ is the number of singular and group entities,
+      respectively; $S_{I}$ is the number of initial state facts; $S_{C}$ is
+      the number of constraint rules; $S_{U}$ is the number of policy update
+      definitions; $S_{S}$ is the number of policy updates in the sequence
+      list; and $S_{Q}$ is the number of facts to be queried.
 
-      \begin{vquote}
-        \begin{tabular}[t]{|r|r|r|r|r|r|r|r|}
-          \hline
-          &
-          \textbf{$S_{E_{s}}$} &
-          \textbf{$S_{E_{g}}$} &
-          \textbf{$S_{I}$} &
-          \textbf{$S_{C}$} &
-          \textbf{$S_{U}$} &
-          \textbf{$S_{S}$} &
-          \textbf{$S_{Q}$} \\
-          \hline
-          1 & 4 & 3 & 3 & 1 & 1 & 1 & 4 \\
-          \hline
-          2 & 24 & 23 & 3 & 1 & 1 & 1 & 4 \\
-          \hline
-          3 & 104 & 3 & 3 & 1 & 1 & 1 & 4 \\
-          \hline
-          4 & 4 & 103 & 3 & 1 & 1 & 1 & 4 \\
-          \hline
-          5 & 24 & 23 & 103 & 1 & 1 & 1 & 4 \\
-          \hline
-          6 & 24 & 23 & 3 & 101 & 1 & 1 & 4 \\
-          \hline
-          7 & 24 & 23 & 3 & 1 & 101 & 1 & 4 \\
-          \hline
-          8 & 24 & 23 & 3 & 1 & 101 & 101 & 4 \\
-          \hline
-          9 & 24 & 23 & 3 & 1 & 1 & 1 & 104 \\
-          \hline
-          10 & 24 & 23 & 103 & 1 & 101 & 101 & 4 \\
-          \hline
-          11 & 24 & 23 & 3 & 101 & 101 & 101 & 4 \\
-          \hline
-        \end{tabular}
-      \end{vquote}
+      \begin{table}[ht]
+        \begin{center}
+          \begin{tabular}[t]{|r|r|r|r|r|r|r|r|}
+            \hline
+            &
+            \textbf{$S_{E_{s}}$} &
+            \textbf{$S_{E_{g}}$} &
+            \textbf{$S_{I}$} &
+            \textbf{$S_{C}$} &
+            \textbf{$S_{U}$} &
+            \textbf{$S_{S}$} &
+            \textbf{$S_{Q}$} \\
+            \hline
+            1 & 4 & 3 & 3 & 1 & 1 & 1 & 4 \\
+            \hline
+            2 & 24 & 23 & 3 & 1 & 1 & 1 & 4 \\
+            \hline
+            3 & 104 & 3 & 3 & 1 & 1 & 1 & 4 \\
+            \hline
+            4 & 4 & 103 & 3 & 1 & 1 & 1 & 4 \\
+            \hline
+            5 & 24 & 23 & 103 & 1 & 1 & 1 & 4 \\
+            \hline
+            6 & 24 & 23 & 3 & 101 & 1 & 1 & 4 \\
+            \hline
+            7 & 24 & 23 & 3 & 1 & 101 & 1 & 4 \\
+            \hline
+            8 & 24 & 23 & 3 & 1 & 101 & 101 & 4 \\
+            \hline
+            9 & 24 & 23 & 3 & 1 & 1 & 1 & 104 \\
+            \hline
+            10 & 24 & 23 & 103 & 1 & 101 & 101 & 4 \\
+            \hline
+            11 & 24 & 23 & 3 & 101 & 101 & 101 & 4 \\
+            \hline
+          \end{tabular}
+        \end{center}
+        \caption[]{Eleven test cases with different domain sizes}
+        \label{tab-1}
+      \end{table}
 
       The language {\cal L} code listing in Example \ref{ex-1} is used in the
       first test case. In the second test case, the same code is used with 20
@@ -2611,54 +2615,57 @@ ENDFUNCTION
       additional query facts. Finally, test case 11 is a combination of test
       cases 6 and 8.
 
-      The table below shows the execution times of each test case. $T_{C}$ is
+      Table \ref{tab-2} shows the execution times of each test case. $T_{C}$ is
       the total time (in seconds) spent by the system to translate the language
       {\cal L} statements to a normal logic program and to generate the answer
       sets. $T_{Q}$ is the total time (in seconds) used by the system to
       evaluate all the queries. To increase result accuracy, each test was
-      conducted 10 times. The figures in the table below are the averages.
+      conducted 10 times. The figures in Table \ref{tab-2} are the averages.
 
-      \begin{vquote}
-        \begin{tabular}[t]{|r|r|r|}
-          \hline
-          &
-          \textbf{$T_{C}$} &
-          \textbf{$T_{Q}$} \\
-          \hline
-          1 & 0.000794 & 0.000472 \\
-          \hline
-          2 & 0.261828  & 0.600932 \\
-          \hline
-          3 & 0.072069 & 0.157254 \\
-          \hline
-          4 & 14.017335 & 32.109291 \\
-          \hline
-          5 & 0.309517 & 0.698068 \\
-          \hline
-          6 & 0.306517 & 0.694729 \\
-          \hline
-          7 & 0.304570 & 0.696636 \\
-          \hline
-          8 & 15.315347 & 32.111353 \\
-          \hline
-          9 & 0.301429 & 25.147113 \\
-          \hline
-          10 & 15.375953 & 32.537575 \\
-          \hline
-          11 & 15.889154 & 33.246048 \\
-          \hline
+      \begin{table}[ht]
+        \begin{center}
+          \begin{tabular}[t]{|r|r|r|}
+            \hline
+            &
+            \textbf{$T_{C}$} &
+            \textbf{$T_{Q}$} \\
+            \hline
+            1 & 0.000794 & 0.000472 \\
+            \hline
+            2 & 0.261828  & 0.600932 \\
+            \hline
+            3 & 0.072069 & 0.157254 \\
+            \hline
+            4 & 14.017335 & 32.109291 \\
+            \hline
+            5 & 0.309517 & 0.698068 \\
+            \hline
+            6 & 0.306517 & 0.694729 \\
+            \hline
+            7 & 0.304570 & 0.696636 \\
+            \hline
+            8 & 15.315347 & 32.111353 \\
+            \hline
+            9 & 0.301429 & 25.147113 \\
+            \hline
+            10 & 15.375953 & 32.537575 \\
+            \hline
+            11 & 15.889154 & 33.246048 \\
+            \hline
+          \end{tabular}
+        \end{center}
+        \caption[]{Average computation times in seconds for each test case}
+        \label{tab-2}
+      \end{table}
 
-        \end{tabular}
-      \end{vquote}
-
-      As shown above, the first two execution times are minimal when the
-      domain size is small. Test 3 shows that having a large number of singular
-      entities have a measurable, but insignificant effect on computation time.
-      However, test 4 shows that an increase in the number of group entities
-      have a great impact on computation speed. This is to be expected, as
-      Section \ref{subsec-semantics} shows that the number of group entities
-      directly affect the number of transitivity, inheritance and identity
-      rules generated in the translation.
+      As shown in Table \ref{tab-2}, the first two execution times are minimal
+      when the domain size is small. Test 3 shows that having a large number of
+      singular entities have a measurable, but insignificant effect on
+      computation time. However, test 4 shows that an increase in the number of
+      group entities have a great impact on computation speed. This is to be
+      expected, as Section \ref{subsec-semantics} shows that the number of group
+      entities directly affect the number of transitivity, inheritance and
+      identity rules generated in the translation.
 
       Comparing test 2 with tests 5 and 6, where the number of initial state
       facts and constraint rules are increased by 100, respectively, we observe
