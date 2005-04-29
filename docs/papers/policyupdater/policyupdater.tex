@@ -2677,7 +2677,7 @@ ENDFUNCTION
             \hline
             11 & 15.889154 & 33.246048 \\
             \hline
-            12 &  &  \\
+            12 & 15.715761 & 575.237985 \\
             \hline
             13 & ? & ? \\
             \hline
@@ -2728,7 +2728,9 @@ ENDFUNCTION
       query requests by themselves have little effect on performance, if
       combined together with the effects of a large number of policy updates,
       computation time is significantly increased, paticularly the query
-      evaluation time.
+      evaluation time. Note that the value of $T_{Q}$ for this test is the
+      average total time for 104 query evaluations. Using this value, each
+      query evaluation takes an average of 5.531135 seconds to complete.
 
       Unfortunately, the test system used in this experiment ran out of memory
       while performing test case 13. Again, this is expected, as the combined
