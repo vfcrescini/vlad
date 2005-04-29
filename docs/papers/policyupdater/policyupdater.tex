@@ -65,12 +65,15 @@
     propositions. The system performs access control query evaluations and
     conditional policy updates by translating the language $\cal{L}$ to a
     normal logic program in a form suitable for evaluation using the
-    {\em Stable Model} semantics.
+    {\em Stable Model} semantics. In this paper, we show the underlying
+    mechanisms that make up the PolicyUpdater system, including its system
+    structure, some theoretical background as well as implementation issues and
+    some performance analysis.
   \end{abstract}
 
   \keywords{
     access control, authorisation, artificial intelligence, logic programming,
-    belief revision
+    policy update
   }
 
   \section{Introduction}
@@ -86,10 +89,10 @@
     policy base.
 
     Recent advances in the field have produced a number of different approaches
-    to logic-based access control systems, e.g. \cite{HAL,LI}. One such system
-    was proposed by Bai and Varadharajan \cite{BA1,BA2}. Their system's key
-    characteristic is its ability to dynamically update an otherwise static
-    policy base.
+    to logic-based access control systems, e.g. \cite{HAL,LI}. One such
+    access control system was proposed by Bai and Varadharajan \cite{BA1,BA2}.
+    Their system's key characteristic is its ability to dynamically update an
+    otherwise static policy base.
 
     Another system, proposed by Bertino, et. al. \cite{BE1}, uses an
     authorisation mechanism based on ordered logic. This powerful mechanism
@@ -2021,7 +2024,7 @@
 
         As the policy itself is written in language ${\cal L}$, the system uses
         two parsers to act as interfaces to the authorisation agent and
-        the the language ${\cal L}$ policy.
+        the language ${\cal L}$ policy.
 
         \paragraph{Policy Parser.}
 
@@ -2563,8 +2566,8 @@ ENDFUNCTION
       In this subsection, we investigate the effects of domain size over
       computation time. The following tests were conducted with the latest
       version of PolicyUpdater\footnotemark running on an AMD Athlon
-      XP 2000+ machine with 512 MB of RAM, running Debian GNU/Linux 3.0r5
-      with a plain Linux 2.4.30 kernel.
+      XP 2000+ machine with 512 MB of RAM, running the Debian GNU/Linux 3.0r5
+      operating system with a plain Linux 2.4.30 kernel.
 
       \footnotetext{\
         At the time of writing, the latest version of PolicyUpdater is vlad\
@@ -2613,9 +2616,13 @@ ENDFUNCTION
             \hline
             11 & 24 & 23 & 3 & 101 & 101 & 101 & 4 \\
             \hline
+            12 & 24 & 23 & 103 & 101 & 101 & 101 & 104 \\
+            \hline
+            13 & 104 & 103 & 103 & 101 & 101 & 101 & 104 \\
+            \hline
           \end{tabular}
         \end{center}
-        \caption[]{Eleven test cases with different domain sizes}
+        \caption[]{Thirteen test cases with different domain sizes}
         \label{tab-1}
       \end{table}
 
@@ -2628,8 +2635,10 @@ ENDFUNCTION
       respectively. In test case 7, 100 new policy update definitions were
       added, and in test case 8, these policy update defintions were applied.
       Test case 9 is similar to test case 2, but this one tries to evaluate 100
-      additional query facts. Finally, test case 11 is a combination of test
-      cases 6 and 8.
+      additional query facts. Test case 11 is a combination of test cases 6 and
+      8. Test case 12 is a combination of test cases 5, 9 and 11. Finally, test
+      case 13 is a combination of test cases 3 to 9, where the number of each
+      domain component is over 100.
 
       Table \ref{tab-2} shows the execution times of each test case. $T_{C}$ is
       the total time (in seconds) spent by the system to translate the language
@@ -2667,6 +2676,10 @@ ENDFUNCTION
             10 & 15.375953 & 32.537575 \\
             \hline
             11 & 15.889154 & 33.246048 \\
+            \hline
+            12 &  &  \\
+            \hline
+            13 & ? & ? \\
             \hline
           \end{tabular}
         \end{center}
@@ -2710,6 +2723,18 @@ ENDFUNCTION
       evaluation times. This is expected, as the translation of a single
       constraint rule results in a constraint rule in every policy update
       state.
+
+      Test case 12 shows that although large numbers of initial state facts and
+      query requests by themselves have little effect on performance, if
+      combined together with the effects of a large number of policy updates,
+      computation time is significantly increased, paticularly the query
+      evaluation time.
+
+      Unfortunately, the test system used in this experiment ran out of memory
+      while performing test case 13. Again, this is expected, as the combined
+      effects of having a large number of entities, constraint rules, policy
+      updates and queries will result in approximately 5.7 billion rules, using
+      the formula given in Theorem \ref{the-size}.
 
   \section{Case Study: Web Server Application}
     \label{sec-case}
