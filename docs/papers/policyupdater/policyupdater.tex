@@ -86,15 +86,31 @@
     policy base.
 
     Recent advances in the field have produced a number of different approaches
-    to logic-based access control systems, e.g. \cite{HAL,LI}. Bertino, et. al.
-    \cite{BE1} proposed such a system based on ordered logic with ordered
-    domains. Jajodia, et. al. \cite{JAJ} on the other hand, proposed a general
-    access control framework that features handling of multiple policies.
-    Another important work is the system proposed by Bai and Varadharajan
-    \cite{BA1,BA2}. Their system's key characteristic is the ability to
-    dynamically update the otherwise static policy base. These systems,
-    effective as they are, lack the details necessary to address the issues
-    involved in the implementation of such a system.
+    to logic-based access control systems, e.g. \cite{HAL,LI}. One such system
+    was proposed by Bai and Varadharajan \cite{BA1,BA2}. Their system's key
+    characteristic is its ability to dynamically update an otherwise static
+    policy base.
+
+    Another system, proposed by Bertino, et. al. \cite{BE1}, uses an
+    authorisation mechanism based on ordered logic. This powerful mechanism
+    supports both positive and negative authorisations as well as rule
+    derivations and default propositions. Other notable features of this system
+    include the distinction between weak and strong authorisations, support
+    for administrative authorisation delegation and more importantly, conflict
+    resolution.
+
+    Jajodia, et. al. \cite{JAJ} argued that most authorisation system models
+    work on a single specific access control policy. Although it is
+    theoretically possible for such systems to handle multiple policies, in
+    practice, only one specific policy can be applied in a given system. As
+    a solution to this problem, they proposed a general access control
+    framework whose main feature is its flexibility to handle multiple
+    policies in one system. Other features of this framework includes support
+    for groups and roles, conflict resolution mechanisms and support for
+    different decision strategies.
+
+    These systems, effective as they are, lack the details necessary to address
+    the issues involved in the implementation of such systems.
 
     The {\em Policy Description Language}, or {\em PDL}, developed by Lobo,
     et. al. \cite{LOB}, is a language for representing event and action
@@ -113,19 +129,19 @@
     perform a sequence of policy updates, and a means of evaluating queries
     against the policies.
 
-     The rest of this paper is organised as follows. In Section \ref{sec-langl},
+    The rest of this paper is organised as follows. In Section \ref{sec-langl},
     the paper introduces language ${\cal L}$, with its formal syntax, semantics
     and some examples. In Section \ref{sec-cons}, the issues of consistency and
     query evaluation are addressed. The implementation, as discussed in Section
     \ref{sec-implement}, gives an overview of the PolicyUpdater system as
-    a whole, its internal and external components, a few algorithms that
-    outlines the underlying mechanisms and some implementation results that
-    shows the relationship between input size and execution time. The case
-    study presented in Section \ref{sec-case} shows a typical application of
-    the PolicyUpdater system: an access control system for web servers. Section
-    \ref{sec-future} outlines the issues involved in extending the system to
-    include temporal authorisations. Section \ref{sec-conclusion} contains a
-    summary of the paper.
+    a whole, with its internal and external components. The section also
+    includes a few algorithms that outline the underlying mechanisms and also
+    some experimental results that show the relationship between input size
+    and execution time. The case study presented in Section \ref{sec-case}
+    shows a typical application of the PolicyUpdater system: an access control
+    system for web servers. Section \ref{sec-future} outlines the issues
+    involved in extending the system to include temporal authorisations.
+    Finally, Section \ref{sec-conclusion} contains a summary of the paper.
 
     The PolicyUpdater system was originally introduced in the conference
     proceedings paper \cite{CR1}. Another conference proceedings paper
@@ -1641,14 +1657,14 @@
   \section{Domain Consistency Checking and Evaluation}
     \label{sec-cons}
 
-    A domain description of language ${\cal L}$ must be consistent in orde to
+    A domain description of language ${\cal L}$ must be consistent in order to
     generate a consistent answer set for the evaluation of queries. This
     section considers two issues: the problem of identifying whether a given
     domain description is consistent, and how query evaluation is performed
     given a consistent language domain description.
 
     Before the above issues can be considered, a few notational constructs
-    must first be introduced. Given a domain description ${\cal D_{L}}$
+    should first be introduced. Given a domain description ${\cal D_{L}}$
     composed of the following language ${\cal L}$ statements:
 
     \begin{vverbatim}
@@ -2542,7 +2558,7 @@ FUNCTION IsFactIn(Fi, SM)
 ENDFUNCTION
         \end{vverbatim}
 
-    \subsection{Implementation Results}
+    \subsection{Experimental Results}
 
       In this subsection, we investigate the effects of domain size over
       computation time. The following tests were conducted with the latest
@@ -2556,7 +2572,7 @@ ENDFUNCTION
       }
 
       Table \ref{tab-1} shows the domain size for each test case. $S_{E_{s}}$
-      and $S_{E_{g}}$ is the number of singular and group entities,
+      and $S_{E_{g}}$ are the numbers of singular and group entities,
       respectively; $S_{I}$ is the number of initial state facts; $S_{C}$ is
       the number of constraint rules; $S_{U}$ is the number of policy update
       definitions; $S_{S}$ is the number of policy updates in the sequence
@@ -2953,10 +2969,11 @@ ENDFUNCTION
     dynamic policy updates. Furthermore, most of these approaches rarely
     address implementation issues. To the best of our knowledge, the
     PolicyUpdater system is the first fully implemented logic based access
-    control system implemented in a web server security application.
+    control system used in a web server security application.
 
-    Finally, Section \ref{sec-future} briefly cited the issues involved in
-    extending the system to support time-bound authorisation rules.
+    Finally, as discussed in Section \ref{sec-future}, we are currently working
+    on extending language {\cal L}, and therefore the PolicyUpdater system, to
+    support time-bound authorisation policies.
 
   \begin{thebibliography}{5}
     \bibitem{AL}
