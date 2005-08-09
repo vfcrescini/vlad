@@ -63,11 +63,11 @@
   \begin{abstract}
     {\em PolicyUpdater} is a fully-implemented authorisation system that
     provides policy evaluations as well as dynamic policy updates. These
-    functions are achieved by the use of a logic-based language ${\cal L}$ to
+    functions are achieved by the use of a logic-based language, ${\cal L}$, to
     represent the underlying access control policies, constraints and update
     propositions. The system performs access control query evaluations and
-    conditional policy updates by translating the language $\cal{L}$ to a
-    normal logic program in a form suitable for evaluation using the
+    conditional policy updates by translating the language $\cal{L}$ policies
+    to a normal logic program in a form suitable for evaluation using the
     {\em Stable Model} semantics. In this paper, we show the underlying
     mechanisms that make up the PolicyUpdater system, including its theoretical
     foundation of the formal language, system structure, implementation issues
@@ -88,11 +88,10 @@
     where columns represent subjects, rows represent objects and each cell
     contains the access-rights of a subject over a particular object. However,
     flexibility and scalability issues arise when such method is used on
-    real-world applications. A more effective paradigm of access control
-    systems is the logic-based approach. In this approach, instead of
-    explicitly defining all access-rights of all subjects for all objects
-    in a domain, a set of logical facts and rules are used to define the
-    policy base.
+    real-world applications. A more effective access control paradigm is the
+    logic-based approach. In this approach, instead of explicitly defining all
+    access-rights of all subjects for all objects in a domain, a set of logical
+    facts and rules are used to define the policy base.
 
     Recent advances in the field have produced a number of different approaches
     to logic-based access control systems, e.g. \cite{HAL,LI}. One such
@@ -114,7 +113,7 @@
     practice, only one specific policy can be applied in a given system. As
     a solution to this problem, they proposed a general access control
     framework whose main feature is its flexibility to handle multiple
-    policies in one system. Other features of this framework includes support
+    policies in one system. Other features of this framework include support
     for groups and roles, conflict resolution mechanisms and support for
     different decision strategies.
 
@@ -147,7 +146,7 @@
     includes a few algorithms that outline the underlying mechanisms as well as
     some experimental results that show the relationship between input size
     and execution time. The case study presented in Section \ref{sec-case}
-    shows a typical application of the PolicyUpdater system: an access control
+    describes an application of the PolicyUpdater system: an access control
     system for web servers. Section \ref{sec-future} outlines the issues
     involved in extending the system to include temporal authorisations.
     Finally, Section \ref{sec-conclusion} contains a summary of the paper.
@@ -193,17 +192,17 @@
 
               \begin{itemize}
                 \item
-                  {\em Subjects}: e.g. alice, lecturers, group.
+                  {\em Subjects}: e.g. alice, lecturers, user-group.
                 \item
                   {\em Access Rights}: e.g. read, write, own.
                 \item
                   {\em Objects}: e.g. file, database, directory.
               \end{itemize}
 
-              An entity identifier is defined as a lower-case alphabet
-              character, followed by 0 to 127 characters of alphabet, digit or
-              underscore characters. The following regular expression shows the
-              syntax of entity identifiers:
+              An entity identifier is defined as a single, lower-case
+              alphabetic character, followed by 0 to 127 alphanumeric and
+              underscore characters. The following regular expression shows
+              the syntax of entity identifiers:
 
               \begin{vverbatim}
   [a-z]([a-zA-Z0-9\_])\{0,127\}
@@ -237,7 +236,7 @@
 
         \paragraph{Atoms.}
           An atom is composed of a relation with 2 to 3 entity or variable
-          identifiers that represent a logical relationship between the
+          identifiers that represents a logical relationship between the
           entities. There are three types of atoms:
 
           \begin{itemize}
@@ -253,7 +252,8 @@
               {\em Membership.} This type of atom states that the singular
               identifier $elt$ is a member or element of the group identifier
               $grp$. It is important to note that identifiers $elt$ and $grp$
-              must be of the same base type (e.g. subject and subject group).
+              must be of the same base type (e.g. singular subject and group
+              subject).
 
               \begin{vverbatim}
   memb(<elt>, <grp>)
@@ -287,7 +287,7 @@
           {\em ground facts}.
 
         \paragraph{Expressions.}
-          An expression is either a fact, or a logical conjunction of facts,
+          An expression is either a fact or a logical conjunction of facts,
           separated by the double-ampersand characters $\&\&$.
 
           \begin{vverbatim}
@@ -332,7 +332,7 @@
           rules are true in the initial state and remain true after any policy
           update.
 
-          The constraint syntax below shows that for any state of the policy
+          The constraint syntax below shows that in any state of the policy
           base, expression $exp1$ holds if expression $exp2$ is true and there
           is no evidence that $exp3$ is true. The $with$ $absence$ clause
           allows constraints to have a default proposition behaviour, where
@@ -362,8 +362,8 @@
 
           $upd\_id$ is the policy update identifier to be used in referencing
           this policy update. The optional parameter $var\_id$ is a list which
-          contains the variable identifiers occurring in the expressions $exp1$
-          and $exp2$ and will eventually be replaced by entity identifiers when
+          contains the variable identifiers occurring in expressions $exp1$
+          and $exp2$ and will be eventually replaced by entity identifiers when
           the update is referenced. The postcondition expression $exp1$ is an
           expression that will hold in the state after this update is applied.
           The expression $exp2$ is a precondition expression that must hold in
@@ -383,11 +383,11 @@
         The policy update sequence list contains a list of references to
         define policy updates in the domain. The policy updates in the
         sequence list are applied to the current state of the policy base one
-        at a time to produce a policy base state upon which queries can be
+        at a time to produce a policy base state against which queries can be
         evaluated.
 
-        The following four directives are the policy sequence manipulation
-        features of language $\cal{L}$.
+        The following four directives are used for policy update sequence list
+        manipulation.
 
         \begin{itemize}
           \item
@@ -414,20 +414,21 @@
             \end{vverbatim}
 
             This directive is answered with an ordinal list of policy updates
-            in the form:
+            in the form
 
             \begin{vverbatim}
   <n> <upd\_id>([<elt\_id>[, ...]])
             \end{vverbatim}
 
             \noindent where $n$ is the ordinal index of the policy update
-            within the sequence list starting at 0. $upd\_id$ is the policy
-            update identifier and the $elt\_id$ list is the list of entity
-            identifiers used to replace the variable identifier place-holders.
+            in the sequence list starting at 0. $upd\_id$ is the policy
+            update identifier and the $elt\_id$ list is the comma-separated
+            list of entity identifiers used to replace the variable identifier
+            place-holders.
 
           \item
             {\em Removing an update from the sequence.}
-            The syntax below shows the directive to remove a policy update
+            The syntax below shows the directive used to remove a policy update
             reference from the list. $n$ is the ordinal index of the policy
             update to be removed. Note that removing a policy update reference
             from the sequence list may change the ordinal index of other update
