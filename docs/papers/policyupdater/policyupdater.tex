@@ -131,20 +131,20 @@
     to be used for access control systems, systems built for such languages
     will not have the ability to dynamically update the policies.
 
-    To overcome these limitations, we propose the PolicyUpdater access control
-    system, which, with its own access control language, provides a formal
-    logic-based representation of policies, with variable resolution and
-    default propositions, a mechanism to conditionally and dynamically
-    perform a sequence of policy updates, and a means of evaluating queries
-    against the policies.
+    To overcome these limitations, we propose PolicyUpdater. This access
+    control system, with its own access control language, provides the
+    following: (1) a formal logic-based representation of policies, with
+    variable resolution and default propositions, (2) a mechanism to
+    conditionally and dynamically perform a sequence of policy updates, and (3)
+    a means of evaluating queries against the policies.
 
-    The rest of this paper is organised as follows. In Section \ref{sec-langl},
+    The rest of the paper is organised as follows. In Section \ref{sec-langl},
     the paper introduces language ${\cal L}$, with its formal syntax, semantics
     and some examples. In Section \ref{sec-cons}, the issues of consistency and
     query evaluation are addressed. The implementation, as discussed in Section
     \ref{sec-implement}, gives an overview of the PolicyUpdater system as
     a whole, with its internal and external components. The section also
-    includes a few algorithms that outline the underlying mechanisms and also
+    includes a few algorithms that outline the underlying mechanisms as well as
     some experimental results that show the relationship between input size
     and execution time. The case study presented in Section \ref{sec-case}
     shows a typical application of the PolicyUpdater system: an access control
@@ -182,14 +182,14 @@
         \paragraph{Identifiers.}
           The most basic unit of language $\cal{L}$ is the identifier.
           Identifiers are used to represent the different components of the
-          language, and are divided into three main classes:
+          language. They are classified into three main categories:
 
           \begin{itemize}
             \item
               {\em Entity Identifiers} represent constant entities that make up
-              a logical atom. They are divided further into three types, with
+              a logical atom. They are further divided into three types, with
               each type again divided into the {\em singular entity} and
-              {\em group entity} categories:
+              {\em group entity} sub-types:
 
               \begin{itemize}
                 \item
@@ -340,8 +340,8 @@
           condition of the proposition.
 
           It is important to note that the expressions $exp1$, $exp2$ and
-          $exp3$ may be non-ground expressions, which allows identifiers
-          occurring in these expressions to be variables.
+          $exp3$ may be non-ground expressions, which means an identifier
+          occurring within these expressions may be a variable.
 
           \begin{vverbatim}
   always <exp1>
@@ -516,7 +516,7 @@
       After giving a detailed syntactic definition of language ${\cal L}$,
       we now define its formal semantics.
 
-      The semantics for language ${\cal L}$ is based on the well-known answer
+      The semantics of language ${\cal L}$ is based on the well-known answer
       set (stable model) semantics of extended logic programs proposed by
       Gelfond and Lifschitz \cite{GEL}. The definition below formally defines
       the answer set of a logic program.
@@ -864,10 +864,10 @@
             $not$ $c_{0}$, \ldots, $not$ $c_{o}$
           \end{vquote}
 
-          Under the definition of constraints, each of the rules listed above
-          must be made to hold in all states as defined by the sequence list
-          $\psi$. This can be accomplished by translating each of the above
-          rules to a set of $|\psi|$ rules, one for each state.
+          Under the definition of constraint rules, each of the rules listed
+          above must be made to hold in all states as defined by the sequence
+          list $\psi$. This can be accomplished by translating each of the
+          above rules to a set of $|\psi|$ rules, one for each state.
 
            \begin{vquote}
             $\hat{a}^{S_{0}}_{0}$ $\leftarrow$
@@ -1422,7 +1422,7 @@
               \end{vquote}
             \item
               {\em Identity rules.}
-              Lastly, explicit rules must be given to show that every set is
+              Finally, explicit rules must be given to show that every set is
               a subset of itself.
 
               \begin{vquote}
@@ -1443,12 +1443,12 @@
 
         \begin{vdefinition}
           \label{def-trans}
-          Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, its
-          ${\cal L^{*}}$ translation $Trans$(${\cal D_{L}}$) is an extended
-          logic program of language ${\cal L}$ consisting of: (1) initial fact
-          rules, (2) constraint rules, (3) policy update rules, (4) inheritance
-          rules, (5) transitivity rules, (6) inertial rules, and (7) identity
-          rules as described above.
+          Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, the
+          language ${\cal L^{*}}$ translation $Trans$(${\cal D_{L}}$) is an
+          extended logic program of language ${\cal L}$ consisting of: (1)
+          initial fact rules, (2) constraint rules, (3) policy update rules,
+          (4) inheritance rules, (5) transitivity rules, (6) inertial rules,
+          and (7) identity rules as described above.
 
           The domain description ${\cal D_{L}}$ of language ${\cal L}$ is said
           to be {\em consistent} if and only if the translation
@@ -1888,11 +1888,11 @@
       \end{vquote}
 
       The absence of these rules means $Trans$(${\cal D}_{\cal L}$) is a
-      program without negative cycles \cite{LIN}. As no other rules in
+      program without negative cycles \cite{LIN}. As no other rule in
       ${\cal D}_{\cal L}$ can cause $Trans$(${\cal D}_{\cal L}$) to have these
-      rules, we conclude that under Definition \ref{def-norm}, a normal domain
-      description ${\cal D}_{\cal L}$ will generate an extended logic program
-      $Trans$(${\cal D}_{\cal L}$) without negative cycles. Also, from
+      rules, we conclude that a normal domain description ${\cal D}_{\cal L}$,
+      as defined by Definition \ref{def-norm}, will generate an extended logic
+      program $Trans$(${\cal D}_{\cal L}$) without negative cycles. Also, from
       \cite{BAR,LIN}, we further conclude that the translated program
       $Trans$(${\cal D}_{\cal L}$) must have an answer set.
 
@@ -2019,12 +2019,12 @@
       \end{center}
     \end{figure}
 
-      As shown in Figure \ref{fig-1}, the PolicyUpdater system works in
-      conjunction with an authorisation agent program that queries the
-      policy base to determine whether to allow users access to resources.
-      Through an authorisation agent program, the PolicyUpdater system also
-      allows administrators to dynamically update the policy base by adding
-      or removing update directives in the policy update table.
+      As shown in Figure \ref{fig-1}, the PolicyUpdater system works with an
+      authorisation agent program that queries the policy base to determine
+      whether to allow users access to resources. Through an authorisation
+      agent program, the PolicyUpdater system also allows administrators to
+      dynamically update the policy base by adding or removing update
+      directives in the policy update table.
 
       \subsubsection{Parsers}
 
@@ -2038,7 +2038,7 @@
           file into the core PolicyUpdater system. The parser ensures that
           the policy file strictly adheres to the language $\cal{L}$ syntax
           then systematically stores entity identifiers into the symbol table
-          and initial state facts, constraint expressions and policy update
+          while initial state facts, constraint expressions and policy update
           definitions are stored into their respective tables in the policy
           base.
 
@@ -2084,8 +2084,8 @@
       \subsubsection{Grounding Constraint Variables}
 
         As the constraints are in the process of being added into the
-        constraints table, each variable identifier that occurs within
-        every constraint is grounded by replacing that constraint with a set of
+        constraints table, each variable identifier that occurs in a
+        constraint is grounded by replacing that constraint with a set of
         constraints wherein each instance of the variable is replaced by all
         entity identifiers defined in the symbol table. Note that only those
         entity identifiers that are valid for each fact in the current
@@ -2106,9 +2106,9 @@
       !holds(SSUB, write, file);
         \end{vverbatim}
 
-        Grounding the constraint statement above will yield three new
-        constraint rules, each replacing occurrences of the variable $SSUB$
-        with $alice$, $bob$ and $charlie$, respectively.
+        Grounding the constraint statement above yields three new constraint
+        rules, each replacing occurrences of the variable $SSUB$ with
+        $alice$, $bob$ and $charlie$, respectively.
 
       \subsubsection{Policy Updates}
 
@@ -2195,8 +2195,8 @@
 
           As shown above, the $Encode$ function takes a language ${\cal L}$
           atom $\alpha$, the state $\sigma$ in which $\alpha$ holds, and a
-          truth value $\tau$ that indicates whether $\alpha$ is classically
-          negated or not. $Encode$ returns a unique index $i$ for that
+          boolean value $\tau$ to indicate whether or not $\alpha$ is
+          classically negated. $Encode$ returns a unique index $i$ for that
           fact. The steps below outlines how the $Encode$ function computes
           the index $i$.
 
@@ -2389,14 +2389,14 @@ ENDFUNCTION
           expressions are replaced with the corresponding entities from the
           given entity identifier list $IL$.
 
-          The function below generates 6 types of inheritance rules: subset
-          subject, subset access right, subset object, membership subject,
-          membership access right and membership object. Each of these 6
-          algorithms work in a similar way: a rule is generated by composing
-          every possible combination of either subject, access right and object
-          entities to form either a subset or membership fact. As with the
-          contraint rule generating algorithm, each new rule generated is
-          replicated for each policy update state.
+          The function shown below generates 6 types of inheritance rules:
+          subset subject, subset access right, subset object, membership
+          subject, membership access right and membership object. Each of
+          these 6 algorithms work in a similar way: a rule is generated by
+          composing every possible combination of either subject, access right
+          and object entities to form either a subset or membership fact. As
+          with the contraint rule generating algorithm, each new rule
+          generated is replicated for each policy update state.
 
           \begin{vverbatim}
 FUNCTION GenInherRules(Ts, Tq)
@@ -2552,8 +2552,8 @@ FUNCTION EvaluateFact(Qf, SM, S)
 ENDFUNCTION
         \end{vverbatim}
 
-        The function $IsFactIn()$ below simply returns a boolean value to
-        indicate whether the given fact index $Fi$ (as returned by the
+        The function $IsFactIn()$ simply returns a boolean value to
+        indicate whether or not the given fact index $Fi$ (as returned by the
         $Encode()$ function) is present in every stable model in $SM$.
 
         \begin{vverbatim}
@@ -2801,13 +2801,13 @@ ENDFUNCTION
 
       \begin{itemize}
         \item
-          {\em Subjects} of the access control policies are the users. Since
+          {\em Subjects} of the authorisation policies are the users. Since
           all users must first be authenticated, the password table used
           in authentication may also be used to extract the list of subjects.
         \item
-          {\em Access Rights} are built in: they are the HTTP request methods
-          as defined by the HTTP 1.1 standard \cite{HTTP1} (i.e. OPTIONS, GET,
-          HEAD, POST, PUT, DELETE, TRACE and CONNECT).
+          {\em Access Rights} are the HTTP request methods defined by the
+          HTTP 1.1 standard \cite{HTTP1}: OPTIONS, GET, HEAD, POST, PUT,
+          DELETE, TRACE and CONNECT.
         \item
           {\em Objects} are the resources available in the server themselves.
           Assuming that the document root is a hierarchy of directories and
@@ -2832,15 +2832,15 @@ ENDFUNCTION
           hard-coded built-ins; and the list of objects are generated by
           traversing the document root for files and directories.
         \item
-          {\em Generating additional constraints.} Additional constraints are
-          generated to preserve the relationship between groups and elements.
-          This is useful to model the assertion that unless explicitly stated,
-          users holding particular access rights to a directory automatically
-          hold those access rights to every file in that directory
-          (recursively, if with subdirectories). The module makes this
-          assertion by generating non-conditional constraint rules that state
-          that each file (object) is a member of the directory (object group)
-          in which it is contained.
+          {\em Generating additional constraints.} Additional constraint
+          rules are generated to preserve the relationship between groups
+          and elements. This is useful to model the assertion that unless
+          explicitly stated, users holding particular access rights to a
+          directory automatically hold those access rights to every file in
+          that directory (recursively, if with subdirectories). The module
+          makes this assertion by generating non-conditional constraint rules
+          that state that each file (object) is a member of the directory
+          (object group) in which it is contained.
       \end{itemize}
 
       All other language ${\cal L'}$ statements (initial state definitions,
@@ -2900,8 +2900,8 @@ ENDFUNCTION
     \label{sec-future}
 
     An obvious limitation of language ${\cal L}$, and therefore of the
-    PolicyUpdater system is its inability to express time-dependent
-    authorisations. Consider the following authorisation rule:
+    PolicyUpdater system is its lack of expressive power to represent
+    time-dependent authorisations. Consider the following authorisation rule:
 
     \begin{vquote}
       $Bob$ holds $read$ access to file $f1$ between $9:00$ $AM$ and $5:00$
@@ -2922,14 +2922,14 @@ ENDFUNCTION
     \end{vquote}
 
     The atom above may be interpreted to mean that the authorisation holds for
-    all times between 9:00 AM and 5:00 PM, inclusive. In this example, time
-    granularity, or the smallest unit of time that can be expressed is one
-    minute. Of course, a more general approach is to use the domain of positive
-    integers. With this approach, the system can handle different granularities
-    of time, where the choice of what time unit each discrete value is
-    interpreted as is left to the application. For example, if the temporal
-    values are defined to be the number of seconds since 12 midnight, 01 Jan
-    1970 (i.e. the UNIX epoch), then the atom below states that the
+    all times between 9:00 AM and 5:00 PM, inclusive. In this example, the
+    granularity of time, or the smallest unit of time that can be expressed is
+    one minute. Of course, a more general approach is to use the domain of
+    positive integers. With this approach, the system can handle different
+    granularities of time, where the choice of what time unit each discrete
+    value is interpreted as is left to the application. For example, if the
+    temporal values are defined to be the number of seconds since 12 midnight,
+    01 Jan 1970 (i.e. the UNIX epoch), then the atom below states that the
     authorisation holds at an interval starting at 9:00 AM, 18 March 1976 and
     ending at 5:00 PM, 18 March 1976:
 
@@ -2999,10 +2999,11 @@ ENDFUNCTION
     system can be adapted to be used in a real-world web server authorisation
     application. As mentioned earlier, while other logic based access control
     approaches have been proposed recently, most of these cannot deal with
-    dynamic policy updates. Furthermore, most of these approaches rarely
-    address implementation issues. To the best of our knowledge, the
-    PolicyUpdater system is the first fully implemented logic based access
-    control system used in a web server security application.
+    dynamic policy updates. Furthermore, most of these approaches do not
+    address issues concerning implementation. To the best of our knowledge, the
+    PolicyUpdater system is the first fully-implemented logic
+    based access control system to be used in a web server security
+    application.
 
     Finally, as discussed in Section \ref{sec-future}, we are currently working
     on extending language {\cal L}, and therefore the PolicyUpdater system, to
