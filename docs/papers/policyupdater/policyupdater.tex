@@ -34,13 +34,13 @@
 \makeatletter
 \newcommand{\vappsection}[1]{
   % change the numbering to Appendix *level*
-  \renewcommand{\@seccntformat}[1]{
-    \appendixname\hspace{0.5em}\csname the##1\endcsname \hspace{1em}
+  \renewcommand{\@seccntformat}[1]{ \\
+    \appendixname\hspace{0.25em}\csname the##1\endcsname\hspace{0.5em} \\
   }
   \section{#1}
   % change the numbering back
-  \renewcommand{\@seccntformat}[1]{
-    \csname the##1\endcsname\hspace{1em}
+  \renewcommand{\@seccntformat}[1]{ \\
+    \csname the##1\endcsname\hspace{0.5em} \\
   }
 }
 \makeatother
