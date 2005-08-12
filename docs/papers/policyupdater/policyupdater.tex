@@ -2904,12 +2904,12 @@ ENDFUNCTION
     time-dependent authorisations. Consider the following authorisation rule:
 
     \begin{vquote}
-      $Bob$ holds $read$ access to file $f1$ between $9:00$ $AM$ and $5:00$
+      $Bob$ holds $read$ access to file $f_{1}$ between $9:00$ $AM$ and $5:00$
       $PM$.
     \end{vquote}
 
     The authorisation information above can be broken down into two parts: an
-    authorisation part, i.e. "Bob holds read access to file $f1$", and a
+    authorisation part, i.e. "Bob holds read access to file $f_{1}$", and a
     temporal part, i.e. "between 9:00 AM and 5:00 PM". As language ${\cal L}$
     can already express authorisations, we focus our attention to the temporal
     part. A naive attempt to extend language ${\cal L}$ to express time may
@@ -2918,7 +2918,7 @@ ENDFUNCTION
     authorisation rule above can be represented as:
 
     \begin{vquote}
-      $holds$($bob$, $read$, $f1$, $900$, $1700$)
+      $holds$($bob$, $read$, $f_{1}$, $900$, $1700$)
     \end{vquote}
 
     The atom above may be interpreted to mean that the authorisation holds for
@@ -2934,7 +2934,7 @@ ENDFUNCTION
     ending at 5:00 PM, 18 March 1976:
 
     \begin{vquote}
-      $holds$($bob$, $read$, $f1$, $195951600$, $195980400$)
+      $holds$($bob$, $read$, $f_{1}$, $195951600$, $195980400$)
     \end{vquote}
 
     While this approach gives the language enough expressive power to represent
@@ -2943,28 +2943,28 @@ ENDFUNCTION
     This deficiency is shown in the example below:
 
     \begin{vquote}
-      $Alice$ holds a $write$ access right to file $f1$ after $Bob$ holds a
-      $read$ access right to file $f2$.
+      $Alice$ holds a $write$ access right to file $f_{1}$ after $Bob$ holds a
+      $read$ access right to file $f_{2}$.
     \end{vquote}
 
     Such authorisation rule might arise in a scenario where the access right
-    $write$ to file $f1$ can only be granted in some time after the $read$
-    access right to file $f2$ has been granted and revoked. This example shows
-    that the specific times at which authorisations hold are not as important
-    as the relationship between the times themselves. This authorisation rule
-    may be represented as follows:
+    $write$ to file $f_{1}$ can only be granted in some time after the $read$
+    access right to file $f_{2}$ has been granted and revoked. This example
+    shows that the specific times at which authorisations hold are not as
+    important as the relationship between the times themselves. This
+    authorisation rule may be represented as follows:
 
     \begin{vquote}
-      $holds$($alice$, $write$, $f1$, $i_{1}$)
+      $holds$($alice$, $write$, $f_{1}$, $i_{1}$)
 
-      $holds$($bob$, $read$, $f2$, $i_{2}$)
+      $holds$($bob$, $read$, $f_{2}$, $i_{2}$)
 
       $after$($i_{1}$, $i_{2}$)
     \end{vquote}
 
     The example above states that $alice$ holds a $write$ access right to file
-    $f1$ at some time interval $i_{1}$, $bob$ holds a $read$ access right to
-    file $f2$ at some time interval $i_{2}$, and that the interval $i_{1}$
+    $f_{1}$ at some time interval $i_{1}$, $bob$ holds a $read$ access right to
+    file $f_{2}$ at some time interval $i_{2}$, and that the interval $i_{1}$
     occurs at some time after the interval $i_{1}$. As mentioned earlier, the
     actual values of the time interval variables $i_{1}$ and $i_{2}$ is not as
     important as the fact that the interval $i_{1}$ occurs after interval
