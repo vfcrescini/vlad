@@ -63,14 +63,14 @@
   \begin{abstract}
     {\em PolicyUpdater} is a fully-implemented authorisation system that
     provides policy evaluations as well as dynamic policy updates. These
-    functions are achieved by the use of a logic-based language, ${\cal L}$, to
-    represent the underlying access control policies, constraints and update
-    propositions. The system performs access control query evaluations and
-    conditional policy updates by translating the language $\cal{L}$ policies
-    to a normal logic program in a form suitable for evaluation using the
-    {\em Stable Model} semantics. In this paper, we show the underlying
-    mechanisms that make up the PolicyUpdater system, including its theoretical
-    foundation of the formal language, system structure, implementation issues
+    functions are achieved by the use of a logic-based language, ${\cal L}$,
+    to represent the underlying access control policies, constraints and
+    update propositions. The system performs access control query evaluations
+    and conditional policy updates by translating the language $\cal{L}$
+    policies to a normal logic program in a form suitable for evaluation using
+    the {\em Stable Model} semantics. In this paper, we show the underlying
+    mechanisms that make up the PolicyUpdater system, including the theoretical
+    foundation of its formal language, system structure, implementation issues
     and some performance analysis.
   \end{abstract}
 
@@ -2923,7 +2923,7 @@ ENDFUNCTION
 
     The atom above may be interpreted to mean that the authorisation holds for
     all times between 9:00 AM and 5:00 PM, inclusive. In this example, the
-    granularity of time, or the smallest unit of time that can be expressed is
+    granularity of time, or the smallest unit of time that can be expressed, is
     one minute. Of course, a more general approach is to use the domain of
     positive integers. With this approach, the system can handle different
     granularities of time, where the choice of what time unit each discrete
@@ -2979,11 +2979,11 @@ ENDFUNCTION
     disjunctive interval relation information.
 
     At the time of writing, the authors of this paper are working on a new
-    authorisation language ${\cal L}^{T}$, an extension of language ${\cal L}$
-    with provisions to (1) express authorisation rules that hold only on
-    specified time intervals, and to (2) allow the representation of temporal
-    interval relations either under Allen's full interval algebra or one of its
-    subalgebras \cite{KRO}.
+    authorisation language, ${\cal L}^{\cal T}$. This new language is an
+    extension of language ${\cal L}$ with provisions to: (1) express
+    authorisation rules that hold only on specified time intervals, and (2)
+    allow the representation of temporal interval relations either under
+    Allen's full interval algebra or one of its subalgebras \cite{KRO}.
 
   \section{Conclusion}
     \label{sec-conclusion}
@@ -3006,8 +3006,8 @@ ENDFUNCTION
     application.
 
     Finally, as discussed in Section \ref{sec-future}, we are currently working
-    on extending language {\cal L}, and therefore the PolicyUpdater system, to
-    support time-bound authorisation policies.
+    on extending language ${\cal L}$ and the PolicyUpdater system to support
+    time-bound authorisation policies.
 
   \begin{thebibliography}{00}
     \bibitem{AL}
@@ -3159,7 +3159,7 @@ ENDFUNCTION
       {\tt \scriptsize ftp://ftp.isi.edu/in-notes/rfc2617.txt}
 
     \bibitem{SIM}
-      Simons. P.
+      Simons P.
       (1995)
       Efficient Implementation of the Stable Model Semantics for Normal Logic
       Programs.
