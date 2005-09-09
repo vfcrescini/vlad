@@ -15,40 +15,59 @@
 # the Free Software Foundation, 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 #
-# Copyright (C) 2003 Vino Fernando Crescini
+# Copyright (C) 2003, 2005 Vino Fernando Crescini
 #
 # Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+# day of the week the weekly backups are to be performed (date +%u)
+# default is 7 (sunday)
+TIME_WEEK="7"
 
-# keep this many backlogs (>=0)
-backlog=7
+# day of the month the monthy backups are to be performed (date +%d). watch out
+# for months not containing this day (if 31 is given, no backups will be made
+# in february, april, etc).
+# default is 28
+TIME_MONTH="28"
 
-# the space-delimited list of paths to backup (full-paths)
-source_dirs=""
+# the month yearly backups are to be perfomed (date +%m). this means yearly
+# backups will be made on the ${TIME_MONTH}th day of the ${TIME_YEAR}th month.
+# default is 1 (january)
+TIME_YEAR="1"
 
-# the directory in which backup archives are stored (full-path)
-backup_dir=""
+# number of years to keep
+# (default is 5)
+BACKLOG="5"
 
-# command line for tar and gzip to read and write to and from stdout and stdin
-tar_cmd="tar -c -p -s --same-owner --numeric-owner"
-gzip_cmd="gzip -9"
+# space-delimited list of paths to backup (full-paths)
+DIR_SRC=""
 
-# prefix for each backup archive
-prefix="bak-"
+# directory to use for backups (full-path)
+DIR_BAK=""
 
-progver="1.0"
-progname="auto_backup"
+CMD_TAR="tar -c -p -s --same-owner --numeric-owner"
+CMD_ZIP="gzip -9"
+
+PROGNAME="auto_backup"
+PROGVER="2.0"
+
+# del_old <full-path> <backlog>
+del_old()
+{
+  ls -1 ${1} | sort -d | sed -n $[${2} + 1]~1p | while read i; do
+    rm -f ${1}/${i}
+  done
+}
 
 while [ ${#} -ge 1 ]; do
   if [ "${1}" = "-h" ]; then
-    echo "usage:      ${progname} [options]"
+    echo "usage:      ${PROGNAME} [options]"
     echo "options:"
     echo "  -h        print this usage and exit"
     echo "  -V        print version and exit"
     echo ""
     exit 0
   elif [ "${1}" = "-V" ]; then
-    echo "${progname} ${progver}"
+    echo "${PROGNAME} ${PROGVER}"
     exit 0
   fi
   shift 1
@@ -56,51 +75,69 @@ done
 
 cd /
 
-# first and foremost, ensure that backup_dir is writable and readable
-if \
-  [ ! -d "${backup_dir}" ] || \
-  [ ! -r "${backup_dir}" ] || \
-  [ ! -w "${backup_dir}" ]; then
+# first and foremost, ensure that DIR_BAK is writable and readable
+if [ ! -d "${DIR_BAK}" ] || [ ! -r "${DIR_BAK}" ] || [ ! -w "${DIR_BAK}" ]; then
+  echo "${DIR_BAK} not writable or not a directory" 1>&2
   exit -1
 fi
 
-# now do it
-for i in ${source_dirs}; do
+# go through each dir that we have to backup
+for i in ${DIR_SRC}; do
   # remove leading /
   i="${i#/}"
-  # ignore those that do not have sufficient priviledges
-  if [ -d "${i}" ] && [ -r "${i}" ] && [ -x "${i}" ]; then
-    # convert / to _
-    name="${prefix}`echo ${i} | tr [/] [_]`"
 
-    # rotate the backups
-    count=${backlog}
-    while [ ${count} -ge 0 ]; do
-      if [ ${count} -eq ${backlog} ]; then
-        # delete oldest one
-        rm -f "${backup_dir}/${name}-${count}.tar.gz"
-      else
-        # shift the rest: there should only be one of each count
-        if [ -f "${backup_dir}/${name}-${count}.tar.gz" ]; then
-          mv -f \
-            "${backup_dir}/${name}-${count}.tar.gz" \
-            "${backup_dir}/${name}-$((${count}+1)).tar.gz"
-        fi
-      fi
-      # decrement
-      count=$((${count}-1))
-    done
-
-    # if the name is blank, then it must have been /, which is the curr dir
-    if [ -z "${i}" ]; then
-      srcdir="."
-    else
-      srcdir="${i}"
-    fi
-
-    # now tar it up and compress
-    ${tar_cmd} "${srcdir}" | ${gzip_cmd} > "${backup_dir}/${name}-0.tar.gz"
+  # ignore those that we do not have sufficient priviledges
+  if [ ! -d "${i}" ] || [ ! -r "${i}" ] || [ ! -x "${i}" ]; then
+    echo "${i} not readable or not a directory" 1>&2
+    continue
   fi
+
+  # if the name is blank, then it must have been /, which is the curr dir
+  if [ -z "${i}" ]; then
+    src_dir="."
+  else
+    src_dir="${i}"
+  fi
+
+  bak_dir="${DIR_BAK}/`echo ${i} | tr [/] [_]`"
+
+  # ensure that the directory tree exists for this dir
+  mkdir -p "${bak_dir}" || exit -2
+  for j in daily weekly monthly yearly; do
+    mkdir -p "${bak_dir}/${j}" || exit -2
+  done
+
+  # now, for our properly formatted date (obviously not Y10K compliant)
+  y="`date +%Y`"
+  m="`date +%m`"
+  d="`date +%d`"
+  w="`date +%u`"
+  date="${y}-${m}-${d}"
+
+  # make today's backup
+  ${CMD_TAR} "${src_dir}" | ${CMD_ZIP} > "${bak_dir}/daily/${date}.tar.gz"
+
+  # see if it is that time of the week when we need to make a weekly copy
+  if [ ${TIME_WEEK} -eq ${w} ]; then
+    cp -f "${bak_dir}/daily/${date}.tar.gz" "${bak_dir}/weekly"
+  fi
+
+  # is it that time of the month?
+  if [ ${TIME_MONTH} -eq ${d} ]; then
+    cp -f "${bak_dir}/daily/${date}.tar.gz" "${bak_dir}/monthly"
+
+    # is it that month of the year?
+    if [ ${TIME_YEAR} -eq ${m} ]; then
+      cp -f "${bak_dir}/daily/${date}.tar.gz" "${bak_dir}/yearly"
+    fi
+  fi
+
+  # now delete old logs
+  del_old "${bak_dir}/daily" 7
+  del_old "${bak_dir}/weekly" 4
+  del_old "${bak_dir}/monthly" 12
+  del_old "${bak_dir}/yearly" ${BACKLOG}
+
 done
 
 exit 0
