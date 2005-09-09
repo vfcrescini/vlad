@@ -24,10 +24,10 @@
 backlog=7
 
 # the space-delimited list of paths to backup (full-paths)
-source_dirs="/var/lib/cvs"
+source_dirs=""
 
 # the directory in which backup archives are stored (full-path)
-backup_dir="/usr/local/tmp/backup"
+backup_dir=""
 
 # command line for tar and gzip to read and write to and from stdout and stdin
 tar_cmd="tar -c -p -s --same-owner --numeric-owner"
@@ -35,6 +35,24 @@ gzip_cmd="gzip -9"
 
 # prefix for each backup archive
 prefix="bak-"
+
+progver="1.0"
+progname="auto_backup"
+
+while [ ${#} -ge 1 ]; do
+  if [ "${1}" = "-h" ]; then
+    echo "usage:      ${progname} [options]"
+    echo "options:"
+    echo "  -h        print this usage and exit"
+    echo "  -V        print version and exit"
+    echo ""
+    exit 0
+  elif [ "${1}" = "-V" ]; then
+    echo "${progname} ${progver}"
+    exit 0
+  fi
+  shift 1
+done
 
 cd /
 
