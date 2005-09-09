@@ -48,7 +48,7 @@ CMD_TAR="tar -c -p -s --same-owner --numeric-owner"
 CMD_ZIP="gzip -9"
 
 PROGNAME="auto_backup"
-PROGVER="2.0"
+PROGVER="2.1"
 
 # del_old <full-path> <backlog>
 del_old()
@@ -74,6 +74,7 @@ while [ ${#} -ge 1 ]; do
 done
 
 cd /
+umask 0027
 
 # first and foremost, ensure that DIR_BAK is writable and readable
 if [ ! -d "${DIR_BAK}" ] || [ ! -r "${DIR_BAK}" ] || [ ! -w "${DIR_BAK}" ]; then
@@ -102,9 +103,9 @@ for i in ${DIR_SRC}; do
   bak_dir="${DIR_BAK}/`echo ${i} | tr [/] [_]`"
 
   # ensure that the directory tree exists for this dir
-  mkdir -p "${bak_dir}" || exit -2
+  mkdir -m 0750 -p "${bak_dir}" || exit -2
   for j in daily weekly monthly yearly; do
-    mkdir -p "${bak_dir}/${j}" || exit -2
+    mkdir -m 0750 -p "${bak_dir}/${j}" || exit -2
   done
 
   # now, for our properly formatted date (obviously not Y10K compliant)
