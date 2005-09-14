@@ -48,12 +48,12 @@ CMD_TAR="tar -c -p -s --same-owner --numeric-owner"
 CMD_ZIP="gzip -9"
 
 PROGNAME="auto_backup"
-PROGVER="2.1"
+PROGVER="2.2"
 
 # del_old <full-path> <backlog>
 del_old()
 {
-  ls -1 ${1} | sort -d | sed -n $[${2} + 1]~1p | while read i; do
+  ls -1 ${1} | sort -d -r | sed -n $[${2} + 1]~1p | while read i; do
     rm -f ${1}/${i}
   done
 }
