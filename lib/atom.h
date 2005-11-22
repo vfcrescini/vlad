@@ -22,6 +22,8 @@
 #ifndef __VLAD_ATOM_H
 #define __VLAD_ATOM_H
 
+#include <vlad/vlad.h>
+
 /* atom type */
 #define VLAD_ATOM_HOLDS          0
 #define VLAD_ATOM_MEMBER         1
