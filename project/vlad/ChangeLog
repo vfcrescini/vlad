@@ -1,3 +1,9 @@
+2005-11-22  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* samples/chwall.vlp :
+
+	  - Fixed some typos.
+
 2005-02-21  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/list.cpp :
