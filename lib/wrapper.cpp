@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/wrapper.h>
 #include <vlad/polbase.h>
 
@@ -37,7 +37,7 @@
 #define VLAD_WRAPPER_CREATE(X,Y)                                 \
   (((Y) == NULL) ?                                               \
     VLAD_NULLPTR :                                               \
-    (((*(Y) = VLAD_WRAPPER_CAST(VLAD_NEW(X), void *)) == NULL) ? \
+    (((*(Y) = VLAD_WRAPPER_CAST(VLAD_MEM_NEW(X), void *)) == NULL) ? \
       VLAD_MALLOCFAILED :                                        \
       VLAD_OK))
 
@@ -593,7 +593,7 @@ VLAD_EXTERN int vlad_uref_init(void *a_uref,
   if ((tmp_uref = VLAD_WRAPPER_CAST(a_uref, updateref *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  if ((tmp_name = VLAD_STRING_MALLOC(a_name)) == NULL)
+  if ((tmp_name = VLAD_MEM_STR_MALLOC(a_name)) == NULL)
     return VLAD_MALLOCFAILED;
 
   strcpy(tmp_name, a_name);

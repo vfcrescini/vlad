@@ -23,6 +23,7 @@
 #include <cstring>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/list.h>
 
 list_item::list_item()
@@ -104,7 +105,7 @@ int list::add(list_item *a_data)
       return retval;
   }
 
-  if ((new_node = VLAD_ADT_MALLOC(list_node, 1)) == NULL)
+  if ((new_node = VLAD_MEM_ADT_MALLOC(list_node, 1)) == NULL)
     return VLAD_MALLOCFAILED;
 
   if (m_tail == NULL)

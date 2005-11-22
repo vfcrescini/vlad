@@ -41,6 +41,7 @@ SHARED_LIBS = libvlad.so.$(VERSION)
 INCLUDES = \
   config.h \
   vlad.h \
+  mem.h \
   list.h \
   stringlist.h \
   numberlist.h \
@@ -109,42 +110,42 @@ ifndef DEBUG
   endif
 endif
 
-list.o : list.h list.cpp
+list.o : vlad.h mem.h list.h list.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c list.cpp
 
-stringlist.o : list.h stringlist.h stringlist.cpp
+stringlist.o : vlad.h mem.h list.h stringlist.h stringlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c stringlist.cpp
 
-numberlist.o : list.h numberlist.h numberlist.cpp
+numberlist.o : vlad.h mem.h list.h numberlist.h numberlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
 
-fact.o : stringlist.h identifier.h atom.h symtab.h fact.h fact.cpp
+fact.o : vlad.h mem.h stringlist.h identifier.h atom.h symtab.h fact.h fact.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c fact.cpp
 
-expression.o : list.h fact.h stringlist.h symtab.h expression.h expression.cpp
+expression.o : vlad.h mem.h list.h fact.h stringlist.h symtab.h expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
 
-symtab.o : stringlist.h identifier.h symtab.h symtab.cpp
+symtab.o : vlad.h mem.h stringlist.h identifier.h symtab.h symtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
 
-consttab.o : expression.h consttab.h consttab.cpp
+consttab.o : vlad.h mem.h expression.h consttab.h consttab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c consttab.cpp
 
-updatetab.o : stringlist.h expression.h updatetab.h updatetab.cpp
+updatetab.o : vlad.h mem.h stringlist.h expression.h updatetab.h updatetab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c updatetab.cpp
 
-seqtab.o : stringlist.h expression.h seqtab.h seqtab.cpp
+seqtab.o : vlad.h mem.h stringlist.h expression.h seqtab.h seqtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
 
 ifdef SMODELS
-smwrap.o : smwrap.h smwrap.cpp
+smwrap.o : vlad.h mem.h smwrap.h smwrap.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c smwrap.cpp
 endif
 
 ifdef WRAPPER
-wrapper.o : polbase.h wrapper.h wrapper.cpp
+wrapper.o : vlad.h mem.h polbase.h wrapper.h wrapper.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
 endif
 
-polbase.o : identifier.h atom.h symtab.h polbase.h polbase.cpp
+polbase.o : vlad.h mem.h identifier.h atom.h symtab.h polbase.h polbase.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp

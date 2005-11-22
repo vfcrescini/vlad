@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/seqtab.h>
 
 updateref::updateref()
@@ -132,7 +132,7 @@ int seqtab::add(const char *a_name, stringlist *a_list)
   int retval;
   updateref *tmp_ref;
 
-  if ((tmp_ref = VLAD_NEW(updateref())) == NULL)
+  if ((tmp_ref = VLAD_MEM_NEW(updateref())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp_ref->init(a_name, a_list)) != VLAD_OK)
