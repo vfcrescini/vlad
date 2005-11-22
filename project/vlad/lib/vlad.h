@@ -22,15 +22,6 @@
 #ifndef __VLAD_VLAD_H
 #define __VLAD_VLAD_H
 
-#ifdef __cplusplus
-#include <cstdlib>
-#include <cstring>
-#include <new>
-#else
-#include <stdlib.h>
-#include <string.h>
-#endif
-
 #include <vlad/config.h>
 
 /* query result codes */
@@ -96,13 +87,6 @@
 #define VLAD_OPENFAILED          -11
 /* operation not permitted at this time */
 #define VLAD_INVALIDOP           -12
-
-/* malloc/new macros */
-#define VLAD_ADT_MALLOC(X,Y)     ((X *) malloc(sizeof(X) * Y))
-#define VLAD_STRING_MALLOC(X)    ((char *) malloc(sizeof(char) * (strlen(X) + 1)))
-#ifdef __cplusplus
-#define VLAD_NEW(X)              (new(std::nothrow) X)
-#endif
 
 /* int/bool to string macros */
 #define VLAD_BOOL_STRING(X)      ((X) ? VLAD_STR_TRUE : VLAD_STR_FALSE)

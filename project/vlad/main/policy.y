@@ -23,9 +23,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/identifier.h>
 #include <vlad/polbase.h>
 
@@ -481,7 +481,7 @@ update_var_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
-    if (($$ = VLAD_NEW(stringlist())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(stringlist())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -513,7 +513,7 @@ expression :
   boolean_fact {
     int retval;
 
-    if (($$ = VLAD_NEW(expression())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(expression())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -566,7 +566,7 @@ holds_fact :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -584,7 +584,7 @@ subst_fact :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -602,7 +602,7 @@ memb_fact :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;

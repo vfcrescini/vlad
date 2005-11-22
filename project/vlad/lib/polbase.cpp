@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/identifier.h>
 #include <vlad/polbase.h>
 
@@ -81,7 +81,7 @@ int polbase::init()
   /* initialise symbol table */
   if (m_stable != NULL)
     delete m_stable;
-  if ((m_stable = VLAD_NEW(symtab())) == NULL)
+  if ((m_stable = VLAD_MEM_NEW(symtab())) == NULL)
     return VLAD_MALLOCFAILED;
   if ((retval = m_stable->init()) != VLAD_OK)
     return retval;
@@ -89,25 +89,25 @@ int polbase::init()
   /* initialise initial expression table */
   if (m_itable != NULL)
     delete m_itable;
-  if ((m_itable = VLAD_NEW(expression())) == NULL)
+  if ((m_itable = VLAD_MEM_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* initialise constraints table */
   if (m_ctable != NULL)
     delete m_ctable;
-  if ((m_ctable = VLAD_NEW(consttab())) == NULL)
+  if ((m_ctable = VLAD_MEM_NEW(consttab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* initialise update declaration table */
   if (m_utable != NULL)
     delete m_utable;
-  if ((m_utable = VLAD_NEW(updatetab())) == NULL)
+  if ((m_utable = VLAD_MEM_NEW(updatetab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* sequence table */
   if (m_setable != NULL)
     delete m_setable;
-  if ((m_setable = VLAD_NEW(seqtab())) == NULL)
+  if ((m_setable = VLAD_MEM_NEW(seqtab())) == NULL)
     return VLAD_MALLOCFAILED;
 
 #ifdef VLAD_SMODELS
@@ -181,7 +181,7 @@ int polbase::add_consttab(expression *a_exp,
    */
 
   /* exression */
-  if ((exp = VLAD_NEW(expression())) == NULL)
+  if ((exp = VLAD_MEM_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
@@ -197,7 +197,7 @@ int polbase::add_consttab(expression *a_exp,
 
   /* condition */
   if (a_cond != NULL) {
-    if ((cond = VLAD_NEW(expression())) == NULL)
+    if ((cond = VLAD_MEM_NEW(expression())) == NULL)
       return VLAD_MALLOCFAILED;
 
     for (i = 0; i < VLAD_LIST_LENGTH(a_cond); i++) {
@@ -214,7 +214,7 @@ int polbase::add_consttab(expression *a_exp,
 
   /* negative condition */
   if (a_ncond != NULL) {
-    if ((ncond = VLAD_NEW(expression())) == NULL)
+    if ((ncond = VLAD_MEM_NEW(expression())) == NULL)
       return VLAD_MALLOCFAILED;
 
     for (i = 0; i < VLAD_LIST_LENGTH(a_ncond); i++) {
@@ -255,14 +255,14 @@ int polbase::add_updatetab(const char *a_name,
     return VLAD_NULLPTR;
 
   /* copy name */
-  if ((name = VLAD_STRING_MALLOC(a_name)) == NULL)
+  if ((name = VLAD_MEM_STR_MALLOC(a_name)) == NULL)
     return VLAD_MALLOCFAILED;
 
   strcpy(name, a_name);
 
   /* verify and copy varlist */
   if (a_vlist != NULL) {
-    if ((vlist = VLAD_NEW(stringlist())) == NULL)
+    if ((vlist = VLAD_MEM_NEW(stringlist())) == NULL)
       return VLAD_MALLOCFAILED;
 
     for (i = 0; i < VLAD_LIST_LENGTH(a_vlist); i++) {
@@ -279,7 +279,7 @@ int polbase::add_updatetab(const char *a_name,
 
   /* verify and copy precondition */
   if (a_precond != NULL) {
-    if ((precond = VLAD_NEW(expression())) == NULL)
+    if ((precond = VLAD_MEM_NEW(expression())) == NULL)
       return VLAD_MALLOCFAILED;
 
     for (i = 0; i < VLAD_LIST_LENGTH(a_precond); i++) {
@@ -297,7 +297,7 @@ int polbase::add_updatetab(const char *a_name,
   }
 
   /* verify and copy the postcondition */
-  if ((postcond = VLAD_NEW(expression())) == NULL)
+  if ((postcond = VLAD_MEM_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < VLAD_LIST_LENGTH(a_postcond); i++) {
@@ -1065,7 +1065,7 @@ int polbase::compute_evaluate()
   /* create a new instance of the smodels smwrap and init it */
   if (m_smobject != NULL)
     delete m_smobject;
-  if ((m_smobject = VLAD_NEW(smwrap())) == NULL)
+  if ((m_smobject = VLAD_MEM_NEW(smwrap())) == NULL)
     return VLAD_MALLOCFAILED;
   if ((retval = m_smobject->init()) != VLAD_OK)
     return retval;
@@ -1432,9 +1432,9 @@ int polbase::compute_evaluate()
       numberlist *tmp_list1;
       numberlist *tmp_list2;
 
-      if ((tmp_list1 = VLAD_NEW(numberlist())) == NULL)
+      if ((tmp_list1 = VLAD_MEM_NEW(numberlist())) == NULL)
         return VLAD_MALLOCFAILED;
-      if ((tmp_list2 = VLAD_NEW(numberlist())) == NULL)
+      if ((tmp_list2 = VLAD_MEM_NEW(numberlist())) == NULL)
         return VLAD_MALLOCFAILED;
 
       if ((retval = m_ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
@@ -1489,7 +1489,7 @@ int polbase::compute_evaluate()
     expression *tmp_post = NULL;
     numberlist *tmp_list;
 
-   if ((tmp_list = VLAD_NEW(numberlist())) == NULL)
+   if ((tmp_list = VLAD_MEM_NEW(numberlist())) == NULL)
      return VLAD_MALLOCFAILED;
 
     if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
@@ -1922,7 +1922,7 @@ int polbase::decode_fact(fact **a_fact,
   }
 
   /*  now create a new fact */
-  if ((*a_fact = VLAD_NEW(fact())) == NULL)
+  if ((*a_fact = VLAD_MEM_NEW(fact())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = (*a_fact)->init(tmp1, tmp2, tmp3, type, truth)) != VLAD_OK) {

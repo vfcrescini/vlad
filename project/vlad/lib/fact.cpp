@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/identifier.h>
 #include <vlad/fact.h>
 
@@ -214,11 +214,11 @@ int fact::init_holds(const char *a_sub,
   m_type = VLAD_ATOM_HOLDS;
   m_truth = a_truth;
 
-  if ((m_holds.subject = VLAD_STRING_MALLOC(a_sub)) == NULL)
+  if ((m_holds.subject = VLAD_MEM_STR_MALLOC(a_sub)) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((m_holds.access = VLAD_STRING_MALLOC(a_acc)) == NULL)
+  if ((m_holds.access = VLAD_MEM_STR_MALLOC(a_acc)) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((m_holds.object = VLAD_STRING_MALLOC(a_obj)) == NULL)
+  if ((m_holds.object = VLAD_MEM_STR_MALLOC(a_obj)) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* strcpy never fails */
@@ -243,9 +243,9 @@ int fact::init_member(const char *a_elt,
   m_type = VLAD_ATOM_MEMBER;
   m_truth = a_truth;
 
-  if ((m_member.element = VLAD_STRING_MALLOC(a_elt)) == NULL)
+  if ((m_member.element = VLAD_MEM_STR_MALLOC(a_elt)) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((m_member.group = VLAD_STRING_MALLOC(a_grp)) == NULL)
+  if ((m_member.group = VLAD_MEM_STR_MALLOC(a_grp)) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* strcpy never fails */
@@ -267,9 +267,9 @@ int fact::init_subset(const char *a_grp1, const char *a_grp2, bool a_truth)
   m_type = VLAD_ATOM_SUBSET;
   m_truth = a_truth;
 
-  if ((m_subset.group1 = VLAD_STRING_MALLOC(a_grp1)) == NULL)
+  if ((m_subset.group1 = VLAD_MEM_STR_MALLOC(a_grp1)) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((m_subset.group2 = VLAD_STRING_MALLOC(a_grp2)) == NULL)
+  if ((m_subset.group2 = VLAD_MEM_STR_MALLOC(a_grp2)) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* strcpy never fails */
@@ -290,7 +290,7 @@ int fact::copy(fact **a_fact)
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  if ((*a_fact = VLAD_NEW(fact())) == NULL)
+  if ((*a_fact = VLAD_MEM_NEW(fact())) == NULL)
     return VLAD_MALLOCFAILED;
 
   switch(m_type) {
@@ -322,7 +322,7 @@ int fact::replace(const char *a_var, const char *a_ident, fact **a_fact)
     return VLAD_NULLPTR;
 
   /* create a new fact */
-  if ((*a_fact = VLAD_NEW(fact())) == NULL)
+  if ((*a_fact = VLAD_MEM_NEW(fact())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /*
@@ -372,7 +372,7 @@ int fact::replace(stringlist *a_vlist, stringlist *a_ilist, fact **a_fact)
     return VLAD_INVALIDINPUT;
 
   /* all clear */
-  if ((*a_fact = VLAD_NEW(fact())) == NULL)
+  if ((*a_fact = VLAD_MEM_NEW(fact())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /*

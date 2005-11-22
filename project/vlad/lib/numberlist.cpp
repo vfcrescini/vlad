@@ -21,9 +21,9 @@
 
 #include <cstdlib>
 #include <cstddef>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/numberlist.h>
 
 number::number()
@@ -76,7 +76,7 @@ int numberlist::add(unsigned int a_num)
   int retval;
   number *tmp = NULL;
 
-  if ((tmp = VLAD_NEW(number())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(number())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_num)) != VLAD_OK)

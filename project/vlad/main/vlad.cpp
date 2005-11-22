@@ -22,11 +22,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <new>
 
 #include <getopt.h>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include "parser.h"
 
 int main(int argc, char *argv[])
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
   }
 
   /* create an instance of the policy base and initialise it */
-  if ((pbase = VLAD_NEW(polbase)) == NULL)
+  if ((pbase = VLAD_MEM_NEW(polbase)) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = pbase->init()) != VLAD_OK) {

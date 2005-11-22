@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/stringlist.h>
 
 string::string()
@@ -65,7 +65,7 @@ int string::init(const char *a_str)
   if (m_string != NULL)
     free(m_string);
 
-  if ((m_string = VLAD_STRING_MALLOC(a_str)) == NULL)
+  if ((m_string = VLAD_MEM_STR_MALLOC(a_str)) == NULL)
     return VLAD_MALLOCFAILED;
 
   return ((strcpy(m_string, a_str) == NULL) ? VLAD_FAILURE : VLAD_OK);
@@ -102,7 +102,7 @@ int stringlist::add(const char *a_str)
   if (a_str == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp = VLAD_NEW(string())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(string())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_str)) != VLAD_OK)

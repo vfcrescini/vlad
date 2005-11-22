@@ -21,9 +21,9 @@
 
 #include <cstdlib>
 #include <cstddef>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/consttab.h>
 
 constraint::constraint()
@@ -134,7 +134,7 @@ int constraint::replace(const char *a_var,
       return retval;
 
   /* now create a new constraint */
-  if ((tmp = VLAD_NEW(constraint())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(constraint())) == NULL)
     return VLAD_MALLOCFAILED;
 
   return tmp->init(exps[0], exps[1], exps[2]);
@@ -148,7 +148,7 @@ int constraint::varlist(stringlist **a_list)
   if (a_list == NULL)
     return VLAD_NULLPTR;
 
-  if ((*a_list = VLAD_NEW(stringlist())) == NULL)
+  if ((*a_list = VLAD_MEM_NEW(stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = m_exp->varlist(a_list)) != VLAD_OK)
@@ -179,7 +179,7 @@ int consttab::add(expression *a_exp, expression *a_cond, expression *a_ncond)
   int retval;
   constraint *tmp;
 
-  if ((tmp = VLAD_NEW(constraint())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(constraint())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_exp, a_cond, a_ncond)) != VLAD_OK) {

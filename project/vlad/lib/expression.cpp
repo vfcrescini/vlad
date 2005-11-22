@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/expression.h>
 
 expression::expression() : list(true)
@@ -75,7 +75,7 @@ int expression::replace(const char *a_var,
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((*a_exp = VLAD_NEW(expression())) == NULL)
+  if ((*a_exp = VLAD_MEM_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < list::length(); i++) {
@@ -101,7 +101,7 @@ int expression::replace(stringlist *a_vlist, stringlist *a_ilist, expression **a
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((*a_exp = VLAD_NEW(expression())) == NULL)
+  if ((*a_exp = VLAD_MEM_NEW(expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < list::length(); i++) {

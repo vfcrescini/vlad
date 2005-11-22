@@ -1,6 +1,26 @@
 2005-11-23  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/Makefile.in :
+	* lib/consttab.cpp :
+	* lib/expression.cpp :
+	* lib/fact.cpp :
+	* lib/list.cpp :
+	* lib/numberlist.cpp :
+	* lib/polbase.cpp :
+	* lib/seqtab.cpp :
+	* lib/smwrap.cpp :
+	* lib/stringlist.cpp :
+	* lib/symtab.cpp :
+	* lib/updatetab.cpp :
+	* lib/vlad.h :
+	* lib/wrapper.cpp :
+	* main/agent.y :
+	* main/policy.y :
+	* main/vlad.cpp :
+
+	  - Moved all memory (malloc) stuff in mem.h
+
+	* lib/Makefile.in :
 	* lib/fact.h :
 	* lib/polbase.h :
 	* lib/vlad.h :

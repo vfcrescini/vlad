@@ -24,9 +24,9 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdarg>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/smwrap.h>
 
 smwrap::smwrap()
@@ -55,9 +55,9 @@ int smwrap::init()
       delete m_api;
   }
 
-  if ((m_smod = VLAD_NEW(Smodels())) == NULL)
+  if ((m_smod = VLAD_MEM_NEW(Smodels())) == NULL)
     return VLAD_MALLOCFAILED;
-  if ((m_api = VLAD_NEW(Api(&(m_smod->program)))) == NULL)
+  if ((m_api = VLAD_MEM_NEW(Api(&(m_smod->program)))) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* so we don't forget */

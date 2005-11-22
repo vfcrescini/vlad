@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/updatetab.h>
 
 updatedef::updatedef()
@@ -138,7 +138,7 @@ int updatetab::add(const char *a_name,
   int retval;
   updatedef *tmp;
 
-  if ((tmp = VLAD_NEW(updatedef())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK) {
@@ -165,12 +165,12 @@ int updatetab::get(const char *a_name,
     return VLAD_NULLPTR;
 
   /* create a dummy updatedef to search */
-  if ((tmp_name = VLAD_STRING_MALLOC(a_name)) == NULL)
+  if ((tmp_name = VLAD_MEM_STR_MALLOC(a_name)) == NULL)
     return VLAD_MALLOCFAILED;
 
   strcpy(tmp_name, a_name);
 
-  if ((tmp_def = VLAD_NEW(updatedef())) == NULL)
+  if ((tmp_def = VLAD_MEM_NEW(updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp_def->init(tmp_name, NULL, NULL, NULL)) != VLAD_OK)

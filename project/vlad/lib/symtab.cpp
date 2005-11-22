@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
-#include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/symtab.h>
 
 symtab::symtab()
@@ -57,7 +57,7 @@ int symtab::init()
     if (m_lists[i] != NULL)
       delete m_lists[i];
     /* now create them */
-    if ((m_lists[i] = VLAD_NEW(stringlist())) == NULL)
+    if ((m_lists[i] = VLAD_MEM_NEW(stringlist())) == NULL)
       return VLAD_MALLOCFAILED;
   }
 
@@ -145,7 +145,7 @@ int symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
 
   *a_s = symtab::length(a_t);
 
-  if ((*a_a = VLAD_ADT_MALLOC(char *, *a_s)) == NULL)
+  if ((*a_a = VLAD_MEM_ADT_MALLOC(char *, *a_s)) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* this is an array of references */
