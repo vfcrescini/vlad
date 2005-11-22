@@ -23,6 +23,7 @@
 #define __VLAD_FACT_H
 
 #include <vlad/list.h>
+#include <vlad/atom.h>
 #include <vlad/stringlist.h>
 #include <vlad/symtab.h>
 
