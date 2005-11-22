@@ -68,13 +68,6 @@
 #define VLAD_MAXLEN_STR          5120
 #define VLAD_MAXLEN_NUM          32
 
-/* atom type */
-#define VLAD_ATOM_HOLDS          0
-#define VLAD_ATOM_MEMBER         1
-#define VLAD_ATOM_SUBSET         2
-#define VLAD_ATOM_FIRST          VLAD_ATOM_HOLDS
-#define VLAD_ATOM_LAST           VLAD_ATOM_SUBSET
-
 /* error codes */
 
 /* success */
@@ -103,12 +96,6 @@
 #define VLAD_OPENFAILED          -11
 /* operation not permitted at this time */
 #define VLAD_INVALIDOP           -12
-
-/* convenience macros */
-#define VLAD_ATOM_TYPE_VALID(X)  (((X) >= VLAD_ATOM_FIRST && (X) <= VLAD_ATOM_LAST)
-#define VLAD_ATOM_IS_HOLDS(X)    ((X) == VLAD_ATOM_HOLDS)
-#define VLAD_ATOM_IS_MEMBER(X)   ((X) == VLAD_ATOM_MEMBER)
-#define VLAD_ATOM_IS_SUBSET(X)   ((X) == VLAD_ATOM_SUBSET)
 
 /* malloc/new macros */
 #define VLAD_ADT_MALLOC(X,Y)     ((X *) malloc(sizeof(X) * Y))

@@ -25,6 +25,7 @@
 #include <cstdio>
 
 #include <vlad/vlad.h>
+#include <vlad/atom.h>
 #include <vlad/symtab.h>
 #include <vlad/expression.h>
 #include <vlad/consttab.h>

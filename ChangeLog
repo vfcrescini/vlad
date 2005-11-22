@@ -1,6 +1,14 @@
 2005-11-23  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/Makefile.in :
+	* lib/fact.h :
+	* lib/polbase.h :
+	* lib/vlad.h :
+	* lib/atom.h :
+
+	  - Moved all atom stuff in atom.h
+
+	* lib/Makefile.in :
 	* lib/fact.cpp :
 	* lib/list.h :
 	* lib/polbase.cpp :
