@@ -67,18 +67,6 @@
 /* string lengths */
 #define VLAD_MAXLEN_STR          5120
 #define VLAD_MAXLEN_NUM          32
-#define VLAD_MAXLEN_IDENT        128
-
-/* identifier types */
-#define VLAD_IDENT_SUB_SIN       0
-#define VLAD_IDENT_ACC_SIN       1
-#define VLAD_IDENT_OBJ_SIN       2
-#define VLAD_IDENT_SUB_GRP       3
-#define VLAD_IDENT_ACC_GRP       4
-#define VLAD_IDENT_OBJ_GRP       5
-#define VLAD_IDENT_FIRST         VLAD_IDENT_SUB_SIN
-#define VLAD_IDENT_MID           VLAD_IDENT_SUB_GRP
-#define VLAD_IDENT_LAST          VLAD_IDENT_OBJ_GRP
 
 /* atom type */
 #define VLAD_ATOM_HOLDS          0
@@ -117,22 +105,10 @@
 #define VLAD_INVALIDOP           -12
 
 /* convenience macros */
-#define VLAD_LIST_LENGTH(X)      (((X) == NULL) ? 0 : (X)->length())
-#define VLAD_LIST_ITEMCMP(X,Y)   (((X) == NULL) ? ((Y) == NULL) : (((Y) == NULL) ? false : ((X)->cmp(Y))))
-#define VLAD_IDENT_BASETYPE(X)   ((VLAD_IDENT_IS_GROUP(X)) ? ((X) - VLAD_IDENT_MID) : (X))
-#define VLAD_IDENT_IS_SUBJECT(X) (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_SUB_SIN)
-#define VLAD_IDENT_IS_ACCESS(X)  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_ACC_SIN)
-#define VLAD_IDENT_IS_OBJECT(X)  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_OBJ_SIN)
-#define VLAD_IDENT_IS_GROUP(X)   ((X) >= VLAD_IDENT_MID)
 #define VLAD_ATOM_TYPE_VALID(X)  (((X) >= VLAD_ATOM_FIRST && (X) <= VLAD_ATOM_LAST)
 #define VLAD_ATOM_IS_HOLDS(X)    ((X) == VLAD_ATOM_HOLDS)
 #define VLAD_ATOM_IS_MEMBER(X)   ((X) == VLAD_ATOM_MEMBER)
 #define VLAD_ATOM_IS_SUBSET(X)   ((X) == VLAD_ATOM_SUBSET)
-
-/* anything that starts with a small letter is an entity identifier */
-#define VLAD_IDENT_IS_IDENT(X)   ((X) ? (((X)[0] >= 'a' && (X)[0] <= 'z') ? true : false) : false)
-/* anything that starts with a capital letter is a variable */
-#define VLAD_IDENT_IS_VAR(X)     ((X) ? (((X)[0] >= 'A' && (X)[0] <= 'Z') ? true : false) : false)
 
 /* malloc/new macros */
 #define VLAD_ADT_MALLOC(X,Y)     ((X *) malloc(sizeof(X) * Y))

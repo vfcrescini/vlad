@@ -26,6 +26,7 @@
 #include <new>
 
 #include <vlad/vlad.h>
+#include <vlad/identifier.h>
 #include <vlad/polbase.h>
 
 /* vars defined from the scanner */

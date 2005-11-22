@@ -44,6 +44,7 @@ INCLUDES = \
   list.h \
   stringlist.h \
   numberlist.h \
+  identifier.h \
   fact.h \
   expression.h \
   seqtab.h \
@@ -116,13 +117,13 @@ stringlist.o : list.h stringlist.h stringlist.cpp
 numberlist.o : list.h numberlist.h numberlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
 
-fact.o : stringlist.h symtab.h fact.h fact.cpp
+fact.o : stringlist.h identifier.h symtab.h fact.h fact.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c fact.cpp
 
 expression.o : list.h fact.h stringlist.h symtab.h expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
 
-symtab.o : stringlist.h symtab.h symtab.cpp
+symtab.o : stringlist.h identifier.h symtab.h symtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
 
 consttab.o : expression.h consttab.h consttab.cpp
@@ -144,5 +145,5 @@ wrapper.o : polbase.h wrapper.h wrapper.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
 endif
 
-polbase.o : symtab.h polbase.h polbase.cpp
+polbase.o : identifier.h symtab.h polbase.h polbase.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp

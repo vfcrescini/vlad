@@ -23,6 +23,7 @@
 #define __VLAD_SYMTAB_H
 
 #include <vlad/stringlist.h>
+#include <vlad/identifier.h>
 
 class symtab
 {
