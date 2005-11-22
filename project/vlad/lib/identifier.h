@@ -42,16 +42,12 @@
 /* convenience macros */
 #define VLAD_IDENT_BASETYPE(X)   \
   ((VLAD_IDENT_IS_GROUP(X)) ? ((X) - VLAD_IDENT_MID) : (X))
-
 #define VLAD_IDENT_IS_SUBJECT(X) \
   (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_SUB_SIN)
-
 #define VLAD_IDENT_IS_ACCESS(X)  \
   (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_ACC_SIN)
-
 #define VLAD_IDENT_IS_OBJECT(X)  \
   (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_OBJ_SIN)
-
 #define VLAD_IDENT_IS_GROUP(X)   ((X) >= VLAD_IDENT_MID)
 
 /* anything that starts with a small letter is an entity identifier */
