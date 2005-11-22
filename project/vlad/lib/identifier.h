@@ -22,7 +22,6 @@
 #ifndef __VLAD_IDENTIFIER_H
 #define __VLAD_IDENTIFIER_H
 
-#include <vlad/config.h>
 #include <vlad/vlad.h>
 
 /* maximum length of an identifier */
