@@ -1,5 +1,17 @@
 2005-11-23  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/Makefile.in :
+	* lib/fact.cpp :
+	* lib/list.h :
+	* lib/polbase.cpp :
+	* lib/symtab.h :
+	* lib/vlad.h :
+	* lib/identifier.h :
+	* main/agent.y :
+	* main/policy.y :
+
+	  - Moved all identifier stuff in identifier.h
+
 	* Makefile.in :
 	* configure.ac :
 	* rules.mk :
