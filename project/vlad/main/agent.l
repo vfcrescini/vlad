@@ -32,7 +32,7 @@
 #include <vlad/polbase.h>
 #include "agent.tab.h"
 
-unsigned int agentlineno = 1;
+unsigned int agentlinenum = 1;
 
 int agentinit(FILE *a_in, FILE *a_out);
 %}
@@ -137,7 +137,7 @@ everything         .
 {whitespace} ;
 
 {newline} {
-  agentlineno++;
+  agentlinenum++;
 }
 
 <COMMENT>{everything} ;

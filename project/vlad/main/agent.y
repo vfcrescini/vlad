@@ -29,7 +29,7 @@
 #include <vlad/polbase.h>
 
 /* vars defined from the scanner */
-extern int agentlineno;
+extern unsigned int agentlinenum;
 
 /* local vars */
 static FILE *fin = NULL;
@@ -457,7 +457,7 @@ memb_fact :
 
 int agenterror(char *a_error)
 {
-  fprintf(ferr, "line %d (error %d) %s\n", agentlineno, errorcode, a_error);
+  fprintf(ferr, "line %d (error %d) %s\n", agentlinenum, errorcode, a_error);
 
   return 0;
 }

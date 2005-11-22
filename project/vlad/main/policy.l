@@ -21,6 +21,7 @@
 
 %option nounput
 %option noyywrap
+%option noyylineno
 %option always-interactive
 %s COMMENT
 
@@ -32,7 +33,7 @@
 #include <vlad/polbase.h>
 #include "policy.tab.h"
 
-unsigned int policylineno = 1;
+unsigned int policylinenum = 1;
 
 int policyinit(FILE *a_in, FILE *a_out);
 %}
@@ -152,7 +153,7 @@ everything         .
 {whitespace} ;
 
 {newline} {
-  policylineno++;
+  policylinenum++;
 }
 
 <COMMENT>{everything} ;

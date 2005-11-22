@@ -1,3 +1,16 @@
+2005-11-23  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* main/agent.l :
+	* main/agent.y :
+	* main/policy.l :
+	* main/policy.y :
+
+	  - Some newer versions of flex seems to enable yylineno by default,
+	    without any means to turn it off, yet some versions do not. The
+	    only portable way to do rename yylineno to some other name to
+	    avoid the conflict (yylinenum, i.e. policylinenum and
+	    agentlinenum).
+
 2005-11-22  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* samples/chwall.vlp :

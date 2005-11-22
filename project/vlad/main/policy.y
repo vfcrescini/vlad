@@ -29,7 +29,7 @@
 #include <vlad/polbase.h>
 
 /* vars defined from the scanner */
-extern int policylineno;
+extern unsigned int policylinenum;
 
 /* local vars */
 static FILE *fin = NULL;
@@ -669,7 +669,7 @@ int add_identifier(const char *a_name, unsigned char a_type)
 
 int policyerror(char *a_error)
 {
-  fprintf(ferr, "line %d (error %d) %s\n", policylineno, errorcode, a_error);
+  fprintf(ferr, "line %d (error %d) %s\n", policylinenum, errorcode, a_error);
 
   return 0;
 }
