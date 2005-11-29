@@ -357,7 +357,7 @@ initial_stmt :
     }
 
     /* when everything's been registered into the polbase, delete the expression */
-    delete $2;
+    VLAD_MEM_DELETE($2);
   }
   ;
 
@@ -392,11 +392,11 @@ constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause VLAD_SYM
 #endif
 
     /* cleanup */
-    delete $2;
+    VLAD_MEM_DELETE($2);
     if ($3 != NULL)
-      delete $3;
+      VLAD_MEM_DELETE($3);
     if ($4 != NULL)
-      delete $4;
+      VLAD_MEM_DELETE($4);
   }
   ;
 
@@ -453,10 +453,10 @@ update_stmt :
 
     /* cleanup */
     if ($2 != NULL)
-      delete $2;
+      VLAD_MEM_DELETE($2);
     if ($5 != NULL)
-      delete $5;
-    delete $4;
+      VLAD_MEM_DELETE($5);
+    VLAD_MEM_DELETE($4);
   }
   ;
 

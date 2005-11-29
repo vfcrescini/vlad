@@ -58,7 +58,7 @@ VLAD_EXTERN int vlad_polbase_destroy(void *a_polbase)
   if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  delete tmp_polbase;
+  VLAD_MEM_DELETE(tmp_polbase);
 
   return VLAD_OK;
 }
@@ -379,7 +379,7 @@ VLAD_EXTERN int vlad_strlist_destroy(void *a_slist)
   if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, vlad_stringlist *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  delete tmp_slist;
+  VLAD_MEM_DELETE(tmp_slist);
 
   return VLAD_OK;
 }
@@ -431,7 +431,7 @@ VLAD_EXTERN int vlad_fact_destroy(void *a_fact)
   if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, vlad_fact *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  delete tmp_fact;
+  VLAD_MEM_DELETE(tmp_fact);
 
   return VLAD_OK;
 }
@@ -519,7 +519,7 @@ VLAD_EXTERN int vlad_exp_destroy(void *a_exp)
   if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, vlad_expression *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  delete tmp_exp;
+  VLAD_MEM_DELETE(tmp_exp);
 
   return VLAD_OK;
 }
@@ -578,7 +578,7 @@ VLAD_EXTERN int vlad_uref_destroy(void *a_uref)
   if ((tmp_uref = VLAD_WRAPPER_CAST(a_uref, vlad_updateref *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  delete tmp_uref;
+  VLAD_MEM_DELETE(tmp_uref);
 
   return VLAD_OK;
 }

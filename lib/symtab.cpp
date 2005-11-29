@@ -43,7 +43,7 @@ vlad_symtab::~vlad_symtab()
 
   for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
     if (m_lists[i] != NULL)
-      delete m_lists[i];
+      VLAD_MEM_DELETE(m_lists[i]);
   }
 }
 
@@ -55,7 +55,7 @@ int vlad_symtab::init()
   for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
     /* first delete things if we need to */
     if (m_lists[i] != NULL)
-      delete m_lists[i];
+      VLAD_MEM_DELETE(m_lists[i]);
     /* now create them */
     if ((m_lists[i] = VLAD_MEM_NEW(vlad_stringlist())) == NULL)
       return VLAD_MALLOCFAILED;
@@ -151,7 +151,7 @@ int vlad_symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
   /* this is an array of references */
   for (i = 0; i < *a_s; i++) {
     if ((retval = m_lists[a_t]->get(i, &((*a_a)[i]))) != VLAD_OK) {
-      free(*a_a);
+      VLAD_MEM_FREE(*a_a);
       *a_a = NULL;
       return retval;
     }

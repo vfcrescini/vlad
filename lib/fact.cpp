@@ -625,23 +625,23 @@ int vlad_fact::reset()
     switch(m_type) {
       case VLAD_ATOM_HOLDS :
         if (m_holds.subject != NULL)
-          free(m_holds.subject);
+          VLAD_MEM_FREE(m_holds.subject);
         if (m_holds.access != NULL)
-          free(m_holds.access);
+          VLAD_MEM_FREE(m_holds.access);
         if (m_holds.object != NULL)
-          free(m_holds.object);
+          VLAD_MEM_FREE(m_holds.object);
         break;
       case VLAD_ATOM_MEMBER :
         if (m_member.element != NULL)
-          free(m_member.element);
+          VLAD_MEM_FREE(m_member.element);
         if (m_member.group != NULL)
-          free(m_member.group);
+          VLAD_MEM_FREE(m_member.group);
         break;
       case VLAD_ATOM_SUBSET :
         if (m_subset.group1 != NULL)
-          free(m_subset.group1);
+          VLAD_MEM_FREE(m_subset.group1);
         if (m_subset.group2 != NULL)
-          free(m_subset.group2);
+          VLAD_MEM_FREE(m_subset.group2);
         break;
     }
   }

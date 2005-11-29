@@ -1,6 +1,24 @@
 2005-11-29  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/consttab.cpp :
+	* lib/fact.cpp :
+	* lib/list.cpp :
+	* lib/mem.h :
+	* lib/polbase.cpp :
+	* lib/seqtab.cpp :
+	* lib/smwrap.cpp :
+	* lib/stringlist.cpp :
+	* lib/symtab.cpp :
+	* lib/updatetab.cpp :
+	* lib/wrapper.cpp :
+	* main/agent.y :
+	* main/policy.y :
+	* main/vlad.cpp :
+
+	  - Standardised calls to malloc, realloc, free, new and delete. Now
+	    uses the macros defined in mem.h.
+
+	* lib/consttab.cpp :
 	* lib/consttab.h :
 	* lib/expression.cpp :
 	* lib/expression.h :

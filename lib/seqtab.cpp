@@ -37,9 +37,9 @@ vlad_updateref::vlad_updateref()
 vlad_updateref::~vlad_updateref()
 {
   if (m_name != NULL)
-    free(m_name);
+    VLAD_MEM_FREE(m_name);
   if (m_list != NULL)
-    delete m_list;
+    VLAD_MEM_DELETE(m_list);
 }
 
 bool vlad_updateref::cmp(vlad_list_item *a_item)

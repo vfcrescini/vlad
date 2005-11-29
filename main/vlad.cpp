@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
   /* cleanup */
   fclose(policyin);
   fclose(agentin);
-  delete pbase;
+  VLAD_MEM_DELETE(pbase);
 
   return VLAD_OK;
 }

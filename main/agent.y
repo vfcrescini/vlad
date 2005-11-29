@@ -189,7 +189,7 @@ query_stmt :
 #endif
 
     /* cleanup */
-    delete $2;
+    VLAD_MEM_DELETE($2);
   }
   ;
 
