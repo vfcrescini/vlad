@@ -26,63 +26,63 @@
 #include <vlad/mem.h>
 #include <vlad/numberlist.h>
 
-number::number()
+vlad_number::vlad_number()
 {
   m_number = 0;
 }
 
-number::~number()
+vlad_number::~vlad_number()
 {
 }
 
 /* compare item with this number */
-bool number::cmp(list_item *a_item)
+bool vlad_number::cmp(vlad_list_item *a_item)
 {
-  number *tmp = NULL;
+  vlad_number *tmp = NULL;
 
   /* a NULL will not match anything */
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<number *>(a_item)) == NULL)
+  if ((tmp = dynamic_cast<vlad_number *>(a_item)) == NULL)
     return false;
 
   return (tmp->m_number == m_number);
 }
 
-int number::init(unsigned int a_num)
+int vlad_number::init(unsigned int a_num)
 {
   m_number = a_num;
   return VLAD_OK;
 }
 
-unsigned int number::get()
+unsigned int vlad_number::get()
 {
   return m_number;
 }
 
-numberlist::numberlist() : list(false)
+vlad_numberlist::vlad_numberlist() : vlad_list(false)
 {
 }
 
-numberlist::~numberlist()
+vlad_numberlist::~vlad_numberlist()
 {
-  list::purge(true);
+  vlad_list::purge(true);
 }
 
 /* add a number in the list */
-int numberlist::add(unsigned int a_num)
+int vlad_numberlist::add(unsigned int a_num)
 {
   int retval;
-  number *tmp = NULL;
+  vlad_number *tmp = NULL;
 
-  if ((tmp = VLAD_MEM_NEW(number())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(vlad_number())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_num)) != VLAD_OK)
     return retval;
 
-  if ((retval = list::add(tmp)) != VLAD_OK) {
+  if ((retval = vlad_list::add(tmp)) != VLAD_OK) {
     delete tmp;
     return retval;
   }
@@ -90,12 +90,12 @@ int numberlist::add(unsigned int a_num)
 }
 
 /* get the i'th number in the list */
-int numberlist::get(unsigned int a_index, unsigned int *a_num)
+int vlad_numberlist::get(unsigned int a_index, unsigned int *a_num)
 {
   int retval;
-  number *tmp = NULL;
+  vlad_number *tmp = NULL;
 
-  if ((retval = list::get(a_index, (list_item **) &tmp)) != VLAD_OK)
+  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &tmp)) != VLAD_OK)
     return retval;
 
   *a_num = tmp->get();
@@ -104,7 +104,7 @@ int numberlist::get(unsigned int a_index, unsigned int *a_num)
 }
 
 /* empty the list */
-void numberlist::purge()
+void vlad_numberlist::purge()
 {
-  list::purge(true);
+  vlad_list::purge(true);
 }

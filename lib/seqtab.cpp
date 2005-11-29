@@ -27,14 +27,14 @@
 #include <vlad/mem.h>
 #include <vlad/seqtab.h>
 
-updateref::updateref()
+vlad_updateref::vlad_updateref()
 {
   m_name = NULL;
   m_list = NULL;
   m_init = false;	
 }
 
-updateref::~updateref()
+vlad_updateref::~vlad_updateref()
 {
   if (m_name != NULL)
     free(m_name);
@@ -42,14 +42,14 @@ updateref::~updateref()
     delete m_list;
 }
 
-bool updateref::cmp(list_item *a_item)
+bool vlad_updateref::cmp(vlad_list_item *a_item)
 {
-  updateref *tmp = NULL;
+  vlad_updateref *tmp = NULL;
 
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<updateref *>(a_item)) == NULL)
+  if ((tmp = dynamic_cast<vlad_updateref *>(a_item)) == NULL)
     return false;
 
   /* if both are uninit return true. if only one -- false */
@@ -66,7 +66,7 @@ bool updateref::cmp(list_item *a_item)
   return VLAD_LIST_ITEMCMP(m_list, tmp->m_list);
 }
 
-int updateref::init(const char *a_name, stringlist *a_list)
+int vlad_updateref::init(const char *a_name, vlad_stringlist *a_list)
 {
   if (a_name == NULL)
     return VLAD_NULLPTR;
@@ -78,7 +78,7 @@ int updateref::init(const char *a_name, stringlist *a_list)
   return VLAD_OK;
 }
 
-int updateref::get(char **a_name, stringlist **a_list)
+int vlad_updateref::get(char **a_name, vlad_stringlist **a_list)
 {
   if (a_name == NULL || a_list == NULL)
     return VLAD_NULLPTR;
@@ -93,7 +93,7 @@ int updateref::get(char **a_name, stringlist **a_list)
 }
 
 #ifdef VLAD_DEBUG
-void updateref::print(char *a_str)
+void vlad_updateref::print(char *a_str)
 {
   char tmp_str[VLAD_MAXLEN_STR];
 
@@ -108,71 +108,74 @@ void updateref::print(char *a_str)
 }
 #endif
 
-seqtab::seqtab() : list(false)
+vlad_seqtab::vlad_seqtab() : vlad_list(false)
 {
 }
 
-seqtab::~seqtab()
+vlad_seqtab::~vlad_seqtab()
 {
   purge(true);
 }
 
 /* add pre-malloc'ed updateref */
-int seqtab::add(updateref *a_uref)
+int vlad_seqtab::add(vlad_updateref *a_uref)
 {
   if (a_uref == NULL)
     return VLAD_NULLPTR;
 
-  return list::add((list_item *) a_uref);
+  return vlad_list::add((vlad_list_item *) a_uref);
 }
 
 /* add pre-malloc'ed m_name and ilist */
-int seqtab::add(const char *a_name, stringlist *a_list)
+int vlad_seqtab::add(const char *a_name, vlad_stringlist *a_list)
 {
   int retval;
-  updateref *tmp_ref;
+  vlad_updateref *tmp_ref;
 
-  if ((tmp_ref = VLAD_MEM_NEW(updateref())) == NULL)
+  if ((tmp_ref = VLAD_MEM_NEW(vlad_updateref())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp_ref->init(a_name, a_list)) != VLAD_OK)
     return retval;
 
-  return list::add((list_item *) tmp_ref);
+  return vlad_list::add((vlad_list_item *) tmp_ref);
 }
 
 /* delete i'th item */
-int seqtab::del(unsigned int a_index)
+int vlad_seqtab::del(unsigned int a_index)
 {
-  return list::del(a_index, true);
+  return vlad_list::del(a_index, true);
 }
 
 /* get i'th m_name and ilist */
-int seqtab::get(unsigned int a_index, char **a_name, stringlist **a_list)
+int vlad_seqtab::get(unsigned int a_index,
+                     char **a_name,
+                     vlad_stringlist **a_list)
 {
   int retval;
-  updateref *tmp_ref;
+  vlad_updateref *tmp_ref;
 
   if (a_name == NULL || a_list == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = list::get(a_index, (list_item **) &tmp_ref)) != VLAD_OK)
+  retval = vlad_list::get(a_index, (vlad_list_item **) &tmp_ref);
+  if (retval != VLAD_OK)
     return retval;
 
   return tmp_ref->get(a_name, a_list);
 }
 
 #ifdef VLAD_DEBUG
-void seqtab::print(char *a_str)
+void vlad_seqtab::print(char *a_str)
 {
   unsigned int i;
   char tmp_str[VLAD_MAXLEN_STR];
-  updateref *tmp_obj;
+  vlad_updateref *tmp_obj;
 
   strcpy(a_str, "");
 
   for (i = 0; i < list::length(); i++) {
-    if (list::get(i, (list_item **) &tmp_obj) != VLAD_OK)
+    if (vlad_list::get(i, (list_item **) &tmp_obj) != VLAD_OK)
       break;
 
     memset(tmp_str, 0, VLAD_MAXLEN_STR);

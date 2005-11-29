@@ -24,13 +24,13 @@
 #ifndef __VLAD_STRINGLIST_H
 #define __VLAD_STRINGLIST_H
 
-class string : public list_item
+class vlad_string : public vlad_list_item
 {
   public :
-    string();
-    ~string();
+    vlad_string();
+    ~vlad_string();
     /* compare item with this string */
-    bool cmp(list_item *a_item);
+    bool cmp(vlad_list_item *a_item);
     int init(const char *a_str);
     char *get();
 #ifdef VLAD_DEBUG
@@ -41,12 +41,12 @@ class string : public list_item
     char *m_string;
 } ;
 
-class stringlist : public list
+class vlad_stringlist : public vlad_list
 {
   public :
     /* n is the optional name for the list */
-    stringlist();
-    ~stringlist();
+    vlad_stringlist();
+    ~vlad_stringlist();
     /* add a string in the list */
     int add(const char *a_str);
     /* get the index of the string */

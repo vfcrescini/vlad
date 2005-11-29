@@ -27,27 +27,27 @@
 #include <vlad/mem.h>
 #include <vlad/stringlist.h>
 
-string::string()
+vlad_string::vlad_string()
 {
   m_string = NULL;
 }
 
-string::~string()
+vlad_string::~vlad_string()
 {
   if (m_string != NULL)
     free(m_string);
 }
 
 /* compare item with this string */
-bool string::cmp(list_item *a_item)
+bool vlad_string::cmp(vlad_list_item *a_item)
 {
-  string *tmp = NULL;
+  vlad_string *tmp = NULL;
 
   /* a NULL will not match anything */
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<string *>(a_item)) == NULL)
+  if ((tmp = dynamic_cast<vlad_string *>(a_item)) == NULL)
     return false;
 
   /* only return true if they are both NULL */
@@ -57,7 +57,7 @@ bool string::cmp(list_item *a_item)
   return (strcmp(tmp->m_string, m_string) == 0);
 }
 
-int string::init(const char *a_str)
+int vlad_string::init(const char *a_str)
 {
   if (a_str == NULL)
     return VLAD_NULLPTR;
@@ -71,44 +71,44 @@ int string::init(const char *a_str)
   return ((strcpy(m_string, a_str) == NULL) ? VLAD_FAILURE : VLAD_OK);
 }
 
-char *string::get()
+char *vlad_string::get()
 {
   return m_string;
 }
 
 #ifdef VLAD_DEBUG
 /* assuming s has enough memory allocation */
-void string::print(char *a_str)
+void vlad_string::print(char *a_str)
 {
   strcpy(a_str, (m_string ? m_string : ""));
 }
 #endif
 
-stringlist::stringlist() : list(true)
+vlad_stringlist::vlad_stringlist() : vlad_list(true)
 {
 }
 
-stringlist::~stringlist()
+vlad_stringlist::~vlad_stringlist()
 {
   purge(true);
 }
 
 /* add a string in the list */
-int stringlist::add(const char *a_str)
+int vlad_stringlist::add(const char *a_str)
 {
   int retval;
-  string *tmp = NULL;
+  vlad_string *tmp = NULL;
 
   if (a_str == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp = VLAD_MEM_NEW(string())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(vlad_string())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_str)) != VLAD_OK)
     return retval;
 
-  if ((retval = list::add(tmp)) != VLAD_OK) {
+  if ((retval = vlad_list::add(tmp)) != VLAD_OK) {
     delete tmp;
     return retval;
   }
@@ -116,10 +116,10 @@ int stringlist::add(const char *a_str)
 }
 
 /* get the index of the string */
-int stringlist::get(const char *a_str, unsigned int *a_index)
+int vlad_stringlist::get(const char *a_str, unsigned int *a_index)
 {
   int retval;
-  string tmp;
+  vlad_string tmp;
   unsigned int size;
   unsigned int *array;
 
@@ -129,7 +129,7 @@ int stringlist::get(const char *a_str, unsigned int *a_index)
   if ((retval = tmp.init(a_str)) != VLAD_OK)
     return retval;
 
-  if ((retval = list::get(&tmp, &array, &size)) != VLAD_OK)
+  if ((retval = vlad_list::get(&tmp, &array, &size)) != VLAD_OK)
     return retval;
 
   /* there should be exactly one in the array */
@@ -141,17 +141,17 @@ int stringlist::get(const char *a_str, unsigned int *a_index)
 }
 
 /* get the ith string in the list */
-int stringlist::get(unsigned int a_index, char **a_str)
+int vlad_stringlist::get(unsigned int a_index, char **a_str)
 {
   int retval;
-  string *tmp = NULL;
+  vlad_string *tmp = NULL;
 
   /*
    * this will give a reference to the actual string and not a copy,
    * so care must be taken to ensure that s is not changed.
    */
 
-  if ((retval = list::get(a_index, (list_item **) &tmp)) != VLAD_OK)
+  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &tmp)) != VLAD_OK)
     return retval;
 
   *a_str = tmp->get();
@@ -160,20 +160,20 @@ int stringlist::get(unsigned int a_index, char **a_str)
 }
 
 /* return true if string is in the list */
-int stringlist::find(const char *a_str)
+int vlad_stringlist::find(const char *a_str)
 {
   int retval;
-  string tmp;
+  vlad_string tmp;
 
   if ((retval = tmp.init(a_str)) != VLAD_OK)
     return retval;
 
-  return list::find(&tmp);
+  return vlad_list::find(&tmp);
 }
 
 #ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
-void stringlist::print(char *a_str)
+void vlad_stringlist::print(char *a_str)
 {
   unsigned int i;
   char tmp_str[VLAD_MAXLEN_STR];

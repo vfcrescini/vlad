@@ -35,27 +35,27 @@
   #include <vlad/smwrap.h>
 #endif
 
-class polbase {
+class vlad_polbase {
   public :
-    polbase();
-    ~polbase();
+    vlad_polbase();
+    ~vlad_polbase();
     /* (re)init the policy base */
     int init();
     /* add an entity in the symbol table */
     int add_symtab(const char *a_name, unsigned char a_type);
     /* add a fact into the initial state table */
-    int add_inittab(fact *a_fact);
+    int add_inittab(vlad_fact *a_fact);
     /* add a constrant into the constraints table */
-    int add_consttab(expression *a_exp,
-                     expression *a_cond,
-                     expression *a_ncond);
+    int add_consttab(vlad_expression *a_exp,
+                     vlad_expression *a_cond,
+                     vlad_expression *a_ncond);
     /* add an update declaration in the update table */
     int add_updatetab(const char *a_name,
-                      stringlist *a_vlist,
-                      expression *a_precond,
-                      expression *a_postcond);
+                      vlad_stringlist *a_vlist,
+                      vlad_expression *a_precond,
+                      vlad_expression *a_postcond);
     /* add an update reference to the sequence table */
-    int add_seqtab(updateref *a_uref);
+    int add_seqtab(vlad_updateref *a_uref);
     /* close symbol table */
     int close_symtab();
     /* after this is called, no further calls to add_inittab(), add_consttab()
@@ -64,15 +64,19 @@ class polbase {
     /* delete an update reference from the sequence table */
     int del_seqtab(unsigned int a_index);
     /* gives an array of identifiers of the given type */
-    int get_symtab(unsigned char a_type, char ***a_array, unsigned int *a_size);
+    int get_symtab(unsigned char a_type,
+                   char ***a_array,
+                   unsigned int *a_size);
     /* gives the index'th entry in the sequence table */
-    int get_seqtab(unsigned int a_index, char **a_name, stringlist **a_ilist);
+    int get_seqtab(unsigned int a_index,
+                   char **a_name,
+                   vlad_stringlist **a_ilist);
     /* gives the index'th entry in the update table */
     int get_updatetab(unsigned int a_index,
                       char **a_name,
-                      stringlist **a_vlist,
-                      expression **a_precond,
-                      expression **a_postcond);
+                      vlad_stringlist **a_vlist,
+                      vlad_expression **a_precond,
+                      vlad_expression **a_postcond);
     /* returns the length of the sequence table */
     unsigned int length_seqtab();
     /* returns the length of the update table */
@@ -84,12 +88,12 @@ class polbase {
     /* generate the rules necessary to evaluate queries */
     int compute_generate(FILE *a_file);
     /* generate the query */
-    int query_generate(expression *a_exp, FILE *a_file);
+    int query_generate(vlad_expression *a_exp, FILE *a_file);
 #ifdef VLAD_SMODELS
     /* prepares the kb for queries */
     int compute_evaluate();
     /* use smwrap class to evaluate a query */
-    int query_evaluate(expression *a_exp, unsigned char *a_res);
+    int query_evaluate(vlad_expression *a_exp, unsigned char *a_res);
 #endif
   private :
     /*
@@ -102,17 +106,17 @@ class polbase {
     /* total number of atoms (sum of the elements of the above array) */
     unsigned int m_tot_atom;
     /* the symbol table */
-    symtab *m_stable;
+    vlad_symtab *m_stable;
     /* the initial expression table */
-    expression *m_itable;
+    vlad_expression *m_itable;
     /* the constraints table */
-    consttab *m_ctable;
+    vlad_consttab *m_ctable;
     /* the update table */
-    updatetab *m_utable;
+    vlad_updatetab *m_utable;
     /* the sequence table */
-    seqtab *m_setable;
+    vlad_seqtab *m_setable;
 #ifdef VLAD_SMODELS
-    smwrap *m_smobject;
+    vlad_smwrap *m_smobject;
 #endif
     /* returns a holds fact id based on the info given */
     unsigned int compute_holds(unsigned int a_state,
@@ -156,7 +160,9 @@ class polbase {
                      unsigned int a_state,
                      unsigned int *a_id);
     /* gives a unique id based on the fact given */
-    int encode_fact(fact *a_fact, unsigned int a_state, unsigned int *a_id);
+    int encode_fact(vlad_fact *a_fact,
+                    unsigned int a_state,
+                    unsigned int *a_id);
     /* gives entities based on the holds id given */
     int decode_holds(unsigned int a_id,
                      char **a_sub,
@@ -167,7 +173,9 @@ class polbase {
     /* gives entities based on the subset id given */
     int decode_subst(unsigned int a_id, char **a_grp1, char **a_grp2);
     /* gives the fact based on the id given */
-    int decode_fact(fact **a_fact, unsigned int *a_state, unsigned int a_id);
+    int decode_fact(vlad_fact **a_fact,
+                    unsigned int *a_state,
+                    unsigned int a_id);
     /*
      * verifies that s, a and o are in the symtab and that they are of the
      * right type, or listed in vlist if vlist is non-null
@@ -175,27 +183,27 @@ class polbase {
     int verify_fact_holds(const char *a_sub,
                           const char *a_acc,
                           const char *a_obj,
-                          stringlist *a_vlist);
+                          vlad_stringlist *a_vlist);
     /*
      * verifies that e and g are in the symtab and that they are of the right
      * type, or listed in vlist if vlist is non-null
      */
     int verify_fact_memb(const char *a_elt,
                          const char *a_grp,
-                         stringlist *a_vlist);
+                         vlad_stringlist *a_vlist);
     /*
      * verifies that g1 and g2 are in the symtab and that they are of the right
      * type, or listed in v if v is non-null
      */
     int verify_fact_subst(const char *a_grp1,
                           const char *a_grp2,
-                          stringlist *a_vlist);
+                          vlad_stringlist *a_vlist);
     /* make sure fact is valid */
-    int verify_fact(fact *a_fact, stringlist *a_vlist);
+    int verify_fact(vlad_fact *a_fact, vlad_stringlist *a_vlist);
     /* make sure expression e is valid */
-    int verify_expression(expression *a_exp);
+    int verify_expression(vlad_expression *a_exp);
     /* make sure updateref is valid */
-    int verify_updateref(char *a_name, stringlist *a_ilist);
+    int verify_updateref(char *a_name, vlad_stringlist *a_ilist);
     /* returns the id of the negation of the given fact id */
     unsigned int negate_fact(unsigned int a_fact);
 #ifdef VLAD_SMODELS

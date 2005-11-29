@@ -1,3 +1,35 @@
+2005-11-29  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/consttab.cpp :
+	* lib/consttab.h :
+	* lib/expression.cpp :
+	* lib/expression.h :
+	* lib/fact.cpp :
+	* lib/fact.h :
+	* lib/list.cpp :
+	* lib/list.h :
+	* lib/numberlist.cpp :
+	* lib/numberlist.h :
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+	* lib/smwrap.cpp :
+	* lib/smwrap.h :
+	* lib/stringlist.cpp :
+	* lib/stringlist.h :
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+	* lib/updatetab.cpp :
+	* lib/updatetab.h :
+	* lib/wrapper.cpp :
+	* main/agent.y :
+	* main/parser.h :
+	* main/policy.y :
+	* main/vlad.cpp :
+
+	  - Added the vlad_ prefix for all classes/
+
 2005-11-23  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/Makefile.in :

@@ -44,18 +44,18 @@
 /* create a polbase */
 VLAD_EXTERN int vlad_polbase_create(void **a_polbase)
 {
-  return VLAD_WRAPPER_CREATE(polbase, a_polbase);
+  return VLAD_WRAPPER_CREATE(vlad_polbase, a_polbase);
 }
 
 /* destroy a polbase */
 VLAD_EXTERN int vlad_polbase_destroy(void *a_polbase)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_polbase;
@@ -66,12 +66,12 @@ VLAD_EXTERN int vlad_polbase_destroy(void *a_polbase)
 /* (re)init a polbase */
 VLAD_EXTERN int vlad_polbase_init(void *a_polbase)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_polbase->init();
@@ -80,12 +80,12 @@ VLAD_EXTERN int vlad_polbase_init(void *a_polbase)
 /* close symbol table */
 VLAD_EXTERN int vlad_polbase_close_symtab(void *a_polbase)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_polbase->close_symtab();
@@ -94,12 +94,12 @@ VLAD_EXTERN int vlad_polbase_close_symtab(void *a_polbase)
 /* close polbase table */
 VLAD_EXTERN int vlad_polbase_close_polbase(void *a_polbase)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_polbase->close_polbase();
@@ -111,12 +111,12 @@ VLAD_EXTERN int vlad_polbase_get_array_symtab(void *a_polbase,
                                               char ***a_array,
                                               unsigned int *a_size)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_polbase->get_symtab(a_type, a_array, a_size);
@@ -127,12 +127,12 @@ VLAD_EXTERN int vlad_polbase_check_symtab(void *a_polbase,
                                           const char *a_name,
                                           unsigned char a_type)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_polbase->check_symtab(a_name, a_type);
@@ -140,15 +140,15 @@ VLAD_EXTERN int vlad_polbase_check_symtab(void *a_polbase,
 
 /* register an identifier in the polbase */
 VLAD_EXTERN int vlad_polbase_add_symtab(void *a_polbase,
-                                   const char *a_name,
-                                   unsigned char a_type)
+                                        const char *a_name,
+                                        unsigned char a_type)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_polbase->add_symtab(a_name, a_type);
@@ -157,15 +157,15 @@ VLAD_EXTERN int vlad_polbase_add_symtab(void *a_polbase,
 /* add a fact into the initial state table */
 VLAD_EXTERN int vlad_polbase_add_inittab(void *a_polbase, void *a_fact)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_polbase->add_inittab(VLAD_WRAPPER_CAST(a_fact, fact *));
+  return tmp_polbase->add_inittab(VLAD_WRAPPER_CAST(a_fact, vlad_fact *));
 }
 
 /* add an expression into the constraints table */
@@ -174,17 +174,18 @@ VLAD_EXTERN int vlad_polbase_add_consttab(void *a_polbase,
                                           void *a_cond,
                                           void *a_ncond)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_polbase->add_consttab(VLAD_WRAPPER_CAST(a_exp, expression *),
-                              VLAD_WRAPPER_CAST(a_cond, expression *),
-                              VLAD_WRAPPER_CAST(a_ncond, expression *));
+  return
+    tmp_polbase->add_consttab(VLAD_WRAPPER_CAST(a_exp, vlad_expression *),
+                              VLAD_WRAPPER_CAST(a_cond, vlad_expression *),
+                              VLAD_WRAPPER_CAST(a_ncond, vlad_expression *));
 }
 
 /* add an update declaration in the update table */
@@ -194,29 +195,30 @@ VLAD_EXTERN int vlad_polbase_add_updatetab(void *a_polbase,
                                            void *a_precond,
                                            void *a_postcond)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_polbase->add_updatetab(a_name,
-                                    VLAD_WRAPPER_CAST(a_vlist, stringlist *),
-                                    VLAD_WRAPPER_CAST(a_precond, expression *),
-                                    VLAD_WRAPPER_CAST(a_postcond, expression *));
+  return
+    tmp_polbase->add_updatetab(a_name,
+                               VLAD_WRAPPER_CAST(a_vlist, vlad_stringlist *),
+                               VLAD_WRAPPER_CAST(a_precond, vlad_expression *),
+                               VLAD_WRAPPER_CAST(a_postcond, vlad_expression *));
 }
 
 /* returns the length of the update table */
 VLAD_EXTERN unsigned int vlad_polbase_length_updatetab(void *a_polbase)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return 0;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return 0;
 
   return tmp_polbase->length_updatetab();
@@ -231,15 +233,15 @@ VLAD_EXTERN int vlad_polbase_get_updatetab(void *a_polbase,
                                            void **a_postcond)
 {
   int retval;
-  polbase *tmp_polbase = NULL;
-  stringlist *tmp_v;
-  expression *tmp_pr;
-  expression *tmp_po;
+  vlad_polbase *tmp_polbase = NULL;
+  vlad_stringlist *tmp_v;
+  vlad_expression *tmp_pr;
+  vlad_expression *tmp_po;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   retval = tmp_polbase->get_updatetab(a_index,
@@ -261,26 +263,26 @@ VLAD_EXTERN int vlad_polbase_get_updatetab(void *a_polbase,
 /* add a update reference to the sequence table */
 VLAD_EXTERN int vlad_polbase_add_seqtab(void *a_polbase, void *a_uref)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_polbase->add_seqtab(VLAD_WRAPPER_CAST(a_uref, updateref *));
+  return tmp_polbase->add_seqtab(VLAD_WRAPPER_CAST(a_uref, vlad_updateref *));
 }
 
 /* delete a update reference from the sequence table */
 VLAD_EXTERN int vlad_polbase_del_seqtab(void *a_polbase, unsigned int a_index)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_polbase->del_seqtab(a_index);
@@ -289,12 +291,12 @@ VLAD_EXTERN int vlad_polbase_del_seqtab(void *a_polbase, unsigned int a_index)
 /* returns the length of the sequence table */
 VLAD_EXTERN unsigned int vlad_polbase_length_seqtab(void *a_polbase)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return 0;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return 0;
 
   return tmp_polbase->length_seqtab();
@@ -307,13 +309,13 @@ VLAD_EXTERN int vlad_polbase_get_seqtab(void *a_polbase,
                                         void **a_ilist)
 {
   int retval;
-  polbase *tmp_polbase = NULL;
-  stringlist *tmp_i;
+  vlad_polbase *tmp_polbase = NULL;
+  vlad_stringlist *tmp_i;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   retval = tmp_polbase->get_seqtab(a_index, a_name, &tmp_i);
@@ -330,12 +332,12 @@ VLAD_EXTERN int vlad_polbase_get_seqtab(void *a_polbase,
 /* prepares the polbase for queries */
 VLAD_EXTERN int vlad_polbase_compute_evaluate(void *a_polbase)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_polbase->compute_evaluate();
@@ -346,33 +348,35 @@ VLAD_EXTERN int vlad_polbase_query_evaluate(void *a_polbase,
                                             void *a_exp,
                                             unsigned char *a_res)
 {
-  polbase *tmp_polbase = NULL;
+  vlad_polbase *tmp_polbase = NULL;
 
   if (a_polbase == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, polbase *)) == NULL)
+  if ((tmp_polbase = VLAD_WRAPPER_CAST(a_polbase, vlad_polbase *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_polbase->query_evaluate(VLAD_WRAPPER_CAST(a_exp, expression *), a_res);
+  return
+    tmp_polbase->query_evaluate(VLAD_WRAPPER_CAST(a_exp, vlad_expression *),
+                                a_res);
 }
 #endif
 
 /* create a stringlist */
 VLAD_EXTERN int vlad_strlist_create(void **a_slist)
 {
-  return VLAD_WRAPPER_CREATE(stringlist, a_slist);
+  return VLAD_WRAPPER_CREATE(vlad_stringlist, a_slist);
 }
 
 /* destroy a stringlist */
 VLAD_EXTERN int vlad_strlist_destroy(void *a_slist)
 {
-  stringlist *tmp_slist = NULL;
+  vlad_stringlist *tmp_slist = NULL;
 
   if (a_slist == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, stringlist *)) == NULL)
+  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, vlad_stringlist *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_slist;
@@ -383,12 +387,12 @@ VLAD_EXTERN int vlad_strlist_destroy(void *a_slist)
 /* add a string into stringlist */
 VLAD_EXTERN int vlad_strlist_add(void *a_slist, const char *a_str)
 {
-  stringlist *tmp_slist = NULL;
+  vlad_stringlist *tmp_slist = NULL;
 
   if (a_slist == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, stringlist *)) == NULL)
+  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, vlad_stringlist *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_slist->add(a_str);
@@ -399,12 +403,12 @@ VLAD_EXTERN int vlad_strlist_get(void *a_slist,
                                  unsigned int a_index,
                                  char **a_str)
 {
-  stringlist *tmp_slist = NULL;
+  vlad_stringlist *tmp_slist = NULL;
 
   if (a_slist == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, stringlist *)) == NULL)
+  if ((tmp_slist = VLAD_WRAPPER_CAST(a_slist, vlad_stringlist *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_slist->get(a_index, a_str);
@@ -413,18 +417,18 @@ VLAD_EXTERN int vlad_strlist_get(void *a_slist,
 /* create an fact */
 VLAD_EXTERN int vlad_fact_create(void **a_fact)
 {
-  return VLAD_WRAPPER_CREATE(fact, a_fact);
+  return VLAD_WRAPPER_CREATE(vlad_fact, a_fact);
 }
 
 /* destroy an fact */
 VLAD_EXTERN int vlad_fact_destroy(void *a_fact)
 {
-  fact *tmp_fact = NULL;
+  vlad_fact *tmp_fact = NULL;
 
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, fact *)) == NULL)
+  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, vlad_fact *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_fact;
@@ -435,12 +439,12 @@ VLAD_EXTERN int vlad_fact_destroy(void *a_fact)
 /* negate an fact */
 VLAD_EXTERN int vlad_fact_negate(void *a_fact)
 {
-  fact *tmp_fact = NULL;
+  vlad_fact *tmp_fact = NULL;
 
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, fact *)) == NULL)
+  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, vlad_fact *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   tmp_fact->negate();
@@ -455,12 +459,12 @@ VLAD_EXTERN int vlad_fact_init_holds(void *a_fact,
                                      const char *a_o,
                                      int a_t)
 {
-  fact *tmp_fact = NULL;
+  vlad_fact *tmp_fact = NULL;
 
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, fact *)) == NULL)
+  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, vlad_fact *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_fact->init_holds(a_s, a_a, a_o, (bool) a_t);
@@ -471,12 +475,12 @@ VLAD_EXTERN int vlad_fact_init_member(void *a_fact,
                                       const char *a_g,
                                       int a_t)
 {
-  fact *tmp_fact = NULL;
+  vlad_fact *tmp_fact = NULL;
 
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, fact *)) == NULL)
+  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, vlad_fact *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_fact->init_member(a_e, a_g, (bool) a_t);
@@ -487,12 +491,12 @@ VLAD_EXTERN int vlad_fact_init_subset(void *a_fact,
                                       const char *a_g2,
                                       int a_t)
 {
-  fact *tmp_fact = NULL;
+  vlad_fact *tmp_fact = NULL;
 
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, fact *)) == NULL)
+  if ((tmp_fact = VLAD_WRAPPER_CAST(a_fact, vlad_fact *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   return tmp_fact->init_subset(a_g1, a_g2, (bool) a_t);
@@ -501,18 +505,18 @@ VLAD_EXTERN int vlad_fact_init_subset(void *a_fact,
 /* create an expression */
 VLAD_EXTERN int vlad_exp_create(void **a_exp)
 {
-  return VLAD_WRAPPER_CREATE(expression, a_exp);
+  return VLAD_WRAPPER_CREATE(vlad_expression, a_exp);
 }
 
 /* destroy an expression */
 VLAD_EXTERN int vlad_exp_destroy(void *a_exp)
 {
-  expression *tmp_exp = NULL;
+  vlad_expression *tmp_exp = NULL;
 
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, expression *)) == NULL)
+  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, vlad_expression *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_exp;
@@ -523,15 +527,15 @@ VLAD_EXTERN int vlad_exp_destroy(void *a_exp)
 /* add an fact into expression */
 VLAD_EXTERN int vlad_exp_add(void *a_exp, void *a_fact)
 {
-  expression *tmp_exp = NULL;
+  vlad_expression *tmp_exp = NULL;
 
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, expression *)) == NULL)
+  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, vlad_expression *)) == NULL)
     return VLAD_INVALIDINPUT;
 
-  return tmp_exp->add(VLAD_WRAPPER_CAST(a_fact, fact *));
+  return tmp_exp->add(VLAD_WRAPPER_CAST(a_fact, vlad_fact *));
 }
 
 /* gives the index'th fact */
@@ -540,13 +544,13 @@ VLAD_EXTERN int vlad_exp_get(void *a_exp,
                              void **a_fact)
 {
   int retval;
-  expression *tmp_exp = NULL;
-  fact *tmp_fact = NULL;
+  vlad_expression *tmp_exp = NULL;
+  vlad_fact *tmp_fact = NULL;
 
   if (a_exp == NULL || a_fact == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, expression *)) == NULL)
+  if ((tmp_exp = VLAD_WRAPPER_CAST(a_exp, vlad_expression *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   if ((retval = tmp_exp->get(a_index, &tmp_fact)) != VLAD_OK)
@@ -560,18 +564,18 @@ VLAD_EXTERN int vlad_exp_get(void *a_exp,
 /* create an update ref */
 VLAD_EXTERN int vlad_uref_create(void **a_uref)
 {
-  return VLAD_WRAPPER_CREATE(updateref, a_uref);
+  return VLAD_WRAPPER_CREATE(vlad_updateref, a_uref);
 }
 
 /* destroy an update ref */
 VLAD_EXTERN int vlad_uref_destroy(void *a_uref)
 {
-  updateref *tmp_uref = NULL;
+  vlad_updateref *tmp_uref = NULL;
 
   if (a_uref == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_uref = VLAD_WRAPPER_CAST(a_uref, updateref *)) == NULL)
+  if ((tmp_uref = VLAD_WRAPPER_CAST(a_uref, vlad_updateref *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   delete tmp_uref;
@@ -584,13 +588,13 @@ VLAD_EXTERN int vlad_uref_init(void *a_uref,
                                const char *a_name,
                                void *a_vlist)
 {
-  updateref *tmp_uref = NULL;
+  vlad_updateref *tmp_uref = NULL;
   char *tmp_name = NULL;
 
   if (a_uref == NULL || a_name == NULL)
     return VLAD_NULLPTR;
 
-  if ((tmp_uref = VLAD_WRAPPER_CAST(a_uref, updateref *)) == NULL)
+  if ((tmp_uref = VLAD_WRAPPER_CAST(a_uref, vlad_updateref *)) == NULL)
     return VLAD_INVALIDINPUT;
 
   if ((tmp_name = VLAD_MEM_STR_MALLOC(a_name)) == NULL)
@@ -598,18 +602,19 @@ VLAD_EXTERN int vlad_uref_init(void *a_uref,
 
   strcpy(tmp_name, a_name);
 
-  return tmp_uref->init(tmp_name, VLAD_WRAPPER_CAST(a_vlist, stringlist *));
+  return
+    tmp_uref->init(tmp_name, VLAD_WRAPPER_CAST(a_vlist, vlad_stringlist *));
 }
 
 /* get the length of the list */
 VLAD_EXTERN int vlad_list_length(void *a_list)
 {
-  list *tmp_list;
+  vlad_list *tmp_list;
 
   if (a_list == NULL)
     return 0;
 
-  if ((tmp_list = VLAD_WRAPPER_CAST(a_list, list *)) == NULL)
+  if ((tmp_list = VLAD_WRAPPER_CAST(a_list, vlad_list *)) == NULL)
     return 0;
 
   return tmp_list->length();

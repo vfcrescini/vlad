@@ -26,11 +26,11 @@
 #include <vlad/polbase.h>
 
 /* parsers must first be initialised to be used */
-int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, polbase *a_pbase);
+int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, vlad_polbase *a_pbase);
 int agent_init(FILE *a_in,
                    FILE *a_out,
                    FILE *a_err,
-                   polbase *a_pbase,
+                   vlad_polbase *a_pbase,
                    unsigned char a_m);
 
 /* it is important that these functions are used instead of the externally

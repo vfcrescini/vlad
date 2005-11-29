@@ -27,58 +27,58 @@
 #include <vlad/mem.h>
 #include <vlad/expression.h>
 
-expression::expression() : list(true)
+vlad_expression::vlad_expression() : vlad_list(true)
 {
 }
 
-expression::~expression()
+vlad_expression::~vlad_expression()
 {
   purge(true);
 }
 
 /* add pre-malloc'ed fact */
-int expression::add(fact *a_fact)
+int vlad_expression::add(vlad_fact *a_fact)
 {
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  return list::add(a_fact);
+  return vlad_list::add(a_fact);
 }
 
 /* return true if fact is in the expression */
-int expression::find(fact *a_fact)
+int vlad_expression::find(vlad_fact *a_fact)
 {
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  return list::find(a_fact);
+  return vlad_list::find(a_fact);
 }
 /* give a reference to the i'th fact */
-int expression::get(unsigned int a_index, fact **a_fact)
+int vlad_expression::get(unsigned int a_index, vlad_fact **a_fact)
 {
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  return list::get(a_index, (list_item **) a_fact);
+  return vlad_list::get(a_index, (vlad_list_item **) a_fact);
 }
 
 /* replace occurences of var with ident, creates a new expression */
-int expression::replace(const char *a_var,
-                        const char *a_ident,
-                        expression **a_exp)
+int vlad_expression::replace(const char *a_var,
+                             const char *a_ident,
+                             vlad_expression **a_exp)
 {
   int retval;
   unsigned int i;
-  fact *old_fact;
-  fact *new_fact;
+  vlad_fact *old_fact;
+  vlad_fact *new_fact;
 
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((*a_exp = VLAD_MEM_NEW(expression())) == NULL)
+  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  for (i = 0; i < list::length(); i++) {
+  for (i = 0; i < vlad_list::length(); i++) {
     if ((retval = get(i, &old_fact)) != VLAD_OK)
       return retval;
     if ((retval = old_fact->replace(a_var, a_ident, &new_fact)) != VLAD_OK)
@@ -91,20 +91,22 @@ int expression::replace(const char *a_var,
 }
 
 /* replace vars in vlist to ident in ilist. create a new expression */
-int expression::replace(stringlist *a_vlist, stringlist *a_ilist, expression **a_exp)
+int vlad_expression::replace(vlad_stringlist *a_vlist,
+                             vlad_stringlist *a_ilist,
+                             vlad_expression **a_exp)
 {
   int retval;
   unsigned int i;
-  fact *old_fact;
-  fact *new_fact;
+  vlad_fact *old_fact;
+  vlad_fact *new_fact;
 
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  if ((*a_exp = VLAD_MEM_NEW(expression())) == NULL)
+  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  for (i = 0; i < list::length(); i++) {
+  for (i = 0; i < vlad_list::length(); i++) {
     if ((retval = get(i, &old_fact)) != VLAD_OK)
       return retval;
     if ((retval = old_fact->replace(a_vlist, a_ilist, &new_fact)) != VLAD_OK)
@@ -117,13 +119,13 @@ int expression::replace(stringlist *a_vlist, stringlist *a_ilist, expression **a
 }
 
 /* gives a list of vars occuring in the expr. assumes list is init'ed */
-int expression::varlist(stringlist **a_list)
+int vlad_expression::varlist(vlad_stringlist **a_list)
 {
   int retval;
   unsigned int i;
-  fact *tmp;
+  vlad_fact *tmp;
 
-  for (i = 0; i < list::length(); i++) {
+  for (i = 0; i < vlad_list::length(); i++) {
     if ((retval = get(i, &tmp)) != VLAD_OK)
       return retval;
     if ((retval = tmp->varlist(a_list)) != VLAD_OK)
@@ -138,14 +140,16 @@ int expression::varlist(stringlist **a_list)
  * occur within this list. if gnd_flag is true, ensure that the fact
  * is ground.
  */
-int expression::verify(symtab *a_stab, stringlist *a_vlist, bool a_gndflag)
+int vlad_expression::verify(vlad_symtab *a_stab,
+                            vlad_stringlist *a_vlist,
+                            bool a_gndflag)
 {
   int retval;
   unsigned int i;
-  fact *tmp;
+  vlad_fact *tmp;
 
-  for (i = 0; i < list::length(); i++) {
-    if ((retval = expression::get(i, &tmp)) != VLAD_OK)
+  for (i = 0; i < vlad_list::length(); i++) {
+    if ((retval = vlad_expression::get(i, &tmp)) != VLAD_OK)
       return retval;
     if ((retval = tmp->verify(a_stab, a_vlist, a_gndflag)) != VLAD_OK)
       return retval;
@@ -156,14 +160,14 @@ int expression::verify(symtab *a_stab, stringlist *a_vlist, bool a_gndflag)
 
 #ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
-void expression::print(char *a_str)
+void vlad_expression::print(char *a_str)
 {
   unsigned int i;
   char tmp_str[VLAD_MAXLEN_STR];
-  fact *tmp_obj;
+  vlad_fact *tmp_obj;
 
-  for (i = 0; i < list::length(); i++) {
-    if (list::get(i, (list_item **) &tmp_obj) != VLAD_OK)
+  for (i = 0; i < vlad_list::length(); i++) {
+    if (vlad_list::get(i, (vlad_list_item **) &tmp_obj) != VLAD_OK)
       break;
 
     memset(tmp_str, 0, VLAD_MAXLEN_STR);

@@ -29,29 +29,33 @@
 
 /* a list of facts. no checking. */
 
-class expression : public list
+class vlad_expression : public vlad_list
 {
   public :
-    expression();
-    ~expression();
+    vlad_expression();
+    ~vlad_expression();
     /* add pre-malloc'ed factg */
-    int add(fact *a_fact);
+    int add(vlad_fact *a_fact);
     /* return true if fact is in the expression */
-    int find(fact *a_fact);
+    int find(vlad_fact *a_fact);
     /* give i'th fact */
-    int get(unsigned int a_index, fact **a_fact);
+    int get(unsigned int a_index, vlad_fact **a_fact);
     /* replace occurences of var with ident, creates a new expression */
-    int replace(const char *a_var, const char *a_ident, expression **a_exp);
+    int replace(const char *a_var,
+                const char *a_ident,
+                vlad_expression **a_exp);
     /* replace vars in vlist to entity in ilist. create a new expression */
-    int replace(stringlist *a_vlist, stringlist *a_ilist, expression **a_exp);
+    int replace(vlad_stringlist *a_vlist,
+                vlad_stringlist *a_ilist,
+                vlad_expression **a_exp);
     /* gives a list of vars occuring in the expr. assumes list is init'ed */
-    int varlist(stringlist **a_list);
+    int varlist(vlad_stringlist **a_list);
     /*
      * verify if fact is valid, if vlist is non-null, check if variables
      * occur within this list. if gnd_flag is true, ensure that the fact
      * is ground.
      */
-    int verify(symtab *a_stab, stringlist *a_vlist, bool a_gndflag);
+    int verify(vlad_symtab *a_stab, vlad_stringlist *a_vlist, bool a_gndflag);
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *a_str);

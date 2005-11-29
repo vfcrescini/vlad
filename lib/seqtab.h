@@ -26,36 +26,36 @@
 #include <vlad/expression.h>
 #include <vlad/stringlist.h>
 
-class updateref : public list_item
+class vlad_updateref : public vlad_list_item
 {
   public :
-    updateref();
-    ~updateref();
-    bool cmp(list_item *a_item);
-    int init(const char *a_name, stringlist *a_list);
-    int get(char **a_name, stringlist **a_list);
+    vlad_updateref();
+    ~vlad_updateref();
+    bool cmp(vlad_list_item *a_item);
+    int init(const char *a_name, vlad_stringlist *a_list);
+    int get(char **a_name, vlad_stringlist **a_list);
 #ifdef VLAD_DEBUG
     void print(char *a_str);
 #endif
   private :
     char *m_name;
-    stringlist *m_list;
+    vlad_stringlist *m_list;
     bool m_init;
 } ;
 
-class seqtab : public list
+class vlad_seqtab : public vlad_list
 {
    public :
-     seqtab();
-     ~seqtab();
+     vlad_seqtab();
+     ~vlad_seqtab();
      /* add pre-malloc'ed updateref */
-     int add(updateref *a_uref);
+     int add(vlad_updateref *a_uref);
      /* add pre-malloc'ed name and ilist */
-     int add(const char *a_name, stringlist *a_list);
+     int add(const char *a_name, vlad_stringlist *a_list);
      /* delete i'th item */
      int del(unsigned int a_index);
      /* get i'th name and ilist */
-     int get(unsigned int a_index, char **a_name, stringlist **a_list);
+     int get(unsigned int a_index, char **a_name, vlad_stringlist **a_list);
 #ifdef VLAD_DEBUG
     void print(char *a_str);
 #endif

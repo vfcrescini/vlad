@@ -36,7 +36,7 @@ extern unsigned int agentlinenum;
 static FILE *fin = NULL;
 static FILE *fout = NULL;
 static FILE *ferr = NULL;
-static polbase *pbase = NULL;
+static vlad_polbase *pbase = NULL;
 static unsigned char mode = VLAD_MODE_GENERATE;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
@@ -52,10 +52,10 @@ int agentlex();
 
 /* available functions */
 int agent_init(FILE *a_in,
-                   FILE *a_out,
-                   FILE *a_err,
-                   polbase *a_pbase,
-                   unsigned char a_m);
+               FILE *a_out,
+               FILE *a_err,
+               vlad_polbase *a_pbase,
+               unsigned char a_m);
 int agent_parse();
 
 #ifdef YYBYACC
@@ -67,10 +67,10 @@ int agentparse();
   unsigned int terminal;
   char identifier[VLAD_MAXLEN_IDENT];
   unsigned int number;
-  fact *fct;
-  expression *exp;
-  stringlist *vlist;
-  updateref *uref;
+  vlad_fact *fct;
+  vlad_expression *exp;
+  vlad_stringlist *vlist;
+  vlad_updateref *uref;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -293,7 +293,7 @@ update_ref_def :
     strcpy(name, $1);
 
     /* then add the entire thing into a updateref */
-    if (($$ = VLAD_MEM_NEW(updateref())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_updateref())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -319,7 +319,7 @@ update_ref_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(stringlist())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_stringlist())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -351,7 +351,7 @@ expression :
   boolean_fact {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(expression())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_expression())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -404,7 +404,7 @@ holds_fact :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -422,7 +422,7 @@ subst_fact :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -440,7 +440,7 @@ memb_fact :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       agenterror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -464,10 +464,10 @@ int agenterror(char *a_error)
 }
 
 int agent_init(FILE *a_in,
-                   FILE *a_out,
-                   FILE *a_err,
-                   polbase *a_pbase,
-                   unsigned char a_m)
+               FILE *a_out,
+               FILE *a_err,
+               vlad_polbase *a_pbase,
+               unsigned char a_m)
 {
   int retval;
 

@@ -29,14 +29,14 @@
 #include <vlad/mem.h>
 #include <vlad/smwrap.h>
 
-smwrap::smwrap()
+vlad_smwrap::vlad_smwrap()
 {
   m_smod = NULL;
   m_api = NULL;
   m_stage = 0;
 }
 
-smwrap::~smwrap()
+vlad_smwrap::~vlad_smwrap()
 {
   if (m_smod != NULL)
     delete m_smod;
@@ -44,7 +44,7 @@ smwrap::~smwrap()
     delete m_api;
 }
 
-int smwrap::init()
+int vlad_smwrap::init()
 {
   Atom *tmp_atom;
 
@@ -80,7 +80,7 @@ int smwrap::init()
 }
 
 /* after this no more calls to add_atom() are allowed */
-int smwrap::close_atom()
+int vlad_smwrap::close_atom()
 {
   if (m_stage != 1)
     return VLAD_INVALIDOP;
@@ -97,7 +97,7 @@ int smwrap::close_atom()
 }
 
 /* after this no more calls to add_rule_*() are allowed */
-int smwrap::close_rule()
+int vlad_smwrap::close_rule()
 {
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -127,7 +127,7 @@ int smwrap::close_rule()
 }
 
 /* register an atom */
-int smwrap::add_atom(unsigned int a_atom)
+int vlad_smwrap::add_atom(unsigned int a_atom)
 {
   Atom *tmp_atom;
   char tmp_name[VLAD_MAXLEN_NUM];
@@ -146,7 +146,7 @@ int smwrap::add_atom(unsigned int a_atom)
 }
 
 /* add an axiom (always true or always false) */
-int smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
+int vlad_smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
 {
   unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
@@ -197,10 +197,10 @@ int smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
 }
 
 /* add rule: variable argument list */
-int smwrap::add_rule(unsigned int a_pcount,
-                     unsigned int a_ncount,
-                     unsigned int a_head,
-                     ...)
+int vlad_smwrap::add_rule(unsigned int a_pcount,
+                          unsigned int a_ncount,
+                          unsigned int a_head,
+                          ...)
 {
   unsigned int i;
   char tmp_name[VLAD_MAXLEN_NUM];
@@ -244,9 +244,9 @@ int smwrap::add_rule(unsigned int a_pcount,
 }
 
 /* add rule: numberlist */
-int smwrap::add_rule(unsigned int a_head,
-                     numberlist *a_pbody,
-                     numberlist *a_nbody)
+int vlad_smwrap::add_rule(unsigned int a_head,
+                          vlad_numberlist *a_pbody,
+                          vlad_numberlist *a_nbody)
 {
   int retval;
   unsigned int i;
@@ -293,7 +293,7 @@ int smwrap::add_rule(unsigned int a_head,
 }
 
 /* give T or F depending on whether atom is in ALL models or not */
-int smwrap::ask(unsigned int a_atom, bool *a_res)
+int vlad_smwrap::ask(unsigned int a_atom, bool *a_res)
 {
   char tmp_name[VLAD_MAXLEN_NUM];
 

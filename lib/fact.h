@@ -34,26 +34,26 @@ typedef struct
   char *subject;
   char *access;
   char *object;
-} holds_atom;
+} vlad_holds_atom;
 
 typedef struct
 {
   char *element;
   char *group;
-} member_atom;
+} vlad_member_atom;
 
 typedef struct
 {
   char *group1;
   char *group2;
-} subset_atom;
+} vlad_subset_atom;
 
-class fact : public list_item
+class vlad_fact : public vlad_list_item
 {
   public :
-    fact();
-    ~fact();
-    bool cmp(list_item *a_item);
+    vlad_fact();
+    ~vlad_fact();
+    bool cmp(vlad_list_item *a_item);
     /* get attributes from fact */
     int get(char **a_ent1,
             char **a_ent2,
@@ -80,11 +80,13 @@ class fact : public list_item
                     const char *a_grp2,
                     bool a_truth);
     /* create a new instance of this fact */
-    int copy(fact **a_fact);
+    int copy(vlad_fact **a_fact);
     /* replaces instances of var with ident, gives a new fact */
-    int replace(const char *a_var, const char *a_ident, fact **a_fact);
+    int replace(const char *a_var, const char *a_ident, vlad_fact **a_fact);
     /* replaces vars in vlist with entities in ilist. gives a new fact */
-    int replace(stringlist *a_vlist, stringlist *a_ilist, fact **a_fact);
+    int replace(vlad_stringlist *a_vlist,
+                vlad_stringlist *a_ilist,
+                vlad_fact **a_fact);
     /* reverses the truth value */
     void negate();
     /* gives the type of the fact */
@@ -92,13 +94,13 @@ class fact : public list_item
     /* gives the truth value of the fact */
     int truth(bool *a_truth);
     /* gives a list of vars occuring in the fact. assumes list is init'ed */
-    int varlist(stringlist **a_list);
+    int varlist(vlad_stringlist **a_list);
     /*
      * verify if fact is valid, if vlist is non-null, check if variables
      * occur within this list. if gnd_flag is true, ensure that the fact
      * is ground.
      */
-    int verify(symtab *a_stab, stringlist *a_vlist, bool a_gndflag);
+    int verify(vlad_symtab *a_stab, vlad_stringlist *a_vlist, bool a_gndflag);
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */
     void print(char *a_str);
@@ -108,9 +110,9 @@ class fact : public list_item
     unsigned char m_type;
     bool m_truth;
     union {
-      holds_atom m_holds;
-      member_atom m_member;
-      subset_atom m_subset;
+      vlad_holds_atom m_holds;
+      vlad_member_atom m_member;
+      vlad_subset_atom m_subset;
     } ;
     bool m_init;
 } ;
