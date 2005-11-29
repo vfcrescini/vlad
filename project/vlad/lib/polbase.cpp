@@ -52,18 +52,18 @@ vlad_polbase::vlad_polbase()
 vlad_polbase::~vlad_polbase()
 {
   if (m_stable != NULL)
-    delete m_stable;
+    VLAD_MEM_DELETE(m_stable);
   if (m_itable != NULL)
-    delete m_itable;
+    VLAD_MEM_DELETE(m_itable);
   if (m_ctable != NULL)
-    delete m_ctable;
+    VLAD_MEM_DELETE(m_ctable);
   if (m_utable != NULL)
-    delete m_utable;
+    VLAD_MEM_DELETE(m_utable);
   if (m_setable != NULL)
-    delete m_setable;
+    VLAD_MEM_DELETE(m_setable);
 #ifdef VLAD_SMODELS
   if (m_smobject != NULL)
-    delete m_smobject;
+    VLAD_MEM_DELETE(m_smobject);
 #endif
 }
 
@@ -80,7 +80,7 @@ int vlad_polbase::init()
 
   /* initialise symbol table */
   if (m_stable != NULL)
-    delete m_stable;
+    VLAD_MEM_DELETE(m_stable);
   if ((m_stable = VLAD_MEM_NEW(vlad_symtab())) == NULL)
     return VLAD_MALLOCFAILED;
   if ((retval = m_stable->init()) != VLAD_OK)
@@ -88,32 +88,32 @@ int vlad_polbase::init()
 
   /* initialise initial expression table */
   if (m_itable != NULL)
-    delete m_itable;
+    VLAD_MEM_DELETE(m_itable);
   if ((m_itable = VLAD_MEM_NEW(vlad_expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* initialise constraints table */
   if (m_ctable != NULL)
-    delete m_ctable;
+    VLAD_MEM_DELETE(m_ctable);
   if ((m_ctable = VLAD_MEM_NEW(vlad_consttab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* initialise update declaration table */
   if (m_utable != NULL)
-    delete m_utable;
+    VLAD_MEM_DELETE(m_utable);
   if ((m_utable = VLAD_MEM_NEW(vlad_updatetab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* sequence table */
   if (m_setable != NULL)
-    delete m_setable;
+    VLAD_MEM_DELETE(m_setable);
   if ((m_setable = VLAD_MEM_NEW(vlad_seqtab())) == NULL)
     return VLAD_MALLOCFAILED;
 
 #ifdef VLAD_SMODELS
   /* smodels smwrap */
   if (m_smobject != NULL)
-    delete m_smobject;
+    VLAD_MEM_DELETE(m_smobject);
   m_smobject = NULL;
 #endif
 
@@ -572,7 +572,7 @@ int vlad_polbase::compute_generate(FILE *a_file)
         break;
     }
 
-    delete tmp_fact;
+    VLAD_MEM_DELETE(tmp_fact);
   }
 
   /* identity rules */
@@ -1064,7 +1064,7 @@ int vlad_polbase::compute_evaluate()
 
   /* create a new instance of the smodels smwrap and init it */
   if (m_smobject != NULL)
-    delete m_smobject;
+    VLAD_MEM_DELETE(m_smobject);
   if ((m_smobject = VLAD_MEM_NEW(vlad_smwrap())) == NULL)
     return VLAD_MALLOCFAILED;
   if ((retval = m_smobject->init()) != VLAD_OK)
@@ -1471,8 +1471,8 @@ int vlad_polbase::compute_evaluate()
           return retval;
       }
 
-      delete tmp_list1;
-      delete tmp_list2;
+      VLAD_MEM_DELETE(tmp_list1);
+      VLAD_MEM_DELETE(tmp_list2);
     }
   }
 
@@ -1519,7 +1519,7 @@ int vlad_polbase::compute_evaluate()
         return retval;
     }
 
-    delete tmp_list;
+    VLAD_MEM_DELETE(tmp_list);
   }
 
   /* this might not succeed as there might not exist a model for this query */
@@ -1926,7 +1926,7 @@ int vlad_polbase::decode_fact(vlad_fact **a_fact,
     return VLAD_MALLOCFAILED;
 
   if ((retval = (*a_fact)->init(tmp1, tmp2, tmp3, type, truth)) != VLAD_OK) {
-    delete (*a_fact);
+    VLAD_MEM_DELETE(*a_fact);
     return retval;
   }
 

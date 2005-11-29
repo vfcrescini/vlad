@@ -35,7 +35,7 @@ vlad_string::vlad_string()
 vlad_string::~vlad_string()
 {
   if (m_string != NULL)
-    free(m_string);
+    VLAD_MEM_FREE(m_string);
 }
 
 /* compare item with this string */
@@ -63,7 +63,7 @@ int vlad_string::init(const char *a_str)
     return VLAD_NULLPTR;
 
   if (m_string != NULL)
-    free(m_string);
+    VLAD_MEM_FREE(m_string);
 
   if ((m_string = VLAD_MEM_STR_MALLOC(a_str)) == NULL)
     return VLAD_MALLOCFAILED;
@@ -109,7 +109,7 @@ int vlad_stringlist::add(const char *a_str)
     return retval;
 
   if ((retval = vlad_list::add(tmp)) != VLAD_OK) {
-    delete tmp;
+    VLAD_MEM_DELETE(tmp);
     return retval;
   }
   return VLAD_OK;
@@ -135,7 +135,7 @@ int vlad_stringlist::get(const char *a_str, unsigned int *a_index)
   /* there should be exactly one in the array */
   *a_index = array[0];
 
-  free(array);
+  VLAD_MEM_FREE(array);
 
   return VLAD_OK;
 }

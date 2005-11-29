@@ -37,11 +37,11 @@ vlad_constraint::vlad_constraint()
 vlad_constraint::~vlad_constraint()
 {
   if (m_exp != NULL)
-    delete m_exp;
+    VLAD_MEM_DELETE(m_exp);
   if (m_cond != NULL)
-    delete m_cond;
+    VLAD_MEM_DELETE(m_cond);
   if (m_ncond != NULL)
-    delete m_ncond;
+    VLAD_MEM_DELETE(m_ncond);
 }
 
 bool vlad_constraint::cmp(vlad_list_item *a_item)
@@ -81,11 +81,11 @@ int vlad_constraint::init(vlad_expression *a_exp,
     return VLAD_NULLPTR;
 
   if (m_exp != NULL)
-    delete m_exp;
+    VLAD_MEM_DELETE(m_exp);
   if (m_cond != NULL)
-    delete m_cond;
+    VLAD_MEM_DELETE(m_cond);
   if (m_ncond != NULL)
-    delete m_ncond;
+    VLAD_MEM_DELETE(m_ncond);
 
   m_exp = a_exp;
   m_cond = a_cond;
@@ -189,7 +189,7 @@ int vlad_consttab::add(vlad_expression *a_exp,
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_exp, a_cond, a_ncond)) != VLAD_OK) {
-    delete tmp;
+    VLAD_MEM_DELETE(tmp);
     return retval;
   }
 

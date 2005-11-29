@@ -39,9 +39,9 @@ vlad_smwrap::vlad_smwrap()
 vlad_smwrap::~vlad_smwrap()
 {
   if (m_smod != NULL)
-    delete m_smod;
+    VLAD_MEM_DELETE(m_smod);
   if (m_api != NULL)
-    delete m_api;
+    VLAD_MEM_DELETE(m_api);
 }
 
 int vlad_smwrap::init()
@@ -50,9 +50,9 @@ int vlad_smwrap::init()
 
   if (m_stage > 0) {
     if (m_smod != NULL)
-      delete m_smod;
+      VLAD_MEM_DELETE(m_smod);
     if (m_api != NULL)
-      delete m_api;
+      VLAD_MEM_DELETE(m_api);
   }
 
   if ((m_smod = VLAD_MEM_NEW(Smodels())) == NULL)

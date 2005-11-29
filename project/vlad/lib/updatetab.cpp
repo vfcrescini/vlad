@@ -39,13 +39,13 @@ vlad_updatedef::vlad_updatedef()
 vlad_updatedef::~vlad_updatedef()
 {
   if (m_name != NULL)
-    free(m_name);
+    VLAD_MEM_FREE(m_name);
   if (m_vlist != NULL)
-    delete m_vlist;
+    VLAD_MEM_DELETE(m_vlist);
   if (m_precond != NULL)
-    delete m_precond;
+    VLAD_MEM_DELETE(m_precond);
   if (m_postcond != NULL)
-    delete m_postcond;
+    VLAD_MEM_DELETE(m_postcond);
 }
 
 bool vlad_updatedef::cmp(vlad_list_item *a_item)
@@ -80,13 +80,13 @@ int vlad_updatedef::init(const char *a_name,
 {
   if (m_init) {
     if (m_name != NULL)
-      free(m_name);
+      VLAD_MEM_FREE(m_name);
     if (m_vlist != NULL)
-      delete m_vlist;
+      VLAD_MEM_DELETE(m_vlist);
     if (m_precond != NULL)
-      delete m_precond;
+      VLAD_MEM_DELETE(m_precond);
     if (m_postcond != NULL)
-      delete m_postcond;
+      VLAD_MEM_DELETE(m_postcond);
   }
 
   if (a_name == NULL)
@@ -142,7 +142,7 @@ int vlad_updatetab::add(const char *a_name,
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK) {
-    delete tmp;
+    VLAD_MEM_DELETE(tmp);
     return retval;
   }
 
@@ -183,8 +183,8 @@ int vlad_updatetab::get(const char *a_name,
   if ((retval = lst[0]->get(&tmp_name, a_vlist, a_precond, a_postcond)) != VLAD_OK)
     return retval;
 
-  free(lst);
-  delete tmp_def;
+  VLAD_MEM_FREE(lst);
+  VLAD_MEM_DELETE(tmp_def);
 
   return VLAD_OK;
 }

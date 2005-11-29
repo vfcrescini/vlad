@@ -151,9 +151,9 @@ int vlad_list::del(unsigned int a_index, bool a_free)
   }
 
   if (a_free)
-    delete (curr->data);
+    VLAD_MEM_DELETE(curr->data);
 
-  free(curr);
+  VLAD_MEM_FREE(curr);
 
   m_length--;
 
@@ -199,9 +199,9 @@ int vlad_list::del(vlad_list_item *a_data, bool a_free)
       curr = curr->next;
 
       if (a_free)
-        delete (ptmp->data);
+        VLAD_MEM_DELETE(ptmp->data);
 
-      free(ptmp);
+      VLAD_MEM_FREE(ptmp);
 
       m_length--;
     }
@@ -236,7 +236,7 @@ int vlad_list::get(vlad_list_item *a_item,
       break;
 
     if (curr->data->cmp(a_item)) {
-      *a_array = (unsigned int *) realloc(*a_array, sizeof(unsigned int) * (*a_size + 1));
+      *a_array = VLAD_MEM_REALLOC(*a_array, unsigned int, *a_size + 1);
       if (*a_array == NULL)
         return VLAD_MALLOCFAILED;
 
@@ -291,7 +291,7 @@ int vlad_list::get(vlad_list_item *a_item,
       break;
 
     if (curr->data->cmp(a_item)) {
-      *a_data = (vlad_list_item **) realloc(*a_data, sizeof(**a_data) * (*a_size + 1));
+      *a_data = VLAD_MEM_REALLOC(*a_data, vlad_list_item *, *a_size + 1);
       if (*a_data == NULL)
         return VLAD_MALLOCFAILED;
 
@@ -337,9 +337,9 @@ void vlad_list::purge(bool a_free)
       curr = curr->next;
 
       if (a_free && (prev->data != NULL))
-        delete (prev->data);
+        VLAD_MEM_DELETE(prev->data);
 
-      free(prev);
+      VLAD_MEM_FREE(prev);
     }
 
     m_head = NULL;

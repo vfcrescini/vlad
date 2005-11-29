@@ -35,10 +35,14 @@
 
 /* malloc/new macros */
 #define VLAD_MEM_ADT_MALLOC(X,Y)  ((X *) malloc(sizeof(X) * Y))
-#define VLAD_MEM_STR_MALLOC(X) \
+#define VLAD_MEM_STR_MALLOC(X)    \
   ((char *) malloc(sizeof(char) * (strlen(X) + 1)))
+#define VLAD_MEM_REALLOC(X,Y,Z)   \
+  ((Y *) realloc(X, sizeof(Y) * (Z)))
+#define VLAD_MEM_FREE(X)          (free(X))
 #ifdef __cplusplus
   #define VLAD_MEM_NEW(X)         (new(std::nothrow) X)
+  #define VLAD_MEM_DELETE(X)      (delete X)
 #endif
 
 #endif
