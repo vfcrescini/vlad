@@ -26,7 +26,7 @@
 #include <vlad/mem.h>
 #include <vlad/consttab.h>
 
-constraint::constraint()
+vlad_constraint::vlad_constraint()
 {
   m_exp = NULL;
   m_cond = NULL;
@@ -34,7 +34,7 @@ constraint::constraint()
   m_init = false;
 }
 
-constraint::~constraint()
+vlad_constraint::~vlad_constraint()
 {
   if (m_exp != NULL)
     delete m_exp;
@@ -44,14 +44,14 @@ constraint::~constraint()
     delete m_ncond;
 }
 
-bool constraint::cmp(list_item *a_item)
+bool vlad_constraint::cmp(vlad_list_item *a_item)
 {
-  constraint *tmp = NULL;
+  vlad_constraint *tmp = NULL;
 
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<constraint *>(a_item)) == NULL)
+  if ((tmp = dynamic_cast<vlad_constraint *>(a_item)) == NULL)
     return false;
 
   /* ensure both are m_init. return true if both are unm_init */
@@ -73,7 +73,9 @@ bool constraint::cmp(list_item *a_item)
   return true;
 }
 
-int constraint::init(expression *a_exp, expression *a_cond, expression *a_ncond)
+int vlad_constraint::init(vlad_expression *a_exp,
+                          vlad_expression *a_cond,
+                          vlad_expression *a_ncond)
 {
   if (a_exp == NULL)
     return VLAD_NULLPTR;
@@ -93,7 +95,9 @@ int constraint::init(expression *a_exp, expression *a_cond, expression *a_ncond)
   return VLAD_OK;
 }
 
-int constraint::get(expression **a_exp, expression **a_cond, expression **a_ncond)
+int vlad_constraint::get(vlad_expression **a_exp,
+                         vlad_expression **a_cond,
+                         vlad_expression **a_ncond)
 {
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -109,13 +113,13 @@ int constraint::get(expression **a_exp, expression **a_cond, expression **a_ncon
 }
 
 /* replaces occurences of var with ident. creates a new constraint */
-int constraint::replace(const char *a_var,
-                        const char *a_ident,
-                        constraint **a_constr)
+int vlad_constraint::replace(const char *a_var,
+                             const char *a_ident,
+                             vlad_constraint **a_constr)
 {
   int retval;
-  constraint *tmp;
-  expression *exps[3];
+  vlad_constraint *tmp;
+  vlad_expression *exps[3];
 
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -134,21 +138,21 @@ int constraint::replace(const char *a_var,
       return retval;
 
   /* now create a new constraint */
-  if ((tmp = VLAD_MEM_NEW(constraint())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(vlad_constraint())) == NULL)
     return VLAD_MALLOCFAILED;
 
   return tmp->init(exps[0], exps[1], exps[2]);
 }
 
 /* gives a list of vars occuring in the constr, creats a new constr */
-int constraint::varlist(stringlist **a_list)
+int vlad_constraint::varlist(vlad_stringlist **a_list)
 {
   int retval; 
 
   if (a_list == NULL)
     return VLAD_NULLPTR;
 
-  if ((*a_list = VLAD_MEM_NEW(stringlist())) == NULL)
+  if ((*a_list = VLAD_MEM_NEW(vlad_stringlist())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = m_exp->varlist(a_list)) != VLAD_OK)
@@ -165,21 +169,23 @@ int constraint::varlist(stringlist **a_list)
   return VLAD_OK;
 }
 
-consttab::consttab() : list(true)
+vlad_consttab::vlad_consttab() : vlad_list(true)
 {
 }
 
-consttab::~consttab()
+vlad_consttab::~vlad_consttab()
 {
   purge(true);
 }
 
-int consttab::add(expression *a_exp, expression *a_cond, expression *a_ncond)
+int vlad_consttab::add(vlad_expression *a_exp,
+                       vlad_expression *a_cond,
+                       vlad_expression *a_ncond)
 {
   int retval;
-  constraint *tmp;
+  vlad_constraint *tmp;
 
-  if ((tmp = VLAD_MEM_NEW(constraint())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(vlad_constraint())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_exp, a_cond, a_ncond)) != VLAD_OK) {
@@ -187,18 +193,18 @@ int consttab::add(expression *a_exp, expression *a_cond, expression *a_ncond)
     return retval;
   }
 
-  return list::add((list_item *) tmp);
+  return vlad_list::add((vlad_list_item *) tmp);
 }
 
-int consttab::get(unsigned int a_index,
-                  expression **a_exp,
-                  expression **a_cond,
-                  expression **a_ncond)
+int vlad_consttab::get(unsigned int a_index,
+                       vlad_expression **a_exp,
+                       vlad_expression **a_cond,
+                       vlad_expression **a_ncond)
 {
   int retval;
-  constraint *tmp;
+  vlad_constraint *tmp;
 
-  if ((retval = list::get(a_index, (list_item **) &tmp)) != VLAD_OK)
+  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &tmp)) != VLAD_OK)
     return retval;
 
   return tmp->get(a_exp, a_cond, a_ncond);

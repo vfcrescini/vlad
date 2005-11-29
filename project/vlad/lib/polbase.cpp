@@ -36,7 +36,7 @@
 #define aglen (m_stable->length(VLAD_IDENT_ACC_GRP))
 #define oglen (m_stable->length(VLAD_IDENT_OBJ_GRP))
 
-polbase::polbase()
+vlad_polbase::vlad_polbase()
 {
   m_stage = 0;
   m_stable = NULL;
@@ -49,7 +49,7 @@ polbase::polbase()
 #endif
 }
 
-polbase::~polbase()
+vlad_polbase::~vlad_polbase()
 {
   if (m_stable != NULL)
     delete m_stable;
@@ -68,7 +68,7 @@ polbase::~polbase()
 }
 
 /* (re)init the policy base */
-int polbase::init()
+int vlad_polbase::init()
 {
   int i;
   int retval;
@@ -81,7 +81,7 @@ int polbase::init()
   /* initialise symbol table */
   if (m_stable != NULL)
     delete m_stable;
-  if ((m_stable = VLAD_MEM_NEW(symtab())) == NULL)
+  if ((m_stable = VLAD_MEM_NEW(vlad_symtab())) == NULL)
     return VLAD_MALLOCFAILED;
   if ((retval = m_stable->init()) != VLAD_OK)
     return retval;
@@ -89,25 +89,25 @@ int polbase::init()
   /* initialise initial expression table */
   if (m_itable != NULL)
     delete m_itable;
-  if ((m_itable = VLAD_MEM_NEW(expression())) == NULL)
+  if ((m_itable = VLAD_MEM_NEW(vlad_expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* initialise constraints table */
   if (m_ctable != NULL)
     delete m_ctable;
-  if ((m_ctable = VLAD_MEM_NEW(consttab())) == NULL)
+  if ((m_ctable = VLAD_MEM_NEW(vlad_consttab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* initialise update declaration table */
   if (m_utable != NULL)
     delete m_utable;
-  if ((m_utable = VLAD_MEM_NEW(updatetab())) == NULL)
+  if ((m_utable = VLAD_MEM_NEW(vlad_updatetab())) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* sequence table */
   if (m_setable != NULL)
     delete m_setable;
-  if ((m_setable = VLAD_MEM_NEW(seqtab())) == NULL)
+  if ((m_setable = VLAD_MEM_NEW(vlad_seqtab())) == NULL)
     return VLAD_MALLOCFAILED;
 
 #ifdef VLAD_SMODELS
@@ -123,7 +123,7 @@ int polbase::init()
 }
 
 /* add an entity in the symbol table */
-int polbase::add_symtab(const char *a_name, unsigned char a_type)
+int vlad_polbase::add_symtab(const char *a_name, unsigned char a_type)
 {
   if (m_stage != 1)
     return VLAD_INVALIDOP;
@@ -132,10 +132,10 @@ int polbase::add_symtab(const char *a_name, unsigned char a_type)
 }
 
 /* add a fact into the initial state table */
-int polbase::add_inittab(fact *a_fact)
+int vlad_polbase::add_inittab(vlad_fact *a_fact)
 {
   int retval;
-  fact *tmp;
+  vlad_fact *tmp;
 
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -155,17 +155,17 @@ int polbase::add_inittab(fact *a_fact)
 }
 
 /* add a constrant into the constraints table */
-int polbase::add_consttab(expression *a_exp,
-                          expression *a_cond,
-                          expression *a_ncond)
+int vlad_polbase::add_consttab(vlad_expression *a_exp,
+                               vlad_expression *a_cond,
+                               vlad_expression *a_ncond)
 {
   int retval;
   unsigned int i;
-  expression *exp = NULL;
-  expression *cond = NULL;
-  expression *ncond = NULL;
-  fact *tmp1;
-  fact *tmp2;
+  vlad_expression *exp = NULL;
+  vlad_expression *cond = NULL;
+  vlad_expression *ncond = NULL;
+  vlad_fact *tmp1;
+  vlad_fact *tmp2;
 
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -181,7 +181,7 @@ int polbase::add_consttab(expression *a_exp,
    */
 
   /* exression */
-  if ((exp = VLAD_MEM_NEW(expression())) == NULL)
+  if ((exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
@@ -197,7 +197,7 @@ int polbase::add_consttab(expression *a_exp,
 
   /* condition */
   if (a_cond != NULL) {
-    if ((cond = VLAD_MEM_NEW(expression())) == NULL)
+    if ((cond = VLAD_MEM_NEW(vlad_expression())) == NULL)
       return VLAD_MALLOCFAILED;
 
     for (i = 0; i < VLAD_LIST_LENGTH(a_cond); i++) {
@@ -214,7 +214,7 @@ int polbase::add_consttab(expression *a_exp,
 
   /* negative condition */
   if (a_ncond != NULL) {
-    if ((ncond = VLAD_MEM_NEW(expression())) == NULL)
+    if ((ncond = VLAD_MEM_NEW(vlad_expression())) == NULL)
       return VLAD_MALLOCFAILED;
 
     for (i = 0; i < VLAD_LIST_LENGTH(a_ncond); i++) {
@@ -234,17 +234,17 @@ int polbase::add_consttab(expression *a_exp,
 }
 
 /* add an update declaration in the update table */
-int polbase::add_updatetab(const char *a_name,
-                           stringlist *a_vlist,
-                           expression *a_precond,
-                           expression *a_postcond)
+int vlad_polbase::add_updatetab(const char *a_name,
+                                vlad_stringlist *a_vlist,
+                                vlad_expression *a_precond,
+                                vlad_expression *a_postcond)
 {
   int retval;
   unsigned int i;
   char *name;
-  stringlist *vlist = NULL;
-  expression *precond = NULL;
-  expression *postcond = NULL;
+  vlad_stringlist *vlist = NULL;
+  vlad_expression *precond = NULL;
+  vlad_expression *postcond = NULL;
 
   /* we only allow this function after symtab is closed */
   if (m_stage != 2)
@@ -262,7 +262,7 @@ int polbase::add_updatetab(const char *a_name,
 
   /* verify and copy varlist */
   if (a_vlist != NULL) {
-    if ((vlist = VLAD_MEM_NEW(stringlist())) == NULL)
+    if ((vlist = VLAD_MEM_NEW(vlad_stringlist())) == NULL)
       return VLAD_MALLOCFAILED;
 
     for (i = 0; i < VLAD_LIST_LENGTH(a_vlist); i++) {
@@ -279,12 +279,12 @@ int polbase::add_updatetab(const char *a_name,
 
   /* verify and copy precondition */
   if (a_precond != NULL) {
-    if ((precond = VLAD_MEM_NEW(expression())) == NULL)
+    if ((precond = VLAD_MEM_NEW(vlad_expression())) == NULL)
       return VLAD_MALLOCFAILED;
 
     for (i = 0; i < VLAD_LIST_LENGTH(a_precond); i++) {
-      fact *tmp1;
-      fact *tmp2;
+      vlad_fact *tmp1;
+      vlad_fact *tmp2;
       if ((retval = a_precond->get(i, &tmp1)) != VLAD_OK)
         return retval;
       if ((retval = verify_fact(tmp1, a_vlist)) != VLAD_OK)
@@ -297,12 +297,12 @@ int polbase::add_updatetab(const char *a_name,
   }
 
   /* verify and copy the postcondition */
-  if ((postcond = VLAD_MEM_NEW(expression())) == NULL)
+  if ((postcond = VLAD_MEM_NEW(vlad_expression())) == NULL)
     return VLAD_MALLOCFAILED;
 
   for (i = 0; i < VLAD_LIST_LENGTH(a_postcond); i++) {
-    fact *tmp1;
-    fact *tmp2;
+    vlad_fact *tmp1;
+    vlad_fact *tmp2;
     if ((retval = a_postcond->get(i, &tmp1)) != VLAD_OK)
       return retval;
     if ((retval = verify_fact(tmp1, a_vlist)) != VLAD_OK)
@@ -318,11 +318,11 @@ int polbase::add_updatetab(const char *a_name,
 }
 
 /* add an update reference to the sequence table */
-int polbase::add_seqtab(updateref *a_uref)
+int vlad_polbase::add_seqtab(vlad_updateref *a_uref)
 {
   int retval;
   char *name;
-  stringlist *ilist;
+  vlad_stringlist *ilist;
 
   /* we only allow this function after policy base is closed */
   if (m_stage < 3)
@@ -350,7 +350,7 @@ int polbase::add_seqtab(updateref *a_uref)
 }
 
 /* close symbol table */
-int polbase::close_symtab()
+int vlad_polbase::close_symtab()
 {
   int i;
 
@@ -378,7 +378,7 @@ int polbase::close_symtab()
 
 /* after this is called, no further calls to add_inittab(), add_consttab()
  * or add_updatetab() is allowed */
-int polbase::close_polbase()
+int vlad_polbase::close_polbase()
 {
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -389,7 +389,7 @@ int polbase::close_polbase()
 }
 
 /* delete an update reference from the sequence table */
-int polbase::del_seqtab(unsigned int a_index)
+int vlad_polbase::del_seqtab(unsigned int a_index)
 {
   int retval;
 
@@ -407,9 +407,9 @@ int polbase::del_seqtab(unsigned int a_index)
 }
 
 /* gives an array of identifiers of the given type */
-int polbase::get_symtab(unsigned char a_type,
-                        char ***a_array,
-                        unsigned int *a_size)
+int vlad_polbase::get_symtab(unsigned char a_type,
+                             char ***a_array,
+                             unsigned int *a_size)
 {
   if (m_stage < 2)
     return VLAD_INVALIDOP;
@@ -418,9 +418,9 @@ int polbase::get_symtab(unsigned char a_type,
 }
 
 /* gives the index'th entry in the sequence table */
-int polbase::get_seqtab(unsigned int a_index,
-                        char **a_name,
-                        stringlist **a_ilist)
+int vlad_polbase::get_seqtab(unsigned int a_index,
+                             char **a_name,
+                             vlad_stringlist **a_ilist)
 {
   if (m_stage < 2)
     return VLAD_INVALIDOP;
@@ -429,11 +429,11 @@ int polbase::get_seqtab(unsigned int a_index,
 }
 
 /* gives the index'th entry in the update table */
-int polbase::get_updatetab(unsigned int a_index,
-                           char **a_name,
-                           stringlist **a_vlist,
-                           expression **a_precond,
-                           expression **a_postcond)
+int vlad_polbase::get_updatetab(unsigned int a_index,
+                                char **a_name,
+                                vlad_stringlist **a_vlist,
+                                vlad_expression **a_precond,
+                                vlad_expression **a_postcond)
 {
   if (m_stage < 2)
     return VLAD_INVALIDOP;
@@ -442,7 +442,7 @@ int polbase::get_updatetab(unsigned int a_index,
 }
 
 /* returns the length of the sequence table */
-unsigned int polbase::length_seqtab()
+unsigned int vlad_polbase::length_seqtab()
 {
   if (m_stage < 2)
     return 0;
@@ -451,7 +451,7 @@ unsigned int polbase::length_seqtab()
 }
 
 /* returns the length of the update table */
-unsigned int polbase::length_updatetab()
+unsigned int vlad_polbase::length_updatetab()
 {
   if (m_stage < 2)
     return 0;
@@ -460,7 +460,7 @@ unsigned int polbase::length_updatetab()
 }
 
 /* checks whether name of the given type is in symtab */
-int polbase::check_symtab(const char *a_name, unsigned char a_type)
+int vlad_polbase::check_symtab(const char *a_name, unsigned char a_type)
 {
   if (m_stage < 2)
     return VLAD_INVALIDOP;
@@ -469,13 +469,13 @@ int polbase::check_symtab(const char *a_name, unsigned char a_type)
 }
 
 /* enumerate the sequences in the sequence table, output to file */
-int polbase::list_seqtab(FILE *a_file)
+int vlad_polbase::list_seqtab(FILE *a_file)
 {
   int retval;
   unsigned int i;
   unsigned int j;
   char *tmp_name;
-  stringlist *tmp_ilist;
+  vlad_stringlist *tmp_ilist;
                                                                                   /* we only allow this function after policy base is closed */
   if (m_stage < 3)
     return VLAD_INVALIDOP;
@@ -505,7 +505,7 @@ int polbase::list_seqtab(FILE *a_file)
 }
 
 /* generate the rules necessary to evaluate queries */
-int polbase::compute_generate(FILE *a_file)
+int vlad_polbase::compute_generate(FILE *a_file)
 {
   int retval;
   unsigned int i;
@@ -522,7 +522,7 @@ int polbase::compute_generate(FILE *a_file)
   fprintf(a_file, "%s\n", VLAD_STR_FACTS);
 
   for (i = 0; i < (m_tot_atom * 2 * (VLAD_LIST_LENGTH(m_setable) + 1)); i++) {
-    fact *tmp_fact;
+    vlad_fact *tmp_fact;
     unsigned char tmp_ty;
     unsigned int tmp_s;
     bool tmp_tr;
@@ -892,7 +892,7 @@ int polbase::compute_generate(FILE *a_file)
   fprintf(a_file, "%s %s\n", VLAD_STR_INITSTATE, VLAD_STR_RULES);
 
   for (i = 0; i < VLAD_LIST_LENGTH(m_itable); i++) {
-    fact *tmp_fact;
+    vlad_fact *tmp_fact;
     unsigned int tmp_num;
 
     if ((retval = m_itable->get(i, &tmp_fact)) != VLAD_OK)
@@ -912,10 +912,10 @@ int polbase::compute_generate(FILE *a_file)
 
     /* constraint loop */
     for (i_const = 0; i_const < VLAD_LIST_LENGTH(m_ctable); i_const++) {
-      expression *tmp_e;
-      expression *tmp_c;
-      expression *tmp_n;
-      fact *tmp_fact;
+      vlad_expression *tmp_e;
+      vlad_expression *tmp_c;
+      vlad_expression *tmp_n;
+      vlad_fact *tmp_fact;
       unsigned int tmp_num;
 
       if ((retval = m_ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
@@ -966,11 +966,11 @@ int polbase::compute_generate(FILE *a_file)
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
     unsigned int i_exp;
     char *tmp_name;
-    fact *tmp_fact;
+    vlad_fact *tmp_fact;
     unsigned int tmp_num;
-    stringlist *tmp_ilist = NULL;
-    expression *tmp_pre = NULL;
-    expression *tmp_post = NULL;
+    vlad_stringlist *tmp_ilist = NULL;
+    vlad_expression *tmp_pre = NULL;
+    vlad_expression *tmp_post = NULL;
 
     if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
       return retval;
@@ -1010,7 +1010,7 @@ int polbase::compute_generate(FILE *a_file)
 }
 
 /* generate the query */
-int polbase::query_generate(expression *a_exp, FILE *a_file)
+int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_file)
 {
   int retval;
   unsigned int i;
@@ -1031,7 +1031,7 @@ int polbase::query_generate(expression *a_exp, FILE *a_file)
   fprintf(a_file, "Queries\n");
 
   for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
-    fact *tmp_fact;
+    vlad_fact *tmp_fact;
     unsigned int tmp_num;
 
     if ((retval = a_exp->get(i, &tmp_fact)) != VLAD_OK)
@@ -1053,7 +1053,7 @@ int polbase::query_generate(expression *a_exp, FILE *a_file)
 
 #ifdef VLAD_SMODELS
 /* prepares the policy base for queries */
-int polbase::compute_evaluate()
+int vlad_polbase::compute_evaluate()
 {
   int retval;
   unsigned int i;
@@ -1065,7 +1065,7 @@ int polbase::compute_evaluate()
   /* create a new instance of the smodels smwrap and init it */
   if (m_smobject != NULL)
     delete m_smobject;
-  if ((m_smobject = VLAD_MEM_NEW(smwrap())) == NULL)
+  if ((m_smobject = VLAD_MEM_NEW(vlad_smwrap())) == NULL)
     return VLAD_MALLOCFAILED;
   if ((retval = m_smobject->init()) != VLAD_OK)
     return retval;
@@ -1405,7 +1405,7 @@ int polbase::compute_evaluate()
   /* initial state */
 
   for (i = 0; i < VLAD_LIST_LENGTH(m_itable); i++) {
-    fact *tmp_fact;
+    vlad_fact *tmp_fact;
     unsigned int tmp_num;
 
     if ((retval = m_itable->get(i, &tmp_fact)) != VLAD_OK)
@@ -1424,17 +1424,17 @@ int polbase::compute_evaluate()
 
     /* constraint loop */
     for (i_const = 0; i_const < VLAD_LIST_LENGTH(m_ctable); i_const++) {
-      expression *tmp_e;
-      expression *tmp_c;
-      expression *tmp_n;
-      fact *tmp_fact;
+      vlad_expression *tmp_e;
+      vlad_expression *tmp_c;
+      vlad_expression *tmp_n;
+      vlad_fact *tmp_fact;
       unsigned int tmp_num;
-      numberlist *tmp_list1;
-      numberlist *tmp_list2;
+      vlad_numberlist *tmp_list1;
+      vlad_numberlist *tmp_list2;
 
-      if ((tmp_list1 = VLAD_MEM_NEW(numberlist())) == NULL)
+      if ((tmp_list1 = VLAD_MEM_NEW(vlad_numberlist())) == NULL)
         return VLAD_MALLOCFAILED;
-      if ((tmp_list2 = VLAD_MEM_NEW(numberlist())) == NULL)
+      if ((tmp_list2 = VLAD_MEM_NEW(vlad_numberlist())) == NULL)
         return VLAD_MALLOCFAILED;
 
       if ((retval = m_ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
@@ -1482,14 +1482,14 @@ int polbase::compute_evaluate()
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
     unsigned int i_exp;
     char *tmp_name;
-    fact *tmp_fact;
+    vlad_fact *tmp_fact;
     unsigned int tmp_num;
-    stringlist *tmp_ilist = NULL;
-    expression *tmp_pre = NULL;
-    expression *tmp_post = NULL;
-    numberlist *tmp_list;
+    vlad_stringlist *tmp_ilist = NULL;
+    vlad_expression *tmp_pre = NULL;
+    vlad_expression *tmp_post = NULL;
+    vlad_numberlist *tmp_list;
 
-   if ((tmp_list = VLAD_MEM_NEW(numberlist())) == NULL)
+   if ((tmp_list = VLAD_MEM_NEW(vlad_numberlist())) == NULL)
      return VLAD_MALLOCFAILED;
 
     if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
@@ -1534,7 +1534,7 @@ int polbase::compute_evaluate()
 
 #ifdef VLAD_SMODELS
 /* use smwrap class to evaluate a query */
-int polbase::query_evaluate(expression *a_exp, unsigned char *a_res)
+int vlad_polbase::query_evaluate(vlad_expression *a_exp, unsigned char *a_res)
 {
   int retval;
   unsigned int i;
@@ -1551,7 +1551,7 @@ int polbase::query_evaluate(expression *a_exp, unsigned char *a_res)
 
   /* go through the facts to test */
   for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
-    fact *tmp_fact;
+    vlad_fact *tmp_fact;
     unsigned int tmp_num;
     unsigned char tmp_res;
 
@@ -1578,11 +1578,11 @@ int polbase::query_evaluate(expression *a_exp, unsigned char *a_res)
 }
 #endif
 
-unsigned int polbase::compute_holds(unsigned int a_state,
-                                    bool a_truth,
-                                    unsigned int a_sub,
-                                    unsigned int a_acc,
-                                    unsigned int a_obj)
+unsigned int vlad_polbase::compute_holds(unsigned int a_state,
+                                         bool a_truth,
+                                         unsigned int a_sub,
+                                         unsigned int a_acc,
+                                         unsigned int a_obj)
 {
   return compute_fact(a_state,
                       a_truth,
@@ -1590,11 +1590,11 @@ unsigned int polbase::compute_holds(unsigned int a_state,
                       (a_acc * (oslen + oglen)) + a_obj);
 }
 
-unsigned int polbase::compute_memb(unsigned int a_state,
-                                   bool a_truth,
-                                   unsigned char a_type,
-                                   unsigned int a_elt,
-                                   unsigned int a_grp)
+unsigned int vlad_polbase::compute_memb(unsigned int a_state,
+                                        bool a_truth,
+                                        unsigned char a_type,
+                                        unsigned int a_elt,
+                                        unsigned int a_grp)
 {
   switch(VLAD_IDENT_BASETYPE(a_type)) {
     case VLAD_IDENT_SUB_SIN :
@@ -1623,11 +1623,11 @@ unsigned int polbase::compute_memb(unsigned int a_state,
   return 0;
 }
 
-unsigned int polbase::compute_subst(unsigned a_state,
-                                    bool a_truth,
-                                    unsigned char a_type,
-                                    unsigned char a_grp1,
-                                    unsigned char a_grp2)
+unsigned int vlad_polbase::compute_subst(unsigned a_state,
+                                         bool a_truth,
+                                         unsigned char a_type,
+                                         unsigned char a_grp1,
+                                         unsigned char a_grp2)
 {
   switch(VLAD_IDENT_BASETYPE(a_type)) {
     case VLAD_IDENT_SUB_SIN :
@@ -1659,20 +1659,20 @@ unsigned int polbase::compute_subst(unsigned a_state,
   return 0;
 }
 
-unsigned int polbase::compute_fact(unsigned int a_state,
-                                   bool a_truth,
-                                   unsigned int a_fact)
+unsigned int vlad_polbase::compute_fact(unsigned int a_state,
+                                        bool a_truth,
+                                        unsigned int a_fact)
 {
   return (a_state * m_tot_atom * 2) + (a_truth ? m_tot_atom : 0) + a_fact;
 }
 
 /* gives a unique id based on the holds entities given */
-int polbase::encode_holds(const char *a_sub,
-                          const char *a_acc,
-                          const char *a_obj,
-                          bool a_truth,
-                          unsigned int a_state,
-                          unsigned int *a_id)
+int vlad_polbase::encode_holds(const char *a_sub,
+                               const char *a_acc,
+                               const char *a_obj,
+                               bool a_truth,
+                               unsigned int a_state,
+                               unsigned int *a_id)
 {
   int retval;
   unsigned int index[3];
@@ -1703,11 +1703,11 @@ int polbase::encode_holds(const char *a_sub,
 }
 
 /* gives a unique id based on the member entities given */
-int polbase::encode_memb(const char *a_elt,
-                         const char *a_grp,
-                         bool a_truth,
-                         unsigned int a_state,
-                         unsigned int *a_id)
+int vlad_polbase::encode_memb(const char *a_elt,
+                              const char *a_grp,
+                              bool a_truth,
+                              unsigned int a_state,
+                              unsigned int *a_id)
 {
   int retval;
   unsigned int index[2];
@@ -1731,11 +1731,11 @@ int polbase::encode_memb(const char *a_elt,
 }
 
 /* gives a unique id based on the subset entities given */
-int polbase::encode_subst(const char *a_grp1,
-                          const char *a_grp2,
-                          bool a_truth,
-                          unsigned int a_state,
-                          unsigned int *a_id)
+int vlad_polbase::encode_subst(const char *a_grp1,
+                               const char *a_grp2,
+                               bool a_truth,
+                               unsigned int a_state,
+                               unsigned int *a_id)
 {
   int retval;
   unsigned int index[2];
@@ -1759,9 +1759,9 @@ int polbase::encode_subst(const char *a_grp1,
 }
 
 /* gives a unique id based on the fact given */
-int polbase::encode_fact(fact *a_fact,
-                         unsigned int a_state,
-                         unsigned int *a_id)
+int vlad_polbase::encode_fact(vlad_fact *a_fact,
+                              unsigned int a_state,
+                              unsigned int *a_id)
 {
   int retval;
   unsigned char type;
@@ -1790,10 +1790,10 @@ int polbase::encode_fact(fact *a_fact,
 }
 
 /* gives the entities based on the holds id */
-int polbase::decode_holds(unsigned int a_id,
-                          char **a_sub,
-                          char **a_acc,
-                          char **a_obj)
+int vlad_polbase::decode_holds(unsigned int a_id,
+                               char **a_sub,
+                               char **a_acc,
+                               char **a_obj)
 {
   int retval;
   unsigned int index[3];
@@ -1815,7 +1815,7 @@ int polbase::decode_holds(unsigned int a_id,
 }
 
 /* gives the entities based on the member id */
-int polbase::decode_memb(unsigned int a_id, char **a_elt, char **a_grp)
+int vlad_polbase::decode_memb(unsigned int a_id, char **a_elt, char **a_grp)
 {
   int retval;
 
@@ -1847,7 +1847,7 @@ int polbase::decode_memb(unsigned int a_id, char **a_elt, char **a_grp)
 }
 
 /* gives the entities based on the subst id */
-int polbase::decode_subst(unsigned int a_id, char **a_grp1, char **a_grp2)
+int vlad_polbase::decode_subst(unsigned int a_id, char **a_grp1, char **a_grp2)
 {
   int retval;
 
@@ -1879,9 +1879,9 @@ int polbase::decode_subst(unsigned int a_id, char **a_grp1, char **a_grp2)
 }
 
 /* gives the fact based on the id given */
-int polbase::decode_fact(fact **a_fact,
-                         unsigned int *a_state,
-                         unsigned int a_id)
+int vlad_polbase::decode_fact(vlad_fact **a_fact,
+                              unsigned int *a_state,
+                              unsigned int a_id)
 {
   int retval;
   char *tmp1;
@@ -1922,7 +1922,7 @@ int polbase::decode_fact(fact **a_fact,
   }
 
   /*  now create a new fact */
-  if ((*a_fact = VLAD_MEM_NEW(fact())) == NULL)
+  if ((*a_fact = VLAD_MEM_NEW(vlad_fact())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = (*a_fact)->init(tmp1, tmp2, tmp3, type, truth)) != VLAD_OK) {
@@ -1937,10 +1937,10 @@ int polbase::decode_fact(fact **a_fact,
  * verifies that s, a and o are in the symtab and that they are of the
  * right type, or listed in vlist if vlist is non-null
  */
-int polbase::verify_fact_holds(const char *a_sub,
-                               const char *a_acc,
-                               const char *a_obj,
-                               stringlist *a_vlist)
+int vlad_polbase::verify_fact_holds(const char *a_sub,
+                                    const char *a_acc,
+                                    const char *a_obj,
+                                    vlad_stringlist *a_vlist)
 {
   int retval;
   unsigned char type;
@@ -2012,11 +2012,11 @@ int polbase::verify_fact_holds(const char *a_sub,
  * verifies that e and g are in the symtab and that they are of the right
  * type, or listed in vlist if vlist is non-null
  */
-int polbase::verify_fact_memb(const char *a_elt,
-                              const char *a_grp,
-                              stringlist *a_vlist)
+int vlad_polbase::verify_fact_memb(const char *a_elt,
+                                   const char *a_grp,
+                                   vlad_stringlist *a_vlist)
 {
- int retval;
+  int retval;
   unsigned char type_elt;
   unsigned char type_grp;
   bool var = false;
@@ -2073,9 +2073,9 @@ int polbase::verify_fact_memb(const char *a_elt,
  * verifies that g1 and g2 are in the symtab and that they are of the right
  * type, or listed in v if v is non-null
  */
-int polbase::verify_fact_subst(const char *a_grp1,
-                               const char *a_grp2,
-                               stringlist *a_vlist)
+int vlad_polbase::verify_fact_subst(const char *a_grp1,
+                                    const char *a_grp2,
+                                    vlad_stringlist *a_vlist)
 {
   int retval;
   unsigned char type_grp1;
@@ -2131,7 +2131,7 @@ int polbase::verify_fact_subst(const char *a_grp1,
 }
 
 /* make sure fact is valid */
-int polbase::verify_fact(fact *a_fact, stringlist *a_vlist)
+int vlad_polbase::verify_fact(vlad_fact *a_fact, vlad_stringlist *a_vlist)
 {
   int retval;
   char *tmp1;
@@ -2160,11 +2160,11 @@ int polbase::verify_fact(fact *a_fact, stringlist *a_vlist)
 }
 
 /* make sure expression e is valid */
-int polbase::verify_expression(expression *a_exp)
+int vlad_polbase::verify_expression(vlad_expression *a_exp)
 {
   int retval;
   unsigned int i;
-  fact *tmp_fact;
+  vlad_fact *tmp_fact;
 
   if (a_exp == NULL)
     return VLAD_NULLPTR;
@@ -2180,11 +2180,11 @@ int polbase::verify_expression(expression *a_exp)
 }
 
 /* make sure updateref is valid */
-int polbase::verify_updateref(char *a_name, stringlist *a_ilist)
+int vlad_polbase::verify_updateref(char *a_name, vlad_stringlist *a_ilist)
 {
   int retval;
-  expression *tmp_pr;
-  expression *tmp_po;
+  vlad_expression *tmp_pr;
+  vlad_expression *tmp_po;
 
   if (a_name == NULL)
     return VLAD_NULLPTR;
@@ -2207,7 +2207,7 @@ int polbase::verify_updateref(char *a_name, stringlist *a_ilist)
 }
 
 /* returns the id of the negation of the given fact id */
-unsigned int polbase::negate_fact(unsigned int a_fact)
+unsigned int vlad_polbase::negate_fact(unsigned int a_fact)
 {
   unsigned int state;
   bool truth;
@@ -2225,7 +2225,7 @@ unsigned int polbase::negate_fact(unsigned int a_fact)
 
 #ifdef VLAD_SMODELS
 /* checks whether the given fact is true, false or unknown */
-int polbase::evaluate_fact(unsigned int a_fact, unsigned char *a_res)
+int vlad_polbase::evaluate_fact(unsigned int a_fact, unsigned char *a_res)
 {
   int retval;
   bool tmp_res;

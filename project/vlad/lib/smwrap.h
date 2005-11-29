@@ -29,11 +29,11 @@
 #include <api.h>
 #include <atomrule.h>
 
-class smwrap
+class vlad_smwrap
 {
   public :
-    smwrap();
-    ~smwrap();
+    vlad_smwrap();
+    ~vlad_smwrap();
     int init();
     /* after this no more calls to add_atom() are allowed */
     int close_atom();
@@ -50,8 +50,8 @@ class smwrap
                  ...);
     /* add rule: numberlist */
     int add_rule(unsigned int a_head,
-                 numberlist *a_pbody,
-                 numberlist *a_nbody);
+                 vlad_numberlist *a_pbody,
+                 vlad_numberlist *a_nbody);
     /* give T or F depending on whether atom is in ALL models or not */
     int ask(unsigned int a_atom, bool *a_res);
   private :

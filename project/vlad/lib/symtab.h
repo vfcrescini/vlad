@@ -25,11 +25,11 @@
 #include <vlad/stringlist.h>
 #include <vlad/identifier.h>
 
-class symtab
+class vlad_symtab
 {
   public :
-    symtab();
-    ~symtab();
+    vlad_symtab();
+    ~vlad_symtab();
     /* initialise */
     int init();
     /* add symbol in symbol table */
@@ -50,7 +50,7 @@ class symtab
     int type(const char *a_s, unsigned char *a_t);
   private :
     /* m_list: 0 = ss, 1 = as, 2 = os, 3 = sg, 4 = ag, 5 = og */
-    stringlist *m_lists[VLAD_IDENT_LAST + 1];
+    vlad_stringlist *m_lists[VLAD_IDENT_LAST + 1];
     bool m_init;
 } ;
 

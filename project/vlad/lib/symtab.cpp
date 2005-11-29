@@ -27,7 +27,7 @@
 #include <vlad/mem.h>
 #include <vlad/symtab.h>
 
-symtab::symtab()
+vlad_symtab::vlad_symtab()
 {
   int i;
 
@@ -37,7 +37,7 @@ symtab::symtab()
   m_init = false;
 }
 
-symtab::~symtab()
+vlad_symtab::~vlad_symtab()
 {
   int i;
 
@@ -48,7 +48,7 @@ symtab::~symtab()
 }
 
 /* initialise synbol table */
-int symtab::init()
+int vlad_symtab::init()
 {
   int i;
 
@@ -57,7 +57,7 @@ int symtab::init()
     if (m_lists[i] != NULL)
       delete m_lists[i];
     /* now create them */
-    if ((m_lists[i] = VLAD_MEM_NEW(stringlist())) == NULL)
+    if ((m_lists[i] = VLAD_MEM_NEW(vlad_stringlist())) == NULL)
       return VLAD_MALLOCFAILED;
   }
 
@@ -67,7 +67,7 @@ int symtab::init()
 }
 
 /* add symbol in symbol table */
-int symtab::add(const char *a_s, unsigned char a_t)
+int vlad_symtab::add(const char *a_s, unsigned char a_t)
 {
   int retval;
 
@@ -92,7 +92,7 @@ int symtab::add(const char *a_s, unsigned char a_t)
 }
 
 /* get the index and type of the identifier based on name */
-int symtab::get(const char *a_s, unsigned int *a_i, unsigned char *a_t)
+int vlad_symtab::get(const char *a_s, unsigned int *a_i, unsigned char *a_t)
 {
   int retval;
   int i;
@@ -116,7 +116,7 @@ int symtab::get(const char *a_s, unsigned int *a_i, unsigned char *a_t)
 }
 
 /* get the ith identifier of type t */
-int symtab::get(unsigned int a_i, unsigned char a_t, char **a_s)
+int vlad_symtab::get(unsigned int a_i, unsigned char a_t, char **a_s)
 {
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -129,7 +129,7 @@ int symtab::get(unsigned int a_i, unsigned char a_t, char **a_s)
 }
 
 /* get an array of identifiers that matches the given type */
-int symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
+int vlad_symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
 {
   int retval;
   unsigned int i;
@@ -143,7 +143,7 @@ int symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
   if (a_t > VLAD_IDENT_LAST)
     return VLAD_INVALIDINPUT;
 
-  *a_s = symtab::length(a_t);
+  *a_s = vlad_symtab::length(a_t);
 
   if ((*a_a = VLAD_MEM_ADT_MALLOC(char *, *a_s)) == NULL)
     return VLAD_MALLOCFAILED;
@@ -161,7 +161,7 @@ int symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
 }
 
 /* return the number of identifiers that are of type t */
-unsigned int symtab::length(unsigned char a_t)
+unsigned int vlad_symtab::length(unsigned char a_t)
 {
   if (!m_init)
     return 0;
@@ -173,7 +173,7 @@ unsigned int symtab::length(unsigned char a_t)
 }
 
 /* return 0 if symbol is in the table */
-int symtab::find(const char *a_s)
+int vlad_symtab::find(const char *a_s)
 {
   int retval;
   unsigned int i;
@@ -193,7 +193,7 @@ int symtab::find(const char *a_s)
 }
 
 /* return 0 if symbol of type t is in the table */
-int symtab::find(const char *a_s, unsigned char a_t)
+int vlad_symtab::find(const char *a_s, unsigned char a_t)
 {
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -208,7 +208,7 @@ int symtab::find(const char *a_s, unsigned char a_t)
 }
 
 /* give the type of the given identifier */
-int symtab::type(const char *a_s, unsigned char *a_t)
+int vlad_symtab::type(const char *a_s, unsigned char *a_t)
 {
   int retval;
   unsigned int i;

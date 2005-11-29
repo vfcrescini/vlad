@@ -27,7 +27,7 @@
 #include <vlad/mem.h>
 #include <vlad/updatetab.h>
 
-updatedef::updatedef()
+vlad_updatedef::vlad_updatedef()
 {
   m_name = NULL;
   m_vlist = NULL;
@@ -36,7 +36,7 @@ updatedef::updatedef()
   m_init = false;
 }
 
-updatedef::~updatedef()
+vlad_updatedef::~vlad_updatedef()
 {
   if (m_name != NULL)
     free(m_name);
@@ -48,14 +48,14 @@ updatedef::~updatedef()
     delete m_postcond;
 }
 
-bool updatedef::cmp(list_item *a_item)
+bool vlad_updatedef::cmp(vlad_list_item *a_item)
 {
-  updatedef *tmp = NULL;
+  vlad_updatedef *tmp = NULL;
 
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<updatedef *>(a_item)) == NULL)
+  if ((tmp = dynamic_cast<vlad_updatedef *>(a_item)) == NULL)
     return false;
 
   /* if both are uninit return true. if only one -- false */
@@ -73,10 +73,10 @@ bool updatedef::cmp(list_item *a_item)
   return !strcmp(m_name, tmp->m_name);
 }
 
-int updatedef::init(const char *a_name,
-                   stringlist *a_vlist,
-                   expression *a_precond,
-                   expression *a_postcond)
+int vlad_updatedef::init(const char *a_name,
+                         vlad_stringlist *a_vlist,
+                         vlad_expression *a_precond,
+                         vlad_expression *a_postcond)
 {
   if (m_init) {
     if (m_name != NULL)
@@ -102,10 +102,10 @@ int updatedef::init(const char *a_name,
   return VLAD_OK;
 }
 
-int updatedef::get(char **a_name,
-                  stringlist **a_vlist,
-                  expression **a_precond,
-                  expression **a_postcond)
+int vlad_updatedef::get(char **a_name,
+                        vlad_stringlist **a_vlist,
+                        vlad_expression **a_precond,
+                        vlad_expression **a_postcond)
 {
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -121,24 +121,24 @@ int updatedef::get(char **a_name,
   return VLAD_OK;
 }
 
-updatetab::updatetab() : list(true)
+vlad_updatetab::vlad_updatetab() : vlad_list(true)
 {
 }
 
-updatetab::~updatetab()
+vlad_updatetab::~vlad_updatetab()
 {
   purge(true);
 }
 
-int updatetab::add(const char *a_name,
-                  stringlist *a_vlist,
-                  expression *a_precond,
-                  expression *a_postcond)
+int vlad_updatetab::add(const char *a_name,
+                        vlad_stringlist *a_vlist,
+                        vlad_expression *a_precond,
+                        vlad_expression *a_postcond)
 {
   int retval;
-  updatedef *tmp;
+  vlad_updatedef *tmp;
 
-  if ((tmp = VLAD_MEM_NEW(updatedef())) == NULL)
+  if ((tmp = VLAD_MEM_NEW(vlad_updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp->init(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK) {
@@ -146,19 +146,19 @@ int updatetab::add(const char *a_name,
     return retval;
   }
 
-  return list::add((list_item *) tmp);
+  return vlad_list::add((vlad_list_item *) tmp);
 }
 
 /* get update by m_name */
-int updatetab::get(const char *a_name,
-                  stringlist **a_vlist,
-                  expression **a_precond,
-                  expression **a_postcond)
+int vlad_updatetab::get(const char *a_name,
+                        vlad_stringlist **a_vlist,
+                        vlad_expression **a_precond,
+                        vlad_expression **a_postcond)
 {
   int retval;
   char *tmp_name;
-  updatedef *tmp_def;
-  updatedef **lst;
+  vlad_updatedef *tmp_def;
+  vlad_updatedef **lst;
   unsigned int size;
 
   if (a_name == NULL || a_vlist == NULL || a_precond == NULL || a_postcond == NULL)
@@ -170,13 +170,13 @@ int updatetab::get(const char *a_name,
 
   strcpy(tmp_name, a_name);
 
-  if ((tmp_def = VLAD_MEM_NEW(updatedef())) == NULL)
+  if ((tmp_def = VLAD_MEM_NEW(vlad_updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = tmp_def->init(tmp_name, NULL, NULL, NULL)) != VLAD_OK)
     return retval;
 
-  if ((retval = list::get((list_item *) tmp_def, (list_item ***) &lst, &size)) != VLAD_OK)
+  if ((retval = vlad_list::get((vlad_list_item *) tmp_def, (vlad_list_item ***) &lst, &size)) != VLAD_OK)
     return retval;
 
   /* only one. m_name is already copied and will be deleted with tmp */
@@ -190,19 +190,19 @@ int updatetab::get(const char *a_name,
 }
 
 /* get update by index */
-int updatetab::get(unsigned int a_index,
-                  char **a_name,
-                  stringlist **a_vlist,
-                  expression **a_precond,
-                  expression **a_postcond)
+int vlad_updatetab::get(unsigned int a_index,
+                        char **a_name,
+                        vlad_stringlist **a_vlist,
+                        vlad_expression **a_precond,
+                        vlad_expression **a_postcond)
 {
   int retval;
-  updatedef *tmp_def;
+  vlad_updatedef *tmp_def;
 
   if (a_name == NULL || a_vlist == NULL || a_precond == NULL || a_postcond == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = list::get(a_index, (list_item **) &tmp_def)) != VLAD_OK)
+  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &tmp_def)) != VLAD_OK)
     return retval;
 
   if ((retval = tmp_def->get(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK)
@@ -212,15 +212,15 @@ int updatetab::get(unsigned int a_index,
 }
 
 /* replace variables with identifiers in v, then get pr and pp */
-int updatetab::replace(const char *a_name,
-                      stringlist *a_ilist,
-                      expression **a_precond,
-                      expression **a_postcond)
+int vlad_updatetab::replace(const char *a_name,
+                            vlad_stringlist *a_ilist,
+                            vlad_expression **a_precond,
+                            vlad_expression **a_postcond)
 {
   int retval;
-  expression *tmp_precond;
-  expression *tmp_postcond;
-  stringlist *tmp_vlist;
+  vlad_expression *tmp_precond;
+  vlad_expression *tmp_postcond;
+  vlad_stringlist *tmp_vlist;
 
   if (a_name == NULL || a_precond == NULL || a_postcond == NULL)
     return VLAD_NULLPTR;

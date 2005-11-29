@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   int curr_opt;
   FILE *policyin = NULL;
   FILE *agentin = NULL;
-  polbase *pbase = NULL;
+  vlad_polbase *pbase = NULL;
   unsigned char mode = VLAD_MODE_GENERATE;
 
   opterr = 0;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
   }
 
   /* create an instance of the policy base and initialise it */
-  if ((pbase = VLAD_MEM_NEW(polbase)) == NULL)
+  if ((pbase = VLAD_MEM_NEW(vlad_polbase)) == NULL)
     return VLAD_MALLOCFAILED;
 
   if ((retval = pbase->init()) != VLAD_OK) {

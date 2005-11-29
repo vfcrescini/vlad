@@ -36,7 +36,7 @@ extern unsigned int policylinenum;
 static FILE *fin = NULL;
 static FILE *fout = NULL;
 static FILE *ferr = NULL;
-static polbase *pbase = NULL;
+static vlad_polbase *pbase = NULL;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
 
@@ -52,7 +52,7 @@ int policyerror(char *a_error);
 int policylex();
 
 /* available functions */
-int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, polbase *a_pbase);
+int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, vlad_polbase *a_pbase);
 int policy_parse();
 
 /* convenience functions */
@@ -67,9 +67,9 @@ int policyparse();
 %union {
   unsigned int terminal;
   char identifier[VLAD_MAXLEN_IDENT];
-  fact *fct;
-  expression *exp;
-  stringlist *vlist;
+  vlad_fact *fct;
+  vlad_expression *exp;
+  vlad_stringlist *vlist;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -326,7 +326,7 @@ initial_stmt :
   VLAD_SYM_INITIALLY expression VLAD_SYM_SEMICOLON {
     int retval;
     unsigned int i;
-    fact *f;
+    vlad_fact *f;
 #ifdef VLAD_DEBUG
     char s[VLAD_MAXLEN_STR];
 #endif
@@ -481,7 +481,7 @@ update_var_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(stringlist())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_stringlist())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -513,7 +513,7 @@ expression :
   boolean_fact {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(expression())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_expression())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -566,7 +566,7 @@ holds_fact :
   VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -584,7 +584,7 @@ subst_fact :
   VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -602,7 +602,7 @@ memb_fact :
   VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(fact())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;
@@ -675,7 +675,7 @@ int policyerror(char *a_error)
   return 0;
 }
 
-int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, polbase *a_pbase)
+int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, vlad_polbase *a_pbase)
 {
   int retval;
 

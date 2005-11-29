@@ -26,15 +26,15 @@
 #include <vlad/mem.h>
 #include <vlad/list.h>
 
-list_item::list_item()
+vlad_list_item::vlad_list_item()
 {
 }
 
-list_item::~list_item()
+vlad_list_item::~vlad_list_item()
 {
 }
 
-list::list()
+vlad_list::vlad_list()
 {
   m_uniq = true;
   m_length = 0;
@@ -42,7 +42,7 @@ list::list()
   m_tail = NULL;
 }
 
-list::list(bool a_uniq)
+vlad_list::vlad_list(bool a_uniq)
 {
   m_uniq = a_uniq;
   m_length = 0;
@@ -50,16 +50,16 @@ list::list(bool a_uniq)
   m_tail = NULL;
 }
 
-list::~list()
+vlad_list::~vlad_list()
 {
   purge(true);
 }
 
-bool list::cmp(list *a_list)
+bool vlad_list::cmp(vlad_list *a_list)
 {
   unsigned int i;
-  list_item *item1;
-  list_item *item2;
+  vlad_list_item *item1;
+  vlad_list_item *item2;
 
   if (a_list == NULL || a_list->length() != m_length)
     return false;
@@ -73,7 +73,7 @@ bool list::cmp(list *a_list)
     get(i, &item2);
 
     /*
-     * if we are given a list of a different type, list_item::cmp() should
+     * if we are given a list of a different type, vlad_list_item::cmp() should
      * detect it and return false.
      */
     if (!item1->cmp(item2))
@@ -83,15 +83,15 @@ bool list::cmp(list *a_list)
   return true;
 }
 
-unsigned int list::length()
+unsigned int vlad_list::length()
 {
   return m_length;
 }
 
 /* add pointer to list, assumes memory has been allocated to it */
-int list::add(list_item *a_data)
+int vlad_list::add(vlad_list_item *a_data)
 {
-  list_node *new_node;
+  vlad_list_node *new_node;
   int retval;
 
   if (a_data == NULL)
@@ -105,7 +105,7 @@ int list::add(list_item *a_data)
       return retval;
   }
 
-  if ((new_node = VLAD_MEM_ADT_MALLOC(list_node, 1)) == NULL)
+  if ((new_node = VLAD_MEM_ADT_MALLOC(vlad_list_node, 1)) == NULL)
     return VLAD_MALLOCFAILED;
 
   if (m_tail == NULL)
@@ -122,10 +122,10 @@ int list::add(list_item *a_data)
 }
 
 /* deletes index'th data, f = true to free mem or false to not free it */
-int list::del(unsigned int a_index, bool a_free)
+int vlad_list::del(unsigned int a_index, bool a_free)
 {
-  list_node *prev;
-  list_node *curr;
+  vlad_list_node *prev;
+  vlad_list_node *curr;
   unsigned int i;
 
   if (m_length <= 0 || a_index >= m_length)
@@ -161,11 +161,11 @@ int list::del(unsigned int a_index, bool a_free)
 }
 
 /* deletes all the nodes that matches data, f = true to free mem */
-int list::del(list_item *a_data, bool a_free)
+int vlad_list::del(vlad_list_item *a_data, bool a_free)
 {
 
-  list_node *prev;
-  list_node *curr;
+  vlad_list_node *prev;
+  vlad_list_node *curr;
   bool found = false;
 
   if (a_data == NULL)
@@ -180,7 +180,7 @@ int list::del(list_item *a_data, bool a_free)
       break;
 	
     if (curr->data->cmp(a_data)) {
-      list_node *ptmp;
+      vlad_list_node *ptmp;
 
       found = true;
 
@@ -215,9 +215,11 @@ int list::del(list_item *a_data, bool a_free)
 }
 
 /* gives an array of indices of the data given */
-int list::get(list_item *a_item, unsigned int **a_array, unsigned int *a_size)
+int vlad_list::get(vlad_list_item *a_item,
+                   unsigned int **a_array,
+                   unsigned int *a_size)
 {
-  list_node *curr;
+  vlad_list_node *curr;
   unsigned int count;
 
   if (a_size == NULL || a_array == NULL || a_item == NULL)
@@ -234,8 +236,8 @@ int list::get(list_item *a_item, unsigned int **a_array, unsigned int *a_size)
       break;
 
     if (curr->data->cmp(a_item)) {
-
-      if ((*a_array = (unsigned int *) realloc(*a_array, sizeof(unsigned int) * (*a_size + 1))) == NULL)
+      *a_array = (unsigned int *) realloc(*a_array, sizeof(unsigned int) * (*a_size + 1));
+      if (*a_array == NULL)
         return VLAD_MALLOCFAILED;
 
       (*a_array)[*a_size] = count;
@@ -248,10 +250,10 @@ int list::get(list_item *a_item, unsigned int **a_array, unsigned int *a_size)
 }
 
 /* gives a reference to the index'th data */
-int list::get(unsigned int a_index, list_item **a_data)
+int vlad_list::get(unsigned int a_index, vlad_list_item **a_data)
 {
   unsigned int i;
-  list_node *curr;
+  vlad_list_node *curr;
 
   if (a_data == NULL)
     return VLAD_NULLPTR;
@@ -270,9 +272,11 @@ int list::get(unsigned int a_index, list_item **a_data)
 }
 
 /* gives a reference to all the nodes that matches item. array + size */
-int list::get(list_item *a_item, list_item ***a_data, unsigned int *a_size)
+int vlad_list::get(vlad_list_item *a_item,
+                   vlad_list_item ***a_data,
+                   unsigned int *a_size)
 {
-  list_node *curr;
+  vlad_list_node *curr;
 
   if (a_size == NULL || a_data == NULL || a_item == NULL)
     return VLAD_NULLPTR;
@@ -287,7 +291,8 @@ int list::get(list_item *a_item, list_item ***a_data, unsigned int *a_size)
       break;
 
     if (curr->data->cmp(a_item)) {
-      if ((*a_data = (list_item **) realloc(*a_data, sizeof(**a_data) * (*a_size + 1))) == NULL)
+      *a_data = (vlad_list_item **) realloc(*a_data, sizeof(**a_data) * (*a_size + 1));
+      if (*a_data == NULL)
         return VLAD_MALLOCFAILED;
 
       (*a_data)[*a_size] = curr->data;
@@ -299,9 +304,9 @@ int list::get(list_item *a_item, list_item ***a_data, unsigned int *a_size)
 }
 
 /* returns 0 if data is in the list */
-int list::find(list_item *a_data)
+int vlad_list::find(vlad_list_item *a_data)
 {
-  list_node *curr;
+  vlad_list_node *curr;
 
   if (a_data == NULL)
     return VLAD_NULLPTR;
@@ -319,10 +324,10 @@ int list::find(list_item *a_data)
 }	
 
 /* destroys the list free = true to free mem */
-void list::purge(bool a_free)
+void vlad_list::purge(bool a_free)
 {
-  list_node *curr;
-  list_node *prev;
+  vlad_list_node *curr;
+  vlad_list_node *prev;
 
   if (m_length > 0) {
     curr = m_head;

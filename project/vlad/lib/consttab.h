@@ -28,34 +28,42 @@
 
 /* consttab list is simply a list of expression/condition pairs */
 
-class constraint : public list_item
+class vlad_constraint : public vlad_list_item
 {
   public :
-    constraint();
-    ~constraint();
-    bool cmp(list_item *a_item);
-    int init(expression *a_exp, expression *a_cond, expression *a_ncond);
-    int get(expression **a_exp, expression **a_cond, expression **a_ncond);
+    vlad_constraint();
+    ~vlad_constraint();
+    bool cmp(vlad_list_item *a_item);
+    int init(vlad_expression *a_exp,
+             vlad_expression *a_cond,
+             vlad_expression *a_ncond);
+    int get(vlad_expression **a_exp,
+            vlad_expression **a_cond,
+            vlad_expression **a_ncond);
     /* replaces occurences of var with ident. creates a new constraint */
-    int replace(const char *a_var, const char *a_ident, constraint **a_constr);
+    int replace(const char *a_var,
+                const char *a_ident,
+                vlad_constraint **a_constr);
     /* gives a list of vars occuring in the constr, creats a new constr */
-    int varlist(stringlist **a_list);
+    int varlist(vlad_stringlist **a_list);
   private :
     bool m_init;
-    expression *m_exp;
-    expression *m_cond;
-    expression *m_ncond;
+    vlad_expression *m_exp;
+    vlad_expression *m_cond;
+    vlad_expression *m_ncond;
 } ;
 
-class consttab : public list
+class vlad_consttab : public vlad_list
 {
   public :
-    consttab();
-    ~consttab();
-    int add(expression *a_exp, expression *a_cond, expression *a_ncond);
+    vlad_consttab();
+    ~vlad_consttab();
+    int add(vlad_expression *a_exp,
+            vlad_expression *a_cond,
+            vlad_expression *a_ncond);
     int get(unsigned int a_index,
-            expression **a_exp,
-            expression **a_cond,
-            expression **a_ncond);
+            vlad_expression **a_exp,
+            vlad_expression **a_cond,
+            vlad_expression **a_ncond);
 } ;
 #endif
