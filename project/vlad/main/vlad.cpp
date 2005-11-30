@@ -27,6 +27,7 @@
 
 #include <vlad/vlad.h>
 #include <vlad/mem.h>
+#include <vlad/polbase.h>
 #include "parser.h"
 
 int main(int argc, char *argv[])
