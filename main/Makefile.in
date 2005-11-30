@@ -19,6 +19,7 @@
 
 TOPSRCDIR = @top_srcdir@
 DISTDIR = @DISTDIR@
+LIBDIR = @LIBDIR@
 CURDIR = main
 CC = @CC@
 CXX = @CXX@
@@ -66,7 +67,7 @@ includedir = @includedir@
 
 include $(TOPSRCDIR)/rules.mk
 
-vlad : $(OBJECTS)
+vlad : $(OBJECTS) $(LIBDIR)/libvlad.so.*
 ifdef STATIC
 	$(CXX) $(LDFLAGS) -static -o $(@) $(OBJECTS) -lvlad $(SMLIBS)
 else
@@ -78,19 +79,19 @@ ifndef DEBUG
   endif
 endif
 
-vlad.o : parser.h vlad.cpp
+vlad.o : $(foreach i,vlad.h mem.h polbase.h,$(LIBDIR)/$(i)) parser.h vlad.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
 
-agent_scanner.o : agent.tab.h lex.agent.cpp
+agent_scanner.o : $(foreach i,vlad.h polbase.h,$(LIBDIR)/$(i)) agent.tab.h lex.agent.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c lex.agent.cpp
 
-agent_parser.o : agent.tab.h agent.tab.cpp
+agent_parser.o : $(foreach i,vlad.h mem.h identifier.h polbase.h,$(LIBDIR)/$(i)) agent.tab.h agent.tab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c agent.tab.cpp
 
-policy_scanner.o : policy.tab.h lex.policy.cpp
+policy_scanner.o : $(foreach i,vlad.h polbase.h,$(LIBDIR)/$(i)) policy.tab.h lex.policy.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c lex.policy.cpp
 
-policy_parser.o : policy.tab.h policy.tab.cpp
+policy_parser.o : $(foreach i,vlad.h mem.h identifier.h polbase.h,$(LIBDIR)/$(i)) policy.tab.h policy.tab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c policy.tab.cpp
 
 lex.agent.cpp : agent.l

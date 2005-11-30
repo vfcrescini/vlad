@@ -1,3 +1,15 @@
+2005-12-01  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* configure.ac :
+	* configure :
+	* main/Makefile.in :
+
+	  - Added missing dependencies from the Makefile.
+
+	* main/vlad.cpp :
+
+	  - Included polbase.h.
+
 2005-11-29  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/consttab.cpp :
