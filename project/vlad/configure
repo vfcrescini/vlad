@@ -273,7 +273,7 @@ PACKAGE_VERSION='1.1.1'
 PACKAGE_STRING='vlad 1.1.1'
 PACKAGE_BUGREPORT='jcrescin@cit.uws.edu.au'
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CXX CXXFLAGS ac_ct_CXX LEX LEXLIB LEX_OUTPUT_ROOT YACC LN_S BUILDSHARED STATIC DEBUG STRIP WRAPPER SMODELS VERSION DISTDIR LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CXX CXXFLAGS ac_ct_CXX LEX LEXLIB LEX_OUTPUT_ROOT YACC LN_S BUILDSHARED STATIC DEBUG STRIP WRAPPER SMODELS VERSION DISTDIR LIBDIR LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -3249,6 +3249,8 @@ VERSION="$PACKAGE_VERSION"
 
 DISTDIR="\$(TOPSRCDIR)/dist"
 
+LIBDIR="\$(TOPSRCDIR)/lib"
+
 
                               ac_config_files="$ac_config_files Makefile lib/Makefile main/Makefile"
 
@@ -3888,6 +3890,7 @@ s,@WRAPPER@,$WRAPPER,;t t
 s,@SMODELS@,$SMODELS,;t t
 s,@VERSION@,$VERSION,;t t
 s,@DISTDIR@,$DISTDIR,;t t
+s,@LIBDIR@,$LIBDIR,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
