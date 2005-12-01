@@ -20,6 +20,9 @@
 
 	* lib/fact.cpp :
 
+	  - Fixed verify() function so that it will not attempt to compare
+	    variables with literals.
+
 	  - Cleanup of verify functions.
 
 	* lib/identifier.h :
