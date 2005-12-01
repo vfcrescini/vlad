@@ -45,6 +45,7 @@ INCLUDES = \
   list.h \
   stringlist.h \
   numberlist.h \
+  varlist.h \
   identifier.h \
   atom.h \
   fact.h \
@@ -61,6 +62,7 @@ OBJECTS = \
   list.o \
   stringlist.o \
   numberlist.o \
+  varlist.o \
   fact.o \
   expression.o \
   seqtab.o \
@@ -118,6 +120,9 @@ stringlist.o : vlad.h mem.h list.h stringlist.h stringlist.cpp
 
 numberlist.o : vlad.h mem.h list.h numberlist.h numberlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
+
+varlist.o : vlad.h mem.h list.h stringlist.h varlist.h varlist.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c varlist.cpp
 
 fact.o : vlad.h mem.h stringlist.h identifier.h atom.h symtab.h fact.h fact.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c fact.cpp
