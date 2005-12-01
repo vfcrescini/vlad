@@ -1,5 +1,12 @@
 2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/Makefile.in :
+        * lib/varlist.cpp :
+        * lib/varlist.h :
+
+	  - Added a varlist (actually a stringlist, but with verify
+	    capabilities).
+
         * lib/expression.cpp :
         * lib/expression.h :
         * lib/fact.cpp :
