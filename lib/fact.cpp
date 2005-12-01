@@ -290,6 +290,47 @@ int vlad_fact::init_subset(const char *a_grp1,
   return VLAD_OK;
 }
 
+/*
+ * verify if fact is valid, if vlist is non-null, check if variables
+ * occur within this list. if gnd_flag is true, ensure that the fact
+ * is ground.
+ */
+int vlad_fact::verify(vlad_symtab *a_stab,
+                      vlad_stringlist *a_vlist,
+                      bool a_gndflag)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_stab == NULL)
+    return VLAD_NULLPTR;
+
+  switch(m_type) {
+    case VLAD_ATOM_HOLDS :
+      return vlad_verify_holds(m_holds.subject,
+                               m_holds.access,
+                               m_holds.object,
+                               a_stab,
+                               a_vlist,
+                               a_gndflag);
+    case VLAD_ATOM_MEMBER :
+      return vlad_verify_memb(m_member.element,
+                              m_member.group,
+                              a_stab,
+                              a_vlist,
+                              a_gndflag);
+
+    case VLAD_ATOM_SUBSET :
+      return vlad_verify_subst(m_subset.group1,
+                               m_subset.group2,
+                               a_stab,
+                               a_vlist,
+                               a_gndflag);
+  }
+
+  return VLAD_INVALIDINPUT;
+}
+
 /* create a new instance of this fact */
 int vlad_fact::copy(vlad_fact **a_fact)
 {
@@ -319,6 +360,22 @@ int vlad_fact::copy(vlad_fact **a_fact)
   }
 
   return VLAD_INVALIDINPUT;
+}
+
+/* verify and copy */
+int vlad_fact::vcopy(vlad_symtab *a_stab,
+                     vlad_stringlist *a_vlist,
+                     bool a_gndflag,
+                     vlad_fact **a_fact)
+{
+  int retval;
+
+  /* first we verify */
+  if ((retval = verify(a_stab, a_vlist, a_gndflag)) != VLAD_OK)
+    return retval;
+
+  /* then we copy */
+  return copy(a_fact);
 }
 
 /* replaces instances of var with ident, gives a new fact */
@@ -546,47 +603,6 @@ int vlad_fact::varlist(vlad_stringlist **a_list)
   }
 
   return VLAD_FAILURE;
-}
-
-/*
- * verify if fact is valid, if vlist is non-null, check if variables
- * occur within this list. if gnd_flag is true, ensure that the fact
- * is ground.
- */
-int vlad_fact::verify(vlad_symtab *a_stab,
-                      vlad_stringlist *a_vlist,
-                      bool a_gndflag)
-{
-  if (!m_init)
-    return VLAD_UNINITIALISED;
-
-  if (a_stab == NULL)
-    return VLAD_NULLPTR;
-
-  switch(m_type) {
-    case VLAD_ATOM_HOLDS :
-      return vlad_verify_holds(m_holds.subject,
-                               m_holds.access,
-                               m_holds.object,
-                               a_stab,
-                               a_vlist,
-                               a_gndflag);
-    case VLAD_ATOM_MEMBER :
-      return vlad_verify_memb(m_member.element,
-                              m_member.group,
-                              a_stab,
-                              a_vlist,
-                              a_gndflag);
-
-    case VLAD_ATOM_SUBSET :
-      return vlad_verify_subst(m_subset.group1,
-                               m_subset.group2,
-                               a_stab,
-                               a_vlist,
-                               a_gndflag);
-  }
-
-  return VLAD_INVALIDINPUT;
 }
 
 #ifdef VLAD_DEBUG

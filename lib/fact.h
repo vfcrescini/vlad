@@ -79,8 +79,19 @@ class vlad_fact : public vlad_list_item
     int init_subset(const char *a_grp1,
                     const char *a_grp2,
                     bool a_truth);
+    /*
+     * verify if fact is valid, if vlist is non-null, check if variables
+     * occur within this list. if gnd_flag is true, ensure that the fact
+     * is ground.
+     */
+    int verify(vlad_symtab *a_stab, vlad_stringlist *a_vlist, bool a_gndflag);
     /* create a new instance of this fact */
     int copy(vlad_fact **a_fact);
+    /* verify and copy */
+    int vcopy(vlad_symtab *a_stab,
+              vlad_stringlist *a_vlist,
+              bool a_gndflag,
+              vlad_fact **a_fact);
     /* replaces instances of var with ident, gives a new fact */
     int replace(const char *a_var, const char *a_ident, vlad_fact **a_fact);
     /* replaces vars in vlist with entities in ilist. gives a new fact */
@@ -95,12 +106,6 @@ class vlad_fact : public vlad_list_item
     int truth(bool *a_truth);
     /* gives a list of vars occuring in the fact. assumes list is init'ed */
     int varlist(vlad_stringlist **a_list);
-    /*
-     * verify if fact is valid, if vlist is non-null, check if variables
-     * occur within this list. if gnd_flag is true, ensure that the fact
-     * is ground.
-     */
-    int verify(vlad_symtab *a_stab, vlad_stringlist *a_vlist, bool a_gndflag);
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */
     void print(char *a_str);
