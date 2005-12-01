@@ -74,7 +74,7 @@ bool vlad_updatedef::cmp(vlad_list_item *a_item)
 }
 
 int vlad_updatedef::init(const char *a_name,
-                         vlad_stringlist *a_vlist,
+                         vlad_varlist *a_vlist,
                          vlad_expression *a_precond,
                          vlad_expression *a_postcond)
 {
@@ -103,7 +103,7 @@ int vlad_updatedef::init(const char *a_name,
 }
 
 int vlad_updatedef::get(char **a_name,
-                        vlad_stringlist **a_vlist,
+                        vlad_varlist **a_vlist,
                         vlad_expression **a_precond,
                         vlad_expression **a_postcond)
 {
@@ -131,7 +131,7 @@ vlad_updatetab::~vlad_updatetab()
 }
 
 int vlad_updatetab::add(const char *a_name,
-                        vlad_stringlist *a_vlist,
+                        vlad_varlist *a_vlist,
                         vlad_expression *a_precond,
                         vlad_expression *a_postcond)
 {
@@ -151,7 +151,7 @@ int vlad_updatetab::add(const char *a_name,
 
 /* get update by m_name */
 int vlad_updatetab::get(const char *a_name,
-                        vlad_stringlist **a_vlist,
+                        vlad_varlist **a_vlist,
                         vlad_expression **a_precond,
                         vlad_expression **a_postcond)
 {
@@ -192,7 +192,7 @@ int vlad_updatetab::get(const char *a_name,
 /* get update by index */
 int vlad_updatetab::get(unsigned int a_index,
                         char **a_name,
-                        vlad_stringlist **a_vlist,
+                        vlad_varlist **a_vlist,
                         vlad_expression **a_precond,
                         vlad_expression **a_postcond)
 {
@@ -220,7 +220,7 @@ int vlad_updatetab::replace(const char *a_name,
   int retval;
   vlad_expression *tmp_precond;
   vlad_expression *tmp_postcond;
-  vlad_stringlist *tmp_vlist;
+  vlad_varlist *tmp_vlist;
 
   if (a_name == NULL || a_precond == NULL || a_postcond == NULL)
     return VLAD_NULLPTR;

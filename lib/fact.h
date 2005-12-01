@@ -25,6 +25,7 @@
 #include <vlad/list.h>
 #include <vlad/atom.h>
 #include <vlad/stringlist.h>
+#include <vlad/varlist.h>
 #include <vlad/symtab.h>
 
 /* structure to hold facts. no checking done here, values are just stored */
@@ -79,23 +80,23 @@ class vlad_fact : public vlad_list_item
     int init_subset(const char *a_grp1,
                     const char *a_grp2,
                     bool a_truth);
+    /* create a new instance of this fact */
+    int copy(vlad_fact **a_fact);
+    /* verify and copy */
+    int vcopy(vlad_symtab *a_stab,
+              vlad_varlist *a_vlist,
+              bool a_gndflag,
+              vlad_fact **a_fact);
     /*
      * verify if fact is valid, if vlist is non-null, check if variables
      * occur within this list. if gnd_flag is true, ensure that the fact
      * is ground.
      */
-    int verify(vlad_symtab *a_stab, vlad_stringlist *a_vlist, bool a_gndflag);
-    /* create a new instance of this fact */
-    int copy(vlad_fact **a_fact);
-    /* verify and copy */
-    int vcopy(vlad_symtab *a_stab,
-              vlad_stringlist *a_vlist,
-              bool a_gndflag,
-              vlad_fact **a_fact);
+    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist, bool a_gndflag);
     /* replaces instances of var with ident, gives a new fact */
     int replace(const char *a_var, const char *a_ident, vlad_fact **a_fact);
     /* replaces vars in vlist with entities in ilist. gives a new fact */
-    int replace(vlad_stringlist *a_vlist,
+    int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
                 vlad_fact **a_fact);
     /* reverses the truth value */
@@ -105,7 +106,7 @@ class vlad_fact : public vlad_list_item
     /* gives the truth value of the fact */
     int truth(bool *a_truth);
     /* gives a list of vars occuring in the fact. assumes list is init'ed */
-    int varlist(vlad_stringlist **a_list);
+    int varlist(vlad_varlist **a_list);
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */
     void print(char *a_str);

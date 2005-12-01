@@ -135,7 +135,7 @@ int vlad_polbase::add_symtab(const char *a_name, unsigned char a_type)
 int vlad_polbase::add_inittab(vlad_fact *a_fact)
 {
   int retval;
-  vlad_fact *tmp;
+  vlad_fact *fact;
 
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -143,15 +143,12 @@ int vlad_polbase::add_inittab(vlad_fact *a_fact)
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
-  /* first check if the fact is valid */
-  if ((retval = verify_fact(a_fact, NULL)) != VLAD_OK)
+  /* verify and copy */
+  if ((retval = a_fact->vcopy(m_stable, NULL, true, &fact)) != VLAD_OK)
     return retval;
 
-  /* now copy and add to inittab */
-  if ((retval = a_fact->copy(&tmp)) != VLAD_OK)
-    return retval;
-
-  return m_itable->add(tmp);
+  /* add to inittab */
+  return m_itable->add(fact);
 }
 
 /* add a constrant into the constraints table */
@@ -160,12 +157,9 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
                                vlad_expression *a_ncond)
 {
   int retval;
-  unsigned int i;
   vlad_expression *exp = NULL;
   vlad_expression *cond = NULL;
   vlad_expression *ncond = NULL;
-  vlad_fact *tmp1;
-  vlad_fact *tmp2;
 
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -174,59 +168,20 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  /*
-   * now, we must go through every fact of every exression to ensure
-   * their validity. while we are going through them, we might as well
-   * make a copy.
-   */
+  /* verify and copy exp */
+  if ((retval = a_exp->vcopy(m_stable, NULL, true, &exp)) != VLAD_OK)
+    return retval;
 
-  /* exression */
-  if ((exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
-    if ((retval = a_exp->get(i, &tmp1)) != VLAD_OK)
-      return retval;
-    if ((retval = verify_fact(tmp1, NULL)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
-      return retval;
-    if ((retval = exp->add(tmp2)) != VLAD_OK)
-      return retval;
-  }
-
-  /* condition */
+  /* verify and copy condition, if any */
   if (a_cond != NULL) {
-    if ((cond = VLAD_MEM_NEW(vlad_expression())) == NULL)
-      return VLAD_MALLOCFAILED;
-
-    for (i = 0; i < VLAD_LIST_LENGTH(a_cond); i++) {
-      if ((retval = a_cond->get(i, &tmp1)) != VLAD_OK)
-        return retval;
-      if ((retval = verify_fact(tmp1, NULL)) != VLAD_OK)
-        return retval;
-      if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
-        return retval;
-      if ((retval = cond->add(tmp2)) != VLAD_OK)
-        return retval;
-    }
+    if ((retval = a_cond->vcopy(m_stable, NULL, true, &cond)) != VLAD_OK)
+      return retval;
   }
 
-  /* negative condition */
+  /* verify and copy negative condition, if any */
   if (a_ncond != NULL) {
-    if ((ncond = VLAD_MEM_NEW(vlad_expression())) == NULL)
-      return VLAD_MALLOCFAILED;
-
-    for (i = 0; i < VLAD_LIST_LENGTH(a_ncond); i++) {
-      if ((retval = a_ncond->get(i, &tmp1)) != VLAD_OK)
-        return retval;
-      if ((retval = verify_fact(tmp1, NULL)) != VLAD_OK)
-        return retval;
-      if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
-        return retval;
-      if ((retval = ncond->add(tmp2)) != VLAD_OK)
-        return retval;
-    }
+    if ((retval = a_ncond->vcopy(m_stable, NULL, true, &ncond)) != VLAD_OK)
+      return retval;
   }
 
   /* finally, we add the expressions into the cosntraints table */
@@ -235,14 +190,13 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
 
 /* add an update declaration in the update table */
 int vlad_polbase::add_updatetab(const char *a_name,
-                                vlad_stringlist *a_vlist,
+                                vlad_varlist *a_vlist,
                                 vlad_expression *a_precond,
                                 vlad_expression *a_postcond)
 {
   int retval;
-  unsigned int i;
   char *name;
-  vlad_stringlist *vlist = NULL;
+  vlad_varlist *vlist = NULL;
   vlad_expression *precond = NULL;
   vlad_expression *postcond = NULL;
 
@@ -262,56 +216,23 @@ int vlad_polbase::add_updatetab(const char *a_name,
 
   /* verify and copy varlist */
   if (a_vlist != NULL) {
-    if ((vlist = VLAD_MEM_NEW(vlad_stringlist())) == NULL)
-      return VLAD_MALLOCFAILED;
-
-    for (i = 0; i < VLAD_LIST_LENGTH(a_vlist); i++) {
-      char *tmp;
-      if ((retval = a_vlist->get(i, &tmp)) != VLAD_OK)
-        return retval;
-      /* check if the variable is already used as an identifier */
-      if ((retval = m_stable->find(tmp)) != VLAD_NOTFOUND)
-        return (retval == VLAD_OK) ? VLAD_DUPLICATE : retval;
-      if ((retval = vlist->add(tmp)) != VLAD_OK)
-        return retval;
-    }
+    if ((retval = a_vlist->vcopy(m_stable, &vlist)) != VLAD_OK)
+      return retval;
   }
 
   /* verify and copy precondition */
   if (a_precond != NULL) {
-    if ((precond = VLAD_MEM_NEW(vlad_expression())) == NULL)
-      return VLAD_MALLOCFAILED;
+    retval = a_precond->vcopy(m_stable, a_vlist, false, &precond);
 
-    for (i = 0; i < VLAD_LIST_LENGTH(a_precond); i++) {
-      vlad_fact *tmp1;
-      vlad_fact *tmp2;
-      if ((retval = a_precond->get(i, &tmp1)) != VLAD_OK)
-        return retval;
-      if ((retval = verify_fact(tmp1, a_vlist)) != VLAD_OK)
-        return retval;
-      if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
-        return retval;
-      if ((retval = precond->add(tmp2)) != VLAD_OK)
-        return retval;
-    }
+    if (retval != VLAD_OK)
+      return retval;
   }
 
   /* verify and copy the postcondition */
-  if ((postcond = VLAD_MEM_NEW(vlad_expression())) == NULL)
-    return VLAD_MALLOCFAILED;
+  retval = a_postcond->vcopy(m_stable, a_vlist, false, &postcond);
 
-  for (i = 0; i < VLAD_LIST_LENGTH(a_postcond); i++) {
-    vlad_fact *tmp1;
-    vlad_fact *tmp2;
-    if ((retval = a_postcond->get(i, &tmp1)) != VLAD_OK)
-      return retval;
-    if ((retval = verify_fact(tmp1, a_vlist)) != VLAD_OK)
-      return retval;
-    if ((retval = tmp1->copy(&tmp2)) != VLAD_OK)
-      return retval;
-    if ((retval = postcond->add(tmp2)) != VLAD_OK)
-      return retval;
-  }
+  if (retval != VLAD_OK)
+    return retval;
 
   /* if all went well, add to the udate table */
   return m_utable->add(name, vlist, precond, postcond);
@@ -335,8 +256,8 @@ int vlad_polbase::add_seqtab(vlad_updateref *a_uref)
   if ((retval = a_uref->get(&name, &ilist)) != VLAD_OK)
     return retval;
 
-  /* now verify the update */
-  if ((retval = verify_updateref(name, ilist)) != VLAD_OK)
+  /* ground it */
+  if ((retval = ground_updateref(name, ilist)) != VLAD_OK)
     return retval;
 
   /* if all is well, add */
@@ -431,7 +352,7 @@ int vlad_polbase::get_seqtab(unsigned int a_index,
 /* gives the index'th entry in the update table */
 int vlad_polbase::get_updatetab(unsigned int a_index,
                                 char **a_name,
-                                vlad_stringlist **a_vlist,
+                                vlad_varlist **a_vlist,
                                 vlad_expression **a_precond,
                                 vlad_expression **a_postcond)
 {
@@ -1020,11 +941,11 @@ int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_file)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
-  if (a_file == NULL)
+  if (a_file == NULL || a_exp == NULL)
     return VLAD_NULLPTR;
 
   /* verify expression */
-  if ((retval = verify_expression(a_exp)) != VLAD_OK)
+  if ((retval = a_exp->verify(m_stable, NULL, true)) != VLAD_OK)
     return retval;
 
   /* and now for the queries */
@@ -1545,8 +1466,11 @@ int vlad_polbase::query_evaluate(vlad_expression *a_exp, unsigned char *a_res)
   if (m_stage != 4)
     return VLAD_INVALIDOP;
 
+  if (a_exp == NULL || a_res == NULL)
+    return VLAD_NULLPTR;
+
   /* verify expression */
-  if ((retval = verify_expression(a_exp)) != VLAD_OK)
+  if ((retval = a_exp->verify(m_stable, NULL, true)) != VLAD_OK)
     return retval;
 
   /* go through the facts to test */
@@ -1933,6 +1857,8 @@ int vlad_polbase::decode_fact(vlad_fact **a_fact,
   return VLAD_OK;
 }
 
+#if 0
+
 /*
  * verifies that s, a and o are in the symtab and that they are of the
  * right type, or listed in vlist if vlist is non-null
@@ -2179,8 +2105,10 @@ int vlad_polbase::verify_expression(vlad_expression *a_exp)
   return VLAD_OK;
 }
 
-/* make sure updateref is valid */
-int vlad_polbase::verify_updateref(char *a_name, vlad_stringlist *a_ilist)
+#endif
+
+/* ground update, then make sure the expressions are valid */
+int vlad_polbase::ground_updateref(char *a_name, vlad_stringlist *a_ilist)
 {
   int retval;
   vlad_expression *tmp_pr;
@@ -2195,12 +2123,12 @@ int vlad_polbase::verify_updateref(char *a_name, vlad_stringlist *a_ilist)
 
   /* now verify the pre and post condition expressions */
   if (tmp_pr != NULL) {
-    if ((retval = verify_expression(tmp_pr)) != VLAD_OK)
+    if ((retval = tmp_pr->verify(m_stable, NULL, true)) != VLAD_OK)
       return retval;
   }
 
   if (tmp_po != NULL) {
-    if ((retval = verify_expression(tmp_po)) != VLAD_OK)
+    if ((retval = tmp_po->verify(m_stable, NULL, true)) != VLAD_OK)
       return retval;
   }
   return VLAD_OK;

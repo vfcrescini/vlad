@@ -91,7 +91,7 @@ int vlad_expression::replace(const char *a_var,
 }
 
 /* replace vars in vlist to ident in ilist. create a new expression */
-int vlad_expression::replace(vlad_stringlist *a_vlist,
+int vlad_expression::replace(vlad_varlist *a_vlist,
                              vlad_stringlist *a_ilist,
                              vlad_expression **a_exp)
 {
@@ -119,7 +119,7 @@ int vlad_expression::replace(vlad_stringlist *a_vlist,
 }
 
 /* gives a list of vars occuring in the expr. assumes list is init'ed */
-int vlad_expression::varlist(vlad_stringlist **a_list)
+int vlad_expression::varlist(vlad_varlist **a_list)
 {
   int retval;
   unsigned int i;
@@ -141,7 +141,7 @@ int vlad_expression::varlist(vlad_stringlist **a_list)
  * is ground.
  */
 int vlad_expression::verify(vlad_symtab *a_stab,
-                            vlad_stringlist *a_vlist,
+                            vlad_varlist *a_vlist,
                             bool a_gndflag)
 {
   int retval;
@@ -188,7 +188,7 @@ int vlad_expression::copy(vlad_expression **a_exp)
 
 /* verify and copy */
 int vlad_expression::vcopy(vlad_symtab *a_stab,
-                           vlad_stringlist *a_vlist,
+                           vlad_varlist *a_vlist,
                            bool a_gndflag,
                            vlad_expression **a_exp)
 {

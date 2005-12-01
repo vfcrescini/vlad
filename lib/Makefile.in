@@ -124,19 +124,19 @@ numberlist.o : vlad.h mem.h list.h numberlist.h numberlist.cpp
 varlist.o : vlad.h mem.h list.h stringlist.h varlist.h varlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c varlist.cpp
 
-fact.o : vlad.h mem.h stringlist.h identifier.h atom.h symtab.h fact.h fact.cpp
+fact.o : vlad.h mem.h stringlist.h varlist.h identifier.h atom.h symtab.h fact.h fact.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c fact.cpp
 
-expression.o : vlad.h mem.h list.h fact.h stringlist.h symtab.h expression.h expression.cpp
+expression.o : vlad.h mem.h list.h fact.h stringlist.h varlist.h symtab.h expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
 
 symtab.o : vlad.h mem.h stringlist.h identifier.h symtab.h symtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
 
-consttab.o : vlad.h mem.h expression.h consttab.h consttab.cpp
+consttab.o : vlad.h mem.h varlist.h expression.h consttab.h consttab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c consttab.cpp
 
-updatetab.o : vlad.h mem.h stringlist.h expression.h updatetab.h updatetab.cpp
+updatetab.o : vlad.h mem.h stringlist.h varlist.h expression.h updatetab.h updatetab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c updatetab.cpp
 
 seqtab.o : vlad.h mem.h stringlist.h expression.h seqtab.h seqtab.cpp
@@ -148,9 +148,9 @@ smwrap.o : vlad.h mem.h smwrap.h smwrap.cpp
 endif
 
 ifdef WRAPPER
-wrapper.o : vlad.h mem.h polbase.h wrapper.h wrapper.cpp
+wrapper.o : vlad.h mem.h stringlist.h varlist.h fact.h expression.h polbase.h wrapper.h wrapper.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
 endif
 
-polbase.o : vlad.h mem.h identifier.h atom.h symtab.h polbase.h polbase.cpp
+polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h symtab.h polbase.h polbase.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp

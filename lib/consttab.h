@@ -23,7 +23,7 @@
 #define __VLAD_CONSTTAB_H
 
 #include <vlad/list.h>
-#include <vlad/stringlist.h>
+#include <vlad/varlist.h>
 #include <vlad/expression.h>
 
 /* consttab list is simply a list of expression/condition pairs */
@@ -45,7 +45,7 @@ class vlad_constraint : public vlad_list_item
                 const char *a_ident,
                 vlad_constraint **a_constr);
     /* gives a list of vars occuring in the constr, creats a new constr */
-    int varlist(vlad_stringlist **a_list);
+    int varlist(vlad_varlist **a_list);
   private :
     bool m_init;
     vlad_expression *m_exp;

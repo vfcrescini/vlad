@@ -205,7 +205,7 @@ VLAD_EXTERN int vlad_polbase_add_updatetab(void *a_polbase,
 
   return
     tmp_polbase->add_updatetab(a_name,
-                               VLAD_WRAPPER_CAST(a_vlist, vlad_stringlist *),
+                               VLAD_WRAPPER_CAST(a_vlist, vlad_varlist *),
                                VLAD_WRAPPER_CAST(a_precond, vlad_expression *),
                                VLAD_WRAPPER_CAST(a_postcond, vlad_expression *));
 }
@@ -234,7 +234,7 @@ VLAD_EXTERN int vlad_polbase_get_updatetab(void *a_polbase,
 {
   int retval;
   vlad_polbase *tmp_polbase = NULL;
-  vlad_stringlist *tmp_v;
+  vlad_varlist *tmp_v;
   vlad_expression *tmp_pr;
   vlad_expression *tmp_po;
 
@@ -603,7 +603,7 @@ VLAD_EXTERN int vlad_uref_init(void *a_uref,
   strcpy(tmp_name, a_name);
 
   return
-    tmp_uref->init(tmp_name, VLAD_WRAPPER_CAST(a_vlist, vlad_stringlist *));
+    tmp_uref->init(tmp_name, VLAD_WRAPPER_CAST(a_vlist, vlad_varlist *));
 }
 
 /* get the length of the list */

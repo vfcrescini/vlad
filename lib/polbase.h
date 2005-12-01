@@ -51,7 +51,7 @@ class vlad_polbase {
                      vlad_expression *a_ncond);
     /* add an update declaration in the update table */
     int add_updatetab(const char *a_name,
-                      vlad_stringlist *a_vlist,
+                      vlad_varlist *a_vlist,
                       vlad_expression *a_precond,
                       vlad_expression *a_postcond);
     /* add an update reference to the sequence table */
@@ -74,7 +74,7 @@ class vlad_polbase {
     /* gives the index'th entry in the update table */
     int get_updatetab(unsigned int a_index,
                       char **a_name,
-                      vlad_stringlist **a_vlist,
+                      vlad_varlist **a_vlist,
                       vlad_expression **a_precond,
                       vlad_expression **a_postcond);
     /* returns the length of the sequence table */
@@ -176,6 +176,7 @@ class vlad_polbase {
     int decode_fact(vlad_fact **a_fact,
                     unsigned int *a_state,
                     unsigned int a_id);
+#if 0
     /*
      * verifies that s, a and o are in the symtab and that they are of the
      * right type, or listed in vlist if vlist is non-null
@@ -202,8 +203,9 @@ class vlad_polbase {
     int verify_fact(vlad_fact *a_fact, vlad_stringlist *a_vlist);
     /* make sure expression e is valid */
     int verify_expression(vlad_expression *a_exp);
-    /* make sure updateref is valid */
-    int verify_updateref(char *a_name, vlad_stringlist *a_ilist);
+#endif
+    /* ground update, then make sure the expressions are valid */
+    int ground_updateref(char *a_name, vlad_stringlist *a_ilist);
     /* returns the id of the negation of the given fact id */
     unsigned int negate_fact(unsigned int a_fact);
 #ifdef VLAD_SMODELS
