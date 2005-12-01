@@ -31,7 +31,7 @@ vlad_symtab::vlad_symtab()
 {
   int i;
 
-  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++)
+  for (i = 0; i < VLAD_IDENT_TOTAL; i++)
     m_lists[i] = NULL;
 
   m_init = false;
@@ -41,7 +41,7 @@ vlad_symtab::~vlad_symtab()
 {
   int i;
 
-  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
+  for (i = 0; i < VLAD_IDENT_TOTAL; i++) {
     if (m_lists[i] != NULL)
       VLAD_MEM_DELETE(m_lists[i]);
   }
@@ -52,7 +52,7 @@ int vlad_symtab::init()
 {
   int i;
 
-  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
+  for (i = 0; i < VLAD_IDENT_TOTAL; i++) {
     /* first delete things if we need to */
     if (m_lists[i] != NULL)
       VLAD_MEM_DELETE(m_lists[i]);
@@ -74,7 +74,7 @@ int vlad_symtab::add(const char *a_s, unsigned char a_t)
   if (!m_init)
     return VLAD_UNINITIALISED;
 
-  if (a_t > VLAD_IDENT_LAST)
+  if (!VLAD_IDENT_IS_VALID(a_t))
     return VLAD_INVALIDINPUT;
 
   /* ensure that the identifier is not already used */
@@ -88,7 +88,7 @@ int vlad_symtab::add(const char *a_s, unsigned char a_t)
   }
 
   /* now add */
-  return m_lists[a_t]->add(a_s);
+  return m_lists[map(a_t)]->add(a_s);
 }
 
 /* get the index and type of the identifier based on name */
@@ -104,10 +104,10 @@ int vlad_symtab::get(const char *a_s, unsigned int *a_i, unsigned char *a_t)
     return VLAD_NULLPTR;
 
   /* try to get s from all the lists sequentially */
-  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
+  for (i = 0; i < VLAD_IDENT_TOTAL; i++) {
     if ((retval = m_lists[i]->get(a_s, a_i)) != VLAD_NOTFOUND) {
       if (retval == VLAD_OK)
-        *a_t = i;
+        *a_t = unmap(i);
       return retval;
     }
   }
@@ -121,11 +121,11 @@ int vlad_symtab::get(unsigned int a_i, unsigned char a_t, char **a_s)
   if (!m_init)
     return VLAD_UNINITIALISED;
 
-  if (a_t > VLAD_IDENT_LAST)
+  if (!VLAD_IDENT_IS_VALID(a_t))
     return VLAD_INVALIDINPUT;
 
   /* now get */
-  return m_lists[a_t]->get(a_i, a_s);
+  return m_lists[map(a_t)]->get(a_i, a_s);
 }
 
 /* get an array of identifiers that matches the given type */
@@ -140,17 +140,17 @@ int vlad_symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
   if (a_a == NULL || a_s == NULL)
     return VLAD_NULLPTR;
 
-  if (a_t > VLAD_IDENT_LAST)
+  if (!VLAD_IDENT_IS_VALID(a_t))
     return VLAD_INVALIDINPUT;
 
-  *a_s = vlad_symtab::length(a_t);
+  *a_s = vlad_symtab::length(map(a_t));
 
   if ((*a_a = VLAD_MEM_ADT_MALLOC(char *, *a_s)) == NULL)
     return VLAD_MALLOCFAILED;
 
   /* this is an array of references */
   for (i = 0; i < *a_s; i++) {
-    if ((retval = m_lists[a_t]->get(i, &((*a_a)[i]))) != VLAD_OK) {
+    if ((retval = m_lists[map(a_t)]->get(i, &((*a_a)[i]))) != VLAD_OK) {
       VLAD_MEM_FREE(*a_a);
       *a_a = NULL;
       return retval;
@@ -166,10 +166,10 @@ unsigned int vlad_symtab::length(unsigned char a_t)
   if (!m_init)
     return 0;
 
-  if (a_t > VLAD_IDENT_LAST)
+  if (!VLAD_IDENT_IS_VALID(a_t))
     return 0;
 
-  return VLAD_LIST_LENGTH(m_lists[a_t]);
+  return VLAD_LIST_LENGTH(m_lists[map(a_t)]);
 }
 
 /* return 0 if symbol is in the table */
@@ -184,7 +184,7 @@ int vlad_symtab::find(const char *a_s)
   if (a_s == NULL)
     return VLAD_NULLPTR;
 
-  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
+  for (i = 0; i < VLAD_IDENT_TOTAL; i++) {
     if ((retval = m_lists[i]->find(a_s)) != VLAD_NOTFOUND)
       return retval;
   }
@@ -201,10 +201,10 @@ int vlad_symtab::find(const char *a_s, unsigned char a_t)
   if (a_s == NULL)
     return VLAD_NULLPTR;
 
-  if (a_t > VLAD_IDENT_LAST)
+  if (!VLAD_IDENT_IS_VALID(a_t))
     return VLAD_INVALIDINPUT;
 
-  return m_lists[a_t]->find(a_s);
+  return m_lists[map(a_t)]->find(a_s);
 }
 
 /* give the type of the given identifier */
@@ -219,13 +219,54 @@ int vlad_symtab::type(const char *a_s, unsigned char *a_t)
   if (a_s == NULL || a_t == NULL)
     return VLAD_NULLPTR;
 
-  for (i = VLAD_IDENT_FIRST; i <= VLAD_IDENT_LAST; i++) {
+  for (i = 0; i < VLAD_IDENT_TOTAL; i++) {
     if ((retval = m_lists[i]->find(a_s)) != VLAD_NOTFOUND) {
       if (retval == VLAD_OK)
-        *a_t = i;
+        *a_t = unmap(i);
       return retval;
     }
   }
 
   return VLAD_NOTFOUND;
+}
+/* map the identifier types into sequential numbers */
+unsigned int vlad_symtab::map(unsigned int a_t)
+{
+  switch(a_t) {
+    case VLAD_IDENT_SUB_SIN :
+      return 0;
+    case VLAD_IDENT_ACC_SIN :
+      return 1;
+    case VLAD_IDENT_OBJ_SIN :
+      return 2;
+    case VLAD_IDENT_SUB_GRP :
+      return 3;
+    case VLAD_IDENT_ACC_GRP :
+      return 4;
+    case VLAD_IDENT_OBJ_GRP :
+      return 5;
+  }
+
+  return 0;
+}
+
+/* unmap the sequential numbers into identifier types */
+unsigned int vlad_symtab::unmap(unsigned int a_n)
+{
+  switch(a_n) {
+    case 0 :
+      return VLAD_IDENT_SUB_SIN;
+    case 1 :
+      return VLAD_IDENT_ACC_SIN;
+    case 2 :
+      return VLAD_IDENT_OBJ_SIN;
+    case 3 :
+      return VLAD_IDENT_SUB_GRP;
+    case 4 :
+      return VLAD_IDENT_ACC_GRP;
+    case 5 :
+      return VLAD_IDENT_OBJ_GRP;
+  }
+
+  return 0; 
 }

@@ -1,5 +1,23 @@
 2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/identifier.h
+
+	  - Redefined the macros so that the identifiers subject, access right
+	    and object are 0, 1 and 2, respectively. Group subjects, access
+	    rights and objects are formed by bitwise-or'ing with 4 (i.e. 5, 6
+	    and 7, respectively).
+
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+
+	  - Added mapping and unmapping functions to convert the new identifier
+	    types to 0, 1, 2, 3, 4 & 5, which are used as indices to the
+	    symtab's internal arrays.
+
+	* main/policy.y :
+
+	  - Some macro changes to reflect the changes in identifier.h.
+
 	* lib/fact.cpp :
 
 	  - Cleanup of verify functions.

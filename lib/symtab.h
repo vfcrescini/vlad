@@ -50,8 +50,12 @@ class vlad_symtab
     int type(const char *a_s, unsigned char *a_t);
   private :
     /* m_list: 0 = ss, 1 = as, 2 = os, 3 = sg, 4 = ag, 5 = og */
-    vlad_stringlist *m_lists[VLAD_IDENT_LAST + 1];
+    vlad_stringlist *m_lists[VLAD_IDENT_TOTAL];
     bool m_init;
+    /* map the identifier types into sequential numbers */
+    unsigned int map(unsigned int a_t);
+    /* unmap the sequential numbers into identifier types */
+    unsigned int unmap(unsigned int a_n);
 } ;
 
 #endif

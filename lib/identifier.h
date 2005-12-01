@@ -28,26 +28,45 @@
 #define VLAD_MAXLEN_IDENT        128
 
 /* identifier types */
-#define VLAD_IDENT_SUB_SIN       0
-#define VLAD_IDENT_ACC_SIN       1
-#define VLAD_IDENT_OBJ_SIN       2
-#define VLAD_IDENT_SUB_GRP       3
-#define VLAD_IDENT_ACC_GRP       4
-#define VLAD_IDENT_OBJ_GRP       5
-#define VLAD_IDENT_FIRST         VLAD_IDENT_SUB_SIN
-#define VLAD_IDENT_MID           VLAD_IDENT_SUB_GRP
-#define VLAD_IDENT_LAST          VLAD_IDENT_OBJ_GRP
+
+#define VLAD_IDENT_VAR           0 /* 0000 */
+#define VLAD_IDENT_SUB_SIN       1 /* 0001 */
+#define VLAD_IDENT_ACC_SIN       2 /* 0010 */
+#define VLAD_IDENT_OBJ_SIN       3 /* 0011 */
+#define VLAD_IDENT_SUB_GRP       5 /* 0101 */
+#define VLAD_IDENT_ACC_GRP       6 /* 0110 */
+#define VLAD_IDENT_OBJ_GRP       7 /* 0111 */
+
+#define VLAD_IDENT_GRP           4 /* 0100 */
+#define VLAD_IDENT_MASK          7 /* 0111 */
+
+#define VLAD_IDENT_TOTAL         6
 
 /* convenience macros */
+
 #define VLAD_IDENT_BASETYPE(X)   \
-  ((VLAD_IDENT_IS_GROUP(X)) ? ((X) - VLAD_IDENT_MID) : (X))
+  (((X) & VLAD_IDENT_MASK) & ~VLAD_IDENT_GRP)
+
+#define VLAD_IDENT_IS_VALID(X) (  \
+  ((X) == VLAD_IDENT_SUB_SIN) || \
+  ((X) == VLAD_IDENT_ACC_SIN) || \
+  ((X) == VLAD_IDENT_OBJ_SIN) || \
+  ((X) == VLAD_IDENT_SUB_GRP) || \
+  ((X) == VLAD_IDENT_ACC_GRP) || \
+  ((X) == VLAD_IDENT_OBJ_GRP)    \
+)
+
 #define VLAD_IDENT_IS_SUBJECT(X) \
-  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_SUB_SIN)
+  (((X) & VLAD_IDENT_SUB_SIN) ? true : false)
+
 #define VLAD_IDENT_IS_ACCESS(X)  \
-  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_ACC_SIN)
+  (((X) & VLAD_IDENT_ACC_SIN) ? true : false)
+
 #define VLAD_IDENT_IS_OBJECT(X)  \
-  (VLAD_IDENT_BASETYPE(X) == VLAD_IDENT_OBJ_SIN)
-#define VLAD_IDENT_IS_GROUP(X)   ((X) >= VLAD_IDENT_MID)
+  (((X) & VLAD_IDENT_OBJ_SIN) ? true : false)
+
+#define VLAD_IDENT_IS_GROUP(X)   \
+  (((X) & VLAD_IDENT_GRP) ? true : false)
 
 /* anything that starts with a small letter is an entity identifier */
 #define VLAD_IDENT_IS_ENT(X)   \

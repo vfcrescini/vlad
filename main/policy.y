@@ -620,7 +620,7 @@ memb_fact :
 
 int add_identifier(const char *a_name, unsigned char a_type)
 {
-  if (a_type > VLAD_IDENT_LAST) {
+  if (!VLAD_IDENT_IS_VALID(a_type)) {
     errorcode = VLAD_INVALIDINPUT;
     policyerror("invalid identifier");
     return VLAD_INVALIDINPUT;
