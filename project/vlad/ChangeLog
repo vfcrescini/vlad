@@ -1,5 +1,13 @@
 2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+        * lib/expression.cpp :
+        * lib/expression.h :
+        * lib/fact.cpp :
+        * lib/fact.h :
+
+	  - Added a copy() and/or a vcopy() function to duplicate and to verify
+	    and duplicate a fact or an expression.
+
 	* lib/identifier.h
 
 	  - Redefined the macros so that the identifiers subject, access right

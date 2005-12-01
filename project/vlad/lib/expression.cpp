@@ -158,6 +158,69 @@ int vlad_expression::verify(vlad_symtab *a_stab,
   return VLAD_OK;
 }
 
+/* make a copy */
+int vlad_expression::copy(vlad_expression **a_exp)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_exp == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* go through each fact in this expression */
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *old_fact;
+    vlad_fact *new_fact;
+
+    if ((retval = vlad_expression::get(i, &old_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = old_fact->copy(&new_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* verify and copy */
+int vlad_expression::vcopy(vlad_symtab *a_stab,
+                           vlad_stringlist *a_vlist,
+                           bool a_gndflag,
+                           vlad_expression **a_exp)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_exp == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* go through each fact in this expression */
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *old_fact;
+    vlad_fact *new_fact;
+
+    if ((retval = vlad_expression::get(i, &old_fact)) != VLAD_OK)
+      return retval;
+
+    /* instead of a copy, we use vcopy */
+    retval = old_fact->vcopy(a_stab, a_vlist, a_gndflag, &new_fact);
+    if (retval != VLAD_OK)
+      return retval;
+
+    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
 #ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
 void vlad_expression::print(char *a_str)

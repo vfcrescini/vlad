@@ -56,6 +56,13 @@ class vlad_expression : public vlad_list
      * is ground.
      */
     int verify(vlad_symtab *a_stab, vlad_stringlist *a_vlist, bool a_gndflag);
+    /* make a copy */
+    int copy(vlad_expression **a_exp);
+    /* verify and copy */
+    int vcopy(vlad_symtab *a_stab,
+              vlad_stringlist *a_vlist,
+              bool a_gndflag,
+              vlad_expression **a_exp);
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *a_str);
