@@ -20,6 +20,8 @@
 	* lib/polbase.cpp :
 	* lib/polbase.h :
 
+	  - Removed unused verify functions.
+
 	  - Cleanup.
 
 	  - Now uses the built-in verify and vcopy functions of different
