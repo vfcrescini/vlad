@@ -1,3 +1,9 @@
+2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/identifier.h :
+
+	  - Renamed VLAD_IDENT_IS_IDENT to VLAD_IDENT_IS_ENT for clarity.
+
 2005-12-01  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* configure.ac :
