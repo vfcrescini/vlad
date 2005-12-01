@@ -50,7 +50,7 @@
 #define VLAD_IDENT_IS_GROUP(X)   ((X) >= VLAD_IDENT_MID)
 
 /* anything that starts with a small letter is an entity identifier */
-#define VLAD_IDENT_IS_IDENT(X)   \
+#define VLAD_IDENT_IS_ENT(X)   \
   ((X) ? (((X)[0] >= 'a' && (X)[0] <= 'z') ? true : false) : false)
 
 /* anything that starts with a capital letter is a variable */
