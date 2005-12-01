@@ -29,17 +29,24 @@
 #include <vlad/fact.h>
 
 /* some extra functions */
+
+/* return VLAD_OK if the given holds atom is valid */
 static int vlad_verify_holds(const char *a_sub,
                              const char *a_acc,
                              const char *a_obj,
                              vlad_symtab *a_stab,
                              vlad_stringlist *a_vlist,
                              bool a_gndflag);
+
+/* return VLAD_OK if the given memb atom is valid */
 static int vlad_verify_memb(const char *a_elt,
                             const char *a_grp,
                             vlad_symtab *a_stab,
                             vlad_stringlist *a_vlist,
                             bool a_gndflag);
+
+
+/* return VLAD_OK if the given subst atom is valid */
 static int vlad_verify_subst(const char *a_grp1,
                              const char *a_grp2,
                              vlad_symtab *a_stab,
@@ -649,7 +656,7 @@ int vlad_fact::reset()
   return VLAD_OK;
 }
 
-/* some extra functions */
+/* return VLAD_OK if the given holds atom is valid */
 static int vlad_verify_holds(const char *a_sub,
                              const char *a_acc,
                              const char *a_obj,
@@ -661,52 +668,49 @@ static int vlad_verify_holds(const char *a_sub,
   unsigned char type;
 
   /* check subject */
-  if (VLAD_IDENT_IS_IDENT(a_sub)) {
+  if (VLAD_IDENT_IS_ENT(a_sub)) {
     if ((retval = a_stab->type(a_sub, &type)) != VLAD_OK)
       return retval;
-    if (type != VLAD_IDENT_SUB_SIN && type != VLAD_IDENT_SUB_GRP)
+    if (!VLAD_IDENT_IS_SUBJECT(type))
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_sub)) {
-    if (a_gndflag)
+    if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
-    if (a_vlist != NULL)
-      if ((retval = a_vlist->find(a_sub)) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
+    if ((retval = a_vlist->find(a_sub)) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
   }
   else
     return VLAD_INVALIDINPUT;
 
   /* check access */
-  if (VLAD_IDENT_IS_IDENT(a_acc)) {
+  if (VLAD_IDENT_IS_ENT(a_acc)) {
     if ((retval = a_stab->type(a_acc, &type)) != VLAD_OK)
       return retval;
-    if (type != VLAD_IDENT_ACC_SIN && type != VLAD_IDENT_ACC_GRP)
+    if (!VLAD_IDENT_IS_ACCESS(type))
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_acc)) {
-    if (a_gndflag)
+    if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
-    if (a_vlist != NULL)
-      if ((retval = a_vlist->find(a_acc)) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
+    if ((retval = a_vlist->find(a_acc)) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
   }
   else
     return VLAD_INVALIDINPUT;
 
   /* check object */
-  if (VLAD_IDENT_IS_IDENT(a_obj)) {
+  if (VLAD_IDENT_IS_ENT(a_obj)) {
     if ((retval = a_stab->type(a_obj, &type)) != VLAD_OK)
       return retval;
-    if (type != VLAD_IDENT_OBJ_SIN && type != VLAD_IDENT_OBJ_GRP)
+    if (!VLAD_IDENT_IS_OBJECT(type))
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_obj)) {
-    if (a_gndflag)
+    if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
-    if (a_vlist != NULL)
-      if ((retval = a_vlist->find(a_obj)) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
+    if ((retval = a_vlist->find(a_obj)) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
   }
   else
     return VLAD_INVALIDINPUT;
@@ -714,6 +718,7 @@ static int vlad_verify_holds(const char *a_sub,
   return VLAD_OK;
 }
 
+/* return VLAD_OK if the given memb atom is valid */
 static int vlad_verify_memb(const char *a_elt,
                             const char *a_grp,
                             vlad_symtab *a_stab,
@@ -724,35 +729,33 @@ static int vlad_verify_memb(const char *a_elt,
   unsigned char type[2];
 
   /* check element */
-  if (VLAD_IDENT_IS_IDENT(a_elt)) {
+  if (VLAD_IDENT_IS_ENT(a_elt)) {
     if ((retval = a_stab->type(a_elt, &(type[0]))) != VLAD_OK)
       return retval;
     if (VLAD_IDENT_IS_GROUP(type[0]))
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_elt)) {
-    if (a_gndflag)
+    if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
-    if (a_vlist != NULL)
-      if ((retval = a_vlist->find(a_elt)) != VLAD_OK)
-         return VLAD_INVALIDINPUT;
+    if ((retval = a_vlist->find(a_elt)) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
   }
   else
     return VLAD_INVALIDINPUT;
 
   /* check group */
-  if (VLAD_IDENT_IS_IDENT(a_grp)) {
+  if (VLAD_IDENT_IS_ENT(a_grp)) {
     if ((retval = a_stab->type(a_grp, &(type[1]))) != VLAD_OK)
       return retval;
     if (!VLAD_IDENT_IS_GROUP(type[1]))
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_grp)) {
-    if (a_gndflag)
+    if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
-    if (a_vlist != NULL)
-      if ((retval = a_vlist->find(a_grp)) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
+    if ((retval = a_vlist->find(a_grp)) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
   }
   else
     return VLAD_INVALIDINPUT;
@@ -764,6 +767,7 @@ static int vlad_verify_memb(const char *a_elt,
   return VLAD_OK;
 }
 
+/* return VLAD_OK if the given subst atom is valid */
 static int vlad_verify_subst(const char *a_grp1,
                              const char *a_grp2,
                              vlad_symtab *a_stab,
@@ -774,31 +778,33 @@ static int vlad_verify_subst(const char *a_grp1,
   unsigned char type[2];
 
   /* check group1 */
-  if (VLAD_IDENT_IS_IDENT(a_grp1)) {
+  if (VLAD_IDENT_IS_ENT(a_grp1)) {
     if ((retval = a_stab->type(a_grp2, &(type[0]))) != VLAD_OK)
       return retval;
     if (!VLAD_IDENT_IS_GROUP(type[0]))
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_grp1)) {
-    if (a_vlist != NULL)
-      if ((retval = a_vlist->find(a_grp1)) != VLAD_OK)
-         return VLAD_INVALIDINPUT;
+    if (a_gndflag || a_vlist == NULL)
+      return VLAD_INVALIDINPUT;
+    if ((retval = a_vlist->find(a_grp1)) != VLAD_OK)
+       return VLAD_INVALIDINPUT;
   }
   else
     return VLAD_INVALIDINPUT;
 
   /* check group2 */
-  if (VLAD_IDENT_IS_IDENT(a_grp2)) {
+  if (VLAD_IDENT_IS_ENT(a_grp2)) {
     if ((retval = a_stab->type(a_grp2, &(type[1]))) != VLAD_OK)
       return retval;
     if (!VLAD_IDENT_IS_GROUP(type[1]))
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_grp2)) {
-    if (a_vlist != NULL)
-      if ((retval = a_vlist->find(a_grp2)) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
+    if (a_gndflag || a_vlist == NULL)
+      return VLAD_INVALIDINPUT;
+    if ((retval = a_vlist->find(a_grp2)) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
   }
   else
     return VLAD_INVALIDINPUT;

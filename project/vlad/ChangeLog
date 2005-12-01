@@ -1,5 +1,9 @@
 2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/fact.cpp :
+
+	  - Cleanup of verify functions.
+
 	* lib/identifier.h :
 
 	  - Renamed VLAD_IDENT_IS_IDENT to VLAD_IDENT_IS_ENT for clarity.
