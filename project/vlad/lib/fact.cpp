@@ -379,8 +379,7 @@ int vlad_fact::replace(vlad_stringlist *a_vlist,
     return VLAD_NULLPTR;
 
   /* if both lists are null or if the lengths are zero, return the fact */
-  if ((a_vlist == NULL && a_ilist == NULL) ||
-      VLAD_LIST_LENGTH(a_vlist) == VLAD_LIST_LENGTH(a_ilist) == 0)
+  if (((a_vlist == NULL) && (a_ilist == NULL)) || ((a_vlist->length() == 0) && (a_ilist->length() == 0)))
     return copy(a_fact);
 
   /* make sure lists are non-NULL and their lengths are equal */
@@ -736,6 +735,7 @@ static int vlad_verify_memb(const char *a_elt,
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_elt)) {
+    type[0] = VLAD_IDENT_VAR;
     if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_elt)) != VLAD_OK)
@@ -752,6 +752,7 @@ static int vlad_verify_memb(const char *a_elt,
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_grp)) {
+    type[1] = VLAD_IDENT_VAR;
     if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp)) != VLAD_OK)
@@ -761,8 +762,9 @@ static int vlad_verify_memb(const char *a_elt,
     return VLAD_INVALIDINPUT;
 
   /* check types */
-  if (type[0] != VLAD_IDENT_BASETYPE(type[1]))
-    return VLAD_INVALIDINPUT;
+  if (type[0] != VLAD_IDENT_VAR && type[1] != VLAD_IDENT_VAR)
+    if (type[0] != VLAD_IDENT_BASETYPE(type[1]))
+      return VLAD_INVALIDINPUT;
 
   return VLAD_OK;
 }
@@ -785,6 +787,7 @@ static int vlad_verify_subst(const char *a_grp1,
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_grp1)) {
+    type[0] = VLAD_IDENT_VAR;
     if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp1)) != VLAD_OK)
@@ -801,6 +804,7 @@ static int vlad_verify_subst(const char *a_grp1,
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_grp2)) {
+    type[1] = VLAD_IDENT_VAR;
     if (a_gndflag || a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp2)) != VLAD_OK)
@@ -810,8 +814,9 @@ static int vlad_verify_subst(const char *a_grp1,
     return VLAD_INVALIDINPUT;
 
   /* check types */
-  if (type[0] != type[1])
-    return VLAD_INVALIDINPUT;
+  if (type[0] != VLAD_IDENT_VAR && type[1] != VLAD_IDENT_VAR)
+    if (type[0] != type[1])
+      return VLAD_INVALIDINPUT;
 
   return VLAD_OK;
 }
