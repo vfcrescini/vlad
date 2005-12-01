@@ -1,6 +1,33 @@
 2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/Makefile.in :
+
+	  - More dependency corrections.
+
+	* lib/consttab.cpp :
+	* lib/consttab.h :
+	* lib/expression.cpp :
+	* lib/expression.h :
+	* lib/fact.cpp :
+	* lib/fact.h :
+	* lib/updatetab.cpp :
+	* lib/updatetab.h :
+	* lib/wrapper.cpp :
+	* main/policy.y :
+
+	  - Now uses the new varlist instead of stringlist.
+
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+
+	  - Cleanup.
+
+	  - Now uses the built-in verify and vcopy functions of different
+	    classes.
+
+	  - Its own verify functions are disabled for now.
+
+	* lib/Makefile.in :
         * lib/varlist.cpp :
         * lib/varlist.h :
 

@@ -25,6 +25,7 @@
 #include <vlad/list.h>
 #include <vlad/expression.h>
 #include <vlad/stringlist.h>
+#include <vlad/varlist.h>
 
 class vlad_updatedef : public vlad_list_item
 {
@@ -33,16 +34,16 @@ class vlad_updatedef : public vlad_list_item
     ~vlad_updatedef();
     bool cmp(vlad_list_item *a_item);
     int get(char **a_name,
-            vlad_stringlist **a_vlist,
+            vlad_varlist **a_vlist,
             vlad_expression **a_precond,
             vlad_expression **a_postcond);
     int init(const char *a_name,
-             vlad_stringlist *a_vlist,
+             vlad_varlist *a_vlist,
              vlad_expression *a_precond,
              vlad_expression *a_postcond);
   private :
     char *m_name;
-    vlad_stringlist *m_vlist;
+    vlad_varlist *m_vlist;
     vlad_expression *m_precond;
     vlad_expression *m_postcond;
     bool m_init;
@@ -54,18 +55,18 @@ class vlad_updatetab : public vlad_list
     vlad_updatetab();
     ~vlad_updatetab();
     int add(const char *a_name,
-            vlad_stringlist *a_vlist,
+            vlad_varlist *a_vlist,
             vlad_expression *a_precond,
             vlad_expression *a_postcond);
     /* get update by name */
     int get(const char *a_name,
-            vlad_stringlist **a_vlist,
+            vlad_varlist **a_vlist,
             vlad_expression **a_precond,
             vlad_expression **a_postcond);
     /* get update by index */
     int get(unsigned int a_index,
             char **a_name,
-            vlad_stringlist **a_vlist,
+            vlad_varlist **a_vlist,
             vlad_expression **a_precond,
             vlad_expression **a_postcond);
     /* replace variables with identifiers in ilist, then get pr and pp */

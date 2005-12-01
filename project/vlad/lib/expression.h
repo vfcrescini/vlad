@@ -24,6 +24,7 @@
 
 #include <vlad/list.h>
 #include <vlad/stringlist.h>
+#include <vlad/varlist.h>
 #include <vlad/symtab.h>
 #include <vlad/fact.h>
 
@@ -45,22 +46,22 @@ class vlad_expression : public vlad_list
                 const char *a_ident,
                 vlad_expression **a_exp);
     /* replace vars in vlist to entity in ilist. create a new expression */
-    int replace(vlad_stringlist *a_vlist,
+    int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
                 vlad_expression **a_exp);
     /* gives a list of vars occuring in the expr. assumes list is init'ed */
-    int varlist(vlad_stringlist **a_list);
+    int varlist(vlad_varlist **a_list);
     /*
      * verify if fact is valid, if vlist is non-null, check if variables
      * occur within this list. if gnd_flag is true, ensure that the fact
      * is ground.
      */
-    int verify(vlad_symtab *a_stab, vlad_stringlist *a_vlist, bool a_gndflag);
+    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist, bool a_gndflag);
     /* make a copy */
     int copy(vlad_expression **a_exp);
     /* verify and copy */
     int vcopy(vlad_symtab *a_stab,
-              vlad_stringlist *a_vlist,
+              vlad_varlist *a_vlist,
               bool a_gndflag,
               vlad_expression **a_exp);
 #ifdef VLAD_DEBUG

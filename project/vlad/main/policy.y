@@ -69,7 +69,7 @@ int policyparse();
   char identifier[VLAD_MAXLEN_IDENT];
   vlad_fact *fct;
   vlad_expression *exp;
-  vlad_stringlist *vlist;
+  vlad_varlist *vlist;
 }
 
 %token <terminal> VLAD_SYM_EOF
@@ -481,7 +481,7 @@ update_var_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
-    if (($$ = VLAD_MEM_NEW(vlad_stringlist())) == NULL) {
+    if (($$ = VLAD_MEM_NEW(vlad_varlist())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
       return VLAD_MALLOCFAILED;

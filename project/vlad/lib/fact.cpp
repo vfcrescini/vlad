@@ -35,14 +35,14 @@ static int vlad_verify_holds(const char *a_sub,
                              const char *a_acc,
                              const char *a_obj,
                              vlad_symtab *a_stab,
-                             vlad_stringlist *a_vlist,
+                             vlad_varlist *a_vlist,
                              bool a_gndflag);
 
 /* return VLAD_OK if the given memb atom is valid */
 static int vlad_verify_memb(const char *a_elt,
                             const char *a_grp,
                             vlad_symtab *a_stab,
-                            vlad_stringlist *a_vlist,
+                            vlad_varlist *a_vlist,
                             bool a_gndflag);
 
 
@@ -50,7 +50,7 @@ static int vlad_verify_memb(const char *a_elt,
 static int vlad_verify_subst(const char *a_grp1,
                              const char *a_grp2,
                              vlad_symtab *a_stab,
-                             vlad_stringlist *a_vlist,
+                             vlad_varlist *a_vlist,
                              bool a_gndflag);
 
 vlad_fact::vlad_fact()
@@ -290,47 +290,6 @@ int vlad_fact::init_subset(const char *a_grp1,
   return VLAD_OK;
 }
 
-/*
- * verify if fact is valid, if vlist is non-null, check if variables
- * occur within this list. if gnd_flag is true, ensure that the fact
- * is ground.
- */
-int vlad_fact::verify(vlad_symtab *a_stab,
-                      vlad_stringlist *a_vlist,
-                      bool a_gndflag)
-{
-  if (!m_init)
-    return VLAD_UNINITIALISED;
-
-  if (a_stab == NULL)
-    return VLAD_NULLPTR;
-
-  switch(m_type) {
-    case VLAD_ATOM_HOLDS :
-      return vlad_verify_holds(m_holds.subject,
-                               m_holds.access,
-                               m_holds.object,
-                               a_stab,
-                               a_vlist,
-                               a_gndflag);
-    case VLAD_ATOM_MEMBER :
-      return vlad_verify_memb(m_member.element,
-                              m_member.group,
-                              a_stab,
-                              a_vlist,
-                              a_gndflag);
-
-    case VLAD_ATOM_SUBSET :
-      return vlad_verify_subst(m_subset.group1,
-                               m_subset.group2,
-                               a_stab,
-                               a_vlist,
-                               a_gndflag);
-  }
-
-  return VLAD_INVALIDINPUT;
-}
-
 /* create a new instance of this fact */
 int vlad_fact::copy(vlad_fact **a_fact)
 {
@@ -364,7 +323,7 @@ int vlad_fact::copy(vlad_fact **a_fact)
 
 /* verify and copy */
 int vlad_fact::vcopy(vlad_symtab *a_stab,
-                     vlad_stringlist *a_vlist,
+                     vlad_varlist *a_vlist,
                      bool a_gndflag,
                      vlad_fact **a_fact)
 {
@@ -376,6 +335,47 @@ int vlad_fact::vcopy(vlad_symtab *a_stab,
 
   /* then we copy */
   return copy(a_fact);
+}
+
+/*
+ * verify if fact is valid, if vlist is non-null, check if variables
+ * occur within this list. if gnd_flag is true, ensure that the fact
+ * is ground.
+ */
+int vlad_fact::verify(vlad_symtab *a_stab,
+                      vlad_varlist *a_vlist,
+                      bool a_gndflag)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_stab == NULL)
+    return VLAD_NULLPTR;
+
+  switch(m_type) {
+    case VLAD_ATOM_HOLDS :
+      return vlad_verify_holds(m_holds.subject,
+                               m_holds.access,
+                               m_holds.object,
+                               a_stab,
+                               a_vlist,
+                               a_gndflag);
+    case VLAD_ATOM_MEMBER :
+      return vlad_verify_memb(m_member.element,
+                              m_member.group,
+                              a_stab,
+                              a_vlist,
+                              a_gndflag);
+
+    case VLAD_ATOM_SUBSET :
+      return vlad_verify_subst(m_subset.group1,
+                               m_subset.group2,
+                               a_stab,
+                               a_vlist,
+                               a_gndflag);
+  }
+
+  return VLAD_INVALIDINPUT;
 }
 
 /* replaces instances of var with ident, gives a new fact */
@@ -421,7 +421,7 @@ int vlad_fact::replace(const char *a_var,
 }
 
 /* replaces vars in a_vlist with idents in a_ilist. gives a new fact */
-int vlad_fact::replace(vlad_stringlist *a_vlist,
+int vlad_fact::replace(vlad_varlist *a_vlist,
                        vlad_stringlist *a_ilist,
                        vlad_fact **a_fact)
 {
@@ -552,7 +552,7 @@ int vlad_fact::truth(bool *a_truth)
 }
 
 /* gives a list of vars occuring in the fact. assumes list is init'ed */
-int vlad_fact::varlist(vlad_stringlist **a_list)
+int vlad_fact::varlist(vlad_varlist **a_list)
 {
   int retval;
 
@@ -676,7 +676,7 @@ static int vlad_verify_holds(const char *a_sub,
                              const char *a_acc,
                              const char *a_obj,
                              vlad_symtab *a_stab,
-                             vlad_stringlist *a_vlist,
+                             vlad_varlist *a_vlist,
                              bool a_gndflag)
 {
   int retval;
@@ -737,7 +737,7 @@ static int vlad_verify_holds(const char *a_sub,
 static int vlad_verify_memb(const char *a_elt,
                             const char *a_grp,
                             vlad_symtab *a_stab,
-                            vlad_stringlist *a_vlist,
+                            vlad_varlist *a_vlist,
                             bool a_gndflag)
 {
   int retval;
@@ -789,7 +789,7 @@ static int vlad_verify_memb(const char *a_elt,
 static int vlad_verify_subst(const char *a_grp1,
                              const char *a_grp2,
                              vlad_symtab *a_stab,
-                             vlad_stringlist *a_vlist,
+                             vlad_varlist *a_vlist,
                              bool a_gndflag)
 {
   int retval;
