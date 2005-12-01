@@ -176,34 +176,6 @@ class vlad_polbase {
     int decode_fact(vlad_fact **a_fact,
                     unsigned int *a_state,
                     unsigned int a_id);
-#if 0
-    /*
-     * verifies that s, a and o are in the symtab and that they are of the
-     * right type, or listed in vlist if vlist is non-null
-     */
-    int verify_fact_holds(const char *a_sub,
-                          const char *a_acc,
-                          const char *a_obj,
-                          vlad_stringlist *a_vlist);
-    /*
-     * verifies that e and g are in the symtab and that they are of the right
-     * type, or listed in vlist if vlist is non-null
-     */
-    int verify_fact_memb(const char *a_elt,
-                         const char *a_grp,
-                         vlad_stringlist *a_vlist);
-    /*
-     * verifies that g1 and g2 are in the symtab and that they are of the right
-     * type, or listed in v if v is non-null
-     */
-    int verify_fact_subst(const char *a_grp1,
-                          const char *a_grp2,
-                          vlad_stringlist *a_vlist);
-    /* make sure fact is valid */
-    int verify_fact(vlad_fact *a_fact, vlad_stringlist *a_vlist);
-    /* make sure expression e is valid */
-    int verify_expression(vlad_expression *a_exp);
-#endif
     /* ground update, then make sure the expressions are valid */
     int ground_updateref(char *a_name, vlad_stringlist *a_ilist);
     /* returns the id of the negation of the given fact id */
