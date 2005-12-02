@@ -242,8 +242,6 @@ int vlad_polbase::add_updatetab(const char *a_name,
 int vlad_polbase::add_seqtab(vlad_updateref *a_uref)
 {
   int retval;
-  char *name;
-  vlad_stringlist *ilist;
 
   /* we only allow this function after policy base is closed */
   if (m_stage < 3)
@@ -252,12 +250,8 @@ int vlad_polbase::add_seqtab(vlad_updateref *a_uref)
   if (a_uref == NULL)
     return VLAD_NULLPTR;
 
-  /* get components */
-  if ((retval = a_uref->get(&name, &ilist)) != VLAD_OK)
-    return retval;
-
-  /* ground it */
-  if ((retval = ground_updateref(name, ilist)) != VLAD_OK)
+  /* we verify first before adding */
+  if ((retval = a_uref->verify(m_stable)) != VLAD_OK)
     return retval;
 
   /* if all is well, add */
@@ -1855,33 +1849,6 @@ int vlad_polbase::decode_fact(vlad_fact **a_fact,
     return retval;
   }
 
-  return VLAD_OK;
-}
-
-/* ground update, then make sure the expressions are valid */
-int vlad_polbase::ground_updateref(char *a_name, vlad_stringlist *a_ilist)
-{
-  int retval;
-  vlad_expression *tmp_pr;
-  vlad_expression *tmp_po;
-
-  if (a_name == NULL)
-    return VLAD_NULLPTR;
-
-  /* replace the variables in transformation n with the identifiers in il */
-  if ((retval = m_utable->replace(a_name, a_ilist, &tmp_pr, &tmp_po)) != VLAD_OK)
-    return retval;
-
-  /* now verify the pre and post condition expressions */
-  if (tmp_pr != NULL) {
-    if ((retval = tmp_pr->verify(m_stable, NULL)) != VLAD_OK)
-      return retval;
-  }
-
-  if (tmp_po != NULL) {
-    if ((retval = tmp_po->verify(m_stable, NULL)) != VLAD_OK)
-      return retval;
-  }
   return VLAD_OK;
 }
 
