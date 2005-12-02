@@ -177,12 +177,12 @@ void vlad_stringlist::print(char *a_str)
 {
   unsigned int i;
   char tmp_str[VLAD_MAXLEN_STR];
-  string *tmp_obj;
+  vlad_string *tmp_obj;
 
   memset(tmp_str, 0, VLAD_MAXLEN_STR);
 
-  for (i = 0; i < list::length(); i++) {
-    if (list::get(i, (list_item **) &tmp_obj) != VLAD_OK)
+  for (i = 0; i < vlad_list::length(); i++) {
+    if (vlad_list::get(i, (vlad_list_item **) &tmp_obj) != VLAD_OK)
       break;
 
     tmp_obj->print(tmp_str);

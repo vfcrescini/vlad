@@ -39,7 +39,7 @@ int vlad_varlist::copy(vlad_varlist **a_vlist)
   if ((*a_vlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  for (i = 0; i < length(); i++) {
+  for (i = 0; i < vlad_list::length(); i++) {
     char *var;
 
     if ((retval = get(i, &var)) != VLAD_OK)
@@ -66,7 +66,7 @@ int vlad_varlist::vcopy(vlad_symtab *a_symtab, vlad_varlist **a_vlist)
   if ((*a_vlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  for (i = 0; i < length(); i++) {
+  for (i = 0; i < vlad_list::length(); i++) {
     char *var;
 
     if ((retval = get(i, &var)) != VLAD_OK)
