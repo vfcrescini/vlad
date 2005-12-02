@@ -105,7 +105,7 @@ int vlad_updateref::verify(vlad_symtab *a_stab)
   if (m_list == NULL)
     return VLAD_OK;
 
-  for (i = 0; i < m_list->length(); i++) {
+  for (i = 0; i < VLAD_LIST_LENGTH(m_list); i++) {
     char *ident;
 
     if ((retval = m_list->get(i, &ident)) != VLAD_OK)
@@ -200,8 +200,8 @@ void vlad_seqtab::print(char *a_str)
 
   strcpy(a_str, "");
 
-  for (i = 0; i < list::length(); i++) {
-    if (vlad_list::get(i, (list_item **) &tmp_obj) != VLAD_OK)
+  for (i = 0; i < vlad_list::length(); i++) {
+    if (vlad_list::get(i, (vlad_list_item **) &tmp_obj) != VLAD_OK)
       break;
 
     memset(tmp_str, 0, VLAD_MAXLEN_STR);

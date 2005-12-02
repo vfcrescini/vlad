@@ -362,7 +362,7 @@ unsigned int vlad_polbase::length_seqtab()
   if (m_stage < 2)
     return 0;
 
-  return m_setable->length();
+  return VLAD_LIST_LENGTH(m_setable);
 }
 
 /* returns the length of the update table */
@@ -371,7 +371,7 @@ unsigned int vlad_polbase::length_updatetab()
   if (m_stage < 2)
     return 0;
 
-  return m_utable->length();
+  return VLAD_LIST_LENGTH(m_utable);
 }
 
 /* checks whether name of the given type is in symtab */
