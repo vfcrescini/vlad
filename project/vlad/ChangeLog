@@ -1,5 +1,11 @@
 2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+
+	  - Added a verify() function to check whether an update reference
+	    contains a list with valid identifiers.
+
 	* lib/expression.cpp :
 	* lib/expression.h :
 	* lib/fact.cpp :
