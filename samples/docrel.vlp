@@ -13,7 +13,7 @@ initially holds(sci, own, doc);
 initially holds(sci, read, doc);
 initially holds(sci, write, doc);
 
-/* transformations */
+/* updates */
 
 request(X, Y, Z)
   causes
