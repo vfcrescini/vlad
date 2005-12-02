@@ -92,6 +92,32 @@ int vlad_updateref::get(char **a_name, vlad_stringlist **a_list)
   return VLAD_OK;
 }
 
+/* verify that all identifiers in the list are in the symtab */
+int vlad_updateref::verify(vlad_symtab *a_stab)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_stab == NULL)
+    return VLAD_NULLPTR;
+
+  /* if the varlist is empty, there's nothing to do */
+  if (m_list == NULL)
+    return VLAD_OK;
+
+  for (i = 0; i < m_list->length(); i++) {
+    char *ident;
+
+    if ((retval = m_list->get(i, &ident)) != VLAD_OK)
+      return retval;
+
+    if ((retval = a_stab->find(ident)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
 #ifdef VLAD_DEBUG
 void vlad_updateref::print(char *a_str)
 {

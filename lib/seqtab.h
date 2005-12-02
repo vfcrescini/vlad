@@ -23,6 +23,7 @@
 #define __VLAD_SEQTAB_H
 
 #include <vlad/list.h>
+#include <vlad/symtab.h>
 #include <vlad/expression.h>
 #include <vlad/stringlist.h>
 
@@ -34,6 +35,8 @@ class vlad_updateref : public vlad_list_item
     bool cmp(vlad_list_item *a_item);
     int init(const char *a_name, vlad_stringlist *a_list);
     int get(char **a_name, vlad_stringlist **a_list);
+    /* verify that all identifiers in the list are in the symtab */
+    int verify(vlad_symtab *a_stab);
 #ifdef VLAD_DEBUG
     void print(char *a_str);
 #endif
