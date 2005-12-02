@@ -35,23 +35,20 @@ static int vlad_verify_holds(const char *a_sub,
                              const char *a_acc,
                              const char *a_obj,
                              vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist,
-                             bool a_gndflag);
+                             vlad_varlist *a_vlist);
 
 /* return VLAD_OK if the given memb atom is valid */
 static int vlad_verify_memb(const char *a_elt,
                             const char *a_grp,
                             vlad_symtab *a_stab,
-                            vlad_varlist *a_vlist,
-                            bool a_gndflag);
+                            vlad_varlist *a_vlist);
 
 
 /* return VLAD_OK if the given subst atom is valid */
 static int vlad_verify_subst(const char *a_grp1,
                              const char *a_grp2,
                              vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist,
-                             bool a_gndflag);
+                             vlad_varlist *a_vlist);
 
 vlad_fact::vlad_fact()
 {
@@ -324,27 +321,20 @@ int vlad_fact::copy(vlad_fact **a_fact)
 /* verify and copy */
 int vlad_fact::vcopy(vlad_symtab *a_stab,
                      vlad_varlist *a_vlist,
-                     bool a_gndflag,
                      vlad_fact **a_fact)
 {
   int retval;
 
   /* first we verify */
-  if ((retval = verify(a_stab, a_vlist, a_gndflag)) != VLAD_OK)
+  if ((retval = verify(a_stab, a_vlist)) != VLAD_OK)
     return retval;
 
   /* then we copy */
   return copy(a_fact);
 }
 
-/*
- * verify if fact is valid, if vlist is non-null, check if variables
- * occur within this list. if gnd_flag is true, ensure that the fact
- * is ground.
- */
-int vlad_fact::verify(vlad_symtab *a_stab,
-                      vlad_varlist *a_vlist,
-                      bool a_gndflag)
+/* check if fact is valid, any variables that occur must be in a_vlist */
+int vlad_fact::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
 {
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -358,21 +348,18 @@ int vlad_fact::verify(vlad_symtab *a_stab,
                                m_holds.access,
                                m_holds.object,
                                a_stab,
-                               a_vlist,
-                               a_gndflag);
+                               a_vlist);
     case VLAD_ATOM_MEMBER :
       return vlad_verify_memb(m_member.element,
                               m_member.group,
                               a_stab,
-                              a_vlist,
-                              a_gndflag);
+                              a_vlist);
 
     case VLAD_ATOM_SUBSET :
       return vlad_verify_subst(m_subset.group1,
                                m_subset.group2,
                                a_stab,
-                               a_vlist,
-                               a_gndflag);
+                               a_vlist);
   }
 
   return VLAD_INVALIDINPUT;
@@ -676,8 +663,7 @@ static int vlad_verify_holds(const char *a_sub,
                              const char *a_acc,
                              const char *a_obj,
                              vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist,
-                             bool a_gndflag)
+                             vlad_varlist *a_vlist)
 {
   int retval;
   unsigned char type;
@@ -690,7 +676,7 @@ static int vlad_verify_holds(const char *a_sub,
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_sub)) {
-    if (a_gndflag || a_vlist == NULL)
+    if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_sub)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
@@ -706,7 +692,7 @@ static int vlad_verify_holds(const char *a_sub,
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_acc)) {
-    if (a_gndflag || a_vlist == NULL)
+    if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_acc)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
@@ -722,7 +708,7 @@ static int vlad_verify_holds(const char *a_sub,
       return VLAD_INVALIDINPUT;
   }
   else if (VLAD_IDENT_IS_VAR(a_obj)) {
-    if (a_gndflag || a_vlist == NULL)
+    if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_obj)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
@@ -737,8 +723,7 @@ static int vlad_verify_holds(const char *a_sub,
 static int vlad_verify_memb(const char *a_elt,
                             const char *a_grp,
                             vlad_symtab *a_stab,
-                            vlad_varlist *a_vlist,
-                            bool a_gndflag)
+                            vlad_varlist *a_vlist)
 {
   int retval;
   unsigned char type[2];
@@ -752,7 +737,7 @@ static int vlad_verify_memb(const char *a_elt,
   }
   else if (VLAD_IDENT_IS_VAR(a_elt)) {
     type[0] = VLAD_IDENT_VAR;
-    if (a_gndflag || a_vlist == NULL)
+    if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_elt)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
@@ -769,7 +754,7 @@ static int vlad_verify_memb(const char *a_elt,
   }
   else if (VLAD_IDENT_IS_VAR(a_grp)) {
     type[1] = VLAD_IDENT_VAR;
-    if (a_gndflag || a_vlist == NULL)
+    if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
@@ -789,8 +774,7 @@ static int vlad_verify_memb(const char *a_elt,
 static int vlad_verify_subst(const char *a_grp1,
                              const char *a_grp2,
                              vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist,
-                             bool a_gndflag)
+                             vlad_varlist *a_vlist)
 {
   int retval;
   unsigned char type[2];
@@ -804,7 +788,7 @@ static int vlad_verify_subst(const char *a_grp1,
   }
   else if (VLAD_IDENT_IS_VAR(a_grp1)) {
     type[0] = VLAD_IDENT_VAR;
-    if (a_gndflag || a_vlist == NULL)
+    if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp1)) != VLAD_OK)
        return VLAD_INVALIDINPUT;
@@ -821,7 +805,7 @@ static int vlad_verify_subst(const char *a_grp1,
   }
   else if (VLAD_IDENT_IS_VAR(a_grp2)) {
     type[1] = VLAD_IDENT_VAR;
-    if (a_gndflag || a_vlist == NULL)
+    if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp2)) != VLAD_OK)
       return VLAD_INVALIDINPUT;

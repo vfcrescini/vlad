@@ -51,18 +51,13 @@ class vlad_expression : public vlad_list
                 vlad_expression **a_exp);
     /* gives a list of vars occuring in the expr. assumes list is init'ed */
     int varlist(vlad_varlist **a_list);
-    /*
-     * verify if fact is valid, if vlist is non-null, check if variables
-     * occur within this list. if gnd_flag is true, ensure that the fact
-     * is ground.
-     */
-    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist, bool a_gndflag);
+    /* check if exp is valid, any variables that occur must be in a_vlist */
+    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
     /* make a copy */
     int copy(vlad_expression **a_exp);
     /* verify and copy */
     int vcopy(vlad_symtab *a_stab,
               vlad_varlist *a_vlist,
-              bool a_gndflag,
               vlad_expression **a_exp);
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */

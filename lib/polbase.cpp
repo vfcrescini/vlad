@@ -144,7 +144,7 @@ int vlad_polbase::add_inittab(vlad_fact *a_fact)
     return VLAD_NULLPTR;
 
   /* verify and copy */
-  if ((retval = a_fact->vcopy(m_stable, NULL, true, &fact)) != VLAD_OK)
+  if ((retval = a_fact->vcopy(m_stable, NULL, &fact)) != VLAD_OK)
     return retval;
 
   /* add to inittab */
@@ -169,18 +169,18 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
     return VLAD_NULLPTR;
 
   /* verify and copy exp */
-  if ((retval = a_exp->vcopy(m_stable, NULL, true, &exp)) != VLAD_OK)
+  if ((retval = a_exp->vcopy(m_stable, NULL, &exp)) != VLAD_OK)
     return retval;
 
   /* verify and copy condition, if any */
   if (a_cond != NULL) {
-    if ((retval = a_cond->vcopy(m_stable, NULL, true, &cond)) != VLAD_OK)
+    if ((retval = a_cond->vcopy(m_stable, NULL, &cond)) != VLAD_OK)
       return retval;
   }
 
   /* verify and copy negative condition, if any */
   if (a_ncond != NULL) {
-    if ((retval = a_ncond->vcopy(m_stable, NULL, true, &ncond)) != VLAD_OK)
+    if ((retval = a_ncond->vcopy(m_stable, NULL, &ncond)) != VLAD_OK)
       return retval;
   }
 
@@ -222,14 +222,14 @@ int vlad_polbase::add_updatetab(const char *a_name,
 
   /* verify and copy precondition */
   if (a_precond != NULL) {
-    retval = a_precond->vcopy(m_stable, a_vlist, false, &precond);
+    retval = a_precond->vcopy(m_stable, a_vlist, &precond);
 
     if (retval != VLAD_OK)
       return retval;
   }
 
   /* verify and copy the postcondition */
-  retval = a_postcond->vcopy(m_stable, a_vlist, false, &postcond);
+  retval = a_postcond->vcopy(m_stable, a_vlist, &postcond);
 
   if (retval != VLAD_OK)
     return retval;
@@ -397,7 +397,8 @@ int vlad_polbase::list_seqtab(FILE *a_file)
   unsigned int j;
   char *tmp_name;
   vlad_stringlist *tmp_ilist;
-                                                                                  /* we only allow this function after policy base is closed */
+
+  /* we only allow this function after policy base is closed */
   if (m_stage < 3)
     return VLAD_INVALIDOP;
 
@@ -945,7 +946,7 @@ int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_file)
     return VLAD_NULLPTR;
 
   /* verify expression */
-  if ((retval = a_exp->verify(m_stable, NULL, true)) != VLAD_OK)
+  if ((retval = a_exp->verify(m_stable, NULL)) != VLAD_OK)
     return retval;
 
   /* and now for the queries */
@@ -1470,7 +1471,7 @@ int vlad_polbase::query_evaluate(vlad_expression *a_exp, unsigned char *a_res)
     return VLAD_NULLPTR;
 
   /* verify expression */
-  if ((retval = a_exp->verify(m_stable, NULL, true)) != VLAD_OK)
+  if ((retval = a_exp->verify(m_stable, NULL)) != VLAD_OK)
     return retval;
 
   /* go through the facts to test */
@@ -1873,12 +1874,12 @@ int vlad_polbase::ground_updateref(char *a_name, vlad_stringlist *a_ilist)
 
   /* now verify the pre and post condition expressions */
   if (tmp_pr != NULL) {
-    if ((retval = tmp_pr->verify(m_stable, NULL, true)) != VLAD_OK)
+    if ((retval = tmp_pr->verify(m_stable, NULL)) != VLAD_OK)
       return retval;
   }
 
   if (tmp_po != NULL) {
-    if ((retval = tmp_po->verify(m_stable, NULL, true)) != VLAD_OK)
+    if ((retval = tmp_po->verify(m_stable, NULL)) != VLAD_OK)
       return retval;
   }
   return VLAD_OK;

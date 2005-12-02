@@ -135,14 +135,8 @@ int vlad_expression::varlist(vlad_varlist **a_list)
   return VLAD_OK;
 }
 
-/*
- * verify if fact is valid, if vlist is non-null, check if variables
- * occur within this list. if gnd_flag is true, ensure that the fact
- * is ground.
- */
-int vlad_expression::verify(vlad_symtab *a_stab,
-                            vlad_varlist *a_vlist,
-                            bool a_gndflag)
+/* check if exp is valid, any variables that occur must be in a_vlist */
+int vlad_expression::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
 {
   int retval;
   unsigned int i;
@@ -151,7 +145,7 @@ int vlad_expression::verify(vlad_symtab *a_stab,
   for (i = 0; i < vlad_list::length(); i++) {
     if ((retval = vlad_expression::get(i, &tmp)) != VLAD_OK)
       return retval;
-    if ((retval = tmp->verify(a_stab, a_vlist, a_gndflag)) != VLAD_OK)
+    if ((retval = tmp->verify(a_stab, a_vlist)) != VLAD_OK)
       return retval;
   }
 
@@ -189,7 +183,6 @@ int vlad_expression::copy(vlad_expression **a_exp)
 /* verify and copy */
 int vlad_expression::vcopy(vlad_symtab *a_stab,
                            vlad_varlist *a_vlist,
-                           bool a_gndflag,
                            vlad_expression **a_exp)
 {
   int retval;
@@ -210,7 +203,7 @@ int vlad_expression::vcopy(vlad_symtab *a_stab,
       return retval;
 
     /* instead of a copy, we use vcopy */
-    retval = old_fact->vcopy(a_stab, a_vlist, a_gndflag, &new_fact);
+    retval = old_fact->vcopy(a_stab, a_vlist, &new_fact);
     if (retval != VLAD_OK)
       return retval;
 
