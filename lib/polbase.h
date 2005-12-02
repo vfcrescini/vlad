@@ -176,8 +176,6 @@ class vlad_polbase {
     int decode_fact(vlad_fact **a_fact,
                     unsigned int *a_state,
                     unsigned int a_id);
-    /* ground update, then make sure the expressions are valid */
-    int ground_updateref(char *a_name, vlad_stringlist *a_ilist);
     /* returns the id of the negation of the given fact id */
     unsigned int negate_fact(unsigned int a_fact);
 #ifdef VLAD_SMODELS

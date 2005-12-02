@@ -1,5 +1,13 @@
 2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+
+	  - Removed the ground_updateref() function. We should not ground the
+	    update rules while adding update sequences.
+
+	  - add_seqtab() will now call uref->verify() before adding it.
+
 	* lib/seqtab.cpp :
 	* lib/seqtab.h :
 
