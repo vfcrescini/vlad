@@ -102,7 +102,7 @@ class vlad_polbase {
      */
     unsigned char m_stage;
     /* m_tot_atoms: 0 = holds, 1 = access, 2 = object */
-    unsigned int m_tot_atoms[VLAD_ATOM_LAST + 1];
+    unsigned int m_tot_atoms[VLAD_ATOM_TOTAL];
     /* total number of atoms (sum of the elements of the above array) */
     unsigned int m_tot_atom;
     /* the symbol table */

@@ -28,12 +28,12 @@
 #define VLAD_ATOM_HOLDS          0
 #define VLAD_ATOM_MEMBER         1
 #define VLAD_ATOM_SUBSET         2
-#define VLAD_ATOM_FIRST          VLAD_ATOM_HOLDS
-#define VLAD_ATOM_LAST           VLAD_ATOM_SUBSET
+
+#define VLAD_ATOM_TOTAL          3
 
 /* convenience macros */
 #define VLAD_ATOM_TYPE_VALID(X)  \
-  (((X) >= VLAD_ATOM_FIRST && (X) <= VLAD_ATOM_LAST)
+  (((X) >= VLAD_ATOM_HOLDS && (X) <= VLAD_ATOM_SUBSET)
 #define VLAD_ATOM_IS_HOLDS(X)    ((X) == VLAD_ATOM_HOLDS)
 #define VLAD_ATOM_IS_MEMBER(X)   ((X) == VLAD_ATOM_MEMBER)
 #define VLAD_ATOM_IS_SUBSET(X)   ((X) == VLAD_ATOM_SUBSET)
