@@ -75,7 +75,7 @@ int vlad_polbase::init()
 
   /* reset all the totals */
   m_tot_atom = 0;
-  for (i = VLAD_ATOM_FIRST; i <= VLAD_ATOM_LAST; i++)
+  for (i = 0; i <= VLAD_ATOM_TOTAL; i++)
     m_tot_atoms[i] = 0;
 
   /* initialise symbol table */
@@ -283,7 +283,7 @@ int vlad_polbase::close_symtab()
                                  (aglen * aglen) +
                                  (oglen * oglen);
 
-  for (i = VLAD_ATOM_FIRST, m_tot_atom = 0; i <= VLAD_ATOM_LAST; i++)
+  for (i = 0, m_tot_atom = 0; i <= VLAD_ATOM_TOTAL; i++)
     m_tot_atom = m_tot_atom + m_tot_atoms[i];
 
   m_stage = 2;
@@ -426,7 +426,7 @@ int vlad_polbase::compute_generate(FILE *a_file)
   int retval;
   unsigned int i;
 
-  /* we only allow this function after kb is closed */
+  /* we only allow this function after polbase is closed */
   if (m_stage < 3)
     return VLAD_INVALIDOP;
 
@@ -434,7 +434,7 @@ int vlad_polbase::compute_generate(FILE *a_file)
   if (a_file == NULL)
     return VLAD_NULLPTR;
 
-  /* first we print out all the possible facts in the kb */
+  /* first we print out all the possible facts in the polbase */
   fprintf(a_file, "%s\n", VLAD_STR_FACTS);
 
   for (i = 0; i < (m_tot_atom * 2 * (VLAD_LIST_LENGTH(m_setable) + 1)); i++) {
