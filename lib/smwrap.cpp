@@ -104,7 +104,7 @@ int vlad_smwrap::close_rule()
 
   m_api->done();
 
-#ifdef VLAD_DEBUG
+#if 0
   m_smod->program.print();
 #endif
 
@@ -117,7 +117,7 @@ int vlad_smwrap::close_rule()
   if (!m_smod->model())
     return VLAD_NOMODEL;
 
-#ifdef VLAD_DEBUG
+#if 0
     m_smod->printAnswer();
 #endif
 

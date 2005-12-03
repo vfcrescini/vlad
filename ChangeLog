@@ -1,5 +1,9 @@
 2005-12-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/smwrap.cpp :
+
+	  - Disabled smodels output in debug mode.
+
 	* lib/polbase.cpp :
 	* lib/polbase.h :
 	* lib/mapper.cpp :
