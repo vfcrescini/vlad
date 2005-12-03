@@ -28,8 +28,10 @@
 class vlad_varlist : public vlad_stringlist
 {
   public :
+
     /* copy varlist */
     int copy(vlad_varlist **a_vlist);
+
     /* verify and copy */
     int vcopy(vlad_symtab *a_symtab, vlad_varlist **a_vlist);
 } ;

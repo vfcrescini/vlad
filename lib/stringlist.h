@@ -27,34 +27,48 @@
 class vlad_string : public vlad_list_item
 {
   public :
+
     vlad_string();
     ~vlad_string();
+
     /* compare item with this string */
     bool cmp(vlad_list_item *a_item);
+
+    /* init with str */
     int init(const char *a_str);
+
+    /* get value */
     char *get();
+
 #ifdef VLAD_DEBUG
     /* assuming s has enough memory allocation */
     void print(char *a_str);
 #endif
+
   private :
+
     char *m_string;
 } ;
 
 class vlad_stringlist : public vlad_list
 {
   public :
-    /* n is the optional name for the list */
+
     vlad_stringlist();
     ~vlad_stringlist();
+
     /* add a string in the list */
     int add(const char *a_str);
+
     /* get the index of the string */
     int get(const char *a_str, unsigned int *a_index);
+
     /* get the ith string in the list */
     int get(unsigned int a_index, char **a_str);
+
     /* return true if string is in the list */
     int find(const char *a_str);
+
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *a_str);

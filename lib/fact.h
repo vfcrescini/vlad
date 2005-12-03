@@ -52,69 +52,102 @@ typedef struct
 class vlad_fact : public vlad_list_item
 {
   public :
+
     vlad_fact();
     ~vlad_fact();
+
+    /* returns true if items are equal */
     bool cmp(vlad_list_item *a_item);
+
     /* get attributes from fact */
     int get(char **a_ent1,
             char **a_ent2,
             char **a_ent3,
             unsigned char *a_type,
             bool *a_truth);
+
+    /* if holds, get attributes */
     int get_holds(char **a_sub, char **a_acc, char **a_obj);
+
+    /* if member, get attributes */
     int get_member(char **a_elt, char **a_grp);
+
+    /* if subset, get attributes */
     int get_subset(char **a_grp1, char **a_grp2);
-    /*initialise facts */
+
+    /* initialise facts */
     int init(const char *a_ent1,
              const char *a_ent2,
              const char *a_ent3,
              unsigned char a_type,
              bool a_truth);
+
+    /* initialise a holds fact */
     int init_holds(const char *a_sub,
                    const char *a_acc,
                    const char *a_obj,
                    bool a_truth);
+
+    /* initialise a memb fact */
     int init_member(const char *a_elt,
                     const char *a_grp,
                     bool a_truth);
+
+    /* initialise a subst fact */
     int init_subset(const char *a_grp1,
                     const char *a_grp2,
                     bool a_truth);
+
     /* create a new instance of this fact */
     int copy(vlad_fact **a_fact);
+
     /* verify and copy */
     int vcopy(vlad_symtab *a_stab,
               vlad_varlist *a_vlist,
               vlad_fact **a_fact);
+
     /* check if fact is valid, any variables that occur must be in a_vlist */
     int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
+
     /* replaces instances of var with ident, gives a new fact */
     int replace(const char *a_var, const char *a_ident, vlad_fact **a_fact);
+
     /* replaces vars in vlist with entities in ilist. gives a new fact */
     int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
                 vlad_fact **a_fact);
+
     /* reverses the truth value */
     void negate();
+
     /* gives the type of the fact */
     int type(unsigned char *a_type);
+
     /* gives the truth value of the fact */
     int truth(bool *a_truth);
+
     /* gives a list of vars occuring in the fact. assumes list is init'ed */
     int varlist(vlad_varlist **a_list);
+
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */
     void print(char *a_str);
 #endif
+
   private :
+
     int reset();
+
     unsigned char m_type;
+
     bool m_truth;
+
     union {
       vlad_holds_atom m_holds;
       vlad_member_atom m_member;
       vlad_subset_atom m_subset;
     } ;
+
     bool m_init;
 } ;
 

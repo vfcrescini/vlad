@@ -27,16 +27,17 @@
 class vlad_list_item
 {
   public :
+
     vlad_list_item();
     virtual ~vlad_list_item();
+
+    /* compares 2 list items */
     virtual bool cmp(vlad_list_item *a_item) = 0;
 } ;
 
-/*
- * simple list works like a queue, except the api allows the data to be
+/* simple list works like a queue, except the api allows the data to be
  * accessed given its ordinal index (the order in which it was added to the
- * list).
- */
+ * list) */
 
 typedef struct vlad_list_node
 {
@@ -47,35 +48,51 @@ typedef struct vlad_list_node
 class vlad_list
 {
   public :
+
     vlad_list();
     vlad_list(bool a_uniq);
     virtual ~vlad_list();
+
+    /* compares 2 lists */
     bool cmp(vlad_list *a_list);
+
+    /* returns the length of the list */
     unsigned int length();
+
   private :
+
     unsigned int m_length;
     bool m_uniq;
     vlad_list_node *m_head;
     vlad_list_node *m_tail;
+
   protected :
+
     /* add pointer to list, assumes memory has been allocated to it */
     int add(vlad_list_item *a_data);
+
     /* deletes index'th data, free = true to free mem or false to not free it */
     int del(unsigned int a_index, bool a_free);
+
     /* deletes all the nodes that matches data, free = true to free mem */
     int del(vlad_list_item *a_data, bool a_free);
+
     /* gives an array of indices of the data given */
     int get(vlad_list_item *a_item,
             unsigned int **a_array,
             unsigned int *a_size);
+
     /* gives a reference to the index'th data */
     int get(unsigned int a_index, vlad_list_item **a_data);
+
     /* gives a reference to all the nodes that matches item. array + size */
     int get(vlad_list_item *a_item,
             vlad_list_item ***a_data,
             unsigned int *a_size);
+
     /* returns 0 if data is in the list */
     int find(vlad_list_item *a_data);
+
     /* destroys the list, f = true to free mem */
     void purge(bool a_free);
 } ;

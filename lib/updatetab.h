@@ -30,18 +30,26 @@
 class vlad_updatedef : public vlad_list_item
 {
   public :
+
     vlad_updatedef();
     ~vlad_updatedef();
+
+    /* compare 2 update defs */
     bool cmp(vlad_list_item *a_item);
+
+    /* get attributes */
     int get(char **a_name,
             vlad_varlist **a_vlist,
             vlad_expression **a_precond,
             vlad_expression **a_postcond);
+
+    /* init attrbiutes */
     int init(const char *a_name,
              vlad_varlist *a_vlist,
              vlad_expression *a_precond,
              vlad_expression *a_postcond);
   private :
+
     char *m_name;
     vlad_varlist *m_vlist;
     vlad_expression *m_precond;
@@ -52,23 +60,29 @@ class vlad_updatedef : public vlad_list_item
 class vlad_updatetab : public vlad_list
 {
   public :
+
     vlad_updatetab();
     ~vlad_updatetab();
+
+    /* add update def to table */
     int add(const char *a_name,
             vlad_varlist *a_vlist,
             vlad_expression *a_precond,
             vlad_expression *a_postcond);
+
     /* get update by name */
     int get(const char *a_name,
             vlad_varlist **a_vlist,
             vlad_expression **a_precond,
             vlad_expression **a_postcond);
+
     /* get update by index */
     int get(unsigned int a_index,
             char **a_name,
             vlad_varlist **a_vlist,
             vlad_expression **a_precond,
             vlad_expression **a_postcond);
+
     /* replace variables with identifiers in ilist, then get pr and pp */
     int replace(const char *a_name,
                 vlad_stringlist *a_ilist,

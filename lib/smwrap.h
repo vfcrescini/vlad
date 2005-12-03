@@ -32,29 +32,41 @@
 class vlad_smwrap
 {
   public :
+
     vlad_smwrap();
     ~vlad_smwrap();
+
+    /* (re)initialise */
     int init();
+
     /* after this no more calls to add_atom() are allowed */
     int close_atom();
+
     /* after this no more calls to add_rule_*() are allowed */
     int close_rule();
+
     /* register an atom */
     int add_atom(unsigned int a_atom);
+
     /* add an axiom (always true or always false) */
     int add_axiom(bool a_tr, unsigned int a_count, ...);
+
     /* add rule: variable argument list */
     int add_rule(unsigned int a_pcount,
                  unsigned int a_ncount,
                  unsigned int a_head,
                  ...);
+
     /* add rule: numberlist */
     int add_rule(unsigned int a_head,
                  vlad_numberlist *a_pbody,
                  vlad_numberlist *a_nbody);
+
     /* give T or F depending on whether atom is in ALL models or not */
     int ask(unsigned int a_atom, bool *a_res);
+
   private :
+
     Smodels *m_smod;
     Api *m_api;
     int m_stage;

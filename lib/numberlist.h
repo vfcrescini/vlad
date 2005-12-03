@@ -28,13 +28,21 @@
 class vlad_number : public vlad_list_item
 {
   public :
+
     vlad_number();
     ~vlad_number();
+
     /* compare item with this number */
     bool cmp(vlad_list_item *a_item);
+
+    /* initialise with num */
     int init(unsigned int a_num);
+
+    /* get value */
     unsigned int get();
+
   private :
+
     unsigned int m_number;
 } ;
 
@@ -44,10 +52,13 @@ class vlad_numberlist : public vlad_list
   public :
     vlad_numberlist();
     ~vlad_numberlist();
+
     /* add a number in the list */
     int add(unsigned int a_num);
+
     /* get the i'th number in the list */
     int get(unsigned int a_index, unsigned int *a_num);
+
     /* empty the list */
     void purge();
 } ;
