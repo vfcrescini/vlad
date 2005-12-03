@@ -31,6 +31,7 @@
 #include <vlad/consttab.h>
 #include <vlad/updatetab.h>
 #include <vlad/seqtab.h>
+#include <vlad/mapper.h>
 #ifdef VLAD_SMODELS
   #include <vlad/smwrap.h>
 #endif
@@ -101,10 +102,6 @@ class vlad_polbase {
      *          4 = after compute()
      */
     unsigned char m_stage;
-    /* m_tot_atoms: 0 = holds, 1 = access, 2 = object */
-    unsigned int m_tot_atoms[VLAD_ATOM_TOTAL];
-    /* total number of atoms (sum of the elements of the above array) */
-    unsigned int m_tot_atom;
     /* the symbol table */
     vlad_symtab *m_stable;
     /* the initial expression table */
@@ -115,69 +112,11 @@ class vlad_polbase {
     vlad_updatetab *m_utable;
     /* the sequence table */
     vlad_seqtab *m_setable;
+    /* the mapper */
+    vlad_mapper *m_mapper;
 #ifdef VLAD_SMODELS
     vlad_smwrap *m_smobject;
 #endif
-    /* returns a holds fact id based on the info given */
-    unsigned int compute_holds(unsigned int a_state,
-                               bool a_truth,
-                               unsigned int a_sub,
-                               unsigned int a_acc,
-                               unsigned int a_obj);
-    /* returns a memb fact id based on the info given */
-    unsigned int compute_memb(unsigned int a_state,
-                              bool a_truth,
-                              unsigned char a_type,
-                              unsigned int a_elt,
-                              unsigned int a_grp);
-    /* returns a subst fact id based on the info given */
-    unsigned int compute_subst(unsigned a_state,
-                               bool a_truth,
-                               unsigned char a_type,
-                               unsigned char a_grp1,
-                               unsigned char a_grp2);
-    /* returns a fact id based on the info given */
-    unsigned int compute_fact(unsigned int a_state,
-                              bool a_truth,
-                              unsigned int a_fact);
-    /* gives a unique id based on the holds entities given */
-    int encode_holds(const char *a_sub,
-                     const char *a_acc,
-                     const char *a_obj,
-                     bool a_truth,
-                     unsigned int a_state,
-                     unsigned int *a_id);
-    /* gives a unique id based on the member entities given */
-    int encode_memb(const char *a_elt,
-                    const char *a_grp,
-                    bool a_truth,
-                    unsigned int a_state,
-                    unsigned int *a_id);
-    /* gives a unique id based on the subset entities given */
-    int encode_subst(const char *a_grp1,
-                     const char *a_grp2,
-                     bool a_truth,
-                     unsigned int a_state,
-                     unsigned int *a_id);
-    /* gives a unique id based on the fact given */
-    int encode_fact(vlad_fact *a_fact,
-                    unsigned int a_state,
-                    unsigned int *a_id);
-    /* gives entities based on the holds id given */
-    int decode_holds(unsigned int a_id,
-                     char **a_sub,
-                     char **a_acc,
-                     char **a_obj);
-    /* gives entities based on the member id given */
-    int decode_memb(unsigned int a_id, char **a_elt, char **a_grp);
-    /* gives entities based on the subset id given */
-    int decode_subst(unsigned int a_id, char **a_grp1, char **a_grp2);
-    /* gives the fact based on the id given */
-    int decode_fact(vlad_fact **a_fact,
-                    unsigned int *a_state,
-                    unsigned int a_id);
-    /* returns the id of the negation of the given fact id */
-    unsigned int negate_fact(unsigned int a_fact);
 #ifdef VLAD_SMODELS
     /* checks whether the given fact is true, false or unknown */
     int evaluate_fact(unsigned int a_fact, unsigned char *a_res);
