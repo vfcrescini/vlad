@@ -1,3 +1,17 @@
+2005-12-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+	* lib/mapper.cpp :
+	* lib/mapper.h :
+
+	  - Moved all complex computation algorithims for mapping facts
+	    to integers into the mapper class.
+
+	* lib/Makefile.in :
+
+	  - Added mapper.h as dependencies of polbase.cpp.
+
 2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/polbase.cpp :

@@ -54,6 +54,7 @@ INCLUDES = \
   symtab.h \
   consttab.h \
   updatetab.h \
+  mapper.h \
   $(SMINCLUDES) \
   $(WRAPINCLUDES) \
   polbase.h \
@@ -71,6 +72,7 @@ OBJECTS = \
   updatetab.o \
   $(SMOBJECTS) \
   $(WRAPOBJECTS) \
+  mapper.o \
   polbase.o \
   $(NULL)
 TEMPS1 =
@@ -142,6 +144,8 @@ updatetab.o : vlad.h mem.h stringlist.h varlist.h expression.h updatetab.h updat
 seqtab.o : vlad.h mem.h stringlist.h expression.h symtab.h seqtab.h seqtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
 
+mapper.o : vlad.h atom.h identifier.h symtab.h mapper.h mapper.cpp
+
 ifdef SMODELS
 smwrap.o : vlad.h mem.h smwrap.h smwrap.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c smwrap.cpp
@@ -152,5 +156,5 @@ wrapper.o : vlad.h mem.h stringlist.h varlist.h fact.h expression.h polbase.h wr
 	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
 endif
 
-polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h symtab.h polbase.h polbase.cpp
+polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h symtab.h mapper.h polbase.h polbase.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp
