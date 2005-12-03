@@ -32,15 +32,25 @@ class vlad_updateref : public vlad_list_item
   public :
     vlad_updateref();
     ~vlad_updateref();
+
+    /* compares two update references */
     bool cmp(vlad_list_item *a_item);
+
+    /* initialise with this update ref */
     int init(const char *a_name, vlad_stringlist *a_list);
+
+    /* get a reference of this update ref */
     int get(char **a_name, vlad_stringlist **a_list);
+
     /* verify that all identifiers in the list are in the symtab */
     int verify(vlad_symtab *a_stab);
+
 #ifdef VLAD_DEBUG
     void print(char *a_str);
 #endif
+
   private :
+
     char *m_name;
     vlad_stringlist *m_list;
     bool m_init;
@@ -51,14 +61,19 @@ class vlad_seqtab : public vlad_list
    public :
      vlad_seqtab();
      ~vlad_seqtab();
+
      /* add pre-malloc'ed updateref */
      int add(vlad_updateref *a_uref);
+
      /* add pre-malloc'ed name and ilist */
      int add(const char *a_name, vlad_stringlist *a_list);
+
      /* delete i'th item */
      int del(unsigned int a_index);
+
      /* get i'th name and ilist */
      int get(unsigned int a_index, char **a_name, vlad_stringlist **a_list);
+
 #ifdef VLAD_DEBUG
     void print(char *a_str);
 #endif

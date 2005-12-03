@@ -27,6 +27,7 @@
 
 /* parsers must first be initialised to be used */
 int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, vlad_polbase *a_pbase);
+
 int agent_init(FILE *a_in,
                    FILE *a_out,
                    FILE *a_err,
@@ -36,6 +37,7 @@ int agent_init(FILE *a_in,
 /* it is important that these functions are used instead of the externally
  * available yyparse() functions */
 int policy_parse();
+
 int agent_parse();
 
 #endif

@@ -57,6 +57,7 @@ bool vlad_string::cmp(vlad_list_item *a_item)
   return (strcmp(tmp->m_string, m_string) == 0);
 }
 
+/* init with str */
 int vlad_string::init(const char *a_str)
 {
   if (a_str == NULL)
@@ -71,6 +72,7 @@ int vlad_string::init(const char *a_str)
   return ((strcpy(m_string, a_str) == NULL) ? VLAD_FAILURE : VLAD_OK);
 }
 
+/* get value */
 char *vlad_string::get()
 {
   return m_string;

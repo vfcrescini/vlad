@@ -44,6 +44,7 @@ vlad_smwrap::~vlad_smwrap()
     VLAD_MEM_DELETE(m_api);
 }
 
+/* (re)initialise */
 int vlad_smwrap::init()
 {
   Atom *tmp_atom;

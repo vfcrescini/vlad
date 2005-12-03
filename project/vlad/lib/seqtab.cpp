@@ -42,6 +42,7 @@ vlad_updateref::~vlad_updateref()
     VLAD_MEM_DELETE(m_list);
 }
 
+/* compares two update references */
 bool vlad_updateref::cmp(vlad_list_item *a_item)
 {
   vlad_updateref *tmp = NULL;
@@ -66,6 +67,7 @@ bool vlad_updateref::cmp(vlad_list_item *a_item)
   return VLAD_LIST_ITEMCMP(m_list, tmp->m_list);
 }
 
+/* initialise with this update ref */
 int vlad_updateref::init(const char *a_name, vlad_stringlist *a_list)
 {
   if (a_name == NULL)
@@ -78,6 +80,7 @@ int vlad_updateref::init(const char *a_name, vlad_stringlist *a_list)
   return VLAD_OK;
 }
 
+/* get a reference of this update ref */
 int vlad_updateref::get(char **a_name, vlad_stringlist **a_list)
 {
   if (a_name == NULL || a_list == NULL)

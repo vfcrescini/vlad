@@ -48,6 +48,7 @@ vlad_updatedef::~vlad_updatedef()
     VLAD_MEM_DELETE(m_postcond);
 }
 
+/* compare 2 update defs */
 bool vlad_updatedef::cmp(vlad_list_item *a_item)
 {
   vlad_updatedef *tmp = NULL;
@@ -102,6 +103,7 @@ int vlad_updatedef::init(const char *a_name,
   return VLAD_OK;
 }
 
+/* get attributes */
 int vlad_updatedef::get(char **a_name,
                         vlad_varlist **a_vlist,
                         vlad_expression **a_precond,
@@ -130,6 +132,7 @@ vlad_updatetab::~vlad_updatetab()
   purge(true);
 }
 
+/* add update def to table */
 int vlad_updatetab::add(const char *a_name,
                         vlad_varlist *a_vlist,
                         vlad_expression *a_precond,

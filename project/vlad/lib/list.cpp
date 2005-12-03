@@ -55,6 +55,7 @@ vlad_list::~vlad_list()
   purge(true);
 }
 
+/* compares 2 lists */
 bool vlad_list::cmp(vlad_list *a_list)
 {
   unsigned int i;
@@ -83,6 +84,7 @@ bool vlad_list::cmp(vlad_list *a_list)
   return true;
 }
 
+/* returns the length of the list */
 unsigned int vlad_list::length()
 {
   return m_length;

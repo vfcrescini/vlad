@@ -35,30 +35,40 @@ class vlad_expression : public vlad_list
   public :
     vlad_expression();
     ~vlad_expression();
+
     /* add pre-malloc'ed factg */
     int add(vlad_fact *a_fact);
+
     /* return true if fact is in the expression */
     int find(vlad_fact *a_fact);
+
     /* give i'th fact */
     int get(unsigned int a_index, vlad_fact **a_fact);
+
     /* replace occurences of var with ident, creates a new expression */
     int replace(const char *a_var,
                 const char *a_ident,
                 vlad_expression **a_exp);
+
     /* replace vars in vlist to entity in ilist. create a new expression */
     int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
                 vlad_expression **a_exp);
+
     /* gives a list of vars occuring in the expr. assumes list is init'ed */
     int varlist(vlad_varlist **a_list);
+
     /* check if exp is valid, any variables that occur must be in a_vlist */
     int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
+
     /* make a copy */
     int copy(vlad_expression **a_exp);
+
     /* verify and copy */
     int vcopy(vlad_symtab *a_stab,
               vlad_varlist *a_vlist,
               vlad_expression **a_exp);
+
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *a_str);

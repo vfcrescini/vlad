@@ -50,12 +50,14 @@ bool vlad_number::cmp(vlad_list_item *a_item)
   return (tmp->m_number == m_number);
 }
 
+/* initialise with num */
 int vlad_number::init(unsigned int a_num)
 {
   m_number = a_num;
   return VLAD_OK;
 }
 
+/* get value */
 unsigned int vlad_number::get()
 {
   return m_number;

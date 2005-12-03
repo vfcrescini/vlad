@@ -66,6 +66,7 @@ vlad_fact::~vlad_fact()
   reset();
 }
 
+/* returns true if items are equal */
 bool vlad_fact::cmp(vlad_list_item *a_item)
 {
   vlad_fact *tmp = NULL;
@@ -108,6 +109,7 @@ bool vlad_fact::cmp(vlad_list_item *a_item)
   return false;
 }
 
+/* get attributes from fact */
 int vlad_fact::get(char **a_elt1,
                    char **a_elt2,
                    char **a_elt3,
@@ -136,6 +138,7 @@ int vlad_fact::get(char **a_elt1,
   return VLAD_FAILURE;
 }
 
+/* if holds, get attributes */
 int vlad_fact::get_holds(char **a_sub, char **a_acc, char **a_obj)
 {
   if (!m_init)
@@ -154,6 +157,7 @@ int vlad_fact::get_holds(char **a_sub, char **a_acc, char **a_obj)
   return VLAD_OK;
 }
 
+/* if member, get attributes */
 int vlad_fact::get_member(char **a_elt, char **a_grp)
 {
   if (!m_init)
@@ -171,6 +175,7 @@ int vlad_fact::get_member(char **a_elt, char **a_grp)
   return VLAD_OK;
 }
 
+/* if subset, get attributes */
 int vlad_fact::get_subset(char **a_grp1, char **a_grp2)
 {
   if (!m_init)
@@ -188,6 +193,7 @@ int vlad_fact::get_subset(char **a_grp1, char **a_grp2)
   return VLAD_OK;
 }
 
+/* initialise facts */
 int vlad_fact::init(const char *a_elt1,
                     const char *a_elt2,
                     const char *a_elt3,
@@ -205,6 +211,7 @@ int vlad_fact::init(const char *a_elt1,
   return VLAD_INVALIDINPUT;
 }
 
+/* initialise a holds fact */
 int vlad_fact::init_holds(const char *a_sub,
                           const char *a_acc,
                           const char *a_obj,
@@ -235,6 +242,7 @@ int vlad_fact::init_holds(const char *a_sub,
   return VLAD_OK;
 }
 
+/* initialise a memb fact */
 int vlad_fact::init_member(const char *a_elt,
                            const char *a_grp,
                            bool a_truth)
@@ -261,6 +269,7 @@ int vlad_fact::init_member(const char *a_elt,
   return VLAD_OK;
 }
 
+/* initialise a subst fact */
 int vlad_fact::init_subset(const char *a_grp1,
                            const char *a_grp2,
                            bool a_truth)
