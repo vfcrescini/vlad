@@ -938,7 +938,7 @@ int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_file)
     return retval;
 
   /* and now for the queries */
-  fprintf(a_file, "Queries\n");
+  fprintf(a_file, "Query\n");
 
   for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
     vlad_fact *tmp_fact;
