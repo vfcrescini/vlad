@@ -103,13 +103,13 @@ class vlad_polbase {
     int check_symtab(const char *a_name, unsigned char a_type);
 
     /* enumerate the sequences in the sequence table, output to file */
-    int list_seqtab(FILE *a_file);
+    int list_seqtab(FILE *a_fs);
 
     /* generate the rules necessary to evaluate queries */
-    int compute_generate(FILE *a_file);
+    int compute_generate(FILE *a_fs);
 
     /* generate the query */
-    int query_generate(vlad_expression *a_exp, FILE *a_file);
+    int query_generate(vlad_expression *a_exp, FILE *a_fs);
 
 #ifdef VLAD_SMODELS
     /* prepares the kb for queries */
@@ -153,5 +153,8 @@ class vlad_polbase {
     /* checks whether the given fact is true, false or unknown */
     int evaluate_fact(unsigned int a_fact, unsigned char *a_res);
 #endif
+
+    /* dumps a fact with the given id onto the given (open) stream */
+    int print_fact(unsigned int a_id, FILE *a_fs);
 } ;
 #endif
