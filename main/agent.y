@@ -29,6 +29,10 @@
 #include <vlad/identifier.h>
 #include <vlad/polbase.h>
 
+#ifdef VLAD_TIMER
+  #include <sys/time.h>
+#endif
+
 /* vars defined from the scanner */
 extern unsigned int agentlinenum;
 
@@ -40,6 +44,9 @@ static vlad_polbase *pbase = NULL;
 static unsigned char mode = VLAD_MODE_GENERATE;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
+#ifdef VLAD_TIMER
+static bool timer = 0;
+#endif
 
 #ifdef VLAD_DEBUG
 static unsigned int cnt_agent = 0;
@@ -51,15 +58,29 @@ int agenterror(char *a_error);
 int agentlex();
 
 /* available functions */
+#ifdef VLAD_TIMER
+int agent_init(FILE *a_in,
+               FILE *a_out,
+               FILE *a_err,
+               vlad_polbase *a_pbase,
+               unsigned char a_m,
+               bool a_t);
+#else
 int agent_init(FILE *a_in,
                FILE *a_out,
                FILE *a_err,
                vlad_polbase *a_pbase,
                unsigned char a_m);
+#endif
 int agent_parse();
 
 #ifdef YYBYACC
 int agentparse();
+#endif
+
+#ifdef VLAD_TIMER
+  #define VLAD_TIME_DIFF(X,Y) \
+    (((Y).tv_sec + ((Y).tv_usec / 1000000.0)) - ((X).tv_sec + ((X).tv_usec / 1000000.0)))
 #endif
 %}
 
@@ -137,55 +158,71 @@ query_stmt :
 #ifdef VLAD_SMODELS
     unsigned char res;
 #endif
+#ifdef VLAD_TIMER
+    struct timeval tv1;
+    struct timeval tv2;
+#endif
 #ifdef VLAD_DEBUG
     char q[VLAD_MAXLEN_STR];
 #endif
 
-  switch(mode) {
-    case VLAD_MODE_GENERATE : {
-      switch(retval = pbase->query_generate($2, fout)) {
-        case VLAD_OK :
-          break;
-        case VLAD_INVALIDOP :
-          errorcode = retval;
-          agenterror("must use compute before query");
-          return retval;
-        default :
-          errorcode = retval;
-          agenterror("could not evaluate query: unexpected error");
-          return retval;
-      }
-      break;
-    }
-#ifdef VLAD_SMODELS
-    case VLAD_MODE_EVALUATE : {
-      switch(retval = pbase->query_evaluate($2, &res)) {
-        case VLAD_OK :
-          fprintf(fout, "%s\n", VLAD_RESULT_STRING(res));
-          break;
-        case VLAD_INVALIDOP :
-          errorcode = retval;
-          agenterror("must use compute before query");
-          return retval;
-        default :
-          errorcode = retval;
-          agenterror("could not evaluate query: unexpected error");
-          return retval;
-      }
-      break;
-    }
+#ifdef VLAD_TIMER
+    if (timer)
+      gettimeofday(&tv1, NULL);
 #endif
-    default :
-      errorcode = VLAD_FAILURE;
-      agenterror("invalid mode");
-      return VLAD_FAILURE;
-  }
+
+    switch(mode) {
+      case VLAD_MODE_GENERATE : {
+        switch(retval = pbase->query_generate($2, fout)) {
+          case VLAD_OK :
+            break;
+          case VLAD_INVALIDOP :
+            errorcode = retval;
+            agenterror("must use compute before query");
+            return retval;
+          default :
+            errorcode = retval;
+            agenterror("could not evaluate query: unexpected error");
+            return retval;
+        }
+        break;
+      }
+#ifdef VLAD_SMODELS
+      case VLAD_MODE_EVALUATE : {
+        switch(retval = pbase->query_evaluate($2, &res)) {
+          case VLAD_OK :
+            fprintf(fout, "%s\n", VLAD_RESULT_STRING(res));
+            break;
+          case VLAD_INVALIDOP :
+            errorcode = retval;
+            agenterror("must use compute before query");
+            return retval;
+          default :
+            errorcode = retval;
+            agenterror("could not evaluate query: unexpected error");
+            return retval;
+        }
+        break;
+      }
+#endif
+      default :
+        errorcode = VLAD_FAILURE;
+        agenterror("invalid mode");
+        return VLAD_FAILURE;
+    }
 
 #ifdef VLAD_DEBUG
     $2->print(q);
 
     fprintf(ferr, "query[%d]:\n", cnt_agent++);
     fprintf(ferr, "  expression: %s\n", q);
+#endif
+
+#ifdef VLAD_TIMER
+    if (timer) {
+      gettimeofday(&tv2, NULL);
+      fprintf(ferr, "%f\n", VLAD_TIME_DIFF(tv1, tv2));
+    }
 #endif
 
     /* cleanup */
@@ -195,6 +232,15 @@ query_stmt :
 
 compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
     int retval;
+#ifdef VLAD_TIMER
+    struct timeval tv1;
+    struct timeval tv2;
+#endif
+
+#ifdef VLAD_TIMER
+    if (timer)
+      gettimeofday(&tv1, NULL);
+#endif
 
     switch(mode) {
       case VLAD_MODE_GENERATE :
@@ -228,6 +274,14 @@ compute_stmt : VLAD_SYM_COMPUTE VLAD_SYM_SEMICOLON {
         agenterror("invalid mode");
         return VLAD_FAILURE;
     }
+
+#ifdef VLAD_TIMER
+    if (timer) {
+      gettimeofday(&tv2, NULL);
+      fprintf(ferr, "%f\n", VLAD_TIME_DIFF(tv1, tv2));
+    }
+#endif
+
   }
   ;
 
@@ -463,11 +517,20 @@ int agenterror(char *a_error)
   return 0;
 }
 
+#ifdef VLAD_TIMER
+int agent_init(FILE *a_in,
+               FILE *a_out,
+               FILE *a_err,
+               vlad_polbase *a_pbase,
+               unsigned char a_m,
+               bool a_t)
+#else
 int agent_init(FILE *a_in,
                FILE *a_out,
                FILE *a_err,
                vlad_polbase *a_pbase,
                unsigned char a_m)
+#endif
 {
   int retval;
 
@@ -486,6 +549,9 @@ int agent_init(FILE *a_in,
   pbase = a_pbase;
   mode = a_m;
   initialised = true;
+#ifdef VLAD_TIMER
+  timer = a_t;
+#endif
 
   return VLAD_OK;
 }

@@ -5,7 +5,7 @@ Build/Use Instructions
 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2004 Jan 06
+Updated: 2005 Dec 05
 -------------------------------------------------------------------------------
 
 REQUIREMENTS :
@@ -39,6 +39,11 @@ BUILD INSTRUCTIONS :
       --enable-debug
 
         Compile with -g and enable printing of debug messages.
+
+      --enable-time
+
+        Enables the -t timer option that dumps the elapsed time in seconds of
+        the compute and query operations.
 
       --enable-static
 
@@ -82,7 +87,7 @@ USAGE :
 
   The executable binary will be in dist/bin/vlad. Usage is as follows:
 
-    ./dist/bin/vlad -h|-v|[-e] policy-filename [agent-filename]
+    ./dist/bin/vlad -h|-v|[-e][-t] policy-filename [agent-filename]
 
   where:
 
@@ -100,6 +105,10 @@ USAGE :
              or false.
 
   Without the agent-filename parameter, vLad will read the queries from stdin.
+
+  The -t option will cause the program to dump the total computation time
+  (in seconds) used by the compute and query directives. The time values are
+  written to stderr.
 
   To use the test files in the samples directory :
 
