@@ -30,21 +30,29 @@
 #include <vlad/polbase.h>
 #include "parser.h"
 
+void print_usage(FILE *a_fs);
+
 int main(int argc, char *argv[])
 {
   int retval;
-#ifdef VLAD_SMODELS
-  char *arglist = "vhe";
-  char *helpstring = "-v|-h|[-e] policy-filename [agent-filename]";
-#else
-  char *arglist = "vh";
-  char *helpstring = "-v|-h|policy-filename [agent-filename]";
-#endif
   int curr_opt;
   FILE *policyin = NULL;
   FILE *agentin = NULL;
   vlad_polbase *pbase = NULL;
   unsigned char mode = VLAD_MODE_GENERATE;
+  char arglist[] = {
+#ifdef VLAD_SMODELS
+    'e',
+#endif
+#ifdef VLAD_TIMER
+    't',
+#endif
+    'v',
+    'h',
+  };
+#ifdef VLAD_TIMER
+  bool timer = false;
+#endif
 
   opterr = 0;
 
@@ -56,22 +64,27 @@ int main(int argc, char *argv[])
         fprintf(stdout, "by Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>\n");
         return VLAD_OK;
       case 'h' :
-        fprintf(stdout, "usage: %s %s\n", argv[0], helpstring);
+        print_usage(stdout);
         return VLAD_OK;;
 #ifdef VLAD_SMODELS
       case 'e' :
 	mode = VLAD_MODE_EVALUATE;
 	break;
 #endif
+#ifdef VLAD_TIMER
+      case 't' :
+        timer = true;
+        break;
+#endif
       default :
-        fprintf(stderr, "usage: %s %s\n", argv[0], helpstring);
+        print_usage(stdout);
         return VLAD_FAILURE;
     }
   }
 
   /* get policy file details */
   if (argv[optind] == NULL || !strcmp(argv[optind], "-")) {
-    fprintf(stderr, "usage: %s %s\n", argv[0], helpstring);
+    print_usage(stdout);
     return VLAD_FAILURE;
   }
 
@@ -100,7 +113,11 @@ int main(int argc, char *argv[])
   /* first initialise the parsers */
   if ((retval = policy_init(policyin, stdout, stderr, pbase)) != VLAD_OK)
     return retval;
+#ifdef VLAD_TIMER
+  if ((retval = agent_init(agentin, stdout, stderr, pbase, mode, timer)) != VLAD_OK)
+#else
   if ((retval = agent_init(agentin, stdout, stderr, pbase, mode)) != VLAD_OK)
+#endif
     return retval;
 
   /* then parse */
@@ -115,4 +132,20 @@ int main(int argc, char *argv[])
   VLAD_MEM_DELETE(pbase);
 
   return VLAD_OK;
+}
+
+void print_usage(FILE *a_fs)
+{
+  if (a_fs == NULL)
+    return;
+
+  fprintf(a_fs, "usage: vlad [options] policy-filename [agent-filename]\n");
+  fprintf(a_fs, "  -v display version number\n");
+  fprintf(a_fs, "  -h display this message\n");
+#ifdef VLAD_SMODELS
+  fprintf(a_fs, "  -e if configured with --with-smodels, evaluate queries\n");
+#endif
+#ifdef VLAD_TIMER
+  fprintf(a_fs, "  -t if configured with --enable-timer, display computation time\n");
+#endif
 }

@@ -28,11 +28,20 @@
 /* parsers must first be initialised to be used */
 int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, vlad_polbase *a_pbase);
 
+#ifdef VLAD_TIMER
+int agent_init(FILE *a_in,
+                   FILE *a_out,
+                   FILE *a_err,
+                   vlad_polbase *a_pbase,
+                   unsigned char a_m,
+                   bool a_t);
+#else
 int agent_init(FILE *a_in,
                    FILE *a_out,
                    FILE *a_err,
                    vlad_polbase *a_pbase,
                    unsigned char a_m);
+#endif
 
 /* it is important that these functions are used instead of the externally
  * available yyparse() functions */

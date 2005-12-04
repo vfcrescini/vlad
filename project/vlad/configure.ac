@@ -181,6 +181,14 @@ if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
   fi
 fi
 
+# --enable-timer
+AC_ARG_ENABLE(timer,AC_HELP_STRING([--enable-timer],[enable displaying of computation time (default is disabled)]))
+
+if test "x$enable_timer" != "x" && test "x$enable_timer" != "xno"; then
+  AC_DEFINE(VLAD_TIMER,[yes])
+  AC_SUBST(TIMER,[yes])
+fi
+
 CFLAGS="$VLAD_CFLAGS $CFLAGS"
 CXXFLAGS="$VLAD_CXXFLAGS $CXXFLAGS"
 LDFLAGS="$VLAD_LDFLAGS $LDFLAGS"
