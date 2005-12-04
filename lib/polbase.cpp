@@ -377,7 +377,7 @@ int vlad_polbase::check_symtab(const char *a_name, unsigned char a_type)
 }
 
 /* enumerate the sequences in the sequence table, output to file */
-int vlad_polbase::list_seqtab(FILE *a_file)
+int vlad_polbase::list_seqtab(FILE *a_fs)
 {
   int retval;
   unsigned int i;
@@ -389,7 +389,7 @@ int vlad_polbase::list_seqtab(FILE *a_file)
   if (m_stage < 3)
     return VLAD_INVALIDOP;
 
-  if (a_file == NULL)
+  if (a_fs == NULL)
     return VLAD_NULLPTR;
 
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
@@ -397,24 +397,24 @@ int vlad_polbase::list_seqtab(FILE *a_file)
     if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
       return retval;
     /* now print */
-    fprintf(a_file, "%d %s(", i, tmp_name);
+    fprintf(a_fs, "%d %s(", i, tmp_name);
     /* also do the stringlist */
     for (j = 0; j < VLAD_LIST_LENGTH(tmp_ilist); j++) {
       char *tmp_arg;
       if ((retval = tmp_ilist->get(j, &tmp_arg)) != VLAD_OK) {
-        fprintf(a_file, ")\n");
+        fprintf(a_fs, ")\n");
         return retval;
       }
-      fprintf(a_file, "%s%s", ((j == 0) ? "" : ","), tmp_arg);
+      fprintf(a_fs, "%s%s", ((j == 0) ? "" : ","), tmp_arg);
     }
-    fprintf(a_file, ")\n");
+    fprintf(a_fs, ")\n");
   }
 
   return VLAD_OK;
 }
 
 /* generate the rules necessary to evaluate queries */
-int vlad_polbase::compute_generate(FILE *a_file)
+int vlad_polbase::compute_generate(FILE *a_fs)
 {
   int retval;
   unsigned int i;
@@ -424,97 +424,40 @@ int vlad_polbase::compute_generate(FILE *a_file)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
-  if (a_file == NULL)
+  if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  /* first we print out all the possible facts in the polbase */
-  fprintf(a_file, "%s\n", VLAD_STR_FACTS);
-
-  for (i = 0; i < (m_mapper->get_totals(VLAD_ATOM_TOTAL) * 2 * (VLAD_LIST_LENGTH(m_setable) + 1)); i++) {
-    vlad_fact *tmp_fact;
-    unsigned char tmp_ty;
-    unsigned int tmp_s;
-    bool tmp_tr;
-    char *tmp_param1;
-    char *tmp_param2;
-    char *tmp_param3;
-
-    if ((retval = m_mapper->decode_fact(i, &tmp_s, &tmp_fact)) != VLAD_OK)
-      return retval;
-
-    if ((retval = tmp_fact->get(&tmp_param1, &tmp_param2, &tmp_param3, &tmp_ty, &tmp_tr)) != VLAD_OK)
-      return retval;
-
-    switch(tmp_ty) {
-      case VLAD_ATOM_HOLDS :
-        fprintf(a_file,
-                "  %d = %s(S%d, %s, %s, %s, %s, %s)\n",
-                i,
-                VLAD_STR_HOLDS,
-                tmp_s,
-                tmp_tr ? VLAD_STR_TRUE : VLAD_STR_FALSE,
-                VLAD_STR_HOLDS,
-                tmp_param1,
-                tmp_param2,
-                tmp_param3);
-        break;
-      case VLAD_ATOM_MEMBER :
-          fprintf(a_file,
-                  "  %d = %s(S%d, %s, %s, %s, %s)\n",
-                  i, VLAD_STR_HOLDS,
-                  tmp_s,
-                  tmp_tr ? VLAD_STR_TRUE : VLAD_STR_FALSE,
-                  VLAD_STR_MEMBER,
-                  tmp_param1,
-                  tmp_param2);
-        break;
-      case VLAD_ATOM_SUBSET :
-          fprintf(a_file,
-                  "  %d = %s(S%d, %s, %s, %s, %s)\n",
-                  i,
-                  VLAD_STR_HOLDS,
-                  tmp_s,
-                  tmp_tr ? VLAD_STR_TRUE : VLAD_STR_FALSE,
-                  VLAD_STR_SUBSET,
-                  tmp_param1,
-                  tmp_param2);
-        break;
-    }
-
-    VLAD_MEM_DELETE(tmp_fact);
-  }
-
   /* identity rules */
-  fprintf(a_file, "%s %s\n", VLAD_STR_IDENTITY, VLAD_STR_RULES);
+  fprintf(a_fs, "\n%s %s\n\n", VLAD_STR_IDENTITY, VLAD_STR_RULES);
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
     unsigned int i_grp;
     /* subject groups */
-    for (i_grp = 0; i_grp < VLAD_LEN_SG; i_grp++)
-      fprintf(a_file,
-              "  %d %s %s\n",
-              m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp, i_grp, i, true),
-              VLAD_STR_ARROW,
-              VLAD_STR_TRUE);
+    for (i_grp = 0; i_grp < VLAD_LEN_SG; i_grp++) {
+      fprintf(a_fs, "  ");
+      print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp, i_grp, i, true), a_fs);
+      fprintf(a_fs, " %s\n    %s.\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+    }
     /* access groups */
-    for (i_grp = 0; i_grp < VLAD_LEN_AG; i_grp++)
-      fprintf(a_file,
-              "  %d %s %s\n",
-              m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp, i_grp, i, true),
-              VLAD_STR_ARROW,
-              VLAD_STR_TRUE);
+    for (i_grp = 0; i_grp < VLAD_LEN_AG; i_grp++) {
+      fprintf(a_fs, "  ");
+      print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp, i_grp, i, true), a_fs);
+      fprintf(a_fs, " %s\n    %s.\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+    }
+
     /* object groups */
-    for (i_grp = 0; i_grp < VLAD_LEN_OG; i_grp++)
-      fprintf(a_file,
-              "  %d %s %s\n",
-              m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp, i_grp, i, true),
-              VLAD_STR_ARROW,
-              VLAD_STR_TRUE);
+    for (i_grp = 0; i_grp < VLAD_LEN_OG; i_grp++) {
+      fprintf(a_fs, "  ");
+      print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp, i_grp, i, true), a_fs);
+      fprintf(a_fs, " %s\n    %s.\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+    }
   }
 
+  fprintf(a_fs, "\n");
+
   /* inheritance rules */
-  fprintf(a_file, "%s %s\n", VLAD_STR_INHERITANCE, VLAD_STR_RULES);
+  fprintf(a_fs, "%s %s\n\n", VLAD_STR_INHERITANCE, VLAD_STR_RULES);
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
@@ -532,23 +475,23 @@ int vlad_polbase::compute_generate(FILE *a_file)
           continue;
         for (i_acc = 0; i_acc < VLAD_LEN_AS + VLAD_LEN_AG; i_acc++) {
           for (i_obj = 0; i_obj < VLAD_LEN_OS + VLAD_LEN_OG; i_obj++) {
-            fprintf(a_file,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, true),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, true),
-                    VLAD_STR_AND,
-                    m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false));
-            fprintf(a_file,
-                    "  %d %s %d %s %d\n",
-                    m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, false),
-                    VLAD_STR_AND,
-                    m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true));
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
+            fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, ".\n");
+
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
+            fprintf(a_fs, ".\n");
           }
         }
       }
@@ -560,23 +503,23 @@ int vlad_polbase::compute_generate(FILE *a_file)
           continue;
         for (i_sub = 0; i_sub < VLAD_LEN_SS + VLAD_LEN_SG; i_sub++) {
           for (i_obj = 0; i_obj < VLAD_LEN_OS + VLAD_LEN_OG; i_obj++) {
-            fprintf(a_file,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, true),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, true),
-                    VLAD_STR_AND,
-                    m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false));
-            fprintf(a_file,
-                    "  %d %s %d %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, false),
-                    VLAD_STR_AND,
-                    m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true));
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
+            fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false), a_fs);
+            fprintf(a_fs, ".\n");
+
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
+            fprintf(a_fs, ".\n");
           }
         }
       }
@@ -588,23 +531,23 @@ int vlad_polbase::compute_generate(FILE *a_file)
           continue;
         for (i_sub = 0; i_sub < VLAD_LEN_SS + VLAD_LEN_SG; i_sub++) {
           for (i_acc = 0; i_acc < VLAD_LEN_AS + VLAD_LEN_AG; i_acc++) {
-            fprintf(a_file,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, true),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, true),
-                    VLAD_STR_AND,
-                    m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false));
-            fprintf(a_file,
-                    "  %d %s %d %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, false),
-                    VLAD_STR_AND,
-                    m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true));
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
+            fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false), a_fs);
+            fprintf(a_fs, ".\n");
+
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
+            fprintf(a_fs, ".\n");
           }
         }
       }
@@ -617,23 +560,23 @@ int vlad_polbase::compute_generate(FILE *a_file)
       for (i_sub = 0; i_sub < VLAD_LEN_SS; i_sub++) {
         for (i_acc = 0; i_acc < VLAD_LEN_AS + VLAD_LEN_AG; i_acc++) {
           for (i_obj = 0; i_obj < VLAD_LEN_OS + VLAD_LEN_OG; i_obj++) {
-            fprintf(a_file,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, true),
-                    VLAD_STR_AND,
-                    m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false));
-            fprintf(a_file,
-                    "  %d %s %d %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false),
-                    VLAD_STR_AND,
-                    m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true));
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true), a_fs);
+            fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, ".\n");
+
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true), a_fs);
+            fprintf(a_fs, ".\n");
           }
         }
       }
@@ -643,23 +586,23 @@ int vlad_polbase::compute_generate(FILE *a_file)
       for (i_sub = 0; i_sub < VLAD_LEN_SS + VLAD_LEN_SG; i_sub++) {
         for (i_acc = 0; i_acc < VLAD_LEN_AS; i_acc++) {
           for (i_obj = 0; i_obj < VLAD_LEN_OS + VLAD_LEN_OG; i_obj++) {
-            fprintf(a_file,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, true),
-                    VLAD_STR_AND,
-                    m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false));
-            fprintf(a_file,
-                    "  %d %s %d %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false),
-                    VLAD_STR_AND,
-                    m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true));
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true), a_fs);
+            fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, ".\n");
+
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true), a_fs);
+            fprintf(a_fs, ".\n");
           }
         }
       }
@@ -669,31 +612,33 @@ int vlad_polbase::compute_generate(FILE *a_file)
       for (i_sub = 0; i_sub < VLAD_LEN_SS + VLAD_LEN_SG; i_sub++) {
         for (i_acc = 0; i_acc < VLAD_LEN_AS + VLAD_LEN_AG; i_acc++) {
           for (i_obj = 0; i_obj < VLAD_LEN_OS; i_obj++) {
-            fprintf(a_file,
-                    "  %d %s %d %s %d %s %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, true),
-                    VLAD_STR_AND,
-                    m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true),
-                    VLAD_STR_AND,
-                    VLAD_STR_NOT,
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false));
-            fprintf(a_file,
-                    "  %d %s %d %s %d\n",
-                    m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false),
-                    VLAD_STR_ARROW,
-                    m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false),
-                    VLAD_STR_AND,
-                    m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true));
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true), a_fs);
+            fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, ".\n");
+
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true), a_fs);
+            fprintf(a_fs, ".\n");
           }
         }
       }
     }
   }
 
+  fprintf(a_fs, "\n");
+
   /* transitivity */
-  fprintf(a_file, "%s %s\n", VLAD_STR_TRANSITIVITY, VLAD_STR_RULES);
+  fprintf(a_fs, "%s %s\n\n", VLAD_STR_TRANSITIVITY, VLAD_STR_RULES);
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
@@ -708,13 +653,13 @@ int vlad_polbase::compute_generate(FILE *a_file)
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
-          fprintf(a_file,
-                  "  %d %s %d %s %d\n",
-                  m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp3, i, true),
-                  VLAD_STR_ARROW,
-                  m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true),
-                  VLAD_STR_AND,
-                  m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp2, i_grp3, i, true));
+          fprintf(a_fs, "  ");
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp3, i, true), a_fs);
+          fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
+          fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp2, i_grp3, i, true), a_fs);
+          fprintf(a_fs, ".\n");
         }
       }
     }
@@ -725,13 +670,14 @@ int vlad_polbase::compute_generate(FILE *a_file)
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
-          fprintf(a_file,
-                  "  %d %s %d %s %d\n",
-                  m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp3, i, true),
-                  VLAD_STR_ARROW,
-                  m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true),
-                  VLAD_STR_AND,
-                  m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp2, i_grp3, i, true));
+
+          fprintf(a_fs, "  ");
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp3, i, true), a_fs);
+          fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
+          fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp2, i_grp3, i, true), a_fs);
+          fprintf(a_fs, ".\n");
         }
       }
     }
@@ -742,63 +688,67 @@ int vlad_polbase::compute_generate(FILE *a_file)
           /* ignore if any 2 are the same */
           if (i_grp1 == i_grp2 || i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
-          fprintf(a_file,
-                  "  %d %s %d %s %d\n",
-                  m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp3, i, true),
-                  VLAD_STR_ARROW,
-                  m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true),
-                  VLAD_STR_AND,
-                  m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp2, i_grp3, i, true));
+
+          fprintf(a_fs, "  ");
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp3, i, true), a_fs);
+          fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
+          fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp2, i_grp3, i, true), a_fs);
+          fprintf(a_fs, ".\n");
         }
       }
     }
   }
 
+  fprintf(a_fs, "\n");
+
   /* negation rules */
-  fprintf(a_file, "%s %s\n", VLAD_STR_NEGATION, VLAD_STR_RULES);
+  fprintf(a_fs, "%s %s\n\n", VLAD_STR_NEGATION, VLAD_STR_RULES);
 
   /* state loop */
   for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
     unsigned int i_atom;
     for (i_atom = 0; i_atom < m_mapper->get_totals(VLAD_ATOM_TOTAL); i_atom++) {
-      fprintf(a_file,
-              "  %s %s %d %s %d\n",
-              VLAD_STR_FALSE,
-              VLAD_STR_ARROW,
-              m_mapper->compute_fact(i_atom, i, true),
-              VLAD_STR_AND,
-              m_mapper->compute_fact(i_atom, i, false));
+      fprintf(a_fs, "  %s %s\n    ", VLAD_STR_FALSE, VLAD_STR_ARROW);
+      print_fact(m_mapper->compute_fact(i_atom, i, true), a_fs);
+      fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+      print_fact(m_mapper->compute_fact(i_atom, i, false), a_fs);
+      fprintf(a_fs, ".\n");
     }
   }
 
+  fprintf(a_fs, "\n");
+
   /* inertial rules */
-  fprintf(a_file, "%s %s\n", VLAD_STR_INERTIAL, VLAD_STR_RULES);
+  fprintf(a_fs, "%s %s\n\n", VLAD_STR_INERTIAL, VLAD_STR_RULES);
 
   /* state loop */
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
     unsigned int i_atom;
     for (i_atom = 0; i_atom < m_mapper->get_totals(VLAD_ATOM_TOTAL); i_atom++) {
-      fprintf(a_file,
-              "  %d %s %d %s %s %d\n",
-              m_mapper->compute_fact(i_atom, i + 1, true),
-              VLAD_STR_ARROW,
-              m_mapper->compute_fact(i_atom, i, true),
-              VLAD_STR_AND,
-              VLAD_STR_NOT,
-              m_mapper->compute_fact(i_atom, i + 1, false));
-      fprintf(a_file,
-              "  %d %s %d %s %s %d\n",
-              m_mapper->compute_fact(i_atom, i + 1, false),
-              VLAD_STR_ARROW,
-              m_mapper->compute_fact(i_atom, i, false),
-              VLAD_STR_AND,
-              VLAD_STR_NOT,
-              m_mapper->compute_fact(i_atom, i + 1, true));
+      fprintf(a_fs, "  ");
+      print_fact(m_mapper->compute_fact(i_atom, i + 1, true), a_fs);
+      fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+      print_fact(m_mapper->compute_fact(i_atom, i, true), a_fs);
+      fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
+      print_fact(m_mapper->compute_fact(i_atom, i + 1, false), a_fs);
+      fprintf(a_fs, ".\n");
+
+      fprintf(a_fs, "  ");
+      print_fact(m_mapper->compute_fact(i_atom, i + 1, false), a_fs);
+      fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+      print_fact(m_mapper->compute_fact(i_atom, i, false), a_fs);
+      fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
+      print_fact(m_mapper->compute_fact(i_atom, i + 1, true), a_fs);
+      fprintf(a_fs, ".\n");
     }
   }
 
+  fprintf(a_fs, "\n");
+
   /* initial state */
-  fprintf(a_file, "%s %s\n", VLAD_STR_INITSTATE, VLAD_STR_RULES);
+  fprintf(a_fs, "%s %s\n\n", VLAD_STR_INITSTATE, VLAD_STR_RULES);
 
   for (i = 0; i < VLAD_LIST_LENGTH(m_itable); i++) {
     vlad_fact *tmp_fact;
@@ -810,11 +760,15 @@ int vlad_polbase::compute_generate(FILE *a_file)
     if ((retval = m_mapper->encode_fact(tmp_fact, 0, &tmp_num)) != VLAD_OK)
       return retval;
 
-    fprintf(a_file, "  %d %s %s\n", tmp_num, VLAD_STR_ARROW, VLAD_STR_TRUE);
+    fprintf(a_fs, "  ");
+    print_fact(tmp_num, a_fs);
+    fprintf(a_fs, " %s\n    %s.\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
   }
 
+  fprintf(a_fs, "\n");
+
   /* constraints */
-  fprintf(a_file, "%s %s\n", VLAD_STR_CONSTRAINT, VLAD_STR_RULES);
+  fprintf(a_fs, "%s %s\n\n", VLAD_STR_CONSTRAINT, VLAD_STR_RULES);
 
   for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
     unsigned int  i_const;
@@ -831,7 +785,7 @@ int vlad_polbase::compute_generate(FILE *a_file)
       if ((retval = m_ctable->get(i_const, &tmp_e, &tmp_c, &tmp_n)) != VLAD_OK)
         return retval;
 
-      fprintf(a_file, " ");
+      fprintf(a_fs, "  ");
 
       /* constaint expression */
       for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_e); i_exp++) {
@@ -839,10 +793,14 @@ int vlad_polbase::compute_generate(FILE *a_file)
           return retval;
         if ((retval = m_mapper->encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
           return retval;
-        fprintf(a_file, " %d", tmp_num);
+
+        print_fact(tmp_num, a_fs);
+
+        if (i_exp + 1 < VLAD_LIST_LENGTH(tmp_e))
+          fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
       }
 
-      fprintf(a_file, " %s", VLAD_STR_ARROW);
+      fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
 
       /* constraint condition */
       for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_c); i_exp++) {
@@ -850,7 +808,11 @@ int vlad_polbase::compute_generate(FILE *a_file)
           return retval;
         if ((retval = m_mapper->encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
           return retval;
-        fprintf(a_file, " %d", tmp_num);
+
+        print_fact(tmp_num, a_fs);
+        
+        if (i_exp + 1 < VLAD_LIST_LENGTH(tmp_c) || tmp_n != NULL)
+          fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
       }
 
       /* constraint negative condition */
@@ -859,18 +821,25 @@ int vlad_polbase::compute_generate(FILE *a_file)
           return retval;
         if ((retval = m_mapper->encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
           return retval;
-        fprintf(a_file, " %s %d", VLAD_STR_NOT, tmp_num);
+
+        fprintf(a_fs, "%s ", VLAD_STR_NOT);
+        print_fact(tmp_num, a_fs);
+
+        if (i_exp + 1 < VLAD_LIST_LENGTH(tmp_n))
+          fprintf(a_fs, "%s\n    ", VLAD_STR_AND);
       }
 
       if (tmp_c == NULL && tmp_n == NULL)
-        fprintf(a_file, " %s\n", VLAD_STR_TRUE);
+        fprintf(a_fs, "%s.\n", VLAD_STR_TRUE);
       else
-        fprintf(a_file, "\n");
+        fprintf(a_fs, ".\n");
     }
   }
 
+  fprintf(a_fs, "\n");
+
   /* update rules */
-  fprintf(a_file, "%s %s\n", VLAD_STR_UPDATE, VLAD_STR_RULES);
+  fprintf(a_fs, "%s %s\n\n", VLAD_STR_UPDATE, VLAD_STR_RULES);
 
   /* state loop */
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
@@ -888,7 +857,7 @@ int vlad_polbase::compute_generate(FILE *a_file)
     if ((retval = m_utable->replace(tmp_name, tmp_ilist, &tmp_pre, &tmp_post)) != VLAD_OK)
       return retval;
 
-    fprintf(a_file, " ");
+    fprintf(a_fs, "  ");
 
     /* postcondition loop */
     for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_post); i_exp++) {
@@ -896,10 +865,14 @@ int vlad_polbase::compute_generate(FILE *a_file)
         return retval;
       if ((retval = m_mapper->encode_fact(tmp_fact, i + 1, &tmp_num)) != VLAD_OK)
         return retval;
-      fprintf(a_file, " %d", tmp_num);
+
+      print_fact(tmp_num, a_fs);
+
+      if (i_exp + 1 < VLAD_LIST_LENGTH(tmp_post))
+          fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
     }
 
-    fprintf(a_file, " %s", VLAD_STR_ARROW);
+    fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
 
     /* precondition loop */
     for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(tmp_pre); i_exp++) {
@@ -907,20 +880,26 @@ int vlad_polbase::compute_generate(FILE *a_file)
         return retval;
       if ((retval = m_mapper->encode_fact(tmp_fact, i, &tmp_num)) != VLAD_OK)
         return retval;
-      fprintf(a_file, " %d", tmp_num);
+
+      print_fact(tmp_num, a_fs);
+
+      if (i_exp + 1 < VLAD_LIST_LENGTH(tmp_pre))
+        fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
     }
 
     if (tmp_pre == NULL)
-      fprintf(a_file, " %s\n", VLAD_STR_TRUE);
+      fprintf(a_fs, "%s.\n", VLAD_STR_TRUE);
     else
-      fprintf(a_file, "\n");
+      fprintf(a_fs, ".\n");
   }
+
+  fprintf(a_fs, "\n");
 
   return VLAD_OK;
 }
 
 /* generate the query */
-int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_file)
+int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_fs)
 {
   int retval;
   unsigned int i;
@@ -930,15 +909,12 @@ int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_file)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
-  if (a_file == NULL || a_exp == NULL)
+  if (a_fs == NULL || a_exp == NULL)
     return VLAD_NULLPTR;
 
   /* verify expression */
   if ((retval = a_exp->verify(m_stable, NULL)) != VLAD_OK)
     return retval;
-
-  /* and now for the queries */
-  fprintf(a_file, "Query\n");
 
   for (i = 0; i < VLAD_LIST_LENGTH(a_exp); i++) {
     vlad_fact *tmp_fact;
@@ -949,13 +925,12 @@ int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_file)
     if ((retval = m_mapper->encode_fact(tmp_fact, VLAD_LIST_LENGTH(m_setable), &tmp_num)) != VLAD_OK)
       return retval;
 
-    if (i == 0)
-      fprintf(a_file, "  ");
+    print_fact(tmp_num, a_fs);
 
     if (i + 1 == VLAD_LIST_LENGTH(a_exp))
-      fprintf(a_file, "%d %s\n", tmp_num, VLAD_STR_QUERY);
+      fprintf(a_fs, " %s\n", VLAD_STR_QUERY);
     else
-      fprintf(a_file, "%d %s ", tmp_num, VLAD_STR_AND);
+      fprintf(a_fs, " %s ", VLAD_STR_AND);
   }
 
   return VLAD_OK;
@@ -1520,3 +1495,64 @@ int vlad_polbase::evaluate_fact(unsigned int a_fact, unsigned char *a_res)
   return VLAD_OK;
 }
 #endif
+
+/* dumps a fact with the given id onto the given (open) stream */
+int vlad_polbase::print_fact(unsigned int a_id, FILE *a_fs)
+{
+  int retval;
+  vlad_fact *fact;
+  unsigned char type;
+  unsigned int state;
+  bool truth;
+  char *parm[3];
+
+  /* we only allow this after polbase is closed */
+  if (m_stage < 3)
+    return VLAD_INVALIDOP;
+
+  if (a_fs == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = m_mapper->decode_fact(a_id, &state, &fact)) != VLAD_OK)
+    return retval;
+
+  retval = fact->get(&(parm[0]), &(parm[1]), &(parm[2]), &type, &truth);
+
+  if (retval != VLAD_OK)
+    return retval;
+
+  switch(type) {
+    case VLAD_ATOM_HOLDS :
+      fprintf(a_fs,
+              "%s(%s, %s, %s, S%d, %s)",
+              VLAD_STR_HOLDS,
+              parm[0],
+              parm[1],
+              parm[2],
+              state,
+              truth ? VLAD_STR_TRUE : VLAD_STR_FALSE);
+      break;
+    case VLAD_ATOM_MEMBER :
+        fprintf(a_fs,
+                "%s(%s, %s, S%d, %s)",
+                VLAD_STR_MEMBER,
+                parm[0],
+                parm[1],
+                state,
+                truth ? VLAD_STR_TRUE : VLAD_STR_FALSE);
+      break;
+    case VLAD_ATOM_SUBSET :
+        fprintf(a_fs,
+                "%s(%s, %s, S%d, %s)",
+                VLAD_STR_SUBSET,
+                parm[0],
+                parm[1],
+                state,
+                truth ? VLAD_STR_TRUE : VLAD_STR_FALSE);
+      break;
+  }
+
+  VLAD_MEM_DELETE(fact);
+  
+  return VLAD_OK;
+}
