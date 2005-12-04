@@ -437,20 +437,20 @@ int vlad_polbase::compute_generate(FILE *a_fs)
     for (i_grp = 0; i_grp < VLAD_LEN_SG; i_grp++) {
       fprintf(a_fs, "  ");
       print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp, i_grp, i, true), a_fs);
-      fprintf(a_fs, " %s\n    %s.\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+      fprintf(a_fs, " %s\n    %s%s\n", VLAD_STR_ARROW, VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
     }
     /* access groups */
     for (i_grp = 0; i_grp < VLAD_LEN_AG; i_grp++) {
       fprintf(a_fs, "  ");
       print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp, i_grp, i, true), a_fs);
-      fprintf(a_fs, " %s\n    %s.\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+      fprintf(a_fs, " %s\n    %s%s\n", VLAD_STR_ARROW, VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
     }
 
     /* object groups */
     for (i_grp = 0; i_grp < VLAD_LEN_OG; i_grp++) {
       fprintf(a_fs, "  ");
       print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp, i_grp, i, true), a_fs);
-      fprintf(a_fs, " %s\n    %s.\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+      fprintf(a_fs, " %s\n    %s%s\n", VLAD_STR_ARROW, VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
     }
   }
 
@@ -483,7 +483,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
 
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
@@ -491,7 +491,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
             print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
       }
@@ -511,7 +511,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
 
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false), a_fs);
@@ -519,7 +519,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
             print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
       }
@@ -539,7 +539,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
 
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false), a_fs);
@@ -547,7 +547,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
             print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
       }
@@ -568,7 +568,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
 
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
@@ -576,7 +576,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
             print_fact(m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
       }
@@ -594,7 +594,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
 
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
@@ -602,7 +602,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
             print_fact(m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
       }
@@ -620,7 +620,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
 
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
@@ -628,7 +628,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
             print_fact(m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true), a_fs);
-            fprintf(a_fs, ".\n");
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
       }
@@ -659,7 +659,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
           print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
           print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp2, i_grp3, i, true), a_fs);
-          fprintf(a_fs, ".\n");
+          fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
         }
       }
     }
@@ -677,7 +677,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
           print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
           print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp2, i_grp3, i, true), a_fs);
-          fprintf(a_fs, ".\n");
+          fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
         }
       }
     }
@@ -695,7 +695,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
           print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
           print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp2, i_grp3, i, true), a_fs);
-          fprintf(a_fs, ".\n");
+          fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
         }
       }
     }
@@ -714,7 +714,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       print_fact(m_mapper->compute_fact(i_atom, i, true), a_fs);
       fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
       print_fact(m_mapper->compute_fact(i_atom, i, false), a_fs);
-      fprintf(a_fs, ".\n");
+      fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
     }
   }
 
@@ -733,7 +733,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       print_fact(m_mapper->compute_fact(i_atom, i, true), a_fs);
       fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
       print_fact(m_mapper->compute_fact(i_atom, i + 1, false), a_fs);
-      fprintf(a_fs, ".\n");
+      fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
 
       fprintf(a_fs, "  ");
       print_fact(m_mapper->compute_fact(i_atom, i + 1, false), a_fs);
@@ -741,7 +741,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       print_fact(m_mapper->compute_fact(i_atom, i, false), a_fs);
       fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
       print_fact(m_mapper->compute_fact(i_atom, i + 1, true), a_fs);
-      fprintf(a_fs, ".\n");
+      fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
     }
   }
 
@@ -762,7 +762,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
 
     fprintf(a_fs, "  ");
     print_fact(tmp_num, a_fs);
-    fprintf(a_fs, " %s\n    %s.\n", VLAD_STR_ARROW, VLAD_STR_TRUE);
+    fprintf(a_fs, " %s\n    %s%s\n", VLAD_STR_ARROW, VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
   }
 
   fprintf(a_fs, "\n");
@@ -830,9 +830,9 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       }
 
       if (tmp_c == NULL && tmp_n == NULL)
-        fprintf(a_fs, "%s.\n", VLAD_STR_TRUE);
+        fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
       else
-        fprintf(a_fs, ".\n");
+        fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
     }
   }
 
@@ -888,9 +888,9 @@ int vlad_polbase::compute_generate(FILE *a_fs)
     }
 
     if (tmp_pre == NULL)
-      fprintf(a_fs, "%s.\n", VLAD_STR_TRUE);
+      fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
     else
-      fprintf(a_fs, ".\n");
+      fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
   }
 
   fprintf(a_fs, "\n");
