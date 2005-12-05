@@ -14,14 +14,13 @@
 	* main/vlad.cpp :
 
 	  - Added a -t option in the main program to measure the time it takes
-           for the compute and query operations to complete.
-
+	    for the compute and query operations to complete.
 
 	* lib/polbase.cpp :
 	* lib/polbase.h :
 
-	  - compute_generate() now dumps the actual facts, and not
-	    some unique id.
+	  - compute_generate() now dumps the actual facts, and not some unique
+	    id.
 
 2005-12-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
@@ -34,8 +33,8 @@
 	* lib/mapper.cpp :
 	* lib/mapper.h :
 
-	  - Moved all complex computation algorithims for mapping facts
-	    to integers into the mapper class.
+	  - Moved all complex computation algorithims for mapping facts to
+	    integers into the mapper class.
 
 	* lib/Makefile.in :
 
