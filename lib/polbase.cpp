@@ -872,6 +872,8 @@ int vlad_polbase::compute_generate(FILE *a_fs)
           fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
     }
 
+    VLAD_MEM_DELETE(exp_po);
+
     fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
 
     /* precondition loop */
@@ -886,6 +888,8 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       if (i_exp + 1 < VLAD_LIST_LENGTH(exp_pr))
         fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
     }
+
+    VLAD_MEM_DELETE(exp_pr);
 
     if (exp_pr == NULL)
       fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
@@ -1418,6 +1422,8 @@ int vlad_polbase::compute_evaluate()
         return retval;
     }
 
+    VLAD_MEM_DELETE(exp_pr);
+
     /* postcondition loop */
     for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_po); i_exp++) {
       if ((retval = exp_po->get(i_exp, &fact)) != VLAD_OK)
@@ -1429,6 +1435,7 @@ int vlad_polbase::compute_evaluate()
         return retval;
     }
 
+    VLAD_MEM_DELETE(exp_po);
     VLAD_MEM_DELETE(list_n);
   }
 
