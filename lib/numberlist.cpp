@@ -26,39 +26,39 @@
 #include <vlad/mem.h>
 #include <vlad/numberlist.h>
 
-vlad_number::vlad_number()
+vlad_numberlist_item::vlad_numberlist_item()
 {
   m_number = 0;
 }
 
-vlad_number::~vlad_number()
+vlad_numberlist_item::~vlad_numberlist_item()
 {
 }
 
 /* compare item with this number */
-bool vlad_number::cmp(vlad_list_item *a_item)
+bool vlad_numberlist_item::cmp(vlad_list_item *a_item)
 {
-  vlad_number *tmp = NULL;
+  vlad_numberlist_item *nitem = NULL;
 
   /* a NULL will not match anything */
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<vlad_number *>(a_item)) == NULL)
+  if ((nitem = dynamic_cast<vlad_numberlist_item *>(a_item)) == NULL)
     return false;
 
-  return (tmp->m_number == m_number);
+  return (nitem->m_number == m_number);
 }
 
 /* initialise with num */
-int vlad_number::init(unsigned int a_num)
+int vlad_numberlist_item::init(unsigned int a_num)
 {
   m_number = a_num;
   return VLAD_OK;
 }
 
 /* get value */
-unsigned int vlad_number::get()
+unsigned int vlad_numberlist_item::get()
 {
   return m_number;
 }
@@ -76,16 +76,16 @@ vlad_numberlist::~vlad_numberlist()
 int vlad_numberlist::add(unsigned int a_num)
 {
   int retval;
-  vlad_number *tmp = NULL;
+  vlad_numberlist_item *nitem = NULL;
 
-  if ((tmp = VLAD_MEM_NEW(vlad_number())) == NULL)
+  if ((nitem = VLAD_MEM_NEW(vlad_numberlist_item())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = tmp->init(a_num)) != VLAD_OK)
+  if ((retval = nitem->init(a_num)) != VLAD_OK)
     return retval;
 
-  if ((retval = vlad_list::add(tmp)) != VLAD_OK) {
-    delete tmp;
+  if ((retval = vlad_list::add(nitem)) != VLAD_OK) {
+    delete nitem;
     return retval;
   }
   return VLAD_OK;
@@ -95,12 +95,12 @@ int vlad_numberlist::add(unsigned int a_num)
 int vlad_numberlist::get(unsigned int a_index, unsigned int *a_num)
 {
   int retval;
-  vlad_number *tmp = NULL;
+  vlad_numberlist_item *nitem = NULL;
 
-  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &tmp)) != VLAD_OK)
+  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &nitem)) != VLAD_OK)
     return retval;
 
-  *a_num = tmp->get();
+  *a_num = nitem->get();
 
   return VLAD_OK;
 }
