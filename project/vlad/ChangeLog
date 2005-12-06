@@ -1,3 +1,10 @@
+2005-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/polbase.cpp :
+
+	  - Added delete() calls for the tmp expressions used in the generation
+	    of policy update rules.
+
 2005-12-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Tagged vlad-1_1_1
