@@ -60,6 +60,7 @@ INCLUDES = \
   polbase.h \
   $(NULL)
 OBJECTS = \
+  mem.o \
   list.o \
   stringlist.o \
   numberlist.o \
@@ -113,6 +114,9 @@ ifndef DEBUG
 	strip $(@)
   endif
 endif
+
+mem.o : vlad.h mem.h mem.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c mem.cpp
 
 list.o : vlad.h mem.h list.h list.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c list.cpp
