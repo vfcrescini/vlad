@@ -1,5 +1,9 @@
 2005-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* test/mem_test.sh :
+
+	  - Added memory test script.
+
 	* configure :
 	* configure.ac :
 	* lib/config.h.in :
