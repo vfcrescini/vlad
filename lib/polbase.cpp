@@ -1403,8 +1403,8 @@ int vlad_polbase::compute_evaluate()
     vlad_stringlist *list_s = NULL;
     vlad_numberlist *list_n;
 
-   if ((list_n = VLAD_MEM_NEW(vlad_numberlist())) == NULL)
-     return VLAD_MALLOCFAILED;
+    if ((list_n = VLAD_MEM_NEW(vlad_numberlist())) == NULL)
+      return VLAD_MALLOCFAILED;
 
     if ((retval = m_setable->get(i, &name, &list_s)) != VLAD_OK)
       return retval;
