@@ -24,6 +24,7 @@
 
 #define VLAD_VERSION "0.0.0"
 #undef VLAD_DEBUG
+#undef VLAD_MEMTEST
 #undef VLAD_SMODELS
 #undef VLAD_TIMER
 #undef VLAD_WRAPPER

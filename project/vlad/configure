@@ -273,7 +273,7 @@ PACKAGE_VERSION='1.1.1'
 PACKAGE_STRING='vlad 1.1.1'
 PACKAGE_BUGREPORT='jcrescin@cit.uws.edu.au'
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CXX CXXFLAGS ac_ct_CXX LEX LEXLIB LEX_OUTPUT_ROOT YACC LN_S BUILDSHARED STATIC DEBUG STRIP WRAPPER SMODELS TIMER VERSION DISTDIR LIBDIR LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CXX CXXFLAGS ac_ct_CXX LEX LEXLIB LEX_OUTPUT_ROOT YACC LN_S BUILDSHARED STATIC DEBUG MEMTEST STRIP WRAPPER SMODELS TIMER VERSION DISTDIR LIBDIR LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -813,6 +813,8 @@ Optional Features:
   --enable-static         generate a statically-linked executable (default is
                           disabled)
   --enable-debug          enable debugging output & compile with -g (default
+                          is disabled)
+  --enable-memtest        enable memory testing feature for debugging (default
                           is disabled)
   --enable-strip          run strip program (default is disabled)
   --enable-wrapper        enable C-interface wrapper (default is disabled)
@@ -3013,6 +3015,22 @@ else
   VLAD_CXXFLAGS="-O3 $VLAD_CXXFLAGS"
 fi
 
+# --enable-memtest
+# Check whether --enable-memtest or --disable-memtest was given.
+if test "${enable_memtest+set}" = set; then
+  enableval="$enable_memtest"
+
+fi;
+
+if test "x$enable_memtest" != "x" && test "x$enable_memtest" != "xno"; then
+  cat >>confdefs.h <<\_ACEOF
+#define VLAD_MEMTEST yes
+_ACEOF
+
+  MEMTEST=yes
+
+fi
+
 # --enable-strip
 # Check whether --enable-strip or --disable-strip was given.
 if test "${enable_strip+set}" = set; then
@@ -3903,6 +3921,7 @@ s,@LN_S@,$LN_S,;t t
 s,@BUILDSHARED@,$BUILDSHARED,;t t
 s,@STATIC@,$STATIC,;t t
 s,@DEBUG@,$DEBUG,;t t
+s,@MEMTEST@,$MEMTEST,;t t
 s,@STRIP@,$STRIP,;t t
 s,@WRAPPER@,$WRAPPER,;t t
 s,@SMODELS@,$SMODELS,;t t
