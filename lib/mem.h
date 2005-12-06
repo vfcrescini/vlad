@@ -33,16 +33,61 @@
 
 #include <vlad/vlad.h>
 
-/* malloc/new macros */
-#define VLAD_MEM_ADT_MALLOC(X,Y)  ((X *) malloc(sizeof(X) * Y))
-#define VLAD_MEM_STR_MALLOC(X)    \
-  ((char *) malloc(sizeof(char) * (strlen(X) + 1)))
-#define VLAD_MEM_REALLOC(X,Y,Z)   \
-  ((Y *) realloc(X, sizeof(Y) * (Z)))
-#define VLAD_MEM_FREE(X)          (free(X))
+#ifdef VLAD_MEMTEST
+  void *vlad_mem_malloc(size_t a_size);
+  void *vlad_mem_realloc(void *a_ptr, size_t a_size);
+  void vlad_mem_free(void *a_ptr);
+#endif
+
 #ifdef __cplusplus
-  #define VLAD_MEM_NEW(X)         (new(std::nothrow) X)
-  #define VLAD_MEM_DELETE(X)      (delete X)
+class vlad_mem
+{
+  public :
+  #ifdef VLAD_MEMTEST
+    void *operator new(size_t a_size);
+    void *operator new(size_t a_size, const std::nothrow_t &a_nt) throw();
+    void *operator new[](size_t a_size);
+    void *operator new[](size_t a_size, const std::nothrow_t &a_nt) throw();
+    void operator delete(void *a_ptr);
+    void operator delete[](void *a_ptr);
+  #endif
+} ;
+#endif
+
+/* generic malloc */
+#ifdef VLAD_MEMTEST
+  #define VLAD_MEM_ADT_MALLOC(X,Y) ((X *) vlad_mem_malloc(sizeof(X) * Y))
+#else
+  #define VLAD_MEM_ADT_MALLOC(X,Y) ((X *) malloc(sizeof(X) * Y))
+#endif
+
+/* special string malloc (allocate enough mem to accomodate string X) */
+#ifdef VLAD_MEMTEST
+  #define VLAD_MEM_STR_MALLOC(X) \
+    ((char *) vlad_mem_malloc(sizeof(char) * (strlen(X) + 1)))
+#else
+  #define VLAD_MEM_STR_MALLOC(X) \
+    ((char *) malloc(sizeof(char) * (strlen(X) + 1)))
+#endif
+
+/* reallocate mem X of type Y to size Z */
+#ifdef VLAD_MEMTEST
+  #define VLAD_MEM_REALLOC(X,Y,Z) ((Y *) vlad_mem_realloc(X, sizeof(Y) * (Z)))
+#else
+  #define VLAD_MEM_REALLOC(X,Y,Z) ((Y *) realloc(X, sizeof(Y) * (Z)))
+#endif
+
+/* generic free */
+#ifdef VLAD_MEMTEST
+  #define VLAD_MEM_FREE(X) (vlad_mem_free(X))
+#else
+  #define VLAD_MEM_FREE(X) (free(X))
+#endif
+
+/* for c++, we have new and delete */
+#ifdef __cplusplus
+  #define VLAD_MEM_NEW(X) (new(std::nothrow) X)
+  #define VLAD_MEM_DELETE(X) (delete X)
 #endif
 
 #endif
