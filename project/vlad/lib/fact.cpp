@@ -69,41 +69,41 @@ vlad_fact::~vlad_fact()
 /* returns true if items are equal */
 bool vlad_fact::cmp(vlad_list_item *a_item)
 {
-  vlad_fact *tmp = NULL;
+  vlad_fact *fact = NULL;
 
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<vlad_fact *>(a_item)) == NULL)
+  if ((fact = dynamic_cast<vlad_fact *>(a_item)) == NULL)
     return false;
 
   /* if both are uninitialised, return true. if only one, return false */
   if (!m_init)
-    return !tmp->m_init;
-  if (!tmp->m_init)
+    return !fact->m_init;
+  if (!fact->m_init)
     return false;
 
   /* make sure the types are equal */
-  if (m_type != tmp->m_type)
+  if (m_type != fact->m_type)
     return false;
 
   switch(m_type) {
     case VLAD_ATOM_HOLDS :
       return
-        (m_truth == tmp->m_truth) &&
-        !strcmp(m_holds.subject, tmp->m_holds.subject) &&
-        !strcmp(m_holds.access, tmp->m_holds.access) &&
-        !strcmp(m_holds.object, tmp->m_holds.object);
+        (m_truth == fact->m_truth) &&
+        !strcmp(m_holds.subject, fact->m_holds.subject) &&
+        !strcmp(m_holds.access, fact->m_holds.access) &&
+        !strcmp(m_holds.object, fact->m_holds.object);
     case VLAD_ATOM_MEMBER :
       return
-        (m_truth == tmp->m_truth) &&
-        !strcmp(m_member.element, tmp->m_member.element) &&
-        !strcmp(m_member.group, tmp->m_member.group);
+        (m_truth == fact->m_truth) &&
+        !strcmp(m_member.element, fact->m_member.element) &&
+        !strcmp(m_member.group, fact->m_member.group);
     case VLAD_ATOM_SUBSET :
       return
-        (m_truth == tmp->m_truth) &&
-        !strcmp(m_subset.group1, tmp->m_subset.group1) &&
-        !strcmp(m_subset.group2, tmp->m_subset.group2);
+        (m_truth == fact->m_truth) &&
+        !strcmp(m_subset.group1, fact->m_subset.group1) &&
+        !strcmp(m_subset.group2, fact->m_subset.group2);
   }
 
   return false;
@@ -423,7 +423,7 @@ int vlad_fact::replace(vlad_varlist *a_vlist,
 {
   int retval;
   unsigned int index;
-  char *tmp[3];
+  char *name[3];
 
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -453,61 +453,61 @@ int vlad_fact::replace(vlad_varlist *a_vlist,
     case VLAD_ATOM_HOLDS :
       /* subject */
       if ((retval = a_vlist->get(m_holds.subject, &index)) == VLAD_NOTFOUND)
-        tmp[0] = m_holds.subject;
+        name[0] = m_holds.subject;
       else if (retval == VLAD_OK)
-        a_ilist->get(index, &(tmp[0]));
+        a_ilist->get(index, &(name[0]));
       else
         return retval;
       /* access */
       if ((retval = a_vlist->get(m_holds.access, &index)) == VLAD_NOTFOUND)
-        tmp[1] = m_holds.access;
+        name[1] = m_holds.access;
       else if (retval == VLAD_OK)
-        a_ilist->get(index, &(tmp[1]));
+        a_ilist->get(index, &(name[1]));
       else
         return retval;
       /* object */
       if ((retval = a_vlist->get(m_holds.object, &index)) == VLAD_NOTFOUND)
-        tmp[2] = m_holds.object;
+        name[2] = m_holds.object;
       else if (retval == VLAD_OK)
-        a_ilist->get(index, &(tmp[2]));
+        a_ilist->get(index, &(name[2]));
       else
         return retval;
 
-      return (*a_fact)->init_holds(tmp[0], tmp[1], tmp[2], m_truth);
+      return (*a_fact)->init_holds(name[0], name[1], name[2], m_truth);
     case VLAD_ATOM_MEMBER :
       /* element */
       if ((retval = a_vlist->get(m_member.element, &index)) == VLAD_NOTFOUND)
-        tmp[0] = m_member.element;
+        name[0] = m_member.element;
       else if (retval == VLAD_OK)
-        a_ilist->get(index, &(tmp[0]));
+        a_ilist->get(index, &(name[0]));
       else
         return retval;
       /* group */
       if ((retval = a_vlist->get(m_member.group, &index)) == VLAD_NOTFOUND)
-        tmp[1] = m_member.group;
+        name[1] = m_member.group;
       else if (retval == VLAD_OK)
-        a_ilist->get(index, &(tmp[1]));
+        a_ilist->get(index, &(name[1]));
       else
         return retval;
 
-      return (*a_fact)->init_member(tmp[0], tmp[1], m_truth);
+      return (*a_fact)->init_member(name[0], name[1], m_truth);
     case VLAD_ATOM_SUBSET :
       /* group1 */
       if ((retval = a_vlist->get(m_subset.group1, &index)) == VLAD_NOTFOUND)
-        tmp[0] = m_subset.group1;
+        name[0] = m_subset.group1;
       else if (retval == VLAD_OK)
-        a_ilist->get(index, &(tmp[0]));
+        a_ilist->get(index, &(name[0]));
       else
         return retval;
       /* group2 */
       if ((retval = a_vlist->get(m_subset.group2, &index)) == VLAD_NOTFOUND)
-        tmp[1] = m_subset.group2;
+        name[1] = m_subset.group2;
       else if (retval == VLAD_OK)
-        a_ilist->get(index, &(tmp[1]));
+        a_ilist->get(index, &(name[1]));
       else
         return retval;
 
-      return (*a_fact)->init_subset(tmp[0], tmp[1], m_truth);
+      return (*a_fact)->init_subset(name[0], name[1], m_truth);
   }
 
   return VLAD_FAILURE;
