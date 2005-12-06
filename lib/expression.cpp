@@ -123,12 +123,12 @@ int vlad_expression::varlist(vlad_varlist **a_list)
 {
   int retval;
   unsigned int i;
-  vlad_fact *tmp;
+  vlad_fact *fact;
 
   for (i = 0; i < vlad_list::length(); i++) {
-    if ((retval = get(i, &tmp)) != VLAD_OK)
+    if ((retval = get(i, &fact)) != VLAD_OK)
       return retval;
-    if ((retval = tmp->varlist(a_list)) != VLAD_OK)
+    if ((retval = fact->varlist(a_list)) != VLAD_OK)
       return retval;
   }
 
@@ -140,12 +140,12 @@ int vlad_expression::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
 {
   int retval;
   unsigned int i;
-  vlad_fact *tmp;
+  vlad_fact *fact;
 
   for (i = 0; i < vlad_list::length(); i++) {
-    if ((retval = vlad_expression::get(i, &tmp)) != VLAD_OK)
+    if ((retval = vlad_expression::get(i, &fact)) != VLAD_OK)
       return retval;
-    if ((retval = tmp->verify(a_stab, a_vlist)) != VLAD_OK)
+    if ((retval = fact->verify(a_stab, a_vlist)) != VLAD_OK)
       return retval;
   }
 
@@ -219,16 +219,16 @@ int vlad_expression::vcopy(vlad_symtab *a_stab,
 void vlad_expression::print(char *a_str)
 {
   unsigned int i;
-  char tmp_str[VLAD_MAXLEN_STR];
-  vlad_fact *tmp_obj;
+  char str[VLAD_MAXLEN_STR];
+  vlad_fact *obj;
 
   for (i = 0; i < vlad_list::length(); i++) {
-    if (vlad_list::get(i, (vlad_list_item **) &tmp_obj) != VLAD_OK)
+    if (vlad_list::get(i, (vlad_list_item **) &obj) != VLAD_OK)
       break;
 
-    memset(tmp_str, 0, VLAD_MAXLEN_STR);
-    tmp_obj->print(tmp_str);
-    sprintf(a_str, "%s %s", a_str, tmp_str);
+    memset(str, 0, VLAD_MAXLEN_STR);
+    obj->print(str);
+    sprintf(a_str, "%s %s", a_str, str);
   }
 }
 #endif

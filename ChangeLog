@@ -1,5 +1,15 @@
 2005-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/expression.cpp :
+	* lib/seqtab.cpp :
+	* lib/smwrap.cpp :
+	* lib/stringlist.cpp :
+	* lib/updatetab.cpp :
+	* lib/wrapper.cpp :
+
+	  - Cleanup: renamed those silly variable names that is prefixed with
+	    _tmp.
+
 	* lib/polbase.cpp :
 
 	  - Added delete() calls for the tmp expressions used in the generation

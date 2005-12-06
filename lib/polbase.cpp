@@ -382,8 +382,8 @@ int vlad_polbase::list_seqtab(FILE *a_fs)
   int retval;
   unsigned int i;
   unsigned int j;
-  char *tmp_name;
-  vlad_stringlist *tmp_ilist;
+  char *name;
+  vlad_stringlist *ilist;
 
   /* we only allow this function after policy base is closed */
   if (m_stage < 3)
@@ -394,18 +394,18 @@ int vlad_polbase::list_seqtab(FILE *a_fs)
 
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
     /* get the update ref */
-    if ((retval = m_setable->get(i, &tmp_name, &tmp_ilist)) != VLAD_OK)
+    if ((retval = m_setable->get(i, &name, &ilist)) != VLAD_OK)
       return retval;
     /* now print */
-    fprintf(a_fs, "%d %s(", i, tmp_name);
+    fprintf(a_fs, "%d %s(", i, name);
     /* also do the stringlist */
-    for (j = 0; j < VLAD_LIST_LENGTH(tmp_ilist); j++) {
-      char *tmp_arg;
-      if ((retval = tmp_ilist->get(j, &tmp_arg)) != VLAD_OK) {
+    for (j = 0; j < VLAD_LIST_LENGTH(ilist); j++) {
+      char *arg;
+      if ((retval = ilist->get(j, &arg)) != VLAD_OK) {
         fprintf(a_fs, ")\n");
         return retval;
       }
-      fprintf(a_fs, "%s%s", ((j == 0) ? "" : ","), tmp_arg);
+      fprintf(a_fs, "%s%s", ((j == 0) ? "" : ","), arg);
     }
     fprintf(a_fs, ")\n");
   }
