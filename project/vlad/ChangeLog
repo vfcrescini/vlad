@@ -1,5 +1,7 @@
 2005-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Tagged vlad-1_1_2
+
 	* test/mem_test.sh :
 
 	  - Added memory test script.
