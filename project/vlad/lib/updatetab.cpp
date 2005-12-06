@@ -51,19 +51,19 @@ vlad_updatedef::~vlad_updatedef()
 /* compare 2 update defs */
 bool vlad_updatedef::cmp(vlad_list_item *a_item)
 {
-  vlad_updatedef *tmp = NULL;
+  vlad_updatedef *udef = NULL;
 
   if (a_item == NULL)
     return false;
 
-  if ((tmp = dynamic_cast<vlad_updatedef *>(a_item)) == NULL)
+  if ((udef = dynamic_cast<vlad_updatedef *>(a_item)) == NULL)
     return false;
 
   /* if both are uninit return true. if only one -- false */
   if (!m_init)
-    return !tmp->m_init;
+    return !udef->m_init;
 
-  if (!tmp->m_init)
+  if (!udef->m_init)
     return false;
 
   /*
@@ -71,7 +71,7 @@ bool vlad_updatedef::cmp(vlad_list_item *a_item)
    * then we consider the update equivalent.
    */
 
-  return !strcmp(m_name, tmp->m_name);
+  return !strcmp(m_name, udef->m_name);
 }
 
 int vlad_updatedef::init(const char *a_name,
@@ -139,17 +139,17 @@ int vlad_updatetab::add(const char *a_name,
                         vlad_expression *a_postcond)
 {
   int retval;
-  vlad_updatedef *tmp;
+  vlad_updatedef *udef;
 
-  if ((tmp = VLAD_MEM_NEW(vlad_updatedef())) == NULL)
+  if ((udef = VLAD_MEM_NEW(vlad_updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = tmp->init(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK) {
-    VLAD_MEM_DELETE(tmp);
+  if ((retval = udef->init(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK) {
+    VLAD_MEM_DELETE(udef);
     return retval;
   }
 
-  return vlad_list::add((vlad_list_item *) tmp);
+  return vlad_list::add((vlad_list_item *) udef);
 }
 
 /* get update by m_name */
@@ -159,8 +159,8 @@ int vlad_updatetab::get(const char *a_name,
                         vlad_expression **a_postcond)
 {
   int retval;
-  char *tmp_name;
-  vlad_updatedef *tmp_def;
+  char *name;
+  vlad_updatedef *udef;
   vlad_updatedef **lst;
   unsigned int size;
 
@@ -168,26 +168,26 @@ int vlad_updatetab::get(const char *a_name,
     return VLAD_NULLPTR;
 
   /* create a dummy updatedef to search */
-  if ((tmp_name = VLAD_MEM_STR_MALLOC(a_name)) == NULL)
+  if ((name = VLAD_MEM_STR_MALLOC(a_name)) == NULL)
     return VLAD_MALLOCFAILED;
 
-  strcpy(tmp_name, a_name);
+  strcpy(name, a_name);
 
-  if ((tmp_def = VLAD_MEM_NEW(vlad_updatedef())) == NULL)
+  if ((udef = VLAD_MEM_NEW(vlad_updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = tmp_def->init(tmp_name, NULL, NULL, NULL)) != VLAD_OK)
+  if ((retval = udef->init(name, NULL, NULL, NULL)) != VLAD_OK)
     return retval;
 
-  if ((retval = vlad_list::get((vlad_list_item *) tmp_def, (vlad_list_item ***) &lst, &size)) != VLAD_OK)
+  if ((retval = vlad_list::get((vlad_list_item *) udef, (vlad_list_item ***) &lst, &size)) != VLAD_OK)
     return retval;
 
-  /* only one. m_name is already copied and will be deleted with tmp */
-  if ((retval = lst[0]->get(&tmp_name, a_vlist, a_precond, a_postcond)) != VLAD_OK)
+  /* only one. m_name is already copied and will be deleted with udef */
+  if ((retval = lst[0]->get(&name, a_vlist, a_precond, a_postcond)) != VLAD_OK)
     return retval;
 
   VLAD_MEM_FREE(lst);
-  VLAD_MEM_DELETE(tmp_def);
+  VLAD_MEM_DELETE(udef);
 
   return VLAD_OK;
 }
@@ -200,15 +200,15 @@ int vlad_updatetab::get(unsigned int a_index,
                         vlad_expression **a_postcond)
 {
   int retval;
-  vlad_updatedef *tmp_def;
+  vlad_updatedef *udef;
 
   if (a_name == NULL || a_vlist == NULL || a_precond == NULL || a_postcond == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &tmp_def)) != VLAD_OK)
+  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &udef)) != VLAD_OK)
     return retval;
 
-  if ((retval = tmp_def->get(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK)
+  if ((retval = udef->get(a_name, a_vlist, a_precond, a_postcond)) != VLAD_OK)
     return retval;
 
   return VLAD_OK;
@@ -221,25 +221,25 @@ int vlad_updatetab::replace(const char *a_name,
                             vlad_expression **a_postcond)
 {
   int retval;
-  vlad_expression *tmp_precond;
-  vlad_expression *tmp_postcond;
-  vlad_varlist *tmp_vlist;
+  vlad_expression *exp_pr;
+  vlad_expression *exp_po;
+  vlad_varlist *vlist;
 
   if (a_name == NULL || a_precond == NULL || a_postcond == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = get(a_name, &tmp_vlist, &tmp_precond, &tmp_postcond)) != VLAD_OK)
+  if ((retval = get(a_name, &vlist, &exp_pr, &exp_po)) != VLAD_OK)
     return retval;
 
-  if (tmp_precond != NULL) {
-    if ((retval = tmp_precond->replace(tmp_vlist, a_ilist, a_precond)) != VLAD_OK)
+  if (exp_pr != NULL) {
+    if ((retval = exp_pr->replace(vlist, a_ilist, a_precond)) != VLAD_OK)
       return retval;
   }
   else
     *a_precond = NULL;
 
-  if (tmp_postcond != NULL) {
-    if ((retval = tmp_postcond->replace(tmp_vlist, a_ilist, a_postcond)) != VLAD_OK)
+  if (exp_po != NULL) {
+    if ((retval = exp_po->replace(vlist, a_ilist, a_postcond)) != VLAD_OK)
       return retval;
   }
   else
