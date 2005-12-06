@@ -109,6 +109,14 @@ else
   VLAD_CXXFLAGS="-O3 $VLAD_CXXFLAGS"
 fi
 
+# --enable-memtest
+AC_ARG_ENABLE(memtest,AC_HELP_STRING([--enable-memtest],[enable memory testing feature for debugging (default is disabled)]))
+
+if test "x$enable_memtest" != "x" && test "x$enable_memtest" != "xno"; then
+  AC_DEFINE(VLAD_MEMTEST,[yes])
+  AC_SUBST(MEMTEST,[yes])
+fi
+
 # --enable-strip
 AC_ARG_ENABLE(strip,AC_HELP_STRING([--enable-strip],[run strip program (default is disabled)]))
 
