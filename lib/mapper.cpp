@@ -213,7 +213,7 @@ int vlad_mapper::encode_fact(vlad_fact *a_fact,
   int retval;
   unsigned char type;
   bool truth;
-  char *tmp[3];
+  char *name[3];
 
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -221,18 +221,18 @@ int vlad_mapper::encode_fact(vlad_fact *a_fact,
   if (a_fact == NULL || a_id == NULL)
     return VLAD_NULLPTR;
 
-  retval = a_fact->get(&(tmp[0]), &(tmp[1]), &(tmp[2]), &type, &truth);
+  retval = a_fact->get(&(name[0]), &(name[1]), &(name[2]), &type, &truth);
 
   if (retval!= VLAD_OK)
     return retval;
 
   switch(type) {
     case VLAD_ATOM_HOLDS :
-      return encode_holds(tmp[0], tmp[1], tmp[2], a_state, truth, a_id);
+      return encode_holds(name[0], name[1], name[2], a_state, truth, a_id);
     case VLAD_ATOM_MEMBER :
-      return encode_memb(tmp[0], tmp[1], a_state, truth, a_id);
+      return encode_memb(name[0], name[1], a_state, truth, a_id);
     case VLAD_ATOM_SUBSET :
-      return encode_subst(tmp[0], tmp[1], a_state, truth, a_id);
+      return encode_subst(name[0], name[1], a_state, truth, a_id);
   }
 
   return VLAD_FAILURE;
@@ -244,7 +244,7 @@ int vlad_mapper::decode_fact(unsigned int a_id,
                              vlad_fact **a_fact)
 {
   int retval;
-  char *tmp[3];
+  char *name[3];
   unsigned char type;
   bool truth;
 
@@ -266,7 +266,7 @@ int vlad_mapper::decode_fact(unsigned int a_id,
   if (a_id < get_totals(VLAD_ATOM_HOLDS)) {
     type = VLAD_ATOM_HOLDS;
 
-    retval = decode_holds(a_id, &(tmp[0]), &(tmp[1]), &(tmp[2]));
+    retval = decode_holds(a_id, &(name[0]), &(name[1]), &(name[2]));
 
     if (retval != VLAD_OK)
       return retval;
@@ -274,7 +274,7 @@ int vlad_mapper::decode_fact(unsigned int a_id,
   else if (a_id < get_totals(VLAD_ATOM_HOLDS) + get_totals(VLAD_ATOM_MEMBER)) {
     type = VLAD_ATOM_MEMBER;
 
-    retval = decode_memb(a_id - get_totals(VLAD_ATOM_HOLDS), &(tmp[0]), &(tmp[1]));
+    retval = decode_memb(a_id - get_totals(VLAD_ATOM_HOLDS), &(name[0]), &(name[1]));
 
     if (retval != VLAD_OK)
       return retval;
@@ -283,8 +283,8 @@ int vlad_mapper::decode_fact(unsigned int a_id,
     type = VLAD_ATOM_SUBSET;
 
     retval = decode_subst(a_id - (get_totals(VLAD_ATOM_HOLDS) + get_totals(VLAD_ATOM_MEMBER)),
-                          &(tmp[0]),
-                          &(tmp[1]));
+                          &(name[0]),
+                          &(name[1]));
 
     if (retval != VLAD_OK)
       return retval;
@@ -294,7 +294,7 @@ int vlad_mapper::decode_fact(unsigned int a_id,
   if ((*a_fact = VLAD_MEM_NEW(vlad_fact())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  retval = (*a_fact)->init(tmp[0], tmp[1], tmp[2], type, truth);
+  retval = (*a_fact)->init(name[0], name[1], name[2], type, truth);
 
   if (retval != VLAD_OK) {
     VLAD_MEM_DELETE(*a_fact);
