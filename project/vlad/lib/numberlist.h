@@ -25,12 +25,12 @@
 #include <vlad/list.h>
 
 /* a number */
-class vlad_number : public vlad_list_item
+class vlad_numberlist_item : public vlad_list_item
 {
   public :
 
-    vlad_number();
-    ~vlad_number();
+    vlad_numberlist_item();
+    ~vlad_numberlist_item();
 
     /* compare item with this number */
     bool cmp(vlad_list_item *a_item);

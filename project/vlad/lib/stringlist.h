@@ -24,12 +24,12 @@
 #ifndef __VLAD_STRINGLIST_H
 #define __VLAD_STRINGLIST_H
 
-class vlad_string : public vlad_list_item
+class vlad_stringlist_item : public vlad_list_item
 {
   public :
 
-    vlad_string();
-    ~vlad_string();
+    vlad_stringlist_item();
+    ~vlad_stringlist_item();
 
     /* compare item with this string */
     bool cmp(vlad_list_item *a_item);

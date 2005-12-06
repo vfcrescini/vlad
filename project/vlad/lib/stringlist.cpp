@@ -27,38 +27,38 @@
 #include <vlad/mem.h>
 #include <vlad/stringlist.h>
 
-vlad_string::vlad_string()
+vlad_stringlist_item::vlad_stringlist_item()
 {
   m_string = NULL;
 }
 
-vlad_string::~vlad_string()
+vlad_stringlist_item::~vlad_stringlist_item()
 {
   if (m_string != NULL)
     VLAD_MEM_FREE(m_string);
 }
 
 /* compare item with this string */
-bool vlad_string::cmp(vlad_list_item *a_item)
+bool vlad_stringlist_item::cmp(vlad_list_item *a_item)
 {
-  vlad_string *vstr = NULL;
+  vlad_stringlist_item *sitem = NULL;
 
   /* a NULL will not match anything */
   if (a_item == NULL)
     return false;
 
-  if ((vstr = dynamic_cast<vlad_string *>(a_item)) == NULL)
+  if ((sitem = dynamic_cast<vlad_stringlist_item *>(a_item)) == NULL)
     return false;
 
   /* only return true if they are both NULL */
-  if (vstr->m_string == NULL)
+  if (sitem->m_string == NULL)
       return (m_string == NULL);
 
-  return (strcmp(vstr->m_string, m_string) == 0);
+  return (strcmp(sitem->m_string, m_string) == 0);
 }
 
 /* init with str */
-int vlad_string::init(const char *a_str)
+int vlad_stringlist_item::init(const char *a_str)
 {
   if (a_str == NULL)
     return VLAD_NULLPTR;
@@ -73,14 +73,14 @@ int vlad_string::init(const char *a_str)
 }
 
 /* get value */
-char *vlad_string::get()
+char *vlad_stringlist_item::get()
 {
   return m_string;
 }
 
 #ifdef VLAD_DEBUG
 /* assuming s has enough memory allocation */
-void vlad_string::print(char *a_str)
+void vlad_stringlist_item::print(char *a_str)
 {
   strcpy(a_str, (m_string ? m_string : ""));
 }
@@ -99,19 +99,19 @@ vlad_stringlist::~vlad_stringlist()
 int vlad_stringlist::add(const char *a_str)
 {
   int retval;
-  vlad_string *vstr = NULL;
+  vlad_stringlist_item *sitem = NULL;
 
   if (a_str == NULL)
     return VLAD_NULLPTR;
 
-  if ((vstr = VLAD_MEM_NEW(vlad_string())) == NULL)
+  if ((sitem = VLAD_MEM_NEW(vlad_stringlist_item())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = vstr->init(a_str)) != VLAD_OK)
+  if ((retval = sitem->init(a_str)) != VLAD_OK)
     return retval;
 
-  if ((retval = vlad_list::add(vstr)) != VLAD_OK) {
-    VLAD_MEM_DELETE(vstr);
+  if ((retval = vlad_list::add(sitem)) != VLAD_OK) {
+    VLAD_MEM_DELETE(sitem);
     return retval;
   }
   return VLAD_OK;
@@ -121,17 +121,17 @@ int vlad_stringlist::add(const char *a_str)
 int vlad_stringlist::get(const char *a_str, unsigned int *a_index)
 {
   int retval;
-  vlad_string vstr;
+  vlad_stringlist_item sitem;
   unsigned int size;
   unsigned int *array;
 
   if (a_str == NULL || a_index == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = vstr.init(a_str)) != VLAD_OK)
+  if ((retval = sitem.init(a_str)) != VLAD_OK)
     return retval;
 
-  if ((retval = vlad_list::get(&vstr, &array, &size)) != VLAD_OK)
+  if ((retval = vlad_list::get(&sitem, &array, &size)) != VLAD_OK)
     return retval;
 
   /* there should be exactly one in the array */
@@ -146,17 +146,17 @@ int vlad_stringlist::get(const char *a_str, unsigned int *a_index)
 int vlad_stringlist::get(unsigned int a_index, char **a_str)
 {
   int retval;
-  vlad_string *vstr = NULL;
+  vlad_stringlist_item *sitem = NULL;
 
   /*
    * this will give a reference to the actual string and not a copy,
    * so care must be taken to ensure that s is not changed.
    */
 
-  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &vstr)) != VLAD_OK)
+  if ((retval = vlad_list::get(a_index, (vlad_list_item **) &sitem)) != VLAD_OK)
     return retval;
 
-  *a_str = vstr->get();
+  *a_str = sitem->get();
 
   return VLAD_OK;
 }
@@ -165,12 +165,12 @@ int vlad_stringlist::get(unsigned int a_index, char **a_str)
 int vlad_stringlist::find(const char *a_str)
 {
   int retval;
-  vlad_string vstr;
+  vlad_stringlist_item sitem;
 
-  if ((retval = vstr.init(a_str)) != VLAD_OK)
+  if ((retval = sitem.init(a_str)) != VLAD_OK)
     return retval;
 
-  return vlad_list::find(&vstr);
+  return vlad_list::find(&sitem);
 }
 
 #ifdef VLAD_DEBUG
@@ -179,15 +179,15 @@ void vlad_stringlist::print(char *a_str)
 {
   unsigned int i;
   char str[VLAD_MAXLEN_STR];
-  vlad_string *obj;
+  vlad_stringlist_item *sitem;
 
   memset(str, 0, VLAD_MAXLEN_STR);
 
   for (i = 0; i < vlad_list::length(); i++) {
-    if (vlad_list::get(i, (vlad_list_item **) &obj) != VLAD_OK)
+    if (vlad_list::get(i, (vlad_list_item **) &sitem) != VLAD_OK)
       break;
 
-    obj->print(str);
+    sitem->print(str);
     sprintf(a_str, "%s %s", a_str, str);
   }
 }
