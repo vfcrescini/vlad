@@ -22,12 +22,13 @@
 #ifndef __VLAD_MAPPER_H
 #define __VLAD_MAPPER_H
 
+#include <vlad/mem.h>
 #include <vlad/symtab.h>
 #include <vlad/fact.h>
 
 /* a class that maps facts to integers */
 
-class vlad_mapper
+class vlad_mapper : public vlad_mem
 {
   public :
 

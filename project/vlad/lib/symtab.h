@@ -22,10 +22,11 @@
 #ifndef __VLAD_SYMTAB_H
 #define __VLAD_SYMTAB_H
 
+#include <vlad/mem.h>
 #include <vlad/stringlist.h>
 #include <vlad/identifier.h>
 
-class vlad_symtab
+class vlad_symtab : public vlad_mem
 {
   public :
 

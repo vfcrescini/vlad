@@ -22,9 +22,11 @@
 #ifndef __VLAD_LIST_H
 #define __VLAD_LIST_H
 
+#include <vlad/mem.h>
+
 /* abstract class to be used as the items in the list */
 
-class vlad_list_item
+class vlad_list_item : public vlad_mem
 {
   public :
 
@@ -45,7 +47,7 @@ typedef struct vlad_list_node
   struct vlad_list_node *next;
 } vlad_list_node;
 
-class vlad_list
+class vlad_list : public vlad_mem
 {
   public :
 

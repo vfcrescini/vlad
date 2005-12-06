@@ -1,5 +1,32 @@
 2005-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* configure :
+	* configure.ac :
+	* lib/config.h.in :
+
+	  - Added a new --enable-memtest option to compile the alternate
+	    memory allocator/deallocator functions and classes.
+
+	* lib/Makefile.in :
+
+	  - Now compiles mem.cpp
+
+	* lib/list.h :
+	* lib/mapper.h :
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+	* lib/smwrap.h :
+	* lib/symtab.h :
+
+	  - Classes in these files now inherits from vlad_mem.
+
+	* lib/mem.h :
+	* lib/mem.cpp :
+
+	  - If configured with --enable-memtest, the special new/malloc/etc.
+	    wrapper functions will be compiled. Each of these wrappers dumps
+	    the mem address to stderr before alloc/deallocing memory.
+
 	* lib/expression.cpp :
 	* lib/seqtab.cpp :
 	* lib/smwrap.cpp :
