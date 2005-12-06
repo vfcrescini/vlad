@@ -24,12 +24,14 @@
 
 /* class smwrap for the smodels library */
 
-#include <vlad/numberlist.h>
 #include <smodels.h>
 #include <api.h>
 #include <atomrule.h>
 
-class vlad_smwrap
+#include <vlad/mem.h>
+#include <vlad/numberlist.h>
+
+class vlad_smwrap : public vlad_mem
 {
   public :
 

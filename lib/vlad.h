@@ -54,6 +54,7 @@
 #define VLAD_STR_RULES           "Rules"
 #define VLAD_STR_QUERY           "?"
 #define VLAD_STR_TERMINATOR      "."
+#define VLAD_STR_MEMPREFIX       "VLAD"
 
 /* string lengths */
 #define VLAD_MAXLEN_STR          5120

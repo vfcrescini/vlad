@@ -25,6 +25,7 @@
 #include <cstdio>
 
 #include <vlad/vlad.h>
+#include <vlad/mem.h>
 #include <vlad/atom.h>
 #include <vlad/symtab.h>
 #include <vlad/expression.h>
@@ -36,8 +37,8 @@
   #include <vlad/smwrap.h>
 #endif
 
-class vlad_polbase {
-
+class vlad_polbase : public vlad_mem
+{
   public :
 
     vlad_polbase();
