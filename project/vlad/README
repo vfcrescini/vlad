@@ -5,7 +5,7 @@ Build/Use Instructions
 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2005 Dec 05
+Updated: 2005 Dec 08
 -------------------------------------------------------------------------------
 
 REQUIREMENTS :
@@ -40,7 +40,11 @@ BUILD INSTRUCTIONS :
 
         Compile with -g and enable printing of debug messages.
 
-      --enable-time
+      --enable-memtest
+
+        Enables the memory testing routines (for debugging purposes only).
+
+      --enable-timer
 
         Enables the -t timer option that dumps the elapsed time in seconds of
         the compute and query operations.
