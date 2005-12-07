@@ -25,7 +25,6 @@
 #include <vlad/mem.h>
 
 /* abstract class to be used as the items in the list */
-
 class vlad_list_item : public vlad_mem
 {
   public :
@@ -35,6 +34,14 @@ class vlad_list_item : public vlad_mem
 
     /* compares 2 list items */
     virtual bool cmp(vlad_list_item *a_item) = 0;
+} ;
+
+/* class used for traversal of the list */
+class vlad_list_trav : public vlad_mem
+{
+  public :
+    vlad_list_trav();
+    virtual ~vlad_list_trav();
 } ;
 
 /* simple list works like a queue, except the api allows the data to be
@@ -51,8 +58,13 @@ class vlad_list : public vlad_mem
 {
   public :
 
+    /* default is to create a list in which all elements are unique */
     vlad_list();
+
+    /* a_uniq specifies whether items are unique or not */
     vlad_list(bool a_uniq);
+
+    /* dtor */
     virtual ~vlad_list();
 
     /* compares 2 lists */
@@ -61,12 +73,18 @@ class vlad_list : public vlad_mem
     /* returns the length of the list */
     unsigned int length();
 
+    /* traverse the list, calling vlad_list_trav::trav() for each node */
+    int traverse(vlad_list_trav *a_trav);
+
   private :
 
     unsigned int m_length;
     bool m_uniq;
     vlad_list_node *m_head;
     vlad_list_node *m_tail;
+
+    /* called by traverse() */
+    virtual int trav(vlad_list_item *a_item, vlad_list_trav *a_trav);
 
   protected :
 
