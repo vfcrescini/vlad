@@ -192,3 +192,19 @@ void vlad_stringlist::print(char *a_str)
   }
 }
 #endif
+
+/* called by vlad_list::traverse() */
+int vlad_stringlist::trav(vlad_list_item *a_item, vlad_list_trav *a_trav)
+{
+  vlad_stringlist_item *sitem;
+  vlad_stringlist_trav *strav;
+
+  if ((sitem = dynamic_cast<vlad_stringlist_item *>(a_item)) == NULL)
+    return VLAD_NULLPTR;
+
+  if ((strav = dynamic_cast<vlad_stringlist_trav *>(a_trav)) == NULL)
+    return VLAD_NULLPTR;
+
+  return strav->trav((const char *)sitem->get());
+}
+
