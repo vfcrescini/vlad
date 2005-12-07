@@ -1,5 +1,9 @@
 2005-12-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/smwrap.cpp :
+
+	  - Now uses numberlist::traverse().
+
 	* lib/numberlist.cpp :
 	* lib/numberlist.h :
 
