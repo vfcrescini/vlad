@@ -46,10 +46,19 @@ class vlad_numberlist_item : public vlad_list_item
     unsigned int m_number;
 } ;
 
+/* class for traversing */
+class vlad_numberlist_trav : public vlad_list_trav
+{
+  public :
+
+    virtual int trav(unsigned int a_num) = 0;
+} ;
+
 /* a list of numbers */
 class vlad_numberlist : public vlad_list
 {
   public :
+
     vlad_numberlist();
     ~vlad_numberlist();
 
@@ -61,6 +70,11 @@ class vlad_numberlist : public vlad_list
 
     /* empty the list */
     void purge();
+
+  private :
+
+    /* called by vlad_list::traverse() */
+    int trav(vlad_list_item *a_item, vlad_list_trav *a_trav);
 } ;
 
 #endif
