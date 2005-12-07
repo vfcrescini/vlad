@@ -1,5 +1,13 @@
 2005-12-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+
+	  - Removed unnecessary calls to encode_fact() in compute_generate().
+
+	  - Added another print_fact() function. This one take a vlad_fact
+	    instead of a fact id.
+
 	* lib/smwrap.cpp :
 
 	  - Now uses numberlist::traverse().
