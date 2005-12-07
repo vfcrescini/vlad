@@ -1,3 +1,11 @@
+2005-12-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/list.cpp :
+	* lib/list.h :
+
+	  - Added a list::traverse() function and an abstract list_trav class
+	    for traversing the list.
+
 2005-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/numberlist.cpp :

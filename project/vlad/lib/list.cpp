@@ -34,6 +34,15 @@ vlad_list_item::~vlad_list_item()
 {
 }
 
+vlad_list_trav::vlad_list_trav()
+{
+}
+
+vlad_list_trav::~vlad_list_trav()
+{
+}
+
+/* default is to create a list in which all elements are unique */
 vlad_list::vlad_list()
 {
   m_uniq = true;
@@ -42,6 +51,7 @@ vlad_list::vlad_list()
   m_tail = NULL;
 }
 
+/* a_uniq specifies whether items are unique or not */
 vlad_list::vlad_list(bool a_uniq)
 {
   m_uniq = a_uniq;
@@ -50,6 +60,7 @@ vlad_list::vlad_list(bool a_uniq)
   m_tail = NULL;
 }
 
+/* dtor */
 vlad_list::~vlad_list()
 {
   purge(true);
@@ -88,6 +99,34 @@ bool vlad_list::cmp(vlad_list *a_list)
 unsigned int vlad_list::length()
 {
   return m_length;
+}
+
+/* traverse the list, calling vlad_list_trav::trav() for each node */
+int vlad_list::traverse(vlad_list_trav *a_trav)
+{
+  vlad_list_node *node = m_head;
+  int retval = VLAD_OK;
+
+  if (a_trav == NULL)
+    return VLAD_NULLPTR;
+
+  while (node != NULL && retval == VLAD_OK) {
+    retval = trav(dynamic_cast<vlad_list_item *>(node->data), a_trav);
+
+    if (retval != VLAD_OK)
+      return retval;
+
+    node = node->next;
+  }
+
+  return retval;
+}
+
+/* called by traverse() */
+int vlad_list::trav(vlad_list_item *a_item, vlad_list_trav *a_trav)
+{
+  /* default is to do nothing */
+  return VLAD_OK;
 }
 
 /* add pointer to list, assumes memory has been allocated to it */
