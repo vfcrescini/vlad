@@ -50,6 +50,14 @@ class vlad_stringlist_item : public vlad_list_item
     char *m_string;
 } ;
 
+/* class for traversing */
+class vlad_stringlist_trav : public vlad_list_trav
+{
+  public :
+
+    virtual int trav(const char *a_str) = 0;
+} ;
+
 class vlad_stringlist : public vlad_list
 {
   public :
@@ -73,6 +81,11 @@ class vlad_stringlist : public vlad_list
     /* assumimg s has enough memory allocation */
     void print(char *a_str);
 #endif
+
+  private :
+
+    /* called by vlad_list::traverse() */
+    int trav(vlad_list_item *a_item, vlad_list_trav *a_trav);
 } ;
 
 #endif

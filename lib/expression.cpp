@@ -232,3 +232,18 @@ void vlad_expression::print(char *a_str)
   }
 }
 #endif
+
+/* called by vlad_list::traverse() */
+int vlad_expression::trav(vlad_list_item *a_item, vlad_list_trav *a_trav)
+{
+  vlad_fact *nitem;
+  vlad_expression_trav *ntrav;
+
+  if ((nitem = dynamic_cast<vlad_fact *>(a_item)) == NULL)
+    return VLAD_NULLPTR;
+
+  if ((ntrav = dynamic_cast<vlad_expression_trav *>(a_trav)) == NULL)
+    return VLAD_NULLPTR;
+
+  return ntrav->trav(nitem);
+}
