@@ -29,6 +29,46 @@
 #include <vlad/mem.h>
 #include <vlad/smwrap.h>
 
+/* a class for traversing the number list */
+class vlad_smwrap_numberlist_trav : public vlad_numberlist_trav
+{
+  public :
+
+    /* (re)init with values */
+    void init(Api *a_api, bool a_truth);
+
+    /* the function called by vlad_list::traverse() */
+    int trav(unsigned int a_num);
+
+  private :
+
+    Api *m_api;
+    bool m_truth;
+} ;
+
+/* (re)init with values */
+void vlad_smwrap_numberlist_trav::init(Api *a_api, bool a_truth)
+{
+  m_api = a_api;
+  m_truth = a_truth;
+}
+
+/* the function called by vlad_list::traverse() */
+int vlad_smwrap_numberlist_trav::trav(unsigned int a_num)
+{
+  char name[VLAD_MAXLEN_NUM];
+
+  if (m_api == NULL)
+    return VLAD_UNINITIALISED;
+
+  /* for each number, we get the name then add the atom */
+
+  sprintf(name, "%d", a_num);
+  m_api->add_body(m_api->get_atom(name), m_truth);
+
+  return VLAD_OK;
+}
+
 vlad_smwrap::vlad_smwrap()
 {
   m_smod = NULL;
@@ -139,7 +179,6 @@ int vlad_smwrap::add_atom(unsigned int a_atom)
   if ((atom = m_api->new_atom()) == NULL)
     return VLAD_MALLOCFAILED;
 
-  memset(name, 0, VLAD_MAXLEN_NUM);
   sprintf(name, "%d", a_atom);
   m_api->set_name(atom, name);
 
@@ -165,7 +204,6 @@ int vlad_smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
 
     /* if positive, we simply add each axiom */
     for (i = 0; i < a_count; i++) {
-      memset(name, 0, VLAD_MAXLEN_NUM);
       sprintf(name, "%d", va_arg(ap, unsigned int));
 
       m_api->begin_rule(BASICRULE);
@@ -184,7 +222,6 @@ int vlad_smwrap::add_axiom(bool a_tr, unsigned int a_count, ...)
     va_start(ap, a_count);
 
     for (i = 0; i < a_count; i++) {
-      memset(name, 0, VLAD_MAXLEN_NUM);
       sprintf(name, "%d", va_arg(ap, unsigned int));
       m_api->add_body(m_api->get_atom(name), true);
     }
@@ -217,7 +254,6 @@ int vlad_smwrap::add_rule(unsigned int a_pcount,
   m_api->begin_rule(BASICRULE);
 
   /* add head */
-  memset(name, 0, VLAD_MAXLEN_NUM);
   sprintf(name, "%d", a_head);
   m_api->add_head(m_api->get_atom(name));
 
@@ -225,14 +261,12 @@ int vlad_smwrap::add_rule(unsigned int a_pcount,
 
   /* now for the positive body */
   for (i = 0; i < a_pcount; i++) {
-    memset(name, 0, VLAD_MAXLEN_NUM);
     sprintf(name, "%d", va_arg(ap, unsigned int));
     m_api->add_body(m_api->get_atom(name), true);
   }
 
   /* then the negative body */
   for (i = 0; i < a_ncount; i++) {
-    memset(name, 0, VLAD_MAXLEN_NUM);
     sprintf(name, "%d", va_arg(ap, unsigned int));
     m_api->add_body(m_api->get_atom(name), false);
   }
@@ -250,9 +284,8 @@ int vlad_smwrap::add_rule(unsigned int a_head,
                           vlad_numberlist *a_nbody)
 {
   int retval;
-  unsigned int i;
   char name[VLAD_MAXLEN_NUM];
-  unsigned int id;
+  vlad_smwrap_numberlist_trav nltrav;
 
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -264,28 +297,23 @@ int vlad_smwrap::add_rule(unsigned int a_head,
   m_api->begin_rule(BASICRULE);
 
   /* add head */
-  memset(name, 0, VLAD_MAXLEN_NUM);
   sprintf(name, "%d", a_head);
   m_api->add_head(m_api->get_atom(name));
 
   /* now for the positive body */
-  for (i = 0; i < VLAD_LIST_LENGTH(a_pbody); i++) {
-    if ((retval = a_pbody->get(i, &id)) != VLAD_OK)
-      return retval;
+  if (a_pbody) {
+    nltrav.init(m_api, true);
 
-    memset(name, 0, VLAD_MAXLEN_NUM);
-    sprintf(name, "%d", id);
-    m_api->add_body(m_api->get_atom(name), true);
+    if ((retval = a_pbody->traverse(&nltrav)) != VLAD_OK)
+      return retval;
   }
-
+  
   /* then the negative body */
-  for (i = 0; i < VLAD_LIST_LENGTH(a_nbody); i++) {
-    if ((retval = a_nbody->get(i, &id)) != VLAD_OK)
-      return retval;
+  if (a_nbody) {
+    nltrav.init(m_api, false);
 
-    memset(name, 0, VLAD_MAXLEN_NUM);
-    sprintf(name, "%d", id);
-    m_api->add_body(m_api->get_atom(name), false);
+    if ((retval = a_nbody->traverse(&nltrav)) != VLAD_OK)
+      return retval;
   }
 
   m_api->end_rule();
@@ -304,7 +332,6 @@ int vlad_smwrap::ask(unsigned int a_atom, bool *a_res)
   if (a_res == NULL)
     return VLAD_NULLPTR;
 
-  memset(name, 0, VLAD_MAXLEN_NUM);
   sprintf(name, "%d", a_atom);
 
   /* clear previous model computations */
