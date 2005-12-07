@@ -110,3 +110,18 @@ void vlad_numberlist::purge()
 {
   vlad_list::purge(true);
 }
+
+/* called by vlad_list::traverse() */
+int vlad_numberlist::trav(vlad_list_item *a_item, vlad_list_trav *a_trav)
+{
+  vlad_numberlist_item *nitem;
+  vlad_numberlist_trav *ntrav;
+
+  if ((nitem = dynamic_cast<vlad_numberlist_item *>(a_item)) == NULL)
+    return VLAD_NULLPTR;
+
+  if ((ntrav = dynamic_cast<vlad_numberlist_trav *>(a_trav)) == NULL)
+    return VLAD_NULLPTR;
+
+  return ntrav->trav(nitem->get());
+}

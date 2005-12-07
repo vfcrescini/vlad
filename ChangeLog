@@ -1,5 +1,10 @@
 2005-12-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/numberlist.cpp :
+	* lib/numberlist.h :
+
+	  - Added traverse functionality.
+
 	* lib/list.cpp :
 	* lib/list.h :
 
