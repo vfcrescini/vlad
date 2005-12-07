@@ -157,5 +157,8 @@ class vlad_polbase : public vlad_mem
 
     /* dumps a fact with the given id onto the given (open) stream */
     int print_fact(unsigned int a_id, FILE *a_fs);
+
+    /* dumps a fact with the given state onto the given (open) stream */
+    int print_fact(vlad_fact *a_fact, unsigned int a_state, FILE *a_fs);
 } ;
 #endif

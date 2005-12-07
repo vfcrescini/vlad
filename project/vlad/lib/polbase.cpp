@@ -752,16 +752,12 @@ int vlad_polbase::compute_generate(FILE *a_fs)
 
   for (i = 0; i < VLAD_LIST_LENGTH(m_itable); i++) {
     vlad_fact *fact;
-    unsigned int id;
 
     if ((retval = m_itable->get(i, &fact)) != VLAD_OK)
       return retval;
 
-    if ((retval = m_mapper->encode_fact(fact, 0, &id)) != VLAD_OK)
-      return retval;
-
     fprintf(a_fs, "  ");
-    print_fact(id, a_fs);
+    print_fact(fact, 0, a_fs);
     fprintf(a_fs, " %s\n    %s%s\n", VLAD_STR_ARROW, VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
   }
 
@@ -780,7 +776,6 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       vlad_expression *exp_c;
       vlad_expression *exp_n;
       vlad_fact *fact;
-      unsigned int id;
 
       if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n)) != VLAD_OK)
         return retval;
@@ -791,10 +786,8 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_e); i_exp++) {
         if ((retval = exp_e->get(i_exp, &fact)) != VLAD_OK)
           return retval;
-        if ((retval = m_mapper->encode_fact(fact, i, &id)) != VLAD_OK)
-          return retval;
 
-        print_fact(id, a_fs);
+        print_fact(fact, i, a_fs);
 
         if (i_exp + 1 < VLAD_LIST_LENGTH(exp_e))
           fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
@@ -806,11 +799,9 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_c); i_exp++) {
         if ((retval = exp_c->get(i_exp, &fact)) != VLAD_OK)
           return retval;
-        if ((retval = m_mapper->encode_fact(fact, i, &id)) != VLAD_OK)
-          return retval;
 
-        print_fact(id, a_fs);
-        
+        print_fact(fact, i, a_fs);
+
         if (i_exp + 1 < VLAD_LIST_LENGTH(exp_c) || exp_n != NULL)
           fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
       }
@@ -819,11 +810,10 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_n); i_exp++) {
         if ((retval = exp_n->get(i_exp, &fact)) != VLAD_OK)
           return retval;
-        if ((retval = m_mapper->encode_fact(fact, i, &id)) != VLAD_OK)
-          return retval;
 
         fprintf(a_fs, "%s ", VLAD_STR_NOT);
-        print_fact(id, a_fs);
+
+        print_fact(fact, i, a_fs);
 
         if (i_exp + 1 < VLAD_LIST_LENGTH(exp_n))
           fprintf(a_fs, "%s\n    ", VLAD_STR_AND);
@@ -846,7 +836,6 @@ int vlad_polbase::compute_generate(FILE *a_fs)
     unsigned int i_exp;
     char *name;
     vlad_fact *fact;
-    unsigned int id;
     vlad_stringlist *list_s = NULL;
     vlad_expression *exp_pr = NULL;
     vlad_expression *exp_po = NULL;
@@ -863,10 +852,8 @@ int vlad_polbase::compute_generate(FILE *a_fs)
     for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_po); i_exp++) {
       if ((retval = exp_po->get(i_exp, &fact)) != VLAD_OK)
         return retval;
-      if ((retval = m_mapper->encode_fact(fact, i + 1, &id)) != VLAD_OK)
-        return retval;
 
-      print_fact(id, a_fs);
+      print_fact(fact, i + 1, a_fs);
 
       if (i_exp + 1 < VLAD_LIST_LENGTH(exp_po))
           fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
@@ -880,10 +867,8 @@ int vlad_polbase::compute_generate(FILE *a_fs)
     for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_pr); i_exp++) {
       if ((retval = exp_pr->get(i_exp, &fact)) != VLAD_OK)
         return retval;
-      if ((retval = m_mapper->encode_fact(fact, i, &id)) != VLAD_OK)
-        return retval;
 
-      print_fact(id, a_fs);
+      print_fact(fact, i, a_fs);
 
       if (i_exp + 1 < VLAD_LIST_LENGTH(exp_pr))
         fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
@@ -1531,10 +1516,7 @@ int vlad_polbase::print_fact(unsigned int a_id, FILE *a_fs)
 {
   int retval;
   vlad_fact *fact;
-  unsigned char type;
   unsigned int state;
-  bool truth;
-  char *parm[3];
 
   /* we only allow this after polbase is closed */
   if (m_stage < 3)
@@ -1546,7 +1528,28 @@ int vlad_polbase::print_fact(unsigned int a_id, FILE *a_fs)
   if ((retval = m_mapper->decode_fact(a_id, &state, &fact)) != VLAD_OK)
     return retval;
 
-  retval = fact->get(&(parm[0]), &(parm[1]), &(parm[2]), &type, &truth);
+  if ((retval = print_fact(fact, state, a_fs)) != VLAD_OK)
+    return retval;
+
+  VLAD_MEM_DELETE(fact);
+  
+  return VLAD_OK;
+}
+
+/* dumps a fact with the given state onto the given (open) stream */
+int vlad_polbase::print_fact(vlad_fact *a_fact,
+                             unsigned int a_state,
+                             FILE *a_fs)
+{
+  int retval;
+  unsigned char type;
+  bool truth;
+  char *parm[3];
+
+  if (a_fact == NULL | a_fs == NULL)
+    return VLAD_NULLPTR;
+
+  retval = a_fact->get(&(parm[0]), &(parm[1]), &(parm[2]), &type, &truth);
 
   if (retval != VLAD_OK)
     return retval;
@@ -1559,7 +1562,7 @@ int vlad_polbase::print_fact(unsigned int a_id, FILE *a_fs)
               parm[0],
               parm[1],
               parm[2],
-              state,
+              a_state,
               truth ? VLAD_STR_TRUE : VLAD_STR_FALSE);
       break;
     case VLAD_ATOM_MEMBER :
@@ -1568,7 +1571,7 @@ int vlad_polbase::print_fact(unsigned int a_id, FILE *a_fs)
                 VLAD_STR_MEMBER,
                 parm[0],
                 parm[1],
-                state,
+                a_state,
                 truth ? VLAD_STR_TRUE : VLAD_STR_FALSE);
       break;
     case VLAD_ATOM_SUBSET :
@@ -1577,12 +1580,10 @@ int vlad_polbase::print_fact(unsigned int a_id, FILE *a_fs)
                 VLAD_STR_SUBSET,
                 parm[0],
                 parm[1],
-                state,
+                a_state,
                 truth ? VLAD_STR_TRUE : VLAD_STR_FALSE);
       break;
   }
-
-  VLAD_MEM_DELETE(fact);
   
   return VLAD_OK;
 }
