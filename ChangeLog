@@ -8,10 +8,6 @@
 	  - Added another print_fact() function. This one take a vlad_fact
 	    instead of a fact id.
 
-	* lib/smwrap.cpp :
-
-	  - Now uses numberlist::traverse().
-
 	* lib/numberlist.cpp :
 	* lib/numberlist.h :
 
