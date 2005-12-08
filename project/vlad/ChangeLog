@@ -1,3 +1,11 @@
+2005-12-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/stringlist.cpp :
+	* lib/stringlist.h :
+
+	  - vlad_stringlist is now also a list_item. This allows us to make
+	    a list of stinglists.
+
 2005-12-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Tagged vlad-1_2_0
