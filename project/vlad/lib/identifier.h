@@ -44,10 +44,10 @@
 
 /* convenience macros */
 
-#define VLAD_IDENT_BASETYPE(X)   \
+#define VLAD_IDENT_BASETYPE(X) \
   (((X) & VLAD_IDENT_MASK) & ~VLAD_IDENT_GRP)
 
-#define VLAD_IDENT_IS_VALID(X) (  \
+#define VLAD_IDENT_IS_VALID(X) ( \
   ((X) == VLAD_IDENT_SUB_SIN) || \
   ((X) == VLAD_IDENT_ACC_SIN) || \
   ((X) == VLAD_IDENT_OBJ_SIN) || \
@@ -59,21 +59,21 @@
 #define VLAD_IDENT_IS_SUBJECT(X) \
   (((X) & VLAD_IDENT_SUB_SIN) ? true : false)
 
-#define VLAD_IDENT_IS_ACCESS(X)  \
+#define VLAD_IDENT_IS_ACCESS(X) \
   (((X) & VLAD_IDENT_ACC_SIN) ? true : false)
 
-#define VLAD_IDENT_IS_OBJECT(X)  \
+#define VLAD_IDENT_IS_OBJECT(X) \
   (((X) & VLAD_IDENT_OBJ_SIN) ? true : false)
 
-#define VLAD_IDENT_IS_GROUP(X)   \
+#define VLAD_IDENT_IS_GROUP(X) \
   (((X) & VLAD_IDENT_GRP) ? true : false)
 
 /* anything that starts with a small letter is an entity identifier */
-#define VLAD_IDENT_IS_ENT(X)   \
+#define VLAD_IDENT_IS_ENT(X) \
   ((X) ? (((X)[0] >= 'a' && (X)[0] <= 'z') ? true : false) : false)
 
 /* anything that starts with a capital letter is a variable */
-#define VLAD_IDENT_IS_VAR(X)     \
+#define VLAD_IDENT_IS_VAR(X) \
   ((X) ? (((X)[0] >= 'A' && (X)[0] <= 'Z') ? true : false) : false)
 
 #endif
