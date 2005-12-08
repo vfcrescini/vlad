@@ -95,6 +95,17 @@ vlad_stringlist::~vlad_stringlist()
   purge(true);
 }
 
+/* compares 2 lists */
+bool vlad_stringlist::cmp(vlad_list_item *a_item)
+{
+  vlad_list *list;
+
+  if ((list = dynamic_cast<vlad_list *>(a_item)) == NULL)
+    return false;
+
+  return vlad_list::cmp(list);
+}
+
 /* add a string in the list */
 int vlad_stringlist::add(const char *a_str)
 {

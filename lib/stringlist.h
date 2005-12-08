@@ -58,12 +58,15 @@ class vlad_stringlist_trav : public vlad_list_trav
     virtual int trav(const char *a_str) = 0;
 } ;
 
-class vlad_stringlist : public vlad_list
+class vlad_stringlist : public vlad_list, public vlad_list_item
 {
   public :
 
     vlad_stringlist();
     ~vlad_stringlist();
+
+    /* compares 2 lists */
+    bool cmp(vlad_list_item *a_item);
 
     /* add a string in the list */
     int add(const char *a_str);
