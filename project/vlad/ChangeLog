@@ -1,5 +1,10 @@
 2005-12-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/stringlistlist.cpp :
+	* lib/stringlistlist.h :
+
+	  - Added a class to hold a list of stringlists.
+
 	* lib/stringlist.cpp :
 	* lib/stringlist.h :
 
