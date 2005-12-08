@@ -218,4 +218,3 @@ int vlad_stringlist::trav(vlad_list_item *a_item, vlad_list_trav *a_trav)
 
   return strav->trav((const char *)sitem->get());
 }
-
