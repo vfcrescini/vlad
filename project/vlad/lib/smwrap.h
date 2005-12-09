@@ -31,7 +31,7 @@
 #include <vlad/mem.h>
 #include <vlad/numberlist.h>
 
-class vlad_smwrap : public vlad_mem
+class vlad_smwrap : virtual public vlad_mem
 {
   public :
 

@@ -26,7 +26,7 @@
 #include <vlad/stringlist.h>
 #include <vlad/identifier.h>
 
-class vlad_symtab : public vlad_mem
+class vlad_symtab : virtual public vlad_mem
 {
   public :
 
