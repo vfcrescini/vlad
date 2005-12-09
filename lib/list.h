@@ -25,7 +25,7 @@
 #include <vlad/mem.h>
 
 /* abstract class to be used as the items in the list */
-class vlad_list_item : public vlad_mem
+class vlad_list_item : virtual public vlad_mem
 {
   public :
 
@@ -37,7 +37,7 @@ class vlad_list_item : public vlad_mem
 } ;
 
 /* class used for traversal of the list */
-class vlad_list_trav : public vlad_mem
+class vlad_list_trav : virtual public vlad_mem
 {
   public :
     vlad_list_trav();
@@ -54,7 +54,7 @@ typedef struct vlad_list_node
   struct vlad_list_node *next;
 } vlad_list_node;
 
-class vlad_list : public vlad_mem
+class vlad_list : virtual public vlad_mem
 {
   public :
 

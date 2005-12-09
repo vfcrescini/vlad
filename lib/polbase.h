@@ -37,7 +37,7 @@
   #include <vlad/smwrap.h>
 #endif
 
-class vlad_polbase : public vlad_mem
+class vlad_polbase : virtual public vlad_mem
 {
   public :
 

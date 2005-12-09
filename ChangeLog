@@ -1,5 +1,14 @@
 2005-12-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/list.h :
+	* lib/mapper.h :
+	* lib/polbase.h :
+	* lib/smwrap.h :
+	* lib/symtab.h :
+
+	  - vlad_mem is now inherited via virtual inheritance for
+	    disambiguation.
+
 	* lib/stringlistlist.cpp :
 	* lib/stringlistlist.h :
 

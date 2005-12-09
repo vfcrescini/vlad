@@ -28,7 +28,7 @@
 
 /* a class that maps facts to integers */
 
-class vlad_mapper : public vlad_mem
+class vlad_mapper : virtual public vlad_mem
 {
   public :
 
