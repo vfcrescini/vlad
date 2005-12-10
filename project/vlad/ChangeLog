@@ -1,5 +1,7 @@
 2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Tagging vlad-1_2_1
+
 	* Makefile.in :
 
 	  - updatetab.h is now a dependency of seqtab.h.
