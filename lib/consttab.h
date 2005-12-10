@@ -31,22 +31,33 @@
 class vlad_constraint : public vlad_list_item
 {
   public :
+
     vlad_constraint();
     ~vlad_constraint();
+
+    /* return true if the 2 are equal */
     bool cmp(vlad_list_item *a_item);
+
+    /* initialise with the given values */
     int init(vlad_expression *a_exp,
              vlad_expression *a_cond,
              vlad_expression *a_ncond);
+
+    /* gives a reference to the values */
     int get(vlad_expression **a_exp,
             vlad_expression **a_cond,
             vlad_expression **a_ncond);
+
     /* replaces occurences of var with ident. creates a new constraint */
     int replace(const char *a_var,
                 const char *a_ident,
                 vlad_constraint **a_constr);
+
     /* gives a list of vars occuring in the constr, creats a new constr */
     int varlist(vlad_varlist **a_list);
+
   private :
+
     bool m_init;
     vlad_expression *m_exp;
     vlad_expression *m_cond;
@@ -56,11 +67,16 @@ class vlad_constraint : public vlad_list_item
 class vlad_consttab : public vlad_list
 {
   public :
+
     vlad_consttab();
     ~vlad_consttab();
+
+    /* store in list */
     int add(vlad_expression *a_exp,
             vlad_expression *a_cond,
             vlad_expression *a_ncond);
+
+    /* get reference of the constraint matching the index */
     int get(unsigned int a_index,
             vlad_expression **a_exp,
             vlad_expression **a_cond,

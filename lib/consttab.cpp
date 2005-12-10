@@ -44,6 +44,7 @@ vlad_constraint::~vlad_constraint()
     VLAD_MEM_DELETE(m_ncond);
 }
 
+/* return true if the 2 are equal */
 bool vlad_constraint::cmp(vlad_list_item *a_item)
 {
   vlad_constraint *cons = NULL;
@@ -73,6 +74,7 @@ bool vlad_constraint::cmp(vlad_list_item *a_item)
   return true;
 }
 
+/* initialise with the given values */
 int vlad_constraint::init(vlad_expression *a_exp,
                           vlad_expression *a_cond,
                           vlad_expression *a_ncond)
@@ -95,6 +97,7 @@ int vlad_constraint::init(vlad_expression *a_exp,
   return VLAD_OK;
 }
 
+/* gives a reference to the values */
 int vlad_constraint::get(vlad_expression **a_exp,
                          vlad_expression **a_cond,
                          vlad_expression **a_ncond)
@@ -178,6 +181,7 @@ vlad_consttab::~vlad_consttab()
   purge(true);
 }
 
+/* store in list */
 int vlad_consttab::add(vlad_expression *a_exp,
                        vlad_expression *a_cond,
                        vlad_expression *a_ncond)
@@ -196,6 +200,7 @@ int vlad_consttab::add(vlad_expression *a_exp,
   return vlad_list::add((vlad_list_item *) cons);
 }
 
+/* get reference of the constraint matching the index */
 int vlad_consttab::get(unsigned int a_index,
                        vlad_expression **a_exp,
                        vlad_expression **a_cond,

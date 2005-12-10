@@ -40,6 +40,7 @@ class vlad_list_item : virtual public vlad_mem
 class vlad_list_trav : virtual public vlad_mem
 {
   public :
+
     vlad_list_trav();
     virtual ~vlad_list_trav();
 } ;

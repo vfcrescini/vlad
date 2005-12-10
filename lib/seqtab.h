@@ -31,6 +31,7 @@
 class vlad_updateref : public vlad_list_item
 {
   public :
+
     vlad_updateref();
     ~vlad_updateref();
 
@@ -60,6 +61,7 @@ class vlad_updateref : public vlad_list_item
 class vlad_seqtab : public vlad_list
 {
    public :
+
      vlad_seqtab();
      ~vlad_seqtab();
 
