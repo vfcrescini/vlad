@@ -12,7 +12,7 @@ Updated 2005 Dec 10
 
   1.1. Identifiers
 
-    Identifiers are case-sensitive, alpha-numeric characters. 
+    Identifiers are case-sensitive, alpha-numeric characters.
 
     1.1.1 Entity Identifiers
 

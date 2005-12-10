@@ -58,7 +58,7 @@ int vlad_identifier::validate_var_ident(const char *a_ident)
     case 'A' :
     case 'O' :
       /* no need to check the second char here */
-      return VLAD_OK; 
+      return VLAD_OK;
   }
 
   return VLAD_INVALIDINPUT;

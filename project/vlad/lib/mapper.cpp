@@ -187,7 +187,7 @@ unsigned int vlad_mapper::compute_subst(unsigned char a_type,
                           a_truth);
   }
 
-  return 0; 
+  return 0;
 }
 
 /* used by the other compute_*() functions */
