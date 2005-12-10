@@ -24,6 +24,7 @@
 
 #include <vlad/list.h>
 #include <vlad/symtab.h>
+#include <vlad/updatetab.h>
 #include <vlad/expression.h>
 #include <vlad/stringlist.h>
 
@@ -42,8 +43,8 @@ class vlad_updateref : public vlad_list_item
     /* get a reference of this update ref */
     int get(char **a_name, vlad_stringlist **a_list);
 
-    /* verify that all identifiers in the list are in the symtab */
-    int verify(vlad_symtab *a_stab);
+    /* verify that entities are in symtab and update is in updatetab */
+    int verify(vlad_symtab *a_stab, vlad_updatetab *a_utab);
 
 #ifdef VLAD_DEBUG
     void print(char *a_str);

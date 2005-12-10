@@ -95,19 +95,29 @@ int vlad_updateref::get(char **a_name, vlad_stringlist **a_list)
   return VLAD_OK;
 }
 
-/* verify that all identifiers in the list are in the symtab */
-int vlad_updateref::verify(vlad_symtab *a_stab)
+/* verify that entities are in symtab and update is in updatetab */
+int vlad_updateref::verify(vlad_symtab *a_stab, vlad_updatetab *a_utab)
 {
   int retval;
   unsigned int i;
+  vlad_varlist *vlist;
 
-  if (a_stab == NULL)
+  if (a_stab == NULL || a_utab == NULL)
     return VLAD_NULLPTR;
 
-  /* if the varlist is empty, there's nothing to do */
-  if (m_list == NULL)
+  /* get the varlist of the update definition */
+  if ((retval = a_utab->get(m_name, &vlist, NULL, NULL)) != VLAD_OK)
+    return retval;
+
+  /* if the lists are empty, there's nothing to do */
+  if (m_list == NULL && vlist == NULL)
     return VLAD_OK;
 
+  /* check if the two lists are of the same length */
+  if (m_list == NULL || vlist == NULL || vlist->length() != m_list->length())
+    return VLAD_FAILURE;
+
+  /* check if the entities are in symtab */
   for (i = 0; i < VLAD_LIST_LENGTH(m_list); i++) {
     char *ident;
 
