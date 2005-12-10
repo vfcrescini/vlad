@@ -67,6 +67,7 @@ OBJECTS = \
   numberlist.o \
   varlist.o \
   stringlistlist.o \
+  identifier.o \
   fact.o \
   expression.o \
   seqtab.o \
@@ -129,11 +130,14 @@ stringlist.o : vlad.h mem.h list.h stringlist.h stringlist.cpp
 numberlist.o : vlad.h mem.h list.h numberlist.h numberlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
 
-varlist.o : vlad.h mem.h list.h stringlist.h varlist.h varlist.cpp
+varlist.o : vlad.h mem.h identifier.h list.h stringlist.h varlist.h varlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c varlist.cpp
 
 stringlistlist.o : vlad.h mem.h list.h stringlist.h stringlistlist.h stringlistlist.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c stringlistlist.cpp
+
+identifier.o : vlad.h mem.h identifier.h identifier.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c identifier.cpp
 
 fact.o : vlad.h mem.h stringlist.h varlist.h identifier.h atom.h symtab.h fact.h fact.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c fact.cpp

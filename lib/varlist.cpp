@@ -25,7 +25,20 @@
 
 #include <vlad/vlad.h>
 #include <vlad/mem.h>
+#include <vlad/identifier.h>
 #include <vlad/varlist.h>
+
+/* add a variable into the list */
+int vlad_varlist::add(const char *a_var)
+{
+  int retval;
+
+  /* make sure what we're adding is really a variable */
+  if ((retval = vlad_identifier::validate_var_ident(a_var)) != VLAD_OK)
+    return retval;
+
+  return vlad_stringlist::add(a_var);
+}
 
 /* copy varlist */
 int vlad_varlist::copy(vlad_varlist **a_vlist)
@@ -51,38 +64,5 @@ int vlad_varlist::copy(vlad_varlist **a_vlist)
     }
   }
 
-  return VLAD_OK;
-}
-
-/* verify and copy */
-int vlad_varlist::vcopy(vlad_symtab *a_symtab, vlad_varlist **a_vlist)
-{
-  int retval;
-  unsigned int i;
-
-  if (a_symtab == NULL || a_vlist == NULL)
-    return VLAD_NULLPTR;
-
-  if ((*a_vlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    char *var;
-
-    if ((retval = get(i, &var)) != VLAD_OK)
-      return retval;
-
-    /* before adding, check if the variable is already an identifier */
-
-    if ((retval = a_symtab->find(var)) != VLAD_NOTFOUND) {
-      VLAD_MEM_DELETE(*a_vlist);
-      return (retval == VLAD_OK) ? VLAD_DUPLICATE : retval;
-    }
-
-    if ((retval = (*a_vlist)->add(var)) != VLAD_OK) {
-      VLAD_MEM_DELETE(*a_vlist);
-      return retval;
-    }
-  }
   return VLAD_OK;
 }

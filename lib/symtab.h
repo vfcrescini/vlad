@@ -51,10 +51,10 @@ class vlad_symtab : virtual public vlad_mem
     /* return the number of identifiers that are of type t */
     unsigned int length(unsigned char a_t);
 
-    /* return 0 if symbol is in the table */
+    /* return VLAD_OK if symbol is in the table */
     int find(const char *a_s);
 
-    /* return 0 if symbol of type t is in the table */
+    /* return VLAD_OK if symbol of type t is in the table */
     int find(const char *a_s, unsigned char a_t);
 
     /* give the type of the given identifier */
@@ -63,7 +63,7 @@ class vlad_symtab : virtual public vlad_mem
   private :
 
     /* m_list: 0 = ss, 1 = as, 2 = os, 3 = sg, 4 = ag, 5 = og */
-    vlad_stringlist *m_lists[VLAD_IDENT_TOTAL];
+    vlad_stringlist *m_lists[VLAD_IDENT_ENT_TOTAL];
     bool m_init;
 
     /* map the identifier types into sequential numbers */
