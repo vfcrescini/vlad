@@ -1,3 +1,10 @@
+2005-12-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/identifier.h :
+	* lib/identifier.cpp :
+
+	  - Changed type from unsigned int to unsigned char.
+
 2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Merged with vlad-1_2_1

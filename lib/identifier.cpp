@@ -65,7 +65,7 @@ int vlad_identifier::validate_var_ident(const char *a_ident)
 }
 
 /* returns VLAD_OK if the given type is a valid entity type */
-int vlad_identifier::validate_ent_type(unsigned int a_type)
+int vlad_identifier::validate_ent_type(unsigned char a_type)
 {
   switch(a_type) {
     case VLAD_IDENT_ENT_SUB_SIN :
@@ -81,7 +81,7 @@ int vlad_identifier::validate_ent_type(unsigned int a_type)
 }
 
 /* returns VLAD_OK if the given type is a valid variable type */
-int vlad_identifier::validate_var_type(unsigned int a_type)
+int vlad_identifier::validate_var_type(unsigned char a_type)
 {
   switch(a_type) {
     case VLAD_IDENT_VAR_SUB :
