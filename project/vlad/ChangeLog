@@ -1,5 +1,17 @@
 2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* docs/bnf_policy.txt :
+	* docs/langspecs.txt :
+
+	  - "Ident Declaration" is now "Entity Declaration"
+
+	* main/policy.l :
+	* main/policy.y :
+
+	  - Changed "ident" statement to "entity" statement.
+
+	  - Entities and variables are now checked while parsing.
+
 	* lib/identifier.h :
 	* lib/identifier.cpp :
 

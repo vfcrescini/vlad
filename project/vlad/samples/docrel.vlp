@@ -3,9 +3,11 @@
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-ident sub sci, pat_off;
-ident acc own, read, write, review, pat_ok, pat_reject, release;
-ident obj doc;
+/* entity declaration */
+
+entity sub sci, pat_off;
+entity acc own, read, write, review, pat_ok, pat_reject, release;
+entity obj doc;
 
 /* initial facts */
 

@@ -98,7 +98,7 @@ int policyparse();
 %token <terminal> VLAD_SYM_SUBGRPTYPE
 %token <terminal> VLAD_SYM_OBJGRPTYPE
 %token <terminal> VLAD_SYM_ACCGRPTYPE
-%token <terminal> VLAD_SYM_IDENT
+%token <terminal> VLAD_SYM_ENTITY
 %token <identifier> VLAD_SYM_IDENTIFIER
 %type <fct> fact
 %type <fct> boolean_fact
@@ -126,7 +126,7 @@ init :
   ;
 
 body :
-  ident_section initial_section constraint_section update_section {
+  entity_section initial_section constraint_section update_section {
     int retval;
     /* after the body, we must close the polbase */
     if ((retval = pbase->close_polbase()) != VLAD_OK) {
@@ -142,16 +142,16 @@ destroy :
   }
   ;
 
-ident_section : {
+entity_section : {
     int retval;
-    /* after the ident section, we must close the symbol table */
+    /* after the entity section, we must close the symbol table */
     if ((retval = pbase->close_symtab()) != VLAD_OK) {
       errorcode = retval;
       policyerror("unable to close symtab");
       return retval;
     }
   }
-  | ident_stmt_list {
+  | entity_stmt_list {
     int retval;
     /* after the ident section, we must close the symbol table */
     if ((retval = pbase->close_symtab()) != VLAD_OK) {
@@ -180,9 +180,9 @@ update_section : {
   }
   ;
 
-ident_stmt_list :
-  ident_stmt
-  | ident_stmt_list ident_stmt
+entity_stmt_list :
+  entity_stmt
+  | entity_stmt_list entity_stmt
   ;
 
 initial_stmt_list :
@@ -200,122 +200,122 @@ update_stmt_list :
   | update_stmt_list update_stmt
   ;
 
-ident_stmt :
-  VLAD_SYM_IDENT ident_declaration VLAD_SYM_SEMICOLON {
+entity_stmt :
+  VLAD_SYM_ENTITY entity_declaration VLAD_SYM_SEMICOLON {
   }
   ;
 
-ident_declaration :
-  sub_sin_ident_decl
-  | obj_sin_ident_decl
-  | acc_sin_ident_decl
-  | sub_grp_ident_decl
-  | obj_grp_ident_decl
-  | acc_grp_ident_decl
+entity_declaration :
+  sub_sin_entity_decl
+  | obj_sin_entity_decl
+  | acc_sin_entity_decl
+  | sub_grp_entity_decl
+  | obj_grp_entity_decl
+  | acc_grp_entity_decl
   ;
 
-sub_sin_ident_decl :
-  VLAD_SYM_SUBSINTYPE sub_sin_ident_list {
+sub_sin_entity_decl :
+  VLAD_SYM_SUBSINTYPE sub_sin_entity_list {
   }
   ;
 
-obj_sin_ident_decl :
-  VLAD_SYM_OBJSINTYPE obj_sin_ident_list {
+obj_sin_entity_decl :
+  VLAD_SYM_OBJSINTYPE obj_sin_entity_list {
   }
   ;
 
-acc_sin_ident_decl :
-  VLAD_SYM_ACCSINTYPE acc_sin_ident_list {
+acc_sin_entity_decl :
+  VLAD_SYM_ACCSINTYPE acc_sin_entity_list {
   }
   ;
 
-sub_grp_ident_decl :
-  VLAD_SYM_SUBGRPTYPE sub_grp_ident_list {
+sub_grp_entity_decl :
+  VLAD_SYM_SUBGRPTYPE sub_grp_entity_list {
   }
   ;
 
-obj_grp_ident_decl :
-  VLAD_SYM_OBJGRPTYPE obj_grp_ident_list {
+obj_grp_entity_decl :
+  VLAD_SYM_OBJGRPTYPE obj_grp_entity_list {
   }
   ;
 
-acc_grp_ident_decl :
-  VLAD_SYM_ACCGRPTYPE acc_grp_ident_list {
+acc_grp_entity_decl :
+  VLAD_SYM_ACCGRPTYPE acc_grp_entity_list {
   }
   ;
 
-sub_sin_ident_list :
+sub_sin_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($1, VLAD_IDENT_ENT_SUB_SIN)) != VLAD_OK)
       return retval;
   }
-  | sub_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | sub_sin_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($3, VLAD_IDENT_ENT_SUB_SIN)) != VLAD_OK)
       return retval;
   }
   ;
 
-obj_sin_ident_list :
+obj_sin_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($1, VLAD_IDENT_ENT_OBJ_SIN)) != VLAD_OK)
       return retval;
   }
-  | obj_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | obj_sin_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($3, VLAD_IDENT_ENT_OBJ_SIN)) != VLAD_OK)
       return retval;
   }
   ;
 
-acc_sin_ident_list :
+acc_sin_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($1, VLAD_IDENT_ENT_ACC_SIN)) != VLAD_OK)
       return retval;
   }
-  | acc_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | acc_sin_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($3, VLAD_IDENT_ENT_ACC_SIN)) != VLAD_OK)
       return retval;
   }
   ;
 
-sub_grp_ident_list :
+sub_grp_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($1, VLAD_IDENT_ENT_SUB_GRP)) != VLAD_OK)
       return retval;
   }
-  | sub_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | sub_grp_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($3, VLAD_IDENT_ENT_SUB_GRP)) != VLAD_OK)
       return retval;
   }
   ;
 
-obj_grp_ident_list :
+obj_grp_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($1, VLAD_IDENT_ENT_OBJ_GRP)) != VLAD_OK)
       return retval;
   }
-  | obj_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | obj_grp_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($3, VLAD_IDENT_ENT_OBJ_GRP)) != VLAD_OK)
       return retval;
   }
   ;
 
-acc_grp_ident_list :
+acc_grp_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($1, VLAD_IDENT_ENT_ACC_GRP)) != VLAD_OK)
       return retval;
   }
-  | acc_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
+  | acc_grp_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
     if ((retval = add_identifier($3, VLAD_IDENT_ENT_ACC_GRP)) != VLAD_OK)
       return retval;
@@ -481,10 +481,17 @@ update_var_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
 
+    /* make sure identifier is a valid variable */
+    if (vlad_identifier::validate_var_ident($1) != VLAD_OK) {
+      errorcode = VLAD_INVALIDINPUT;
+      policyerror("invalid variable");
+      return errorcode;
+    }
+
     if (($$ = VLAD_MEM_NEW(vlad_varlist())) == NULL) {
       errorcode = VLAD_MALLOCFAILED;
       policyerror("memory overflow");
-      return VLAD_MALLOCFAILED;
+      return errorcode;
     }
 
     if ((retval = $$->add($1)) != VLAD_OK) {
@@ -495,6 +502,13 @@ update_var_list :
   }
   | update_var_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
+
+    /* make sure identifier is a valid variable */
+    if (vlad_identifier::validate_var_ident($3) != VLAD_OK) {
+      errorcode = VLAD_INVALIDINPUT;
+      policyerror("invalid variable");
+      return errorcode;
+    }
 
     if ((retval = $$->add($3)) != VLAD_OK) {
       errorcode = retval;
@@ -620,7 +634,15 @@ memb_fact :
 
 int add_identifier(const char *a_name, unsigned char a_type)
 {
+  /* check type */
   if (vlad_identifier::validate_ent_type(a_type)) {
+    errorcode = VLAD_INVALIDINPUT;
+    policyerror("invalid identifier type");
+    return VLAD_INVALIDINPUT;
+  }
+
+  /* check identifier */
+  if (vlad_identifier::validate_ent_ident(a_name)) {
     errorcode = VLAD_INVALIDINPUT;
     policyerror("invalid identifier");
     return VLAD_INVALIDINPUT;

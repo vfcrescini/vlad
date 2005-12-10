@@ -58,7 +58,7 @@ absence            absence
 always             always
 causes             causes
 if                 if
-ident              ident
+entity             entity
 sub_grp_type       sub-grp
 obj_grp_type       obj-grp
 acc_grp_type       acc-grp
@@ -109,7 +109,7 @@ everything         .
 
 <INITIAL>{if} return VLAD_SYM_IF;
 
-<INITIAL>{ident} return VLAD_SYM_IDENT;
+<INITIAL>{entity} return VLAD_SYM_ENTITY;
 
 <INITIAL>{sub_grp_type} return VLAD_SYM_SUBGRPTYPE;
 
