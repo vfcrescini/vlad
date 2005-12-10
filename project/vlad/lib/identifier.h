@@ -110,10 +110,10 @@ class vlad_identifier : virtual public vlad_mem
     static int validate_var_ident(const char *a_ident);
 
     /* returns VLAD_OK if the given type is a valid entity type */
-    static int validate_ent_type(unsigned int a_type);
+    static int validate_ent_type(unsigned char a_type);
 
     /* returns VLAD_OK if the given type is a valid variable type */
-    static int validate_var_type(unsigned int a_type);
+    static int validate_var_type(unsigned char a_type);
 
     /* returns the type of the given variable */
     static unsigned int get_var_type(const char *a_var);
