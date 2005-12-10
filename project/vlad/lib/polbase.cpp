@@ -254,7 +254,7 @@ int vlad_polbase::add_seqtab(vlad_updateref *a_uref)
     return VLAD_NULLPTR;
 
   /* we verify first before adding */
-  if ((retval = a_uref->verify(m_stable)) != VLAD_OK)
+  if ((retval = a_uref->verify(m_stable, m_utable)) != VLAD_OK)
     return retval;
 
   /* if all is well, add */

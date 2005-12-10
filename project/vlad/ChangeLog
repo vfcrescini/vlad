@@ -1,5 +1,31 @@
 2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Merged with vlad-1_2_1
+
+	* Makefile.in :
+
+	  - updatetab.h is now a dependency of seqtab.h.
+
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+
+	  - The updateref::verify() function now takes a reference to update
+	    table so that it can check if the name of the update reference is
+	    actually in the update table and that the varlist matches the
+	    entity list.
+
+	* lib/updatetab.cpp :
+	* lib/updatetab.h :
+
+	  - Cleanup.
+
+	  - In the get() functions, precond and postcond expressions may now
+	    be null.
+
+	* lib/polbase.cpp :
+
+	  - add_seqtab() is now passed the update table too for extra checking.
+
 	* docs/bnf_policy.txt :
 	* docs/langspecs.txt :
 
@@ -81,6 +107,12 @@
 
 	  - vlad_stringlist is now also a list_item. This allows us to make
 	    a list of stinglists.
+
+2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Tagging vlad-1_2_1
+
+
 
 2005-12-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 

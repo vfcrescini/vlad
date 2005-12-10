@@ -40,20 +40,20 @@ class vlad_updatedef : public vlad_list_item
     /* get attributes */
     int get(char **a_name,
             vlad_varlist **a_vlist,
-            vlad_expression **a_precond,
-            vlad_expression **a_postcond);
+            vlad_expression **a_prexp,
+            vlad_expression **a_poexp);
 
     /* init attrbiutes */
     int init(const char *a_name,
              vlad_varlist *a_vlist,
-             vlad_expression *a_precond,
-             vlad_expression *a_postcond);
+             vlad_expression *a_prexp,
+             vlad_expression *a_poexp);
   private :
 
     char *m_name;
     vlad_varlist *m_vlist;
-    vlad_expression *m_precond;
-    vlad_expression *m_postcond;
+    vlad_expression *m_prexp;
+    vlad_expression *m_poexp;
     bool m_init;
 } ;
 
@@ -67,27 +67,27 @@ class vlad_updatetab : public vlad_list
     /* add update def to table */
     int add(const char *a_name,
             vlad_varlist *a_vlist,
-            vlad_expression *a_precond,
-            vlad_expression *a_postcond);
+            vlad_expression *a_prexp,
+            vlad_expression *a_poexp);
 
     /* get update by name */
     int get(const char *a_name,
             vlad_varlist **a_vlist,
-            vlad_expression **a_precond,
-            vlad_expression **a_postcond);
+            vlad_expression **a_prexp,
+            vlad_expression **a_poexp);
 
     /* get update by index */
     int get(unsigned int a_index,
             char **a_name,
             vlad_varlist **a_vlist,
-            vlad_expression **a_precond,
-            vlad_expression **a_postcond);
+            vlad_expression **a_prexp,
+            vlad_expression **a_poexp);
 
     /* replace variables with identifiers in ilist, then get pr and pp */
     int replace(const char *a_name,
                 vlad_stringlist *a_ilist,
-                vlad_expression **a_precond,
-                vlad_expression **a_postcond);
+                vlad_expression **a_prexp,
+                vlad_expression **a_poexp);
 } ;
 
 #endif

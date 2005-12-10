@@ -154,7 +154,7 @@ consttab.o : vlad.h mem.h varlist.h expression.h consttab.h consttab.cpp
 updatetab.o : vlad.h mem.h stringlist.h varlist.h expression.h updatetab.h updatetab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c updatetab.cpp
 
-seqtab.o : vlad.h mem.h stringlist.h expression.h symtab.h seqtab.h seqtab.cpp
+seqtab.o : vlad.h mem.h stringlist.h expression.h updatetab.h symtab.h seqtab.h seqtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
 
 mapper.o : vlad.h atom.h identifier.h symtab.h mapper.h mapper.cpp
