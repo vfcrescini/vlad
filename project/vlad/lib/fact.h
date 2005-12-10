@@ -28,26 +28,7 @@
 #include <vlad/varlist.h>
 #include <vlad/symtab.h>
 
-/* structure to hold facts. no checking done here, values are just stored */
-
-typedef struct
-{
-  char *subject;
-  char *access;
-  char *object;
-} vlad_holds_atom;
-
-typedef struct
-{
-  char *element;
-  char *group;
-} vlad_member_atom;
-
-typedef struct
-{
-  char *group1;
-  char *group2;
-} vlad_subset_atom;
+/* structure to hold facts. */
 
 class vlad_fact : public vlad_list_item
 {
@@ -143,9 +124,9 @@ class vlad_fact : public vlad_list_item
     bool m_truth;
 
     union {
-      vlad_holds_atom m_holds;
-      vlad_member_atom m_member;
-      vlad_subset_atom m_subset;
+      vlad_atom_holds m_holds;
+      vlad_atom_member m_member;
+      vlad_atom_subset m_subset;
     } ;
 
     bool m_init;
