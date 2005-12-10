@@ -120,11 +120,20 @@ int vlad_updateref::verify(vlad_symtab *a_stab, vlad_updatetab *a_utab)
   /* check if the entities are in symtab */
   for (i = 0; i < VLAD_LIST_LENGTH(m_list); i++) {
     char *ident;
+    char *var;
+    unsigned char type;
 
     if ((retval = m_list->get(i, &ident)) != VLAD_OK)
       return retval;
 
-    if ((retval = a_stab->find(ident)) != VLAD_OK)
+    if ((retval = vlist->get(i, &var)) != VLAD_OK)
+      return retval;
+
+    if ((retval = a_stab->type(ident, &type)) != VLAD_OK)
+      return retval;
+
+    /* now check if the two are of compatible types */
+    if ((retval = vlad_identifier::check_compat(var, type)) != VLAD_OK)
       return retval;
   }
 
