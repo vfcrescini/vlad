@@ -1,5 +1,10 @@
 2005-12-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* samples/docrel.vla :
+	* samples/docrel.vlp :
+
+	  - Fixed error in the ordering of parameters in the updates.
+
 	* lib/seqtab.cpp :
 
 	  - verify() function now checks whether the replacement identifier
