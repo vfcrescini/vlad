@@ -116,7 +116,7 @@ class vlad_identifier : virtual public vlad_mem
     static int validate_var_type(unsigned char a_type);
 
     /* returns the type of the given variable */
-    static unsigned int get_var_type(const char *a_var);
+    static unsigned char get_var_type(const char *a_var);
 } ;
 
 #endif
