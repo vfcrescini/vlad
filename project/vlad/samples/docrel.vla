@@ -3,30 +3,30 @@
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-seq add request(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
 compute;
 
 query holds(pat_off, review, doc) && !holds(sci, write, doc);
 
 seq del 0;
-seq add request(sci, doc, pat_off);
-seq add get_approval(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
+seq add get_approval(sci, pat_off, doc);
 compute;
 
 query holds(sci, pat_ok, doc) && !holds(pat_off, review, doc);
 
 seq del 0;
 seq del 0;
-seq add request(sci, doc, pat_off);
-seq add get_rejection(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
+seq add get_rejection(sci, pat_off, doc);
 compute;
 
 query holds(sci, pat_reject, doc) && !holds(pat_off, review, doc);
 
 seq del 0;
 seq del 0;
-seq add request(sci, doc, pat_off);
-seq add get_approval(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
+seq add get_approval(sci, pat_off, doc);
 seq add release_doc(sci, doc);
 compute;
 
@@ -35,8 +35,8 @@ query holds(sci, release, doc) && holds(sci, pat_ok, doc);
 seq del 0;
 seq del 0;
 seq del 0;
-seq add request(sci, doc, pat_off);
-seq add get_rejection(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
+seq add get_rejection(sci, pat_off, doc);
 seq add revise_doc(sci, doc);
 compute;
 
@@ -45,30 +45,30 @@ query holds(sci, write, doc);
 seq del 0;
 seq del 0;
 seq del 0;
-seq add request(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
 compute;
 
 query holds(sci, own, doc);
 
 seq del 0;
-seq add request(sci, doc, pat_off);
-seq add get_approval(sci, doc, pat_off);
-compute;
-
-query holds(sci, own, doc);
-
-seq del 0;
-seq del 0;
-seq add request(sci, doc, pat_off);
-seq add get_rejection(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
+seq add get_approval(sci, pat_off, doc);
 compute;
 
 query holds(sci, own, doc);
 
 seq del 0;
 seq del 0;
-seq add request(sci, doc, pat_off);
-seq add get_approval(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
+seq add get_rejection(sci, pat_off, doc);
+compute;
+
+query holds(sci, own, doc);
+
+seq del 0;
+seq del 0;
+seq add request(sci, pat_off, doc);
+seq add get_approval(sci, pat_off, doc);
 seq add release_doc(sci, doc);
 compute;
 
@@ -77,8 +77,8 @@ query holds(sci, own, doc);
 seq del 0;
 seq del 0;
 seq del 0;
-seq add request(sci, doc, pat_off);
-seq add get_rejection(sci, doc, pat_off);
+seq add request(sci, pat_off, doc);
+seq add get_rejection(sci, pat_off, doc);
 seq add revise_doc(sci, doc);
 compute;
 

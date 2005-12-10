@@ -17,39 +17,39 @@ initially holds(sci, write, doc);
 
 /* updates */
 
-request(SS, AS, OS)
+request(SS1, SS2, OS1)
   causes
-    holds(OS, review, AS) &&
-    !holds(SS, write, AS)
+    holds(SS2, review, OS1) &&
+    !holds(SS1, write, OS1)
   if
-    holds(SS, own, AS) &&
-    holds(SS, write, AS);
+    holds(SS1, own, OS1) &&
+    holds(SS1, write, OS1);
 
-get_approval(SS, AS, OS)
+get_approval(SS1, SS2, OS1)
   causes
-    holds(SS, pat_ok, AS) &&
-    !holds(OS, review, AS)
+    holds(SS1, pat_ok, OS1) &&
+    !holds(SS2, review, OS1)
   if
-    holds(OS, review, AS) &&
-    holds(SS, own, AS);
+    holds(SS2, review, OS1) &&
+    holds(SS1, own, OS1);
 
-get_rejection(SS, AS, OS)
+get_rejection(SS1, SS2, OS1)
   causes
-    holds(SS, pat_reject, AS) &&
-    !holds(OS, review, AS)
+    holds(SS1, pat_reject, OS1) &&
+    !holds(SS2, review, OS1)
   if
-    holds(OS, review, AS) &&
-    holds(SS, own, AS);
+    holds(SS2, review, OS1) &&
+    holds(SS1, own, OS1);
 
-release_doc(SS, AS)
+release_doc(SS1, OS1)
   causes
-    holds(SS, release, AS) &&
-    !holds(SS, pat_ok, AS)
+    holds(SS1, release, OS1) &&
+    !holds(SS1, pat_ok, OS1)
   if
-    holds(SS, pat_ok, AS);
+    holds(SS1, pat_ok, OS1);
 
-revise_doc(SS, AS)
+revise_doc(SS1, OS1)
   causes
-    holds(SS, write, AS)
+    holds(SS1, write, OS1)
   if
-    holds(SS, pat_reject, AS);
+    holds(SS1, pat_reject, OS1);
