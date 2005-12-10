@@ -1082,7 +1082,7 @@ int vlad_polbase::compute_evaluate()
             /* negative */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false);
             id[1] = m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, false);
-            id[2] = m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp2, i, true); 
+            id[2] = m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp2, i, true);
 
             retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1303,7 +1303,7 @@ int vlad_polbase::compute_evaluate()
   }
 
   /* initial state */
-  
+
   for (i = 0; i < VLAD_LIST_LENGTH(m_itable); i++) {
     vlad_fact *fact;
     unsigned int id;
@@ -1532,7 +1532,7 @@ int vlad_polbase::print_fact(unsigned int a_id, FILE *a_fs)
     return retval;
 
   VLAD_MEM_DELETE(fact);
-  
+
   return VLAD_OK;
 }
 
@@ -1584,6 +1584,6 @@ int vlad_polbase::print_fact(vlad_fact *a_fact,
                 truth ? VLAD_STR_TRUE : VLAD_STR_FALSE);
       break;
   }
-  
+
   return VLAD_OK;
 }

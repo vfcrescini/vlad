@@ -90,7 +90,7 @@
 #define VLAD_IDENT_TYPE_IS_SUB(X)    ((X) & VLAD_IDENT_SUB)
 #define VLAD_IDENT_TYPE_IS_ACC(X)    ((X) & VLAD_IDENT_ACC)
 #define VLAD_IDENT_TYPE_IS_OBJ(X)    ((X) & VLAD_IDENT_OBJ)
-                                     
+
 #define VLAD_IDENT_TYPE_IS_SIN(X)    ((X) & VLAD_IDENT_SIN_MASK)
 #define VLAD_IDENT_TYPE_IS_GRP(X)    ((X) & VLAD_IDENT_GRP_MASK)
 

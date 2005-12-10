@@ -147,7 +147,7 @@ int vlad_constraint::replace(const char *a_var,
 /* gives a list of vars occuring in the constr, creats a new constr */
 int vlad_constraint::varlist(vlad_varlist **a_list)
 {
-  int retval; 
+  int retval;
 
   if (a_list == NULL)
     return VLAD_NULLPTR;

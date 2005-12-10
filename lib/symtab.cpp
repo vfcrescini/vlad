@@ -278,5 +278,5 @@ unsigned int vlad_symtab::unmap(unsigned int a_n)
       return VLAD_IDENT_ENT_OBJ_GRP;
   }
 
-  return 0; 
+  return 0;
 }
