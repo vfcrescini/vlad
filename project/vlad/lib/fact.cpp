@@ -560,37 +560,37 @@ int vlad_fact::varlist(vlad_varlist **a_list)
 
   switch(m_type) {
     case VLAD_ATOM_HOLDS :
-      if (VLAD_IDENT_IS_VAR(m_holds.subject))
+      if (vlad_identifier::validate_var_ident(m_holds.subject) == VLAD_OK)
         if ((retval = (*a_list)->add(m_holds.subject)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
-      if (VLAD_IDENT_IS_VAR(m_holds.access))
+      if (vlad_identifier::validate_var_ident(m_holds.access) == VLAD_OK)
         if ((retval = (*a_list)->add(m_holds.access)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
-      if (VLAD_IDENT_IS_VAR(m_holds.object))
+      if (vlad_identifier::validate_var_ident(m_holds.object) == VLAD_OK)
         if ((retval = (*a_list)->add(m_holds.object)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
 
       return VLAD_OK;
     case VLAD_ATOM_MEMBER :
-      if (VLAD_IDENT_IS_VAR(m_member.element))
+      if (vlad_identifier::validate_var_ident(m_member.element) == VLAD_OK)
         if ((retval = (*a_list)->add(m_member.element)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
-      if (VLAD_IDENT_IS_VAR(m_member.group))
+      if (vlad_identifier::validate_var_ident(m_member.group) == VLAD_OK)
         if ((retval = (*a_list)->add(m_member.group)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
 
       return VLAD_OK;
     case VLAD_ATOM_SUBSET :
-      if (VLAD_IDENT_IS_VAR(m_subset.group1))
+      if (vlad_identifier::validate_var_ident(m_subset.group1) == VLAD_OK)
         if ((retval = (*a_list)->add(m_subset.group1)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
-      if (VLAD_IDENT_IS_VAR(m_subset.group2))
+      if (vlad_identifier::validate_var_ident(m_subset.group2) == VLAD_OK)
         if ((retval = (*a_list)->add(m_subset.group2)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
@@ -678,13 +678,18 @@ static int vlad_verify_holds(const char *a_sub,
   unsigned char type;
 
   /* check subject */
-  if (VLAD_IDENT_IS_ENT(a_sub)) {
+  if (vlad_identifier::validate_ent_ident(a_sub) == VLAD_OK) {
+    /* an entity, so we get the type from the symtab and make sure it's sub */
     if ((retval = a_stab->type(a_sub, &type)) != VLAD_OK)
       return retval;
-    if (!VLAD_IDENT_IS_SUBJECT(type))
+    if (!VLAD_IDENT_TYPE_IS_SUB(type))
       return VLAD_INVALIDINPUT;
   }
-  else if (VLAD_IDENT_IS_VAR(a_sub)) {
+  else if (vlad_identifier::validate_var_ident(a_sub) == VLAD_OK) {
+    /* a variable, so we check it's type */
+    if (!VLAD_IDENT_TYPE_IS_SUB(vlad_identifier::get_var_type(a_sub)))
+      return VLAD_INVALIDINPUT;
+    /* all good, so we check if it's in the varlist */
     if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_sub)) != VLAD_OK)
@@ -694,13 +699,18 @@ static int vlad_verify_holds(const char *a_sub,
     return VLAD_INVALIDINPUT;
 
   /* check access */
-  if (VLAD_IDENT_IS_ENT(a_acc)) {
+  if (vlad_identifier::validate_ent_ident(a_acc) == VLAD_OK) {
+    /* an entity, so we get the type from the symtab and make sure it's acc */
     if ((retval = a_stab->type(a_acc, &type)) != VLAD_OK)
       return retval;
-    if (!VLAD_IDENT_IS_ACCESS(type))
+    if (!VLAD_IDENT_TYPE_IS_ACC(type))
       return VLAD_INVALIDINPUT;
   }
-  else if (VLAD_IDENT_IS_VAR(a_acc)) {
+  else if (vlad_identifier::validate_var_ident(a_acc) == VLAD_OK) {
+    /* a variable, so we check it's type */
+    if (!VLAD_IDENT_TYPE_IS_ACC(vlad_identifier::get_var_type(a_acc)))
+      return VLAD_INVALIDINPUT;
+    /* all good, so we check if it's in the varlist */
     if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_acc)) != VLAD_OK)
@@ -710,13 +720,18 @@ static int vlad_verify_holds(const char *a_sub,
     return VLAD_INVALIDINPUT;
 
   /* check object */
-  if (VLAD_IDENT_IS_ENT(a_obj)) {
+  if (vlad_identifier::validate_ent_ident(a_obj) == VLAD_OK) {
+    /* an entity, so we get the type from the symtab and make sure it's obj */
     if ((retval = a_stab->type(a_obj, &type)) != VLAD_OK)
       return retval;
-    if (!VLAD_IDENT_IS_OBJECT(type))
+    if (!VLAD_IDENT_TYPE_IS_OBJ(type))
       return VLAD_INVALIDINPUT;
   }
-  else if (VLAD_IDENT_IS_VAR(a_obj)) {
+  else if (vlad_identifier::validate_var_ident(a_obj) == VLAD_OK) {
+    /* a variable, so we check it's type */
+    if (!VLAD_IDENT_TYPE_IS_OBJ(vlad_identifier::get_var_type(a_obj)))
+      return VLAD_INVALIDINPUT;
+    /* all good, so we check if it's in the varlist */
     if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_obj)) != VLAD_OK)
@@ -738,14 +753,19 @@ static int vlad_verify_memb(const char *a_elt,
   unsigned char type[2];
 
   /* check element */
-  if (VLAD_IDENT_IS_ENT(a_elt)) {
+  if (vlad_identifier::validate_ent_ident(a_elt) == VLAD_OK) {
+    /* it's an entity, so check the type */
     if ((retval = a_stab->type(a_elt, &(type[0]))) != VLAD_OK)
       return retval;
-    if (VLAD_IDENT_IS_GROUP(type[0]))
+    /* make sure it's a single */
+    if (!VLAD_IDENT_TYPE_IS_SIN(type[0]))
       return VLAD_INVALIDINPUT;
   }
-  else if (VLAD_IDENT_IS_VAR(a_elt)) {
-    type[0] = VLAD_IDENT_VAR;
+  else if (vlad_identifier::validate_var_ident(a_elt) == VLAD_OK) {
+    /* it's a variable, so get the type */
+    if (!VLAD_IDENT_TYPE_IS_SIN(type[0] = vlad_identifier::get_var_type(a_elt)))
+      return VLAD_INVALIDINPUT;
+    /* all good, now check if it's in the varlist */
     if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_elt)) != VLAD_OK)
@@ -755,14 +775,19 @@ static int vlad_verify_memb(const char *a_elt,
     return VLAD_INVALIDINPUT;
 
   /* check group */
-  if (VLAD_IDENT_IS_ENT(a_grp)) {
+  if (vlad_identifier::validate_ent_ident(a_grp) == VLAD_OK) {
+    /* it's an entity, so get the type */
     if ((retval = a_stab->type(a_grp, &(type[1]))) != VLAD_OK)
       return retval;
-    if (!VLAD_IDENT_IS_GROUP(type[1]))
+    /* make sure it's a group */
+    if (!VLAD_IDENT_TYPE_IS_GRP(type[1]))
       return VLAD_INVALIDINPUT;
   }
-  else if (VLAD_IDENT_IS_VAR(a_grp)) {
-    type[1] = VLAD_IDENT_VAR;
+  else if (vlad_identifier::validate_var_ident(a_grp) == VLAD_OK) {
+    /* it's a variable, so check the type */
+    if (!VLAD_IDENT_TYPE_IS_GRP(type[1] = vlad_identifier::get_var_type(a_grp)))
+      return VLAD_INVALIDINPUT;
+    /* all good, now check if it's in the varlist */
     if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp)) != VLAD_OK)
@@ -772,9 +797,8 @@ static int vlad_verify_memb(const char *a_elt,
     return VLAD_INVALIDINPUT;
 
   /* check types */
-  if (type[0] != VLAD_IDENT_VAR && type[1] != VLAD_IDENT_VAR)
-    if (type[0] != VLAD_IDENT_BASETYPE(type[1]))
-      return VLAD_INVALIDINPUT;
+  if (VLAD_IDENT_TYPE_BASETYPE(type[0]) != VLAD_IDENT_TYPE_BASETYPE(type[1]))
+    return VLAD_INVALIDINPUT;
 
   return VLAD_OK;
 }
@@ -789,31 +813,41 @@ static int vlad_verify_subst(const char *a_grp1,
   unsigned char type[2];
 
   /* check group1 */
-  if (VLAD_IDENT_IS_ENT(a_grp1)) {
-    if ((retval = a_stab->type(a_grp2, &(type[0]))) != VLAD_OK)
+  if (vlad_identifier::validate_ent_ident(a_grp1) == VLAD_OK) {
+    /* it's an entity, so check the type */
+    if ((retval = a_stab->type(a_grp1, &(type[0]))) != VLAD_OK)
       return retval;
-    if (!VLAD_IDENT_IS_GROUP(type[0]))
+    /* make sure it's a group */
+    if (!VLAD_IDENT_TYPE_IS_GRP(type[0]))
       return VLAD_INVALIDINPUT;
   }
-  else if (VLAD_IDENT_IS_VAR(a_grp1)) {
-    type[0] = VLAD_IDENT_VAR;
+  else if (vlad_identifier::validate_var_ident(a_grp1) == VLAD_OK) {
+    /* it's a variable, so get the type */
+    if (!VLAD_IDENT_TYPE_IS_GRP(type[0] = vlad_identifier::get_var_type(a_grp1)))
+      return VLAD_INVALIDINPUT;
+    /* all good, now check if it's in the varlist */
     if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp1)) != VLAD_OK)
-       return VLAD_INVALIDINPUT;
+      return VLAD_INVALIDINPUT;
   }
   else
     return VLAD_INVALIDINPUT;
 
-  /* check group2 */
-  if (VLAD_IDENT_IS_ENT(a_grp2)) {
+  /* check group */
+  if (vlad_identifier::validate_ent_ident(a_grp2) == VLAD_OK) {
+    /* it's an entity, so get the type */
     if ((retval = a_stab->type(a_grp2, &(type[1]))) != VLAD_OK)
       return retval;
-    if (!VLAD_IDENT_IS_GROUP(type[1]))
+    /* make sure it's a group */
+    if (!VLAD_IDENT_TYPE_IS_GRP(type[1]))
       return VLAD_INVALIDINPUT;
   }
-  else if (VLAD_IDENT_IS_VAR(a_grp2)) {
-    type[1] = VLAD_IDENT_VAR;
+  else if (vlad_identifier::validate_var_ident(a_grp2) == VLAD_OK) {
+    /* it's a variable, so check the type */
+    if (!VLAD_IDENT_TYPE_IS_GRP(type[1] = vlad_identifier::get_var_type(a_grp2)))
+      return VLAD_INVALIDINPUT;
+    /* all good, now check if it's in the varlist */
     if (a_vlist == NULL)
       return VLAD_INVALIDINPUT;
     if ((retval = a_vlist->find(a_grp2)) != VLAD_OK)
@@ -823,9 +857,8 @@ static int vlad_verify_subst(const char *a_grp1,
     return VLAD_INVALIDINPUT;
 
   /* check types */
-  if (type[0] != VLAD_IDENT_VAR && type[1] != VLAD_IDENT_VAR)
-    if (type[0] != type[1])
-      return VLAD_INVALIDINPUT;
+  if (VLAD_IDENT_TYPE_BASETYPE(type[0]) != VLAD_IDENT_TYPE_BASETYPE(type[1]))
+    return VLAD_INVALIDINPUT;
 
   return VLAD_OK;
 }

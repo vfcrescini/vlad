@@ -1,5 +1,48 @@
 2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/identifier.h :
+	* lib/identifier.cpp :
+
+	  - Redefined macros in identifier.h. It now has provisions for typed
+	    variables.
+
+	  - Added a helper identifier class to validate identifiers.
+
+	  - Entities are now strictly defined as strings that start with a
+	    lowercase character and variables are now defined as strings that
+	    start with 'S', 'A' or 'O'.
+
+	* lib/fact.cpp :
+
+	  - Use new identifier macros/functions.
+
+	  - Reimplemented verify() functions to take advantage of the new typed
+	    variables.
+
+	* lib/mapper.cpp :
+	* lib/polbase.cpp :
+	* lib/symtab.cpp :
+
+	  - Use new identifier macros/functions.
+
+	* lib/varlist.cpp :
+	* lib/varlist.h :
+
+	  - Added a new add() function that validates variables using the new
+	    identfier macros/functions before adding into the varlist.
+
+	  - Removed vcopy(), as copy() calls the new add() function, which
+	    automatically verifies the variables.
+
+	* main/policy.y :
+
+	  - Use new identifier macros/functions.
+
+	* samples/chwall.vlp :
+	* samples/docrel.vlp :
+
+	  - Renamed variables to adhere to the new definition.
+
 	* lib/atom.h :
 	* lib/fact.h :
 

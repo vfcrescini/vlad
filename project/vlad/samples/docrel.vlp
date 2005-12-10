@@ -15,39 +15,39 @@ initially holds(sci, write, doc);
 
 /* updates */
 
-request(X, Y, Z)
+request(SS, AS, OS)
   causes
-    holds(Z, review, Y) &&
-    !holds(X, write, Y)
+    holds(OS, review, AS) &&
+    !holds(SS, write, AS)
   if
-    holds(X, own, Y) &&
-    holds(X, write, Y);
+    holds(SS, own, AS) &&
+    holds(SS, write, AS);
 
-get_approval(X, Y, Z)
+get_approval(SS, AS, OS)
   causes
-    holds(X, pat_ok, Y) &&
-    !holds(Z, review, Y)
+    holds(SS, pat_ok, AS) &&
+    !holds(OS, review, AS)
   if
-    holds(Z, review, Y) &&
-    holds(X, own, Y);
+    holds(OS, review, AS) &&
+    holds(SS, own, AS);
 
-get_rejection(X, Y, Z)
+get_rejection(SS, AS, OS)
   causes
-    holds(X, pat_reject, Y) &&
-    !holds(Z, review, Y)
+    holds(SS, pat_reject, AS) &&
+    !holds(OS, review, AS)
   if
-    holds(Z, review, Y) &&
-    holds(X, own, Y);
+    holds(OS, review, AS) &&
+    holds(SS, own, AS);
 
-release_doc(X, Y)
+release_doc(SS, AS)
   causes
-    holds(X, release, Y) &&
-    !holds(X, pat_ok, Y)
+    holds(SS, release, AS) &&
+    !holds(SS, pat_ok, AS)
   if
-    holds(X, pat_ok, Y);
+    holds(SS, pat_ok, AS);
 
-revise_doc(X, Y)
+revise_doc(SS, AS)
   causes
-    holds(X, write, Y)
+    holds(SS, write, AS)
   if
-    holds(X, pat_reject, Y);
+    holds(SS, pat_reject, AS);

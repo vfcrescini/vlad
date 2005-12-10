@@ -23,18 +23,18 @@ always memb(object2, company2);
 
 /* updates */
 
-request_access_company1(X, Y)
+request_access_company1(SS, OS)
   causes
-    holds(X, access, Y) &&
-    !holds(X, accessible, company2)
+    holds(SS, access, OS) &&
+    !holds(SS, accessible, company2)
   if
-    memb(Y, company1) &&
-    holds(X, accessible, company1);
+    memb(OS, company1) &&
+    holds(SS, accessible, company1);
 
-request_access_company2(X, Y)
+request_access_company2(SS, OS)
   causes
-    holds(X, access, Y) &&
-    !holds(X, accessible, company1)
+    holds(SS, access, OS) &&
+    !holds(SS, accessible, company1)
   if
-    memb(Y, company2) &&
-    holds(X, accessible, company2);
+    memb(OS, company2) &&
+    holds(SS, accessible, company2);

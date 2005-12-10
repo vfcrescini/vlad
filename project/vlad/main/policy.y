@@ -247,12 +247,12 @@ acc_grp_ident_decl :
 sub_sin_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_SUB_SIN)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_ENT_SUB_SIN)) != VLAD_OK)
       return retval;
   }
   | sub_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_SUB_SIN)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_ENT_SUB_SIN)) != VLAD_OK)
       return retval;
   }
   ;
@@ -260,12 +260,12 @@ sub_sin_ident_list :
 obj_sin_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_OBJ_SIN)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_ENT_OBJ_SIN)) != VLAD_OK)
       return retval;
   }
   | obj_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_OBJ_SIN)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_ENT_OBJ_SIN)) != VLAD_OK)
       return retval;
   }
   ;
@@ -273,12 +273,12 @@ obj_sin_ident_list :
 acc_sin_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ACC_SIN)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_ENT_ACC_SIN)) != VLAD_OK)
       return retval;
   }
   | acc_sin_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ACC_SIN)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_ENT_ACC_SIN)) != VLAD_OK)
       return retval;
   }
   ;
@@ -286,12 +286,12 @@ acc_sin_ident_list :
 sub_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_SUB_GRP)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_ENT_SUB_GRP)) != VLAD_OK)
       return retval;
   }
   | sub_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_SUB_GRP)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_ENT_SUB_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -299,12 +299,12 @@ sub_grp_ident_list :
 obj_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_OBJ_GRP)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_ENT_OBJ_GRP)) != VLAD_OK)
       return retval;
   }
   | obj_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_OBJ_GRP)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_ENT_OBJ_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -312,12 +312,12 @@ obj_grp_ident_list :
 acc_grp_ident_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ACC_GRP)) != VLAD_OK)
+    if ((retval = add_identifier($1, VLAD_IDENT_ENT_ACC_GRP)) != VLAD_OK)
       return retval;
   }
   | acc_grp_ident_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ACC_GRP)) != VLAD_OK)
+    if ((retval = add_identifier($3, VLAD_IDENT_ENT_ACC_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -620,7 +620,7 @@ memb_fact :
 
 int add_identifier(const char *a_name, unsigned char a_type)
 {
-  if (!VLAD_IDENT_IS_VALID(a_type)) {
+  if (vlad_identifier::validate_ent_type(a_type)) {
     errorcode = VLAD_INVALIDINPUT;
     policyerror("invalid identifier");
     return VLAD_INVALIDINPUT;
@@ -630,22 +630,22 @@ int add_identifier(const char *a_name, unsigned char a_type)
     case VLAD_OK :
 #ifdef VLAD_DEBUG
       switch (a_type) {
-        case VLAD_IDENT_SUB_SIN :
+        case VLAD_IDENT_ENT_SUB_SIN :
           fprintf(ferr, "declared identifier subject: %s\n", a_name);
           break;
-        case VLAD_IDENT_ACC_SIN :
+        case VLAD_IDENT_ENT_ACC_SIN :
           fprintf(ferr, "declared identifier access: %s\n", a_name);
           break;
-        case VLAD_IDENT_OBJ_SIN :
+        case VLAD_IDENT_ENT_OBJ_SIN :
           fprintf(ferr, "declared identifier object: %s\n", a_name);
           break;
-        case VLAD_IDENT_SUB_GRP :
+        case VLAD_IDENT_ENT_SUB_GRP :
            fprintf(ferr, "declared identifier subject-group: %s\n", a_name);
           break;
-        case VLAD_IDENT_ACC_GRP :
+        case VLAD_IDENT_ENT_ACC_GRP :
            fprintf(ferr, "declared identifier access-group: %s\n", a_name);
           break;
-        case VLAD_IDENT_OBJ_GRP :
+        case VLAD_IDENT_ENT_OBJ_GRP :
            fprintf(ferr, "declared identiifer object-group: %s\n", a_name);
           break;
       }

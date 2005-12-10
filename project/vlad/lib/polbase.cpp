@@ -29,12 +29,12 @@
 #include <vlad/polbase.h>
 
 /* some shorthand macros */
-#define VLAD_LEN_SS (m_stable->length(VLAD_IDENT_SUB_SIN))
-#define VLAD_LEN_SG (m_stable->length(VLAD_IDENT_SUB_GRP))
-#define VLAD_LEN_AS (m_stable->length(VLAD_IDENT_ACC_SIN))
-#define VLAD_LEN_AG (m_stable->length(VLAD_IDENT_ACC_GRP))
-#define VLAD_LEN_OS (m_stable->length(VLAD_IDENT_OBJ_SIN))
-#define VLAD_LEN_OG (m_stable->length(VLAD_IDENT_OBJ_GRP))
+#define VLAD_LEN_SS (m_stable->length(VLAD_IDENT_ENT_SUB_SIN))
+#define VLAD_LEN_SG (m_stable->length(VLAD_IDENT_ENT_SUB_GRP))
+#define VLAD_LEN_AS (m_stable->length(VLAD_IDENT_ENT_ACC_SIN))
+#define VLAD_LEN_AG (m_stable->length(VLAD_IDENT_ENT_ACC_GRP))
+#define VLAD_LEN_OS (m_stable->length(VLAD_IDENT_ENT_OBJ_SIN))
+#define VLAD_LEN_OG (m_stable->length(VLAD_IDENT_ENT_OBJ_GRP))
 
 vlad_polbase::vlad_polbase()
 {
@@ -217,9 +217,9 @@ int vlad_polbase::add_updatetab(const char *a_name,
 
   strcpy(name, a_name);
 
-  /* verify and copy varlist */
+  /* copy varlist */
   if (a_vlist != NULL) {
-    if ((retval = a_vlist->vcopy(m_stable, &vlist)) != VLAD_OK)
+    if ((retval = a_vlist->copy(&vlist)) != VLAD_OK)
       return retval;
   }
 
@@ -436,20 +436,20 @@ int vlad_polbase::compute_generate(FILE *a_fs)
     /* subject groups */
     for (i_grp = 0; i_grp < VLAD_LEN_SG; i_grp++) {
       fprintf(a_fs, "  ");
-      print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp, i_grp, i, true), a_fs);
+      print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp, i_grp, i, true), a_fs);
       fprintf(a_fs, " %s\n    %s%s\n", VLAD_STR_ARROW, VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
     }
     /* access groups */
     for (i_grp = 0; i_grp < VLAD_LEN_AG; i_grp++) {
       fprintf(a_fs, "  ");
-      print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp, i_grp, i, true), a_fs);
+      print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp, i_grp, i, true), a_fs);
       fprintf(a_fs, " %s\n    %s%s\n", VLAD_STR_ARROW, VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
     }
 
     /* object groups */
     for (i_grp = 0; i_grp < VLAD_LEN_OG; i_grp++) {
       fprintf(a_fs, "  ");
-      print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp, i_grp, i, true), a_fs);
+      print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp, i_grp, i, true), a_fs);
       fprintf(a_fs, " %s\n    %s%s\n", VLAD_STR_ARROW, VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
     }
   }
@@ -480,7 +480,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, true), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
@@ -490,7 +490,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
@@ -508,7 +508,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, true), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
@@ -518,7 +518,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
@@ -536,7 +536,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, true), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
@@ -546,7 +546,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp2, i, true), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
@@ -565,7 +565,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, true), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true), a_fs);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_SUB, i_sub, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
@@ -575,7 +575,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true), a_fs);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_SUB, i_sub, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
@@ -591,7 +591,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, true), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true), a_fs);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ACC, i_acc, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
@@ -601,7 +601,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true), a_fs);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ACC, i_acc, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
@@ -617,7 +617,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, true), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true), a_fs);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_OBJ, i_obj, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
@@ -627,7 +627,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-            print_fact(m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true), a_fs);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_OBJ, i_obj, i_grp1, i, true), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
           }
         }
@@ -654,11 +654,11 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             continue;
 
           fprintf(a_fs, "  ");
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp3, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp1, i_grp3, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp1, i_grp2, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp2, i_grp3, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp2, i_grp3, i, true), a_fs);
           fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
         }
       }
@@ -672,11 +672,11 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             continue;
 
           fprintf(a_fs, "  ");
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp3, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp1, i_grp3, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp1, i_grp2, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp2, i_grp3, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp2, i_grp3, i, true), a_fs);
           fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
         }
       }
@@ -690,11 +690,11 @@ int vlad_polbase::compute_generate(FILE *a_fs)
             continue;
 
           fprintf(a_fs, "  ");
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp3, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp3, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp2, i, true), a_fs);
           fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp2, i_grp3, i, true), a_fs);
+          print_fact(m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp2, i_grp3, i, true), a_fs);
           fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
         }
       }
@@ -961,7 +961,7 @@ int vlad_polbase::compute_evaluate()
     unsigned int id;
     /* subject groups */
     for (i_grp = 0; i_grp < VLAD_LEN_SG; i_grp++) {
-      id = m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp, i_grp, i, true);
+      id = m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp, i_grp, i, true);
 
       if ((retval = m_smobject->add_axiom(true, 1, id)) != VLAD_OK)
         return retval;
@@ -969,7 +969,7 @@ int vlad_polbase::compute_evaluate()
 
     /* access groups */
     for (i_grp = 0; i_grp < VLAD_LEN_AG; i_grp++) {
-      id = m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp, i_grp, i, true);
+      id = m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp, i_grp, i, true);
 
       if ((retval = m_smobject->add_axiom(true, 1, id)) != VLAD_OK)
         return retval;
@@ -977,7 +977,7 @@ int vlad_polbase::compute_evaluate()
 
     /* object groups */
     for (i_grp = 0; i_grp < VLAD_LEN_OG; i_grp++) {
-      id = m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp, i_grp, i, true);
+      id = m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp, i_grp, i, true);
 
       if ((retval = m_smobject->add_axiom(true, 1, id)) != VLAD_OK)
         return retval;
@@ -1007,7 +1007,7 @@ int vlad_polbase::compute_evaluate()
             /* positive */
             id[0] = m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, true);
             id[1] = m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, true);
-            id[2] = m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true);
+            id[2] = m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp1, i_grp2, i, true);
             id[3] = m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false);
 
             retval = m_smobject->add_rule(2, 1, id[0], id[1], id[2], id[3]);
@@ -1018,7 +1018,7 @@ int vlad_polbase::compute_evaluate()
             /* negative */
             id[0] = m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false);
             id[1] = m_mapper->compute_holds(i_grp2 + VLAD_LEN_SS, i_acc, i_obj, i, false);
-            id[2] = m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true);
+            id[2] = m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp1, i_grp2, i, true);
 
             retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1040,7 +1040,7 @@ int vlad_polbase::compute_evaluate()
 
             id[0] = m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, true);
             id[1] = m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, true);
-            id[2] = m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true);
+            id[2] = m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp1, i_grp2, i, true);
             id[3] = m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false);
 
             retval = m_smobject->add_rule(2, 1, id[0], id[1], id[2], id[3]);
@@ -1051,7 +1051,7 @@ int vlad_polbase::compute_evaluate()
             /* negative */
             id[0] = m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false);
             id[1] = m_mapper->compute_holds(i_sub, i_grp2 + VLAD_LEN_AS, i_obj, i, false);
-            id[2] = m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true);
+            id[2] = m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp1, i_grp2, i, true);
 
             retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1071,7 +1071,7 @@ int vlad_polbase::compute_evaluate()
             /* positive */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, true);
             id[1] = m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, true);
-            id[2] = m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true);
+            id[2] = m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp2, i, true);
             id[3] = m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false);
 
             retval = m_smobject->add_rule(2, 1, id[0], id[1], id[2], id[3]);
@@ -1082,7 +1082,7 @@ int vlad_polbase::compute_evaluate()
             /* negative */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false);
             id[1] = m_mapper->compute_holds(i_sub, i_acc, i_grp2 + VLAD_LEN_OS, i, false);
-            id[2] = m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true); 
+            id[2] = m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp2, i, true); 
 
             retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1102,7 +1102,7 @@ int vlad_polbase::compute_evaluate()
             /* positive */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true);
             id[1] = m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, true);
-            id[2] = m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true);
+            id[2] = m_mapper->compute_memb(VLAD_IDENT_SUB, i_sub, i_grp1, i, true);
             id[3] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false);
 
             retval = m_smobject->add_rule(2, 1, id[0], id[1], id[2], id[3]);
@@ -1113,7 +1113,7 @@ int vlad_polbase::compute_evaluate()
             /* negative */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false);
             id[1] = m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i, false);
-            id[2] = m_mapper->compute_memb(VLAD_IDENT_SUB_SIN, i_sub, i_grp1, i, true);
+            id[2] = m_mapper->compute_memb(VLAD_IDENT_SUB, i_sub, i_grp1, i, true);
 
             retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1131,7 +1131,7 @@ int vlad_polbase::compute_evaluate()
             /* positive */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true);
             id[1] = m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, true);
-            id[2] = m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true);
+            id[2] = m_mapper->compute_memb(VLAD_IDENT_ACC, i_acc, i_grp1, i, true);
             id[3] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false);
 
             retval = m_smobject->add_rule(2, 1, id[0], id[1], id[2], id[3]);
@@ -1142,7 +1142,7 @@ int vlad_polbase::compute_evaluate()
             /* negative */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false);
             id[1] = m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i, false);
-            id[2] = m_mapper->compute_memb(VLAD_IDENT_ACC_SIN, i_acc, i_grp1, i, true);
+            id[2] = m_mapper->compute_memb(VLAD_IDENT_ACC, i_acc, i_grp1, i, true);
 
             retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1160,7 +1160,7 @@ int vlad_polbase::compute_evaluate()
             /* positive */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, true);
             id[1] = m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, true);
-            id[2] = m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true);
+            id[2] = m_mapper->compute_memb(VLAD_IDENT_OBJ, i_obj, i_grp1, i, true);
             id[3] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false);
 
             retval = m_smobject->add_rule(2, 1, id[0], id[1], id[2], id[3]);
@@ -1171,7 +1171,7 @@ int vlad_polbase::compute_evaluate()
             /* negative */
             id[0] = m_mapper->compute_holds(i_sub, i_acc, i_obj, i, false);
             id[1] = m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i, false);
-            id[2] = m_mapper->compute_memb(VLAD_IDENT_OBJ_SIN, i_obj, i_grp1, i, true);
+            id[2] = m_mapper->compute_memb(VLAD_IDENT_OBJ, i_obj, i_grp1, i, true);
 
             retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1202,9 +1202,9 @@ int vlad_polbase::compute_evaluate()
           if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
-          id[0] = m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp3, i, true);
-          id[1] = m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp1, i_grp2, i, true);
-          id[2] = m_mapper->compute_subst(VLAD_IDENT_SUB_SIN, i_grp2, i_grp3, i, true);
+          id[0] = m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp1, i_grp3, i, true);
+          id[1] = m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp1, i_grp2, i, true);
+          id[2] = m_mapper->compute_subst(VLAD_IDENT_SUB, i_grp2, i_grp3, i, true);
 
           retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1224,9 +1224,9 @@ int vlad_polbase::compute_evaluate()
           if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
-          id[0] = m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp3, i, true);
-          id[1] = m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp1, i_grp2, i, true);
-          id[2] = m_mapper->compute_subst(VLAD_IDENT_ACC_SIN, i_grp2, i_grp3, i, true);
+          id[0] = m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp1, i_grp3, i, true);
+          id[1] = m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp1, i_grp2, i, true);
+          id[2] = m_mapper->compute_subst(VLAD_IDENT_ACC, i_grp2, i_grp3, i, true);
 
           retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
@@ -1246,9 +1246,9 @@ int vlad_polbase::compute_evaluate()
           if (i_grp1 == i_grp3 || i_grp2 == i_grp3)
             continue;
 
-          id[0] = m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp3, i, true);
-          id[1] = m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp1, i_grp2, i, true);
-          id[2] = m_mapper->compute_subst(VLAD_IDENT_OBJ_SIN, i_grp2, i_grp3, i, true);
+          id[0] = m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp3, i, true);
+          id[1] = m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp1, i_grp2, i, true);
+          id[2] = m_mapper->compute_subst(VLAD_IDENT_OBJ, i_grp2, i_grp3, i, true);
 
           retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
