@@ -100,9 +100,9 @@ int vlad_identifier::validate_var_type(unsigned char a_type)
 }
 
 /* returns the type of the given variable */
-unsigned int vlad_identifier::get_var_type(const char *a_ident)
+unsigned char vlad_identifier::get_var_type(const char *a_ident)
 {
-  unsigned int type = VLAD_IDENT_VAR_MASK;
+  unsigned char type = VLAD_IDENT_VAR_MASK;
 
   if (a_ident == NULL)
     return VLAD_IDENT_NUL;
