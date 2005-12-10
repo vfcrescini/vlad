@@ -3,12 +3,12 @@
  * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
  */
 
-/* identifier declarations */
+/* entity declarations */
 
-ident sub s;
-ident acc access, accessible;
-ident obj object1, object2;
-ident obj-grp company1, company2;
+entity sub s;
+entity acc access, accessible;
+entity obj object1, object2;
+entity obj-grp company1, company2;
 
 /* initial facts */
 
