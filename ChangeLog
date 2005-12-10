@@ -1,3 +1,10 @@
+2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/atom.h :
+	* lib/fact.h :
+
+	  - Moved atom structures to atom.h. Also renamed them to vlad_atom_*.
+
 2005-12-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/list.h :

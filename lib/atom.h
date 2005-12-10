@@ -24,7 +24,27 @@
 
 #include <vlad/vlad.h>
 
+typedef struct
+{
+  char *subject;
+  char *access;
+  char *object;
+} vlad_atom_holds;
+
+typedef struct
+{
+  char *element;
+  char *group;
+} vlad_atom_member;
+
+typedef struct
+{
+  char *group1;
+  char *group2;
+} vlad_atom_subset;
+
 /* atom type */
+
 #define VLAD_ATOM_HOLDS          0
 #define VLAD_ATOM_MEMBER         1
 #define VLAD_ATOM_SUBSET         2
@@ -32,6 +52,7 @@
 #define VLAD_ATOM_TOTAL          3
 
 /* convenience macros */
+
 #define VLAD_ATOM_TYPE_VALID(X)  \
   (((X) >= VLAD_ATOM_HOLDS && (X) <= VLAD_ATOM_SUBSET)
 #define VLAD_ATOM_IS_HOLDS(X)    ((X) == VLAD_ATOM_HOLDS)
