@@ -181,6 +181,32 @@ int vlad_stringlist::get(unsigned int a_index, char **a_str)
   return VLAD_OK;
 }
 
+/* make a copy of this stringlist */
+int vlad_stringlist::copy(vlad_stringlist **a_slist)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_slist == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a_slist = VLAD_MEM_NEW(vlad_stringlist(m_uniq))) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* go through each string in this expression */
+  for (i = 0; i < vlad_list::length(); i++) {
+    char *str;
+
+    if ((retval = get(i, &str)) != VLAD_OK)
+      return retval;
+
+    if ((retval = (*a_slist)->add(str)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
 /* return true if string is in the list */
 int vlad_stringlist::find(const char *a_str)
 {

@@ -8,6 +8,8 @@
 	* lib/stinglist.cpp :
 	* lib/stringlist.h :
 
+	  - Added a copy() function.
+
 	  - Added an m_uniq to keep track of whether we are keeping a unique
 	    list or not. This is safer than making vlad_list::m_uniq pubic or
 	    protected.

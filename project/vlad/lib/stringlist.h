@@ -78,6 +78,9 @@ class vlad_stringlist : public vlad_list, public vlad_list_item
     /* get the ith string in the list */
     int get(unsigned int a_index, char **a_str);
 
+    /* make a copy of this stringlist */
+    int copy(vlad_stringlist **a_slist);
+
     /* return true if string is in the list */
     int find(const char *a_str);
 
