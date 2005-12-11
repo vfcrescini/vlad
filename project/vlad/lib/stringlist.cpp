@@ -90,6 +90,10 @@ vlad_stringlist::vlad_stringlist() : vlad_list(true)
 {
 }
 
+vlad_stringlist::vlad_stringlist(bool a_uniq) : vlad_list(a_uniq)
+{
+}
+
 vlad_stringlist::~vlad_stringlist()
 {
   purge(true);
