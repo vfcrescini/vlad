@@ -1,3 +1,9 @@
+2005-12-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/identifier.h :
+
+	  - Fixed error in the VLAD_IDENT_IS_*() macros.
+
 2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Tagging vlad-1_2_1
