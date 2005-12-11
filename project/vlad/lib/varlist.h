@@ -23,7 +23,6 @@
 #define __VLAD_VARLIST_H
 
 #include <vlad/stringlist.h>
-#include <vlad/symtab.h>
 
 class vlad_varlist : public vlad_stringlist
 {
