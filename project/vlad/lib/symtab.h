@@ -24,11 +24,15 @@
 
 #include <vlad/mem.h>
 #include <vlad/stringlist.h>
+#include <vlad/stringlistlist.h>
+#include <vlad/varlist.h>
 #include <vlad/identifier.h>
 
 class vlad_symtab : virtual public vlad_mem
 {
   public :
+
+    friend class vlad_symtab_tuple_trav;
 
     vlad_symtab();
     ~vlad_symtab();
@@ -60,6 +64,9 @@ class vlad_symtab : virtual public vlad_mem
     /* give the type of the given identifier */
     int type(const char *a_s, unsigned char *a_t);
 
+    /* given a list of variables, generate a list of tuples for grounding */
+    int tupleate(vlad_varlist *a_vlist, vlad_stringlistlist **a_tlist);
+
   private :
 
     /* m_list: 0 = ss, 1 = as, 2 = os, 3 = sg, 4 = ag, 5 = og */
@@ -71,6 +78,12 @@ class vlad_symtab : virtual public vlad_mem
 
     /* unmap the sequential numbers into identifier types */
     unsigned int unmap(unsigned int a_n);
+
+    /* tupleate() helper */
+    int tupleateify(vlad_varlist *a_vlist,
+                    vlad_stringlistlist *a_tlist,
+                    vlad_stringlist *a_tuple,
+                    unsigned int a_iteration);
 } ;
 
 #endif

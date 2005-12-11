@@ -27,6 +27,104 @@
 #include <vlad/mem.h>
 #include <vlad/symtab.h>
 
+/* class for tuple generation traversing */
+class vlad_symtab_tuple_trav : public vlad_stringlist_trav
+{
+  public :
+
+    vlad_symtab_tuple_trav();
+    ~vlad_symtab_tuple_trav();
+
+    /* (re)initialise */
+    void init(vlad_varlist *a_vlist,
+              vlad_stringlistlist *m_tlist,
+              vlad_symtab *m_stab,
+              vlad_stringlist *a_tuple,
+              unsigned int a_iteration);
+
+    /* the function called at every node */
+    int trav(const char *a_str);
+
+  private :
+
+    vlad_varlist *m_vlist;
+    vlad_stringlistlist *m_tlist;
+    vlad_symtab *m_stab;
+    vlad_stringlist *m_tuple;
+    unsigned int m_iteration;
+} ;
+
+vlad_symtab_tuple_trav::vlad_symtab_tuple_trav()
+{
+  m_vlist = NULL;
+  m_tlist = NULL;
+  m_stab = NULL;
+  m_tuple = NULL;
+  m_iteration = 0;
+}
+
+vlad_symtab_tuple_trav::~vlad_symtab_tuple_trav()
+{
+}
+
+/* (re)initialise */
+void vlad_symtab_tuple_trav::init(vlad_varlist *a_vlist,
+                                  vlad_stringlistlist *a_tlist,
+                                  vlad_symtab *a_stab,
+                                  vlad_stringlist *a_tuple,
+                                  unsigned int a_iteration)
+{
+  m_vlist = a_vlist;
+  m_tlist = a_tlist;
+  m_stab = a_stab;
+  m_tuple = a_tuple;
+  m_iteration = a_iteration;
+}
+
+/* the function called at every node */
+int vlad_symtab_tuple_trav::trav(const char *a_str)
+{
+  int retval;
+  vlad_stringlist *tuple;
+
+  if (m_iteration == 0) {
+    /* first item in the tuple */
+    if ((tuple = VLAD_MEM_NEW(vlad_stringlist(false))) == NULL)
+      return VLAD_NULLPTR;
+  }
+  else if (m_tuple != NULL) {
+    /* not the first tuple so we copy our tuple and load this string */
+    if ((retval = m_tuple->copy(&tuple)) != VLAD_OK)
+      return retval;
+  }
+  else {
+    /* something's wrong here */
+    return VLAD_FAILURE;
+  }
+
+  /* add the current variable into the current tuple */
+  if ((retval = tuple->add(a_str)) != VLAD_OK) {
+    VLAD_MEM_DELETE(tuple);
+    return retval;
+  }
+
+  /* if the tuple is full, add to our tuple list */
+  if (m_iteration + 1 >= m_vlist->length())
+    return m_tlist->add(tuple);
+
+  /* not full yet so we re-iterate */
+  if ((retval = m_stab->tupleateify(m_vlist, m_tlist, tuple, m_iteration + 1)) != VLAD_OK) {
+    /* something's very wrong here */
+    VLAD_MEM_DELETE(tuple);
+    return retval;
+  }
+
+  /* always cleanup */
+  VLAD_MEM_DELETE(tuple);
+
+  return VLAD_OK;
+}
+
 vlad_symtab::vlad_symtab()
 {
   int i;
@@ -239,6 +337,24 @@ int vlad_symtab::type(const char *a_s, unsigned char *a_t)
 
   return VLAD_NOTFOUND;
 }
+
+/* given a list of variables, generate a list of tuples for grounding */
+int vlad_symtab::tupleate(vlad_varlist *a_vlist, vlad_stringlistlist **a_tlist)
+{
+  if (a_tlist == NULL)
+    return VLAD_NULLPTR;
+
+  /* we create a new tuple list */
+  if ((*a_tlist = VLAD_MEM_NEW(vlad_stringlistlist())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  /* nothing to do */
+  if (a_vlist == NULL || a_vlist->length() == 0)
+    return VLAD_OK;
+
+  return tupleateify(a_vlist, *a_tlist, NULL, 0);
+}
+
 /* map the identifier types into sequential numbers */
 unsigned int vlad_symtab::map(unsigned int a_t)
 {
@@ -279,4 +395,63 @@ unsigned int vlad_symtab::unmap(unsigned int a_n)
   }
 
   return 0;
+}
+
+/* tupleate() helper */
+int vlad_symtab::tupleateify(vlad_varlist *a_vlist,
+                             vlad_stringlistlist *a_tlist,
+                             vlad_stringlist *a_tuple,
+                             unsigned int a_iteration)
+{
+  int retval;
+  char *var;
+  unsigned int vtype;
+  vlad_symtab_tuple_trav *trav;
+
+  if (a_vlist == NULL || a_tlist == NULL)
+    return VLAD_NULLPTR;
+
+  /* make sure we don't iterate too much */
+  if (a_iteration >= a_vlist->length())
+    return VLAD_INVALIDINPUT;
+
+  /* get a variable to work with */
+  if ((retval = a_vlist->get(a_iteration, &var)) != VLAD_OK)
+    return retval;
+
+  /* once we have the variable, determine its type */
+  if ((vtype = vlad_identifier::get_var_type(var)) == VLAD_IDENT_NUL)
+    return VLAD_INVALIDINPUT;
+
+  /* build and initialise a traverse object */
+  if ((trav = VLAD_MEM_NEW(vlad_symtab_tuple_trav())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  trav->init(a_vlist, a_tlist, this, a_tuple, a_iteration);
+ 
+  /* now we figure out which list(s) to traverse */
+  switch(VLAD_IDENT_TYPE_BASETYPE(vtype)) {
+    case VLAD_IDENT_SUB :
+      if (VLAD_IDENT_TYPE_IS_SIN(vtype))
+        retval = m_lists[map(VLAD_IDENT_ENT_SUB_SIN)]->traverse(trav);
+      if ((retval == VLAD_OK) && VLAD_IDENT_TYPE_IS_GRP(vtype))
+        retval = m_lists[map(VLAD_IDENT_ENT_SUB_GRP)]->traverse(trav);
+      break;
+    case VLAD_IDENT_ACC :
+      if (VLAD_IDENT_TYPE_IS_SIN(vtype))
+        retval = m_lists[map(VLAD_IDENT_ENT_ACC_SIN)]->traverse(trav);
+      if ((retval == VLAD_OK) && VLAD_IDENT_TYPE_IS_GRP(vtype))
+        retval = m_lists[map(VLAD_IDENT_ENT_ACC_GRP)]->traverse(trav);
+      break;
+    case VLAD_IDENT_OBJ :
+      if (VLAD_IDENT_TYPE_IS_SIN(vtype))
+        retval = m_lists[map(VLAD_IDENT_ENT_OBJ_SIN)]->traverse(trav);
+      if ((retval == VLAD_OK) && VLAD_IDENT_TYPE_IS_GRP(vtype))
+        retval = m_lists[map(VLAD_IDENT_ENT_OBJ_GRP)]->traverse(trav);
+      break;
+  }
+
+  /* cleanup */
+  VLAD_MEM_DELETE(trav);
+  return retval;
 }

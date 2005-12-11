@@ -145,7 +145,7 @@ fact.o : vlad.h mem.h stringlist.h varlist.h identifier.h atom.h symtab.h fact.h
 expression.o : vlad.h mem.h list.h fact.h stringlist.h varlist.h symtab.h expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
 
-symtab.o : vlad.h mem.h stringlist.h identifier.h symtab.h symtab.cpp
+symtab.o : vlad.h mem.h stringlist.h stringlistlist.h varlist.h identifier.h symtab.h symtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
 
 consttab.o : vlad.h mem.h varlist.h expression.h consttab.h consttab.cpp
