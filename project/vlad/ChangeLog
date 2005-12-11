@@ -1,3 +1,15 @@
+2005-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Merged with vlad-1_2_2
+
+2005-12-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Tagging vlad-1_2_2
+
+	* lib/identifier.h :
+
+	  - Fixed error in the VLAD_IDENT_IS_*() macros.
+
 2005-12-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* samples/docrel.vla :
