@@ -53,6 +53,14 @@ class vlad_expression : public vlad_list
     /* give i'th fact */
     int get(unsigned int a_index, vlad_fact **a_fact);
 
+    /* make a copy */
+    int copy(vlad_expression **a_exp);
+
+    /* verify and copy */
+    int vcopy(vlad_symtab *a_stab,
+              vlad_varlist *a_vlist,
+              vlad_expression **a_exp);
+
     /* replace occurences of var with ident, creates a new expression */
     int replace(const char *a_var,
                 const char *a_ident,
@@ -63,19 +71,17 @@ class vlad_expression : public vlad_list
                 vlad_stringlist *a_ilist,
                 vlad_expression **a_exp);
 
-    /* gives a list of vars occuring in the expr. assumes list is init'ed */
-    int varlist(vlad_varlist **a_list);
+    /* replace then verify */
+    int vreplace(vlad_symtab *a_stab,
+                 vlad_varlist *a_vlist,
+                 vlad_stringlist *a_ilist,
+                 vlad_expression **a_exp);
 
     /* check if exp is valid, any variables that occur must be in a_vlist */
     int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
-    /* make a copy */
-    int copy(vlad_expression **a_exp);
-
-    /* verify and copy */
-    int vcopy(vlad_symtab *a_stab,
-              vlad_varlist *a_vlist,
-              vlad_expression **a_exp);
+    /* gives a list of vars occuring in the expr. assumes list is init'ed */
+    int varlist(vlad_varlist **a_list);
 
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */

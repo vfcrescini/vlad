@@ -87,9 +87,6 @@ class vlad_fact : public vlad_list_item
               vlad_varlist *a_vlist,
               vlad_fact **a_fact);
 
-    /* check if fact is valid, any variables that occur must be in a_vlist */
-    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
-
     /* replaces instances of var with ident, gives a new fact */
     int replace(const char *a_var, const char *a_ident, vlad_fact **a_fact);
 
@@ -97,6 +94,15 @@ class vlad_fact : public vlad_list_item
     int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
                 vlad_fact **a_fact);
+
+    /* replace then verify */
+    int vreplace(vlad_symtab *a_stab,
+                 vlad_varlist *a_vlist,
+                 vlad_stringlist *a_ilist,
+                 vlad_fact **a_fact);
+
+    /* check if fact is valid, any variables that occur must be in a_vlist */
+    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
     /* reverses the truth value */
     void negate();
