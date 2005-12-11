@@ -1,5 +1,11 @@
 2005-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+
+	  - Added a function that will give a list of tuples of entities that
+	    match a given list of variables for grounding.
+
 	* lib/stringlistlist.cpp :
 
 	  - get() will now first get a vlad_list_item then dynamic_cast that
