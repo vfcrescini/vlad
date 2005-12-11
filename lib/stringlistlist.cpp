@@ -45,7 +45,20 @@ int vlad_stringlistlist::add(vlad_stringlist *a_slist)
 /* get the ith stringlist in the list */
 int vlad_stringlistlist::get(unsigned int a_index, vlad_stringlist **a_slist)
 {
-  return vlad_list::get(a_index, (vlad_list_item **)(a_slist));
+  unsigned int retval;
+
+  vlad_list_item *item;
+
+  if (a_slist == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = vlad_list::get(a_index, &item)) != VLAD_OK)
+    return retval;
+
+  if ((*a_slist = dynamic_cast<vlad_stringlist *>(item)) == NULL)
+    return VLAD_FAILURE;
+
+  return VLAD_OK;
 }
 
 /* called by vlad_list::traverse() */

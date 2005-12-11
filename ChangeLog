@@ -1,5 +1,10 @@
 2005-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/stringlistlist.cpp :
+
+	  - get() will now first get a vlad_list_item then dynamic_cast that
+	    into a vlad_stringlist.
+
 	* lib/stinglist.cpp :
 	* lib/stringlist.h :
 
