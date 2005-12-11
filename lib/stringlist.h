@@ -63,6 +63,7 @@ class vlad_stringlist : public vlad_list, public vlad_list_item
   public :
 
     vlad_stringlist();
+    vlad_stringlist(bool a_uniq);
     ~vlad_stringlist();
 
     /* compares 2 lists */

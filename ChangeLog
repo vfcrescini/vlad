@@ -1,5 +1,11 @@
 2005-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/stinglist.cpp :
+	* lib/stringlist.h :
+
+	  - Added a stringlist constructor for creating a stringlist where
+	    duplicates are allowed.
+
 	* Merged with vlad-1_2_2
 
 2005-12-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
