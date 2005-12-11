@@ -8,6 +8,12 @@
 	* lib/stinglist.cpp :
 	* lib/stringlist.h :
 
+	  - Added an m_uniq to keep track of whether we are keeping a unique
+	    list or not. This is safer than making vlad_list::m_uniq pubic or
+	    protected.
+
+	  - Made get(const char *, unsigned int &) fail if m_uniq is true.
+
 	  - Added a stringlist constructor for creating a stringlist where
 	    duplicates are allowed.
 

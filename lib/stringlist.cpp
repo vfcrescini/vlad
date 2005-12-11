@@ -88,10 +88,12 @@ void vlad_stringlist_item::print(char *a_str)
 
 vlad_stringlist::vlad_stringlist() : vlad_list(true)
 {
+  m_uniq = true;
 }
 
 vlad_stringlist::vlad_stringlist(bool a_uniq) : vlad_list(a_uniq)
 {
+  m_uniq = a_uniq;
 }
 
 vlad_stringlist::~vlad_stringlist()
@@ -132,7 +134,7 @@ int vlad_stringlist::add(const char *a_str)
   return VLAD_OK;
 }
 
-/* get the index of the string */
+/* get the index of the string (will only work if m_uniq is true) */
 int vlad_stringlist::get(const char *a_str, unsigned int *a_index)
 {
   int retval;
@@ -142,6 +144,9 @@ int vlad_stringlist::get(const char *a_str, unsigned int *a_index)
 
   if (a_str == NULL || a_index == NULL)
     return VLAD_NULLPTR;
+
+  if (!m_uniq)
+    return VLAD_INVALIDOP;
 
   if ((retval = sitem.init(a_str)) != VLAD_OK)
     return retval;
