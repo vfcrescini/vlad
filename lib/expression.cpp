@@ -62,96 +62,6 @@ int vlad_expression::get(unsigned int a_index, vlad_fact **a_fact)
   return vlad_list::get(a_index, (vlad_list_item **) a_fact);
 }
 
-/* replace occurences of var with ident, creates a new expression */
-int vlad_expression::replace(const char *a_var,
-                             const char *a_ident,
-                             vlad_expression **a_exp)
-{
-  int retval;
-  unsigned int i;
-  vlad_fact *old_fact;
-  vlad_fact *new_fact;
-
-  if (a_exp == NULL)
-    return VLAD_NULLPTR;
-
-  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    if ((retval = get(i, &old_fact)) != VLAD_OK)
-      return retval;
-    if ((retval = old_fact->replace(a_var, a_ident, &new_fact)) != VLAD_OK)
-      return retval;
-    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
-      return retval;
-  }
-
-  return VLAD_OK;
-}
-
-/* replace vars in vlist to ident in ilist. create a new expression */
-int vlad_expression::replace(vlad_varlist *a_vlist,
-                             vlad_stringlist *a_ilist,
-                             vlad_expression **a_exp)
-{
-  int retval;
-  unsigned int i;
-  vlad_fact *old_fact;
-  vlad_fact *new_fact;
-
-  if (a_exp == NULL)
-    return VLAD_NULLPTR;
-
-  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    if ((retval = get(i, &old_fact)) != VLAD_OK)
-      return retval;
-    if ((retval = old_fact->replace(a_vlist, a_ilist, &new_fact)) != VLAD_OK)
-      return retval;
-    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
-      return retval;
-  }
-
-  return VLAD_OK;
-}
-
-/* gives a list of vars occuring in the expr. assumes list is init'ed */
-int vlad_expression::varlist(vlad_varlist **a_list)
-{
-  int retval;
-  unsigned int i;
-  vlad_fact *fact;
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    if ((retval = get(i, &fact)) != VLAD_OK)
-      return retval;
-    if ((retval = fact->varlist(a_list)) != VLAD_OK)
-      return retval;
-  }
-
-  return VLAD_OK;
-}
-
-/* check if exp is valid, any variables that occur must be in a_vlist */
-int vlad_expression::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
-{
-  int retval;
-  unsigned int i;
-  vlad_fact *fact;
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    if ((retval = vlad_expression::get(i, &fact)) != VLAD_OK)
-      return retval;
-    if ((retval = fact->verify(a_stab, a_vlist)) != VLAD_OK)
-      return retval;
-  }
-
-  return VLAD_OK;
-}
-
 /* make a copy */
 int vlad_expression::copy(vlad_expression **a_exp)
 {
@@ -208,6 +118,143 @@ int vlad_expression::vcopy(vlad_symtab *a_stab,
       return retval;
 
     if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* replace occurences of var with ident, creates a new expression */
+int vlad_expression::replace(const char *a_var,
+                             const char *a_ident,
+                             vlad_expression **a_exp)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_exp == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *old_fact;
+    vlad_fact *new_fact;
+
+    if ((retval = get(i, &old_fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = old_fact->replace(a_var, a_ident, &new_fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* replace vars in vlist to ident in ilist. create a new expression */
+int vlad_expression::replace(vlad_varlist *a_vlist,
+                             vlad_stringlist *a_ilist,
+                             vlad_expression **a_exp)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_exp == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *old_fact;
+    vlad_fact *new_fact;
+
+    if ((retval = get(i, &old_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = old_fact->replace(a_vlist, a_ilist, &new_fact)) != VLAD_OK)
+      return retval;
+    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* replace then verify */
+int vlad_expression::vreplace(vlad_symtab *a_stab,
+                              vlad_varlist *a_vlist,
+                              vlad_stringlist *a_ilist,
+                              vlad_expression **a_exp)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_exp == NULL)
+    return VLAD_NULLPTR;
+
+  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
+    return VLAD_MALLOCFAILED;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *old_fact;
+    vlad_fact *new_fact;
+
+    if ((retval = get(i, &old_fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = old_fact->replace(a_vlist, a_ilist, &new_fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = new_fact->verify(a_stab, NULL)) != VLAD_OK) {
+      /* if the new fact failed to verify, we stop right here */
+      VLAD_MEM_DELETE(new_fact);
+      VLAD_MEM_DELETE(*a_exp);
+      return retval;
+    }
+
+    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* check if exp is valid, any variables that occur must be in a_vlist */
+int vlad_expression::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
+{
+  int retval;
+  unsigned int i;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *fact;
+
+    if ((retval = get(i, &fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = fact->verify(a_stab, a_vlist)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* gives a list of vars occuring in the expr. assumes list is init'ed */
+int vlad_expression::varlist(vlad_varlist **a_list)
+{
+  int retval;
+  unsigned int i;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *fact;
+
+    if ((retval = get(i, &fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = fact->varlist(a_list)) != VLAD_OK)
       return retval;
   }
 

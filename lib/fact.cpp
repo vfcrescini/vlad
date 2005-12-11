@@ -342,38 +342,6 @@ int vlad_fact::vcopy(vlad_symtab *a_stab,
   return copy(a_fact);
 }
 
-/* check if fact is valid, any variables that occur must be in a_vlist */
-int vlad_fact::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
-{
-  if (!m_init)
-    return VLAD_UNINITIALISED;
-
-  if (a_stab == NULL)
-    return VLAD_NULLPTR;
-
-  switch(m_type) {
-    case VLAD_ATOM_HOLDS :
-      return vlad_verify_holds(m_holds.subject,
-                               m_holds.access,
-                               m_holds.object,
-                               a_stab,
-                               a_vlist);
-    case VLAD_ATOM_MEMBER :
-      return vlad_verify_memb(m_member.element,
-                              m_member.group,
-                              a_stab,
-                              a_vlist);
-
-    case VLAD_ATOM_SUBSET :
-      return vlad_verify_subst(m_subset.group1,
-                               m_subset.group2,
-                               a_stab,
-                               a_vlist);
-  }
-
-  return VLAD_INVALIDINPUT;
-}
-
 /* replaces instances of var with ident, gives a new fact */
 int vlad_fact::replace(const char *a_var,
                        const char *a_ident,
@@ -511,6 +479,57 @@ int vlad_fact::replace(vlad_varlist *a_vlist,
   }
 
   return VLAD_FAILURE;
+}
+
+/* replace then verify */
+int vlad_fact::vreplace(vlad_symtab *a_stab,
+                        vlad_varlist *a_vlist,
+                        vlad_stringlist *a_ilist,
+                        vlad_fact **a_fact)
+{
+  int retval;
+
+  if ((retval = replace(a_vlist, a_ilist, a_fact)) != VLAD_OK)
+    return retval;
+
+  if ((retval = (*a_fact)->verify(a_stab, NULL)) != VLAD_OK) {
+    VLAD_MEM_DELETE(*a_fact);
+    return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* check if fact is valid, any variables that occur must be in a_vlist */
+int vlad_fact::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_stab == NULL)
+    return VLAD_NULLPTR;
+
+  switch(m_type) {
+    case VLAD_ATOM_HOLDS :
+      return vlad_verify_holds(m_holds.subject,
+                               m_holds.access,
+                               m_holds.object,
+                               a_stab,
+                               a_vlist);
+    case VLAD_ATOM_MEMBER :
+      return vlad_verify_memb(m_member.element,
+                              m_member.group,
+                              a_stab,
+                              a_vlist);
+
+    case VLAD_ATOM_SUBSET :
+      return vlad_verify_subst(m_subset.group1,
+                               m_subset.group2,
+                               a_stab,
+                               a_vlist);
+  }
+
+  return VLAD_INVALIDINPUT;
 }
 
 /* reverses the truth value */

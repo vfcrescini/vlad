@@ -1,5 +1,14 @@
 2005-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/expression.cpp :
+	* lib/expression.h :
+	* lib/fact.cpp :
+	* lib/fact.h :
+
+	  - Added a vreplace() function to replace and verify.
+
+	  - Some minor cleanup.
+
 	* lib/symtab.cpp :
 	* lib/symtab.h :
 
