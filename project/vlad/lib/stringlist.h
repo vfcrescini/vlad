@@ -72,7 +72,7 @@ class vlad_stringlist : public vlad_list, public vlad_list_item
     /* add a string in the list */
     int add(const char *a_str);
 
-    /* get the index of the string */
+    /* get the index of the string (will only work if m_uniq is true) */
     int get(const char *a_str, unsigned int *a_index);
 
     /* get the ith string in the list */
@@ -87,6 +87,8 @@ class vlad_stringlist : public vlad_list, public vlad_list_item
 #endif
 
   private :
+
+    bool m_uniq;
 
     /* called by vlad_list::traverse() */
     int trav(vlad_list_item *a_item, vlad_list_trav *a_trav);
