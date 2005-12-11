@@ -45,8 +45,7 @@ int vlad_stringlistlist::add(vlad_stringlist *a_slist)
 /* get the ith stringlist in the list */
 int vlad_stringlistlist::get(unsigned int a_index, vlad_stringlist **a_slist)
 {
-  unsigned int retval;
-
+  int retval;
   vlad_list_item *item;
 
   if (a_slist == NULL)
