@@ -39,7 +39,7 @@ vlad_stringlistlist::~vlad_stringlistlist()
 /* add a stringlist in the list */
 int vlad_stringlistlist::add(vlad_stringlist *a_slist)
 {
-  return vlad_list::add(a_slist);
+  return vlad_list::add((vlad_list_item *) a_slist);
 }
 
 /* get the ith stringlist in the list */
