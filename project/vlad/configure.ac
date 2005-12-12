@@ -31,8 +31,10 @@ CXXFLAGS="$CXXFLAGS"
 # set flags
 VLAD_C_WFLG="-Wall -Wshadow -Wcast-align -Wstrict-prototypes"
 VLAD_C_OFLG="-ansi -pedantic"
+VLAD_CXX_WFLG="-Wall -Wshadow -Wcast-align"
+VLAD_CXX_OFLG="-ansi -pedantic"
 VLAD_CFLAGS="$VLAD_C_OFLG $VLAD_C_WFLG -I\$(DISTDIR)/include"
-VLAD_CXXFLAGS="$VLAD_C_OFLG $VLAD_C_WFLG -I\$(DISTDIR)/include"
+VLAD_CXXFLAGS="$VLAD_CXX_OFLG $VLAD_CXX_WFLG -I\$(DISTDIR)/include"
 VLAD_LDFLAGS="-L\$(DISTDIR)/lib"
 
 # some tests
