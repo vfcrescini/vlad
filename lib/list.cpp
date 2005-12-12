@@ -95,6 +95,13 @@ bool vlad_list::cmp(vlad_list *a_list)
   return true;
 }
 
+/* create an exact duplicate of this item */
+vlad_list_item *vlad_list_item::copy()
+{
+  /* our default behaviour is to just return the same pointer */
+  return this;
+}
+
 /* returns the length of the list */
 unsigned int vlad_list::length()
 {
@@ -158,6 +165,39 @@ int vlad_list::add(vlad_list_item *a_data)
   new_node->next = NULL;
   m_tail = new_node;
   m_length++;
+
+  return VLAD_OK;
+}
+
+/* add the contents of the given list */
+int vlad_list::add(vlad_list *a_list)
+{
+  vlad_list_node *curr;
+  int retval;
+
+  /* see if we have anything to do */
+  if (a_list == NULL || a_list->length() == 0)
+    return VLAD_OK;
+
+  curr = a_list->m_head;
+
+  /* go through the list */
+  while(curr != NULL) {
+    vlad_list_item *item;
+
+    if ((item = curr->data->copy()) == NULL)
+      return VLAD_FAILURE;
+
+    if ((retval = add(item)) != VLAD_OK) {
+      /* if it is different from the orig, assume it is newly allocated */
+      if (item != curr->data)
+        VLAD_MEM_DELETE(item);
+
+      return retval;
+    }
+
+    curr = curr->next;
+  }
 
   return VLAD_OK;
 }
@@ -253,6 +293,28 @@ int vlad_list::del(vlad_list_item *a_data, bool a_free)
   }
 
   return (found ? VLAD_OK : VLAD_NOTFOUND);
+}
+
+/* delete all items that matches the items in the given list */
+int vlad_list::del(vlad_list *a_list, bool a_free)
+{
+  vlad_list_node *curr;
+  int retval;
+
+  /* see if we have anything to do */
+  if (a_list == NULL || a_list->length() == 0)
+    return VLAD_OK;
+
+  curr = a_list->m_head;
+
+  /* go through the list */
+  while(curr != NULL) {
+    if ((retval = del(curr->data, a_free)) != VLAD_OK)
+      return retval;
+    curr = curr->next;
+  }
+
+  return VLAD_OK;
 }
 
 /* gives an array of indices of the data given */
