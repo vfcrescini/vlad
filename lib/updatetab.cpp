@@ -191,12 +191,72 @@ int vlad_updatetab::get(const char *a_name,
   VLAD_MEM_FREE(lst);
   VLAD_MEM_DELETE(udef);
 
-  if (a_prexp)
+  if (a_prexp != NULL)
     *a_prexp = prexp;
-  if (a_poexp)
+  if (a_poexp != NULL)
     *a_poexp = poexp;
 
   return VLAD_OK;
+}
+
+/* vlist1 contains vars in the varlist that are actually used, vlist2
+ * contains all other vars that occur in the expressions */
+int vlad_updatetab::get(const char *a_name,
+                        vlad_varlist **a_vlist1,
+                        vlad_varlist **a_vlist2,
+                        vlad_expression **a_prexp,
+                        vlad_expression **a_poexp)
+{
+  int retval;
+  vlad_varlist *vlist_spec;
+  vlad_varlist *vlist_used;
+  vlad_expression *prexp;
+  vlad_expression *poexp;
+
+  if (a_vlist1 == NULL || a_vlist2 == NULL)
+    return VLAD_NULLPTR;
+
+  if ((retval = get(a_name, &vlist_spec, &prexp, &poexp)) != VLAD_OK)
+    return retval;
+
+  /* create a list of variables that are actually used in the exps */
+  if ((vlist_used = VLAD_MEM_NEW(vlad_varlist())) == NULL)
+    return retval;
+
+  /* generate variable list */
+  if (retval == VLAD_OK)
+    retval = prexp->varlist(vlist_used);
+  if (retval == VLAD_OK)
+    retval = prexp->varlist(vlist_used);
+
+  /* make copies of the lists */
+  if (retval == VLAD_OK)
+    retval = vlist_used->copy(a_vlist1);
+  if (retval == VLAD_OK)
+    retval = vlist_used->copy(a_vlist2);
+
+  /* trim the lists */
+  if (retval == VLAD_OK)
+    retval = (*a_vlist2)->del(vlist_spec);
+  if (retval == VLAD_OK)
+    retval = (*a_vlist1)->del(*a_vlist2);
+
+  /* cleanup */
+  if (vlist_used != NULL)
+    VLAD_MEM_DELETE(vlist_used);
+  if (retval != VLAD_OK) {
+    if (*a_vlist1 != NULL)
+      VLAD_MEM_DELETE(*a_vlist1);
+    if (*a_vlist2 != NULL)
+      VLAD_MEM_DELETE(*a_vlist2);
+  }
+
+  if (a_prexp != NULL)
+    *a_prexp = prexp;
+  if (a_poexp != NULL)
+    *a_poexp = poexp;
+  
+  return retval;
 }
 
 /* get update by index */

@@ -1,5 +1,11 @@
 2005-12-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/updatetab.cpp :
+	* lib/updatetab.h :
+
+	  - Added a variant of the get() function that gives out 2 variable
+	    lists.
+
 	* lib/list.cpp :
 
 	  - In the del() function, if deleting a list of items, ignore those
