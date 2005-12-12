@@ -235,6 +235,10 @@ Updated 2005 Dec 10
 
       always <expression1>
 
+    Identifiers in expressions of constraint rules may contain variables. These
+    variables are automatically grounded to all matching entities of the same
+    type.
+
 3. Operations Statements
 
   3.1. Query Statement
