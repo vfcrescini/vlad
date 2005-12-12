@@ -309,8 +309,11 @@ int vlad_list::del(vlad_list *a_list, bool a_free)
 
   /* go through the list */
   while(curr != NULL) {
-    if ((retval = del(curr->data, a_free)) != VLAD_OK)
-      return retval;
+    if ((retval = del(curr->data, a_free)) != VLAD_OK) {
+      /* we ignore those that are not in the list */
+      if (retval != VLAD_NOTFOUND)
+        return retval;
+    }
     curr = curr->next;
   }
 

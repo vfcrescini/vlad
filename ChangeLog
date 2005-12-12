@@ -1,5 +1,12 @@
 2005-12-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/list.cpp :
+
+	  - In the del() function, if deleting a list of items, ignore those
+	    that are not in the list.
+
+2005-12-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
 	* Tagging vlad-1_3_0
 
 	* lib/polbase.cpp :
