@@ -220,13 +220,13 @@ int vlad_updatetab::get(const char *a_name,
 
   /* create a list of variables that are actually used in the exps */
   if ((*a_vlist2 = VLAD_MEM_NEW(vlad_varlist())) == NULL)
-    return retval;
+    return VLAD_MALLOCFAILED;
 
   /* generate variable list */
   if (retval == VLAD_OK)
     retval = prexp->varlist(*a_vlist2);
   if (retval == VLAD_OK)
-    retval = prexp->varlist(*a_vlist2);
+    retval = poexp->varlist(*a_vlist2);
 
   /* make a copy for list 1 */
   if (retval == VLAD_OK)
