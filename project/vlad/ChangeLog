@@ -6,7 +6,15 @@
 	  - Removed replace() and varlist() from consttab. Expressions stored
 	    in this table should already be grounded.
 
+	* lib/expression.cpp :
+	* lib/expression.h :
 	* lib/fact.cpp :
+	* lib/fact.h :
+
+	  - Added a vvarlist() function that will verify a fact/expression and
+	    at the same time will add any variables encountered into a list.
+
+	  - Original varlist() does not need a varlist **. Now uses varlist *.
 
 	  - verify() functions will now ignore the varlist if it is null.
 

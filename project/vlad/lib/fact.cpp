@@ -35,20 +35,23 @@ static int vlad_verify_holds(const char *a_sub,
                              const char *a_acc,
                              const char *a_obj,
                              vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist);
+                             vlad_varlist *a_vlist1,
+                             vlad_varlist *a_vlist2);
 
 /* return VLAD_OK if the given memb atom is valid */
 static int vlad_verify_memb(const char *a_elt,
                             const char *a_grp,
                             vlad_symtab *a_stab,
-                            vlad_varlist *a_vlist);
+                            vlad_varlist *a_vlist1,
+                            vlad_varlist *a_vlist2);
 
 
 /* return VLAD_OK if the given subst atom is valid */
 static int vlad_verify_subst(const char *a_grp1,
                              const char *a_grp2,
                              vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist);
+                             vlad_varlist *a_vlist1,
+                             vlad_varlist *a_vlist2);
 
 vlad_fact::vlad_fact()
 {
@@ -500,6 +503,95 @@ int vlad_fact::vreplace(vlad_symtab *a_stab,
   return VLAD_OK;
 }
 
+/* gives a list of vars occuring in the fact. assumes list is init'ed */
+int vlad_fact::varlist(vlad_varlist *a_list)
+{
+  int retval;
+
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_list == NULL)
+    return VLAD_NULLPTR;
+
+  switch(m_type) {
+    case VLAD_ATOM_HOLDS :
+      if (vlad_identifier::validate_var_ident(m_holds.subject) == VLAD_OK)
+        if ((retval = a_list->add(m_holds.subject)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+      if (vlad_identifier::validate_var_ident(m_holds.access) == VLAD_OK)
+        if ((retval = a_list->add(m_holds.access)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+      if (vlad_identifier::validate_var_ident(m_holds.object) == VLAD_OK)
+        if ((retval = a_list->add(m_holds.object)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+
+      return VLAD_OK;
+    case VLAD_ATOM_MEMBER :
+      if (vlad_identifier::validate_var_ident(m_member.element) == VLAD_OK)
+        if ((retval = a_list->add(m_member.element)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+      if (vlad_identifier::validate_var_ident(m_member.group) == VLAD_OK)
+        if ((retval = a_list->add(m_member.group)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+
+      return VLAD_OK;
+    case VLAD_ATOM_SUBSET :
+      if (vlad_identifier::validate_var_ident(m_subset.group1) == VLAD_OK)
+        if ((retval = a_list->add(m_subset.group1)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+      if (vlad_identifier::validate_var_ident(m_subset.group2) == VLAD_OK)
+        if ((retval = a_list->add(m_subset.group2)) != VLAD_OK)
+          if (retval != VLAD_DUPLICATE)
+            return retval;
+
+      return VLAD_OK;
+  }
+
+  return VLAD_FAILURE;
+}
+
+/* same as above, but verifies the fact too */
+int vlad_fact::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_stab == NULL || a_list == NULL)
+    return VLAD_NULLPTR;
+
+  switch(m_type) {
+    case VLAD_ATOM_HOLDS :
+      return vlad_verify_holds(m_holds.subject,
+                               m_holds.access,
+                               m_holds.object,
+                               a_stab,
+                               NULL,
+                               a_list);
+    case VLAD_ATOM_MEMBER :
+      return vlad_verify_memb(m_member.element,
+                              m_member.group,
+                              a_stab,
+                              NULL,
+                              a_list);
+
+    case VLAD_ATOM_SUBSET :
+      return vlad_verify_subst(m_subset.group1,
+                               m_subset.group2,
+                               a_stab,
+                               NULL,
+                               a_list);
+  }
+
+  return VLAD_INVALIDINPUT;
+}
+
 /* check if fact is valid, any variables that occur must be in a_vlist */
 int vlad_fact::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
 {
@@ -515,18 +607,21 @@ int vlad_fact::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
                                m_holds.access,
                                m_holds.object,
                                a_stab,
-                               a_vlist);
+                               a_vlist,
+                               NULL);
     case VLAD_ATOM_MEMBER :
       return vlad_verify_memb(m_member.element,
                               m_member.group,
                               a_stab,
-                              a_vlist);
+                              a_vlist,
+                              NULL);
 
     case VLAD_ATOM_SUBSET :
       return vlad_verify_subst(m_subset.group1,
                                m_subset.group2,
                                a_stab,
-                               a_vlist);
+                               a_vlist,
+                               NULL);
   }
 
   return VLAD_INVALIDINPUT;
@@ -564,60 +659,6 @@ int vlad_fact::truth(bool *a_truth)
   *a_truth = m_truth;
 
   return VLAD_OK;
-}
-
-/* gives a list of vars occuring in the fact. assumes list is init'ed */
-int vlad_fact::varlist(vlad_varlist **a_list)
-{
-  int retval;
-
-  if (!m_init)
-    return VLAD_UNINITIALISED;
-
-  if (a_list == NULL || *a_list == NULL)
-    return VLAD_NULLPTR;
-
-  switch(m_type) {
-    case VLAD_ATOM_HOLDS :
-      if (vlad_identifier::validate_var_ident(m_holds.subject) == VLAD_OK)
-        if ((retval = (*a_list)->add(m_holds.subject)) != VLAD_OK)
-          if (retval != VLAD_DUPLICATE)
-            return retval;
-      if (vlad_identifier::validate_var_ident(m_holds.access) == VLAD_OK)
-        if ((retval = (*a_list)->add(m_holds.access)) != VLAD_OK)
-          if (retval != VLAD_DUPLICATE)
-            return retval;
-      if (vlad_identifier::validate_var_ident(m_holds.object) == VLAD_OK)
-        if ((retval = (*a_list)->add(m_holds.object)) != VLAD_OK)
-          if (retval != VLAD_DUPLICATE)
-            return retval;
-
-      return VLAD_OK;
-    case VLAD_ATOM_MEMBER :
-      if (vlad_identifier::validate_var_ident(m_member.element) == VLAD_OK)
-        if ((retval = (*a_list)->add(m_member.element)) != VLAD_OK)
-          if (retval != VLAD_DUPLICATE)
-            return retval;
-      if (vlad_identifier::validate_var_ident(m_member.group) == VLAD_OK)
-        if ((retval = (*a_list)->add(m_member.group)) != VLAD_OK)
-          if (retval != VLAD_DUPLICATE)
-            return retval;
-
-      return VLAD_OK;
-    case VLAD_ATOM_SUBSET :
-      if (vlad_identifier::validate_var_ident(m_subset.group1) == VLAD_OK)
-        if ((retval = (*a_list)->add(m_subset.group1)) != VLAD_OK)
-          if (retval != VLAD_DUPLICATE)
-            return retval;
-      if (vlad_identifier::validate_var_ident(m_subset.group2) == VLAD_OK)
-        if ((retval = (*a_list)->add(m_subset.group2)) != VLAD_OK)
-          if (retval != VLAD_DUPLICATE)
-            return retval;
-
-      return VLAD_OK;
-  }
-
-  return VLAD_FAILURE;
 }
 
 #ifdef VLAD_DEBUG
@@ -691,7 +732,8 @@ static int vlad_verify_holds(const char *a_sub,
                              const char *a_acc,
                              const char *a_obj,
                              vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist)
+                             vlad_varlist *a_vlist1,
+                             vlad_varlist *a_vlist2)
 {
   int retval;
   unsigned char type;
@@ -709,8 +751,14 @@ static int vlad_verify_holds(const char *a_sub,
     if (!VLAD_IDENT_TYPE_IS_SUB(vlad_identifier::get_var_type(a_sub)))
       return VLAD_INVALIDINPUT;
     /* all good, so we check if it's in the varlist */
-    if (a_vlist != NULL && (retval = a_vlist->find(a_sub)) != VLAD_OK)
+    if (a_vlist1 != NULL && (retval = a_vlist1->find(a_sub)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
+    /* finally, we add it in vlist2 */
+    if (a_vlist2 != NULL) {
+      retval = a_vlist2->add(a_sub);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
   }
   else
     return VLAD_INVALIDINPUT;
@@ -728,8 +776,14 @@ static int vlad_verify_holds(const char *a_sub,
     if (!VLAD_IDENT_TYPE_IS_ACC(vlad_identifier::get_var_type(a_acc)))
       return VLAD_INVALIDINPUT;
     /* all good, so we check if it's in the varlist */
-    if (a_vlist != NULL && (retval = a_vlist->find(a_acc)) != VLAD_OK)
+    if (a_vlist1 != NULL && (retval = a_vlist1->find(a_acc)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
+    /* finally, we add it in vlist2 */
+    if (a_vlist2 != NULL) {
+      retval = a_vlist2->add(a_acc);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
   }
   else
     return VLAD_INVALIDINPUT;
@@ -747,8 +801,14 @@ static int vlad_verify_holds(const char *a_sub,
     if (!VLAD_IDENT_TYPE_IS_OBJ(vlad_identifier::get_var_type(a_obj)))
       return VLAD_INVALIDINPUT;
     /* all good, so we check if it's in the varlist */
-    if (a_vlist != NULL && (retval = a_vlist->find(a_obj)) != VLAD_OK)
+    if (a_vlist1 != NULL && (retval = a_vlist1->find(a_obj)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
+    /* finally, we add it in vlist2 */
+    if (a_vlist2 != NULL) {
+      retval = a_vlist2->add(a_obj);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
   }
   else
     return VLAD_INVALIDINPUT;
@@ -760,7 +820,8 @@ static int vlad_verify_holds(const char *a_sub,
 static int vlad_verify_memb(const char *a_elt,
                             const char *a_grp,
                             vlad_symtab *a_stab,
-                            vlad_varlist *a_vlist)
+                            vlad_varlist *a_vlist1,
+                            vlad_varlist *a_vlist2)
 {
   int retval;
   unsigned char type[2];
@@ -779,7 +840,7 @@ static int vlad_verify_memb(const char *a_elt,
     if (!VLAD_IDENT_TYPE_IS_SIN(type[0] = vlad_identifier::get_var_type(a_elt)))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
-    if (a_vlist != NULL && (retval = a_vlist->find(a_elt)) != VLAD_OK)
+    if (a_vlist1 != NULL && (retval = a_vlist1->find(a_elt)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -799,7 +860,7 @@ static int vlad_verify_memb(const char *a_elt,
     if (!VLAD_IDENT_TYPE_IS_GRP(type[1] = vlad_identifier::get_var_type(a_grp)))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
-    if (a_vlist != NULL && (retval = a_vlist->find(a_grp)) != VLAD_OK)
+    if (a_vlist1 != NULL && (retval = a_vlist1->find(a_grp)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -809,6 +870,20 @@ static int vlad_verify_memb(const char *a_elt,
   if (VLAD_IDENT_TYPE_BASETYPE(type[0]) != VLAD_IDENT_TYPE_BASETYPE(type[1]))
     return VLAD_INVALIDINPUT;
 
+  /* add to vlist2 */
+  if (a_vlist2 != NULL) {
+    if (type[0] & VLAD_IDENT_VAR_MASK) {
+      retval = a_vlist2->add(a_elt);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
+    if (type[1] & VLAD_IDENT_VAR_MASK) {
+      retval = a_vlist2->add(a_grp);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
+  }
+
   return VLAD_OK;
 }
 
@@ -816,7 +891,8 @@ static int vlad_verify_memb(const char *a_elt,
 static int vlad_verify_subst(const char *a_grp1,
                              const char *a_grp2,
                              vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist)
+                             vlad_varlist *a_vlist1,
+                             vlad_varlist *a_vlist2)
 {
   int retval;
   unsigned char type[2];
@@ -835,7 +911,7 @@ static int vlad_verify_subst(const char *a_grp1,
     if (!VLAD_IDENT_TYPE_IS_GRP(type[0] = vlad_identifier::get_var_type(a_grp1)))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
-    if (a_vlist != NULL && (retval = a_vlist->find(a_grp1)) != VLAD_OK)
+    if (a_vlist1 != NULL && (retval = a_vlist1->find(a_grp1)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -855,7 +931,7 @@ static int vlad_verify_subst(const char *a_grp1,
     if (!VLAD_IDENT_TYPE_IS_GRP(type[1] = vlad_identifier::get_var_type(a_grp2)))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
-    if (a_vlist != NULL && (retval = a_vlist->find(a_grp2)) != VLAD_OK)
+    if (a_vlist1 != NULL && (retval = a_vlist1->find(a_grp2)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -864,6 +940,20 @@ static int vlad_verify_subst(const char *a_grp1,
   /* check types */
   if (VLAD_IDENT_TYPE_BASETYPE(type[0]) != VLAD_IDENT_TYPE_BASETYPE(type[1]))
     return VLAD_INVALIDINPUT;
+
+  /* add to vlist2 */
+  if (a_vlist2 != NULL) {
+    if (type[0] & VLAD_IDENT_VAR_MASK) {
+      retval = a_vlist2->add(a_grp1);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
+    if (type[1] & VLAD_IDENT_VAR_MASK) {
+      retval = a_vlist2->add(a_grp2);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
+  }
 
   return VLAD_OK;
 }

@@ -223,30 +223,14 @@ int vlad_expression::vreplace(vlad_symtab *a_stab,
   return VLAD_OK;
 }
 
-/* check if exp is valid, any variables that occur must be in a_vlist */
-int vlad_expression::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
-{
-  int retval;
-  unsigned int i;
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    vlad_fact *fact;
-
-    if ((retval = get(i, &fact)) != VLAD_OK)
-      return retval;
-
-    if ((retval = fact->verify(a_stab, a_vlist)) != VLAD_OK)
-      return retval;
-  }
-
-  return VLAD_OK;
-}
-
 /* gives a list of vars occuring in the expr. assumes list is init'ed */
-int vlad_expression::varlist(vlad_varlist **a_list)
+int vlad_expression::varlist(vlad_varlist *a_list)
 {
   int retval;
   unsigned int i;
+
+  if (a_list == NULL)
+    return VLAD_NULLPTR;
 
   for (i = 0; i < vlad_list::length(); i++) {
     vlad_fact *fact;
@@ -255,6 +239,50 @@ int vlad_expression::varlist(vlad_varlist **a_list)
       return retval;
 
     if ((retval = fact->varlist(a_list)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* as above, but verify first */
+int vlad_expression::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_stab == NULL || a_list == NULL)
+    return VLAD_NULLPTR;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *fact;
+
+    if ((retval = get(i, &fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = fact->vvarlist(a_stab, a_list)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
+/* check if exp is valid, any variables that occur must be in a_vlist */
+int vlad_expression::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_stab == NULL)
+    return VLAD_NULLPTR;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *fact;
+
+    if ((retval = get(i, &fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = fact->verify(a_stab, a_vlist)) != VLAD_OK)
       return retval;
   }
 
