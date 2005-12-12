@@ -709,9 +709,7 @@ static int vlad_verify_holds(const char *a_sub,
     if (!VLAD_IDENT_TYPE_IS_SUB(vlad_identifier::get_var_type(a_sub)))
       return VLAD_INVALIDINPUT;
     /* all good, so we check if it's in the varlist */
-    if (a_vlist == NULL)
-      return VLAD_INVALIDINPUT;
-    if ((retval = a_vlist->find(a_sub)) != VLAD_OK)
+    if (a_vlist != NULL && (retval = a_vlist->find(a_sub)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -730,9 +728,7 @@ static int vlad_verify_holds(const char *a_sub,
     if (!VLAD_IDENT_TYPE_IS_ACC(vlad_identifier::get_var_type(a_acc)))
       return VLAD_INVALIDINPUT;
     /* all good, so we check if it's in the varlist */
-    if (a_vlist == NULL)
-      return VLAD_INVALIDINPUT;
-    if ((retval = a_vlist->find(a_acc)) != VLAD_OK)
+    if (a_vlist != NULL && (retval = a_vlist->find(a_acc)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -751,9 +747,7 @@ static int vlad_verify_holds(const char *a_sub,
     if (!VLAD_IDENT_TYPE_IS_OBJ(vlad_identifier::get_var_type(a_obj)))
       return VLAD_INVALIDINPUT;
     /* all good, so we check if it's in the varlist */
-    if (a_vlist == NULL)
-      return VLAD_INVALIDINPUT;
-    if ((retval = a_vlist->find(a_obj)) != VLAD_OK)
+    if (a_vlist != NULL && (retval = a_vlist->find(a_obj)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -785,9 +779,7 @@ static int vlad_verify_memb(const char *a_elt,
     if (!VLAD_IDENT_TYPE_IS_SIN(type[0] = vlad_identifier::get_var_type(a_elt)))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
-    if (a_vlist == NULL)
-      return VLAD_INVALIDINPUT;
-    if ((retval = a_vlist->find(a_elt)) != VLAD_OK)
+    if (a_vlist != NULL && (retval = a_vlist->find(a_elt)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -807,9 +799,7 @@ static int vlad_verify_memb(const char *a_elt,
     if (!VLAD_IDENT_TYPE_IS_GRP(type[1] = vlad_identifier::get_var_type(a_grp)))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
-    if (a_vlist == NULL)
-      return VLAD_INVALIDINPUT;
-    if ((retval = a_vlist->find(a_grp)) != VLAD_OK)
+    if (a_vlist != NULL && (retval = a_vlist->find(a_grp)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -845,9 +835,7 @@ static int vlad_verify_subst(const char *a_grp1,
     if (!VLAD_IDENT_TYPE_IS_GRP(type[0] = vlad_identifier::get_var_type(a_grp1)))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
-    if (a_vlist == NULL)
-      return VLAD_INVALIDINPUT;
-    if ((retval = a_vlist->find(a_grp1)) != VLAD_OK)
+    if (a_vlist != NULL && (retval = a_vlist->find(a_grp1)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
@@ -867,9 +855,7 @@ static int vlad_verify_subst(const char *a_grp1,
     if (!VLAD_IDENT_TYPE_IS_GRP(type[1] = vlad_identifier::get_var_type(a_grp2)))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
-    if (a_vlist == NULL)
-      return VLAD_INVALIDINPUT;
-    if ((retval = a_vlist->find(a_grp2)) != VLAD_OK)
+    if (a_vlist != NULL && (retval = a_vlist->find(a_grp2)) != VLAD_OK)
       return VLAD_INVALIDINPUT;
   }
   else
