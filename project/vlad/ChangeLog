@@ -1,3 +1,16 @@
+2005-12-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/list.h :
+	* lib/list.cpp :
+
+	  - Added add() and del() functions in vlad_list. These functions take
+	    vlad_list parameters.
+
+	  - Added a default copy() function in vlad_list_item that is used by
+	    the above add() function to duplicate the item. This copy()
+	    function, of course, should be overridden by any child class that
+	    uses the above add() function.
+
 2005-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* configure :

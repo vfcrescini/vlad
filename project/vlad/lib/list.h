@@ -34,6 +34,9 @@ class vlad_list_item : virtual public vlad_mem
 
     /* compares 2 list items */
     virtual bool cmp(vlad_list_item *a_item) = 0;
+
+    /* create an exact duplicate of this item */
+    virtual vlad_list_item *copy();
 } ;
 
 /* class used for traversal of the list */
@@ -92,11 +95,17 @@ class vlad_list : virtual public vlad_mem
     /* add pointer to list, assumes memory has been allocated to it */
     int add(vlad_list_item *a_data);
 
+    /* add the contents of the given list */
+    int add(vlad_list *a_list);
+
     /* deletes index'th data, free = true to free mem or false to not free it */
     int del(unsigned int a_index, bool a_free);
 
     /* deletes all the nodes that matches data, free = true to free mem */
     int del(vlad_list_item *a_data, bool a_free);
+
+    /* delete all items that matches the items in the given list */
+    int del(vlad_list *a_list, bool a_free);
 
     /* gives an array of indices of the data given */
     int get(vlad_list_item *a_item,
