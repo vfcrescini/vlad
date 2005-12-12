@@ -1,5 +1,10 @@
 2005-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* configure :
+	* configure.ac :
+
+	  - Removed -Wstrict-prototypes from CXXFLAGS.
+
 	* lib/expression.cpp :
 	* lib/expression.h :
 	* lib/fact.cpp :
