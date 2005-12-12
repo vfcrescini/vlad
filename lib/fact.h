@@ -101,6 +101,12 @@ class vlad_fact : public vlad_list_item
                  vlad_stringlist *a_ilist,
                  vlad_fact **a_fact);
 
+    /* gives a list of vars occuring in the fact. assumes list is init'ed */
+    int varlist(vlad_varlist *a_list);
+
+    /* same as above, but verifies the fact too */
+    int vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list);
+
     /* check if fact is valid, any variables that occur must be in a_vlist */
     int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
@@ -112,9 +118,6 @@ class vlad_fact : public vlad_list_item
 
     /* gives the truth value of the fact */
     int truth(bool *a_truth);
-
-    /* gives a list of vars occuring in the fact. assumes list is init'ed */
-    int varlist(vlad_varlist **a_list);
 
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */

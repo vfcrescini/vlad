@@ -77,11 +77,14 @@ class vlad_expression : public vlad_list
                  vlad_stringlist *a_ilist,
                  vlad_expression **a_exp);
 
+    /* gives a list of vars occuring in the expr. assumes list is init'ed */
+    int varlist(vlad_varlist *a_list);
+
+    /* as above, but verify first */
+    int vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list);
+
     /* check if exp is valid, any variables that occur must be in a_vlist */
     int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
-
-    /* gives a list of vars occuring in the expr. assumes list is init'ed */
-    int varlist(vlad_varlist **a_list);
 
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
