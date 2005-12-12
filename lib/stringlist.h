@@ -34,6 +34,9 @@ class vlad_stringlist_item : public vlad_list_item
     /* compare item with this string */
     bool cmp(vlad_list_item *a_item);
 
+    /* return an exact duplicate of this item */
+    vlad_list_item *copy();
+
     /* init with str */
     int init(const char *a_str);
 
@@ -71,6 +74,12 @@ class vlad_stringlist : public vlad_list, public vlad_list_item
 
     /* add a string in the list */
     int add(const char *a_str);
+
+    /* add the contents of the given list to this list */
+    int add(vlad_stringlist *a_slist);
+
+    /* delete all items that matches the items in the given list */
+    int del(vlad_stringlist *a_slist);
 
     /* get the index of the string (will only work if m_uniq is true) */
     int get(const char *a_str, unsigned int *a_index);
