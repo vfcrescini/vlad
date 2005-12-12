@@ -48,14 +48,6 @@ class vlad_constraint : public vlad_list_item
             vlad_expression **a_cond,
             vlad_expression **a_ncond);
 
-    /* replaces occurences of var with ident. creates a new constraint */
-    int replace(const char *a_var,
-                const char *a_ident,
-                vlad_constraint **a_constr);
-
-    /* gives a list of vars occuring in the constr, creats a new constr */
-    int varlist(vlad_varlist **a_list);
-
   private :
 
     bool m_init;
