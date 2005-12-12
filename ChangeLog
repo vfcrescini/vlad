@@ -1,5 +1,9 @@
 2005-12-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/fact.cpp :
+
+	  - verify() functions will now ignore the varlist if it is null.
+
 	* lib/stringlist.cpp :
 	* lib/stringlist.h :
 	* lib/varlist.cpp :
