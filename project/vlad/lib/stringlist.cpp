@@ -57,6 +57,20 @@ bool vlad_stringlist_item::cmp(vlad_list_item *a_item)
   return (strcmp(sitem->m_string, m_string) == 0);
 }
 
+/* return an exact duplicate of this item */
+vlad_list_item *vlad_stringlist_item::copy()
+{
+  vlad_stringlist_item *sitem;
+
+  if ((sitem = VLAD_MEM_NEW(vlad_stringlist_item())) == NULL)
+    return NULL;
+
+  if (sitem->init(m_string) != VLAD_OK)
+    return NULL;
+
+  return (vlad_list_item *) sitem;
+}
+
 /* init with str */
 int vlad_stringlist_item::init(const char *a_str)
 {
@@ -134,6 +148,18 @@ int vlad_stringlist::add(const char *a_str)
   return VLAD_OK;
 }
 
+/* add the contents of the given list to this list */
+int vlad_stringlist::add(vlad_stringlist *a_slist)
+{
+  return vlad_list::add(dynamic_cast<vlad_list *>(a_slist));
+}
+
+/* delete all items that matches the items in the given list */
+int vlad_stringlist::del(vlad_stringlist *a_slist)
+{
+  return vlad_list::del(dynamic_cast<vlad_list *>(a_slist), true);
+}
+
 /* get the index of the string (will only work if m_uniq is true) */
 int vlad_stringlist::get(const char *a_str, unsigned int *a_index)
 {
@@ -185,7 +211,6 @@ int vlad_stringlist::get(unsigned int a_index, char **a_str)
 int vlad_stringlist::copy(vlad_stringlist **a_slist)
 {
   int retval;
-  unsigned int i;
 
   if (a_slist == NULL)
     return VLAD_NULLPTR;
@@ -193,15 +218,9 @@ int vlad_stringlist::copy(vlad_stringlist **a_slist)
   if ((*a_slist = VLAD_MEM_NEW(vlad_stringlist(m_uniq))) == NULL)
     return VLAD_MALLOCFAILED;
 
-  /* go through each string in this expression */
-  for (i = 0; i < vlad_list::length(); i++) {
-    char *str;
-
-    if ((retval = get(i, &str)) != VLAD_OK)
-      return retval;
-
-    if ((retval = (*a_slist)->add(str)) != VLAD_OK)
-      return retval;
+  if ((retval = (*a_slist)->vlad_list::add((vlad_list *) this)) != VLAD_OK) {
+    VLAD_MEM_DELETE(*a_slist);
+    return retval;
   }
 
   return VLAD_OK;

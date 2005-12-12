@@ -31,6 +31,12 @@ class vlad_varlist : public vlad_stringlist
     /* add a variable into the list */
     int add(const char *a_var);
 
+    /* add the contents of the given list to this list */
+    int add(vlad_varlist *a_vlist);
+
+    /* delete all items that matches the items in the given list */
+    int del(vlad_varlist *a_vlist);
+
     /* copy varlist */
     int copy(vlad_varlist **a_vlist);
 } ;
