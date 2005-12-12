@@ -199,8 +199,8 @@ int vlad_updatetab::get(const char *a_name,
   return VLAD_OK;
 }
 
-/* vlist1 contains vars in the varlist that are actually used, vlist2
- * contains all other vars that occur in the expressions */
+/* vlist1 contains the specified varlist, vlist2 contains all vars that occur
+ * in the expressions but not in vlist1 */
 int vlad_updatetab::get(const char *a_name,
                         vlad_varlist **a_vlist1,
                         vlad_varlist **a_vlist2,
@@ -208,47 +208,41 @@ int vlad_updatetab::get(const char *a_name,
                         vlad_expression **a_poexp)
 {
   int retval;
-  vlad_varlist *vlist_spec;
-  vlad_varlist *vlist_used;
+  vlad_varlist *vlist;
   vlad_expression *prexp;
   vlad_expression *poexp;
 
   if (a_vlist1 == NULL || a_vlist2 == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = get(a_name, &vlist_spec, &prexp, &poexp)) != VLAD_OK)
+  if ((retval = get(a_name, &vlist, &prexp, &poexp)) != VLAD_OK)
     return retval;
 
   /* create a list of variables that are actually used in the exps */
-  if ((vlist_used = VLAD_MEM_NEW(vlad_varlist())) == NULL)
+  if ((*a_vlist2 = VLAD_MEM_NEW(vlad_varlist())) == NULL)
     return retval;
 
   /* generate variable list */
   if (retval == VLAD_OK)
-    retval = prexp->varlist(vlist_used);
+    retval = prexp->varlist(*a_vlist2);
   if (retval == VLAD_OK)
-    retval = prexp->varlist(vlist_used);
+    retval = prexp->varlist(*a_vlist2);
 
-  /* make copies of the lists */
+  /* make a copy for list 1 */
   if (retval == VLAD_OK)
-    retval = vlist_used->copy(a_vlist1);
-  if (retval == VLAD_OK)
-    retval = vlist_used->copy(a_vlist2);
+    retval = vlist->copy(a_vlist1);
 
-  /* trim the lists */
+  /* trim list 2 */
   if (retval == VLAD_OK)
-    retval = (*a_vlist2)->del(vlist_spec);
-  if (retval == VLAD_OK)
-    retval = (*a_vlist1)->del(*a_vlist2);
+    retval = (*a_vlist2)->del(vlist);
 
   /* cleanup */
-  if (vlist_used != NULL)
-    VLAD_MEM_DELETE(vlist_used);
   if (retval != VLAD_OK) {
     if (*a_vlist1 != NULL)
       VLAD_MEM_DELETE(*a_vlist1);
     if (*a_vlist2 != NULL)
       VLAD_MEM_DELETE(*a_vlist2);
+    return retval;
   }
 
   if (a_prexp != NULL)
@@ -256,7 +250,7 @@ int vlad_updatetab::get(const char *a_name,
   if (a_poexp != NULL)
     *a_poexp = poexp;
   
-  return retval;
+  return VLAD_OK;
 }
 
 /* get update by index */

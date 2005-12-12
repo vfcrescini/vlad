@@ -76,8 +76,8 @@ class vlad_updatetab : public vlad_list
             vlad_expression **a_prexp,
             vlad_expression **a_poexp);
 
-    /* vlist1 contains vars in the varlist that are actually used, vlist2
-     * contains all other vars that occur in the expressions */
+    /* vlist1 contains the specified varlist, vlist2 contains all vars that
+     * occur in the expressions but not in vlist1 */
     int get(const char *a_name,
             vlad_varlist **a_vlist1,
             vlad_varlist **a_vlist2,
