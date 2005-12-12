@@ -1,5 +1,7 @@
 2005-12-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Tagging vlad-1_3_0
+
 	* lib/polbase.cpp :
 
 	  - add_consttab() now accepts non-ground expressions.
