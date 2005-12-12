@@ -115,63 +115,6 @@ int vlad_constraint::get(vlad_expression **a_exp,
   return VLAD_OK;
 }
 
-/* replaces occurences of var with ident. creates a new constraint */
-int vlad_constraint::replace(const char *a_var,
-                             const char *a_ident,
-                             vlad_constraint **a_constr)
-{
-  int retval;
-  vlad_constraint *cons;
-  vlad_expression *exps[3];
-
-  if (!m_init)
-    return VLAD_UNINITIALISED;
-
-  if (a_var == NULL || a_ident == NULL || a_constr == NULL)
-    return VLAD_NULLPTR;
-
-  /* replace the individual expressions of this constraint */
-  if ((retval = m_exp->replace(a_var, a_ident, &(exps[0]))) != VLAD_OK)
-    return retval;
-  if (m_cond != NULL)
-    if ((retval = m_cond->replace(a_var, a_ident, &(exps[1]))) != VLAD_OK)
-      return retval;
-  if (m_ncond != NULL)
-    if ((retval = m_ncond->replace(a_var, a_ident, &(exps[2]))) != VLAD_OK)
-      return retval;
-
-  /* now create a new constraint */
-  if ((cons = VLAD_MEM_NEW(vlad_constraint())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  return cons->init(exps[0], exps[1], exps[2]);
-}
-
-/* gives a list of vars occuring in the constr, creats a new constr */
-int vlad_constraint::varlist(vlad_varlist **a_list)
-{
-  int retval;
-
-  if (a_list == NULL)
-    return VLAD_NULLPTR;
-
-  if ((*a_list = VLAD_MEM_NEW(vlad_varlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  if ((retval = m_exp->varlist(a_list)) != VLAD_OK)
-    return retval;
-
-  if (m_cond != NULL)
-    if ((retval = m_cond->varlist(a_list)) != VLAD_OK)
-      return retval;
-
-  if (m_ncond != NULL)
-    if ((retval = m_ncond->varlist(a_list)) != VLAD_OK)
-      return retval;
-
-  return VLAD_OK;
-}
-
 vlad_consttab::vlad_consttab() : vlad_list(true)
 {
 }
