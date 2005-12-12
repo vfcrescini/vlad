@@ -76,6 +76,14 @@ class vlad_updatetab : public vlad_list
             vlad_expression **a_prexp,
             vlad_expression **a_poexp);
 
+    /* vlist1 contains vars in the varlist that are actually used, vlist2
+     * contains all other vars that occur in the expressions */
+    int get(const char *a_name,
+            vlad_varlist **a_vlist1,
+            vlad_varlist **a_vlist2,
+            vlad_expression **a_prexp,
+            vlad_expression **a_poexp);
+
     /* get update by index */
     int get(unsigned int a_index,
             char **a_name,
