@@ -226,9 +226,9 @@ int vlad_updatetab::get(const char *a_name,
     return VLAD_MALLOCFAILED;
 
   /* generate variable list */
-  if (retval == VLAD_OK)
+  if (retval == VLAD_OK && prexp != NULL)
     retval = prexp->varlist(*a_vlist2);
-  if (retval == VLAD_OK)
+  if (retval == VLAD_OK && poexp != NULL)
     retval = poexp->varlist(*a_vlist2);
 
   /* make a copy for list 1 */
