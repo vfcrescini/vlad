@@ -3,6 +3,12 @@
 	* lib/updatetab.cpp :
 	* lib/updatetab.h :
 
+	  - Fixed get() problem so that it won't barf when given null ptrs.
+
+	  - Fixed get() function so that it will give out null pointers
+	    instead of an empty list, similar to the behaviour of the other
+	    get() function.
+
 	  - Added a variant of the get() function that gives out 2 variable
 	    lists.
 
