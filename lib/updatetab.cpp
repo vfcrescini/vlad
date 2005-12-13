@@ -215,6 +215,9 @@ int vlad_updatetab::get(const char *a_name,
   if (a_vlist1 == NULL || a_vlist2 == NULL)
     return VLAD_NULLPTR;
 
+  *a_vlist1 = NULL;
+  *a_vlist2 = NULL;
+
   if ((retval = get(a_name, &vlist, &prexp, &poexp)) != VLAD_OK)
     return retval;
 
@@ -229,11 +232,11 @@ int vlad_updatetab::get(const char *a_name,
     retval = poexp->varlist(*a_vlist2);
 
   /* make a copy for list 1 */
-  if (retval == VLAD_OK)
+  if (retval == VLAD_OK && vlist != NULL)
     retval = vlist->copy(a_vlist1);
 
   /* trim list 2 */
-  if (retval == VLAD_OK)
+  if (retval == VLAD_OK && vlist != NULL)
     retval = (*a_vlist2)->del(vlist);
 
   /* cleanup */
@@ -249,6 +252,12 @@ int vlad_updatetab::get(const char *a_name,
     *a_prexp = prexp;
   if (a_poexp != NULL)
     *a_poexp = poexp;
+
+  /* if empty, delete it */
+  if ((*a_vlist2)->length() == 0) {
+    VLAD_MEM_DELETE(*a_vlist2);
+    *a_vlist2 = NULL;
+  }
   
   return VLAD_OK;
 }
