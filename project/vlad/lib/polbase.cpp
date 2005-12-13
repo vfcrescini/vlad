@@ -201,9 +201,9 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
     if ((retval = a_exp->copy(&exp_e)) != VLAD_OK)
       return retval;
     if (a_cond != NULL && (retval = a_cond->copy(&exp_c)) != VLAD_OK)
-       return retval;
+      return retval;
     if (a_ncond != NULL && (retval = a_ncond->copy(&exp_n)) != VLAD_OK)
-        return retval;
+      return retval;
 
     /* finally, we add the expressions into the cosntraints table */
     return m_ctable->add(exp_e, exp_c, exp_n);
