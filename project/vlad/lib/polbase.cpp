@@ -249,11 +249,11 @@ int vlad_polbase::add_updatetab(const char *a_name,
                                 vlad_expression *a_precond,
                                 vlad_expression *a_postcond)
 {
-  int retval;
+  int retval = VLAD_OK;
   char *name;
   vlad_varlist *vlist = NULL;
-  vlad_expression *precond = NULL;
-  vlad_expression *postcond = NULL;
+  vlad_expression *exp_pr = NULL;
+  vlad_expression *exp_po = NULL;
 
   /* we only allow this function after symtab is closed */
   if (m_stage != 2)
@@ -270,27 +270,34 @@ int vlad_polbase::add_updatetab(const char *a_name,
   strcpy(name, a_name);
 
   /* copy varlist */
-  if (a_vlist != NULL) {
-    if ((retval = a_vlist->copy(&vlist)) != VLAD_OK)
-      return retval;
-  }
+  if (retval == VLAD_OK && a_vlist != NULL)
+    retval = a_vlist->copy(&vlist);
 
   /* verify and copy precondition */
-  if (a_precond != NULL) {
-    retval = a_precond->vcopy(m_stable, a_vlist, &precond);
-
-    if (retval != VLAD_OK)
-      return retval;
-  }
+  if (retval == VLAD_OK && a_precond != NULL)
+    retval = a_precond->vcopy(m_stable, NULL, &exp_pr);
 
   /* verify and copy the postcondition */
-  retval = a_postcond->vcopy(m_stable, a_vlist, &postcond);
-
-  if (retval != VLAD_OK)
-    return retval;
+  if (retval == VLAD_OK)
+    retval = a_postcond->vcopy(m_stable, NULL, &exp_po);
 
   /* if all went well, add to the udate table */
-  return m_utable->add(name, vlist, precond, postcond);
+  if (retval == VLAD_OK)
+    retval = m_utable->add(name, vlist, exp_pr, exp_po);
+
+  /* cleanup */
+  if (retval != VLAD_OK) {
+    if (name != NULL)
+      VLAD_MEM_FREE(name);
+    if (vlist != NULL)
+      VLAD_MEM_DELETE(vlist);
+    if (exp_pr != NULL)
+      VLAD_MEM_DELETE(exp_pr);
+    if (exp_po != NULL)
+      VLAD_MEM_DELETE(exp_po);
+  }
+
+  return retval;
 }
 
 /* add an update reference to the sequence table */
@@ -885,53 +892,159 @@ int vlad_polbase::compute_generate(FILE *a_fs)
 
   /* state loop */
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_tup;
     unsigned int i_exp;
     char *name;
     vlad_fact *fact;
-    vlad_stringlist *list_s = NULL;
     vlad_expression *exp_pr = NULL;
     vlad_expression *exp_po = NULL;
+    vlad_varlist *vlist1 = NULL;
+    vlad_varlist *vlist2 = NULL;
+    vlad_stringlist *ilist;
 
-    if ((retval = m_setable->get(i, &name, &list_s)) != VLAD_OK)
+    /* get the details of this update sequence */
+    if ((retval = m_setable->get(i, &name, &ilist)) != VLAD_OK)
       return retval;
 
-    if ((retval = m_utable->replace(name, list_s, &exp_pr, &exp_po)) != VLAD_OK)
+    /* get the details of this update */
+    if ((retval = m_utable->get(name, &vlist1, &vlist2, &exp_pr, &exp_po)) != VLAD_OK)
       return retval;
 
-    fprintf(a_fs, "  ");
+    /* check if there are no unbound variables */
+    if (vlist2 == NULL || vlist2->length() == 0) {
+      vlad_expression *exp_tpr = NULL;
+      vlad_expression *exp_tpo = NULL;
 
-    /* postcondition loop */
-    for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_po); i_exp++) {
-      if ((retval = exp_po->get(i_exp, &fact)) != VLAD_OK)
-        return retval;
+      /* the only variables that exist (if any) are already grounded */
+      if (retval == VLAD_OK && exp_pr != NULL)
+        retval = exp_pr->vreplace(m_stable, vlist1, ilist, &exp_tpr);
+      if (retval == VLAD_OK && exp_po != NULL)
+        retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
 
-      print_fact(fact, i + 1, a_fs);
+      fprintf(a_fs, "  ");
 
-      if (i_exp + 1 < VLAD_LIST_LENGTH(exp_po))
+      /* postcondition loop */
+      for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpo); i_exp++) {
+        if (retval == VLAD_OK)
+          retval = exp_tpo->get(i_exp, &fact);
+        if (retval == VLAD_OK)
+          print_fact(fact, i + 1, a_fs);
+        if (retval == VLAD_OK && i_exp + 1 < exp_tpo->length())
           fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
-    }
+      }
 
-    VLAD_MEM_DELETE(exp_po);
+      if (retval == VLAD_OK)
+        fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
 
-    fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+      /* precondition loop */
+      for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpr); i_exp++) {
+        if (retval == VLAD_OK)
+          retval = exp_tpr->get(i_exp, &fact);
+        if (retval == VLAD_OK)
+          print_fact(fact, i, a_fs);
+        if (retval == VLAD_OK && i_exp + 1 < VLAD_LIST_LENGTH(exp_pr))
+          fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+      }
 
-    /* precondition loop */
-    for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_pr); i_exp++) {
-      if ((retval = exp_pr->get(i_exp, &fact)) != VLAD_OK)
+      if (retval == VLAD_OK) {
+        if (exp_tpr == NULL || exp_tpr->length() == 0)
+          fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
+        else
+          fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+      }
+
+      /* cleanup */
+      if (exp_tpr != NULL)
+        VLAD_MEM_DELETE(exp_tpr);
+      if (exp_tpo != NULL)
+        VLAD_MEM_DELETE(exp_tpo);
+
+      if (retval != VLAD_OK)
         return retval;
+    }
+    else {
+      vlad_stringlistlist *tlist;
 
-      print_fact(fact, i, a_fs);
+      /* generate tuples */
+      if (retval == VLAD_OK)
+        retval = m_stable->tupleate(vlist2, &tlist);
 
-      if (i_exp + 1 < VLAD_LIST_LENGTH(exp_pr))
-        fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+      /* after generating the tuples, add vlist1 back to vlist2 */
+      if (retval == VLAD_OK)
+        retval = vlist2->add(vlist1);
+      
+      /* go through each tuple */
+      for (i_tup = 0; retval == VLAD_OK && i_tup < VLAD_LIST_LENGTH(tlist); i_tup++) {
+        vlad_expression *exp_tpr = NULL;
+        vlad_expression *exp_tpo = NULL;
+        vlad_stringlist *tuple;
+      
+        if (retval == VLAD_OK)
+          retval = tlist->get(i_tup, &tuple);
+      
+        /* now we append each tuple with the ilist from the sequence */
+        if (retval == VLAD_OK)
+          retval = tuple->add(ilist);
+      
+        /* replace */
+        if (retval == VLAD_OK && exp_pr != NULL)
+          retval = exp_pr->vreplace(m_stable, vlist2, tuple, &exp_tpr);
+        if (retval == VLAD_OK && exp_po != NULL)
+          retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
+
+        if (retval == VLAD_OK)
+          fprintf(a_fs, "  ");
+      
+        /* postcondition loop */
+        for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpo); i_exp++) {
+          if (retval == VLAD_OK)
+            retval = exp_tpo->get(i_exp, &fact);
+          if (retval == VLAD_OK)
+            print_fact(fact, i + 1, a_fs);
+          if (retval == VLAD_OK && i_exp + 1 < VLAD_LIST_LENGTH(exp_tpo))
+            fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
+        }
+     
+        if (retval == VLAD_OK)
+          fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+      
+        /* precondition loop */
+        for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpr); i_exp++) {
+          if (retval == VLAD_OK)
+            retval = exp_tpr->get(i_exp, &fact);
+          if (retval == VLAD_OK)
+            print_fact(fact, i, a_fs);
+          if (retval == VLAD_OK && i_exp + 1 < VLAD_LIST_LENGTH(exp_pr))
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+        }
+      
+        if (retval == VLAD_OK) {
+          if (exp_tpr == NULL || exp_tpr->length() == 0)
+            fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
+          else
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+        }
+
+        /* cleanup */
+        if (exp_tpr != NULL)
+          VLAD_MEM_DELETE(exp_tpr);
+        if (exp_tpo != NULL)
+          VLAD_MEM_DELETE(exp_tpo);
+      }
+
+      /* more cleanup */
+      if (tlist != NULL)
+        VLAD_MEM_DELETE(tlist);
     }
 
-    VLAD_MEM_DELETE(exp_pr);
+    /* yet even more more cleanup */
+    if (vlist1 != NULL)
+      VLAD_MEM_DELETE(vlist1);
+    if (vlist2 != NULL)
+      VLAD_MEM_DELETE(vlist2);
 
-    if (exp_pr == NULL)
-      fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
-    else
-      fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+    if (retval != VLAD_OK)
+      return retval;
   }
 
   fprintf(a_fs, "\n");
@@ -1431,49 +1544,151 @@ int vlad_polbase::compute_evaluate()
 
   /* state loop */
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
+    unsigned int i_tup;
     unsigned int i_exp;
     char *name;
     vlad_fact *fact;
     unsigned int id;
     vlad_expression *exp_pr = NULL;
     vlad_expression *exp_po = NULL;
-    vlad_stringlist *list_s = NULL;
-    vlad_numberlist *list_n;
+    vlad_varlist *vlist1 = NULL;
+    vlad_varlist *vlist2 = NULL;
+    vlad_numberlist *nlist;
+    vlad_stringlist *ilist;
 
-    if ((list_n = VLAD_MEM_NEW(vlad_numberlist())) == NULL)
-      return VLAD_MALLOCFAILED;
-
-    if ((retval = m_setable->get(i, &name, &list_s)) != VLAD_OK)
+    /* get the details of this update sequence */
+    if ((retval = m_setable->get(i, &name, &ilist)) != VLAD_OK)
       return retval;
 
-    if ((retval = m_utable->replace(name, list_s, &exp_pr, &exp_po)) != VLAD_OK)
+    /* get the details of this update */
+    if ((retval = m_utable->get(name, &vlist1, &vlist2, &exp_pr, &exp_po)) != VLAD_OK)
       return retval;
 
-    /* precondition loop */
-    for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_pr); i_exp++) {
-      if ((retval = exp_pr->get(i_exp, &fact)) != VLAD_OK)
-        return retval;
-      if ((retval = m_mapper->encode_fact(fact, i, &id)) != VLAD_OK)
-        return retval;
-      if ((retval = list_n->add(id)) != VLAD_OK)
+    /* check if there are no unbound variables */
+    if (vlist2 == NULL || vlist2->length() == 0) {
+      vlad_expression *exp_tpr = NULL;
+      vlad_expression *exp_tpo = NULL;
+
+      /* create a new numberlist */
+      if ((nlist = VLAD_MEM_NEW(vlad_numberlist())) == NULL)
+        retval = VLAD_MALLOCFAILED;
+
+      /* the only varibables that exist (if any) are already grounded */
+      if (retval == VLAD_OK && exp_pr != NULL)
+        retval = exp_pr->vreplace(m_stable, vlist1, ilist, &exp_tpr);
+      if (retval == VLAD_OK && exp_po != NULL)
+        retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
+
+      /* precondition loop */
+      for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpr); i_exp++) {
+        if (retval == VLAD_OK)
+          retval = exp_tpr->get(i_exp, &fact);
+        if (retval == VLAD_OK)
+          retval = m_mapper->encode_fact(fact, i, &id);
+        if (retval == VLAD_OK)
+          retval = nlist->add(id);
+      }
+  
+      /* postcondition loop */
+      for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpo); i_exp++) {
+        if (retval == VLAD_OK)
+          retval = exp_tpo->get(i_exp, &fact);
+        if (retval == VLAD_OK)
+          retval = m_mapper->encode_fact(fact, i + 1, &id);
+        /* for every fact in the postcondition we add a rule */
+        if (retval == VLAD_OK)
+          retval = m_smobject->add_rule(id, nlist, NULL);
+      }
+
+      /* cleanup */
+      if (exp_tpr != NULL)
+        VLAD_MEM_DELETE(exp_tpr);
+      if (exp_tpo != NULL)
+        VLAD_MEM_DELETE(exp_tpo);
+      if (nlist != NULL)
+        VLAD_MEM_DELETE(nlist);
+
+      if (retval != VLAD_OK)
         return retval;
     }
+    else {
+      vlad_stringlistlist *tlist;
 
-    VLAD_MEM_DELETE(exp_pr);
+      /* generate tuples */
+      if (retval == VLAD_OK)
+        retval = m_stable->tupleate(vlist2, &tlist);
 
-    /* postcondition loop */
-    for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_po); i_exp++) {
-      if ((retval = exp_po->get(i_exp, &fact)) != VLAD_OK)
-        return retval;
-      if ((retval = m_mapper->encode_fact(fact, i + 1, &id)) != VLAD_OK)
-        return retval;
-      /* for every fact in the postcondition we add a rule */
-      if ((retval = m_smobject->add_rule(id, list_n, NULL)) != VLAD_OK)
-        return retval;
+      /* after generating the tuples, add vlist1 back to vlist2 */
+      if (retval == VLAD_OK)
+        retval = vlist2->add(vlist1);
+
+      /* go through each tuple */
+      for (i_tup = 0; retval == VLAD_OK && i_tup < VLAD_LIST_LENGTH(tlist); i_tup++) {
+        vlad_expression *exp_tpr = NULL;
+        vlad_expression *exp_tpo = NULL;
+        vlad_stringlist *tuple;
+
+        /* create a new numberlist */
+        if ((nlist = VLAD_MEM_NEW(vlad_numberlist())) == NULL)
+          retval = VLAD_MALLOCFAILED;
+
+        /* get this tuple */
+        if (retval == VLAD_OK)
+          retval = tlist->get(i_tup, &tuple);
+
+        /* now we append each tuple with the ilist from the sequence */
+        if (retval == VLAD_OK)
+          retval = tuple->add(ilist);
+      
+        /* replace */
+        if (retval == VLAD_OK && exp_pr != NULL)
+          retval = exp_pr->vreplace(m_stable, vlist2, tuple, &exp_tpr);
+        if (retval == VLAD_OK && exp_po != NULL)
+          retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
+
+        /* precondition loop */
+        for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpr); i_exp++) {
+          if (retval == VLAD_OK)
+            retval = exp_tpr->get(i_exp, &fact);
+          if (retval == VLAD_OK)
+            retval = m_mapper->encode_fact(fact, i, &id);
+          if (retval == VLAD_OK)
+            retval = nlist->add(id);
+        }
+        
+        /* postcondition loop */
+        for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpo); i_exp++) {
+          if (retval == VLAD_OK)
+            retval = exp_tpo->get(i_exp, &fact);
+          if (retval == VLAD_OK)
+            retval = m_mapper->encode_fact(fact, i + 1, &id);
+          /* for every fact in the postcondition we add a rule */
+          if (retval == VLAD_OK)
+            retval = m_smobject->add_rule(id, nlist, NULL);
+        }
+
+        /* cleanup */
+        if (exp_tpr != NULL)
+          VLAD_MEM_DELETE(exp_tpr);
+        if (exp_tpo != NULL)
+          VLAD_MEM_DELETE(exp_tpo);
+        if (nlist != NULL)
+          VLAD_MEM_DELETE(nlist);
+      }
+
+      /* more cleanup */
+      if (tlist != NULL)
+        VLAD_MEM_DELETE(tlist);
     }
 
-    VLAD_MEM_DELETE(exp_po);
-    VLAD_MEM_DELETE(list_n);
+    /* yet even more more cleanup */
+    if (vlist1 != NULL)
+      VLAD_MEM_DELETE(vlist1);
+    if (vlist2 != NULL)
+      VLAD_MEM_DELETE(vlist2);
+
+    if (retval != VLAD_OK)
+      return retval;
   }
 
   /* this might not succeed as there might not exist a model for this query */
