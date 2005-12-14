@@ -160,5 +160,56 @@ class vlad_polbase : virtual public vlad_mem
 
     /* dumps a fact with the given state onto the given (open) stream */
     int print_fact(vlad_fact *a_fact, unsigned int a_state, FILE *a_fs);
+
+    /* generates identity rules and prints them to a_fs */
+    int generate_identity(FILE *a_fs);
+
+    /* generates inheritance rules and prints them to a_fs */
+    int generate_inheritance(FILE *a_fs);
+
+    /* generates transitivity rules and prints them to a_fs */
+    int generate_transitivity(FILE *a_fs);
+
+    /* generates negation rules and prints them to a_fs */
+    int generate_negation(FILE *a_fs);
+
+    /* generates inertial rules and prints them to a_fs */
+    int generate_inertial(FILE *a_fs);
+
+    /* generates initial state rules and prints them to a_fs */
+    int generate_initial(FILE *a_fs);
+
+    /* generates constraint rules and prints them to a_fs */
+    int generate_constraint(FILE *a_fs);
+
+    /* generates policy update rules and prints them to a_fs */
+    int generate_update(FILE *a_fs);
+
+#ifdef VLAD_SMODELS
+    /* registers identity rules in smodels object for evaluation */
+    int evaluate_identity();
+
+    /* registers inheritance rules in smodels object for evaluation */
+    int evaluate_inheritance();
+
+    /* registers transitivity rules in smodels object for evaluation */
+    int evaluate_transitivity();
+
+    /* registers negation rules in smodels object for evaluation */
+    int evaluate_negation();
+
+    /* registers inertial rules in smodels object for evaluation */
+    int evaluate_inertial();
+
+    /* registers initial state rules in smodels object for evaluation */
+    int evaluate_initial();
+
+    /* registers constraint rules in smodels object for evaluation */
+    int evaluate_constraint();
+
+    /* registers policy update rules in smodels object for evaluation */
+    int evaluate_update();
+#endif
+
 } ;
 #endif
