@@ -1,5 +1,11 @@
 2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/Makefile.in :
+
+	  - Forgot to add action for mapper.o rule.
+
+2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
 	* Tagging vlad-1_2_3
 
 	* lib/polbase.h :
