@@ -158,6 +158,7 @@ seqtab.o : vlad.h mem.h stringlist.h expression.h updatetab.h symtab.h seqtab.h 
 	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
 
 mapper.o : vlad.h atom.h identifier.h symtab.h mapper.h mapper.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c mapper.cpp
 
 ifdef SMODELS
 smwrap.o : vlad.h mem.h smwrap.h smwrap.cpp

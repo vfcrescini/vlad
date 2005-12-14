@@ -1,5 +1,11 @@
 2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/Makefile.in :
+
+	  - Added forgotten action for mapper rule.
+
+2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
 	* Tagging vlad-1_3_1
 
 	* Merged vlad-1_2_3
