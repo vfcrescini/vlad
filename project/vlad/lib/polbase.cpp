@@ -147,11 +147,17 @@ int vlad_polbase::add_inittab(vlad_fact *a_fact)
     return VLAD_NULLPTR;
 
   /* verify and copy */
-  if ((retval = a_fact->vcopy(m_stable, NULL, &fact)) != VLAD_OK)
-    return retval;
+  retval = a_fact->vcopy(m_stable, NULL, &fact);
 
   /* add to inittab */
-  return m_itable->add(fact);
+  if (retval == VLAD_OK)
+    retval = m_itable->add(fact);
+
+  /* cleanup */
+  if (retval != VLAD_OK)
+    VLAD_MEM_DELETE(fact);
+
+  return retval;
 }
 
 /* add a constrant into the constraints table */
@@ -159,10 +165,9 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
                                vlad_expression *a_cond,
                                vlad_expression *a_ncond)
 {
-  int retval;
+  int retval = VLAD_OK;
   unsigned int i;
   vlad_varlist *vlist;
-  vlad_stringlistlist *tlist;
 
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -176,15 +181,14 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
     return VLAD_MALLOCFAILED;
 
   /* generate the vlist, also verify the expressions */
-  if ((retval = a_exp->vvarlist(m_stable,vlist)) != VLAD_OK) {
-    VLAD_MEM_DELETE(vlist);
-    return retval;
-  }
-  if (a_cond != NULL && (retval = a_cond->vvarlist(m_stable, vlist)) != VLAD_OK) {
-    VLAD_MEM_DELETE(vlist);
-    return retval;
-  }
-  if (a_ncond != NULL && (retval = a_ncond->vvarlist(m_stable, vlist)) != VLAD_OK) {
+  if (retval == VLAD_OK)
+    retval = a_exp->vvarlist(m_stable, vlist);
+  if (retval == VLAD_OK && a_cond != NULL)
+    retval = a_cond->vvarlist(m_stable, vlist);
+  if (retval == VLAD_OK && a_ncond != NULL)
+    retval = a_ncond->vvarlist(m_stable, vlist);
+
+  if (retval != VLAD_OK) {
     VLAD_MEM_DELETE(vlist);
     return retval;
   }
@@ -195,50 +199,70 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
     vlad_expression *exp_c = NULL;
     vlad_expression *exp_n = NULL;
 
-    VLAD_MEM_DELETE(vlist);
-
     /* make copies of the expresssions, no need to verify anymore */
-    if ((retval = a_exp->copy(&exp_e)) != VLAD_OK)
-      return retval;
-    if (a_cond != NULL && (retval = a_cond->copy(&exp_c)) != VLAD_OK)
-      return retval;
-    if (a_ncond != NULL && (retval = a_ncond->copy(&exp_n)) != VLAD_OK)
-      return retval;
+    if (retval == VLAD_OK)
+      retval = a_exp->copy(&exp_e);
+    if (retval == VLAD_OK && a_cond != NULL)
+      retval = a_cond->copy(&exp_c);
+    if (retval == VLAD_OK && a_ncond != NULL)
+      retval = a_ncond->copy(&exp_n);
 
-    /* finally, we add the expressions into the cosntraints table */
-    return m_ctable->add(exp_e, exp_c, exp_n);
+    /* then, we add the expressions into the cosntraints table */
+    if (retval == VLAD_OK)
+      retval = m_ctable->add(exp_e, exp_c, exp_n);
+
+    if (retval != VLAD_OK) {
+      if (exp_e != NULL)
+        VLAD_MEM_DELETE(exp_e);
+      if (exp_c != NULL)
+        VLAD_MEM_DELETE(exp_c);
+      if (exp_n != NULL)
+        VLAD_MEM_DELETE(exp_n);
+    }
   }
+  else {
+    vlad_stringlistlist *tlist;
 
-  /* get a tuple list */
-  if ((retval = m_stable->tupleate(vlist, &tlist)) != VLAD_OK)
-    return retval;
+    /* get a tuple list */
+    if (retval == VLAD_OK)
+      retval = m_stable->tupleate(vlist, &tlist);
 
-  /* ground and store */
-  retval = VLAD_OK;
-  for (i = 0; retval == VLAD_OK && i < tlist->length(); i++) {
-    vlad_stringlist *ilist;
-    vlad_expression *exp_e = NULL;
-    vlad_expression *exp_c = NULL;
-    vlad_expression *exp_n = NULL;
+    /* ground and store */
+    for (i = 0; retval == VLAD_OK && i < tlist->length(); i++) {
+      vlad_stringlist *ilist;
+      vlad_expression *exp_e = NULL;
+      vlad_expression *exp_c = NULL;
+      vlad_expression *exp_n = NULL;
+    
+      if (retval == VLAD_OK)
+        retval = tlist->get(i, &ilist);
+    
+      /* now ground and verify each expression */
+      if (retval == VLAD_OK)
+        retval = a_exp->vreplace(m_stable, vlist, ilist, &exp_e);
+      if (retval == VLAD_OK && a_cond != NULL)
+        retval = a_cond->vreplace(m_stable, vlist, ilist, &exp_c);
+      if (retval == VLAD_OK && a_ncond != NULL)
+        retval = a_ncond->vreplace(m_stable, vlist, ilist, &exp_n);
+     
+      /* finally, we add this instantiation to the constraints table */
+      if (retval == VLAD_OK)
+        retval = m_ctable->add(exp_e, exp_c, exp_n);
 
-    if ((retval = tlist->get(i, &ilist)) != VLAD_OK)
-      return retval;
+      if (retval != VLAD_OK) {
+        if (exp_e != NULL)
+          VLAD_MEM_DELETE(exp_e);
+        if (exp_c != NULL)
+          VLAD_MEM_DELETE(exp_c);
+        if (exp_n != NULL)
+          VLAD_MEM_DELETE(exp_n);
+      }
+    }
 
-    /* now ground and verify each expression */
-    if ((retval = a_exp->vreplace(m_stable, vlist, ilist, &exp_e)) != VLAD_OK)
-      break;
-    if (a_cond != NULL && (retval = a_cond->vreplace(m_stable, vlist, ilist, &exp_c)) != VLAD_OK)
-      break;
-    if (a_ncond != NULL && (retval = a_ncond->vreplace(m_stable, vlist, ilist, &exp_n)) != VLAD_OK)
-      break;
-   
-    /* finally, we add this instantiation to the constraints table */
-    if ((retval = m_ctable->add(exp_e, exp_c, exp_n)) != VLAD_OK)
-      break;
+    VLAD_MEM_DELETE(tlist);
   }
 
   VLAD_MEM_DELETE(vlist);
-  VLAD_MEM_DELETE(tlist);
 
   return retval;
 }
