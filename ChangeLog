@@ -1,5 +1,11 @@
 2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+
+	  - Update rules with variables that are not declared in the var
+	    list will be automatically grounded to any matching entities
+	    of the same type.
+
 	* lib/fact.cpp :
 
 	  - Fixed incorrect checking of verify_memb() and verify_subst() which
