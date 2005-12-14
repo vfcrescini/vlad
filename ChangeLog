@@ -1,5 +1,14 @@
 2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Merged vlad-1_2_3
+
+	* lib/polbase.h :
+
+	  - Fixed rule dumping format so that no rule has more than one fact
+	    in its head.
+
+2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
 	* lib/polbase.cpp :
 
 	  - Update rules with variables that are not declared in the var
