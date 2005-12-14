@@ -1,5 +1,7 @@
 2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Tagging vlad-1_2_3
+
 	* lib/polbase.h :
 
 	  - Fixed rule dumping format so that no rule has more than one fact
