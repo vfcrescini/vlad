@@ -1,3 +1,10 @@
+2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/fact.cpp :
+
+	  - Fixed incorrect checking of verify_memb() and verify_subst() which
+	    used to allow non-ground facts like memb(SS, S) or subst(A, AG).
+
 2005-12-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/updatetab.cpp :

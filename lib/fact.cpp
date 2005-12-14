@@ -837,7 +837,9 @@ static int vlad_verify_memb(const char *a_elt,
   }
   else if (vlad_identifier::validate_var_ident(a_elt) == VLAD_OK) {
     /* it's a variable, so get the type */
-    if (!VLAD_IDENT_TYPE_IS_SIN(type[0] = vlad_identifier::get_var_type(a_elt)))
+    type[0] = vlad_identifier::get_var_type(a_elt);
+    /* check for both types as they are not mutually exclusive */
+    if (!VLAD_IDENT_TYPE_IS_SIN(type[0]) || VLAD_IDENT_TYPE_IS_GRP(type[0]))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
     if (a_vlist1 != NULL && (retval = a_vlist1->find(a_elt)) != VLAD_OK)
@@ -856,8 +858,10 @@ static int vlad_verify_memb(const char *a_elt,
       return VLAD_INVALIDINPUT;
   }
   else if (vlad_identifier::validate_var_ident(a_grp) == VLAD_OK) {
-    /* it's a variable, so check the type */
-    if (!VLAD_IDENT_TYPE_IS_GRP(type[1] = vlad_identifier::get_var_type(a_grp)))
+    /* it's a variable, so get the type */
+    type[1] = vlad_identifier::get_var_type(a_grp);
+    /* check for both types as they are not mutually exclusive */
+    if (VLAD_IDENT_TYPE_IS_SIN(type[1]) || !VLAD_IDENT_TYPE_IS_GRP(type[1]))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
     if (a_vlist1 != NULL && (retval = a_vlist1->find(a_grp)) != VLAD_OK)
@@ -908,7 +912,9 @@ static int vlad_verify_subst(const char *a_grp1,
   }
   else if (vlad_identifier::validate_var_ident(a_grp1) == VLAD_OK) {
     /* it's a variable, so get the type */
-    if (!VLAD_IDENT_TYPE_IS_GRP(type[0] = vlad_identifier::get_var_type(a_grp1)))
+    type[0] = vlad_identifier::get_var_type(a_grp1);
+    /* check for both types as they are not mutually exclusive */
+    if (VLAD_IDENT_TYPE_IS_SIN(type[0]) || !VLAD_IDENT_TYPE_IS_GRP(type[0]))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
     if (a_vlist1 != NULL && (retval = a_vlist1->find(a_grp1)) != VLAD_OK)
@@ -927,8 +933,10 @@ static int vlad_verify_subst(const char *a_grp1,
       return VLAD_INVALIDINPUT;
   }
   else if (vlad_identifier::validate_var_ident(a_grp2) == VLAD_OK) {
-    /* it's a variable, so check the type */
-    if (!VLAD_IDENT_TYPE_IS_GRP(type[1] = vlad_identifier::get_var_type(a_grp2)))
+    /* it's a variable, so get the type */
+    type[1] = vlad_identifier::get_var_type(a_grp2);
+    /* check for both types as they are not mutually exclusive */
+    if (VLAD_IDENT_TYPE_IS_SIN(type[1]) || !VLAD_IDENT_TYPE_IS_GRP(type[1]))
       return VLAD_INVALIDINPUT;
     /* all good, now check if it's in the varlist */
     if (a_vlist1 != NULL && (retval = a_vlist1->find(a_grp2)) != VLAD_OK)
