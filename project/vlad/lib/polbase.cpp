@@ -851,7 +851,8 @@ int vlad_polbase::compute_generate(FILE *a_fs)
 
   for (i = 0; i <= VLAD_LIST_LENGTH(m_setable); i++) {
     unsigned int i_con;
-    unsigned int i_exp;
+    unsigned int i_exp1;
+    unsigned int i_exp2;
 
     /* constraint loop */
     for (i_con = 0; i_con < VLAD_LIST_LENGTH(m_ctable); i_con++) {
@@ -863,49 +864,46 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n)) != VLAD_OK)
         return retval;
 
-      fprintf(a_fs, "  ");
-
       /* constaint expression */
-      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_e); i_exp++) {
-        if ((retval = exp_e->get(i_exp, &fact)) != VLAD_OK)
+      for (i_exp1 = 0; i_exp1 < VLAD_LIST_LENGTH(exp_e); i_exp1++) {
+        if ((retval = exp_e->get(i_exp1, &fact)) != VLAD_OK)
           return retval;
+
+        fprintf(a_fs, "  ");
 
         print_fact(fact, i, a_fs);
 
-        if (i_exp + 1 < VLAD_LIST_LENGTH(exp_e))
-          fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
+        fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+        
+        /* constraint condition */
+        for (i_exp2 = 0; i_exp2 < VLAD_LIST_LENGTH(exp_c); i_exp2++) {
+          if ((retval = exp_c->get(i_exp2, &fact)) != VLAD_OK)
+            return retval;
+        
+          print_fact(fact, i, a_fs);
+        
+          if (i_exp2 + 1 < VLAD_LIST_LENGTH(exp_c) || exp_n != NULL)
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+        }
+        
+        /* constraint negative condition */
+        for (i_exp2 = 0; i_exp2 < VLAD_LIST_LENGTH(exp_n); i_exp2++) {
+          if ((retval = exp_n->get(i_exp2, &fact)) != VLAD_OK)
+            return retval;
+        
+          fprintf(a_fs, "%s ", VLAD_STR_NOT);
+        
+          print_fact(fact, i, a_fs);
+        
+          if (i_exp2 + 1 < VLAD_LIST_LENGTH(exp_n))
+            fprintf(a_fs, "%s\n    ", VLAD_STR_AND);
+        }
+        
+        if (exp_c == NULL && exp_n == NULL)
+          fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
+        else
+          fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
       }
-
-      fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-
-      /* constraint condition */
-      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_c); i_exp++) {
-        if ((retval = exp_c->get(i_exp, &fact)) != VLAD_OK)
-          return retval;
-
-        print_fact(fact, i, a_fs);
-
-        if (i_exp + 1 < VLAD_LIST_LENGTH(exp_c) || exp_n != NULL)
-          fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-      }
-
-      /* constraint negative condition */
-      for (i_exp = 0; i_exp < VLAD_LIST_LENGTH(exp_n); i_exp++) {
-        if ((retval = exp_n->get(i_exp, &fact)) != VLAD_OK)
-          return retval;
-
-        fprintf(a_fs, "%s ", VLAD_STR_NOT);
-
-        print_fact(fact, i, a_fs);
-
-        if (i_exp + 1 < VLAD_LIST_LENGTH(exp_n))
-          fprintf(a_fs, "%s\n    ", VLAD_STR_AND);
-      }
-
-      if (exp_c == NULL && exp_n == NULL)
-        fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
-      else
-        fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
     }
   }
 
@@ -917,7 +915,8 @@ int vlad_polbase::compute_generate(FILE *a_fs)
   /* state loop */
   for (i = 0; i < VLAD_LIST_LENGTH(m_setable); i++) {
     unsigned int i_tup;
-    unsigned int i_exp;
+    unsigned int i_exp1;
+    unsigned int i_exp2;
     char *name;
     vlad_fact *fact;
     vlad_expression *exp_pr = NULL;
@@ -945,36 +944,32 @@ int vlad_polbase::compute_generate(FILE *a_fs)
       if (retval == VLAD_OK && exp_po != NULL)
         retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
 
-      fprintf(a_fs, "  ");
-
       /* postcondition loop */
-      for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpo); i_exp++) {
+      for (i_exp1 = 0; retval == VLAD_OK && i_exp1 < VLAD_LIST_LENGTH(exp_tpo); i_exp1++) {
         if (retval == VLAD_OK)
-          retval = exp_tpo->get(i_exp, &fact);
-        if (retval == VLAD_OK)
+          retval = exp_tpo->get(i_exp1, &fact);
+        if (retval == VLAD_OK) {
+          fprintf(a_fs, "  ");
           print_fact(fact, i + 1, a_fs);
-        if (retval == VLAD_OK && i_exp + 1 < exp_tpo->length())
-          fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
-      }
-
-      if (retval == VLAD_OK)
-        fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-
-      /* precondition loop */
-      for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpr); i_exp++) {
-        if (retval == VLAD_OK)
-          retval = exp_tpr->get(i_exp, &fact);
-        if (retval == VLAD_OK)
-          print_fact(fact, i, a_fs);
-        if (retval == VLAD_OK && i_exp + 1 < VLAD_LIST_LENGTH(exp_pr))
-          fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-      }
-
-      if (retval == VLAD_OK) {
-        if (exp_tpr == NULL || exp_tpr->length() == 0)
-          fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
-        else
-          fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+          fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+        }
+  
+        /* precondition loop */
+        for (i_exp2 = 0; retval == VLAD_OK && i_exp2 < VLAD_LIST_LENGTH(exp_tpr); i_exp2++) {
+          if (retval == VLAD_OK)
+            retval = exp_tpr->get(i_exp2, &fact);
+          if (retval == VLAD_OK)
+            print_fact(fact, i, a_fs);
+          if (retval == VLAD_OK && i_exp2 + 1 < VLAD_LIST_LENGTH(exp_pr))
+            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+        }
+  
+        if (retval == VLAD_OK) {
+          if (exp_tpr == NULL || exp_tpr->length() == 0)
+            fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
+          else
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+        }
       }
 
       /* cleanup */
@@ -1016,37 +1011,32 @@ int vlad_polbase::compute_generate(FILE *a_fs)
         if (retval == VLAD_OK && exp_po != NULL)
           retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
 
-        if (retval == VLAD_OK)
-          fprintf(a_fs, "  ");
-      
         /* postcondition loop */
-        for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpo); i_exp++) {
+        for (i_exp1 = 0; retval == VLAD_OK && i_exp1 < VLAD_LIST_LENGTH(exp_tpo); i_exp1++) {
           if (retval == VLAD_OK)
-            retval = exp_tpo->get(i_exp, &fact);
-          if (retval == VLAD_OK)
+            retval = exp_tpo->get(i_exp1, &fact);
+          if (retval == VLAD_OK) {
+            fprintf(a_fs, "  ");
             print_fact(fact, i + 1, a_fs);
-          if (retval == VLAD_OK && i_exp + 1 < VLAD_LIST_LENGTH(exp_tpo))
-            fprintf(a_fs, " %s\n  ", VLAD_STR_AND);
-        }
-     
-        if (retval == VLAD_OK)
-          fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-      
-        /* precondition loop */
-        for (i_exp = 0; retval == VLAD_OK && i_exp < VLAD_LIST_LENGTH(exp_tpr); i_exp++) {
-          if (retval == VLAD_OK)
-            retval = exp_tpr->get(i_exp, &fact);
-          if (retval == VLAD_OK)
-            print_fact(fact, i, a_fs);
-          if (retval == VLAD_OK && i_exp + 1 < VLAD_LIST_LENGTH(exp_pr))
-            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-        }
-      
-        if (retval == VLAD_OK) {
-          if (exp_tpr == NULL || exp_tpr->length() == 0)
-            fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
-          else
-            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+          }
+          
+          /* precondition loop */
+          for (i_exp2 = 0; retval == VLAD_OK && i_exp2 < VLAD_LIST_LENGTH(exp_tpr); i_exp2++) {
+            if (retval == VLAD_OK)
+              retval = exp_tpr->get(i_exp2, &fact);
+            if (retval == VLAD_OK)
+              print_fact(fact, i, a_fs);
+            if (retval == VLAD_OK && i_exp2 + 1 < VLAD_LIST_LENGTH(exp_pr))
+              fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+          }
+          
+          if (retval == VLAD_OK) {
+            if (exp_tpr == NULL || exp_tpr->length() == 0)
+              fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
+            else
+              fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+          }
         }
 
         /* cleanup */
