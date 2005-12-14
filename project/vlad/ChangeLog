@@ -1,5 +1,11 @@
 2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+
+	  - Cleanup by moving the different rule generators to their own
+	    functions.
+
 	* lib/Makefile.in :
 
 	  - Added forgotten action for mapper rule.
