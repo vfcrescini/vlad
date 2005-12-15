@@ -1,3 +1,10 @@
+2005-12-15  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/smwrap.cpp :
+	* lib/smwrap.h :
+
+	  - Added rule constructor functions.
+
 2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/polbase.cpp :

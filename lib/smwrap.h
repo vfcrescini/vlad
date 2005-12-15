@@ -64,6 +64,15 @@ class vlad_smwrap : virtual public vlad_mem
                  vlad_numberlist *a_pbody,
                  vlad_numberlist *a_nbody);
 
+    /* start rule constructor mode */
+    int construct_rule_begin(unsigned int a_head);
+
+    /* add rule body in constructor mode */
+    int construct_rule_body(unsigned int a_body, bool a_truth);
+
+    /* end rule constructor mode */
+    int construct_rule_end();
+
     /* give T or F depending on whether atom is in ALL models or not */
     int ask(unsigned int a_atom, bool *a_res);
 
