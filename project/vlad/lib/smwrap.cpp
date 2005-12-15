@@ -122,7 +122,7 @@ int vlad_smwrap::close_rule()
     m_smod->printAnswer();
 #endif
 
-  m_stage = 3;
+  m_stage = 5;
 
   return VLAD_OK;
 }
@@ -284,12 +284,61 @@ int vlad_smwrap::add_rule(unsigned int a_head,
   return VLAD_OK;
 }
 
+/* start rule constructor mode */
+int vlad_smwrap::construct_rule_begin(unsigned int a_head)
+{
+  char name[VLAD_MAXLEN_NUM];
+
+  if (m_stage != 2)
+    return VLAD_INVALIDOP;
+
+  sprintf(name, "%d", a_head);
+  m_api->add_head(m_api->get_atom(name));
+
+  m_stage = 3;
+
+  return VLAD_OK;
+}
+
+/* add rule body in constructor mode */
+int vlad_smwrap::construct_rule_body(unsigned int a_body, bool a_truth)
+{
+  char name[VLAD_MAXLEN_NUM];
+
+  if (m_stage != 3 && m_stage != 4)
+    return VLAD_INVALIDOP;
+
+  sprintf(name, "%d", a_body);
+  m_api->add_body(m_api->get_atom(name), a_truth);
+
+  m_stage = 4;
+
+  return VLAD_OK;
+}
+
+/* end rule constructor mode */
+int vlad_smwrap::construct_rule_end()
+{
+  if (m_stage != 3 && m_stage != 4)
+    return VLAD_INVALIDOP;
+
+  /* if construc_rule_body is not called, we assume the body is "true" */
+  if (m_stage == 3)
+    m_api->add_body(m_api->get_atom(VLAD_STR_TRUE), true);
+
+  m_api->end_rule();
+
+  m_stage = 2;
+
+  return VLAD_OK;
+}
+
 /* give T or F depending on whether atom is in ALL models or not */
 int vlad_smwrap::ask(unsigned int a_atom, bool *a_res)
 {
   char name[VLAD_MAXLEN_NUM];
 
-  if (m_stage != 3)
+  if (m_stage != 5)
     return VLAD_INVALIDOP;
 
   if (a_res == NULL)
