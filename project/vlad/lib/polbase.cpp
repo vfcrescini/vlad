@@ -73,52 +73,47 @@ vlad_polbase::~vlad_polbase()
 /* (re)init the policy base */
 int vlad_polbase::init()
 {
-  int retval;
+  int retval = VLAD_OK;
+
+  /* first, we delete everything */
+  this->~vlad_polbase();
 
   /* initialise symbol table */
-  if (m_stable != NULL)
-    VLAD_MEM_DELETE(m_stable);
-  if ((m_stable = VLAD_MEM_NEW(vlad_symtab())) == NULL)
-    return VLAD_MALLOCFAILED;
-  if ((retval = m_stable->init()) != VLAD_OK)
-    return retval;
+  if (retval == VLAD_OK && (m_stable = VLAD_MEM_NEW(vlad_symtab())) == NULL)
+    retval = VLAD_MALLOCFAILED;
+  if (retval == VLAD_OK)
+    retval = m_stable->init();
 
   /* initialise initial expression table */
-  if (m_itable != NULL)
-    VLAD_MEM_DELETE(m_itable);
-  if ((m_itable = VLAD_MEM_NEW(vlad_expression())) == NULL)
-    return VLAD_MALLOCFAILED;
+  if (retval == VLAD_OK && (m_itable = VLAD_MEM_NEW(vlad_expression())) == NULL)
+    retval = VLAD_MALLOCFAILED;
 
   /* initialise constraints table */
-  if (m_ctable != NULL)
-    VLAD_MEM_DELETE(m_ctable);
-  if ((m_ctable = VLAD_MEM_NEW(vlad_consttab())) == NULL)
-    return VLAD_MALLOCFAILED;
+  if (retval == VLAD_OK && (m_ctable = VLAD_MEM_NEW(vlad_consttab())) == NULL)
+    retval = VLAD_MALLOCFAILED;
 
   /* initialise update declaration table */
-  if (m_utable != NULL)
-    VLAD_MEM_DELETE(m_utable);
-  if ((m_utable = VLAD_MEM_NEW(vlad_updatetab())) == NULL)
-    return VLAD_MALLOCFAILED;
+  if (retval == VLAD_OK && (m_utable = VLAD_MEM_NEW(vlad_updatetab())) == NULL)
+    retval = VLAD_MALLOCFAILED;
 
   /* sequence table */
-  if (m_setable != NULL)
-    VLAD_MEM_DELETE(m_setable);
-  if ((m_setable = VLAD_MEM_NEW(vlad_seqtab())) == NULL)
-    return VLAD_MALLOCFAILED;
+  if (retval == VLAD_OK && (m_setable = VLAD_MEM_NEW(vlad_seqtab())) == NULL)
+    retval = VLAD_MALLOCFAILED;
 
   /* the mapper */
-  if (m_mapper != NULL)
-    VLAD_MEM_DELETE(m_mapper);
-  if ((m_mapper = VLAD_MEM_NEW(vlad_mapper())) == NULL)
-    return VLAD_MALLOCFAILED;
+  if (retval == VLAD_OK && (m_mapper = VLAD_MEM_NEW(vlad_mapper())) == NULL)
+    retval = VLAD_MALLOCFAILED;
 
 #ifdef VLAD_SMODELS
-  /* smodels smwrap */
-  if (m_smobject != NULL)
-    VLAD_MEM_DELETE(m_smobject);
+  /* smodels smwrap: no need to create it here */
   m_smobject = NULL;
 #endif
+
+  /* cleanup if we failed */
+  if (retval != VLAD_OK) {
+    this->~vlad_polbase();
+    return retval;
+  }
 
   m_stage = 1;
 
