@@ -1,5 +1,9 @@
 2005-12-15  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+
+	  - Now uses the rule constructor functions instead of using numlists.
+
 	* lib/smwrap.cpp :
 	* lib/smwrap.h :
 
