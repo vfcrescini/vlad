@@ -1,3 +1,13 @@
+2005-12-16  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/expression.cpp :
+	* lib/expression.h :
+	* lib/fact.cpp :
+	* lib/fact.h :
+
+	  - Removed the unused version of replace() that takes a single entity
+	    and single variable.
+
 2005-12-15  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/polbase.cpp :
