@@ -345,48 +345,6 @@ int vlad_fact::vcopy(vlad_symtab *a_stab,
   return copy(a_fact);
 }
 
-/* replaces instances of var with ident, gives a new fact */
-int vlad_fact::replace(const char *a_var,
-                       const char *a_ident,
-                       vlad_fact **a_fact)
-{
-  if (!m_init)
-    return VLAD_UNINITIALISED;
-
-  if (a_var == NULL || a_ident == NULL || a_fact == NULL)
-    return VLAD_NULLPTR;
-
-  /* create a new fact */
-  if ((*a_fact = VLAD_MEM_NEW(vlad_fact())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /*
-   * at this level we do not care if the entities are valid or not. we blindy
-   * replace var with ident. nothing more, nothing less.
-   */
-
-  switch(m_type) {
-    case VLAD_ATOM_HOLDS :
-      return
-        (*a_fact)->init_holds((strcmp(m_holds.subject, a_var) ? m_holds.subject : a_ident),
-                              (strcmp(m_holds.access, a_var) ? m_holds.access : a_ident),
-                              (strcmp(m_holds.object, a_var) ? m_holds.object : a_ident),
-                              m_truth);
-    case VLAD_ATOM_MEMBER :
-      return
-        (*a_fact)->init_member((strcmp(m_member.element, a_var) ? m_member.element : a_ident),
-                               (strcmp(m_member.group, a_var) ? m_member.group : a_ident),
-                               m_truth);
-    case VLAD_ATOM_SUBSET :
-      return
-        (*a_fact)->init_subset((strcmp(m_subset.group1, a_var) ? m_subset.group1 : a_ident),
-                               (strcmp(m_subset.group2, a_var) ? m_subset.group2 : a_ident),
-                               m_truth);
-  }
-
-  return VLAD_FAILURE;
-}
-
 /* replaces vars in a_vlist with idents in a_ilist. gives a new fact */
 int vlad_fact::replace(vlad_varlist *a_vlist,
                        vlad_stringlist *a_ilist,

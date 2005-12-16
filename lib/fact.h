@@ -87,9 +87,6 @@ class vlad_fact : public vlad_list_item
               vlad_varlist *a_vlist,
               vlad_fact **a_fact);
 
-    /* replaces instances of var with ident, gives a new fact */
-    int replace(const char *a_var, const char *a_ident, vlad_fact **a_fact);
-
     /* replaces vars in vlist with entities in ilist. gives a new fact */
     int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,

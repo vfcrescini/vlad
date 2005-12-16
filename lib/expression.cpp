@@ -124,37 +124,6 @@ int vlad_expression::vcopy(vlad_symtab *a_stab,
   return VLAD_OK;
 }
 
-/* replace occurences of var with ident, creates a new expression */
-int vlad_expression::replace(const char *a_var,
-                             const char *a_ident,
-                             vlad_expression **a_exp)
-{
-  int retval;
-  unsigned int i;
-
-  if (a_exp == NULL)
-    return VLAD_NULLPTR;
-
-  if ((*a_exp = VLAD_MEM_NEW(vlad_expression())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    vlad_fact *old_fact;
-    vlad_fact *new_fact;
-
-    if ((retval = get(i, &old_fact)) != VLAD_OK)
-      return retval;
-
-    if ((retval = old_fact->replace(a_var, a_ident, &new_fact)) != VLAD_OK)
-      return retval;
-
-    if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
-      return retval;
-  }
-
-  return VLAD_OK;
-}
-
 /* replace vars in vlist to ident in ilist. create a new expression */
 int vlad_expression::replace(vlad_varlist *a_vlist,
                              vlad_stringlist *a_ilist,

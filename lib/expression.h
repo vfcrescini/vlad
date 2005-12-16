@@ -61,11 +61,6 @@ class vlad_expression : public vlad_list
               vlad_varlist *a_vlist,
               vlad_expression **a_exp);
 
-    /* replace occurences of var with ident, creates a new expression */
-    int replace(const char *a_var,
-                const char *a_ident,
-                vlad_expression **a_exp);
-
     /* replace vars in vlist to entity in ilist. create a new expression */
     int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
