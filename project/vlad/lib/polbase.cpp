@@ -161,8 +161,6 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
                                vlad_expression *a_ncond)
 {
   int retval = VLAD_OK;
-  unsigned int i;
-  vlad_varlist *vlist;
   vlad_expression *exp_e = NULL;
   vlad_expression *exp_c = NULL;
   vlad_expression *exp_n = NULL;
@@ -174,66 +172,19 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  /* create the vlist */
-  if ((vlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
-    return VLAD_MALLOCFAILED;
-
-  /* generate the vlist, also verify the expressions */
+  /* make copies of the expresssions while verifying */
   if (retval == VLAD_OK)
-    retval = a_exp->vvarlist(m_stable, vlist);
+    retval = a_exp->vcopy(m_stable, NULL, &exp_e);
   if (retval == VLAD_OK && a_cond != NULL)
-    retval = a_cond->vvarlist(m_stable, vlist);
+    retval = a_cond->vcopy(m_stable, NULL, &exp_c);
   if (retval == VLAD_OK && a_ncond != NULL)
-    retval = a_ncond->vvarlist(m_stable, vlist);
+    retval = a_ncond->vcopy(m_stable, NULL, &exp_n);
 
-  /* if there are no variables, forget trying to ground them */
-  if (vlist->length() == 0) {
-    /* make copies of the expresssions, no need to verify anymore */
-    if (retval == VLAD_OK)
-      retval = a_exp->copy(&exp_e);
-    if (retval == VLAD_OK && a_cond != NULL)
-      retval = a_cond->copy(&exp_c);
-    if (retval == VLAD_OK && a_ncond != NULL)
-      retval = a_ncond->copy(&exp_n);
+  /* then, we add the expressions into the cosntraints table */
+  if (retval == VLAD_OK)
+    retval = m_ctable->add(exp_e, exp_c, exp_n);
 
-    /* then, we add the expressions into the cosntraints table */
-    if (retval == VLAD_OK)
-      retval = m_ctable->add(exp_e, exp_c, exp_n);
-  }
-  else {
-    vlad_stringlistlist *tlist = NULL;
-
-    /* get a tuple list */
-    if (retval == VLAD_OK)
-      retval = m_stable->tupleate(vlist, &tlist);
-
-    /* ground and store */
-    for (i = 0; retval == VLAD_OK && i < tlist->length(); i++) {
-      vlad_stringlist *ilist;
-
-      if (retval == VLAD_OK)
-        retval = tlist->get(i, &ilist);
-    
-      /* now ground and verify each expression */
-      if (retval == VLAD_OK)
-        retval = a_exp->vreplace(m_stable, vlist, ilist, &exp_e);
-      if (retval == VLAD_OK && a_cond != NULL)
-        retval = a_cond->vreplace(m_stable, vlist, ilist, &exp_c);
-      if (retval == VLAD_OK && a_ncond != NULL)
-        retval = a_ncond->vreplace(m_stable, vlist, ilist, &exp_n);
-     
-      /* finally, we add this instantiation to the constraints table */
-      if (retval == VLAD_OK)
-        retval = m_ctable->add(exp_e, exp_c, exp_n);
-    }
-
-    if (tlist != NULL)
-      VLAD_MEM_DELETE(tlist);
-  }
-
-  if (vlist != NULL)
-    VLAD_MEM_DELETE(vlist);
-
+  /* cleanup */
   if (retval != VLAD_OK) {
     if (exp_e != NULL)
       VLAD_MEM_DELETE(exp_e);
@@ -1173,7 +1124,6 @@ int vlad_polbase::generate_inertial(FILE *a_fs)
 int vlad_polbase::generate_initial(FILE *a_fs)
 {
   int retval;
-  unsigned int i;
 
   if (a_fs == NULL)
     return VLAD_NULLPTR;
@@ -1181,20 +1131,8 @@ int vlad_polbase::generate_initial(FILE *a_fs)
   if (m_stage < 3)
     return VLAD_INVALIDOP;
 
-  for (i = 0; i < VLAD_LIST_LENGTH(m_itable); i++) {
-    vlad_fact *fact = NULL;
-
-    if ((retval = m_itable->get(i, &fact)) != VLAD_OK)
-      return retval;
-
-    fprintf(a_fs, "  ");
-    print_fact(fact, 0, a_fs);
-    fprintf(a_fs,
-            " %s\n    %s%s\n",
-            VLAD_STR_ARROW,
-            VLAD_STR_TRUE,
-            VLAD_STR_TERMINATOR);
-  }
+  if ((retval = generate_rule(a_fs, 0, 0, 0, m_itable, NULL, NULL)) != VLAD_OK)
+    return retval;
 
   fprintf(a_fs, "\n");
 
@@ -1204,11 +1142,10 @@ int vlad_polbase::generate_initial(FILE *a_fs)
 /* generates constraint rules and prints them to a_fs */
 int vlad_polbase::generate_constraint(FILE *a_fs)
 {
-  int retval;
+  int retval = VLAD_OK;
   unsigned int i_sta;
   unsigned int i_con;
-  unsigned int i_exp1;
-  unsigned int i_exp2;
+  unsigned int i_tup;
 
   if (a_fs == NULL)
     return VLAD_NULLPTR;
@@ -1216,58 +1153,79 @@ int vlad_polbase::generate_constraint(FILE *a_fs)
   if (m_stage < 3)
     return VLAD_INVALIDOP;
 
-  for (i_sta = 0; i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++) {
-    /* constraint loop */
-    for (i_con = 0; i_con < VLAD_LIST_LENGTH(m_ctable); i_con++) {
-      vlad_expression *exp_e = NULL;
-      vlad_expression *exp_c = NULL;
-      vlad_expression *exp_n = NULL;
-      vlad_fact *fact = NULL;
+  /* constraint loop */
+  for (i_con = 0; i_con < VLAD_LIST_LENGTH(m_ctable); i_con++) {
+    vlad_expression *exp_e = NULL;
+    vlad_expression *exp_c = NULL;
+    vlad_expression *exp_n = NULL;
+    vlad_varlist *vlist;
 
-      if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n)) != VLAD_OK)
-        return retval;
+    if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n)) != VLAD_OK)
+      return retval;
 
-      /* constaint expression */
-      for (i_exp1 = 0; i_exp1 < VLAD_LIST_LENGTH(exp_e); i_exp1++) {
-        if ((retval = exp_e->get(i_exp1, &fact)) != VLAD_OK)
-          return retval;
+    /* create a vlist for this constraint */
+    if ((vlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
+      return VLAD_MALLOCFAILED;
 
-        fprintf(a_fs, "  ");
+    /* generate a varlist from the expressions. no need to verify */
+    if (retval == VLAD_OK)
+      retval = exp_e->varlist(vlist);
+    if (retval == VLAD_OK && exp_c != NULL)
+      retval = exp_c->varlist(vlist);
+    if (retval == VLAD_OK && exp_n != NULL)
+      retval = exp_n->varlist(vlist);
 
-        print_fact(fact, i_sta, a_fs);
-
-        fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-        
-        /* constraint condition */
-        for (i_exp2 = 0; i_exp2 < VLAD_LIST_LENGTH(exp_c); i_exp2++) {
-          if ((retval = exp_c->get(i_exp2, &fact)) != VLAD_OK)
-            return retval;
-        
-          print_fact(fact, i_sta, a_fs);
-        
-          if (i_exp2 + 1 < VLAD_LIST_LENGTH(exp_c) || exp_n != NULL)
-            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-        }
-        
-        /* constraint negative condition */
-        for (i_exp2 = 0; i_exp2 < VLAD_LIST_LENGTH(exp_n); i_exp2++) {
-          if ((retval = exp_n->get(i_exp2, &fact)) != VLAD_OK)
-            return retval;
-        
-          fprintf(a_fs, "%s ", VLAD_STR_NOT);
-        
-          print_fact(fact, i_sta, a_fs);
-        
-          if (i_exp2 + 1 < VLAD_LIST_LENGTH(exp_n))
-            fprintf(a_fs, "%s\n    ", VLAD_STR_AND);
-        }
-        
-        if (exp_c == NULL && exp_n == NULL)
-          fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
-        else
-          fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
-      }
+    /* if there are no variables, expressions are already ground */
+    if (vlist->length() == 0) {
+      for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++)
+        retval = generate_rule(a_fs, i_sta, i_sta, i_sta, exp_e, exp_c, exp_n);
     }
+    else {
+      vlad_stringlistlist *tlist;
+      vlad_expression *exp_ge = NULL;
+      vlad_expression *exp_gc = NULL;
+      vlad_expression *exp_gn = NULL;
+
+      /* generate a list of tuples */
+      if (retval == VLAD_OK)
+        retval = m_stable->tupleate(vlist, &tlist);
+
+      /* ground for each tuple */
+      for (i_tup = 0; retval == VLAD_OK && i_tup < tlist->length(); i_tup++) {
+        vlad_stringlist *ilist;
+
+        if (retval == VLAD_OK)
+          retval = tlist->get(i_tup, &ilist);
+
+        /* ground and verify each exp */
+        if (retval == VLAD_OK)
+          retval = exp_e->vreplace(m_stable, vlist, ilist, &exp_ge);
+        if (retval == VLAD_OK && exp_c != NULL)
+          retval = exp_c->vreplace(m_stable, vlist, ilist, &exp_gc);
+        if (retval == VLAD_OK && exp_n != NULL)
+          retval = exp_n->vreplace(m_stable, vlist, ilist, &exp_gn);
+
+        /* now generate */
+        for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++)
+          retval = generate_rule(a_fs, i_sta, i_sta, i_sta, exp_ge, exp_gc, exp_gn);
+
+        /* cleanup */
+        if (exp_ge != NULL)
+          VLAD_MEM_DELETE(exp_ge);
+        if (exp_gc != NULL)
+          VLAD_MEM_DELETE(exp_gc);
+        if (exp_gn != NULL)
+          VLAD_MEM_DELETE(exp_gn);
+      }
+
+      /* more cleanup */
+      if (tlist != NULL)
+        VLAD_MEM_DELETE(tlist);
+    }
+
+    /* yet some more cleanup */
+    if (vlist != NULL)
+      VLAD_MEM_DELETE(vlist);
   }
 
   fprintf(a_fs, "\n");
@@ -1281,8 +1239,6 @@ int vlad_polbase::generate_update(FILE *a_fs)
   int retval = VLAD_OK;
   unsigned int i_sta;
   unsigned int i_tup;
-  unsigned int i_exp1;
-  unsigned int i_exp2;
 
   if (a_fs == NULL)
     return VLAD_NULLPTR;
@@ -1293,7 +1249,6 @@ int vlad_polbase::generate_update(FILE *a_fs)
   /* state loop */
   for (i_sta = 0; retval == VLAD_OK && i_sta < VLAD_LIST_LENGTH(m_setable); i_sta++) {
     char *name;
-    vlad_fact *fact;
     vlad_expression *exp_pr = NULL;
     vlad_expression *exp_po = NULL;
     vlad_varlist *vlist1 = NULL;
@@ -1319,33 +1274,8 @@ int vlad_polbase::generate_update(FILE *a_fs)
       if (retval == VLAD_OK && exp_po != NULL)
         retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
 
-      /* postcondition loop */
-      for (i_exp1 = 0; retval == VLAD_OK && i_exp1 < VLAD_LIST_LENGTH(exp_tpo); i_exp1++) {
-        if (retval == VLAD_OK)
-          retval = exp_tpo->get(i_exp1, &fact);
-        if (retval == VLAD_OK) {
-          fprintf(a_fs, "  ");
-          print_fact(fact, i_sta + 1, a_fs);
-          fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-        }
-  
-        /* precondition loop */
-        for (i_exp2 = 0; retval == VLAD_OK && i_exp2 < VLAD_LIST_LENGTH(exp_tpr); i_exp2++) {
-          if (retval == VLAD_OK)
-            retval = exp_tpr->get(i_exp2, &fact);
-          if (retval == VLAD_OK)
-            print_fact(fact, i_sta, a_fs);
-          if (retval == VLAD_OK && i_exp2 + 1 < VLAD_LIST_LENGTH(exp_pr))
-            fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-        }
-  
-        if (retval == VLAD_OK) {
-          if (exp_tpr == NULL || exp_tpr->length() == 0)
-            fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
-          else
-            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
-        }
-      }
+      if (retval == VLAD_OK)
+        retval = generate_rule(a_fs, i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
 
       /* cleanup */
       if (exp_tpr != NULL)
@@ -1386,34 +1316,9 @@ int vlad_polbase::generate_update(FILE *a_fs)
         if (retval == VLAD_OK && exp_po != NULL)
           retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
 
-        /* postcondition loop */
-        for (i_exp1 = 0; retval == VLAD_OK && i_exp1 < VLAD_LIST_LENGTH(exp_tpo); i_exp1++) {
-          if (retval == VLAD_OK)
-            retval = exp_tpo->get(i_exp1, &fact);
-          if (retval == VLAD_OK) {
-            fprintf(a_fs, "  ");
-            print_fact(fact, i_sta + 1, a_fs);
-            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-          }
-          
-          /* precondition loop */
-          for (i_exp2 = 0; retval == VLAD_OK && i_exp2 < VLAD_LIST_LENGTH(exp_tpr); i_exp2++) {
-            if (retval == VLAD_OK)
-              retval = exp_tpr->get(i_exp2, &fact);
-            if (retval == VLAD_OK)
-              print_fact(fact, i_sta, a_fs);
-            if (retval == VLAD_OK && i_exp2 + 1 < VLAD_LIST_LENGTH(exp_pr))
-              fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
-          }
-          
-          if (retval == VLAD_OK) {
-            if (exp_tpr == NULL || exp_tpr->length() == 0)
-              fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
-            else
-              fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
-          }
-        }
-
+        if (retval == VLAD_OK)
+          retval = generate_rule(a_fs, i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+ 
         /* cleanup */
         if (exp_tpr != NULL)
           VLAD_MEM_DELETE(exp_tpr);
@@ -1439,6 +1344,70 @@ int vlad_polbase::generate_update(FILE *a_fs)
   fprintf(a_fs, "\n");
 
   return VLAD_OK;
+}
+
+/* generates the given rule and prints them to a_fs */
+int vlad_polbase::generate_rule(FILE *a_fs,
+                                unsigned int a_state1,
+                                unsigned int a_state2,
+                                unsigned int a_state3,
+                                vlad_expression *a_exp1,
+                                vlad_expression *a_exp2,
+                                vlad_expression *a_exp3)
+{
+  int retval = VLAD_OK;
+  unsigned int i_exp1;
+  unsigned int i_exp2;
+  unsigned int i_exp3;
+  vlad_fact *fact;
+
+  if (m_stage < 3)
+    return VLAD_INVALIDOP;
+
+  if (a_fs == NULL || a_exp1 == NULL)
+    return VLAD_NULLPTR;
+
+  for (i_exp1 = 0; i_exp1 < VLAD_LIST_LENGTH(a_exp1); i_exp1++) {
+    if ((retval = a_exp1->get(i_exp1, &fact)) != VLAD_OK)
+      return retval;
+
+    fprintf(a_fs, "  ");
+
+    print_fact(fact, a_state1, a_fs);
+
+    fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+    
+    /* positive condition */
+    for (i_exp2 = 0; i_exp2 < VLAD_LIST_LENGTH(a_exp2); i_exp2++) {
+      if ((retval = a_exp2->get(i_exp2, &fact)) != VLAD_OK)
+        return retval;
+    
+      print_fact(fact, a_state2, a_fs);
+    
+      if (i_exp2 + 1 < VLAD_LIST_LENGTH(a_exp2) || a_exp3 != NULL)
+        fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
+    }
+    
+    /* negative condition */
+    for (i_exp3 = 0; i_exp3 < VLAD_LIST_LENGTH(a_exp3); i_exp3++) {
+      if ((retval = a_exp3->get(i_exp3, &fact)) != VLAD_OK)
+        return retval;
+    
+      fprintf(a_fs, "%s ", VLAD_STR_NOT);
+    
+      print_fact(fact, a_state3, a_fs);
+    
+      if (i_exp3 + 1 < VLAD_LIST_LENGTH(a_exp3))
+        fprintf(a_fs, "%s\n    ", VLAD_STR_AND);
+    }
+    
+    if (a_exp2 == NULL && a_exp3 == NULL)
+      fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
+    else
+      fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+  }
+
+  return retval;
 }
 
 #ifdef VLAD_SMODELS
@@ -1846,88 +1815,98 @@ int vlad_polbase::evaluate_inertial()
 /* registers initial state rules in smodels object for evaluation */
 int vlad_polbase::evaluate_initial()
 {
-  int retval;
-  unsigned int i_ini;
-  unsigned int id;
-
   /* we only allow this after policy base is closed */
   if (m_stage != 3 && m_stage != 4)
     return VLAD_INVALIDOP;
 
-  for (i_ini = 0; i_ini < VLAD_LIST_LENGTH(m_itable); i_ini++) {
-    vlad_fact *fact;
-
-    if ((retval = m_itable->get(i_ini, &fact)) != VLAD_OK)
-      return retval;
-    if ((retval = m_mapper->encode_fact(fact, 0, &id)) != VLAD_OK)
-      return retval;
-    if ((retval = m_smobject->add_axiom(true, 1, id)) != VLAD_OK)
-      return retval;
-  }
-
-  return VLAD_OK;
+  return evaluate_rule(0, 0, 0, m_itable, NULL, NULL);
 }
 
 /* registers constraint rules in smodels object for evaluation */
 int vlad_polbase::evaluate_constraint()
 {
   int retval = VLAD_OK;
-  unsigned int id;
   unsigned int i_sta;
   unsigned int i_con;
-  unsigned int i_exp1;
-  unsigned int i_exp2;
-  unsigned int i_exp3;
+  unsigned int i_tup;
 
   /* we only allow this after policy base is closed */
   if (m_stage != 3 && m_stage != 4)
     return VLAD_INVALIDOP;
 
-  /* state loop */
-  for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++) {
-    /* constraint loop */
-    for (i_con = 0; retval == VLAD_OK && i_con < VLAD_LIST_LENGTH(m_ctable); i_con++) {
-      vlad_expression *exp_e;
-      vlad_expression *exp_c;
-      vlad_expression *exp_n;
-      vlad_fact *fact;
+  /* constraint loop */
+  for (i_con = 0; retval == VLAD_OK && i_con < VLAD_LIST_LENGTH(m_ctable); i_con++) {
+    vlad_expression *exp_e = NULL;
+    vlad_expression *exp_c = NULL;
+    vlad_expression *exp_n = NULL;
+    vlad_varlist *vlist;
 
-      if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n)) != VLAD_OK)
-        return retval;
+    if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n)) != VLAD_OK)
+      return retval;
 
-      /* constaint expression */
-      for (i_exp1 = 0; retval == VLAD_OK && i_exp1 < VLAD_LIST_LENGTH(exp_e); i_exp1++) {
-        if (retval == VLAD_OK)
-          retval = exp_e->get(i_exp1, &fact);
-        if (retval == VLAD_OK)
-          retval = m_mapper->encode_fact(fact, i_sta, &id);
-        if (retval == VLAD_OK)
-          retval = m_smobject->construct_rule_begin(id);
+    /* create a varlist for this constraint */
+    if ((vlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
+      return VLAD_MALLOCFAILED;
 
-        /* constraint positive condition */
-        for (i_exp2 = 0; retval == VLAD_OK && i_exp2 < VLAD_LIST_LENGTH(exp_c); i_exp2++) {
-          if (retval == VLAD_OK)
-            retval = exp_c->get(i_exp2, &fact);
-          if (retval == VLAD_OK)
-            retval = m_mapper->encode_fact(fact, i_sta, &id);
-          if (retval == VLAD_OK)
-            retval = m_smobject->construct_rule_body(id, true);
-        }
-  
-        /* constraint negative condition */
-        for (i_exp3 = 0; retval == VLAD_OK && i_exp3 < VLAD_LIST_LENGTH(exp_n); i_exp3++) {
-          if (retval == VLAD_OK)
-            retval = exp_n->get(i_exp3, &fact);
-          if (retval == VLAD_OK)
-            retval = m_mapper->encode_fact(fact, i_sta, &id);
-          if (retval == VLAD_OK)
-            retval = m_smobject->construct_rule_body(id, false);
-        }
+    /* generate a varlist from the expressions. no need to verify */
+    if (retval == VLAD_OK)
+      retval = exp_e->varlist(vlist);
+    if (retval == VLAD_OK && exp_c != NULL)
+      retval = exp_c->varlist(vlist);
+    if (retval == VLAD_OK && exp_n != NULL)
+      retval = exp_n->varlist(vlist);
 
-        if (retval == VLAD_OK)
-          retval = m_smobject->construct_rule_end();
-      }
+    /* if there are no variables, expressions are already ground */
+    if (vlist->length() == 0) {
+      for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++)
+        retval = evaluate_rule(i_sta, i_sta, i_sta, exp_e, exp_c, exp_n);
     }
+    else {
+      vlad_stringlistlist *tlist;
+      vlad_expression *exp_ge = NULL;
+      vlad_expression *exp_gc = NULL;
+      vlad_expression *exp_gn = NULL;
+
+      /* generate a list of tuples */
+      if (retval == VLAD_OK)
+        retval = m_stable->tupleate(vlist, &tlist);
+
+      /* ground for each tuple */
+      for (i_tup = 0; retval == VLAD_OK && i_tup < tlist->length(); i_tup++) {
+        vlad_stringlist *ilist;
+
+        if (retval == VLAD_OK)
+          retval = tlist->get(i_tup, &ilist);
+
+        /* ground and verify each exp */
+        if (retval == VLAD_OK)
+          retval = exp_e->vreplace(m_stable, vlist, ilist, &exp_ge);
+        if (retval == VLAD_OK && exp_c != NULL)
+          retval = exp_c->vreplace(m_stable, vlist, ilist, &exp_gc);
+        if (retval == VLAD_OK && exp_n != NULL)
+          retval = exp_n->vreplace(m_stable, vlist, ilist, &exp_gn);
+
+        /* now evaluate */
+        for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++)
+          retval = evaluate_rule(i_sta, i_sta, i_sta, exp_ge, exp_gc, exp_gn);
+
+        /* cleanup */
+        if (exp_ge != NULL)
+          VLAD_MEM_DELETE(exp_ge);
+        if (exp_gc != NULL)
+          VLAD_MEM_DELETE(exp_gc);
+        if (exp_gn != NULL)
+          VLAD_MEM_DELETE(exp_gn);
+      }
+
+      /* more cleanup */
+      if (tlist != NULL)
+        VLAD_MEM_DELETE(tlist);
+    }
+
+    /* yet some more cleanup */
+    if (vlist != NULL)
+      VLAD_MEM_DELETE(vlist);
   }
 
   return retval;
@@ -1939,9 +1918,6 @@ int vlad_polbase::evaluate_update()
   int retval = VLAD_OK;
   unsigned int i_sta;
   unsigned int i_tup;
-  unsigned int i_exp1;
-  unsigned int i_exp2;
-  unsigned int id;
 
   /* we only allow this after policy base is closed */
   if (m_stage != 3 && m_stage != 4)
@@ -1950,7 +1926,6 @@ int vlad_polbase::evaluate_update()
   /* state loop */
   for (i_sta = 0; retval == VLAD_OK && i_sta < VLAD_LIST_LENGTH(m_setable); i_sta++) {
     char *name;
-    vlad_fact *fact;
     vlad_expression *exp_pr = NULL;
     vlad_expression *exp_po = NULL;
     vlad_varlist *vlist1 = NULL;
@@ -1976,29 +1951,9 @@ int vlad_polbase::evaluate_update()
       if (retval == VLAD_OK && exp_po != NULL)
         retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
 
-      /* postcondition loop */
-      for (i_exp1 = 0; retval == VLAD_OK && i_exp1 < VLAD_LIST_LENGTH(exp_tpo); i_exp1++) {
-        if (retval == VLAD_OK)
-          retval = exp_tpo->get(i_exp1, &fact);
-        if (retval == VLAD_OK)
-          retval = m_mapper->encode_fact(fact, i_sta + 1, &id);
-        if (retval == VLAD_OK) {
-          retval = m_smobject->construct_rule_begin(id);
-        }
-
-        /* precondition loop */
-        for (i_exp2 = 0; retval == VLAD_OK && i_exp2 < VLAD_LIST_LENGTH(exp_tpr); i_exp2++) {
-          if (retval == VLAD_OK)
-            retval = exp_tpr->get(i_exp2, &fact);
-          if (retval == VLAD_OK)
-            retval = m_mapper->encode_fact(fact, i_sta, &id);
-          if (retval == VLAD_OK)
-            retval = m_smobject->construct_rule_body(id, true);
-        }
-
-        if (retval == VLAD_OK)
-          retval = m_smobject->construct_rule_end(); 
-      }
+      /* now add the rule */
+      if (retval == VLAD_OK)
+        retval = evaluate_rule(i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
 
       /* cleanup */
       if (exp_tpr != NULL)
@@ -2040,28 +1995,9 @@ int vlad_polbase::evaluate_update()
         if (retval == VLAD_OK && exp_po != NULL)
           retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
 
-        /* postcondition loop */
-        for (i_exp1 = 0; retval == VLAD_OK && i_exp1 < VLAD_LIST_LENGTH(exp_tpo); i_exp1++) {
-          if (retval == VLAD_OK)
-            retval = exp_tpo->get(i_exp1, &fact);
-          if (retval == VLAD_OK)
-            retval = m_mapper->encode_fact(fact, i_sta + 1, &id);
-          if (retval == VLAD_OK)
-            retval = m_smobject->construct_rule_begin(id);
-
-          /* precondition loop */
-          for (i_exp2 = 0; retval == VLAD_OK && i_exp2 < VLAD_LIST_LENGTH(exp_tpr); i_exp2++) {
-            if (retval == VLAD_OK)
-              retval = exp_tpr->get(i_exp2, &fact);
-            if (retval == VLAD_OK)
-              retval = m_mapper->encode_fact(fact, i_sta, &id);
-            if (retval == VLAD_OK)
-              retval = m_smobject->construct_rule_body(id, true);
-          }
-
-          if (retval == VLAD_OK)
-            retval = m_smobject->construct_rule_end();
-        }
+        /* now add the rule */
+        if (retval == VLAD_OK)
+          retval = evaluate_rule(i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
 
         /* cleanup */
         if (exp_tpr != NULL)
@@ -2088,4 +2024,60 @@ int vlad_polbase::evaluate_update()
   return VLAD_OK;
 }
 
+/* registers the given rules in smodels object for evaluation */
+int vlad_polbase::evaluate_rule(unsigned int a_state1,
+                                unsigned int a_state2,
+                                unsigned int a_state3,
+                                vlad_expression *a_exp1,
+                                vlad_expression *a_exp2,
+                                vlad_expression *a_exp3)
+{
+  int retval = VLAD_OK;
+  unsigned int i_exp1;
+  unsigned int i_exp2;
+  unsigned int i_exp3;
+  vlad_fact *fact;
+  unsigned int id;
+
+  /* we only allow this after policy base is closed */
+  if (m_stage != 3 && m_stage != 4)
+    return VLAD_INVALIDOP;
+
+  if (a_exp1 == NULL)
+    return VLAD_NULLPTR;
+
+  for (i_exp1 = 0; retval == VLAD_OK && i_exp1 < VLAD_LIST_LENGTH(a_exp1); i_exp1++) {
+    if (retval == VLAD_OK)
+      retval = a_exp1->get(i_exp1, &fact);
+    if (retval == VLAD_OK)
+      retval = m_mapper->encode_fact(fact, a_state1, &id);
+    if (retval == VLAD_OK)
+      retval = m_smobject->construct_rule_begin(id);
+
+    /* positive condition */
+    for (i_exp2 = 0; retval == VLAD_OK && i_exp2 < VLAD_LIST_LENGTH(a_exp2); i_exp2++) {
+      if (retval == VLAD_OK)
+        retval = a_exp2->get(i_exp2, &fact);
+      if (retval == VLAD_OK)
+        retval = m_mapper->encode_fact(fact, a_state2, &id);
+      if (retval == VLAD_OK)
+        retval = m_smobject->construct_rule_body(id, true);
+    }
+  
+    /* negative condition */
+    for (i_exp3 = 0; retval == VLAD_OK && i_exp3 < VLAD_LIST_LENGTH(a_exp3); i_exp3++) {
+      if (retval == VLAD_OK)
+        retval = a_exp3->get(i_exp3, &fact);
+      if (retval == VLAD_OK)
+        retval = m_mapper->encode_fact(fact, a_state3, &id);
+      if (retval == VLAD_OK)
+        retval = m_smobject->construct_rule_body(id, false);
+    }
+
+    if (retval == VLAD_OK)
+      retval = m_smobject->construct_rule_end();
+  }
+
+  return retval;
+}
 #endif

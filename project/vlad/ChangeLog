@@ -1,3 +1,13 @@
+2005-12-24  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+
+	  - Constraint rule grounding is now performed in compute_evaluate()
+	    and compute_generate() instead of when they come in.
+
+	  - Added generate_rule() and evaluate_rule().
+
 2005-12-16  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/expression.cpp :

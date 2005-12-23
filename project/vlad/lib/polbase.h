@@ -185,6 +185,15 @@ class vlad_polbase : virtual public vlad_mem
     /* generates policy update rules and prints them to a_fs */
     int generate_update(FILE *a_fs);
 
+    /* generates the given rule and prints them to a_fs */
+    int generate_rule(FILE *a_fs,
+                      unsigned int a_state1,
+                      unsigned int a_state2,
+                      unsigned int a_state3,
+                      vlad_expression *a_exp1,
+                      vlad_expression *a_exp2,
+                      vlad_expression *a_exp3);
+
 #ifdef VLAD_SMODELS
     /* registers identity rules in smodels object for evaluation */
     int evaluate_identity();
@@ -209,6 +218,14 @@ class vlad_polbase : virtual public vlad_mem
 
     /* registers policy update rules in smodels object for evaluation */
     int evaluate_update();
+
+    /* registers the given rules in smodels object for evaluation */
+    int evaluate_rule(unsigned int a_state1,
+                      unsigned int a_state2,
+                      unsigned int a_state3,
+                      vlad_expression *a_exp1,
+                      vlad_expression *a_exp2,
+                      vlad_expression *a_exp3);
 #endif
 
 } ;
