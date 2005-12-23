@@ -829,17 +829,17 @@ static int vlad_verify_memb(const char *a_elt,
     return VLAD_INVALIDINPUT;
 
   /* check types */
-  if (VLAD_IDENT_TYPE_BASETYPE(type[0]) != VLAD_IDENT_TYPE_BASETYPE(type[1]))
+  if (VLAD_IDENT_TYPE_BASE(type[0]) != VLAD_IDENT_TYPE_BASE(type[1]))
     return VLAD_INVALIDINPUT;
 
   /* add to vlist2 */
   if (a_vlist2 != NULL) {
-    if (type[0] & VLAD_IDENT_VAR_MASK) {
+    if (VLAD_IDENT_TYPE_IS_VAR(type[0])) {
       retval = a_vlist2->add(a_elt);
       if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
         return retval;
     }
-    if (type[1] & VLAD_IDENT_VAR_MASK) {
+    if (VLAD_IDENT_TYPE_IS_VAR(type[1])) {
       retval = a_vlist2->add(a_grp);
       if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
         return retval;
@@ -904,17 +904,17 @@ static int vlad_verify_subst(const char *a_grp1,
     return VLAD_INVALIDINPUT;
 
   /* check types */
-  if (VLAD_IDENT_TYPE_BASETYPE(type[0]) != VLAD_IDENT_TYPE_BASETYPE(type[1]))
+  if (VLAD_IDENT_TYPE_BASE(type[0]) != VLAD_IDENT_TYPE_BASE(type[1]))
     return VLAD_INVALIDINPUT;
 
   /* add to vlist2 */
   if (a_vlist2 != NULL) {
-    if (type[0] & VLAD_IDENT_VAR_MASK) {
+    if (VLAD_IDENT_TYPE_IS_VAR(type[0])) {
       retval = a_vlist2->add(a_grp1);
       if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
         return retval;
     }
-    if (type[1] & VLAD_IDENT_VAR_MASK) {
+    if (VLAD_IDENT_TYPE_IS_VAR(type[1])) {
       retval = a_vlist2->add(a_grp2);
       if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
         return retval;
