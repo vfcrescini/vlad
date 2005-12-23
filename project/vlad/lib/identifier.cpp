@@ -102,7 +102,7 @@ int vlad_identifier::validate_var_type(unsigned char a_type)
 /* returns the type of the given variable */
 unsigned char vlad_identifier::get_var_type(const char *a_ident)
 {
-  unsigned char type = VLAD_IDENT_VAR_MASK;
+  unsigned char type = VLAD_IDENT_MASK_VAR;
 
   if (a_ident == NULL)
     return VLAD_IDENT_NUL;
@@ -110,13 +110,13 @@ unsigned char vlad_identifier::get_var_type(const char *a_ident)
   /* get the base type */
   switch(a_ident[0]) {
     case 'S' :
-      type |= VLAD_IDENT_SUB;
+      type |= VLAD_IDENT_MASK_SUB;
       break;
     case 'A' :
-      type |= VLAD_IDENT_ACC;
+      type |= VLAD_IDENT_MASK_ACC;
       break;
     case 'O' :
-      type |= VLAD_IDENT_OBJ;
+      type |= VLAD_IDENT_MASK_OBJ;
       break;
     default :
       return VLAD_IDENT_NUL;
@@ -126,13 +126,13 @@ unsigned char vlad_identifier::get_var_type(const char *a_ident)
   if (strlen(a_ident) >= 2) {
     switch(a_ident[1]) {
       case 'S' :
-        return (type | VLAD_IDENT_SIN_MASK);
+        return (type | VLAD_IDENT_MASK_SIN);
       case 'G' :
-        return (type | VLAD_IDENT_GRP_MASK);
+        return (type | VLAD_IDENT_MASK_GRP);
     }
   }
 
-  return (type | VLAD_IDENT_SIN_MASK | VLAD_IDENT_GRP_MASK);
+  return (type | VLAD_IDENT_MASK_SIN | VLAD_IDENT_MASK_GRP);
 }
 
 /* returns VLAD_OK if the entity type is compatible with the var */
@@ -147,11 +147,11 @@ int vlad_identifier::check_compat(const char *a_var, unsigned char a_type)
     return VLAD_INVALIDINPUT;
 
   /* first, make sure the basetypes are equal */
-  if (VLAD_IDENT_TYPE_BASETYPE(a_type) != VLAD_IDENT_TYPE_BASETYPE(vtype))
+  if (VLAD_IDENT_TYPE_BASE(a_type) != VLAD_IDENT_TYPE_BASE(vtype))
     return VLAD_INVALIDINPUT;
 
   /* now check the rest */
-  if (((VLAD_IDENT_SIN_MASK | VLAD_IDENT_GRP_MASK) & vtype) & a_type)
+  if (((VLAD_IDENT_MASK_SIN | VLAD_IDENT_MASK_GRP) & vtype) & a_type)
     return VLAD_OK;
 
   return VLAD_INVALIDINPUT;

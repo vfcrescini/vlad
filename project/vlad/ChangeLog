@@ -1,5 +1,13 @@
 2005-12-24  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/fact.cpp :
+	* lib/identifier.cpp :
+	* lib/identifier.h :
+	* lib/mapper.cpp :
+	* lib/symtab.cpp :
+
+	  - Cleanup of identifier macros.
+
 	* samples/ground.vlp :
 	* samples/ground.vla :
 

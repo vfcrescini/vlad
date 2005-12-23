@@ -430,7 +430,7 @@ int vlad_symtab::tupleateify(vlad_varlist *a_vlist,
   trav->init(a_vlist, a_tlist, this, a_tuple, a_iteration);
  
   /* now we figure out which list(s) to traverse */
-  switch(VLAD_IDENT_TYPE_BASETYPE(vtype)) {
+  switch(VLAD_IDENT_TYPE_BASE(vtype)) {
     case VLAD_IDENT_SUB :
       if (VLAD_IDENT_TYPE_IS_SIN(vtype))
         retval = m_lists[map(VLAD_IDENT_ENT_SUB_SIN)]->traverse(trav);
