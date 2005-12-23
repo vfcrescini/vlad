@@ -1,5 +1,10 @@
 2005-12-24  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* samples/ground.vlp :
+	* samples/ground.vla :
+
+	  - A simple program to test grounding mechanism.
+
 	* lib/polbase.cpp :
 	* lib/polbase.h :
 
