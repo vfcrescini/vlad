@@ -780,7 +780,7 @@ int vlad_polbase::generate_identity(FILE *a_fs)
     }
   }
 
-  fprintf(a_fs, "\n"); 
+  fprintf(a_fs, "\n");
 
   return VLAD_OK;
 }
@@ -820,7 +820,7 @@ int vlad_polbase::generate_inheritance(FILE *a_fs)
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i_sta, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
-    
+
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_grp1 + VLAD_LEN_SS, i_acc, i_obj, i_sta, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
@@ -848,7 +848,7 @@ int vlad_polbase::generate_inheritance(FILE *a_fs)
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i_sta, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
-    
+
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_sub, i_grp1 + VLAD_LEN_AS, i_obj, i_sta, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
@@ -876,7 +876,7 @@ int vlad_polbase::generate_inheritance(FILE *a_fs)
             fprintf(a_fs, " %s\n    %s ", VLAD_STR_AND, VLAD_STR_NOT);
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i_sta, false), a_fs);
             fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
-    
+
             fprintf(a_fs, "  ");
             print_fact(m_mapper->compute_holds(i_sub, i_acc, i_grp1 + VLAD_LEN_OS, i_sta, false), a_fs);
             fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
@@ -985,7 +985,7 @@ int vlad_polbase::generate_transitivity(FILE *a_fs)
   unsigned int i_grp1;
   unsigned int i_grp2;
   unsigned int i_grp3;
-  
+
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
@@ -1296,20 +1296,20 @@ int vlad_polbase::generate_update(FILE *a_fs)
       /* after generating the tuples, add vlist1 back to vlist2 */
       if (retval == VLAD_OK)
         retval = vlist2->add(vlist1);
-      
+
       /* go through each tuple */
       for (i_tup = 0; retval == VLAD_OK && i_tup < VLAD_LIST_LENGTH(tlist); i_tup++) {
         vlad_expression *exp_tpr = NULL;
         vlad_expression *exp_tpo = NULL;
         vlad_stringlist *tuple;
-      
+
         if (retval == VLAD_OK)
           retval = tlist->get(i_tup, &tuple);
-      
+
         /* now we append each tuple with the ilist from the sequence */
         if (retval == VLAD_OK)
           retval = tuple->add(ilist);
-      
+
         /* replace */
         if (retval == VLAD_OK && exp_pr != NULL)
           retval = exp_pr->vreplace(m_stable, vlist2, tuple, &exp_tpr);
@@ -1318,7 +1318,7 @@ int vlad_polbase::generate_update(FILE *a_fs)
 
         if (retval == VLAD_OK)
           retval = generate_rule(a_fs, i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
- 
+
         /* cleanup */
         if (exp_tpr != NULL)
           VLAD_MEM_DELETE(exp_tpr);
@@ -1376,31 +1376,31 @@ int vlad_polbase::generate_rule(FILE *a_fs,
     print_fact(fact, a_state1, a_fs);
 
     fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
-    
+
     /* positive condition */
     for (i_exp2 = 0; i_exp2 < VLAD_LIST_LENGTH(a_exp2); i_exp2++) {
       if ((retval = a_exp2->get(i_exp2, &fact)) != VLAD_OK)
         return retval;
-    
+
       print_fact(fact, a_state2, a_fs);
-    
+
       if (i_exp2 + 1 < VLAD_LIST_LENGTH(a_exp2) || a_exp3 != NULL)
         fprintf(a_fs, " %s\n    ", VLAD_STR_AND);
     }
-    
+
     /* negative condition */
     for (i_exp3 = 0; i_exp3 < VLAD_LIST_LENGTH(a_exp3); i_exp3++) {
       if ((retval = a_exp3->get(i_exp3, &fact)) != VLAD_OK)
         return retval;
-    
+
       fprintf(a_fs, "%s ", VLAD_STR_NOT);
-    
+
       print_fact(fact, a_state3, a_fs);
-    
+
       if (i_exp3 + 1 < VLAD_LIST_LENGTH(a_exp3))
         fprintf(a_fs, "%s\n    ", VLAD_STR_AND);
     }
-    
+
     if (a_exp2 == NULL && a_exp3 == NULL)
       fprintf(a_fs, "%s%s\n", VLAD_STR_TRUE, VLAD_STR_TERMINATOR);
     else
@@ -1653,7 +1653,7 @@ int vlad_polbase::evaluate_inheritance()
             retval = m_smobject->add_rule(2, 0, id[0], id[1], id[2]);
 
             if (retval != VLAD_OK)
-              return retval;                                                   
+              return retval;
           }
         }
       }
@@ -1988,7 +1988,7 @@ int vlad_polbase::evaluate_update()
         /* now we append each tuple with the ilist from the sequence */
         if (retval == VLAD_OK)
           retval = tuple->add(ilist);
-      
+
         /* replace */
         if (retval == VLAD_OK && exp_pr != NULL)
           retval = exp_pr->vreplace(m_stable, vlist2, tuple, &exp_tpr);
@@ -2063,7 +2063,7 @@ int vlad_polbase::evaluate_rule(unsigned int a_state1,
       if (retval == VLAD_OK)
         retval = m_smobject->construct_rule_body(id, true);
     }
-  
+
     /* negative condition */
     for (i_exp3 = 0; retval == VLAD_OK && i_exp3 < VLAD_LIST_LENGTH(a_exp3); i_exp3++) {
       if (retval == VLAD_OK)

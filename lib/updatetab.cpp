@@ -258,7 +258,7 @@ int vlad_updatetab::get(const char *a_name,
     VLAD_MEM_DELETE(*a_vlist2);
     *a_vlist2 = NULL;
   }
-  
+
   return VLAD_OK;
 }
 
