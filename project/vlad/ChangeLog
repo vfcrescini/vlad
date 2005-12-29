@@ -1,3 +1,9 @@
+2005-12-30  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/identifier.h :
+
+	  - VLAD_IDENT_ENT was not part of the entity types.
+
 2005-12-28  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Tagged vlad-1_4_0
