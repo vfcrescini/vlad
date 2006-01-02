@@ -826,6 +826,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-smodels          enable smodels support: yes or path to smodels
                           source tree (default is no)
+  --with-tribe            path to tribe install directory (required)
 
 Some influential environment variables:
   CC          C compiler command
@@ -3242,6 +3243,163 @@ rm -f conftest.err conftest.$ac_objext \
       esac
     fi
   fi
+fi
+
+# --with-tribe
+
+# Check whether --with-tribe or --without-tribe was given.
+if test "${with_tribe+set}" = set; then
+  withval="$with_tribe"
+
+fi;
+
+if test "x$with_tribe" = "xno"; then
+  { { echo "$as_me:$LINENO: error: *** tribe is required ***" >&5
+echo "$as_me: error: *** tribe is required ***" >&2;}
+   { (exit 1); exit 1; }; }
+elif test "x$with_tribe" != "x" && test "x$with_tribe" != "xyes"; then
+  echo "$as_me:$LINENO: checking if tribe path $with_tribe is valid" >&5
+echo $ECHO_N "checking if tribe path $with_tribe is valid... $ECHO_C" >&6
+  if ! test -d "$with_tribe"; then
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    { { echo "$as_me:$LINENO: error: *** invalid path: $with_tribe ***" >&5
+echo "$as_me: error: *** invalid path: $with_tribe ***" >&2;}
+   { (exit 1); exit 1; }; }
+  else
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+    echo "$as_me:$LINENO: checking if tribe in $with_tribe can be used" >&5
+echo $ECHO_N "checking if tribe in $with_tribe can be used... $ECHO_C" >&6
+    OLD_CXXFLAGS="$CXXFLAGS"
+    OLD_LDFLAGS="$LDFLAGS"
+    CXXFLAGS="$CXXFLAGS -I$with_tribe/include"
+    LDFLAGS="$LDFLAGS -L$with_tribe/lib -ltribe"
+    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <tribe/tribe.h>
+                 #include <tribe/network.h>
+int
+main ()
+{
+tbe_net n;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+                { { echo "$as_me:$LINENO: error: *** tribe test program failed to compile ***" >&5
+echo "$as_me: error: *** tribe test program failed to compile ***" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+    CXXFLAGS="$OLD_CXXFLAGS"
+    LDFLAGS="$OLD_LDFLAGS"
+
+    # adjust relative paths and add them to the flags
+    case "$with_tribe" in
+      /*)
+        VLAD_CFLAGS="$VLAD_CFLAGS -I$with_tribe/include"
+        VLAD_CXXFLAGS="$VLAD_CXXFLAGS -I$with_tribe/include"
+        VLAD_LDFLAGS="$VLAD_LDFLAGS -L$with_tribe/lib"
+        ;;
+      *)
+        VLAD_CFLAGS="$VLAD_CFLAGS -I\$(TOPSRCDIR)/$with_tribe/include"
+        VLAD_CXXFLAGS="$VLAD_CXXFLAGS -I\$(TOPSRCDIR)/$with_tribe/include"
+        VLAD_LDFLAGS="$VLAD_LDFLAGS -L\$(TOPSRCDIR)/$with_tribe/lib"
+        ;;
+    esac
+  fi
+else
+  echo "$as_me:$LINENO: checking if tribe is installed and usable" >&5
+echo $ECHO_N "checking if tribe is installed and usable... $ECHO_C" >&6
+  OLD_LDFLAGS="$LDFLAGS"
+  LDFLAGS="$LDFLAGS -ltribe"
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <tribe/tribe.h>
+               #include <tribe/network.h>
+int
+main ()
+{
+tbe_net n;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+              { { echo "$as_me:$LINENO: error: *** tribe test program failed to compile ***" >&5
+echo "$as_me: error: *** tribe test program failed to compile ***" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+  LDFLAGS="$OLD_LDFLAGS"
 fi
 
 # --enable-timer
