@@ -191,6 +191,59 @@ if test "x$with_smodels" != "x" && test "x$with_smodels" != "xno"; then
   fi
 fi
 
+# --with-tribe
+AC_ARG_WITH(tribe, AC_HELP_STRING([--with-tribe],[path to tribe install directory (required)]))
+
+if test "x$with_tribe" = "xno"; then
+  AC_MSG_ERROR([*** tribe is required ***])
+elif test "x$with_tribe" != "x" && test "x$with_tribe" != "xyes"; then
+  AC_MSG_CHECKING([if tribe path $with_tribe is valid])
+  if ! test -d "$with_tribe"; then
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR([*** invalid path: $with_tribe ***])
+  else
+    AC_MSG_RESULT([yes])
+    AC_MSG_CHECKING([if tribe in $with_tribe can be used])
+    OLD_CXXFLAGS="$CXXFLAGS"
+    OLD_LDFLAGS="$LDFLAGS"
+    CXXFLAGS="$CXXFLAGS -I$with_tribe/include"
+    LDFLAGS="$LDFLAGS -L$with_tribe/lib -ltribe"
+    AC_TRY_LINK([#include <tribe/tribe.h>
+                 #include <tribe/network.h>],
+                [tbe_net n;],
+                AC_MSG_RESULT([yes]),
+                AC_MSG_RESULT([no])
+                AC_MSG_ERROR([*** tribe test program failed to compile ***]))
+    CXXFLAGS="$OLD_CXXFLAGS"
+    LDFLAGS="$OLD_LDFLAGS"
+
+    # adjust relative paths and add them to the flags
+    case "$with_tribe" in
+      /*)
+        VLAD_CFLAGS="$VLAD_CFLAGS -I$with_tribe/include"
+        VLAD_CXXFLAGS="$VLAD_CXXFLAGS -I$with_tribe/include"
+        VLAD_LDFLAGS="$VLAD_LDFLAGS -L$with_tribe/lib"
+        ;;
+      *)
+        VLAD_CFLAGS="$VLAD_CFLAGS -I\$(TOPSRCDIR)/$with_tribe/include"
+        VLAD_CXXFLAGS="$VLAD_CXXFLAGS -I\$(TOPSRCDIR)/$with_tribe/include"
+        VLAD_LDFLAGS="$VLAD_LDFLAGS -L\$(TOPSRCDIR)/$with_tribe/lib"
+        ;;
+    esac
+  fi
+else
+  AC_MSG_CHECKING([if tribe is installed and usable])
+  OLD_LDFLAGS="$LDFLAGS"
+  LDFLAGS="$LDFLAGS -ltribe"
+  AC_TRY_LINK([#include <tribe/tribe.h>
+               #include <tribe/network.h>],
+              [tbe_net n;],
+              AC_MSG_RESULT([yes]),
+              AC_MSG_RESULT([no])
+              AC_MSG_ERROR([*** tribe test program failed to compile ***]))
+  LDFLAGS="$OLD_LDFLAGS"
+fi
+
 # --enable-timer
 AC_ARG_ENABLE(timer,AC_HELP_STRING([--enable-timer],[enable displaying of computation time (default is disabled)]))
 

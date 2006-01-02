@@ -1,3 +1,10 @@
+2006-01-03  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* configure.ac :
+	* configure :
+
+	  - Vlad package now requires a working libtribe.
+
 2005-12-30  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* Merged with vlad-1_4_1
