@@ -5,6 +5,8 @@
 	* lib/rel.h :
 	* lib/rlist.cpp :
 	* lib/rlist.h :
+	* lib/tnet.cpp :
+	* lib/tnet.h :
 
 	  - Added classes to represent temporal interval relations.
 
