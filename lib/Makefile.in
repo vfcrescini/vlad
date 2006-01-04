@@ -51,10 +51,13 @@ INCLUDES = \
   atom.h \
   fact.h \
   expression.h \
+  rel.h \
+  rlist.h \
   seqtab.h \
   symtab.h \
   consttab.h \
   updatetab.h \
+  tnet.h \
   mapper.h \
   $(SMINCLUDES) \
   $(WRAPINCLUDES) \
@@ -70,10 +73,13 @@ OBJECTS = \
   identifier.o \
   fact.o \
   expression.o \
+  rel.o \
+  rlist.o \
   seqtab.o \
   symtab.o \
   consttab.o \
   updatetab.o \
+  tnet.o \
   $(SMOBJECTS) \
   $(WRAPOBJECTS) \
   mapper.o \
@@ -145,6 +151,12 @@ fact.o : vlad.h mem.h stringlist.h varlist.h identifier.h atom.h symtab.h fact.h
 expression.o : vlad.h mem.h list.h fact.h stringlist.h varlist.h symtab.h expression.h expression.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
 
+rel.o : vlad.h mem.h list.h stringlist.h varlist.h identifier.h rel.h rel.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c rel.cpp
+
+rlist.o : vlad.h mem.h list.h stringlist.h varlist.h rel.h rlist.h rlist.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c rlist.cpp
+
 symtab.o : vlad.h mem.h stringlist.h stringlistlist.h varlist.h identifier.h symtab.h symtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
 
@@ -156,6 +168,9 @@ updatetab.o : vlad.h mem.h stringlist.h varlist.h expression.h updatetab.h updat
 
 seqtab.o : vlad.h mem.h stringlist.h expression.h updatetab.h symtab.h seqtab.h seqtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
+
+tnet.o : vlad.h mem.h symtab.h rel.h rlist.h tnet.h
+	$(CXX) $(CXXFLAGS) -o $(@) -c tnet.cpp
 
 mapper.o : vlad.h atom.h identifier.h symtab.h mapper.h mapper.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c mapper.cpp
