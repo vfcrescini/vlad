@@ -10,6 +10,9 @@
 	* lib/symtab.cpp :
 	* lib/symtab.h :
 
+	  - Added another get() function that will give the index of an
+	    identifier of a specified type.
+
 	  - Symtab now also stores time interval identifiers.
 
 	* lib/fact.cpp :

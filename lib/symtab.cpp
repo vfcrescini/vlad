@@ -272,6 +272,23 @@ int vlad_symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
   return VLAD_OK;
 }
 
+/* get the index of the identifier of the given type */
+int vlad_symtab::get(const char *a_s, unsigned char a_t, unsigned int *a_i)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_s == NULL || a_i == NULL)
+    return VLAD_NULLPTR;
+
+  /* make sure type is either an entity or an interval */
+  if (vlad_identifier::validate_ent_type(a_t) != VLAD_OK)
+    if (vlad_identifier::validate_int_type(a_t) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
+
+  return m_lists[map(a_t)]->get(a_s, a_i);
+}
+
 /* return the number of identifiers that are of type t */
 unsigned int vlad_symtab::length(unsigned char a_t)
 {
