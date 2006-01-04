@@ -54,6 +54,9 @@ class vlad_symtab : virtual public vlad_mem
     /* get an array of identifiers that matches the given type */
     int get(unsigned char a_t, char ***a_a, unsigned int *a_s);
 
+    /* get the index of the identifier of the given type */
+    int get(const char *a_s, unsigned char a_t, unsigned int *a_i);
+
     /* return the number of identifiers that are of type t */
     unsigned int length(unsigned char a_t);
 
