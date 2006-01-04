@@ -28,6 +28,8 @@
 #include <vlad/varlist.h>
 #include <vlad/identifier.h>
 
+#define VLAD_SYMTAB_TABLES 7
+
 class vlad_symtab : virtual public vlad_mem
 {
   public :
@@ -69,8 +71,8 @@ class vlad_symtab : virtual public vlad_mem
 
   private :
 
-    /* m_list: 0 = ss, 1 = as, 2 = os, 3 = sg, 4 = ag, 5 = og */
-    vlad_stringlist *m_lists[VLAD_IDENT_ENT_TOTAL];
+    /* m_list: 0 = ss, 1 = as, 2 = os, 3 = sg, 4 = ag, 5 = og, 6 = int */
+    vlad_stringlist *m_lists[VLAD_SYMTAB_TABLES];
     bool m_init;
 
     /* map the identifier types into sequential numbers */

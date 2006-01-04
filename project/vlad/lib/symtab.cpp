@@ -129,7 +129,7 @@ vlad_symtab::vlad_symtab()
 {
   int i;
 
-  for (i = 0; i < VLAD_IDENT_ENT_TOTAL; i++)
+  for (i = 0; i < VLAD_SYMTAB_TABLES; i++)
     m_lists[i] = NULL;
 
   m_init = false;
@@ -139,7 +139,7 @@ vlad_symtab::~vlad_symtab()
 {
   int i;
 
-  for (i = 0; i < VLAD_IDENT_ENT_TOTAL; i++) {
+  for (i = 0; i < VLAD_SYMTAB_TABLES; i++) {
     if (m_lists[i] != NULL)
       VLAD_MEM_DELETE(m_lists[i]);
   }
@@ -150,7 +150,7 @@ int vlad_symtab::init()
 {
   int i;
 
-  for (i = 0; i < VLAD_IDENT_ENT_TOTAL; i++) {
+  for (i = 0; i < VLAD_SYMTAB_TABLES; i++) {
     /* first delete things if we need to */
     if (m_lists[i] != NULL)
       VLAD_MEM_DELETE(m_lists[i]);
@@ -172,13 +172,14 @@ int vlad_symtab::add(const char *a_s, unsigned char a_t)
   if (!m_init)
     return VLAD_UNINITIALISED;
 
-  /* validate the identifier */
-  if ((retval = vlad_identifier::validate_ent_ident(a_s)) != VLAD_OK)
+  /* make sure it's not a variable */
+  if ((retval = vlad_identifier::validate_nvar_ident(a_s)) != VLAD_OK)
     return retval;
 
-  /* validate the type */
-  if ((retval = vlad_identifier::validate_ent_type(a_t)) != VLAD_OK)
-    return retval;
+  /* make sure the type is either an entity or an interval */
+  if (vlad_identifier::validate_ent_type(a_t) != VLAD_OK)
+    if (vlad_identifier::validate_int_type(a_t) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
 
   /* ensure that the identifier is not already used */
   switch(retval = find(a_s)) {
@@ -206,8 +207,12 @@ int vlad_symtab::get(const char *a_s, unsigned int *a_i, unsigned char *a_t)
   if (a_s == NULL || a_i == NULL || a_t == NULL)
     return VLAD_NULLPTR;
 
+  /* check if it's valid */
+  if ((retval = vlad_identifier::validate_nvar_ident(a_s)) != VLAD_OK)
+    return retval;
+
   /* try to get s from all the lists sequentially */
-  for (i = 0; i < VLAD_IDENT_ENT_TOTAL; i++) {
+  for (i = 0; i < VLAD_SYMTAB_TABLES; i++) {
     if ((retval = m_lists[i]->get(a_s, a_i)) != VLAD_NOTFOUND) {
       if (retval == VLAD_OK)
         *a_t = unmap(i);
@@ -224,8 +229,10 @@ int vlad_symtab::get(unsigned int a_i, unsigned char a_t, char **a_s)
   if (!m_init)
     return VLAD_UNINITIALISED;
 
+  /* type must be either an entity or an interval */
   if (vlad_identifier::validate_ent_type(a_t) != VLAD_OK)
-    return VLAD_INVALIDINPUT;
+    if (vlad_identifier::validate_int_type(a_t) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
 
   /* now get */
   return m_lists[map(a_t)]->get(a_i, a_s);
@@ -243,8 +250,10 @@ int vlad_symtab::get(unsigned char a_t, char ***a_a, unsigned int *a_s)
   if (a_a == NULL || a_s == NULL)
     return VLAD_NULLPTR;
 
+  /* make sure type is either an entity or an interval */
   if (vlad_identifier::validate_ent_type(a_t) != VLAD_OK)
-    return VLAD_INVALIDINPUT;
+    if (vlad_identifier::validate_int_type(a_t) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
 
   *a_s = vlad_symtab::length(map(a_t));
 
@@ -269,8 +278,10 @@ unsigned int vlad_symtab::length(unsigned char a_t)
   if (!m_init)
     return 0;
 
+  /* make sure type is either an entity or an interval */
   if (vlad_identifier::validate_ent_type(a_t) != VLAD_OK)
-    return 0;
+    if (vlad_identifier::validate_int_type(a_t) != VLAD_OK)
+      return 0;
 
   return VLAD_LIST_LENGTH(m_lists[map(a_t)]);
 }
@@ -287,7 +298,11 @@ int vlad_symtab::find(const char *a_s)
   if (a_s == NULL)
     return VLAD_NULLPTR;
 
-  for (i = 0; i < VLAD_IDENT_ENT_TOTAL; i++) {
+  /* make sure identifier is valid */
+  if ((vlad_identifier::validate_nvar_ident(a_s)) != VLAD_OK)
+    return VLAD_INVALIDINPUT;
+
+  for (i = 0; i < VLAD_SYMTAB_TABLES; i++) {
     if ((retval = m_lists[i]->find(a_s)) != VLAD_NOTFOUND)
       return retval;
   }
@@ -298,16 +313,17 @@ int vlad_symtab::find(const char *a_s)
 /* return VLAD_OK if symbol of type t is in the table */
 int vlad_symtab::find(const char *a_s, unsigned char a_t)
 {
-  int retval;
-
   if (!m_init)
     return VLAD_UNINITIALISED;
 
-  if ((retval = vlad_identifier::validate_ent_ident(a_s)) != VLAD_OK)
-    return retval;
+  /* make sure identifier is valid */
+  if ((vlad_identifier::validate_nvar_ident(a_s)) != VLAD_OK)
+    return VLAD_INVALIDINPUT;
 
-  if ((retval = vlad_identifier::validate_ent_type(a_t)) != VLAD_OK)
-    return retval;
+  /* make sure type is either an entity or an interval */
+  if (vlad_identifier::validate_ent_type(a_t) != VLAD_OK)
+    if (vlad_identifier::validate_int_type(a_t) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
 
   return m_lists[map(a_t)]->find(a_s);
 }
@@ -324,10 +340,11 @@ int vlad_symtab::type(const char *a_s, unsigned char *a_t)
   if (a_t == NULL)
     return VLAD_NULLPTR;
 
-  if ((retval = vlad_identifier::validate_ent_ident(a_s)) != VLAD_OK)
-    return retval;
+  /* make sure identifier is valid */
+  if ((vlad_identifier::validate_nvar_ident(a_s)) != VLAD_OK)
+    return VLAD_INVALIDINPUT;
 
-  for (i = 0; i < VLAD_IDENT_ENT_TOTAL; i++) {
+  for (i = 0; i < VLAD_SYMTAB_TABLES; i++) {
     if ((retval = m_lists[i]->find(a_s)) != VLAD_NOTFOUND) {
       if (retval == VLAD_OK)
         *a_t = unmap(i);
@@ -371,6 +388,8 @@ unsigned int vlad_symtab::map(unsigned int a_t)
       return 4;
     case VLAD_IDENT_ENT_OBJ_GRP :
       return 5;
+    case VLAD_IDENT_INT :
+      return 6;
   }
 
   return 0;
@@ -392,6 +411,8 @@ unsigned int vlad_symtab::unmap(unsigned int a_n)
       return VLAD_IDENT_ENT_ACC_GRP;
     case 5 :
       return VLAD_IDENT_ENT_OBJ_GRP;
+    case 6 :
+      return VLAD_IDENT_INT;
   }
 
   return 0;
@@ -429,26 +450,41 @@ int vlad_symtab::tupleateify(vlad_varlist *a_vlist,
 
   trav->init(a_vlist, a_tlist, this, a_tuple, a_iteration);
 
+  retval = VLAD_OK;
+
   /* now we figure out which list(s) to traverse */
-  switch(VLAD_IDENT_TYPE_BASE(vtype)) {
-    case VLAD_IDENT_SUB :
-      if (VLAD_IDENT_TYPE_IS_SIN(vtype))
-        retval = m_lists[map(VLAD_IDENT_ENT_SUB_SIN)]->traverse(trav);
-      if ((retval == VLAD_OK) && VLAD_IDENT_TYPE_IS_GRP(vtype))
-        retval = m_lists[map(VLAD_IDENT_ENT_SUB_GRP)]->traverse(trav);
+  switch(vtype & VLAD_IDENT_MASK_TYPE) {
+    case VLAD_IDENT_MASK_ENT :
+      /* it's an entity */
+      switch(vtype & VLAD_IDENT_MASK_ENT_BASE) {
+        case VLAD_IDENT_ENT_SUB :
+          if (retval == VLAD_OK && VLAD_IDENT_TYPE_IS_SIN(vtype))
+            retval = m_lists[map(VLAD_IDENT_ENT_SUB_SIN)]->traverse(trav);
+          if (retval == VLAD_OK && VLAD_IDENT_TYPE_IS_GRP(vtype))
+            retval = m_lists[map(VLAD_IDENT_ENT_SUB_GRP)]->traverse(trav);
+          break;
+        case VLAD_IDENT_ENT_ACC :
+          if (retval == VLAD_OK && VLAD_IDENT_TYPE_IS_SIN(vtype))
+            retval = m_lists[map(VLAD_IDENT_ENT_ACC_SIN)]->traverse(trav);
+          if (retval == VLAD_OK && VLAD_IDENT_TYPE_IS_GRP(vtype))
+            retval = m_lists[map(VLAD_IDENT_ENT_ACC_GRP)]->traverse(trav);
+          break;
+        case VLAD_IDENT_ENT_OBJ :
+          if (retval == VLAD_OK && VLAD_IDENT_TYPE_IS_SIN(vtype))
+            retval = m_lists[map(VLAD_IDENT_ENT_OBJ_SIN)]->traverse(trav);
+          if (retval == VLAD_OK && VLAD_IDENT_TYPE_IS_GRP(vtype))
+            retval = m_lists[map(VLAD_IDENT_ENT_OBJ_GRP)]->traverse(trav);
+          break;
+        default :
+          retval = VLAD_FAILURE;
+      }
       break;
-    case VLAD_IDENT_ACC :
-      if (VLAD_IDENT_TYPE_IS_SIN(vtype))
-        retval = m_lists[map(VLAD_IDENT_ENT_ACC_SIN)]->traverse(trav);
-      if ((retval == VLAD_OK) && VLAD_IDENT_TYPE_IS_GRP(vtype))
-        retval = m_lists[map(VLAD_IDENT_ENT_ACC_GRP)]->traverse(trav);
+    case VLAD_IDENT_MASK_INT :
+      /* it's an interval */
+      retval = m_lists[map(VLAD_IDENT_INT)]->traverse(trav);
       break;
-    case VLAD_IDENT_OBJ :
-      if (VLAD_IDENT_TYPE_IS_SIN(vtype))
-        retval = m_lists[map(VLAD_IDENT_ENT_OBJ_SIN)]->traverse(trav);
-      if ((retval == VLAD_OK) && VLAD_IDENT_TYPE_IS_GRP(vtype))
-        retval = m_lists[map(VLAD_IDENT_ENT_OBJ_GRP)]->traverse(trav);
-      break;
+    default :
+      retval = VLAD_FAILURE;
   }
 
   /* cleanup */

@@ -123,21 +123,21 @@ unsigned int vlad_mapper::compute_memb(unsigned char a_type,
   if (!m_init)
     return 0;
 
-  switch(VLAD_IDENT_TYPE_BASE(a_type)) {
-    case VLAD_IDENT_SUB :
+  switch(a_type & VLAD_IDENT_MASK_ENT_BASE) {
+    case VLAD_IDENT_ENT_SUB :
       return compute_fact(get_totals(VLAD_ATOM_HOLDS) +
                           (a_elt * VLAD_LEN_SG) +
                           (a_grp),
                           a_state,
                           a_truth);
-    case VLAD_IDENT_ACC :
+    case VLAD_IDENT_ENT_ACC :
       return compute_fact(get_totals(VLAD_ATOM_HOLDS) +
                           (VLAD_LEN_SS * VLAD_LEN_SG) +
                           (a_elt * VLAD_LEN_AG) +
                           (a_grp),
                           a_state,
                           a_truth);
-    case VLAD_IDENT_OBJ :
+    case VLAD_IDENT_ENT_OBJ :
       return compute_fact(get_totals(VLAD_ATOM_HOLDS) +
                           (VLAD_LEN_SS * VLAD_LEN_SG) +
                           (VLAD_LEN_AS * VLAD_LEN_AG) +
@@ -160,15 +160,15 @@ unsigned int vlad_mapper::compute_subst(unsigned char a_type,
   if (!m_init)
     return 0;
 
-  switch(VLAD_IDENT_TYPE_BASE(a_type)) {
-    case VLAD_IDENT_SUB :
+  switch(a_type & VLAD_IDENT_MASK_ENT_BASE) {
+    case VLAD_IDENT_ENT_SUB :
       return compute_fact(get_totals(VLAD_ATOM_HOLDS) +
                           get_totals(VLAD_ATOM_MEMBER) +
                           (a_grp1 * VLAD_LEN_SG) +
                           (a_grp2),
                           a_state,
                           a_truth);
-    case VLAD_IDENT_ACC :
+    case VLAD_IDENT_ENT_ACC :
       return compute_fact(get_totals(VLAD_ATOM_HOLDS) +
                           get_totals(VLAD_ATOM_MEMBER) +
                           (VLAD_LEN_SG * VLAD_LEN_SG) +
@@ -176,7 +176,7 @@ unsigned int vlad_mapper::compute_subst(unsigned char a_type,
                           (a_grp2),
                           a_state,
                           a_truth);
-    case VLAD_IDENT_OBJ :
+    case VLAD_IDENT_ENT_OBJ :
       return compute_fact(get_totals(VLAD_ATOM_HOLDS) +
                           get_totals(VLAD_ATOM_MEMBER) +
                           (VLAD_LEN_SG * VLAD_LEN_SG) +
@@ -380,7 +380,7 @@ int vlad_mapper::encode_memb(const char *a_elt,
   /* verify */
   if (VLAD_IDENT_TYPE_IS_GRP(type[0]) || !VLAD_IDENT_TYPE_IS_GRP(type[1]))
     return VLAD_INVALIDINPUT;
-  if (VLAD_IDENT_TYPE_BASE(type[0]) != VLAD_IDENT_TYPE_BASE(type[1]))
+  if ((type[0] & VLAD_IDENT_MASK_ENT_BASE) != (type[1] & VLAD_IDENT_MASK_ENT_BASE))
     return VLAD_INVALIDINPUT;
 
   *a_id = compute_memb(type[0], index[0], index[1], a_state, a_truth);
@@ -408,7 +408,7 @@ int vlad_mapper::encode_subst(const char *a_grp1,
   /* verify */
   if (!VLAD_IDENT_TYPE_IS_GRP(type[0]) || !VLAD_IDENT_TYPE_IS_GRP(type[1]))
     return VLAD_INVALIDINPUT;
-  if (VLAD_IDENT_TYPE_BASE(type[0]) != VLAD_IDENT_TYPE_BASE(type[1]))
+  if ((type[0] & VLAD_IDENT_MASK_ENT_BASE) != (type[1] & VLAD_IDENT_MASK_ENT_BASE))
     return VLAD_INVALIDINPUT;
 
   *a_id = compute_subst(type[0], index[0], index[1], a_state, a_truth);

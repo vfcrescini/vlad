@@ -1,3 +1,24 @@
+2006-01-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/identifier.cpp :
+	* lib/identifier.h :
+
+	  - Identifiers can now also be time intervals.
+
+	  - Reorganised macro definitions to include an interval type.
+
+	* lib/symtab.cpp :
+	* lib/symtab.h :
+
+	  - Symtab now also stores time interval identifiers.
+
+	* lib/fact.cpp :
+	* lib/mapper.cpp :
+	* lib/polbase.cpp :
+	* main/policy.y :
+
+	  - Now uses new identifier macros.
+
 2006-01-03  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* configure.ac :

@@ -642,7 +642,7 @@ int add_identifier(const char *a_name, unsigned char a_type)
   }
 
   /* check identifier */
-  if (vlad_identifier::validate_ent_ident(a_name)) {
+  if (vlad_identifier::validate_nvar_ident(a_name)) {
     errorcode = VLAD_INVALIDINPUT;
     policyerror("invalid identifier");
     return VLAD_INVALIDINPUT;
