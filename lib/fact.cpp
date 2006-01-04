@@ -697,7 +697,7 @@ static int vlad_verify_holds(const char *a_sub,
   unsigned char type;
 
   /* check subject */
-  if (vlad_identifier::validate_ent_ident(a_sub) == VLAD_OK) {
+  if (vlad_identifier::validate_nvar_ident(a_sub) == VLAD_OK) {
     /* an entity, so we get the type from the symtab and make sure it's sub */
     if ((retval = a_stab->type(a_sub, &type)) != VLAD_OK)
       return retval;
@@ -722,7 +722,7 @@ static int vlad_verify_holds(const char *a_sub,
     return VLAD_INVALIDINPUT;
 
   /* check access */
-  if (vlad_identifier::validate_ent_ident(a_acc) == VLAD_OK) {
+  if (vlad_identifier::validate_nvar_ident(a_acc) == VLAD_OK) {
     /* an entity, so we get the type from the symtab and make sure it's acc */
     if ((retval = a_stab->type(a_acc, &type)) != VLAD_OK)
       return retval;
@@ -747,7 +747,7 @@ static int vlad_verify_holds(const char *a_sub,
     return VLAD_INVALIDINPUT;
 
   /* check object */
-  if (vlad_identifier::validate_ent_ident(a_obj) == VLAD_OK) {
+  if (vlad_identifier::validate_nvar_ident(a_obj) == VLAD_OK) {
     /* an entity, so we get the type from the symtab and make sure it's obj */
     if ((retval = a_stab->type(a_obj, &type)) != VLAD_OK)
       return retval;
@@ -785,7 +785,7 @@ static int vlad_verify_memb(const char *a_elt,
   unsigned char type[2];
 
   /* check element */
-  if (vlad_identifier::validate_ent_ident(a_elt) == VLAD_OK) {
+  if (vlad_identifier::validate_nvar_ident(a_elt) == VLAD_OK) {
     /* it's an entity, so check the type */
     if ((retval = a_stab->type(a_elt, &(type[0]))) != VLAD_OK)
       return retval;
@@ -807,7 +807,7 @@ static int vlad_verify_memb(const char *a_elt,
     return VLAD_INVALIDINPUT;
 
   /* check group */
-  if (vlad_identifier::validate_ent_ident(a_grp) == VLAD_OK) {
+  if (vlad_identifier::validate_nvar_ident(a_grp) == VLAD_OK) {
     /* it's an entity, so get the type */
     if ((retval = a_stab->type(a_grp, &(type[1]))) != VLAD_OK)
       return retval;
@@ -829,7 +829,7 @@ static int vlad_verify_memb(const char *a_elt,
     return VLAD_INVALIDINPUT;
 
   /* check types */
-  if (VLAD_IDENT_TYPE_BASE(type[0]) != VLAD_IDENT_TYPE_BASE(type[1]))
+  if ((type[0] & VLAD_IDENT_MASK_ENT_BASE) != (type[1] & VLAD_IDENT_MASK_ENT_BASE))
     return VLAD_INVALIDINPUT;
 
   /* add to vlist2 */
@@ -860,7 +860,7 @@ static int vlad_verify_subst(const char *a_grp1,
   unsigned char type[2];
 
   /* check group1 */
-  if (vlad_identifier::validate_ent_ident(a_grp1) == VLAD_OK) {
+  if (vlad_identifier::validate_nvar_ident(a_grp1) == VLAD_OK) {
     /* it's an entity, so check the type */
     if ((retval = a_stab->type(a_grp1, &(type[0]))) != VLAD_OK)
       return retval;
@@ -882,7 +882,7 @@ static int vlad_verify_subst(const char *a_grp1,
     return VLAD_INVALIDINPUT;
 
   /* check group */
-  if (vlad_identifier::validate_ent_ident(a_grp2) == VLAD_OK) {
+  if (vlad_identifier::validate_nvar_ident(a_grp2) == VLAD_OK) {
     /* it's an entity, so get the type */
     if ((retval = a_stab->type(a_grp2, &(type[1]))) != VLAD_OK)
       return retval;
@@ -904,7 +904,7 @@ static int vlad_verify_subst(const char *a_grp1,
     return VLAD_INVALIDINPUT;
 
   /* check types */
-  if (VLAD_IDENT_TYPE_BASE(type[0]) != VLAD_IDENT_TYPE_BASE(type[1]))
+  if ((type[0] & VLAD_IDENT_MASK_ENT_BASE) != (type[1] & VLAD_IDENT_MASK_ENT_BASE))
     return VLAD_INVALIDINPUT;
 
   /* add to vlist2 */
