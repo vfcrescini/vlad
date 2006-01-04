@@ -169,7 +169,7 @@ updatetab.o : vlad.h mem.h stringlist.h varlist.h expression.h updatetab.h updat
 seqtab.o : vlad.h mem.h stringlist.h expression.h updatetab.h symtab.h seqtab.h seqtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
 
-tnet.o : vlad.h mem.h symtab.h rel.h rlist.h tnet.h
+tnet.o : vlad.h mem.h stringlist.h varlist.h symtab.h rel.h rlist.h tnet.h tnet.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c tnet.cpp
 
 mapper.o : vlad.h atom.h identifier.h symtab.h mapper.h mapper.cpp
