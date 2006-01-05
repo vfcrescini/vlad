@@ -44,22 +44,24 @@ class vlad_fact : public vlad_list_item
     int get(char **a_ent1,
             char **a_ent2,
             char **a_ent3,
+            char **a_int,
             unsigned char *a_type,
             bool *a_truth);
 
     /* if holds, get attributes */
-    int get_holds(char **a_sub, char **a_acc, char **a_obj);
+    int get_holds(char **a_sub, char **a_acc, char **a_obj, char **a_int);
 
     /* if member, get attributes */
-    int get_member(char **a_elt, char **a_grp);
+    int get_member(char **a_elt, char **a_grp, char **a_int);
 
     /* if subset, get attributes */
-    int get_subset(char **a_grp1, char **a_grp2);
+    int get_subset(char **a_grp1, char **a_grp2, char **a_int);
 
     /* initialise facts */
     int init(const char *a_ent1,
              const char *a_ent2,
              const char *a_ent3,
+             const char *a_int,
              unsigned char a_type,
              bool a_truth);
 
@@ -67,16 +69,19 @@ class vlad_fact : public vlad_list_item
     int init_holds(const char *a_sub,
                    const char *a_acc,
                    const char *a_obj,
+                   const char *a_int,
                    bool a_truth);
 
     /* initialise a memb fact */
     int init_member(const char *a_elt,
                     const char *a_grp,
+                    const char *a_int,
                     bool a_truth);
 
     /* initialise a subst fact */
     int init_subset(const char *a_grp1,
                     const char *a_grp2,
+                    const char *a_int,
                     bool a_truth);
 
     /* create a new instance of this fact */

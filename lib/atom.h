@@ -29,18 +29,21 @@ typedef struct
   char *subject;
   char *access;
   char *object;
+  char *interval;
 } vlad_atom_holds;
 
 typedef struct
 {
   char *element;
   char *group;
+  char *interval;
 } vlad_atom_member;
 
 typedef struct
 {
   char *group1;
   char *group2;
+  char *interval;
 } vlad_atom_subset;
 
 /* atom type */
