@@ -117,7 +117,7 @@ libvlad.a : $(OBJECTS)
 	$(AR) -rcs $(@) $(OBJECTS)
 
 libvlad.so.$(VERSION) : $(OBJECTS)
-	$(CXX) $(LDFLAGS) $(CXXFLAGS) -shared -Wl,-soname,`echo $(@) | cut -d. -f1,2,3` -o $(@) $(OBJECTS) $(SMLIBS)
+	$(CXX) $(LDFLAGS) $(CXXFLAGS) -shared -Wl,-soname,`echo $(@) | cut -d. -f1,2,3` -o $(@) $(OBJECTS) $(SMLIBS) -ltribe
 ifndef DEBUG
   ifdef STRIP
 	strip $(@)
@@ -185,5 +185,5 @@ wrapper.o : vlad.h mem.h stringlist.h varlist.h fact.h expression.h polbase.h wr
 	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
 endif
 
-polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h symtab.h mapper.h polbase.h polbase.cpp
+polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h symtab.h mapper.h tnet.h polbase.h polbase.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp

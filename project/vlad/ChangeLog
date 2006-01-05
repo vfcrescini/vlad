@@ -1,3 +1,10 @@
+2006-01-06  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/Makefile.in :
+	* main/Makefile.in :
+
+	  - The library and the test program are now linked with libtribe.so.
+
 2006-01-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/Makefile.in :
