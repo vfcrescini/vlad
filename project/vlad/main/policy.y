@@ -586,7 +586,8 @@ holds_fact :
       return VLAD_MALLOCFAILED;
     }
 
-    if ((retval = $$->init_holds($3, $5, $7, true)) != VLAD_OK) {
+    /* XXX: use "default" interval */
+    if ((retval = $$->init_holds($3, $5, $7, "today", true)) != VLAD_OK) {
       errorcode = retval;
       policyerror("could not initialise holds fact");
       return retval;
@@ -604,7 +605,8 @@ subst_fact :
       return VLAD_MALLOCFAILED;
     }
 
-    if ((retval = $$->init_subset($3, $5, true)) != VLAD_OK) {
+    /* XXX: use "default" interval */
+    if ((retval = $$->init_subset($3, $5, "today", true)) != VLAD_OK) {
       errorcode = retval;
       policyerror("could not initialise subset fact");
       return retval;
@@ -622,7 +624,8 @@ memb_fact :
       return VLAD_MALLOCFAILED;
     }
 
-    if ((retval = $$->init_member($3, $5, true)) != VLAD_OK) {
+    /* XXX: use "default" interval */
+    if ((retval = $$->init_member($3, $5, "today", true)) != VLAD_OK) {
       errorcode = retval;
       policyerror("could not initialise member fact");
       return retval;

@@ -36,6 +36,7 @@
 #ifdef VLAD_SMODELS
   #include <vlad/smwrap.h>
 #endif
+#include <vlad/tnet.h>
 
 class vlad_polbase : virtual public vlad_mem
 {
@@ -123,8 +124,11 @@ class vlad_polbase : virtual public vlad_mem
   private :
 
     /* m_stage:
-     * 0 = uninit, 1 = init, 2 = symtab closed, 3 = polbase closed,
-     * 4 = after compute() */
+     *   0 = uninit
+     *   1 = init
+     *   2 = symtab closed
+     *   3 = polbase closed
+     *   4 = after compute() */
     unsigned char m_stage;
 
     /* the symbol table */
@@ -149,6 +153,9 @@ class vlad_polbase : virtual public vlad_mem
     /* the smodels wrapper */
     vlad_smwrap *m_smobject;
 #endif
+
+    /* temporal network object */
+    vlad_tnet *m_tnet;
 
 #ifdef VLAD_SMODELS
     /* checks whether the given fact is true, false or unknown */

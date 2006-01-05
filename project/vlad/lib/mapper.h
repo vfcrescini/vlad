@@ -45,6 +45,7 @@ class vlad_mapper : virtual public vlad_mem
     unsigned int compute_holds(unsigned int a_sub,
                                unsigned int a_acc,
                                unsigned int a_obj,
+                               unsigned int a_int,
                                unsigned int a_state,
                                bool a_truth);
 
@@ -52,13 +53,15 @@ class vlad_mapper : virtual public vlad_mem
     unsigned int compute_memb(unsigned char a_type,
                               unsigned int a_elt,
                               unsigned int a_grp,
+                              unsigned int a_int,
                               unsigned int a_state,
                               bool a_truth);
 
     /* given the state, truth value and indices, map a subst fact into an id */
     unsigned int compute_subst(unsigned char a_type,
-                               unsigned char a_grp1,
-                               unsigned char a_grp2,
+                               unsigned int a_grp1,
+                               unsigned int a_grp2,
+                               unsigned int a_int,
                                unsigned a_state,
                                bool a_truth);
 
@@ -89,6 +92,7 @@ class vlad_mapper : virtual public vlad_mem
     int encode_holds(const char *a_sub,
                      const char *a_acc,
                      const char *a_obj,
+                     const char *a_int,
                      unsigned int a_state,
                      bool a_truth,
                      unsigned int *a_id);
@@ -96,6 +100,7 @@ class vlad_mapper : virtual public vlad_mem
     /* gives a unique id based on the member entities given */
     int encode_memb(const char *a_elt,
                     const char *a_grp,
+                    const char *a_int,
                     unsigned int a_state,
                     bool a_truth,
                     unsigned int *a_id);
@@ -103,6 +108,7 @@ class vlad_mapper : virtual public vlad_mem
     /* gives a unique id based on the subset entities given */
     int encode_subst(const char *a_grp1,
                      const char *a_grp2,
+                     const char *a_int,
                      unsigned int a_state,
                      bool a_truth,
                      unsigned int *a_id);
@@ -111,13 +117,20 @@ class vlad_mapper : virtual public vlad_mem
     int decode_holds(unsigned int a_id,
                      char **a_sub,
                      char **a_acc,
-                     char **a_obj);
+                     char **a_obj,
+                     char **a_int);
 
     /* gives entities based on the member id given */
-    int decode_memb(unsigned int a_id, char **a_elt, char **a_grp);
+    int decode_memb(unsigned int a_id,
+                    char **a_elt,
+                    char **a_grp,
+                    char **a_int);
 
     /* gives entities based on the subset id given */
-    int decode_subst(unsigned int a_id, char **a_grp1, char **a_grp2);
+    int decode_subst(unsigned int a_id,
+                     char **a_grp1,
+                     char **a_grp2,
+                     char **a_int);
 } ;
 
 #endif
