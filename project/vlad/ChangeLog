@@ -3,9 +3,17 @@
 	* lib/polbase.cpp :
 	* lib/polbase.h :
 
+	  - Added close_rel() to indicate closure of the stage where interval
+	    relations can be added.
+
+	  - Added another policy base stage where adding temporal interval
+	    relations can be done.
+
 	  - Replaced add_symtab() with add_entity() and 2 add_intervals().
 
 	* main/policy.y :
+
+	  - Temporarily calls close_rel() after the last initially statement.
 
 	  - Now uses add_entity().
 

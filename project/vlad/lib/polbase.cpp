@@ -176,7 +176,7 @@ int vlad_polbase::add_interval(const char *a_name,
 int vlad_polbase::add_inittab(vlad_fact *a_fact)
 {
   int retval;
-  vlad_fact *fact;
+  vlad_fact *fact = NULL;
 
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -192,7 +192,7 @@ int vlad_polbase::add_inittab(vlad_fact *a_fact)
     retval = m_itable->add(fact);
 
   /* cleanup */
-  if (retval != VLAD_OK)
+  if (retval != VLAD_OK && fact != NULL)
     VLAD_MEM_DELETE(fact);
 
   return retval;
@@ -208,7 +208,7 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
   vlad_expression *exp_c = NULL;
   vlad_expression *exp_n = NULL;
 
-  if (m_stage != 2)
+  if (m_stage != 3)
     return VLAD_INVALIDOP;
 
   /* only a_exp is required to be non-null */
@@ -253,7 +253,7 @@ int vlad_polbase::add_updatetab(const char *a_name,
   vlad_expression *exp_po = NULL;
 
   /* we only allow this function after symtab is closed */
-  if (m_stage != 2)
+  if (m_stage != 3)
     return VLAD_INVALIDOP;
 
   /* precondition and vlist are allowed to be NULL */
@@ -303,7 +303,7 @@ int vlad_polbase::add_seqtab(vlad_updateref *a_uref)
   int retval;
 
   /* we only allow this function after policy base is closed */
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   if (a_uref == NULL)
@@ -317,8 +317,8 @@ int vlad_polbase::add_seqtab(vlad_updateref *a_uref)
   if ((retval = m_setable->add(a_uref)) != VLAD_OK)
     return retval;
 
-  /* set back to m_stage 3 to prevent query before compute */
-  m_stage = 3;
+  /* set back to m_stage 4 to prevent query before compute */
+  m_stage = 4;
 
   return VLAD_OK;
 }
@@ -344,14 +344,25 @@ int vlad_polbase::close_symtab()
   return VLAD_OK;
 }
 
-/* after this is called, no further calls to add_inittab(), add_consttab()
- * or add_updatetab() is allowed */
-int vlad_polbase::close_polbase()
+/* after this is called, no further calls to add_rel() is allowed */
+int vlad_polbase::close_rel()
 {
   if (m_stage != 2)
     return VLAD_INVALIDOP;
 
   m_stage = 3;
+
+  return VLAD_OK;
+}
+
+/* after this is called, no further calls to add_entity(), add_interval(),
+ * add_rel(), add_constab() and add_updatetab() can be made */
+int vlad_polbase::close_polbase()
+{
+  if (m_stage != 3)
+    return VLAD_INVALIDOP;
+
+  m_stage = 4;
 
   return VLAD_OK;
 }
@@ -362,14 +373,14 @@ int vlad_polbase::del_seqtab(unsigned int a_index)
   int retval;
 
   /* we only allow this function after policy base is closed */
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   if ((retval = m_setable->del(a_index)) != VLAD_OK)
     return retval;
 
-  /* set back to m_stage 3 to prevent query before compute */
-  m_stage = 3;
+  /* set back to m_stage 4 to prevent query before compute */
+  m_stage = 4;
 
   return retval;
 }
@@ -390,7 +401,7 @@ int vlad_polbase::get_seqtab(unsigned int a_index,
                              char **a_name,
                              vlad_stringlist **a_ilist)
 {
-  if (m_stage < 2)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   return m_setable->get(a_index, a_name, a_ilist);
@@ -403,7 +414,7 @@ int vlad_polbase::get_updatetab(unsigned int a_index,
                                 vlad_expression **a_precond,
                                 vlad_expression **a_postcond)
 {
-  if (m_stage < 2)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   return m_utable->get(a_index, a_name, a_vlist, a_precond, a_postcond);
@@ -412,7 +423,7 @@ int vlad_polbase::get_updatetab(unsigned int a_index,
 /* returns the length of the sequence table */
 unsigned int vlad_polbase::length_seqtab()
 {
-  if (m_stage < 2)
+  if (m_stage < 4)
     return 0;
 
   return VLAD_LIST_LENGTH(m_setable);
@@ -421,7 +432,7 @@ unsigned int vlad_polbase::length_seqtab()
 /* returns the length of the update table */
 unsigned int vlad_polbase::length_updatetab()
 {
-  if (m_stage < 2)
+  if (m_stage < 4)
     return 0;
 
   return VLAD_LIST_LENGTH(m_utable);
@@ -446,7 +457,7 @@ int vlad_polbase::list_seqtab(FILE *a_fs)
   vlad_stringlist *ilist;
 
   /* we only allow this function after policy base is closed */
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   if (a_fs == NULL)
@@ -479,7 +490,7 @@ int vlad_polbase::compute_generate(FILE *a_fs)
   int retval;
 
   /* we only allow this function after polbase is closed */
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
@@ -538,7 +549,7 @@ int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_fs)
   unsigned int i;
 
   /* only allowed after policy base has closed */
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* make sure the filestream is not NULL */
@@ -577,7 +588,7 @@ int vlad_polbase::compute_evaluate()
   unsigned int i;
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   /* create a new instance of the smodels smwrap and init it */
@@ -632,7 +643,7 @@ int vlad_polbase::compute_evaluate()
   if ((retval = m_smobject->close_rule()) != VLAD_OK)
     return retval;
 
-  m_stage = 4;
+  m_stage = 5;
 
   return VLAD_OK;
 }
@@ -648,7 +659,7 @@ int vlad_polbase::query_evaluate(vlad_expression *a_exp, unsigned char *a_res)
   *a_res = VLAD_RESULT_TRUE;
 
   /* we only allow this after a call to compute() */
-  if (m_stage != 4)
+  if (m_stage != 5)
     return VLAD_INVALIDOP;
 
   if (a_exp == NULL || a_res == NULL)
@@ -694,7 +705,7 @@ int vlad_polbase::evaluate_fact(unsigned int a_fact, unsigned char *a_res)
   int retval;
   bool res;
 
-  if (m_stage != 4)
+  if (m_stage != 5)
     return VLAD_INVALIDOP;
   if (a_res == NULL)
     return VLAD_NULLPTR;
@@ -723,7 +734,7 @@ int vlad_polbase::print_fact(unsigned int a_id, FILE *a_fs)
   unsigned int state;
 
   /* we only allow this after polbase is closed */
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   if (a_fs == NULL)
@@ -810,7 +821,7 @@ int vlad_polbase::generate_identity(FILE *a_fs)
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -858,7 +869,7 @@ int vlad_polbase::generate_inheritance(FILE *a_fs)
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* subset inheritance */
@@ -1058,7 +1069,7 @@ int vlad_polbase::generate_transitivity(FILE *a_fs)
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -1136,7 +1147,7 @@ int vlad_polbase::generate_negation(FILE *a_fs)
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -1165,7 +1176,7 @@ int vlad_polbase::generate_inertial(FILE *a_fs)
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -1203,7 +1214,7 @@ int vlad_polbase::generate_initial(FILE *a_fs)
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   if ((retval = generate_rule(a_fs, 0, 0, 0, m_itable, NULL, NULL)) != VLAD_OK)
@@ -1225,7 +1236,7 @@ int vlad_polbase::generate_constraint(FILE *a_fs)
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* constraint loop */
@@ -1318,7 +1329,7 @@ int vlad_polbase::generate_update(FILE *a_fs)
   if (a_fs == NULL)
     return VLAD_NULLPTR;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -1436,7 +1447,7 @@ int vlad_polbase::generate_rule(FILE *a_fs,
   unsigned int i_exp3;
   vlad_fact *fact;
 
-  if (m_stage < 3)
+  if (m_stage < 4)
     return VLAD_INVALIDOP;
 
   if (a_fs == NULL || a_exp1 == NULL)
@@ -1497,7 +1508,7 @@ int vlad_polbase::evaluate_identity()
   unsigned int id;
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -1547,7 +1558,7 @@ int vlad_polbase::evaluate_inheritance()
   unsigned int id[4];
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -1757,7 +1768,7 @@ int vlad_polbase::evaluate_transitivity()
   unsigned int id[3];
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -1872,7 +1883,7 @@ int vlad_polbase::evaluate_inertial()
   unsigned int id[3];
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -1904,7 +1915,7 @@ int vlad_polbase::evaluate_inertial()
 int vlad_polbase::evaluate_initial()
 {
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   return evaluate_rule(0, 0, 0, m_itable, NULL, NULL);
@@ -1919,7 +1930,7 @@ int vlad_polbase::evaluate_constraint()
   unsigned int i_tup;
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   /* constraint loop */
@@ -2008,7 +2019,7 @@ int vlad_polbase::evaluate_update()
   unsigned int i_tup;
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -2128,7 +2139,7 @@ int vlad_polbase::evaluate_rule(unsigned int a_state1,
   unsigned int id;
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   if (a_exp1 == NULL)
