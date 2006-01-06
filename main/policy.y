@@ -163,8 +163,22 @@ entity_section : {
   ;
 
 initial_section : {
+    int retval;
+    /* XXX: for now, we close the rel here too */
+    if ((retval = pbase->close_rel()) != VLAD_OK) {
+      errorcode = retval;
+      policyerror("unable to close rel");
+      return retval;
+    }
   }
   | initial_stmt_list {
+    int retval;
+    /* XXX: for now, we close the rel here too */
+    if ((retval = pbase->close_rel()) != VLAD_OK) {
+      errorcode = retval;
+      policyerror("unable to close rel");
+      return retval;
+    }
   }
   ;
 

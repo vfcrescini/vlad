@@ -79,8 +79,11 @@ class vlad_polbase : virtual public vlad_mem
     /* close symbol table */
     int close_symtab();
 
-    /* after this is called, no further calls to add_inittab(), add_consttab()
-     * or add_updatetab() is allowed */
+    /* after this is called, no further calls to add_rel() is allowed */
+    int close_rel();
+
+    /* after this is called, no further calls to add_entity(), add_interval(),
+     * add_rel(), add_constab() and add_updatetab() can be made */
     int close_polbase();
 
     /* delete an update reference from the sequence table */
@@ -135,8 +138,9 @@ class vlad_polbase : virtual public vlad_mem
      *   0 = uninit
      *   1 = init
      *   2 = symtab closed
-     *   3 = polbase closed
-     *   4 = after compute() */
+     *   3 = tnet closed
+     *   4 = polbase closed
+     *   5 = after compute() */
     unsigned char m_stage;
 
     /* the symbol table */
