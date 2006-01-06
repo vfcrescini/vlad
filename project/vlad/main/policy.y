@@ -651,7 +651,7 @@ int add_identifier(const char *a_name, unsigned char a_type)
     return VLAD_INVALIDINPUT;
   }
 
-  switch (pbase->add_symtab(a_name, a_type)) {
+  switch (pbase->add_entity(a_name, a_type)) {
     case VLAD_OK :
 #ifdef VLAD_DEBUG
       switch (a_type) {

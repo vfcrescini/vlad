@@ -48,8 +48,16 @@ class vlad_polbase : virtual public vlad_mem
     /* (re)init the policy base */
     int init();
 
-    /* add an entity in the symbol table */
-    int add_symtab(const char *a_name, unsigned char a_type);
+    /* add an entity in the policy base */
+    int add_entity(const char *a_name, unsigned char a_type);
+
+    /* add an interval into the policy base */
+    int add_interval(const char *a_name);
+
+    /* same as above, but with endpoints */
+    int add_interval(const char *a_name,
+                     unsigned int a_ep1,
+                     unsigned int a_ep2);
 
     /* add a fact into the initial state table */
     int add_inittab(vlad_fact *a_fact);
