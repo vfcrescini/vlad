@@ -129,22 +129,47 @@ int vlad_polbase::init()
 }
 
 /* add an entity in the symbol table */
-int vlad_polbase::add_symtab(const char *a_name, unsigned char a_type)
+int vlad_polbase::add_entity(const char *a_name, unsigned char a_type)
+{
+  if (m_stage != 1)
+    return VLAD_INVALIDOP;
+
+  /* we only allow entity types here */
+  if (!VLAD_IDENT_TYPE_IS_ENT(a_type))
+    return VLAD_INVALIDINPUT;
+
+  return m_stable->add(a_name, a_type);
+}
+
+/* add an interval into the policy base */
+int vlad_polbase::add_interval(const char *a_name)
 {
   int retval;
 
   if (m_stage != 1)
     return VLAD_INVALIDOP;
 
-  if ((retval = m_stable->add(a_name, a_type)) != VLAD_OK)
+  /* first, we add it to the symtab */
+  if ((retval = m_stable->add(a_name, VLAD_IDENT_INT)) != VLAD_OK)
     return retval;
 
-  /* if this new indentifier happens to be an interval, we add it to the net */
-  if (VLAD_IDENT_TYPE_IS_INT(a_type))
-    if ((retval = m_tnet->add_interval(a_name, m_stable)) != VLAD_OK)
-      return retval;
+  /* then add it to tnet */
+  return m_tnet->add_interval(a_name, m_stable);
+}
 
-  return  VLAD_OK;
+/* same as above, but with endpoints */
+int vlad_polbase::add_interval(const char *a_name,
+                               unsigned int a_ep1,
+                               unsigned int a_ep2)
+{
+  int retval;
+
+  /* first, add the interval */
+  if ((retval = add_interval(a_name)) != VLAD_OK)
+    return retval;
+
+  /* then add the endpoints */
+  return m_tnet->add_endpoints(a_name, a_ep1, a_ep2, m_stable);
 }
 
 /* add a fact into the initial state table */
