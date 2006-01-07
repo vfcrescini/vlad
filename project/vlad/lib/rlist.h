@@ -45,6 +45,9 @@ class vlad_rlist : public vlad_list
                 vlad_stringlist *a_ilist,
                 vlad_rlist **a_rlist);
 
+    /* gives a list of vars occurring in the rlist. assumes list is init'ed */
+    int varlist(vlad_varlist *a_vlist);
+
     /* returns VLAD_OK if the list contains no variables */
     int is_ground();
 } ;

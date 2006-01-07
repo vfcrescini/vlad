@@ -132,6 +132,29 @@ int vlad_rlist::replace(vlad_varlist *a_vlist,
 
   return VLAD_OK;
 }
+
+/* gives a list of vars occurring in the rlist. assumes list is init'ed */
+int vlad_rlist::varlist(vlad_varlist *a_vlist)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_vlist == NULL)
+    return VLAD_NULLPTR;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_rel *rel;
+
+    if ((retval = get(i, &rel)) != VLAD_OK)
+      return retval;
+
+    if ((retval = rel->varlist(a_vlist)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
 /* returns VLAD_OK if the list contains no variables */
 int vlad_rlist::is_ground()
 {
