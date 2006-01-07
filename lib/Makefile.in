@@ -53,10 +53,11 @@ INCLUDES = \
   expression.h \
   rel.h \
   rlist.h \
-  seqtab.h \
   symtab.h \
+  inttab.h \
   consttab.h \
   updatetab.h \
+  seqtab.h \
   tnet.h \
   mapper.h \
   $(SMINCLUDES) \
@@ -76,9 +77,10 @@ OBJECTS = \
   rel.o \
   rlist.o \
   seqtab.o \
-  symtab.o \
+  inttab.o \
   consttab.o \
   updatetab.o \
+  symtab.o \
   tnet.o \
   $(SMOBJECTS) \
   $(WRAPOBJECTS) \
@@ -159,6 +161,9 @@ rlist.o : vlad.h mem.h list.h stringlist.h varlist.h rel.h rlist.h rlist.cpp
 
 symtab.o : vlad.h mem.h stringlist.h stringlistlist.h varlist.h identifier.h symtab.h symtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
+
+inttab.o : vlad.h mem.h list.h inttab.h inttab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c inttab.cpp
 
 consttab.o : vlad.h mem.h varlist.h expression.h consttab.h consttab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c consttab.cpp
