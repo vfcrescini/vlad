@@ -27,6 +27,7 @@
 #include <vlad/list.h>
 #include <vlad/stringlist.h>
 #include <vlad/varlist.h>
+#include <vlad/symtab.h>
 
 class vlad_rel : public vlad_list_item
 {
@@ -50,13 +51,16 @@ class vlad_rel : public vlad_list_item
     /* creates a new instance of this relation */
     int copy(vlad_rel **a_rel);
 
+    /* ensure that each interval is in symtab and each var is in varlist */
+    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
+
     /* replaces vars in a_vlist with idents in a_ilist. gives a new rel */
     int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
                 vlad_rel **a_rel);
 
     /* gives a list of vars occurring in the rel. assumes list is init'ed */
-    int varlist(vlad_varlist *a_list);
+    int varlist(vlad_varlist *a_vlist);
 
     /* returns VLAD_OK if none of the interval identifiers are variables */
     int is_ground();

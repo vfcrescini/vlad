@@ -3,6 +3,8 @@
 	* lib/rlist.cpp :
 	* lib/rlist.h :
 
+	  - Added verify() function.
+
 	  - Added varlist() function.
 
 	  - Fixed is_ground() function to return VLAD_OK instead of a
@@ -13,6 +15,8 @@
 
 	* lib/rel.cpp :
 	* lib/rel.h :
+
+	  - Added verify() function.
 
 	  - Fixed is_ground() function to return VLAD_OK instead of a
 	    boolean value.
