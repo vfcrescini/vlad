@@ -104,6 +104,10 @@ int vlad_tnet::add_constraints(vlad_rlist *a_rlist)
   if (a_rlist == NULL)
     return VLAD_NULLPTR;
 
+  /* the list must contain no variables */
+  if (!a_rlist->is_ground())
+    return VLAD_INVALIDINPUT;
+
   /* go through each relation in the list */
   for (i = 0; i < VLAD_LIST_LENGTH(a_rlist); i++) {
     char *int1;
