@@ -1,15 +1,21 @@
 2006-01-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
-	* lib/rel.cpp :
-	* lib/rel.h :
 	* lib/rlist.cpp :
 	* lib/rlist.h :
+
+	  - Added varlist() function.
 
 	  - Fixed is_ground() function to return VLAD_OK instead of a
 	    boolean value.
 
 	  - Removed m_ground from rlist as these is no reliable way to
 	    keep track of the rels.
+
+	* lib/rel.cpp :
+	* lib/rel.h :
+
+	  - Fixed is_ground() function to return VLAD_OK instead of a
+	    boolean value.
 
 	* lib/tnet.cpp :
 
