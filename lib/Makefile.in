@@ -190,5 +190,5 @@ wrapper.o : vlad.h mem.h stringlist.h varlist.h fact.h expression.h polbase.h wr
 	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
 endif
 
-polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h symtab.h inttab.h mapper.h tnet.h polbase.h polbase.cpp
+polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h rlist.h symtab.h inttab.h mapper.h tnet.h polbase.h polbase.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp

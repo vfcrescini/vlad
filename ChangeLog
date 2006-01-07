@@ -1,5 +1,10 @@
 2006-01-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+
+	  - Added add_tc() function to add ground temporal constraints.
+
 	* lib/rlist.cpp :
 	* lib/rlist.h :
 
