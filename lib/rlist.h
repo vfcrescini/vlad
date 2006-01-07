@@ -26,6 +26,7 @@
 #include <vlad/list.h>
 #include <vlad/stringlist.h>
 #include <vlad/varlist.h>
+#include <vlad/symtab.h>
 
 class vlad_rlist : public vlad_list
 {
@@ -39,6 +40,9 @@ class vlad_rlist : public vlad_list
 
     /* gives a reference to the ith relation */
     int get(unsigned int a_i, vlad_rel **a_rel);
+
+    /* ensure that each interval is in symtab and each var is in varlist */
+    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
     /* replace vars in vlist to ident in ilist. create a new rlist */
     int replace(vlad_varlist *a_vlist,

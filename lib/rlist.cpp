@@ -93,6 +93,28 @@ int vlad_rlist::get(unsigned int a_i, vlad_rel **a_rel)
   return vlad_list::get(a_i, (vlad_list_item **) a_rel);
 }
 
+/* ensure that each interval is in symtab and each var is in varlist */
+int vlad_rlist::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
+{
+  int retval;
+  unsigned int i;
+
+  if (a_stab == NULL)
+    return VLAD_NULLPTR;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_rel *rel;
+
+    if ((retval = get(i, &rel)) != VLAD_OK)
+      return retval;
+
+    if ((retval = rel->verify(a_stab, a_vlist)) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
 /* replace vars in vlist to ident in ilist. create a new rlist */
 int vlad_rlist::replace(vlad_varlist *a_vlist,
                         vlad_stringlist *a_ilist,
