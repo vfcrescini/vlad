@@ -266,17 +266,16 @@ int vlad_rel::varlist(vlad_varlist *a_list)
   return VLAD_OK;
 }
 
-/* returns true if none of the interval identifiers are variables */
-bool vlad_rel::is_ground()
+/* returns VLAD_OK if none of the interval identifiers are variables */
+int vlad_rel::is_ground()
 {
-  /* uninitialised rel is ground */
   if (!m_init)
-    return true;
+    return VLAD_UNINITIALISED;
 
   if (vlad_identifier::validate_var_ident(m_int1) == VLAD_OK)
-    return false;
+    return VLAD_FAILURE;
   if (vlad_identifier::validate_var_ident(m_int2) == VLAD_OK)
-    return false;
+    return VLAD_FAILURE;
 
-  return true;
+  return VLAD_OK;
 }

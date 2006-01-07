@@ -105,7 +105,7 @@ int vlad_tnet::add_constraints(vlad_rlist *a_rlist)
     return VLAD_NULLPTR;
 
   /* the list must contain no variables */
-  if (!a_rlist->is_ground())
+  if (a_rlist->is_ground() != VLAD_OK)
     return VLAD_INVALIDINPUT;
 
   /* go through each relation in the list */
@@ -187,7 +187,7 @@ int vlad_tnet::check_tuple(vlad_stringlist *a_tuple,
       return retval;
 
     /* each rel in the rlist should have at least one variable */
-    if (rel->is_ground())
+    if (rel->is_ground() == VLAD_OK)
       return VLAD_INVALIDINPUT;
 
     if ((retval = rel->get(&int1, &int2, &c_rs)) != VLAD_OK)

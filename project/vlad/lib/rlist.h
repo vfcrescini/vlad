@@ -45,12 +45,8 @@ class vlad_rlist : public vlad_list
                 vlad_stringlist *a_ilist,
                 vlad_rlist **a_rlist);
 
-    /* returns true if the list contains no variables */
-    bool is_ground();
-
-  private :
-
-    bool m_ground;
+    /* returns VLAD_OK if the list contains no variables */
+    int is_ground();
 } ;
 
 #endif
