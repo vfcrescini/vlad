@@ -1,3 +1,10 @@
+2006-01-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/tnet.cpp :
+
+	  - add_constraint() now checks whether the given rlist is ground
+	    before doing anything.
+
 2006-01-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* main/policy.y :
