@@ -27,6 +27,7 @@
 #include <vlad/stringlist.h>
 #include <vlad/varlist.h>
 #include <vlad/symtab.h>
+#include <vlad/inttab.h>
 #include <vlad/rel.h>
 #include <vlad/rlist.h>
 
@@ -38,35 +39,25 @@ class vlad_tnet : virtual public vlad_mem
     ~vlad_tnet();
 
     /* (re)initialise temporal network */
-    int init();
-
-    /* add a new interval (a_int must already be in the symtab */
-    int add_interval(const char *a_int, vlad_symtab *a_stab);
-
-    /* bind the given (existing) interval with the given endpoints */
-    int add_endpoints(const char *a_int,
-                      unsigned int a_ep1,
-                      unsigned int a_ep2,
-                      vlad_symtab *a_stab);
+    int init(vlad_symtab *a_stab, vlad_inttab *a_itab);
 
     /* add the given temporal constraints */
-    int add_constraints(vlad_rlist *a_rlist, vlad_symtab *a_stab);
+    int add_constraints(vlad_rlist *a_rlist);
 
     /* gives the relation set that exists between the given 2 intervals */
     int get_relset(const char *a_int1,
                    const char *a_int2,
-                   vlad_symtab *a_stab,
                    unsigned int *a_rs);
 
    /* checks whether the given tuple satisfies the given constraints */
    int check_tuple(vlad_stringlist *a_tuple,
                    vlad_varlist *a_vlist,
-                   vlad_rlist *a_rlist,
-                   vlad_symtab *a_stab);
+                   vlad_rlist *a_rlist);
 
   private :
 
     tbe_net m_net;
+    vlad_symtab *m_stab;
     bool m_init;
 } ;
 

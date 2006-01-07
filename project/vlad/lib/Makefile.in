@@ -174,7 +174,7 @@ updatetab.o : vlad.h mem.h stringlist.h varlist.h expression.h updatetab.h updat
 seqtab.o : vlad.h mem.h stringlist.h expression.h updatetab.h symtab.h seqtab.h seqtab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
 
-tnet.o : vlad.h mem.h stringlist.h varlist.h symtab.h rel.h rlist.h tnet.h tnet.cpp
+tnet.o : vlad.h mem.h stringlist.h varlist.h symtab.h inttab.h rel.h rlist.h tnet.h tnet.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c tnet.cpp
 
 mapper.o : vlad.h atom.h identifier.h symtab.h mapper.h mapper.cpp
@@ -190,5 +190,5 @@ wrapper.o : vlad.h mem.h stringlist.h varlist.h fact.h expression.h polbase.h wr
 	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
 endif
 
-polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h symtab.h mapper.h tnet.h polbase.h polbase.cpp
+polbase.o : vlad.h mem.h identifier.h atom.h fact.h expression.h stringlist.h varlist.h symtab.h inttab.h mapper.h tnet.h polbase.h polbase.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c polbase.cpp

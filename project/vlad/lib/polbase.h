@@ -28,6 +28,7 @@
 #include <vlad/mem.h>
 #include <vlad/atom.h>
 #include <vlad/symtab.h>
+#include <vlad/inttab.h>
 #include <vlad/expression.h>
 #include <vlad/consttab.h>
 #include <vlad/updatetab.h>
@@ -146,6 +147,9 @@ class vlad_polbase : virtual public vlad_mem
     /* the symbol table */
     vlad_symtab *m_stable;
 
+    /* the interval table */
+    vlad_inttab *m_ttable;
+
     /* the initial expression table */
     vlad_expression *m_itable;
 
@@ -161,13 +165,13 @@ class vlad_polbase : virtual public vlad_mem
     /* the mapper */
     vlad_mapper *m_mapper;
 
+    /* temporal network object */
+    vlad_tnet *m_tnet;
+
 #ifdef VLAD_SMODELS
     /* the smodels wrapper */
     vlad_smwrap *m_smobject;
 #endif
-
-    /* temporal network object */
-    vlad_tnet *m_tnet;
 
 #ifdef VLAD_SMODELS
     /* checks whether the given fact is true, false or unknown */
