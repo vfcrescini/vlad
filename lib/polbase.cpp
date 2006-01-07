@@ -41,21 +41,24 @@ vlad_polbase::vlad_polbase()
 {
   m_stage = 0;
   m_stable = NULL;
+  m_ttable = NULL;
   m_itable = NULL;
   m_ctable = NULL;
   m_utable = NULL;
   m_setable = NULL;
   m_mapper = NULL;
+  m_tnet = NULL;
 #ifdef VLAD_SMODELS
   m_smobject = NULL;
 #endif
-  m_tnet = NULL;
 }
 
 vlad_polbase::~vlad_polbase()
 {
   if (m_stable != NULL)
     VLAD_MEM_DELETE(m_stable);
+  if (m_ttable != NULL)
+    VLAD_MEM_DELETE(m_ttable);
   if (m_itable != NULL)
     VLAD_MEM_DELETE(m_itable);
   if (m_ctable != NULL)
@@ -66,12 +69,12 @@ vlad_polbase::~vlad_polbase()
     VLAD_MEM_DELETE(m_setable);
   if (m_mapper != NULL)
     VLAD_MEM_DELETE(m_mapper);
+  if (m_tnet != NULL)
+    VLAD_MEM_DELETE(m_tnet);
 #ifdef VLAD_SMODELS
   if (m_smobject != NULL)
     VLAD_MEM_DELETE(m_smobject);
 #endif
-  if (m_tnet != NULL)
-    VLAD_MEM_DELETE(m_tnet);
 }
 
 /* (re)init the policy base */
@@ -87,6 +90,10 @@ int vlad_polbase::init()
     retval = VLAD_MALLOCFAILED;
   if (retval == VLAD_OK)
     retval = m_stable->init();
+
+  /* initialise interval table */
+  if (retval == VLAD_OK && (m_ttable = VLAD_MEM_NEW(vlad_inttab())) == NULL)
+    retval = VLAD_MALLOCFAILED;
 
   /* initialise initial expression table */
   if (retval == VLAD_OK && (m_itable = VLAD_MEM_NEW(vlad_expression())) == NULL)
@@ -108,14 +115,14 @@ int vlad_polbase::init()
   if (retval == VLAD_OK && (m_mapper = VLAD_MEM_NEW(vlad_mapper())) == NULL)
     retval = VLAD_MALLOCFAILED;
 
+  /* the tnet */
+  if (retval == VLAD_OK && (m_tnet = VLAD_MEM_NEW(vlad_tnet())) == NULL)
+    retval = VLAD_MALLOCFAILED;
+
 #ifdef VLAD_SMODELS
   /* smodels smwrap: no need to create it here */
   m_smobject = NULL;
 #endif
-
-  /* the tnet */
-  if (retval == VLAD_OK && (m_tnet = VLAD_MEM_NEW(vlad_tnet())) == NULL)
-    retval = VLAD_MALLOCFAILED;
 
   /* cleanup if we failed */
   if (retval != VLAD_OK) {
@@ -144,17 +151,14 @@ int vlad_polbase::add_entity(const char *a_name, unsigned char a_type)
 /* add an interval into the policy base */
 int vlad_polbase::add_interval(const char *a_name)
 {
-  int retval;
-
   if (m_stage != 1)
     return VLAD_INVALIDOP;
 
-  /* first, we add it to the symtab */
-  if ((retval = m_stable->add(a_name, VLAD_IDENT_INT)) != VLAD_OK)
-    return retval;
+  if (a_name == NULL)
+    return VLAD_NULLPTR;
 
-  /* then add it to tnet */
-  return m_tnet->add_interval(a_name, m_stable);
+  /* first, we add it to the symtab */
+  return m_stable->add(a_name, VLAD_IDENT_INT);
 }
 
 /* same as above, but with endpoints */
@@ -164,12 +168,22 @@ int vlad_polbase::add_interval(const char *a_name,
 {
   int retval;
 
-  /* first, add the interval */
-  if ((retval = add_interval(a_name)) != VLAD_OK)
+  if (m_stage != 1)
+    return VLAD_INVALIDOP;
+
+  if (a_name == NULL)
+    return VLAD_NULLPTR;
+
+  /* ep1 should be less than ep2 */
+  if (a_ep1 >= a_ep2)
+    return VLAD_INVALIDINPUT;
+
+  /* first, we add it to the symtab */
+  if ((retval = m_stable->add(a_name, VLAD_IDENT_INT)) != VLAD_OK)
     return retval;
 
-  /* then add the endpoints */
-  return m_tnet->add_endpoints(a_name, a_ep1, a_ep2, m_stable);
+  /* then add it to the inttab */
+  return m_ttable->add(a_name, a_ep1, a_ep2);
 }
 
 /* add a fact into the initial state table */
@@ -331,12 +345,12 @@ int vlad_polbase::close_symtab()
   if (m_stage != 1)
     return VLAD_INVALIDOP;
 
-  /* XXX: for now, add a "default" interval */
-  if ((retval = m_stable->add("today", VLAD_IDENT_INT)) != VLAD_OK)
-    return retval;
-
   /* initialise the mapper with the closed symbol table */
   if ((retval = m_mapper->init(m_stable)) != VLAD_OK)
+    return retval;
+
+  /* initialise the tnet with the closed symbol table and interval table */
+  if ((retval = m_tnet->init(m_stable, m_ttable)) != VLAD_OK)
     return retval;
 
   m_stage = 2;

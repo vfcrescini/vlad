@@ -144,6 +144,12 @@ destroy :
 
 entity_section : {
     int retval;
+    /* XXX: for now, add a "default" interval */
+    if ((retval = pbase->add_interval("today")) != VLAD_OK) {
+      errorcode = retval;
+      policyerror("unable to add interval \"today\"");
+      return retval;
+    }
     /* after the entity section, we must close the symbol table */
     if ((retval = pbase->close_symtab()) != VLAD_OK) {
       errorcode = retval;
@@ -153,6 +159,12 @@ entity_section : {
   }
   | entity_stmt_list {
     int retval;
+    /* XXX: for now, add a "default" interval */
+    if ((retval = pbase->add_interval("today")) != VLAD_OK) {
+      errorcode = retval;
+      policyerror("unable to add interval \"today\"");
+      return retval;
+    }
     /* after the ident section, we must close the symbol table */
     if ((retval = pbase->close_symtab()) != VLAD_OK) {
       errorcode = retval;
