@@ -58,8 +58,8 @@ class vlad_rel : public vlad_list_item
     /* gives a list of vars occurring in the rel. assumes list is init'ed */
     int varlist(vlad_varlist *a_list);
 
-    /* returns true if none of the interval identifiers are variables */
-    bool is_ground();
+    /* returns VLAD_OK if none of the interval identifiers are variables */
+    int is_ground();
 
   private :
 

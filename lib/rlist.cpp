@@ -29,7 +29,6 @@
 
 vlad_rlist::vlad_rlist() : vlad_list(true)
 {
-  m_ground = true;
 }
 
 vlad_rlist::~vlad_rlist()
@@ -72,11 +71,8 @@ int vlad_rlist::add(const char *a_int1, const char *a_int2, unsigned int a_rel)
   }
 
   /* if not already in the list, we add it */
-  if (retval == VLAD_NOTFOUND) {
-    if (!rptr->is_ground())
-      m_ground = false;
+  if (retval == VLAD_NOTFOUND)
     return vlad_list::add(rptr);
-  }
 
   /* if already in, we just add the relation to the relset */
   if (retval == VLAD_OK)
@@ -136,9 +132,21 @@ int vlad_rlist::replace(vlad_varlist *a_vlist,
 
   return VLAD_OK;
 }
-
-/* returns true if the list contains no variables */
-bool vlad_rlist::is_ground()
+/* returns VLAD_OK if the list contains no variables */
+int vlad_rlist::is_ground()
 {
-  return m_ground;
+  int retval;
+  unsigned int i;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_rel *rel;
+
+    if ((retval = get(i, &rel)) != VLAD_OK)
+      return retval;
+
+    if ((retval = rel->is_ground()) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
 }
