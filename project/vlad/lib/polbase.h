@@ -30,14 +30,15 @@
 #include <vlad/symtab.h>
 #include <vlad/inttab.h>
 #include <vlad/expression.h>
+#include <vlad/rlist.h>
 #include <vlad/consttab.h>
 #include <vlad/updatetab.h>
 #include <vlad/seqtab.h>
 #include <vlad/mapper.h>
+#include <vlad/tnet.h>
 #ifdef VLAD_SMODELS
   #include <vlad/smwrap.h>
 #endif
-#include <vlad/tnet.h>
 
 class vlad_polbase : virtual public vlad_mem
 {
@@ -60,6 +61,9 @@ class vlad_polbase : virtual public vlad_mem
                      unsigned int a_ep1,
                      unsigned int a_ep2);
 
+    /* add a temporal constraint */
+    int add_tc(vlad_rlist *a_rlist);
+
     /* add a fact into the initial state table */
     int add_inittab(vlad_fact *a_fact);
 
@@ -80,11 +84,11 @@ class vlad_polbase : virtual public vlad_mem
     /* close symbol table */
     int close_symtab();
 
-    /* after this is called, no further calls to add_rel() is allowed */
+    /* after this is called, no further calls to add_tc() is allowed */
     int close_rel();
 
     /* after this is called, no further calls to add_entity(), add_interval(),
-     * add_rel(), add_constab() and add_updatetab() can be made */
+     * add_tc(), add_constab() and add_updatetab() can be made */
     int close_polbase();
 
     /* delete an update reference from the sequence table */
