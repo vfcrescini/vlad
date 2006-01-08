@@ -31,30 +31,30 @@
 /* some extra functions */
 
 /* return VLAD_OK if the given holds atom is valid */
-static int vlad_verify_holds(const char *a_sub,
-                             const char *a_acc,
-                             const char *a_obj,
-                             const char *a_int,
-                             vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist1,
-                             vlad_varlist *a_vlist2);
+static int vlad_fact_verify_holds(const char *a_sub,
+                                  const char *a_acc,
+                                  const char *a_obj,
+                                  const char *a_int,
+                                  vlad_symtab *a_stab,
+                                  vlad_varlist *a_vlist1,
+                                  vlad_varlist *a_vlist2);
 
 /* return VLAD_OK if the given memb atom is valid */
-static int vlad_verify_memb(const char *a_elt,
-                            const char *a_grp,
-                            const char *a_int,
-                            vlad_symtab *a_stab,
-                            vlad_varlist *a_vlist1,
-                            vlad_varlist *a_vlist2);
+static int vlad_fact_verify_memb(const char *a_elt,
+                                 const char *a_grp,
+                                 const char *a_int,
+                                 vlad_symtab *a_stab,
+                                 vlad_varlist *a_vlist1,
+                                 vlad_varlist *a_vlist2);
 
 
 /* return VLAD_OK if the given subst atom is valid */
-static int vlad_verify_subst(const char *a_grp1,
-                             const char *a_grp2,
-                             const char *a_int,
-                             vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist1,
-                             vlad_varlist *a_vlist2);
+static int vlad_fact_verify_subst(const char *a_grp1,
+                                  const char *a_grp2,
+                                  const char *a_int,
+                                  vlad_symtab *a_stab,
+                                  vlad_varlist *a_vlist1,
+                                  vlad_varlist *a_vlist2);
 
 vlad_fact::vlad_fact()
 {
@@ -669,28 +669,28 @@ int vlad_fact::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_vlist)
 
   switch(m_type) {
     case VLAD_ATOM_HOLDS :
-      return vlad_verify_holds(m_holds.subject,
-                               m_holds.access,
-                               m_holds.object,
-                               m_holds.interval,
-                               a_stab,
-                               NULL,
-                               a_vlist);
+      return vlad_fact_verify_holds(m_holds.subject,
+                                    m_holds.access,
+                                    m_holds.object,
+                                    m_holds.interval,
+                                    a_stab,
+                                    NULL,
+                                    a_vlist);
     case VLAD_ATOM_MEMBER :
-      return vlad_verify_memb(m_member.element,
-                              m_member.group,
-                              m_member.interval,
-                              a_stab,
-                              NULL,
-                              a_vlist);
+      return vlad_fact_verify_memb(m_member.element,
+                                   m_member.group,
+                                   m_member.interval,
+                                   a_stab,
+                                   NULL,
+                                   a_vlist);
 
     case VLAD_ATOM_SUBSET :
-      return vlad_verify_subst(m_subset.group1,
-                               m_subset.group2,
-                               m_subset.interval,
-                               a_stab,
-                               NULL,
-                               a_vlist);
+      return vlad_fact_verify_subst(m_subset.group1,
+                                    m_subset.group2,
+                                    m_subset.interval,
+                                    a_stab,
+                                    NULL,
+                                    a_vlist);
   }
 
   return VLAD_INVALIDINPUT;
@@ -707,28 +707,28 @@ int vlad_fact::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
 
   switch(m_type) {
     case VLAD_ATOM_HOLDS :
-      return vlad_verify_holds(m_holds.subject,
-                               m_holds.access,
-                               m_holds.object,
-                               m_holds.interval,
-                               a_stab,
-                               a_vlist,
-                               NULL);
+      return vlad_fact_verify_holds(m_holds.subject,
+                                    m_holds.access,
+                                    m_holds.object,
+                                    m_holds.interval,
+                                    a_stab,
+                                    a_vlist,
+                                    NULL);
     case VLAD_ATOM_MEMBER :
-      return vlad_verify_memb(m_member.element,
-                              m_member.group,
-                              m_member.interval,
-                              a_stab,
-                              a_vlist,
-                              NULL);
+      return vlad_fact_verify_memb(m_member.element,
+                                   m_member.group,
+                                   m_member.interval,
+                                   a_stab,
+                                   a_vlist,
+                                   NULL);
 
     case VLAD_ATOM_SUBSET :
-      return vlad_verify_subst(m_subset.group1,
-                               m_subset.group2,
-                               m_subset.interval,
-                               a_stab,
-                               a_vlist,
-                               NULL);
+      return vlad_fact_verify_subst(m_subset.group1,
+                                    m_subset.group2,
+                                    m_subset.interval,
+                                    a_stab,
+                                    a_vlist,
+                                    NULL);
   }
 
   return VLAD_INVALIDINPUT;
@@ -842,13 +842,13 @@ int vlad_fact::reset()
 }
 
 /* return VLAD_OK if the given holds atom is valid */
-static int vlad_verify_holds(const char *a_sub,
-                             const char *a_acc,
-                             const char *a_obj,
-                             const char *a_int,
-                             vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist1,
-                             vlad_varlist *a_vlist2)
+static int vlad_fact_verify_holds(const char *a_sub,
+                                  const char *a_acc,
+                                  const char *a_obj,
+                                  const char *a_int,
+                                  vlad_symtab *a_stab,
+                                  vlad_varlist *a_vlist1,
+                                  vlad_varlist *a_vlist2)
 {
   int retval;
   unsigned char type;
@@ -955,12 +955,12 @@ static int vlad_verify_holds(const char *a_sub,
 }
 
 /* return VLAD_OK if the given memb atom is valid */
-static int vlad_verify_memb(const char *a_elt,
-                            const char *a_grp,
-                            const char *a_int,
-                            vlad_symtab *a_stab,
-                            vlad_varlist *a_vlist1,
-                            vlad_varlist *a_vlist2)
+static int vlad_fact_verify_memb(const char *a_elt,
+                                 const char *a_grp,
+                                 const char *a_int,
+                                 vlad_symtab *a_stab,
+                                 vlad_varlist *a_vlist1,
+                                 vlad_varlist *a_vlist2)
 {
   int retval;
   unsigned char type[3];
@@ -1055,12 +1055,12 @@ static int vlad_verify_memb(const char *a_elt,
 }
 
 /* return VLAD_OK if the given subst atom is valid */
-static int vlad_verify_subst(const char *a_grp1,
-                             const char *a_grp2,
-                             const char *a_int,
-                             vlad_symtab *a_stab,
-                             vlad_varlist *a_vlist1,
-                             vlad_varlist *a_vlist2)
+static int vlad_fact_verify_subst(const char *a_grp1,
+                                  const char *a_grp2,
+                                  const char *a_int,
+                                  vlad_symtab *a_stab,
+                                  vlad_varlist *a_vlist1,
+                                  vlad_varlist *a_vlist2)
 {
   int retval;
   unsigned char type[3];
