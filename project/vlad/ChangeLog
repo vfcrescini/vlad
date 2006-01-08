@@ -1,5 +1,10 @@
 2006-01-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* main/policy.y :
+
+	  - For now, just hardcode an empty rlist when adding constraints and
+	    updates.
+
 	* lib/polbase.cpp :
 	* lib/polbase.h :
 
