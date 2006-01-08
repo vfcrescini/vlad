@@ -344,3 +344,31 @@ int vlad_rlist::is_ground()
 
   return VLAD_OK;
 }
+
+/* returns VLAD_OK if all the rels contain at least one variable */
+int vlad_rlist::is_allnonground()
+{
+  int retval;
+  unsigned int i;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_rel *rel;
+
+    if ((retval = get(i, &rel)) != VLAD_OK)
+      return retval;
+
+    switch((retval = rel->is_ground())) {
+      case VLAD_FAILURE :
+        /* VLAD_FAILURE means non-ground */
+        continue;
+      case VLAD_OK :
+        /* VLAD_OK means ground, which means it failed the test */
+        return VLAD_FAILURE;
+      default :
+        return retval;
+    }
+  }
+
+  return VLAD_OK;
+}
+
