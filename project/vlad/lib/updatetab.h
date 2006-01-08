@@ -26,6 +26,7 @@
 #include <vlad/expression.h>
 #include <vlad/stringlist.h>
 #include <vlad/varlist.h>
+#include <vlad/rlist.h>
 
 class vlad_updatedef : public vlad_list_item
 {
@@ -41,19 +42,22 @@ class vlad_updatedef : public vlad_list_item
     int get(char **a_name,
             vlad_varlist **a_vlist,
             vlad_expression **a_prexp,
-            vlad_expression **a_poexp);
+            vlad_expression **a_poexp,
+            vlad_rlist **a_rlist);
 
     /* init attrbiutes */
     int init(const char *a_name,
              vlad_varlist *a_vlist,
              vlad_expression *a_prexp,
-             vlad_expression *a_poexp);
+             vlad_expression *a_poexp,
+             vlad_rlist *a_rlist);
   private :
 
     char *m_name;
     vlad_varlist *m_vlist;
     vlad_expression *m_prexp;
     vlad_expression *m_poexp;
+    vlad_rlist *m_rlist;
     bool m_init;
 } ;
 
@@ -68,13 +72,15 @@ class vlad_updatetab : public vlad_list
     int add(const char *a_name,
             vlad_varlist *a_vlist,
             vlad_expression *a_prexp,
-            vlad_expression *a_poexp);
+            vlad_expression *a_poexp,
+            vlad_rlist *a_rlist);
 
     /* get update by name */
     int get(const char *a_name,
             vlad_varlist **a_vlist,
             vlad_expression **a_prexp,
-            vlad_expression **a_poexp);
+            vlad_expression **a_poexp,
+            vlad_rlist **a_rlist);
 
     /* vlist1 contains the specified varlist, vlist2 contains all vars that
      * occur in the expressions but not in vlist1 */
@@ -82,14 +88,16 @@ class vlad_updatetab : public vlad_list
             vlad_varlist **a_vlist1,
             vlad_varlist **a_vlist2,
             vlad_expression **a_prexp,
-            vlad_expression **a_poexp);
+            vlad_expression **a_poexp,
+            vlad_rlist **a_rlist);
 
     /* get update by index */
     int get(unsigned int a_index,
             char **a_name,
             vlad_varlist **a_vlist,
             vlad_expression **a_prexp,
-            vlad_expression **a_poexp);
+            vlad_expression **a_poexp,
+            vlad_rlist **a_rlist);
 } ;
 
 #endif

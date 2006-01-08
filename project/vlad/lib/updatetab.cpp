@@ -33,6 +33,7 @@ vlad_updatedef::vlad_updatedef()
   m_vlist = NULL;
   m_prexp = NULL;
   m_poexp = NULL;
+  m_rlist = NULL;
   m_init = false;
 }
 
@@ -46,6 +47,8 @@ vlad_updatedef::~vlad_updatedef()
     VLAD_MEM_DELETE(m_prexp);
   if (m_poexp != NULL)
     VLAD_MEM_DELETE(m_poexp);
+  if (m_rlist != NULL)
+    VLAD_MEM_DELETE(m_rlist);
 }
 
 /* compare 2 update defs */
@@ -77,7 +80,8 @@ bool vlad_updatedef::cmp(vlad_list_item *a_item)
 int vlad_updatedef::init(const char *a_name,
                          vlad_varlist *a_vlist,
                          vlad_expression *a_prexp,
-                         vlad_expression *a_poexp)
+                         vlad_expression *a_poexp,
+                         vlad_rlist *a_rlist)
 {
   if (m_init) {
     if (m_name != NULL)
@@ -88,6 +92,8 @@ int vlad_updatedef::init(const char *a_name,
       VLAD_MEM_DELETE(m_prexp);
     if (m_poexp != NULL)
       VLAD_MEM_DELETE(m_poexp);
+    if (m_rlist != NULL)
+      VLAD_MEM_DELETE(m_rlist);
   }
 
   if (a_name == NULL)
@@ -97,6 +103,7 @@ int vlad_updatedef::init(const char *a_name,
   m_vlist = a_vlist;
   m_prexp = a_prexp;
   m_poexp = a_poexp;
+  m_rlist = a_rlist;
 
   m_init = true;
 
@@ -107,18 +114,20 @@ int vlad_updatedef::init(const char *a_name,
 int vlad_updatedef::get(char **a_name,
                         vlad_varlist **a_vlist,
                         vlad_expression **a_prexp,
-                        vlad_expression **a_poexp)
+                        vlad_expression **a_poexp,
+                        vlad_rlist **a_rlist)
 {
   if (!m_init)
     return VLAD_UNINITIALISED;
 
-  if (a_name == NULL || a_vlist == NULL || a_prexp == NULL || a_poexp == NULL)
+  if (a_name == NULL || a_vlist == NULL || a_prexp == NULL || a_poexp == NULL || a_rlist == NULL)
     return VLAD_NULLPTR;
 
   *a_name = m_name;
   *a_vlist = m_vlist;
   *a_prexp = m_prexp;
   *a_poexp = m_poexp;
+  *a_rlist = m_rlist;
 
   return VLAD_OK;
 }
@@ -136,7 +145,8 @@ vlad_updatetab::~vlad_updatetab()
 int vlad_updatetab::add(const char *a_name,
                         vlad_varlist *a_vlist,
                         vlad_expression *a_prexp,
-                        vlad_expression *a_poexp)
+                        vlad_expression *a_poexp,
+                        vlad_rlist *a_rlist)
 {
   int retval;
   vlad_updatedef *udef;
@@ -144,7 +154,7 @@ int vlad_updatetab::add(const char *a_name,
   if ((udef = VLAD_MEM_NEW(vlad_updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = udef->init(a_name, a_vlist, a_prexp, a_poexp)) != VLAD_OK) {
+  if ((retval = udef->init(a_name, a_vlist, a_prexp, a_poexp, a_rlist)) != VLAD_OK) {
     VLAD_MEM_DELETE(udef);
     return retval;
   }
@@ -156,7 +166,8 @@ int vlad_updatetab::add(const char *a_name,
 int vlad_updatetab::get(const char *a_name,
                         vlad_varlist **a_vlist,
                         vlad_expression **a_prexp,
-                        vlad_expression **a_poexp)
+                        vlad_expression **a_poexp,
+                        vlad_rlist **a_rlist)
 {
   int retval;
   char *name;
@@ -164,6 +175,7 @@ int vlad_updatetab::get(const char *a_name,
   vlad_updatedef **lst;
   vlad_expression *prexp;
   vlad_expression *poexp;
+  vlad_rlist *rlist;
   unsigned int size;
 
   if (a_name == NULL || a_vlist == NULL)
@@ -178,14 +190,14 @@ int vlad_updatetab::get(const char *a_name,
   if ((udef = VLAD_MEM_NEW(vlad_updatedef())) == NULL)
     return VLAD_MALLOCFAILED;
 
-  if ((retval = udef->init(name, NULL, NULL, NULL)) != VLAD_OK)
+  if ((retval = udef->init(name, NULL, NULL, NULL, NULL)) != VLAD_OK)
     return retval;
 
   if ((retval = vlad_list::get((vlad_list_item *) udef, (vlad_list_item ***) &lst, &size)) != VLAD_OK)
     return retval;
 
   /* only one. m_name is already copied and will be deleted with udef */
-  if ((retval = lst[0]->get(&name, a_vlist, &prexp, &poexp)) != VLAD_OK)
+  if ((retval = lst[0]->get(&name, a_vlist, &prexp, &poexp, &rlist)) != VLAD_OK)
     return retval;
 
   VLAD_MEM_FREE(lst);
@@ -195,6 +207,8 @@ int vlad_updatetab::get(const char *a_name,
     *a_prexp = prexp;
   if (a_poexp != NULL)
     *a_poexp = poexp;
+  if (a_rlist != NULL)
+    *a_rlist = rlist;
 
   return VLAD_OK;
 }
@@ -205,12 +219,14 @@ int vlad_updatetab::get(const char *a_name,
                         vlad_varlist **a_vlist1,
                         vlad_varlist **a_vlist2,
                         vlad_expression **a_prexp,
-                        vlad_expression **a_poexp)
+                        vlad_expression **a_poexp,
+                        vlad_rlist **a_rlist)
 {
   int retval;
   vlad_varlist *vlist;
   vlad_expression *prexp;
   vlad_expression *poexp;
+  vlad_rlist *rlist;
 
   if (a_vlist1 == NULL || a_vlist2 == NULL)
     return VLAD_NULLPTR;
@@ -218,7 +234,7 @@ int vlad_updatetab::get(const char *a_name,
   *a_vlist1 = NULL;
   *a_vlist2 = NULL;
 
-  if ((retval = get(a_name, &vlist, &prexp, &poexp)) != VLAD_OK)
+  if ((retval = get(a_name, &vlist, &prexp, &poexp, &rlist)) != VLAD_OK)
     return retval;
 
   /* create a list of variables that are actually used in the exps */
@@ -252,6 +268,8 @@ int vlad_updatetab::get(const char *a_name,
     *a_prexp = prexp;
   if (a_poexp != NULL)
     *a_poexp = poexp;
+  if (a_rlist != NULL)
+    *a_rlist = rlist;
 
   /* if empty, delete it */
   if ((*a_vlist2)->length() == 0) {
@@ -267,11 +285,13 @@ int vlad_updatetab::get(unsigned int a_index,
                         char **a_name,
                         vlad_varlist **a_vlist,
                         vlad_expression **a_prexp,
-                        vlad_expression **a_poexp)
+                        vlad_expression **a_poexp,
+                        vlad_rlist **a_rlist)
 {
   int retval;
   vlad_expression *prexp;
   vlad_expression *poexp;
+  vlad_rlist *rlist;
   vlad_updatedef *udef;
 
   if (a_name == NULL || a_vlist == NULL)
@@ -280,13 +300,15 @@ int vlad_updatetab::get(unsigned int a_index,
   if ((retval = vlad_list::get(a_index, (vlad_list_item **) &udef)) != VLAD_OK)
     return retval;
 
-  if ((retval = udef->get(a_name, a_vlist, &prexp, &poexp)) != VLAD_OK)
+  if ((retval = udef->get(a_name, a_vlist, &prexp, &poexp, &rlist)) != VLAD_OK)
     return retval;
 
   if (a_prexp)
     *a_prexp = prexp;
   if (a_poexp)
     *a_poexp = poexp;
+  if (a_rlist)
+    *a_rlist = rlist;
 
   return VLAD_OK;
 }

@@ -70,13 +70,15 @@ class vlad_polbase : virtual public vlad_mem
     /* add a constrant into the constraints table */
     int add_consttab(vlad_expression *a_exp,
                      vlad_expression *a_cond,
-                     vlad_expression *a_ncond);
+                     vlad_expression *a_ncond,
+                     vlad_rlist *a_rlist);
 
     /* add an update declaration in the update table */
     int add_updatetab(const char *a_name,
                       vlad_varlist *a_vlist,
                       vlad_expression *a_precond,
-                      vlad_expression *a_postcond);
+                      vlad_expression *a_postcond,
+                      vlad_rlist *a_rlist);
 
     /* add an update reference to the sequence table */
     int add_seqtab(vlad_updateref *a_uref);
@@ -109,7 +111,8 @@ class vlad_polbase : virtual public vlad_mem
                       char **a_name,
                       vlad_varlist **a_vlist,
                       vlad_expression **a_precond,
-                      vlad_expression **a_postcond);
+                      vlad_expression **a_postcond,
+                      vlad_rlist **a_rlist);
 
     /* returns the length of the sequence table */
     unsigned int length_seqtab();
