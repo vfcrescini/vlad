@@ -41,16 +41,33 @@ class vlad_rlist : public vlad_list
     /* gives a reference to the ith relation */
     int get(unsigned int a_i, vlad_rel **a_rel);
 
-    /* ensure that each interval is in symtab and each var is in varlist */
-    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
+    /* make a copy */
+    int copy(vlad_rlist **a_rlist);
+
+    /* verify then copy */
+    int vcopy(vlad_symtab *a_stab,
+              vlad_varlist *a_vlist,
+              vlad_rlist **a_rlist);
 
     /* replace vars in vlist to ident in ilist. create a new rlist */
     int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
                 vlad_rlist **a_rlist);
 
+    /* replace then verify */
+    int vreplace(vlad_symtab *a_stab,
+                 vlad_varlist *a_vlist,
+                 vlad_stringlist *a_ilist,
+                 vlad_rlist **a_rlist);
+
     /* gives a list of vars occurring in the rlist. assumes list is init'ed */
     int varlist(vlad_varlist *a_vlist);
+
+    /* as above, but verify first */
+    int vvarlist(vlad_symtab *a_stab, vlad_varlist *a_vlist);
+
+    /* ensure that each interval is in symtab and each var is in varlist */
+    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
     /* returns VLAD_OK if the list contains no variables */
     int is_ground();
