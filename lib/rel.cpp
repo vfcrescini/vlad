@@ -27,6 +27,13 @@
 #include <vlad/identifier.h>
 #include <vlad/rel.h>
 
+/* verify, vars must be in vlist1. actual vars occuring go to vlist2 */
+static int vlad_rel_verify(const char *a_int1,
+                           const char *a_int2,
+                           vlad_symtab *a_stab,
+                           vlad_varlist *a_vlist1,
+                           vlad_varlist *a_vlist2);
+
 vlad_rel::vlad_rel()
 {
   m_int1 = NULL;
@@ -170,50 +177,19 @@ int vlad_rel::copy(vlad_rel **a_rel)
   return retval;
 }
 
-/* ensure that each interval is in symtab and each var is in varlist */
-int vlad_rel::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
+/* verify, then copy */
+int vlad_rel::vcopy(vlad_symtab *a_stab,
+                    vlad_varlist *a_vlist,
+                    vlad_rel **a_rel)
 {
-  if (!m_init)
-    return VLAD_UNINITIALISED;
+  int retval;
 
-  if (a_stab == NULL)
-    return VLAD_NULLPTR;
+  /* first we verify */
+  if ((retval = verify(a_stab, a_vlist)) != VLAD_OK)
+    return retval;
 
-  /* check interval 1 */
-  if (vlad_identifier::validate_nvar_ident(m_int1) == VLAD_OK) {
-    /* an interval, so make sure it's in the symtab with the right type */
-    if (a_stab->find(m_int1, VLAD_IDENT_INT) != VLAD_OK)
-      return VLAD_INVALIDINPUT;
-  }
-  else if (vlad_identifier::validate_var_ident(m_int1) == VLAD_OK) {
-    /* a variable, so we check if the type is ok */
-    if (!VLAD_IDENT_TYPE_IS_INT(vlad_identifier::get_var_type(m_int1)))
-      return VLAD_INVALIDINPUT;
-    /* if all is good, we check the varlist */
-    if ((a_vlist != NULL) && (a_vlist->find(m_int1) != VLAD_OK))
-      return VLAD_INVALIDINPUT;
-  }
-  else
-    return VLAD_INVALIDINPUT;
-
-  /* check interval 2 */
-  if (vlad_identifier::validate_nvar_ident(m_int2) == VLAD_OK) {
-    /* an interval, so make sure it's in the symtab with the right type */
-    if (a_stab->find(m_int2, VLAD_IDENT_INT) != VLAD_OK)
-      return VLAD_INVALIDINPUT;
-  }
-  else if (vlad_identifier::validate_var_ident(m_int2) == VLAD_OK) {
-    /* a variable, so we check if the type is ok */
-    if (!VLAD_IDENT_TYPE_IS_INT(vlad_identifier::get_var_type(m_int2)))
-      return VLAD_INVALIDINPUT;
-    /* if all is good, we check the varlist */
-    if ((a_vlist != NULL) && (a_vlist->find(m_int2) != VLAD_OK))
-      return VLAD_INVALIDINPUT;
-  }
-  else
-    return VLAD_INVALIDINPUT;
-
-  return VLAD_OK;
+  /* then we copy */
+  return copy(a_rel);
 }
 
 /* replaces vars in a_vlist with idents in a_ilist. gives a new rel */
@@ -288,6 +264,27 @@ int vlad_rel::replace(vlad_varlist *a_vlist,
   return VLAD_OK;
 }
 
+/* replace, then verify */
+int vlad_rel::vreplace(vlad_symtab *a_stab,
+                      vlad_varlist *a_vlist,
+                      vlad_stringlist *a_ilist,
+                      vlad_rel **a_rel)
+{
+  int retval;
+
+  /* first we replace */
+  if ((retval = replace(a_vlist, a_ilist, a_rel)) != VLAD_OK)
+    return retval;
+
+  /* then we verify */
+  if ((retval = (*a_rel)->verify(a_stab, NULL)) != VLAD_OK) {
+    VLAD_MEM_DELETE(*a_rel);
+    return retval;
+  }
+
+  return VLAD_OK;
+}
+
 /* gives a list of vars occurring in the rel. assumes list is init'ed */
 int vlad_rel::varlist(vlad_varlist *a_vlist)
 {
@@ -312,6 +309,30 @@ int vlad_rel::varlist(vlad_varlist *a_vlist)
   return VLAD_OK;
 }
 
+/* same as above, but verifies the the rel too */
+int vlad_rel::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_vlist)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_stab == NULL || a_vlist == NULL)
+    return VLAD_NULLPTR;
+
+  return vlad_rel_verify(m_int1, m_int2, a_stab, NULL, a_vlist);
+}
+
+/* ensure that each interval is in symtab and each var is in varlist */
+int vlad_rel::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_stab == NULL)
+    return VLAD_NULLPTR;
+
+  return vlad_rel_verify(m_int1, m_int2, a_stab, a_vlist, NULL);
+}
+
 /* returns VLAD_OK if none of the interval identifiers are variables */
 int vlad_rel::is_ground()
 {
@@ -322,6 +343,64 @@ int vlad_rel::is_ground()
     return VLAD_FAILURE;
   if (vlad_identifier::validate_var_ident(m_int2) == VLAD_OK)
     return VLAD_FAILURE;
+
+  return VLAD_OK;
+}
+
+/* verify, vars must be in vlist1. actual vars occuring go to vlist2 */
+static int vlad_rel_verify(const char *a_int1,
+                           const char *a_int2,
+                           vlad_symtab *a_stab,
+                           vlad_varlist *a_vlist1,
+                           vlad_varlist *a_vlist2)
+{
+  int retval;
+
+  /* check interval 1 */
+  if (vlad_identifier::validate_nvar_ident(a_int1) == VLAD_OK) {
+    /* an interval, so make sure it's in the symtab with the right type */
+    if (a_stab->find(a_int1, VLAD_IDENT_INT) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
+  }
+  else if (vlad_identifier::validate_var_ident(a_int1) == VLAD_OK) {
+    /* a variable, so we check if the type is ok */
+    if (!VLAD_IDENT_TYPE_IS_INT(vlad_identifier::get_var_type(a_int1)))
+      return VLAD_INVALIDINPUT;
+    /* if all is good, we check the varlist */
+    if ((a_vlist1 != NULL) && (a_vlist1->find(a_int1) != VLAD_OK))
+      return VLAD_INVALIDINPUT;
+    /* finally, we add it in vlist2 */
+    if (a_vlist2 != NULL) {
+      retval = a_vlist2->add(a_int1);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
+  }
+  else
+    return VLAD_INVALIDINPUT;
+
+  /* check interval 2 */
+  if (vlad_identifier::validate_nvar_ident(a_int2) == VLAD_OK) {
+    /* an interval, so make sure it's in the symtab with the right type */
+    if (a_stab->find(a_int2, VLAD_IDENT_INT) != VLAD_OK)
+      return VLAD_INVALIDINPUT;
+  }
+  else if (vlad_identifier::validate_var_ident(a_int2) == VLAD_OK) {
+    /* a variable, so we check if the type is ok */
+    if (!VLAD_IDENT_TYPE_IS_INT(vlad_identifier::get_var_type(a_int2)))
+      return VLAD_INVALIDINPUT;
+    /* if all is good, we check the varlist */
+    if ((a_vlist1 != NULL) && (a_vlist1->find(a_int2) != VLAD_OK))
+      return VLAD_INVALIDINPUT;
+    /* finally, we add it in vlist2 */
+    if (a_vlist2 != NULL) {
+      retval = a_vlist2->add(a_int2);
+      if (retval != VLAD_OK && retval != VLAD_DUPLICATE)
+        return retval;
+    }
+  }
+  else
+    return VLAD_INVALIDINPUT;
 
   return VLAD_OK;
 }
