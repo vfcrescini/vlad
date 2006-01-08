@@ -1,5 +1,10 @@
 2006-01-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/rel.cpp :
+	* lib/rel.h :
+
+	  - Added vcopy(),vreplace() and vvarlist().
+
 	* lib/updatetab.cpp :
 	* lib/updatetab.h :
 

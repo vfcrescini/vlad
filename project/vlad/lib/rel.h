@@ -51,16 +51,28 @@ class vlad_rel : public vlad_list_item
     /* creates a new instance of this relation */
     int copy(vlad_rel **a_rel);
 
-    /* ensure that each interval is in symtab and each var is in varlist */
-    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
+    /* verify, then copy */
+    int vcopy(vlad_symtab *a_stab, vlad_varlist *a_vlist, vlad_rel **a_rel);
 
     /* replaces vars in a_vlist with idents in a_ilist. gives a new rel */
     int replace(vlad_varlist *a_vlist,
                 vlad_stringlist *a_ilist,
                 vlad_rel **a_rel);
 
+    /* replace, then verify */
+    int vreplace(vlad_symtab *a_stab,
+                 vlad_varlist *a_vlist,
+                 vlad_stringlist *a_ilist,
+                 vlad_rel **a_rel);
+
     /* gives a list of vars occurring in the rel. assumes list is init'ed */
     int varlist(vlad_varlist *a_vlist);
+
+    /* same as above, but verifies the the rel too */
+    int vvarlist(vlad_symtab *a_stab, vlad_varlist *a_vlist);
+
+    /* ensure that each interval is in symtab and each var is in varlist */
+    int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
     /* returns VLAD_OK if none of the interval identifiers are variables */
     int is_ground();
