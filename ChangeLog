@@ -1,5 +1,10 @@
 2006-01-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/rlist.cpp :
+	* lib/rlist.h :
+
+	  - Added copy(), vcopy(),vreplace() and vvarlist().
+
 	* lib/rel.cpp :
 	* lib/rel.h :
 
