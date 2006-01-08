@@ -165,10 +165,10 @@ symtab.o : vlad.h mem.h stringlist.h stringlistlist.h varlist.h identifier.h sym
 inttab.o : vlad.h mem.h list.h inttab.h inttab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c inttab.cpp
 
-consttab.o : vlad.h mem.h varlist.h expression.h consttab.h consttab.cpp
+consttab.o : vlad.h mem.h varlist.h expression.h rlist.h consttab.h consttab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c consttab.cpp
 
-updatetab.o : vlad.h mem.h stringlist.h varlist.h expression.h updatetab.h updatetab.cpp
+updatetab.o : vlad.h mem.h stringlist.h varlist.h rlist.h expression.h updatetab.h updatetab.cpp
 	$(CXX) $(CXXFLAGS) -o $(@) -c updatetab.cpp
 
 seqtab.o : vlad.h mem.h stringlist.h expression.h updatetab.h symtab.h seqtab.h seqtab.cpp
