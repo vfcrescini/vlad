@@ -73,10 +73,10 @@ class vlad_expression : public vlad_list
                  vlad_expression **a_exp);
 
     /* gives a list of vars occuring in the expr. assumes list is init'ed */
-    int varlist(vlad_varlist *a_list);
+    int varlist(vlad_varlist *a_vlist);
 
     /* as above, but verify first */
-    int vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list);
+    int vvarlist(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
     /* check if exp is valid, any variables that occur must be in a_vlist */
     int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
