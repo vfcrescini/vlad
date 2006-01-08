@@ -193,12 +193,12 @@ int vlad_expression::vreplace(vlad_symtab *a_stab,
 }
 
 /* gives a list of vars occuring in the expr. assumes list is init'ed */
-int vlad_expression::varlist(vlad_varlist *a_list)
+int vlad_expression::varlist(vlad_varlist *a_vlist)
 {
   int retval;
   unsigned int i;
 
-  if (a_list == NULL)
+  if (a_vlist == NULL)
     return VLAD_NULLPTR;
 
   for (i = 0; i < vlad_list::length(); i++) {
@@ -207,7 +207,7 @@ int vlad_expression::varlist(vlad_varlist *a_list)
     if ((retval = get(i, &fact)) != VLAD_OK)
       return retval;
 
-    if ((retval = fact->varlist(a_list)) != VLAD_OK)
+    if ((retval = fact->varlist(a_vlist)) != VLAD_OK)
       return retval;
   }
 
@@ -215,12 +215,12 @@ int vlad_expression::varlist(vlad_varlist *a_list)
 }
 
 /* as above, but verify first */
-int vlad_expression::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list)
+int vlad_expression::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_vlist)
 {
   int retval;
   unsigned int i;
 
-  if (a_stab == NULL || a_list == NULL)
+  if (a_stab == NULL || a_vlist == NULL)
     return VLAD_NULLPTR;
 
   for (i = 0; i < vlad_list::length(); i++) {
@@ -229,7 +229,7 @@ int vlad_expression::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list)
     if ((retval = get(i, &fact)) != VLAD_OK)
       return retval;
 
-    if ((retval = fact->vvarlist(a_stab, a_list)) != VLAD_OK)
+    if ((retval = fact->vvarlist(a_stab, a_vlist)) != VLAD_OK)
       return retval;
   }
 
