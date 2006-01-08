@@ -106,7 +106,7 @@ int vlad_updateref::verify(vlad_symtab *a_stab, vlad_updatetab *a_utab)
     return VLAD_NULLPTR;
 
   /* get the varlist of the update definition */
-  if ((retval = a_utab->get(m_name, &vlist, NULL, NULL)) != VLAD_OK)
+  if ((retval = a_utab->get(m_name, &vlist, NULL, NULL, NULL)) != VLAD_OK)
     return retval;
 
   /* if the lists are empty, there's nothing to do */
