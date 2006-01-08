@@ -3,6 +3,8 @@
 	* lib/rlist.cpp :
 	* lib/rlist.h :
 
+	  - Added is_allnonground() to check whether all rels are non-ground.
+
 	  - Added copy(), vcopy(),vreplace() and vvarlist().
 
 	* lib/rel.cpp :

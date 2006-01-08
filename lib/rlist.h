@@ -71,6 +71,9 @@ class vlad_rlist : public vlad_list
 
     /* returns VLAD_OK if the list contains no variables */
     int is_ground();
+
+    /* returns VLAD_OK if all the rels contain at least one variable */
+    int is_allnonground();
 } ;
 
 #endif
