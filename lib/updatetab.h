@@ -90,12 +90,6 @@ class vlad_updatetab : public vlad_list
             vlad_varlist **a_vlist,
             vlad_expression **a_prexp,
             vlad_expression **a_poexp);
-
-    /* replace variables with identifiers in ilist, then get pr and pp */
-    int replace(const char *a_name,
-                vlad_stringlist *a_ilist,
-                vlad_expression **a_prexp,
-                vlad_expression **a_poexp);
 } ;
 
 #endif

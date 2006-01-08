@@ -290,37 +290,3 @@ int vlad_updatetab::get(unsigned int a_index,
 
   return VLAD_OK;
 }
-
-/* replace variables with identifiers in v, then get pr and pp */
-int vlad_updatetab::replace(const char *a_name,
-                            vlad_stringlist *a_ilist,
-                            vlad_expression **a_prexp,
-                            vlad_expression **a_poexp)
-{
-  int retval;
-  vlad_expression *prexp;
-  vlad_expression *poexp;
-  vlad_varlist *vlist;
-
-  if (a_name == NULL || a_prexp == NULL || a_poexp == NULL)
-    return VLAD_NULLPTR;
-
-  if ((retval = get(a_name, &vlist, &prexp, &poexp)) != VLAD_OK)
-    return retval;
-
-  if (prexp != NULL) {
-    if ((retval = prexp->replace(vlist, a_ilist, a_prexp)) != VLAD_OK)
-      return retval;
-  }
-  else
-    *a_prexp = NULL;
-
-  if (poexp != NULL) {
-    if ((retval = poexp->replace(vlist, a_ilist, a_poexp)) != VLAD_OK)
-      return retval;
-  }
-  else
-    *a_poexp = NULL;
-
-  return VLAD_OK;
-}

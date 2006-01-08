@@ -1,3 +1,10 @@
+2006-01-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/updatetab.cpp :
+	* lib/updatetab.h :
+
+	  - Removed unused replace() function.
+
 2006-01-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/polbase.cpp :
