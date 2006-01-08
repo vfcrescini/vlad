@@ -104,10 +104,10 @@ class vlad_fact : public vlad_list_item
                  vlad_fact **a_fact);
 
     /* gives a list of vars occuring in the fact. assumes list is init'ed */
-    int varlist(vlad_varlist *a_list);
+    int varlist(vlad_varlist *a_vlist);
 
     /* same as above, but verifies the fact too */
-    int vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list);
+    int vvarlist(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
     /* check if fact is valid, any variables that occur must be in a_vlist */
     int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);

@@ -590,32 +590,32 @@ int vlad_fact::vreplace(vlad_symtab *a_stab,
 }
 
 /* gives a list of vars occuring in the fact. assumes list is init'ed */
-int vlad_fact::varlist(vlad_varlist *a_list)
+int vlad_fact::varlist(vlad_varlist *a_vlist)
 {
   int retval;
 
   if (!m_init)
     return VLAD_UNINITIALISED;
 
-  if (a_list == NULL)
+  if (a_vlist == NULL)
     return VLAD_NULLPTR;
 
   switch(m_type) {
     case VLAD_ATOM_HOLDS :
       if (vlad_identifier::validate_var_ident(m_holds.subject) == VLAD_OK)
-        if ((retval = a_list->add(m_holds.subject)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_holds.subject)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
       if (vlad_identifier::validate_var_ident(m_holds.access) == VLAD_OK)
-        if ((retval = a_list->add(m_holds.access)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_holds.access)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
       if (vlad_identifier::validate_var_ident(m_holds.object) == VLAD_OK)
-        if ((retval = a_list->add(m_holds.object)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_holds.object)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
       if (vlad_identifier::validate_var_ident(m_holds.interval) == VLAD_OK)
-        if ((retval = a_list->add(m_holds.interval)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_holds.interval)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
 
@@ -623,15 +623,15 @@ int vlad_fact::varlist(vlad_varlist *a_list)
 
     case VLAD_ATOM_MEMBER :
       if (vlad_identifier::validate_var_ident(m_member.element) == VLAD_OK)
-        if ((retval = a_list->add(m_member.element)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_member.element)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
       if (vlad_identifier::validate_var_ident(m_member.group) == VLAD_OK)
-        if ((retval = a_list->add(m_member.group)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_member.group)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
       if (vlad_identifier::validate_var_ident(m_member.interval) == VLAD_OK)
-        if ((retval = a_list->add(m_member.interval)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_member.interval)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
 
@@ -639,15 +639,15 @@ int vlad_fact::varlist(vlad_varlist *a_list)
 
     case VLAD_ATOM_SUBSET :
       if (vlad_identifier::validate_var_ident(m_subset.group1) == VLAD_OK)
-        if ((retval = a_list->add(m_subset.group1)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_subset.group1)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
       if (vlad_identifier::validate_var_ident(m_subset.group2) == VLAD_OK)
-        if ((retval = a_list->add(m_subset.group2)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_subset.group2)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
       if (vlad_identifier::validate_var_ident(m_subset.interval) == VLAD_OK)
-        if ((retval = a_list->add(m_subset.interval)) != VLAD_OK)
+        if ((retval = a_vlist->add(m_subset.interval)) != VLAD_OK)
           if (retval != VLAD_DUPLICATE)
             return retval;
 
@@ -659,12 +659,12 @@ int vlad_fact::varlist(vlad_varlist *a_list)
 }
 
 /* same as above, but verifies the fact too */
-int vlad_fact::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list)
+int vlad_fact::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_vlist)
 {
   if (!m_init)
     return VLAD_UNINITIALISED;
 
-  if (a_stab == NULL || a_list == NULL)
+  if (a_stab == NULL || a_vlist == NULL)
     return VLAD_NULLPTR;
 
   switch(m_type) {
@@ -675,14 +675,14 @@ int vlad_fact::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list)
                                m_holds.interval,
                                a_stab,
                                NULL,
-                               a_list);
+                               a_vlist);
     case VLAD_ATOM_MEMBER :
       return vlad_verify_memb(m_member.element,
                               m_member.group,
                               m_member.interval,
                               a_stab,
                               NULL,
-                              a_list);
+                              a_vlist);
 
     case VLAD_ATOM_SUBSET :
       return vlad_verify_subst(m_subset.group1,
@@ -690,7 +690,7 @@ int vlad_fact::vvarlist(vlad_symtab *a_stab, vlad_varlist *a_list)
                                m_subset.interval,
                                a_stab,
                                NULL,
-                               a_list);
+                               a_vlist);
   }
 
   return VLAD_INVALIDINPUT;
