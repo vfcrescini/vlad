@@ -394,7 +394,8 @@ constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause VLAD_SYM
     char c[VLAD_MAXLEN_STR];
     char n[VLAD_MAXLEN_STR];
 #endif
-    if ((retval = pbase->add_consttab($2, $3, $4)) != VLAD_OK) {
+    /* XXX */
+    if ((retval = pbase->add_consttab($2, $3, $4, NULL)) != VLAD_OK) {
       errorcode = retval;
       policyerror("could not add constraint into constraint table");
       return retval;
@@ -451,7 +452,8 @@ update_stmt :
     char po[VLAD_MAXLEN_STR];
 #endif
 
-    if ((retval = pbase->add_updatetab($1, $2, $5, $4)) != VLAD_OK) {
+    /* XXX */
+    if ((retval = pbase->add_updatetab($1, $2, $5, $4, NULL)) != VLAD_OK) {
       errorcode = retval;
       policyerror("could not add update into update table");
       return retval;
