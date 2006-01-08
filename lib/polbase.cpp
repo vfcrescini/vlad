@@ -233,12 +233,14 @@ int vlad_polbase::add_inittab(vlad_fact *a_fact)
 /* add a constrant into the constraints table */
 int vlad_polbase::add_consttab(vlad_expression *a_exp,
                                vlad_expression *a_cond,
-                               vlad_expression *a_ncond)
+                               vlad_expression *a_ncond,
+                               vlad_rlist *a_rlist)
 {
-  int retval = VLAD_OK;
+  int retval;
   vlad_expression *exp_e = NULL;
   vlad_expression *exp_c = NULL;
   vlad_expression *exp_n = NULL;
+  vlad_rlist *rlist = NULL;
 
   if (m_stage != 3)
     return VLAD_INVALIDOP;
@@ -247,17 +249,55 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
   if (a_exp == NULL)
     return VLAD_NULLPTR;
 
-  /* make copies of the expresssions while verifying */
-  if (retval == VLAD_OK)
-    retval = a_exp->vcopy(m_stable, NULL, &exp_e);
-  if (retval == VLAD_OK && a_cond != NULL)
-    retval = a_cond->vcopy(m_stable, NULL, &exp_c);
-  if (retval == VLAD_OK && a_ncond != NULL)
-    retval = a_ncond->vcopy(m_stable, NULL, &exp_n);
+  /* firstly, we verfiy all the exressions */
+  if ((retval = a_exp->verify(m_stable, NULL)) != VLAD_OK)
+    return retval;
+  if (a_cond != NULL && (retval = a_cond->verify(m_stable, NULL)) != VLAD_OK)
+    return retval;
+  if (a_ncond != NULL && (retval = a_ncond->verify(m_stable, NULL)) != VLAD_OK)
+    return retval;
 
-  /* then, we add the expressions into the cosntraints table */
+  retval = VLAD_OK;
+
+  if (a_rlist != NULL) {
+    vlad_varlist *vlist = NULL;
+
+    /* make sure each rel is non-ground */
+    if ((retval = a_rlist->is_allnonground()) != VLAD_OK)
+      return retval;
+
+    /* now we compose a varlist from the vars of the expressions */
+    if ((vlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
+      return VLAD_MALLOCFAILED;
+
+    if (retval == VLAD_OK)
+      retval = a_exp->varlist(vlist);
+    if (retval == VLAD_OK && a_cond != NULL)
+      retval = a_cond->varlist(vlist);
+    if (retval == VLAD_OK && a_ncond != NULL)
+      retval = a_ncond->varlist(vlist);
+
+    /* now, we verify the rlist, each variable there must be in the vlist */
+    if (retval == VLAD_OK)
+      retval = a_rlist->verify(m_stable, vlist);
+   
+    if (vlist != NULL)
+      VLAD_MEM_DELETE(vlist);
+  }
+
+  /* all verified, now we copy */
   if (retval == VLAD_OK)
-    retval = m_ctable->add(exp_e, exp_c, exp_n);
+    retval = a_exp->copy(&exp_e);
+  if (retval == VLAD_OK && a_cond != NULL)
+    retval = a_cond->copy(&exp_c);
+  if (retval == VLAD_OK && a_ncond != NULL)
+    retval = a_ncond->copy(&exp_n);
+  if (retval == VLAD_OK && a_rlist != NULL)
+    retval = a_rlist->copy(&rlist);
+
+  /* finally, we add them all into the cosntraints table */
+  if (retval == VLAD_OK)
+    retval = m_ctable->add(exp_e, exp_c, exp_n, rlist);
 
   /* cleanup */
   if (retval != VLAD_OK) {
@@ -267,6 +307,8 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
       VLAD_MEM_DELETE(exp_c);
     if (exp_n != NULL)
       VLAD_MEM_DELETE(exp_n);
+    if (rlist != NULL)
+      VLAD_MEM_DELETE(rlist);
   }
 
   return retval;
@@ -276,13 +318,15 @@ int vlad_polbase::add_consttab(vlad_expression *a_exp,
 int vlad_polbase::add_updatetab(const char *a_name,
                                 vlad_varlist *a_vlist,
                                 vlad_expression *a_precond,
-                                vlad_expression *a_postcond)
+                                vlad_expression *a_postcond,
+                                vlad_rlist *a_rlist)
 {
   int retval = VLAD_OK;
-  char *name;
+  char *name = NULL;
   vlad_varlist *vlist = NULL;
   vlad_expression *exp_pr = NULL;
   vlad_expression *exp_po = NULL;
+  vlad_rlist *rlist = NULL;
 
   /* we only allow this function after symtab is closed */
   if (m_stage != 3)
@@ -292,27 +336,57 @@ int vlad_polbase::add_updatetab(const char *a_name,
   if (a_name == NULL || a_postcond == NULL)
     return VLAD_NULLPTR;
 
-  /* copy name */
-  if ((name = VLAD_MEM_STR_MALLOC(a_name)) == NULL)
-    return VLAD_MALLOCFAILED;
+  /* firstly, we verify all the expressions */
+  if ((retval = a_postcond->verify(m_stable, NULL)) != VLAD_OK)
+    return retval;
+  if (a_precond != NULL && (retval = a_precond->verify(m_stable, NULL)) != VLAD_OK)
+    return retval;
 
-  strcpy(name, a_name);
+  retval = VLAD_OK;
 
-  /* copy varlist */
+  if (a_rlist != NULL) {
+    vlad_varlist *tlist = NULL;
+
+    /* make sure each rel is non-ground */
+    if ((retval = a_rlist->is_allnonground()) != VLAD_OK)
+      return retval;
+
+    /* compose a var list from the vars of the exps and a_vlist */
+    if (a_vlist == NULL) {
+      if ((tlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
+        retval = VLAD_MALLOCFAILED;
+      else
+        retval = a_vlist->copy(&tlist);
+    }
+
+    if (retval == VLAD_OK)
+      retval = a_postcond->varlist(tlist);
+    if (retval == VLAD_OK && a_precond != NULL)
+      retval = a_precond->varlist(tlist);
+
+    /* now we verify the rlist, each var there must be in tlist */
+    if (retval == VLAD_OK)
+      retval = a_rlist->verify(m_stable, tlist);
+
+    if (tlist != NULL)
+      VLAD_MEM_DELETE(tlist);
+  }
+
+  /* all verified, now we copy */
+  if (retval == VLAD_OK && (name = VLAD_MEM_STR_MALLOC(a_name)) == NULL)
+    retval = VLAD_MALLOCFAILED;
+  if (retval == VLAD_OK)
+    strcpy(name, a_name);
+  if (retval == VLAD_OK)
+    retval = a_postcond->copy(&exp_po);
+  if (retval == VLAD_OK && a_precond != NULL)
+    retval = a_precond->copy(&exp_pr);
   if (retval == VLAD_OK && a_vlist != NULL)
     retval = a_vlist->copy(&vlist);
 
-  /* verify and copy precondition */
-  if (retval == VLAD_OK && a_precond != NULL)
-    retval = a_precond->vcopy(m_stable, NULL, &exp_pr);
-
-  /* verify and copy the postcondition */
-  if (retval == VLAD_OK)
-    retval = a_postcond->vcopy(m_stable, NULL, &exp_po);
-
   /* if all went well, add to the udate table */
   if (retval == VLAD_OK)
-    retval = m_utable->add(name, vlist, exp_pr, exp_po);
+    retval = m_utable->add(name, vlist, exp_pr, exp_po, rlist);
 
   /* cleanup */
   if (retval != VLAD_OK) {
@@ -324,6 +398,8 @@ int vlad_polbase::add_updatetab(const char *a_name,
       VLAD_MEM_DELETE(exp_pr);
     if (exp_po != NULL)
       VLAD_MEM_DELETE(exp_po);
+    if (rlist != NULL)
+      VLAD_MEM_DELETE(rlist);
   }
 
   return retval;
@@ -444,12 +520,13 @@ int vlad_polbase::get_updatetab(unsigned int a_index,
                                 char **a_name,
                                 vlad_varlist **a_vlist,
                                 vlad_expression **a_precond,
-                                vlad_expression **a_postcond)
+                                vlad_expression **a_postcond,
+                                vlad_rlist **a_rlist)
 {
   if (m_stage < 4)
     return VLAD_INVALIDOP;
 
-  return m_utable->get(a_index, a_name, a_vlist, a_precond, a_postcond);
+  return m_utable->get(a_index, a_name, a_vlist, a_precond, a_postcond, a_rlist);
 }
 
 /* returns the length of the sequence table */
@@ -1276,9 +1353,10 @@ int vlad_polbase::generate_constraint(FILE *a_fs)
     vlad_expression *exp_e = NULL;
     vlad_expression *exp_c = NULL;
     vlad_expression *exp_n = NULL;
+    vlad_rlist *rlist = NULL;
     vlad_varlist *vlist;
 
-    if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n)) != VLAD_OK)
+    if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n, &rlist)) != VLAD_OK)
       return retval;
 
     /* create a vlist for this constraint */
@@ -1312,20 +1390,26 @@ int vlad_polbase::generate_constraint(FILE *a_fs)
       for (i_tup = 0; retval == VLAD_OK && i_tup < tlist->length(); i_tup++) {
         vlad_stringlist *ilist;
 
+        /* get this tuple */
         if (retval == VLAD_OK)
           retval = tlist->get(i_tup, &ilist);
 
-        /* ground and verify each exp */
-        if (retval == VLAD_OK)
-          retval = exp_e->vreplace(m_stable, vlist, ilist, &exp_ge);
-        if (retval == VLAD_OK && exp_c != NULL)
-          retval = exp_c->vreplace(m_stable, vlist, ilist, &exp_gc);
-        if (retval == VLAD_OK && exp_n != NULL)
-          retval = exp_n->vreplace(m_stable, vlist, ilist, &exp_gn);
-
-        /* now generate */
-        for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++)
-          retval = generate_rule(a_fs, i_sta, i_sta, i_sta, exp_ge, exp_gc, exp_gn);
+        if (retval == VLAD_OK) {
+          /* check if this tuple satisfies the temporal constraints */
+          if (rlist == NULL || m_tnet->check_tuple(ilist, vlist, rlist) == VLAD_OK) {
+            /* ground and verify each exp */
+            if (retval == VLAD_OK)
+              retval = exp_e->vreplace(m_stable, vlist, ilist, &exp_ge);
+            if (retval == VLAD_OK && exp_c != NULL)
+              retval = exp_c->vreplace(m_stable, vlist, ilist, &exp_gc);
+            if (retval == VLAD_OK && exp_n != NULL)
+              retval = exp_n->vreplace(m_stable, vlist, ilist, &exp_gn);
+            
+            /* now generate */
+            for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++)
+              retval = generate_rule(a_fs, i_sta, i_sta, i_sta, exp_ge, exp_gc, exp_gn);
+          }
+        }
 
         /* cleanup */
         if (exp_ge != NULL)
@@ -1371,6 +1455,7 @@ int vlad_polbase::generate_update(FILE *a_fs)
     vlad_expression *exp_po = NULL;
     vlad_varlist *vlist1 = NULL;
     vlad_varlist *vlist2 = NULL;
+    vlad_rlist *rlist = NULL;
     vlad_stringlist *ilist;
 
     /* get the details of this update sequence */
@@ -1378,7 +1463,7 @@ int vlad_polbase::generate_update(FILE *a_fs)
       return retval;
 
     /* get the details of this update */
-    if ((retval = m_utable->get(name, &vlist1, &vlist2, &exp_pr, &exp_po)) != VLAD_OK)
+    if ((retval = m_utable->get(name, &vlist1, &vlist2, &exp_pr, &exp_po, &rlist)) != VLAD_OK)
       return retval;
 
     /* check if there are no unbound variables */
@@ -1386,14 +1471,22 @@ int vlad_polbase::generate_update(FILE *a_fs)
       vlad_expression *exp_tpr = NULL;
       vlad_expression *exp_tpo = NULL;
 
-      /* the only variables that exist (if any) are already grounded */
-      if (retval == VLAD_OK && exp_pr != NULL)
-        retval = exp_pr->vreplace(m_stable, vlist1, ilist, &exp_tpr);
-      if (retval == VLAD_OK && exp_po != NULL)
-        retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
+      /* the only variables that exist (if any) are from vlist1 */
 
-      if (retval == VLAD_OK)
-        retval = generate_rule(a_fs, i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+      if (retval == VLAD_OK) {
+        /* check if vlist1 satisfies the temporal constraints */
+        if (rlist == NULL || m_tnet->check_tuple(ilist, vlist1, rlist) == VLAD_OK) {
+          /* ground */
+          if (retval == VLAD_OK && exp_pr != NULL)
+            retval = exp_pr->vreplace(m_stable, vlist1, ilist, &exp_tpr);
+          if (retval == VLAD_OK && exp_po != NULL)
+            retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
+
+          /* generate */
+          if (retval == VLAD_OK)
+            retval = generate_rule(a_fs, i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+        }
+      }
 
       /* cleanup */
       if (exp_tpr != NULL)
@@ -1421,6 +1514,7 @@ int vlad_polbase::generate_update(FILE *a_fs)
         vlad_expression *exp_tpo = NULL;
         vlad_stringlist *tuple;
 
+        /* get this tuple */
         if (retval == VLAD_OK)
           retval = tlist->get(i_tup, &tuple);
 
@@ -1428,14 +1522,19 @@ int vlad_polbase::generate_update(FILE *a_fs)
         if (retval == VLAD_OK)
           retval = tuple->add(ilist);
 
-        /* replace */
-        if (retval == VLAD_OK && exp_pr != NULL)
-          retval = exp_pr->vreplace(m_stable, vlist2, tuple, &exp_tpr);
-        if (retval == VLAD_OK && exp_po != NULL)
-          retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
-
-        if (retval == VLAD_OK)
-          retval = generate_rule(a_fs, i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+        if (retval == VLAD_OK) {
+          /* check if this tuple satisfies the temporal constraints */
+          if (rlist == NULL || m_tnet->check_tuple(tuple, vlist2, rlist) == VLAD_OK) {
+            /* replace */
+            if (retval == VLAD_OK && exp_pr != NULL)
+              retval = exp_pr->vreplace(m_stable, vlist2, tuple, &exp_tpr);
+            if (retval == VLAD_OK && exp_po != NULL)
+              retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
+    
+            if (retval == VLAD_OK)
+              retval = generate_rule(a_fs, i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+          }
+        }
 
         /* cleanup */
         if (exp_tpr != NULL)
@@ -1970,9 +2069,10 @@ int vlad_polbase::evaluate_constraint()
     vlad_expression *exp_e = NULL;
     vlad_expression *exp_c = NULL;
     vlad_expression *exp_n = NULL;
+    vlad_rlist *rlist = NULL;
     vlad_varlist *vlist;
 
-    if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n)) != VLAD_OK)
+    if ((retval = m_ctable->get(i_con, &exp_e, &exp_c, &exp_n, &rlist)) != VLAD_OK)
       return retval;
 
     /* create a varlist for this constraint */
@@ -2009,17 +2109,22 @@ int vlad_polbase::evaluate_constraint()
         if (retval == VLAD_OK)
           retval = tlist->get(i_tup, &ilist);
 
-        /* ground and verify each exp */
-        if (retval == VLAD_OK)
-          retval = exp_e->vreplace(m_stable, vlist, ilist, &exp_ge);
-        if (retval == VLAD_OK && exp_c != NULL)
-          retval = exp_c->vreplace(m_stable, vlist, ilist, &exp_gc);
-        if (retval == VLAD_OK && exp_n != NULL)
-          retval = exp_n->vreplace(m_stable, vlist, ilist, &exp_gn);
-
-        /* now evaluate */
-        for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++)
-          retval = evaluate_rule(i_sta, i_sta, i_sta, exp_ge, exp_gc, exp_gn);
+        if (retval == VLAD_OK) {
+          /* check if this tuple satisfies the temporal constraints */
+          if (rlist == NULL || m_tnet->check_tuple(ilist, vlist, rlist) == VLAD_OK) {
+            /* ground and verify each exp */
+            if (retval == VLAD_OK)
+              retval = exp_e->vreplace(m_stable, vlist, ilist, &exp_ge);
+            if (retval == VLAD_OK && exp_c != NULL)
+              retval = exp_c->vreplace(m_stable, vlist, ilist, &exp_gc);
+            if (retval == VLAD_OK && exp_n != NULL)
+              retval = exp_n->vreplace(m_stable, vlist, ilist, &exp_gn);
+            
+            /* now evaluate */
+            for (i_sta = 0; retval == VLAD_OK && i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++)
+              retval = evaluate_rule(i_sta, i_sta, i_sta, exp_ge, exp_gc, exp_gn);
+          }
+        }
 
         /* cleanup */
         if (exp_ge != NULL)
@@ -2061,6 +2166,7 @@ int vlad_polbase::evaluate_update()
     vlad_expression *exp_po = NULL;
     vlad_varlist *vlist1 = NULL;
     vlad_varlist *vlist2 = NULL;
+    vlad_rlist *rlist = NULL;
     vlad_stringlist *ilist;
 
     /* get the details of this update sequence */
@@ -2068,7 +2174,7 @@ int vlad_polbase::evaluate_update()
       return retval;
 
     /* get the details of this update */
-    if ((retval = m_utable->get(name, &vlist1, &vlist2, &exp_pr, &exp_po)) != VLAD_OK)
+    if ((retval = m_utable->get(name, &vlist1, &vlist2, &exp_pr, &exp_po, &rlist)) != VLAD_OK)
       return retval;
 
     /* check if there are no unbound variables */
@@ -2076,15 +2182,21 @@ int vlad_polbase::evaluate_update()
       vlad_expression *exp_tpr = NULL;
       vlad_expression *exp_tpo = NULL;
 
-      /* the only varibables that exist (if any) are already grounded */
-      if (retval == VLAD_OK && exp_pr != NULL)
-        retval = exp_pr->vreplace(m_stable, vlist1, ilist, &exp_tpr);
-      if (retval == VLAD_OK && exp_po != NULL)
-        retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
-
-      /* now add the rule */
-      if (retval == VLAD_OK)
-        retval = evaluate_rule(i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+      /* the only varibables that exist (if any) are from vlist1 */
+      if (retval == VLAD_OK) {
+        /* check if ilist satisfies the temporal constraints */
+        if (rlist == NULL || m_tnet->check_tuple(ilist, vlist1, rlist) == VLAD_OK) {
+          /* ground */
+          if (retval == VLAD_OK && exp_pr != NULL)
+            retval = exp_pr->vreplace(m_stable, vlist1, ilist, &exp_tpr);
+          if (retval == VLAD_OK && exp_po != NULL)
+            retval = exp_po->vreplace(m_stable, vlist1, ilist, &exp_tpo);
+    
+          /* now add the rule */
+          if (retval == VLAD_OK)
+            retval = evaluate_rule(i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+        }
+      }
 
       /* cleanup */
       if (exp_tpr != NULL)
@@ -2120,15 +2232,20 @@ int vlad_polbase::evaluate_update()
         if (retval == VLAD_OK)
           retval = tuple->add(ilist);
 
-        /* replace */
-        if (retval == VLAD_OK && exp_pr != NULL)
-          retval = exp_pr->vreplace(m_stable, vlist2, tuple, &exp_tpr);
-        if (retval == VLAD_OK && exp_po != NULL)
-          retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
+        if (retval == VLAD_OK) {
+          /* check if this tuple satisfies the temporal constraints */
+          if (rlist == NULL || m_tnet->check_tuple(tuple, vlist2, rlist) == VLAD_OK) {
+            /* replace */
+            if (retval == VLAD_OK && exp_pr != NULL)
+              retval = exp_pr->vreplace(m_stable, vlist2, tuple, &exp_tpr);
+            if (retval == VLAD_OK && exp_po != NULL)
+              retval = exp_po->vreplace(m_stable, vlist2, tuple, &exp_tpo);
 
-        /* now add the rule */
-        if (retval == VLAD_OK)
-          retval = evaluate_rule(i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+            /* now add the rule */
+            if (retval == VLAD_OK)
+              retval = evaluate_rule(i_sta + 1, i_sta, 0, exp_tpo, exp_tpr, NULL);
+          }
+        }
 
         /* cleanup */
         if (exp_tpr != NULL)

@@ -25,6 +25,7 @@
 #include <vlad/list.h>
 #include <vlad/varlist.h>
 #include <vlad/expression.h>
+#include <vlad/rlist.h>
 
 /* consttab list is simply a list of expression/condition pairs */
 
@@ -41,12 +42,14 @@ class vlad_constraint : public vlad_list_item
     /* initialise with the given values */
     int init(vlad_expression *a_exp,
              vlad_expression *a_cond,
-             vlad_expression *a_ncond);
+             vlad_expression *a_ncond,
+             vlad_rlist *a_rlist);
 
     /* gives a reference to the values */
     int get(vlad_expression **a_exp,
             vlad_expression **a_cond,
-            vlad_expression **a_ncond);
+            vlad_expression **a_ncond,
+            vlad_rlist **a_rlist);
 
   private :
 
@@ -54,6 +57,7 @@ class vlad_constraint : public vlad_list_item
     vlad_expression *m_exp;
     vlad_expression *m_cond;
     vlad_expression *m_ncond;
+    vlad_rlist *m_rlist;
 } ;
 
 class vlad_consttab : public vlad_list
@@ -66,12 +70,14 @@ class vlad_consttab : public vlad_list
     /* store in list */
     int add(vlad_expression *a_exp,
             vlad_expression *a_cond,
-            vlad_expression *a_ncond);
+            vlad_expression *a_ncond,
+            vlad_rlist *a_rlist);
 
     /* get reference of the constraint matching the index */
     int get(unsigned int a_index,
             vlad_expression **a_exp,
             vlad_expression **a_cond,
-            vlad_expression **a_ncond);
+            vlad_expression **a_ncond,
+            vlad_rlist **a_rlist);
 } ;
 #endif

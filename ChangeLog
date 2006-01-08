@@ -1,5 +1,23 @@
 2006-01-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+
+	  - The {compute,evaluate}_{constraint,update}() functions will now
+	    check if the grounded identifiers satisfy the temporal constraints
+	    in rlist before evaluating/generating rules.
+
+	  - add_consttab() and and_updatetab() now contains the extra rlist
+	    parameter.
+
+	* lib/consttab.cpp :
+	* lib/consttab.h :
+	* lib/updatetab.cpp :
+	* lib/updatetab.h :
+
+	  - Added an rlist to these classes. The rlist contains a list of
+	    temporal constraints.
+
 	* lib/rlist.cpp :
 	* lib/rlist.h :
 
