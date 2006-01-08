@@ -175,15 +175,8 @@ int vlad_expression::vreplace(vlad_symtab *a_stab,
     if ((retval = get(i, &old_fact)) != VLAD_OK)
       return retval;
 
-    if ((retval = old_fact->replace(a_vlist, a_ilist, &new_fact)) != VLAD_OK)
+    if ((retval = old_fact->vreplace(a_stab, a_vlist, a_ilist, &new_fact)) != VLAD_OK)
       return retval;
-
-    if ((retval = new_fact->verify(a_stab, NULL)) != VLAD_OK) {
-      /* if the new fact failed to verify, we stop right here */
-      VLAD_MEM_DELETE(new_fact);
-      VLAD_MEM_DELETE(*a_exp);
-      return retval;
-    }
 
     if ((retval = (*a_exp)->add(new_fact)) != VLAD_OK)
       return retval;
