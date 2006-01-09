@@ -136,6 +136,22 @@ int vlad_tnet::add_constraints(vlad_rlist *a_rlist)
 }
 
 /* gives the relation set that exists between the given 2 intervals */
+int vlad_tnet::get_relset(unsigned int a_int1,
+                          unsigned int a_int2,
+                          unsigned int *a_rs)
+{
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  if (a_rs == NULL)
+    return VLAD_NULLPTR;
+
+  *a_rs = tbe_net_get_relation1(m_net, a_int1, a_int2);
+
+  return VLAD_OK;
+}
+
+/* as above, but intervals are given as identifiers */ 
 int vlad_tnet::get_relset(const char *a_int1,
                           const char *a_int2,
                           unsigned int *a_rs)

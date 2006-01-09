@@ -45,6 +45,11 @@ class vlad_tnet : virtual public vlad_mem
     int add_constraints(vlad_rlist *a_rlist);
 
     /* gives the relation set that exists between the given 2 intervals */
+    int get_relset(unsigned int a_int1,
+                   unsigned int a_int2,
+                   unsigned int *a_rs);
+
+    /* as above, but intervals are given as identifiers */
     int get_relset(const char *a_int1,
                    const char *a_int2,
                    unsigned int *a_rs);
