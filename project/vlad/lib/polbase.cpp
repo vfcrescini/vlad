@@ -633,6 +633,11 @@ int vlad_polbase::compute_generate(FILE *a_fs)
   if ((retval = generate_inertial(a_fs)) != VLAD_OK)
     return retval;
 
+  /* temporal rules */
+  fprintf(a_fs, "%s %s\n\n", VLAD_STR_TEMPORAL, VLAD_STR_RULES);
+  if ((retval = generate_temporal(a_fs)) != VLAD_OK)
+    return retval;
+
   /* initial state */
   fprintf(a_fs, "%s %s\n\n", VLAD_STR_INITSTATE, VLAD_STR_RULES);
   if ((retval = generate_initial(a_fs)) != VLAD_OK)
@@ -734,6 +739,10 @@ int vlad_polbase::compute_evaluate()
 
   /* inertial rules */
   if ((retval = evaluate_inertial()) != VLAD_OK)
+    return retval;
+
+  /* temporal rules */
+  if ((retval = evaluate_temporal()) != VLAD_OK)
     return retval;
 
   /* initial state */
@@ -1314,6 +1323,184 @@ int vlad_polbase::generate_inertial(FILE *a_fs)
 
   return VLAD_OK;
 }
+
+/* generates temporal constraint rules and prints them to a_fs */
+int vlad_polbase::generate_temporal(FILE *a_fs)
+{
+  int retval;
+  unsigned int i_sta;
+  unsigned int i_int1;
+  unsigned int i_int2;
+  unsigned int t_rs;
+
+  if (a_fs == NULL)
+    return VLAD_NULLPTR;
+
+  if (m_stage < 4)
+    return VLAD_INVALIDOP;
+
+  /* first, create a relset to test */
+  TBE_REL_SET_CLEAR(t_rs);
+  TBE_REL_SET_ADD(t_rs, TBE_REL_DUI);
+  TBE_REL_SET_ADD(t_rs, TBE_REL_STI);
+  TBE_REL_SET_ADD(t_rs, TBE_REL_FII);
+  TBE_REL_SET_ADD(t_rs, TBE_REL_EQL);
+
+  /* state loop */
+  for (i_sta = 0; i_sta < VLAD_LIST_LENGTH(m_setable); i_sta++) {
+    /* interval 1 loop */
+    for (i_int1 = 0; i_int1 < VLAD_LEN_IN; i_int1++) {
+      /* interval 2 loop */
+      for (i_int2 = 0; i_int2 < VLAD_LEN_IN; i_int2++) {
+        unsigned int n_rs;
+        unsigned int i_e1;
+        unsigned int i_e2;
+        unsigned int i_e3;
+
+        /* ignore cases where the two intervals are equal */
+        if (i_int1 == i_int2)
+          continue;
+
+        /* get the relset between int1 and int2 */
+        if ((retval = m_tnet->get_relset(i_int1, i_int2, &n_rs)) != VLAD_OK)
+          return retval;
+
+        /* check if int2 is "inside" int1 by comparing the relsets */
+        if (TBE_REL_SET_INTERSECT(n_rs, t_rs) != n_rs)
+          continue;
+
+        /* holds */
+        for (i_e1 = 0; i_e1 < VLAD_LEN_SS + VLAD_LEN_SG; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_AS + VLAD_LEN_AG; i_e2++) {
+            for (i_e3 = 0; i_e3 < VLAD_LEN_OS + VLAD_LEN_OG; i_e3++) {
+              /* positive */
+              fprintf(a_fs, "  ");
+              print_fact(m_mapper->compute_holds(i_e1, i_e2, i_e3, i_int2, i_sta, true), a_fs);
+              fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+              print_fact(m_mapper->compute_holds(i_e1, i_e2, i_e3, i_int1, i_sta, true), a_fs);
+              fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+              /* negative */
+              fprintf(a_fs, "  ");
+              print_fact(m_mapper->compute_holds(i_e1, i_e2, i_e3, i_int2, i_sta, false), a_fs);
+              fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+              print_fact(m_mapper->compute_holds(i_e1, i_e2, i_e3, i_int1, i_sta, false), a_fs);
+              fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+            }
+          }
+        }
+        /* member */
+        for (i_e1 = 0; i_e1 < VLAD_LEN_SS; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_SG; i_e2++) {
+            /* positive */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int2, i_sta, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int1, i_sta, true), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+            /* negative */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int2, i_sta, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int1, i_sta, false), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+          }
+        }
+        for (i_e1 = 0; i_e1 < VLAD_LEN_AS; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_AG; i_e2++) {
+            /* positive */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int2, i_sta, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int1, i_sta, true), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+            /* negative */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int2, i_sta, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int1, i_sta, false), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+          }
+        }
+        for (i_e1 = 0; i_e1 < VLAD_LEN_OS; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_OG; i_e2++) {
+            /* positive */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int2, i_sta, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int1, i_sta, true), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+            /* negative */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int2, i_sta, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_memb(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int1, i_sta, false), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+          }
+        }
+        /* subset */
+        for (i_e1 = 0; i_e1 < VLAD_LEN_SG; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_SG; i_e2++) {
+            if (i_e1 == i_e2)
+              continue;
+            /* positive */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int2, i_sta, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int1, i_sta, true), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+            /* negative */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int2, i_sta, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int1, i_sta, false), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+          }
+        }
+        for (i_e1 = 0; i_e1 < VLAD_LEN_AG; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_AG; i_e2++) {
+            if (i_e1 == i_e2)
+              continue;
+            /* positive */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int2, i_sta, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int1, i_sta, true), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+            /* negative */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int2, i_sta, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int1, i_sta, false), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+          }
+        }
+        for (i_e1 = 0; i_e1 < VLAD_LEN_OG; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_OG; i_e2++) {
+            if (i_e1 == i_e2)
+              continue;
+            /* positive */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int2, i_sta, true), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int1, i_sta, true), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+            /* negative */
+            fprintf(a_fs, "  ");
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int2, i_sta, false), a_fs);
+            fprintf(a_fs, " %s\n    ", VLAD_STR_ARROW);
+            print_fact(m_mapper->compute_subst(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int1, i_sta, false), a_fs);
+            fprintf(a_fs, "%s\n", VLAD_STR_TERMINATOR);
+          }
+        }
+      }
+    }
+  }
+
+  fprintf(a_fs, "\n");
+
+  return VLAD_OK;
+}
+
 
 /* generates initial state rules and prints them to a_fs */
 int vlad_polbase::generate_initial(FILE *a_fs)
@@ -1987,7 +2174,7 @@ int vlad_polbase::evaluate_negation()
   unsigned int id[2];
 
   /* we only allow this after policy base is closed */
-  if (m_stage != 3 && m_stage != 4)
+  if (m_stage != 4 && m_stage != 5)
     return VLAD_INVALIDOP;
 
   /* state loop */
@@ -2036,6 +2223,186 @@ int vlad_polbase::evaluate_inertial()
 
       if ((retval = m_smobject->add_rule(1, 1, id[0], id[1], id[2])) != VLAD_OK)
         return retval;
+    }
+  }
+
+  return VLAD_OK;
+}
+
+/* registers temporal rules in smodels object for evaluation */
+int vlad_polbase::evaluate_temporal()
+{
+  int retval;
+  unsigned int i_sta;
+  unsigned int i_int1;
+  unsigned int i_int2;
+  unsigned int t_rs;
+
+  if (m_stage != 4 && m_stage != 5)
+    return VLAD_INVALIDOP;
+
+  /* first, create a relset to test */
+  TBE_REL_SET_CLEAR(t_rs);
+  TBE_REL_SET_ADD(t_rs, TBE_REL_DUI);
+  TBE_REL_SET_ADD(t_rs, TBE_REL_STI);
+  TBE_REL_SET_ADD(t_rs, TBE_REL_FII);
+  TBE_REL_SET_ADD(t_rs, TBE_REL_EQL);
+
+  /* state loop */
+  for (i_sta = 0; i_sta < VLAD_LIST_LENGTH(m_setable); i_sta++) {
+    /* interval 1 loop */
+    for (i_int1 = 0; i_int1 < VLAD_LEN_IN; i_int1++) {
+      /* interval 2 loop */
+      for (i_int2 = 0; i_int2 < VLAD_LEN_IN; i_int2++) {
+        unsigned int n_rs;
+        unsigned int i_e1;
+        unsigned int i_e2;
+        unsigned int i_e3;
+        unsigned int id[2];
+
+        /* ignore cases where the two intervals are equal */
+        if (i_int1 == i_int2)
+          continue;
+
+        /* get the relset between int1 and int2 */
+        if ((retval = m_tnet->get_relset(i_int1, i_int2, &n_rs)) != VLAD_OK)
+          return retval;
+
+        /* check if int2 is "inside" int1 by comparing the relsets */
+        if (TBE_REL_SET_INTERSECT(n_rs, t_rs) != n_rs)
+          continue;
+
+        /* holds */
+        for (i_e1 = 0; i_e1 < VLAD_LEN_SS + VLAD_LEN_SG; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_AS + VLAD_LEN_AG; i_e2++) {
+            for (i_e3 = 0; i_e3 < VLAD_LEN_OS + VLAD_LEN_OG; i_e3++) {
+              /* positive */
+              id[0] = m_mapper->compute_holds(i_e1, i_e2, i_e3, i_int2, i_sta, true);
+              id[1] = m_mapper->compute_holds(i_e1, i_e2, i_e3, i_int1, i_sta, true);
+
+              if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+                return retval;
+
+              /* negative */
+              id[0] = m_mapper->compute_holds(i_e1, i_e2, i_e3, i_int2, i_sta, false);
+              id[1] = m_mapper->compute_holds(i_e1, i_e2, i_e3, i_int1, i_sta, false);
+
+              if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+                return retval;
+            }
+          }
+        }
+        /* member */
+        for (i_e1 = 0; i_e1 < VLAD_LEN_SS; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_SG; i_e2++) {
+            /* positive */
+            id[0] = m_mapper->compute_memb(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int2, i_sta, true);
+            id[1] = m_mapper->compute_memb(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int1, i_sta, true);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+
+            /* negative */
+            id[0] = m_mapper->compute_memb(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int2, i_sta, false);
+            id[1] = m_mapper->compute_memb(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int1, i_sta, false);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+          }
+        }
+        for (i_e1 = 0; i_e1 < VLAD_LEN_AS; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_AG; i_e2++) {
+            /* positive */
+            id[0] = m_mapper->compute_memb(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int2, i_sta, true);
+            id[1] = m_mapper->compute_memb(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int1, i_sta, true);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+
+            /* negative */
+            id[0] = m_mapper->compute_memb(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int2, i_sta, false);
+            id[1] = m_mapper->compute_memb(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int1, i_sta, false);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+          }
+        }
+        for (i_e1 = 0; i_e1 < VLAD_LEN_OS; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_OG; i_e2++) {
+            /* positive */
+            id[0] = m_mapper->compute_memb(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int2, i_sta, true);
+            id[1] = m_mapper->compute_memb(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int1, i_sta, true);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+
+            /* negative */
+            id[0] = m_mapper->compute_memb(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int2, i_sta, false);
+            id[1] = m_mapper->compute_memb(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int1, i_sta, false);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+          }
+        }
+        /* subset */
+        for (i_e1 = 0; i_e1 < VLAD_LEN_SG; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_SG; i_e2++) {
+            if (i_e1 == i_e2)
+              continue;
+            /* positive */
+            id[0] = m_mapper->compute_subst(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int2, i_sta, true);
+            id[1] = m_mapper->compute_subst(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int1, i_sta, true);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+
+            /* negative */
+            id[0] = m_mapper->compute_subst(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int2, i_sta, false);
+            id[1] = m_mapper->compute_subst(VLAD_IDENT_ENT_SUB, i_e1, i_e2, i_int1, i_sta, false);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+          }
+        }
+        for (i_e1 = 0; i_e1 < VLAD_LEN_AG; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_AG; i_e2++) {
+            if (i_e1 == i_e2)
+              continue;
+            /* positive */
+            id[0] = m_mapper->compute_subst(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int2, i_sta, true);
+            id[1] = m_mapper->compute_subst(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int1, i_sta, true);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+
+            /* negative */
+            id[0] = m_mapper->compute_subst(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int2, i_sta, false);
+            id[1] = m_mapper->compute_subst(VLAD_IDENT_ENT_ACC, i_e1, i_e2, i_int1, i_sta, false);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+          }
+        }
+        for (i_e1 = 0; i_e1 < VLAD_LEN_OG; i_e1++) {
+          for (i_e2 = 0; i_e2 < VLAD_LEN_OG; i_e2++) {
+            if (i_e1 == i_e2)
+              continue;
+            /* positive */
+            id[0] = m_mapper->compute_subst(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int2, i_sta, true);
+            id[1] = m_mapper->compute_subst(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int1, i_sta, true);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+
+            /* negative */
+            id[0] = m_mapper->compute_subst(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int2, i_sta, false);
+            id[1] = m_mapper->compute_subst(VLAD_IDENT_ENT_OBJ, i_e1, i_e2, i_int1, i_sta, false);
+
+            if ((retval = m_smobject->add_rule(1, 0, id[0], id[1])) != VLAD_OK)
+              return retval;
+          }
+        }
+      }
     }
   }
 

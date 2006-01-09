@@ -206,6 +206,9 @@ class vlad_polbase : virtual public vlad_mem
     /* generates inertial rules and prints them to a_fs */
     int generate_inertial(FILE *a_fs);
 
+    /* generates temporal constraint rules and prints them to a_fs */
+    int generate_temporal(FILE *a_fs);
+
     /* generates initial state rules and prints them to a_fs */
     int generate_initial(FILE *a_fs);
 
@@ -239,6 +242,9 @@ class vlad_polbase : virtual public vlad_mem
 
     /* registers inertial rules in smodels object for evaluation */
     int evaluate_inertial();
+
+    /* registers temporal rules in smodels object for evaluation */
+    int evaluate_temporal();
 
     /* registers initial state rules in smodels object for evaluation */
     int evaluate_initial();

@@ -1,5 +1,10 @@
 2006-01-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+	* lib/polbash.h :
+
+	  - Added temporal rules.
+
 	* lib/tnet.cpp :
 	* lib/tnet.h :
 
