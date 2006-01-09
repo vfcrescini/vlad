@@ -1,3 +1,11 @@
+2006-01-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/tnet.cpp :
+	* lib/tnet.h :
+
+	  - Added a variation of get_rel() that takes indices instead of
+	    identifiers"
+
 2006-01-09  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* main/policy.y :
