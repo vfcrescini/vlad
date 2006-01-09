@@ -48,6 +48,7 @@
 #define VLAD_STR_TRANSITIVITY    "Transitivity"
 #define VLAD_STR_NEGATION        "Negation"
 #define VLAD_STR_INERTIAL        "Inertial"
+#define VLAD_STR_TEMPORAL        "Temporal"
 #define VLAD_STR_INITSTATE       "Initial State"
 #define VLAD_STR_CONSTRAINT      "Constraint"
 #define VLAD_STR_UPDATE          "Update"
