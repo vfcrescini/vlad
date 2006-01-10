@@ -45,8 +45,8 @@ class vlad_rel : public vlad_list_item
     /* gives the values */
     int get(char **a_int1, char **a_int2, unsigned int *a_rs);
 
-    /* adds the given relation to the relset */
-    int add(unsigned int a_rel);
+    /* joins the relset of the given relation with this one's relset */
+    int join(vlad_rel *a_rel);
 
     /* creates a new instance of this relation */
     int copy(vlad_rel **a_rel);
@@ -81,7 +81,7 @@ class vlad_rel : public vlad_list_item
 
     char *m_int1;
     char *m_int2;
-    unsigned char m_rs;
+    unsigned int m_rs;
     bool m_init;
 } ;
 

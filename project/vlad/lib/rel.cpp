@@ -21,6 +21,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 
 #include <vlad/vlad.h>
 #include <vlad/mem.h>
@@ -81,9 +82,6 @@ int vlad_rel::init(const char *a_int1, const char *a_int2, unsigned int a_rs)
   if (a_int1 == NULL || a_int2 == NULL)
     return VLAD_NULLPTR;
 
-  if (a_rs > TBE_REL_FII)
-    return VLAD_INVALIDINPUT;
-
   /* allocate mem */
   if ((retval == VLAD_OK) && (int1 = VLAD_MEM_STR_MALLOC(a_int1)) == NULL)
     retval = VLAD_MALLOCFAILED;
@@ -109,11 +107,19 @@ int vlad_rel::init(const char *a_int1, const char *a_int2, unsigned int a_rs)
   /* copy strings */
   strcpy(int1, a_int1);
   strcpy(int2, a_int2);
+  
+  /* normalise the relation */
+  if (strcmp(int1, int2) <= 0) {
+    m_int1 = int1;
+    m_int2 = int2;
+    m_rs = a_rs;
+  }
+  else {
+    m_int1 = int2;
+    m_int2 = int1;
+    m_rs = tbe_rel_inverse(a_rs);
+  }
 
-  /* assign */
-  m_int1 = int1;
-  m_int2 = int2;
-  m_rs = a_rs;
   m_init = true;
     
   return VLAD_OK;
@@ -140,20 +146,19 @@ int vlad_rel::get(char **a_int1, char **a_int2, unsigned int *a_rs)
   return VLAD_OK;
 }
 
-/* adds the given relation to the relset */
-int vlad_rel::add(unsigned int a_rel)
+/* joins the relset of the given relation with this one's relset */
+int vlad_rel::join(vlad_rel *a_rel)
 {
   if (!m_init)
     return VLAD_UNINITIALISED;
 
-  if (a_rel > TBE_REL_FII)
+  if (!a_rel->m_init)
     return VLAD_INVALIDINPUT;
 
-  TBE_REL_SET_ADD(m_rs, a_rel);
+  m_rs = TBE_REL_SET_UNION(a_rel->m_rs, m_rs);
 
   return VLAD_OK;
 }
-
 
 /* creates a new instance of this relation */
 int vlad_rel::copy(vlad_rel **a_rel)
