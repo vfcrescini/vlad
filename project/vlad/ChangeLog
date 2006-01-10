@@ -1,5 +1,14 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* samples/chwall.vla :
+	* samples/chwall.vlp :
+	* samples/docrel.vla :
+	* samples/docrel.vlp :
+	* samples/ground.vla :
+	* samples/ground.vlp :
+
+	  - New syntax.
+
 	* lib/identifier.cpp :
 
 	  - Function check_compat() now checks both types of identifiers:

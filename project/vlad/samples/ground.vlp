@@ -11,12 +11,16 @@ entity sub-grp sg0, sg1, sg2;
 entity acc-grp ag0, ag1, ag2;
 entity obj-grp og0, og1, og2;
 
-initially holds(sg0, ag0, og0);
-initially memb(ss0, sg0);
+interval i0, i1, i2;
 
-always memb(ss0, sg0);
-always memb(as0, AG0);
-always holds(SS0, AS0, os0) with absence !holds(SS0, AS0, os0);
+initially holds(sg0, ag0, og0, i0);
+initially memb(ss0, sg0, i0);
 
-f1(SS0, AS0, OG0)
-  causes holds(SS0, AS0, OG0) && memb(SS0, SG0);
+relation during(i0, i1), during(i1, i2);
+
+always memb(ss0, sg0, i0);
+always memb(as0, AG0, I0);
+always holds(SS0, AS0, os0, I0) with absence !holds(SS0, AS0, os0, I0);
+
+f1(SS0, AS0, OG0, I0)
+  causes holds(SS0, AS0, OG0, I0) && memb(SS0, SG0, I1);
