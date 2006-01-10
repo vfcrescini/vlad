@@ -1,5 +1,10 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/wrapper.cpp :
+	* lib/wrapper.h :
+
+	  - Updated to use new API.
+
 	* lib/polbase.cpp :
 	* lib/polbase.h :
 	* main/policy.y :
