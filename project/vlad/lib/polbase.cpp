@@ -141,6 +141,10 @@ int vlad_polbase::add_inittab(vlad_fact *a_fact)
   if (a_fact == NULL)
     return VLAD_NULLPTR;
 
+  /* check if it's ground */
+  if ((retval = a_fact->is_ground()) != VLAD_OK)
+    return retval;
+
   /* verify and copy */
   retval = a_fact->vcopy(m_stable, NULL, &fact);
 
@@ -498,6 +502,10 @@ int vlad_polbase::query_generate(vlad_expression *a_exp, FILE *a_fs)
   if (a_fs == NULL || a_exp == NULL)
     return VLAD_NULLPTR;
 
+  /* make sure the query expression is ground */
+  if ((retval = a_exp->is_ground()) != VLAD_OK)
+    return retval;
+
   /* verify expression */
   if ((retval = a_exp->verify(m_stable, NULL)) != VLAD_OK)
     return retval;
@@ -606,6 +614,10 @@ int vlad_polbase::query_evaluate(vlad_expression *a_exp, unsigned char *a_res)
 
   if (a_exp == NULL || a_res == NULL)
     return VLAD_NULLPTR;
+
+  /* make sure the query expression is ground */
+  if ((retval = a_exp->is_ground()) != VLAD_OK)
+    return retval;
 
   /* verify expression */
   if ((retval = a_exp->verify(m_stable, NULL)) != VLAD_OK)
