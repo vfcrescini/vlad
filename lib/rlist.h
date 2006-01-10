@@ -36,7 +36,7 @@ class vlad_rlist : public vlad_list
     virtual ~vlad_rlist();
 
     /* adds a relation to the list */
-    int add(const char *a_int1, const char *a_int2, unsigned int a_rel);
+    int add(vlad_rel *a_rel);
 
     /* gives a reference to the ith relation */
     int get(unsigned int a_i, vlad_rel **a_rel);

@@ -37,33 +37,22 @@ vlad_rlist::~vlad_rlist()
 }
 
 /* adds a relation to the list */
-int vlad_rlist::add(const char *a_int1, const char *a_int2, unsigned int a_rel)
+int vlad_rlist::add(vlad_rel *a_rel)
 {
   int retval;
   vlad_rel *rptr = NULL;
   vlad_rel **rarray = NULL;
   unsigned int size;
 
-  if (a_int1 == NULL || a_int2 == NULL)
+  if (a_rel == NULL)
     return VLAD_NULLPTR;
-
-  if (a_rel > TBE_REL_FII)
-    return VLAD_INVALIDINPUT;
-
-  if ((rptr = VLAD_MEM_NEW(vlad_rel())) == NULL)
-    return VLAD_MALLOCFAILED;
 
   retval = VLAD_OK;
 
-  if (retval == VLAD_OK) {
-    unsigned int rs;
-
-    TBE_REL_SET_CLEAR(rs);
-    TBE_REL_SET_ADD(rs, a_rel);
-
-    retval = rptr->init(a_int1, a_int2, rs);
-  }
- 
+  /* make a copy */
+  if (retval == VLAD_OK)
+    retval = a_rel->copy(&rptr);
+   
   if (retval == VLAD_OK) {
     retval = vlad_list::get((vlad_list_item *) rptr,
                             (vlad_list_item ***) &rarray,
@@ -74,9 +63,9 @@ int vlad_rlist::add(const char *a_int1, const char *a_int2, unsigned int a_rel)
   if (retval == VLAD_NOTFOUND)
     return vlad_list::add(rptr);
 
-  /* if already in, we just add the relation to the relset */
+  /* if already in, we just join the relset */
   if (retval == VLAD_OK)
-    retval = (rarray[0])->add(a_rel);
+    retval = (rarray[0])->join(rptr);
 
   /* cleanup */
   if (rarray != NULL)
