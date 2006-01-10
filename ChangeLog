@@ -1,5 +1,7 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* Tagging vlad-1_4_2
+
 	* Makefile.in :
 	* configure.ac :
 	* rules.mk :
