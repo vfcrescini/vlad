@@ -156,7 +156,7 @@ int vlad_identifier::check_compat(const char *a_var, unsigned char a_type)
   /* make sure type is entity variable */
   if (!VLAD_IDENT_TYPE_IS_ENT(vtype) || !VLAD_IDENT_TYPE_IS_VAR(vtype))
     return VLAD_INVALIDINPUT;
-  
+
   /* make sure type is a valid entity type */
   if (validate_ent_type(a_type) != VLAD_OK)
     return VLAD_INVALIDINPUT;

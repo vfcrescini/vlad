@@ -54,7 +54,7 @@ class vlad_inttab_item : public vlad_list_item
 class vlad_inttab : public vlad_list
 {
   public :
- 
+
     vlad_inttab();
     ~vlad_inttab();
 
