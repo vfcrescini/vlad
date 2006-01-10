@@ -152,8 +152,8 @@ unsigned int vlad_mapper::compute_memb(unsigned char a_type,
 
 /* given the state, truth value and indices, map a subst fact into an id */
 unsigned int vlad_mapper::compute_subst(unsigned char a_type,
-                                        unsigned char a_grp1,
-                                        unsigned char a_grp2,
+                                        unsigned int a_grp1,
+                                        unsigned int a_grp2,
                                         unsigned int a_state,
                                         bool a_truth)
 {
