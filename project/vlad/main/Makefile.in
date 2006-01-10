@@ -1,6 +1,6 @@
 # This file is part of PolicyUpdater.
 #
-# Copyright (C) 2003, 2004, 2005 University of Western Sydney
+# Copyright (C) 2003, 2004, 2005, 2006 University of Western Sydney
 # by Vino Fernando Crescini <jcrescin@cit.uws.edu.au>
 #
 # PolicyUpdater is free software; you can redistribute it and/or modify
