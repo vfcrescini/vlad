@@ -1,6 +1,21 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
-	* lib/polbase.h :
+	* lib/rel.cpp :
+	* lib/rel.h :
+
+	  - m_rs was erroneously defined as an unsigned char which resulted
+	    in overflows. Now defined as unsigned int.
+
+	  - Removed unused add() function.
+
+	  - Added a join() which will set m_rs to the union of the m_rs's of
+	    this rel and the given one.
+
+	  - The init() function will now normalise a relation first, e.g. the
+	    first interval is always alphabetically less than the second
+	    interval.
+
+	* lib/polbase.cpp :
 
 	  - Fixed a few minor mistakes.
 
