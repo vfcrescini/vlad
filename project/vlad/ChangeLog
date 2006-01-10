@@ -1,5 +1,10 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/rlist.cpp :
+	* lib/rlist.h :
+
+	  - The list now takes a rel object for adding.
+
 	* lib/rel.cpp :
 	* lib/rel.h :
 
