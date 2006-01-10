@@ -1,5 +1,14 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* main/agent.l :
+	* main/agent.y :
+	* main/parser.l :
+	* main/parser.y :
+
+	  - Parsers now accepts the new syntax: facts have intervals, the
+	    "where" clause, interval definition, temporal constraints
+	    definition, etc.
+
 	* lib/rlist.cpp :
 	* lib/rlist.h :
 

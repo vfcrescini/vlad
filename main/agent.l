@@ -56,10 +56,10 @@ add                add
 delete             del
 list               list
 digit              [0-9]
-number             ({digit})+
+number             {digit}{0,127}
 alpha              [a-zA-Z]
 alphanum           {alpha}|{digit}|{underscore}
-identifier         {alpha}({alphanum}){0,127}
+identifier         {alpha}({alphanum}){0,126}
 whitespace         ([\t ])+
 newline            \n
 everything         .
@@ -103,7 +103,6 @@ everything         .
   }
 
   agentlval.number = atoi(agenttext);
-
   return VLAD_SYM_NUMBER;
 }
 
@@ -114,7 +113,6 @@ everything         .
   }
 
   strcpy(agentlval.identifier, agenttext);
-
   return VLAD_SYM_IDENTIFIER;
 }
 

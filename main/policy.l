@@ -43,6 +43,8 @@ end_comment        \*\/
 underscore         _
 open_parent        \(
 close_parent       \)
+open_bracket       \[
+close_bracket      \]
 comma              \,
 semicolon          ;
 and                &&
@@ -58,17 +60,28 @@ absence            absence
 always             always
 causes             causes
 if                 if
+where              where
 entity             entity
+interval           interval
+relation           relation
 sub_grp_type       sub-grp
 obj_grp_type       obj-grp
 acc_grp_type       acc-grp
 sub_sin_type       sub
 obj_sin_type       obj
 acc_sin_type       acc
+equals             equals
+before             before
+during             during
+overlaps           overlaps
+meets              meets
+starts             starts
+finishes           finishes
 digit              [0-9]
 alpha              [a-zA-Z]
 alphanum           {alpha}|{digit}|{underscore}
-identifier         {alpha}({alphanum}){0,127}
+number             {digit}{1,127}
+identifier         {alpha}({alphanum}){0,126}
 whitespace         ([\t ])+
 newline            \n
 everything         .
@@ -78,6 +91,10 @@ everything         .
 <INITIAL>{open_parent} return VLAD_SYM_OPEN_PARENT;
 
 <INITIAL>{close_parent} return VLAD_SYM_CLOSE_PARENT;
+
+<INITIAL>{open_bracket} return VLAD_SYM_OPEN_BRACKET;
+
+<INITIAL>{close_bracket} return VLAD_SYM_CLOSE_BRACKET;
 
 <INITIAL>{comma} return VLAD_SYM_COMMA;
 
@@ -109,7 +126,13 @@ everything         .
 
 <INITIAL>{if} return VLAD_SYM_IF;
 
+<INITIAL>{where} return VLAD_SYM_WHERE;
+
 <INITIAL>{entity} return VLAD_SYM_ENTITY;
+
+<INITIAL>{interval} return VLAD_SYM_INTERVAL;
+
+<INITIAL>{relation} return VLAD_SYM_RELATION;
 
 <INITIAL>{sub_grp_type} return VLAD_SYM_SUBGRPTYPE;
 
@@ -122,6 +145,30 @@ everything         .
 <INITIAL>{obj_sin_type} return VLAD_SYM_OBJSINTYPE;
 
 <INITIAL>{acc_sin_type} return VLAD_SYM_ACCSINTYPE;
+
+<INITIAL>{equals} return VLAD_SYM_EQL;
+
+<INITIAL>{before} return VLAD_SYM_BEF;
+
+<INITIAL>{during} return VLAD_SYM_DUR;
+
+<INITIAL>{overlaps} return VLAD_SYM_OVR;
+
+<INITIAL>{meets} return VLAD_SYM_MET;
+
+<INITIAL>{starts} return VLAD_SYM_STA;
+
+<INITIAL>{finishes} return VLAD_SYM_FIN;
+
+<INITIAL>{number} {
+  if (policytext == NULL) {
+    policylval.number = 0;
+    return VLAD_SYM_ERROR;
+  }
+
+  policylval.number = atoi(policytext);
+  return VLAD_SYM_NUMBER;
+}
 
 <INITIAL>{identifier} {
   if (policytext == NULL) {
