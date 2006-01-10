@@ -86,8 +86,8 @@ int agentparse();
 
 %union {
   unsigned int terminal;
-  char identifier[VLAD_MAXLEN_IDENT];
   unsigned int number;
+  char identifier[VLAD_MAXLEN_IDENT];
   vlad_fact *fct;
   vlad_expression *exp;
   vlad_stringlist *vlist;
@@ -455,7 +455,7 @@ fact :
   ;
 
 holds_fact :
-  VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+  VLAD_SYM_HOLDS VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
     if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
@@ -464,8 +464,7 @@ holds_fact :
       return VLAD_MALLOCFAILED;
     }
 
-    /* XXX: use "default" interval */
-    if ((retval = $$->init_holds($3, $5, $7, "today", true)) != VLAD_OK) {
+    if ((retval = $$->init_holds($3, $5, $7, $9, true)) != VLAD_OK) {
       errorcode = retval;
       agenterror("could not initialise holds fact");
       return retval;
@@ -474,7 +473,7 @@ holds_fact :
   ;
 
 subst_fact :
-  VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+  VLAD_SYM_SUBST VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
     if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
@@ -483,8 +482,7 @@ subst_fact :
       return VLAD_MALLOCFAILED;
     }
 
-    /* XXX: use "default" interval */
-    if ((retval = $$->init_subset($3, $5, "today", true)) != VLAD_OK) {
+    if ((retval = $$->init_subset($3, $5, $7, true)) != VLAD_OK) {
       errorcode = retval;
       agenterror("could not initialise subset fact");
       return retval;
@@ -493,7 +491,7 @@ subst_fact :
   ;
 
 memb_fact :
-  VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
+  VLAD_SYM_MEMB VLAD_SYM_OPEN_PARENT VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER VLAD_SYM_CLOSE_PARENT {
     int retval;
 
     if (($$ = VLAD_MEM_NEW(vlad_fact())) == NULL) {
@@ -502,8 +500,7 @@ memb_fact :
       return VLAD_MALLOCFAILED;
     }
 
-    /* XXX: use "default" interval */
-    if ((retval = $$->init_member($3, $5, "today", true)) != VLAD_OK) {
+    if ((retval = $$->init_member($3, $5, $7, true)) != VLAD_OK) {
       errorcode = retval;
       agenterror("could not initialise member fact");
       return retval;
