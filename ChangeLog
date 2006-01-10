@@ -1,5 +1,9 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+
+	  - Make sure initial facts and query expressions are ground.
+
 	* lib/fact.cpp :
 	* lib/fact.h :
 	* lib/expression.cpp :
