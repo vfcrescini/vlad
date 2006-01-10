@@ -231,6 +231,14 @@ int vlad_tnet::check_tuple(vlad_stringlist *a_tuple,
     if ((retval = get_relset(int1, int2, &n_rs)) != VLAD_OK)
       return retval;
 
+#if 0
+    fprintf(stderr, "%s %s | ", int1, int2);
+    tbe_rel_dump(n_rs, stderr);
+    fprintf(stderr, " | ");
+    tbe_rel_dump(c_rs, stderr);
+    fprintf(stderr, "\n");
+#endif
+
     /* the relset in the network must be a subset of the constraint relset */
     if (TBE_REL_SET_INTERSECT(n_rs, c_rs) != n_rs)
       return VLAD_FAILURE;
