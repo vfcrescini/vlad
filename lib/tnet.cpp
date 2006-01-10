@@ -60,7 +60,7 @@ int vlad_tnet::init(vlad_symtab *a_stab, vlad_inttab *a_itab)
     if (tbe_net_add_interval(m_net, i) != TBE_OK)
       return VLAD_FAILURE;
   }
-  
+
   /* now, we add the endpoints of intervals */
   for (i = 0; i < a_itab->length(); i++) {
     char *name;
@@ -84,7 +84,7 @@ int vlad_tnet::init(vlad_symtab *a_stab, vlad_inttab *a_itab)
     if (tbe_net_add_endpoints(m_net, index, interval))
       return VLAD_FAILURE;
   }
-  
+
   m_stab = a_stab;
   m_init = true;
 
@@ -151,7 +151,7 @@ int vlad_tnet::get_relset(unsigned int a_int1,
   return VLAD_OK;
 }
 
-/* as above, but intervals are given as identifiers */ 
+/* as above, but intervals are given as identifiers */
 int vlad_tnet::get_relset(const char *a_int1,
                           const char *a_int2,
                           unsigned int *a_rs)

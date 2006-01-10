@@ -52,7 +52,7 @@ int vlad_rlist::add(vlad_rel *a_rel)
   /* make a copy */
   if (retval == VLAD_OK)
     retval = a_rel->copy(&rptr);
-   
+
   if (retval == VLAD_OK) {
     retval = vlad_list::get((vlad_list_item *) rptr,
                             (vlad_list_item ***) &rarray,
@@ -73,7 +73,7 @@ int vlad_rlist::add(vlad_rel *a_rel)
   if (rptr != NULL)
     VLAD_MEM_DELETE(rptr);
 
-  return retval; 
+  return retval;
 }
 
 /* gives a reference to the ith relation */
@@ -151,7 +151,7 @@ int vlad_rlist::vcopy(vlad_symtab *a_stab,
     if (retval == VLAD_OK)
       retval = rlist->vlad_list::add((vlad_list_item *) new_rel);
     if (retval != VLAD_OK && new_rel != NULL)
-      VLAD_MEM_DELETE(new_rel); 
+      VLAD_MEM_DELETE(new_rel);
   }
 
   if (retval != VLAD_OK) {
@@ -192,7 +192,7 @@ int vlad_rlist::replace(vlad_varlist *a_vlist,
     if (retval == VLAD_OK)
       retval = rlist->vlad_list::add((vlad_list_item *) new_rel);
     if (retval != VLAD_OK && new_rel != NULL)
-      VLAD_MEM_DELETE(new_rel); 
+      VLAD_MEM_DELETE(new_rel);
   }
 
   /* cleanup */
@@ -235,7 +235,7 @@ int vlad_rlist::vreplace(vlad_symtab *a_stab,
     if (retval == VLAD_OK)
       retval = rlist->vlad_list::add((vlad_list_item *) new_rel);
     if (retval != VLAD_OK && new_rel != NULL)
-      VLAD_MEM_DELETE(new_rel); 
+      VLAD_MEM_DELETE(new_rel);
   }
 
   /* cleanup */
