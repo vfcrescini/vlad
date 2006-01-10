@@ -146,28 +146,32 @@ unsigned char vlad_identifier::get_var_type(const char *a_ident)
   return (type | VLAD_IDENT_MASK_ENT_SIN | VLAD_IDENT_MASK_ENT_GRP);
 }
 
-/* returns VLAD_OK if the entity type is compatible with the var */
+/* returns VLAD_OK if the identifier type is compatible with the var */
 int vlad_identifier::check_compat(const char *a_var, unsigned char a_type)
 {
   unsigned char vtype;
 
   vtype = get_var_type(a_var);
 
-  /* make sure type is entity variable */
-  if (!VLAD_IDENT_TYPE_IS_ENT(vtype) || !VLAD_IDENT_TYPE_IS_VAR(vtype))
+  /* make sure type is variable */
+  if (!VLAD_IDENT_TYPE_IS_VAR(vtype))
     return VLAD_INVALIDINPUT;
 
-  /* make sure type is a valid entity type */
-  if (validate_ent_type(a_type) != VLAD_OK)
-    return VLAD_INVALIDINPUT;
+  if (validate_ent_type(a_type) == VLAD_OK) {
+    /* is it an entity? */
+    /* make sure the base types (sub, acc, obj) are equal */
+    if ((vtype & VLAD_IDENT_MASK_ENT_BASE) != (a_type & VLAD_IDENT_MASK_ENT_BASE))
+      return VLAD_INVALIDINPUT;
 
-  /* make sure the base types (sub, acc, obj) are equal */
-  if ((vtype & VLAD_IDENT_MASK_ENT_BASE) != (a_type & VLAD_IDENT_MASK_ENT_BASE))
-    return VLAD_INVALIDINPUT;
-
-  /* now check the rest */
-  if (((VLAD_IDENT_MASK_ENT_SIN | VLAD_IDENT_MASK_ENT_GRP) & vtype) & a_type)
-    return VLAD_OK;
+    /* now check the rest */
+    if (((VLAD_IDENT_MASK_ENT_SIN | VLAD_IDENT_MASK_ENT_GRP) & vtype) & a_type)
+      return VLAD_OK;
+  }
+  else if (validate_int_type(a_type) == VLAD_OK) {
+    /* perhaps an interval ? */
+    if (VLAD_IDENT_TYPE_IS_INT(vtype))
+      return VLAD_OK;
+  }
 
   return VLAD_INVALIDINPUT;
 }

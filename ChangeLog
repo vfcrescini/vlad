@@ -1,5 +1,10 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/identifier.cpp :
+
+	  - Function check_compat() now checks both types of identifiers:
+	    entities and intervals.
+
 	* lib/wrapper.cpp :
 	* lib/wrapper.h :
 
