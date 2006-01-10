@@ -1,7 +1,7 @@
 /*
  * This file is part of PolicyUpdater.
  *
- * Copyright (C) 2003, 2004, 2005 University of Western Sydney
+ * Copyright (C) 2003, 2004, 2005, 2006 University of Western Sydney
  * by Vino Fernando Crescini <jcrescin@cit.uws.edu.au>
  *
  * PolicyUpdater is free software; you can redistribute it and/or modify
@@ -107,7 +107,7 @@ int vlad_rel::init(const char *a_int1, const char *a_int2, unsigned int a_rs)
   /* copy strings */
   strcpy(int1, a_int1);
   strcpy(int2, a_int2);
-  
+
   /* normalise the relation */
   if (strcmp(int1, int2) <= 0) {
     m_int1 = int1;
@@ -121,7 +121,7 @@ int vlad_rel::init(const char *a_int1, const char *a_int2, unsigned int a_rs)
   }
 
   m_init = true;
-    
+
   return VLAD_OK;
 }
 
