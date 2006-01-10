@@ -25,11 +25,11 @@
 #include <vlad/vlad.h>
 
 #ifdef __cplusplus
-#include <cstdio>
-#define VLAD_EXTERN extern "C"
+  #include <cstdio>
+  #define VLAD_EXTERN extern "C"
 #else
-#include <stdio.h>
-#define VLAD_EXTERN extern
+  #include <stdio.h>
+  #define VLAD_EXTERN extern
 #endif
 
 /* create a polbase */
@@ -44,6 +44,9 @@ VLAD_EXTERN int vlad_polbase_init(void *a_polbase);
 /* close symbol table */
 VLAD_EXTERN int vlad_polbase_close_symtab(void *a_polbase);
 
+/* close temporal constraint table */
+VLAD_EXTERN int vlad_polbase_close_tctab(void *a_polbase);
+
 /* close polbase table */
 VLAD_EXTERN int vlad_polbase_close_polbase(void *a_polbase);
 
@@ -51,6 +54,7 @@ VLAD_EXTERN int vlad_polbase_close_polbase(void *a_polbase);
 VLAD_EXTERN int vlad_polbase_get_symtab(void *a_polbase,
                                         unsigned int a_index,
                                         char **a_str);
+
 /* gives an array of identifiers of type t */
 VLAD_EXTERN int vlad_polbase_get_array_symtab(void *a_polbase,
                                               unsigned char a_type,
@@ -62,10 +66,20 @@ VLAD_EXTERN int vlad_polbase_check_symtab(void *a_polbase,
                                          const char *a_name,
                                          unsigned char a_type);
 
-/* register an identifier in the polbase */
-VLAD_EXTERN int vlad_polbase_add_symtab(void *a_polbase,
+/* register an entity identifier in the polbase */
+VLAD_EXTERN int vlad_polbase_add_entity(void *a_polbase,
                                         const char *a_name,
                                         unsigned char a_type);
+
+/* register an interval identifier in the polbase */
+VLAD_EXTERN int vlad_polbase_add_interval1(void *a_polbase,
+                                           const char *a_name);
+
+/* register an interval identifier in the polbase (with endpoints) */
+VLAD_EXTERN int vlad_polbase_add_interval2(void *a_polbase,
+                                           const char *a_name,
+                                           unsigned int a_ep1,
+                                           unsigned int a_ep2);
 
 /* add a fact into the initial state table */
 VLAD_EXTERN int vlad_polbase_add_inittab(void *a_polbase, void *a_fact);
@@ -74,14 +88,16 @@ VLAD_EXTERN int vlad_polbase_add_inittab(void *a_polbase, void *a_fact);
 VLAD_EXTERN int vlad_polbase_add_consttab(void *a_polbase,
                                           void *a_exp,
                                           void *a_cond,
-                                          void *a_ncond);
+                                          void *a_ncond,
+                                          void *a_rlist);
 
 /* add an update declaration in the update table */
 VLAD_EXTERN int vlad_polbase_add_updatetab(void *a_polbase,
                                            const char *a_name,
                                            void *a_vlist,
                                            void *a_precond,
-                                           void *a_postcond);
+                                           void *a_postcond,
+                                           void *a_rlist);
 
 /* returns the length of the update table */
 VLAD_EXTERN unsigned int vlad_polbase_length_updatetab(void *a_polbase);
@@ -92,7 +108,8 @@ VLAD_EXTERN int vlad_polbase_get_updatetab(void *a_polbase,
                                            char **a_name,
                                            void **a_vlist,
                                            void **a_precond,
-                                           void **a_postcond);
+                                           void **a_postcond,
+                                           void **a_rlist);
 
 /* add a update reference to the sequence table */
 VLAD_EXTERN int vlad_polbase_add_seqtab(void *a_polbase, void *a_uref);
@@ -146,16 +163,19 @@ VLAD_EXTERN int vlad_fact_init_holds(void *a_fact,
                                      const char *a_s,
                                      const char *a_a,
                                      const char *a_o,
+                                     const char *a_i,
                                      int a_t);
 
 VLAD_EXTERN int vlad_fact_init_member(void *a_fact,
                                       const char *a_e,
                                       const char *a_g,
+                                      const char *a_i,
                                       int a_t);
 
 VLAD_EXTERN int vlad_fact_init_subset(void *a_fact,
                                       const char *a_g1,
                                       const char *a_g2,
+                                      const char *a_i,
                                       int a_t);
 
 /* create an expression */
