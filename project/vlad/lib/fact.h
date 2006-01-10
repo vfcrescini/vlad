@@ -121,6 +121,9 @@ class vlad_fact : public vlad_list_item
     /* gives the truth value of the fact */
     int truth(bool *a_truth);
 
+    /* returns VLAD_OK if none of the entities are variables */
+    int is_ground();
+
 #ifdef VLAD_DEBUG
     /* assuming a_str has enough memory allocation */
     void print(char *a_str);

@@ -1,5 +1,12 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/fact.cpp :
+	* lib/fact.h :
+	* lib/expression.cpp :
+	* lib/expression.h :
+
+	  - Added is_ground() functions.
+
 	* main/agent.l :
 	* main/agent.y :
 	* main/parser.l :

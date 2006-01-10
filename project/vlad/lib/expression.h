@@ -81,6 +81,9 @@ class vlad_expression : public vlad_list
     /* check if exp is valid, any variables that occur must be in a_vlist */
     int verify(vlad_symtab *a_stab, vlad_varlist *a_vlist);
 
+    /* returns VLAD_OK if all facts are ground */
+    int is_ground();
+
 #ifdef VLAD_DEBUG
     /* assumimg s has enough memory allocation */
     void print(char *a_str);
