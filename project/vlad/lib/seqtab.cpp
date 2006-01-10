@@ -95,7 +95,7 @@ int vlad_updateref::get(char **a_name, vlad_stringlist **a_list)
   return VLAD_OK;
 }
 
-/* verify that entities are in symtab and update is in updatetab */
+/* verify that identifiers are in symtab and update is in updatetab */
 int vlad_updateref::verify(vlad_symtab *a_stab, vlad_updatetab *a_utab)
 {
   int retval;
@@ -117,7 +117,7 @@ int vlad_updateref::verify(vlad_symtab *a_stab, vlad_updatetab *a_utab)
   if (m_list == NULL || vlist == NULL || vlist->length() != m_list->length())
     return VLAD_FAILURE;
 
-  /* check if the entities are in symtab */
+  /* check if the identifiers are in symtab */
   for (i = 0; i < VLAD_LIST_LENGTH(m_list); i++) {
     char *ident;
     char *var;
