@@ -258,6 +258,25 @@ int vlad_expression::verify(vlad_symtab *a_stab, vlad_varlist *a_vlist)
   return VLAD_OK;
 }
 
+/* returns VLAD_OK if all facts are ground */
+int vlad_expression::is_ground()
+{
+  int retval;
+  unsigned int i;
+
+  for (i = 0; i < vlad_list::length(); i++) {
+    vlad_fact *fact;
+
+    if ((retval = get(i, &fact)) != VLAD_OK)
+      return retval;
+
+    if ((retval = fact->is_ground()) != VLAD_OK)
+      return retval;
+  }
+
+  return VLAD_OK;
+}
+
 #ifdef VLAD_DEBUG
 /* assumimg s has enough memory allocation */
 void vlad_expression::print(char *a_str)
