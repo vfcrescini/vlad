@@ -619,6 +619,40 @@ int vlad_fact::truth(bool *a_truth)
   return VLAD_OK;
 }
 
+/* returns VLAD_OK if none of the entities are variables */
+int vlad_fact::is_ground()
+{
+  int retval;
+
+  if (!m_init)
+    return VLAD_UNINITIALISED;
+
+  switch(m_type) {
+    case VLAD_ATOM_HOLDS :
+      if ((retval = vlad_identifier::validate_ent_ident(m_holds.subject)) != VLAD_OK)
+        return retval;
+      if ((retval = vlad_identifier::validate_ent_ident(m_holds.access)) != VLAD_OK)
+        return retval;
+      if ((retval = vlad_identifier::validate_ent_ident(m_holds.object)) != VLAD_OK)
+        return retval;
+      return VLAD_OK;
+    case VLAD_ATOM_MEMBER :
+      if ((retval = vlad_identifier::validate_ent_ident(m_member.element)) != VLAD_OK)
+        return retval;
+      if ((retval = vlad_identifier::validate_ent_ident(m_member.group)) != VLAD_OK)
+        return retval;
+      return VLAD_OK;
+    case VLAD_ATOM_SUBSET :
+      if ((retval = vlad_identifier::validate_ent_ident(m_subset.group1)) != VLAD_OK)
+        return retval;
+      if ((retval = vlad_identifier::validate_ent_ident(m_subset.group2)) != VLAD_OK)
+        return retval;
+      return VLAD_OK;
+  }
+
+  return VLAD_INVALIDINPUT;
+}
+
 #ifdef VLAD_DEBUG
 /* assuming s has enough memory allocation */
 void vlad_fact::print(char *a_str)
