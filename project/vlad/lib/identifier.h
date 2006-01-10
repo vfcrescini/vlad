@@ -162,7 +162,7 @@ class vlad_identifier : virtual public vlad_mem
     /* returns the type of the given variable */
     static unsigned char get_var_type(const char *a_var);
 
-    /* returns VLAD_OK if the entity type is compatible with the var */
+    /* returns VLAD_OK if the identifier type is compatible with the var */
     static int check_compat(const char *a_var, unsigned char a_type);
 } ;
 
