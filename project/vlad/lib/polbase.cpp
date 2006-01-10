@@ -187,7 +187,7 @@ int vlad_polbase::add_interval(const char *a_name,
 }
 
 /* add a temporal constraint */
-int vlad_polbase::add_tc(vlad_rlist *a_rlist)
+int vlad_polbase::add_tctab(vlad_rlist *a_rlist)
 {
   int retval;
 
@@ -458,8 +458,8 @@ int vlad_polbase::close_symtab()
   return VLAD_OK;
 }
 
-/* after this is called, no further calls to add_tc() is allowed */
-int vlad_polbase::close_rel()
+/* after this is called, no further calls to add_tctab() is allowed */
+int vlad_polbase::close_tctab()
 {
   if (m_stage != 2)
     return VLAD_INVALIDOP;
@@ -470,7 +470,7 @@ int vlad_polbase::close_rel()
 }
 
 /* after this is called, no further calls to add_entity(), add_interval(),
- * add_tc(), add_constab() and add_updatetab() can be made */
+ * add_tctab(), add_constab() and add_updatetab() can be made */
 int vlad_polbase::close_polbase()
 {
   if (m_stage != 3)

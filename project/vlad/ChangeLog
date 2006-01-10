@@ -1,5 +1,11 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/polbase.cpp :
+	* lib/polbase.h :
+	* main/policy.y :
+
+	  - Renamed add_tc() and close_rel() to add_tctab() and close_tctab().
+
 	* lib/expression.cpp :
 	* lib/expression.h :
 	* lib/fact.cpp :
