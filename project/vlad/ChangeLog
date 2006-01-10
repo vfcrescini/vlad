@@ -1,5 +1,11 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/mapper.cpp :
+	* lib/mapper.h :
+
+	  - compute_subst() was mistakenly declared to accept unsigned char
+	    instead of unsigned int.
+
 	* lib/polbase.cpp :
 
 	  - Make sure initial facts and queries are ground.
