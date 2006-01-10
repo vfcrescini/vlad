@@ -62,7 +62,7 @@ class vlad_polbase : virtual public vlad_mem
                      unsigned int a_ep2);
 
     /* add a temporal constraint */
-    int add_tc(vlad_rlist *a_rlist);
+    int add_tctab(vlad_rlist *a_rlist);
 
     /* add a fact into the initial state table */
     int add_inittab(vlad_fact *a_fact);
@@ -86,11 +86,11 @@ class vlad_polbase : virtual public vlad_mem
     /* close symbol table */
     int close_symtab();
 
-    /* after this is called, no further calls to add_tc() is allowed */
-    int close_rel();
+    /* after this is called, no further calls to add_tctab() is allowed */
+    int close_tctab();
 
     /* after this is called, no further calls to add_entity(), add_interval(),
-     * add_tc(), add_constab() and add_updatetab() can be made */
+     * add_tctab(), add_constab() and add_updatetab() can be made */
     int close_polbase();
 
     /* delete an update reference from the sequence table */
@@ -146,7 +146,7 @@ class vlad_polbase : virtual public vlad_mem
      *   0 = uninit
      *   1 = init
      *   2 = symtab closed
-     *   3 = tnet closed
+     *   3 = tctab closed
      *   4 = polbase closed
      *   5 = after compute() */
     unsigned char m_stage;

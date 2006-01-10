@@ -197,7 +197,7 @@ initial_section : {
 relation_section :
   relation_stmt_list {
     int retval;
-    if ((retval = pbase->close_rel()) != VLAD_OK) {
+    if ((retval = pbase->close_tctab()) != VLAD_OK) {
       errorcode = retval;
       policyerror("unable to close relation table");
       return retval;
@@ -205,7 +205,7 @@ relation_section :
   }
   | {
     int retval;
-    if ((retval = pbase->close_rel()) != VLAD_OK) {
+    if ((retval = pbase->close_tctab()) != VLAD_OK) {
       errorcode = retval;
       policyerror("unable to close relation table");
       return retval;
@@ -435,7 +435,7 @@ relation_stmt :
   VLAD_SYM_RELATION relation_list VLAD_SYM_SEMICOLON {
     int retval;
 
-    if ((retval = pbase->add_tc($2)) != VLAD_OK) {
+    if ((retval = pbase->add_tctab($2)) != VLAD_OK) {
       errorcode = retval;
       policyerror("could not add relation list into the policy base");
       return errorcode;
