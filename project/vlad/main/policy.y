@@ -55,7 +55,11 @@ int policy_init(FILE *a_in, FILE *a_out, FILE *a_err, vlad_polbase *a_pbase);
 int policy_parse();
 
 /* convenience functions */
-int add_identifier(const char *a_name, unsigned char a_type);
+int add_entity(const char *a_name, unsigned char a_type);
+int add_interval(const char *a_name,
+                 bool a_ep,
+                 unsigned int a_ep1,
+                 unsigned int a_ep2);
 
 #ifdef YYBYACC
 int policyparse();
@@ -306,12 +310,12 @@ acc_grp_entity_decl :
 sub_sin_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ENT_SUB_SIN)) != VLAD_OK)
+    if ((retval = add_entity($1, VLAD_IDENT_ENT_SUB_SIN)) != VLAD_OK)
       return retval;
   }
   | sub_sin_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ENT_SUB_SIN)) != VLAD_OK)
+    if ((retval = add_entity($3, VLAD_IDENT_ENT_SUB_SIN)) != VLAD_OK)
       return retval;
   }
   ;
@@ -319,12 +323,12 @@ sub_sin_entity_list :
 obj_sin_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ENT_OBJ_SIN)) != VLAD_OK)
+    if ((retval = add_entity($1, VLAD_IDENT_ENT_OBJ_SIN)) != VLAD_OK)
       return retval;
   }
   | obj_sin_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ENT_OBJ_SIN)) != VLAD_OK)
+    if ((retval = add_entity($3, VLAD_IDENT_ENT_OBJ_SIN)) != VLAD_OK)
       return retval;
   }
   ;
@@ -332,12 +336,12 @@ obj_sin_entity_list :
 acc_sin_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ENT_ACC_SIN)) != VLAD_OK)
+    if ((retval = add_entity($1, VLAD_IDENT_ENT_ACC_SIN)) != VLAD_OK)
       return retval;
   }
   | acc_sin_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ENT_ACC_SIN)) != VLAD_OK)
+    if ((retval = add_entity($3, VLAD_IDENT_ENT_ACC_SIN)) != VLAD_OK)
       return retval;
   }
   ;
@@ -345,12 +349,12 @@ acc_sin_entity_list :
 sub_grp_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ENT_SUB_GRP)) != VLAD_OK)
+    if ((retval = add_entity($1, VLAD_IDENT_ENT_SUB_GRP)) != VLAD_OK)
       return retval;
   }
   | sub_grp_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ENT_SUB_GRP)) != VLAD_OK)
+    if ((retval = add_entity($3, VLAD_IDENT_ENT_SUB_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -358,12 +362,12 @@ sub_grp_entity_list :
 obj_grp_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ENT_OBJ_GRP)) != VLAD_OK)
+    if ((retval = add_entity($1, VLAD_IDENT_ENT_OBJ_GRP)) != VLAD_OK)
       return retval;
   }
   | obj_grp_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ENT_OBJ_GRP)) != VLAD_OK)
+    if ((retval = add_entity($3, VLAD_IDENT_ENT_OBJ_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -371,12 +375,12 @@ obj_grp_entity_list :
 acc_grp_entity_list :
   VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($1, VLAD_IDENT_ENT_ACC_GRP)) != VLAD_OK)
+    if ((retval = add_entity($1, VLAD_IDENT_ENT_ACC_GRP)) != VLAD_OK)
       return retval;
   }
   | acc_grp_entity_list VLAD_SYM_COMMA VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = add_identifier($3, VLAD_IDENT_ENT_ACC_GRP)) != VLAD_OK)
+    if ((retval = add_entity($3, VLAD_IDENT_ENT_ACC_GRP)) != VLAD_OK)
       return retval;
   }
   ;
@@ -384,12 +388,12 @@ acc_grp_entity_list :
 interval_decl :
   VLAD_SYM_IDENTIFIER interval_endpoint_decl {
     int retval;
-    if ((retval = pbase->add_interval($1, $2[0], $2[1])) != VLAD_OK)
+    if ((retval = add_interval($1, true, $2[0], $2[1])) != VLAD_OK)
       return retval;
   }
   | VLAD_SYM_IDENTIFIER {
     int retval;
-    if ((retval = pbase->add_interval($1)) != VLAD_OK)
+    if ((retval = add_interval($1, false, 0, 0)) != VLAD_OK)
       return retval;
   }
   ;
@@ -880,19 +884,19 @@ memb_fact :
 
 %%
 
-int add_identifier(const char *a_name, unsigned char a_type)
+int add_entity(const char *a_name, unsigned char a_type)
 {
   /* check type */
   if (vlad_identifier::validate_ent_type(a_type)) {
     errorcode = VLAD_INVALIDINPUT;
-    policyerror("invalid identifier type");
+    policyerror("invalid entity identifier type");
     return VLAD_INVALIDINPUT;
   }
 
   /* check identifier */
   if (vlad_identifier::validate_nvar_ident(a_name)) {
     errorcode = VLAD_INVALIDINPUT;
-    policyerror("invalid identifier");
+    policyerror("invalid entity identifier");
     return VLAD_INVALIDINPUT;
   }
 
@@ -901,7 +905,7 @@ int add_identifier(const char *a_name, unsigned char a_type)
       break;
     case VLAD_DUPLICATE :
       errorcode = VLAD_DUPLICATE;
-      policyerror("identifier already declared");
+      policyerror("identifier already used");
       return VLAD_DUPLICATE;
     case VLAD_MALLOCFAILED :
       errorcode = VLAD_MALLOCFAILED;
@@ -909,7 +913,52 @@ int add_identifier(const char *a_name, unsigned char a_type)
       return VLAD_MALLOCFAILED;
     default :
       errorcode = VLAD_FAILURE;
-      policyerror("cannot add identifier to symtab: unexpected error");
+      policyerror("cannot add entity identifier to symtab: unexpected error");
+      return VLAD_FAILURE;
+  }
+
+  return VLAD_OK;
+}
+
+int add_interval(const char *a_name,
+                 bool a_ep,
+                 unsigned int a_ep1,
+                 unsigned int a_ep2)
+{
+  int retval;
+
+  /* check identifier */
+  if (vlad_identifier::validate_nvar_ident(a_name)) {
+    errorcode = VLAD_INVALIDINPUT;
+    policyerror("invalid interval identifier");
+    return VLAD_INVALIDINPUT;
+  }
+
+  if (a_ep) {
+    if (a_ep1 >= a_ep2) {
+      errorcode = VLAD_INVALIDINPUT;
+      policyerror("invalid identifier endpoints");
+      return VLAD_INVALIDINPUT;
+    }
+    retval = pbase->add_interval(a_name, a_ep1, a_ep2);
+  }
+  else
+    retval = pbase->add_interval(a_name);
+
+  switch (retval) {
+    case VLAD_OK :
+      break;
+    case VLAD_DUPLICATE :
+      errorcode = VLAD_DUPLICATE;
+      policyerror("identifier already used");
+      return VLAD_DUPLICATE;
+    case VLAD_MALLOCFAILED :
+      errorcode = VLAD_MALLOCFAILED;
+      policyerror("memory overflow");
+      return VLAD_MALLOCFAILED;
+    default :
+      errorcode = VLAD_FAILURE;
+      policyerror("cannot add interval identifier to symtab: unexpected error");
       return VLAD_FAILURE;
   }
 
