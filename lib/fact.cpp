@@ -802,45 +802,6 @@ int vlad_fact::is_ground()
   return VLAD_INVALIDINPUT;
 }
 
-#ifdef VLAD_DEBUG
-/* assuming s has enough memory allocation */
-void vlad_fact::print(char *a_str)
-{
-  if (a_str) {
-    switch(m_type) {
-      case VLAD_ATOM_HOLDS :
-        sprintf(a_str,
-                "%s%s(%s,%s,%s,%s)",
-                m_truth ? "" : "!",
-                VLAD_STR_HOLDS,
-                m_holds.subject,
-                m_holds.access,
-                m_holds.object,
-                m_holds.interval);
-        break;
-      case VLAD_ATOM_MEMBER :
-        sprintf(a_str,
-                "%s%s(%s,%s,%s)",
-                m_truth ? "" : "!",
-                VLAD_STR_MEMBER,
-                m_member.element,
-                m_member.group,
-                m_member.interval);
-        break;
-      case VLAD_ATOM_SUBSET :
-        sprintf(a_str,
-                "%s%s(%s,%s,%s)",
-                m_truth ? "" : "!",
-                VLAD_STR_SUBSET,
-                m_subset.group1,
-                m_subset.group2,
-                m_subset.interval);
-        break;
-    }
-  }
-}
-#endif
-
 int vlad_fact::reset()
 {
   if (m_init) {

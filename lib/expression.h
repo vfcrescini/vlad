@@ -84,11 +84,6 @@ class vlad_expression : public vlad_list
     /* returns VLAD_OK if all facts are ground */
     int is_ground();
 
-#ifdef VLAD_DEBUG
-    /* assumimg s has enough memory allocation */
-    void print(char *a_str);
-#endif
-
   private :
 
     /* called by vlad_list::traverse() */

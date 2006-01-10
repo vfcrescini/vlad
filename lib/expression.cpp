@@ -270,25 +270,6 @@ int vlad_expression::is_ground()
   return VLAD_OK;
 }
 
-#ifdef VLAD_DEBUG
-/* assumimg s has enough memory allocation */
-void vlad_expression::print(char *a_str)
-{
-  unsigned int i;
-  char str[VLAD_MAXLEN_STR];
-  vlad_fact *obj;
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    if (vlad_list::get(i, (vlad_list_item **) &obj) != VLAD_OK)
-      break;
-
-    memset(str, 0, VLAD_MAXLEN_STR);
-    obj->print(str);
-    sprintf(a_str, "%s %s", a_str, str);
-  }
-}
-#endif
-
 /* called by vlad_list::traverse() */
 int vlad_expression::trav(vlad_list_item *a_item, vlad_list_trav *a_trav)
 {

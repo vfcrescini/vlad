@@ -43,11 +43,6 @@ class vlad_stringlist_item : public vlad_list_item
     /* get value */
     char *get();
 
-#ifdef VLAD_DEBUG
-    /* assuming s has enough memory allocation */
-    void print(char *a_str);
-#endif
-
   private :
 
     char *m_string;
@@ -92,11 +87,6 @@ class vlad_stringlist : public vlad_list, public vlad_list_item
 
     /* return true if string is in the list */
     int find(const char *a_str);
-
-#ifdef VLAD_DEBUG
-    /* assumimg s has enough memory allocation */
-    void print(char *a_str);
-#endif
 
   private :
 
