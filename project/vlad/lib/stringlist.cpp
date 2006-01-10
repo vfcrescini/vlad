@@ -92,14 +92,6 @@ char *vlad_stringlist_item::get()
   return m_string;
 }
 
-#ifdef VLAD_DEBUG
-/* assuming s has enough memory allocation */
-void vlad_stringlist_item::print(char *a_str)
-{
-  strcpy(a_str, (m_string ? m_string : ""));
-}
-#endif
-
 vlad_stringlist::vlad_stringlist() : vlad_list(true)
 {
   m_uniq = true;
@@ -237,26 +229,6 @@ int vlad_stringlist::find(const char *a_str)
 
   return vlad_list::find(&sitem);
 }
-
-#ifdef VLAD_DEBUG
-/* assumimg s has enough memory allocation */
-void vlad_stringlist::print(char *a_str)
-{
-  unsigned int i;
-  char str[VLAD_MAXLEN_STR];
-  vlad_stringlist_item *sitem;
-
-  memset(str, 0, VLAD_MAXLEN_STR);
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    if (vlad_list::get(i, (vlad_list_item **) &sitem) != VLAD_OK)
-      break;
-
-    sitem->print(str);
-    sprintf(a_str, "%s %s", a_str, str);
-  }
-}
-#endif
 
 /* called by vlad_list::traverse() */
 int vlad_stringlist::trav(vlad_list_item *a_item, vlad_list_trav *a_trav)

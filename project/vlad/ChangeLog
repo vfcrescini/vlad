@@ -1,5 +1,18 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/expression.cpp :
+	* lib/expression.h :
+	* lib/fact.cpp :
+	* lib/fact.h :
+	* lib/seqtab.cpp :
+	* lib/seqtab.h :
+	* lib/stringlist.cpp :
+	* lib/stringlist.h :
+	* main/agent.y :
+	* main/policy.y :
+
+	  - Removed unused and unmaintained debugging code.
+
 	* Makefile.in :
 	* configure.ac :
 	* rules.mk :

@@ -45,12 +45,6 @@ static vlad_polbase *pbase = NULL;
 static int errorcode = VLAD_FAILURE;
 static bool initialised = false;
 
-#ifdef VLAD_DEBUG
-static unsigned int cnt_init = 0;
-static unsigned int cnt_const = 0;
-static unsigned int cnt_update = 0;
-#endif
-
 /* functions from scanner */
 int policyinit(FILE *a_in, FILE *a_out);
 int policyerror(char *a_error);
@@ -412,9 +406,6 @@ initial_stmt :
     int retval;
     unsigned int i;
     vlad_fact *f;
-#ifdef VLAD_DEBUG
-    char s[VLAD_MAXLEN_STR];
-#endif
 
     /*
      * we must, unfortunetly, go through the expression and add them one
@@ -433,12 +424,6 @@ initial_stmt :
         policyerror("could not add fact into initial state table");
         return retval;
       }
-
-#ifdef VLAD_DEBUG
-      f->print(s);
-      fprintf(ferr, "initial state[%d]: %s\n", cnt_init++, s);
-#endif
-
     }
 
     /* when everything's been registered into the polbase, delete the expression */
@@ -664,34 +649,12 @@ rel_fin_atom :
 
 constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause where_clause VLAD_SYM_SEMICOLON {
     int retval;
-#ifdef VLAD_DEBUG
-    char e[VLAD_MAXLEN_STR];
-    char c[VLAD_MAXLEN_STR];
-    char n[VLAD_MAXLEN_STR];
-#endif
 
     if ((retval = pbase->add_consttab($2, $3, $4, $5)) != VLAD_OK) {
       errorcode = retval;
       policyerror("could not add constraint into constraint table");
       return retval;
     }
-
-#ifdef VLAD_DEBUG
-    $2->print(e);
-    if ($3 != NULL)
-      $3->print(c);
-    else
-      strcpy(c, "none");
-    if ($4 != NULL)
-      $4->print(n);
-    else
-      strcpy(n, "none");
-
-    fprintf(ferr, "constraint[%d]:\n", cnt_const++);
-    fprintf(ferr, "  expression: %s\n", e);
-    fprintf(ferr, "  condition:   %s\n", c);
-    fprintf(ferr, "  absence:     %s\n", n);
-#endif
 
     /* cleanup */
     VLAD_MEM_DELETE($2);
@@ -729,37 +692,12 @@ where_clause : {
 update_stmt :
   VLAD_SYM_IDENTIFIER update_var_def VLAD_SYM_CAUSES expression if_clause where_clause VLAD_SYM_SEMICOLON {
     int retval;
-#ifdef VLAD_DEBUG
-    char v[VLAD_MAXLEN_STR];
-    char pr[VLAD_MAXLEN_STR];
-    char po[VLAD_MAXLEN_STR];
-#endif
 
     if ((retval = pbase->add_updatetab($1, $2, $5, $4, $6)) != VLAD_OK) {
       errorcode = retval;
       policyerror("could not add update into update table");
       return retval;
     }
-
-#ifdef VLAD_DEBUG
-    if ($2 != NULL)
-      $2->print(v);
-    else
-      strcpy(v, "none");
-
-    if ($5 != NULL)
-      $5->print(pr);
-    else
-      strcpy(pr, "none");
-
-    $4->print(po);
-
-    fprintf(ferr, "update[%d]:\n", cnt_update++);
-    fprintf(ferr, "  name:        %s\n", $1);
-    fprintf(ferr, "  varlist:    %s\n", v);
-    fprintf(ferr, "  precond:    %s\n", pr);
-    fprintf(ferr, "  postcond:   %s\n", po);
-#endif
 
     /* cleanup */
     if ($2 != NULL)
@@ -960,28 +898,6 @@ int add_identifier(const char *a_name, unsigned char a_type)
 
   switch (pbase->add_entity(a_name, a_type)) {
     case VLAD_OK :
-#ifdef VLAD_DEBUG
-      switch (a_type) {
-        case VLAD_IDENT_ENT_SUB_SIN :
-          fprintf(ferr, "declared identifier subject: %s\n", a_name);
-          break;
-        case VLAD_IDENT_ENT_ACC_SIN :
-          fprintf(ferr, "declared identifier access: %s\n", a_name);
-          break;
-        case VLAD_IDENT_ENT_OBJ_SIN :
-          fprintf(ferr, "declared identifier object: %s\n", a_name);
-          break;
-        case VLAD_IDENT_ENT_SUB_GRP :
-           fprintf(ferr, "declared identifier subject-group: %s\n", a_name);
-          break;
-        case VLAD_IDENT_ENT_ACC_GRP :
-           fprintf(ferr, "declared identifier access-group: %s\n", a_name);
-          break;
-        case VLAD_IDENT_ENT_OBJ_GRP :
-           fprintf(ferr, "declared identiifer object-group: %s\n", a_name);
-          break;
-      }
-#endif
       break;
     case VLAD_DUPLICATE :
       errorcode = VLAD_DUPLICATE;

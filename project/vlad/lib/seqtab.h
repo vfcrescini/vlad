@@ -47,10 +47,6 @@ class vlad_updateref : public vlad_list_item
     /* verify that entities are in symtab and update is in updatetab */
     int verify(vlad_symtab *a_stab, vlad_updatetab *a_utab);
 
-#ifdef VLAD_DEBUG
-    void print(char *a_str);
-#endif
-
   private :
 
     char *m_name;
@@ -76,10 +72,6 @@ class vlad_seqtab : public vlad_list
 
      /* get i'th name and ilist */
      int get(unsigned int a_index, char **a_name, vlad_stringlist **a_list);
-
-#ifdef VLAD_DEBUG
-    void print(char *a_str);
-#endif
 } ;
 
 #endif

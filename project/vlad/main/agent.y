@@ -48,10 +48,6 @@ static bool initialised = false;
 static bool timer = 0;
 #endif
 
-#ifdef VLAD_DEBUG
-static unsigned int cnt_agent = 0;
-#endif
-
 /* functions from scanner */
 int agentinit(FILE *a_in, FILE *a_out);
 int agenterror(char *a_error);
@@ -162,9 +158,6 @@ query_stmt :
     struct timeval tv1;
     struct timeval tv2;
 #endif
-#ifdef VLAD_DEBUG
-    char q[VLAD_MAXLEN_STR];
-#endif
 
 #ifdef VLAD_TIMER
     if (timer)
@@ -210,13 +203,6 @@ query_stmt :
         agenterror("invalid mode");
         return VLAD_FAILURE;
     }
-
-#ifdef VLAD_DEBUG
-    $2->print(q);
-
-    fprintf(ferr, "query[%d]:\n", cnt_agent++);
-    fprintf(ferr, "  expression: %s\n", q);
-#endif
 
 #ifdef VLAD_TIMER
     if (timer) {

@@ -140,22 +140,6 @@ int vlad_updateref::verify(vlad_symtab *a_stab, vlad_updatetab *a_utab)
   return VLAD_OK;
 }
 
-#ifdef VLAD_DEBUG
-void vlad_updateref::print(char *a_str)
-{
-  char str[VLAD_MAXLEN_STR];
-
-  if (m_init) {
-    memset(str, 0, VLAD_MAXLEN_STR);
-
-    if (m_list != NULL)
-      m_list->print(str);
-
-    sprintf(a_str, "%s(%s)", m_name, str);
-  }
-}
-#endif
-
 vlad_seqtab::vlad_seqtab() : vlad_list(false)
 {
 }
@@ -212,24 +196,3 @@ int vlad_seqtab::get(unsigned int a_index,
 
   return uref->get(a_name, a_list);
 }
-
-#ifdef VLAD_DEBUG
-void vlad_seqtab::print(char *a_str)
-{
-  unsigned int i;
-  char str[VLAD_MAXLEN_STR];
-  vlad_updateref *uref;
-
-  strcpy(a_str, "");
-
-  for (i = 0; i < vlad_list::length(); i++) {
-    if (vlad_list::get(i, (vlad_list_item **) &uref) != VLAD_OK)
-      break;
-
-    memset(str, 0, VLAD_MAXLEN_STR);
-    if (uref != NULL)
-      uref->print(str);
-    sprintf(a_str, "%s %s", a_str, str);
-  }
-}
-#endif
