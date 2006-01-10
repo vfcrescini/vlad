@@ -1,3 +1,9 @@
+2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/polbase.h :
+
+	  - Fixed a few minor mistakes.
+
 2006-01-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/polbase.cpp :

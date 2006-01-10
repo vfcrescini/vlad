@@ -355,9 +355,9 @@ int vlad_polbase::add_updatetab(const char *a_name,
     if (a_vlist == NULL) {
       if ((tlist = VLAD_MEM_NEW(vlad_varlist())) == NULL)
         retval = VLAD_MALLOCFAILED;
-      else
-        retval = a_vlist->copy(&tlist);
     }
+    else
+      retval = a_vlist->copy(&tlist);
 
     if (retval == VLAD_OK)
       retval = a_postcond->varlist(tlist);
@@ -383,6 +383,8 @@ int vlad_polbase::add_updatetab(const char *a_name,
     retval = a_precond->copy(&exp_pr);
   if (retval == VLAD_OK && a_vlist != NULL)
     retval = a_vlist->copy(&vlist);
+  if (retval == VLAD_OK && a_rlist != NULL)
+    retval = a_rlist->copy(&rlist);
 
   /* if all went well, add to the udate table */
   if (retval == VLAD_OK)
@@ -1347,7 +1349,7 @@ int vlad_polbase::generate_temporal(FILE *a_fs)
   TBE_REL_SET_ADD(t_rs, TBE_REL_EQL);
 
   /* state loop */
-  for (i_sta = 0; i_sta < VLAD_LIST_LENGTH(m_setable); i_sta++) {
+  for (i_sta = 0; i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++) {
     /* interval 1 loop */
     for (i_int1 = 0; i_int1 < VLAD_LEN_IN; i_int1++) {
       /* interval 2 loop */
@@ -1565,9 +1567,6 @@ int vlad_polbase::generate_constraint(FILE *a_fs)
     }
     else {
       vlad_stringlistlist *tlist;
-      vlad_expression *exp_ge = NULL;
-      vlad_expression *exp_gc = NULL;
-      vlad_expression *exp_gn = NULL;
 
       /* generate a list of tuples */
       if (retval == VLAD_OK)
@@ -1575,6 +1574,9 @@ int vlad_polbase::generate_constraint(FILE *a_fs)
 
       /* ground for each tuple */
       for (i_tup = 0; retval == VLAD_OK && i_tup < tlist->length(); i_tup++) {
+        vlad_expression *exp_ge = NULL;
+        vlad_expression *exp_gc = NULL;
+        vlad_expression *exp_gn = NULL;
         vlad_stringlist *ilist;
 
         /* get this tuple */
@@ -1619,7 +1621,7 @@ int vlad_polbase::generate_constraint(FILE *a_fs)
 
   fprintf(a_fs, "\n");
 
-  return VLAD_OK;
+  return retval;
 }
 
 /* generates policy update rules and prints them to a_fs */
@@ -1747,7 +1749,7 @@ int vlad_polbase::generate_update(FILE *a_fs)
 
   fprintf(a_fs, "\n");
 
-  return VLAD_OK;
+  return retval;
 }
 
 /* generates the given rule and prints them to a_fs */
@@ -2249,7 +2251,7 @@ int vlad_polbase::evaluate_temporal()
   TBE_REL_SET_ADD(t_rs, TBE_REL_EQL);
 
   /* state loop */
-  for (i_sta = 0; i_sta < VLAD_LIST_LENGTH(m_setable); i_sta++) {
+  for (i_sta = 0; i_sta <= VLAD_LIST_LENGTH(m_setable); i_sta++) {
     /* interval 1 loop */
     for (i_int1 = 0; i_int1 < VLAD_LEN_IN; i_int1++) {
       /* interval 2 loop */
@@ -2461,16 +2463,15 @@ int vlad_polbase::evaluate_constraint()
     }
     else {
       vlad_stringlistlist *tlist;
-      vlad_expression *exp_ge = NULL;
-      vlad_expression *exp_gc = NULL;
-      vlad_expression *exp_gn = NULL;
-
       /* generate a list of tuples */
       if (retval == VLAD_OK)
         retval = m_stable->tupleate(vlist, &tlist);
 
       /* ground for each tuple */
       for (i_tup = 0; retval == VLAD_OK && i_tup < tlist->length(); i_tup++) {
+        vlad_expression *exp_ge = NULL;
+        vlad_expression *exp_gc = NULL;
+        vlad_expression *exp_gn = NULL;
         vlad_stringlist *ilist;
 
         if (retval == VLAD_OK)
