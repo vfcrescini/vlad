@@ -260,7 +260,7 @@ int vlad_mapper::decode_fact(unsigned int a_id,
                              vlad_fact **a_fact)
 {
   int retval;
-  char *name[3];
+  char *name[4];
   unsigned char type;
   bool truth;
 
