@@ -1,5 +1,9 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* main/agent.l :
+
+	  - Number is 1 to 127 digits.
+
 	* lib/mapper.cpp :
 
 	  - Fixed a nasty little bug in decode_fact() that seems to be ignored
