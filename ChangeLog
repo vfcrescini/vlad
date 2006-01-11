@@ -1,5 +1,10 @@
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* docs/bnf_agent.txt :
+	* docs/bnf_policy.txt :
+
+	  - Updated BNF to reflect actual parsers.
+
 	* main/agent.l :
 
 	  - Number is 1 to 127 digits.

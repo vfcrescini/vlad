@@ -5,7 +5,7 @@ BNF for Policy Definition Parser
 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started 2002 Dec 08
-Updated 2005 Dec 10
+Updated 2006 Jan 11
 -------------------------------------------------------------------------------
 
 <start>                  : <program>
@@ -14,34 +14,45 @@ Updated 2005 Dec 10
 
 <init>                   : <nil>
 
-<body>                   : <entity-section> <initial-section>
-                           <constraint-section> <update-section>
+<body>                   : <identifier-section> <initial-section>
+                           <relation-section> <constraint-section>
+                           <update-section>
 
 <destroy>                : <nil>
 
-<entity-section>         : <nil> | <entity-stmt-list>
+<identifier-section>     : <nil> | <identifier-stmt-list>
 
 <initial-section>        : <nil> | <inital-stmt-list>
+
+<relation-section>       : <nil> | <relation-stmt-list>
 
 <constraint-section>     : <nil> | <constraint-stmt-list>
 
 <update-section>         : <nil> | <update-stmt-list>
 
-<entity-stmt-list>       : <entity-stmt> | <entity-stmt-list> <entity-stmt>
+<identifier-stmt-list>   : <identifier-stmt> |
+                           <identifier-stmt-list> <identifier-stmt>
 
 <initial-stmt-list>      : <initial-stmt> | <initial-stmt-list> <initial-stmt>
+
+<relation-stmt-list>     : <relation-stmt> |
+                           <relation-stmt-list> <relation-stmt>
 
 <constraint-stmt-list>   : <constraint-stmt> | <constraint-stmt-list>
                            <constraint-stmt>
 
 <update-stmt-list>       : <update-stmt> | <update-stmt-list> <update-stmt>
 
-<entity-stmt>            : <entity> <entity-declaration> <semicolon>
+<identifier-stmt>        : <entity> <entity-declaration> <semicolon> |
+                           <interval> <interval-declaration> <semicolon>
 
 <entity-declaration>     : <sub-entity-decl> | <obj-entity-decl> |
                            <acc-entity-decl> | <sub-grp-entity-decl> |
                            <obj-grp-entity-decl> |
                            <acc-grp-entity-decl>
+
+<interval-declaration>   : <interval-decl> |
+                           <interval-declaration> <comma> <interval-decl>
 
 <sub-entity-decl>        : <sub-type> <sub-entity-list>
 
@@ -67,10 +78,43 @@ Updated 2005 Dec 10
 
 <acc-grp-entity-list>    : <identifier> | <acc-grp-entity-list> <comma> <identifier>
 
+<interval-decl>          : <identifier> <interval-enpoint-decl> |
+                           <identifier>
+
+<interval-endpoint-decl> : <open-bracket> <number> <comma> <number> <close-braket>
+
 <initial-stmt>           : <initially> <expression> <semicolon>
 
+<relation-stmt>          : <relation> <relation-list> <semicolon>
+
+<relation-list>          : <relation-atom> |
+                           <relation-list> <comma> <relation-atom>
+
+<relation-atom>          : <rel-eql-atom> |
+                           <rel-bef-atom> |
+                           <rel-dur-atom> |
+                           <rel-ovr-atom> |
+                           <rel-met-atom> |
+                           <rel-sta-atom> |
+                           <rel-fin-atom>
+
+<rel-eql-atom>           : <eql> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
+<rel-bef-atom>           : <bef> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
+<rel-dur-atom>           : <dur> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
+<rel-ovr-atom>           : <ovr> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
+<rel-met-atom>           : <met> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
+<rel-sta-atom>           : <sta> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
+<rel-fin-atom>           : <fin> <open-parent> <identifier>
+                           <comma> <identifier> <close-parent>
+
 <constraint-stmt>        : <always> <expression> <implied-clause> <with-clause>
-                           <semicolon>
+                           <where-clause> <semicolon>
 
 <implied-clause>         : <nil> | <implied> <by> <expression>
 
@@ -78,8 +122,10 @@ Updated 2005 Dec 10
 
 <with-clause>            : <nil> | <with> <absence> <expression>
 
+<where-clause>           : <nil> | <where> <relation-list>
+
 <update-stmt>            : <identifier> <update-var-def> <causes> <expression>
-                           <if-clause> <semicolon>
+                           <if-clause> <where-clause> <semicolon>
 
 <if-clause>              : <nil> | <if> <expression>
 
@@ -96,17 +142,20 @@ Updated 2005 Dec 10
 <fact>                   : <holds-fact> | <subst-fact> | <memb-fact>
 
 <holds-fact>             : <holds> <open-parent> <identfier> <comma>
-                           <identifier> <comma> <identifier> <close-parent>
+                           <identifier> <comma> <identifier> <comma>
+                           <identifier> <close-parent>
 
 <subst-fact>             : <subset> <open-parent> <identifier>
-                           <comma> <identifier> <close-parent>
+                           <comma> <identifier> <comma> <identifier>
+                           <close-parent>
 
 <memb-fact>              : <member> <open-parent> <identifier>
-                           <comma> <identifier> <close-parent>
+                           <comma> <identifier> <comma> <identifier>
+                           <close-parent>
 
 <logical-op>             : <and>
 
-<identifier>             : <alpha> <alphanum> {0,127}
+<identifier>             : <alpha> <alphanum> {0,126}
 
 <and>                    : &&
 
@@ -120,6 +169,8 @@ Updated 2005 Dec 10
 
 <initially>              : initially
 
+<relation>               : relation
+
 <causes>                 : causes
 
 <implied>                : implied
@@ -130,11 +181,15 @@ Updated 2005 Dec 10
 
 <absence>                : absence
 
+<where>                  : where
+
 <always>                 : always
 
 <if>                     : if
 
 <entity>                 : entity
+
+<interval>               : interval
 
 <sub-type>               : sub
 
@@ -148,9 +203,27 @@ Updated 2005 Dec 10
 
 <acc-grp-type>           : acc-grp
 
+<eql>                    : equals
+
+<bef>                    : before
+
+<dur>                    : during
+
+<ovr>                    : overlaps
+
+<met>                    : meets
+
+<sta>                    : starts
+
+<fin>                    : finishes
+
 <open-parent>            : (
 
 <close-parent>           : )
+
+<open-bracker>           : [
+
+<close-braket>           : ]
 
 <comma>                  : ,
 
@@ -160,7 +233,7 @@ Updated 2005 Dec 10
 
 <digit>                  : [0-9]
 
-<number>                 : <digit> | <number> <digit>
+<number>                 : <digit>{1,127}
 
 <alpha>                  : [a-zA-Z]
 

@@ -51,17 +51,20 @@ Updated 2004 Jan 06
 <fact>                   : <holds-fact> | <subst-fact> | <memb-fact>
 
 <holds-fact>             : <holds> <open-parent> <identfier> <comma>
-                           <identifier> <comma> <identifier> <close-parent>
+                           <identifier> <comma> <identifier> <comma>
+                           <identifier> <close-parent>
 
 <subst-fact>             : <subset> <open-parent> <identifier>
-                           <comma> <identifier> <close-parent>
+                           <comma> <identifier> <comma> <identifier>
+                           <close-parent>
 
 <memb-fact>              : <member> <open-parent> <identifier>
-                           <comma> <identifier> <close-parent>
+                           <comma> <identifier> <comma> <identifier>
+                           <close-parent>
 
 <logical-op>             : <and>
 
-<identifier>             : <alpha> <alphanumstr>{0,127}
+<identifier>             : <alpha> <alphanumstr>{0,126}
 
 <and>                    : &&
 
@@ -97,7 +100,7 @@ Updated 2004 Jan 06
 
 <digit>                  : [0-9]
 
-<number>                 : <digit> | <number> <digit>
+<number>                 : <digit>{1,127}
 
 <alpha>                  : [a-zA-Z]
 
