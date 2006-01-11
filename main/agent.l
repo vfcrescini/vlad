@@ -56,7 +56,7 @@ add                add
 delete             del
 list               list
 digit              [0-9]
-number             {digit}{0,127}
+number             {digit}{1,127}
 alpha              [a-zA-Z]
 alphanum           {alpha}|{digit}|{underscore}
 identifier         {alpha}({alphanum}){0,126}
