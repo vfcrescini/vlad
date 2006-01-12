@@ -184,6 +184,7 @@ int vlad_tnet::check_tuple(vlad_stringlist *a_tuple,
 {
   int retval;
   unsigned int i;
+  vlad_rlist *rlist = NULL;
 
   if (!m_init)
     return VLAD_UNINITIALISED;
@@ -191,45 +192,32 @@ int vlad_tnet::check_tuple(vlad_stringlist *a_tuple,
   if (a_tuple == NULL || a_vlist == NULL || a_rlist == NULL)
     return VLAD_NULLPTR;
 
-  for (i = 0; i < a_rlist->length(); i++) {
+  /* rlist must be non-ground */
+  if ((retval = a_rlist->is_allnonground()) != VLAD_OK)
+    return retval;
+
+  /* ground the rlist */
+  retval = a_rlist->replace(a_vlist, a_tuple, &rlist);
+
+  for (i = 0; retval == VLAD_OK && i < rlist->length(); i++) {
     vlad_rel *rel;
     char *int1;
     char *int2;
     unsigned int c_rs;
     unsigned int n_rs;
-    unsigned int index;
 
-    if ((retval = a_rlist->get(i, &rel)) != VLAD_OK)
-      return retval;
+    if (retval == VLAD_OK)
+      retval = rlist->get(i, &rel);
 
-    /* each rel in the rlist should have at least one variable */
-    if (rel->is_ground() == VLAD_OK)
-      return VLAD_INVALIDINPUT;
+    if (retval == VLAD_OK)
+      retval = rel->is_ground();
 
-    if ((retval = rel->get(&int1, &int2, &c_rs)) != VLAD_OK)
-      return retval;
-
-    if ((retval = vlad_identifier::validate_var_ident(int1)) == VLAD_OK) {
-      /* first one is a var, so get it's index from the varlist */
-      if (a_vlist->get(int1, &index) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
-      /* using the index of the var from the varlist, get the crspndg int */
-      if (a_tuple->get(index, &int1) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
-    }
-
-    if ((retval = vlad_identifier::validate_var_ident(int2)) == VLAD_OK) {
-      /* second one is a var, so get it's index from the varlist */
-      if (a_vlist->get(int2, &index) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
-      /* using the index of the var from the varlist, get the crspndg int */
-      if (a_tuple->get(index, &int2) != VLAD_OK)
-        return VLAD_INVALIDINPUT;
-    }
+    if (retval == VLAD_OK)
+      retval = rel->get(&int1, &int2, &c_rs);
 
     /* get the actual relset of these intervals from the network */
-    if ((retval = get_relset(int1, int2, &n_rs)) != VLAD_OK)
-      return retval;
+    if (retval == VLAD_OK)
+      retval = get_relset(int1, int2, &n_rs);
 
 #if 0
     fprintf(stderr, "%s %s | ", int1, int2);
@@ -240,9 +228,12 @@ int vlad_tnet::check_tuple(vlad_stringlist *a_tuple,
 #endif
 
     /* the relset in the network must be a subset of the constraint relset */
-    if (TBE_REL_SET_INTERSECT(n_rs, c_rs) != n_rs)
-      return VLAD_FAILURE;
+    if (retval == VLAD_OK)
+      retval = (TBE_REL_SET_INTERSECT(n_rs, c_rs) != n_rs) ? VLAD_FAILURE : VLAD_OK;
   }
+
+  if (rlist != NULL)
+    VLAD_MEM_DELETE(rlist);
 
   return VLAD_OK;
 }

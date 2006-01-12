@@ -190,8 +190,8 @@ int vlad_rlist::replace(vlad_varlist *a_vlist,
     if (retval == VLAD_OK)
       retval = old_rel->replace(a_vlist, a_ilist, &new_rel);
     if (retval == VLAD_OK)
-      retval = rlist->vlad_list::add((vlad_list_item *) new_rel);
-    if (retval != VLAD_OK && new_rel != NULL)
+      retval = rlist->add(new_rel);
+    if (new_rel != NULL)
       VLAD_MEM_DELETE(new_rel);
   }
 
@@ -233,8 +233,8 @@ int vlad_rlist::vreplace(vlad_symtab *a_stab,
     if (retval == VLAD_OK)
       retval = old_rel->vreplace(a_stab, a_vlist, a_ilist, &new_rel);
     if (retval == VLAD_OK)
-      retval = rlist->vlad_list::add((vlad_list_item *) new_rel);
-    if (retval != VLAD_OK && new_rel != NULL)
+      retval = rlist->add(new_rel);
+    if (new_rel != NULL)
       VLAD_MEM_DELETE(new_rel);
   }
 

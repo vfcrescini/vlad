@@ -1,5 +1,15 @@
 2006-01-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* lib/tnet.cpp :
+
+	  - check_tuple() now uses rlist::replace() to ground the rlist.
+
+	* lib/rlist.cpp :
+
+	  - replace() now uses its own add() function to handle situations
+	    where a seemingly different relation is actually the same one
+	    when grounded.
+
 	* docs/langspecs.txt :
 
 	  - Updated to show new syntax.
