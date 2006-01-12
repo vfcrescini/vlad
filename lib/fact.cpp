@@ -827,6 +827,8 @@ int vlad_fact::reset()
       case VLAD_ATOM_SUBSET :
         if (m_subset.group1 != NULL)
           VLAD_MEM_FREE(m_subset.group1);
+        if (m_subset.group2 != NULL)
+          VLAD_MEM_FREE(m_subset.group2);
         if (m_subset.interval != NULL)
           VLAD_MEM_FREE(m_subset.interval);
         break;
