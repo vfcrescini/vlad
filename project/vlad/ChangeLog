@@ -1,3 +1,9 @@
+2006-01-13  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* docs/langspecs.txt :
+
+	  - Updated to show new syntax.
+
 2006-01-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* docs/bnf_agent.txt :
