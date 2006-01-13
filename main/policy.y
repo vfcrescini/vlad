@@ -666,6 +666,8 @@ constraint_stmt : VLAD_SYM_ALWAYS expression implied_clause with_clause where_cl
       VLAD_MEM_DELETE($3);
     if ($4 != NULL)
       VLAD_MEM_DELETE($4);
+    if ($5 != NULL)
+      VLAD_MEM_DELETE($5);
   }
   ;
 
@@ -704,11 +706,13 @@ update_stmt :
     }
 
     /* cleanup */
+    VLAD_MEM_DELETE($4);
     if ($2 != NULL)
       VLAD_MEM_DELETE($2);
     if ($5 != NULL)
       VLAD_MEM_DELETE($5);
-    VLAD_MEM_DELETE($4);
+    if ($6 != NULL)
+      VLAD_MEM_DELETE($6);
   }
   ;
 
