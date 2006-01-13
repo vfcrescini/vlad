@@ -5,13 +5,14 @@ Build/Use Instructions
 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 -------------------------------------------------------------------------------
 Started: 2002 Dec 08
-Updated: 2005 Dec 08
+Updated: 2006 Jan 14
 -------------------------------------------------------------------------------
 
 REQUIREMENTS :
 
   - GNU build system (GCC, GNU Make, GNU Bison and GNU Flex)
-  - (optional) Smodels 2.27 library (built with make lib)
+  - (optional) Smodels 2.27 source tree (built with make lib)
+  - Tribe 0.4.0 library and header files
 
 BUILD INSTRUCTIONS :
 
@@ -27,10 +28,16 @@ BUILD INSTRUCTIONS :
         assumes that the smodels library and header files are installed in the
         system.
 
-      --with-smodels=<path-to-smodels>
+      --with-smodels=<path-to-smodels-src-dir>
 
         Alternatively, the path to the directory containing the full smodels
         source tree (compiled) can be specified.
+
+      --with-tribe=<path-to-tribe-install-dir>
+
+        If this option is not specified, the default behaviour is to use
+        system paths to search for a usable version of libtribe. This option
+        allows an alternate path to be used.
 
       --enable-strip
 
