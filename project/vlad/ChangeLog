@@ -1,5 +1,9 @@
 2006-01-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
+	* main/policy.y :
+
+	  - Another memory leak plugged.
+
 	* README :
 
 	  - Updated readme file.
