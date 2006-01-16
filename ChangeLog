@@ -1,3 +1,11 @@
+2006-01-17  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* lib/mapper.cpp :
+	* lib/mapper.h :
+
+         - compute_subst() was mistakenly declared to accept unsigned char
+           instead of unsigned int.
+
 2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* lib/Makefile.in :
