@@ -252,6 +252,11 @@
             \item Interval ${i_1}$ {\em overlaps} interval $i_2$.
           \end{itemize}
 
+          In this example, note that because no relation is defined for intervals
+          ${i_0}$ and ${i_2}$. the corresponding arc between these nodes in Figure
+          \ref{fig-net-ex-01} is labelled {\em All}, meaning the relation set contains
+          all 13 possible relations.
+
           \begin{figure}[ht]
             \begin{center}
               \includegraphics{net-01}
@@ -269,19 +274,19 @@
                                         & \textbf{Before}         & \textbf{After}          & \textbf{During}         & \textbf{Contains}       & \textbf{Overlaps}       & \textbf{Overlapped By}  & \textbf{Meets}          & \textbf{Met}            & \textbf{Starts}         & \textbf{Started By}     & \textbf{Finishes}       & \textbf{Finished By}    \\
                                         & (BEF)                   & (BEI)                   & (DUR)                   & (DUI)                   & (OVR)                   & (OVI)                   & (MET)                   & (MEI)                   & (STA)                   & (STI)                   & (FIN)                   & (FII)                   \\
                 \hline                                                                                                                                                                                                                                                                                                                                          
-                \textbf{Before}         & BEF                     & ?                       & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     \\
+                \textbf{Before}         & BEF                     & ALL                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     \\
                 (BEF)                   &                         &                         & OVR                     &                         &                         & OVR                     &                         & OVR                     &                         &                         & OVR                     &                         \\ 
                                         &                         &                         & MET                     &                         &                         & MET                     &                         & MET                     &                         &                         & MET                     &                         \\ 
                                         &                         &                         & DUR                     &                         &                         & DUR                     &                         & DUR                     &                         &                         & DUR                     &                         \\
                                         &                         &                         & STA                     &                         &                         & STA                     &                         & STA                     &                         &                         & STA                     &                         \\
                 \hline                                                                                                                                                                                                                                                                                                                                         
-                \textbf{After}          & ?                       & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     \\
+                \textbf{After}          & ALL                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     \\
                 (BEI)                   &                         &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         &                         &                         \\
                                         &                         &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         &                         &                         \\
                                         &                         &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         &                         &                         \\
                                         &                         &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         &                         &                         \\
                 \hline                                                                                                                                                                                                                                                                                                                                         
-                \textbf{During}         & BEF                     & BEI                     & DUR                     & ?                       & BEF                     & BEI                     & BEF                     & BEI                     & DUR                     & BEI                     & DUR                     & BEF                     \\
+                \textbf{During}         & BEF                     & BEI                     & DUR                     & ALL                     & BEF                     & BEI                     & BEF                     & BEI                     & DUR                     & BEI                     & DUR                     & BEF                     \\
                 (DUR)                   &                         &                         &                         &                         & OVI                     & OVI                     &                         &                         &                         & OVI                     &                         & OVR                     \\
                                         &                         &                         &                         &                         & MET                     & MEI                     &                         &                         &                         & MEI                     &                         & MET                     \\
                                         &                         &                         &                         &                         & DUR                     & DUR                     &                         &                         &                         & DUR                     &                         & DUR                     \\
@@ -496,7 +501,18 @@ ENDFUNCTION
         some events can be treated as instantaneously occuring at a specific time
         point.
 
+        Regardless of the granularity chosen, the domain of time points is the set of
+        positive integers ${\mathbb Z}^{+}$.
+
       \subsection{Defining Intervals in Terms of Time Points}
+
+        \begin{vdefinition}
+          \label{def-interval}
+          A {\em well-defined interval} $i$ is an interval whose end points $i^{-}$
+          $\in$ ${\mathbb Z}^{+}$ and $i^{+}$ $\in$ ${\mathbb Z}^{+}$ are defined,
+          where $i^{-}$ $<$ $i^{+}$. A {\em regular interval} is an interval whose
+          end points are not known.
+        \end{vdefinition}
 
     \section{Temporal Constraints in Authorisation Policies}
 
