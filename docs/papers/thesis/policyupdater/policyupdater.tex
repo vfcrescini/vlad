@@ -6,7 +6,8 @@
 \usepackage{graphicx}
 \usepackage{alltt}
 
-\newenvironment{changemargin}[2]
+% a variable margin environment
+\newenvironment{vvarmargin}[2]
 {
   \begin{list}{}
   {
@@ -24,7 +25,21 @@
   \end{list}
 }
 
+% definition environment
+\newtheorem{vdefinition}{Definition}
+
+% example environment
 \newtheorem{vexample}{Example}
+
+% verbatim environment
+\newenvironment{vverbatim}
+{
+  \begin{alltt}
+}
+{
+  \vspace{-\baselineskip}
+  \end{alltt}
+}
 
 \begin{document}
   \onehalfspacing
@@ -246,7 +261,7 @@
           \end{figure}
 
         \begin{table}[p]
-          \begin{changemargin}{-4cm}{-4cm}
+          \begin{vvarmargin}{-4cm}{-4cm}
             \begin{center}
               \tiny
               \begin{tabular}[t]{|r|l|l|l|l|l|l|l|l|l|l|l|l|}
@@ -341,7 +356,7 @@
             \end{center}
             \caption[]{Transitivity Table}
             \label{table-trans}
-          \end{changemargin}
+          \end{vvarmargin}
         \end{table}
 
         \subsubsection{Propagation Algorithm}
@@ -381,7 +396,7 @@
           possible relations inferred from the two given relation sets using the
           $Trans_1$() function.
 
-          \begin{alltt}
+          \begin{vverbatim}
 FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
   \(RS\) = \(\emptyset\)
   FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
@@ -391,7 +406,7 @@ FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
   END DO
   RETURN \(RS\)
 ENDFUNCTION
-          \end{alltt}
+          \end{vverbatim}
 
           We now define some network oprerators. The first operator,
           $NET.Get$($I_0$, $I_1$), returns the relation set on the arc between
@@ -409,7 +424,7 @@ ENDFUNCTION
           With these operators, we can now define the network operator to add new
           relations to the network and propagate its effects.
 
-          \begin{alltt}
+          \begin{vverbatim}
 FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
   \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
   WHILE NOT \(Q.IsEmpty\)() DO
@@ -435,7 +450,7 @@ FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
     ENDDO
   ENDDO
 ENDFUNCTION
-          \end{alltt}
+          \end{vverbatim}
 
           [ more explanation + example ]
 
