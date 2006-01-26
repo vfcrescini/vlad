@@ -4,6 +4,7 @@
 \usepackage{amsfonts}
 \usepackage{setspace}
 \usepackage{graphicx}
+\usepackage{alltt}
 
 \newenvironment{changemargin}[2]
 {
@@ -22,6 +23,8 @@
 {
   \end{list}
 }
+
+\newtheorem{vexample}{Example}
 
 \begin{document}
   \onehalfspacing
@@ -53,56 +56,46 @@
       {\em during} ${i_1}$ and ${i_2}$ occurs {\em after} ${i_1}$, then the
       interval ${i_0}$ must occur {\em before} ${i_2}$.
 
-      The rest of the section gives a detailed overview of the interval
+      The rest of the section gives a detailed overview of Allen's interval
       algebra.
 
-      \subsection{Time Lines, Time Points and Time Intervals}
+      \subsection{Time Points and Time Intervals}
 
-        The preceding introduction hinted the difference between a time point
-        and a time interval. This sub section aims to give a more formal
-        distinction between the two.
+        The preceding introduction hinted the difference between a time point and a
+        time interval. This sub section aims to give a more formal distinction between
+        the two.
 
-        Disregarding relativity, we first make the assumption that time is
-        linear, absolute and universal. That is, time always flows in one
-        direction: from past to future; that the passage of time experienced by
-        one system is the same for any other system; and that all systems
-        define time against a universal frame of reference. For simplicity, we
-        further assume that time is not a continuous line, but is instead made
-        up of discrete time points. 
+        A point in time represents an event with zero duration, or an event that occurs
+        instantaneouly, such as the switching on of a light bulb, or the moment the sun
+        has risen in the morning.
 
-        A point in time represents an event with zero duration, such as the
-        switching on of a light bulb, or the rising of the sun in the morning.
-        One might argue that such instances are not instantaneous, meaning
-        time, no matter how small a value, has elapsed between the instant that
-        electricity flowed through light bulb's fillament and the instant the
-        light from the bulb reaches the observer's eyes. Then again, the
-        "instant" that electricity flowed through the bulb's fillament is not
-        instantaneous, once we consider that the speed of light and electricity
-        is finite. This argument is more evident in the sunrise example.
+        A time interval, on the other hand, is defined to be the time that has elapsed
+        between two given time points. For example, the interval one might call lunch
+        hour may be defined as the time elapsed between the time points 1 PM and 2 PM.
 
-        To solve this problem, we allow time point granularity to be chosen
-        arbitrarilty. That is, if we choose a granularity of 1 second, then
-        the switching on of a light bulb is an event that occurres at a
-        specific time point. A granularity of 1 second, however, means that
-        a sunrise is not an event but an interval, given the fact that in most
-        parts of the world, the sun takes a few minutes to rise above the
-        horizon. If, however, we choose a granularity of 1 hour (and we do not
-        live in the polar regions), a sunrise becomes an event that occurs at
-        a single point in time. We can therefore argue that given a specific
-        time granularity, some events can be treated as instantaneously
-        occuring at a specific time point.
+        Formally, a time interval $i$ is defined by its starting end point ${i^-}$ and
+        a finishing end point ${i^+}$, where ${i^-}$ $<$ ${i^+}$. 
 
-        Formally, we define time as a non-coninuous line, made up of time
-        points. A time interval $i$ is a segment on this line, defined by a
-        starting end point ${i^-}$ and a finishing end point ${i^+}$, where
-        ${i^-}$ $<$ ${i^+}$. It is important to note that intervals cannot be
-        of width 0, i.e., they must span at least two time points.
+        One might argue that time point events such as the switching on of a light bulb
+        are not instantaneous, meaning that time, no matter how small the value, has
+        elapsed between the instant that electricity flowed through light bulb's
+        fillament and the instant the light from the bulb reaches the observer's eyes.
+        One can further argue that the "instant" that electricity flowed through the
+        bulb's fillament is not instantaneous, once we consider that the speed of light
+        and electricity is finite. In other words, any given event can always be
+        divided into sub-events. This argument is more evident in the sunrise example.
+
+        To solve this problem, Allen's algebra defines time intervals as the most basic
+        entities. This means time points are not used to define time intervals, but
+        instead, each interval is defined only in terms of its relationship with other
+        intervals.
 
       \subsection{Time Interval Relations}
 
-        As shown in Figure \ref{fig-rels}, the algebra defines 13 disjoint
-        interval relations. Each interval relation can be defined in terms of
-        the relationships of the end points of their intervals:
+        As shown in Figure \ref{fig-rels}, the algebra defines 13 disjoint relations
+        that can occur between any two intervals. For clarity, we define each temporal
+        interval relation below in terms of the relationships of the end points of
+        their intervals:
 
         \begin{figure}[ht]
           \begin{center}
@@ -113,11 +106,6 @@
         \end{figure}
 
         \begin{itemize}
-          \item
-            {\em Equals}.
-            Interval ${i_0}$ is said to be {\em equals} interval ${i_1}$ if and
-            only if ${i_0^-}$ $=$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
-
           \item
             {\em Before}.
             Interval ${i_0}$ is said to be {\em before} interval ${i_1}$ if and
@@ -186,6 +174,10 @@
             if and only if ${i_0^-}$ $<$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
             Note that this is an inverse of the {\em finishes} relation.
 
+          \item
+            {\em Equals}.
+            Interval ${i_0}$ {\em equals} interval ${i_1}$ if and only if ${i_0^-}$
+            $=$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
         \end{itemize}
 
         For example, given intervals {\em lunch hour} and {\em work hours},
@@ -196,13 +188,12 @@
 
       \subsection{Inferring New Relations}
 
-        As mentioned earlier, the strength of the algebra is its ability to
-        infer new relations from existing ones, even if the intervals in the
-        relations have unknown end points. This is achieved by taking advantage
-        of the transitive properties of relations. For example, given that
-        interval ${i_0}$ is {\em before} interval ${i_1}$ and interval ${i_1}$
-        is {\em before} interval ${i_2}$. Regardless of what the end points
-        are, interval ${i_0}$ is {\em before} interval ${i_2}$.
+        As mentioned earlier, the strength of the algebra is its ability to infer new
+        relations from existing ones. This is achieved by taking advantage of the
+        transitive properties of relations. For example, given that interval ${i_0}$ is
+        {\em before} interval ${i_1}$ and interval ${i_1}$ is {\em before} interval
+        ${i_2}$. Regardless of what the end points are, interval ${i_0}$ is 
+        {\em before} interval ${i_2}$.
 
         While simple relations like the one shown in the above example may seem
         intuitive, we quickly realise that it may not be so if we consider that
@@ -215,9 +206,44 @@
         is populated by these disjunctive interval relations, adding new
         pieces of information may narrow down the set of possible relations
         between two intervals. This in turn may lead to the trimming down of
-        possible relations between another pair of intervals. In fact, as
-        new and more specific intformation are added into the knowledge base,
-        its effects may propagate to other relations.
+        other relations between other interval pairs. In fact, as new and more
+        specific information are added into the knowledge base, its effects may
+        propagate to other relations.
+
+        \subsubsection{Interval Relation Network}
+
+          The temporal interval relation knowledge base is represented as a network
+          whose nodes represent intervals and the arcs between them represent a set
+          of possible relations that hold between the two intervals. Note that although
+          this representation allows the assignment of a set of relations between any
+          two intervals, because the relations are mutually exclusive, we know that
+          only one of these relations actually holds. The fact that some interval
+          pairs have a set of relations between them only suggests that the information
+          given is insufficient to define the exact relation that holds between the
+          intervals.
+
+          The interval relation network is maintained in such a way that each node
+          is connected to every other node in the network. In cases where no
+          information is given to define an arc, we use the default arc which contains
+          a set of all 13 relations. As a matter of convention in the notation, we only
+          show one arc between two nodes. The reverse arc, composed of the inverses of
+          the relations represented by the first arc, is omitted.
+
+          Figure \ref{fig-net-ex-01} gives an example of a network with three nodes:
+          $i_0$, $i_1$ and $i_2$ and the following relations:
+
+          \begin{itemize}
+            \item Interval ${i_0}$ is {\em before} or {\em during} interval ${i_1}$.
+            \item Interval ${i_1}$ {\em overlaps} interval $i_2$.
+          \end{itemize}
+
+          \begin{figure}[ht]
+            \begin{center}
+              \includegraphics{net-01}
+              \caption{Network Representation Example}
+              \label{fig-net-ex-01}
+            \end{center}
+          \end{figure}
 
         \begin{table}[p]
           \begin{changemargin}{-4cm}{-4cm}
@@ -314,14 +340,148 @@
               \end{tabular}
             \end{center}
             \caption[]{Transitivity Table}
+            \label{table-trans}
           \end{changemargin}
         \end{table}
 
-        \subsubsection{Interval Relation Network}
-
         \subsubsection{Propagation Algorithm}
 
+          The algorithm works as follows. As a starting point, we assume that the
+          network contains complete interval relation information, i.e. at each node,
+          there is an arc that connects it to every other node. The algorithm is
+          invoked whenever new information is to be added into the network. Whenever
+          a new relation is added into the network, all consequences of this new
+          relation are also added into the network. These consequences are computed
+          through the transitive closure of the network. The following example
+          illustrates this procedure.
+
+          Given 3 intervals $i_0$, $i_1$ and $i_2$, and the relation $i_0$ is
+          {\em before} $i_1$. Suppose the new relation $i_2$ is {\em during} $i_1$ is
+          added into the network. The algorithm then infers that $i_0$ is {\em before}
+          $i_2$. This new relation is again added into the network in a similar way,
+          possibly inferring other new relations as it is added. This procedure is
+          repeated until no new information is yielded.
+
+          Table \ref{table-trans} shows the basic transitivity rules. For any 3
+          intervals $i_0$, $i_1$ and $i_2$, the relation(s) between intervals
+          $i_0$ and $i_2$ is shown in the intersection of the row that contains the
+          the relation between $i_0$ and $i_1$, and the column that contains the
+          relation between $i_1$ and $i_2$.
+
+          Before we can define the actual algorithm, we must first define a few
+          notational constructs.
+
+          For any single relations $r_0$ and $r_1$, the function $Trans_1$($r_0$, $r_1$)
+          returns the relation set $RS$ that corresponds to the intersection of $r_0$
+          and $r_1$ in Table \ref{table-trans}.
+
+          Using this function, we can then define the extended function
+          $Trans_2$($RS_0$, $RS_1$), which takes a pair of relation sets $RS_0$ and
+          $RS_1$ as input, and returns the relation set $RS$ which contains all the
+          possible relations inferred from the two given relation sets using the
+          $Trans_1$() function.
+
+          \begin{alltt}
+FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
+  \(RS\) = \(\emptyset\)
+  FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
+    FOR each \(r\sb{1}\) \(\in\) \(RS\sb{1}\) DO
+      \(RS\) = \(RS\) \(\cup\) \(Trans\sb{1}\)(\(r\sb{0}\), \(r\sb{1}\))
+    END DO
+  END DO
+  RETURN \(RS\)
+ENDFUNCTION
+          \end{alltt}
+
+          We now define some network oprerators. The first operator,
+          $NET.Get$($I_0$, $I_1$), returns the relation set on the arc between
+          interval $I_0$ and interval $I_1$. The function $NET.Replace$($I_0$, $I_1$,
+          $RS$) blindly replaces the relation set of the arc between $I_0$ and $I_1$
+          with the given relation set $RS$. In addition to these network operators,
+          we also define a standard queue structure $Q$ which stores a network arc,
+          i.e. a pair of intervals and a relation set that holds between the two
+          intervals. Thus, we have three operators for the queue structure:
+          $Q.Enqueue$($I_0$, $I_1$, $RS$), which enqueues the given arc; and
+          $Q.Dequeue$() which returns and removes the oldest arc stored in the queue
+          $Q$; and $Q.IsEmpty$() which returns true if the queue is empty and false
+          otherwise.
+
+          With these operators, we can now define the network operator to add new
+          relations to the network and propagate its effects.
+
+          \begin{alltt}
+FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
+  \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
+  WHILE NOT \(Q.IsEmpty\)() DO
+    \(I\sb{0}'\), \(I\sb{1}'\), \(RS'\) = \(Q.Dequeue\)()
+    \(NET.Replace\)(\(I\sb{0}'\), \(I\sb{1}'\), \(RS'\)) 
+    FOR each interval \(I''\) \(\in\) \(NET\) DO
+      IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
+        \(RS''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(I''\), \(I\sb{0}'\)), \(RS'\)) 
+        \(RS'''\) = \(NET.Get\)(\(I''\), \(I\sb{1}'\)) \(\cap\) \(RS''\)
+        IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{1}'\)) THEN
+          \(Q.Add\)(\(I''\), \(I\sb{1}'\), \(RS'''\))
+        ENDIF 
+      ENDIF
+    ENDDO
+    FOR each interval \(I''\) \(\in\) \(NET\) DO
+      IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
+        \(RS''\) =  \(Trans\sb{2}\)(\(RS'\), \(NET.Get\)(\(I\sb{1}'\), \(I''\)))
+        \(RS'''\) = \(NET.Get\)(\(I\sb{0}'\), \(I''\)) \(\cap\) \(RS''\)
+        IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{0}'\)) THEN
+          \(Q.Add\)(\(I\sb{0}'\), \(I''\), \(RS'''\))
+        ENDIF 
+      ENDIF
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{alltt}
+
+          [ more explanation + example ]
+
     \section{Extensions to Allen's Interval Algebra}
+
+      In the previous section, we have shown that Allen's Algebra defines temporal
+      intervals as the primitive, where each interval is defined not by time points,
+      but by their relationships with other intervals. In this section, we will attempt
+      to show the extensions to the interval algebra to allow it to express intervals
+      in terms of time points.
+
+      \subsection{Time Points Revisited}
+
+        By allowing time point definitions to be expressed in the algebra, we must
+        formally define time points.
+
+        Disregarding the relativistic effects of gravitation and velocity, we make the
+        assumption that time is linear, absolute and universal. That is, time always
+        flows in one direction: from past to future; that the passage of time as seen
+        by one system is the same for any other system; and that all systems define
+        time against a universal frame of reference. For simplicity, we further assume
+        that time is not a continuous line, but is instead made up of discrete time
+        points.
+
+        As this definition goes against the more intuitive notion of continuous time
+        lines, one might see the problem of events falling through the gaps between
+        the discrete time points in the non-continuous time line.
+
+        To go around this problem, we allow the time point granularity to be chosen
+        arbitrarilty. Idealy, for a specific application, one would choose a
+        granularity that is at least as small as the smallest interval in that
+        application. In practice, however, one can choose a granularity that would
+        encompass the largest interval that one needs to treat as an event.
+
+        In the light bulb and sunrise example in the previous section, if we
+        choose a granularity of 1 second, then the switching on of a light bulb is an
+        event that occurres at a specific time point. A granularity of 1 second,
+        however, means that a sunrise is not an event but an interval, given the fact
+        that in most parts of the world, the sun takes a few minutes to rise above the
+        horizon. If, however, we choose a granularity of 1 hour (and we do not
+        live in the polar regions), a sunrise becomes an event that occurs at a single
+        point in time. We can therefore argue that given a specific time granularity,
+        some events can be treated as instantaneously occuring at a specific time
+        point.
+
+      \subsection{Defining Intervals in Terms of Time Points}
 
     \section{Temporal Constraints in Authorisation Policies}
 
