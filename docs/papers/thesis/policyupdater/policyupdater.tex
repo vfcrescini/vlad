@@ -1,0 +1,340 @@
+\documentclass[11pt]{report}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{setspace}
+\usepackage{graphicx}
+
+\newenvironment{changemargin}[2]
+{
+  \begin{list}{}
+  {
+    \setlength{\topsep}{0pt}
+    \setlength{\leftmargin}{0pt}
+    \setlength{\rightmargin}{0pt}
+    \setlength{\listparindent}{\parindent}
+    \setlength{\itemindent}{\parindent}
+    \setlength{\parsep}{0pt plus 1pt}
+    \addtolength{\leftmargin}{#1}\addtolength{\rightmargin}{#2}
+  }
+  \item
+}
+{
+  \end{list}
+}
+
+\begin{document}
+  \onehalfspacing
+
+  \chapter{Temporal Interval Overview}
+
+    \section{Introduction}
+
+    \section{Allen's Temporal Interval Algebra}
+
+      Allen's interval algebra is based on the fact that for any two well
+      defined time intervals, there exists exacly one interval relation between
+      them. The strength of the algebra lies not just on the formalisation of
+      these relations, but also on its ability to handle disjunctive interval
+      relations between undefined time intervals.
+
+      For example, given an interval ${i_0}$, defined as 24th of September,
+      1995 to 25th of September, 1995; and interval ${i_1}$, defined as 25th of
+      December 1995 to 1st of January 1996. From the definitions of these
+      intervals, it is easy to conclude that interval ${i_0}$ is {\em before}
+      interval ${i_1}$, since the finishing end point of interval ${i_0}$
+      occurs before the starting end point of interval ${i_1}$.
+
+      The strength of the interval algebra can be illustrated by considering
+      intervals without endpoint definitions, but rather disjunctive relations
+      with other intervals. For example, given three intervals ${i_0}$, ${i_1}$
+      and ${i_2}$ whose bounding endpoints are not known. The algebra allows us
+      to conclude that if ${i_0}$ occurs either {\em before} or
+      {\em during} ${i_1}$ and ${i_2}$ occurs {\em after} ${i_1}$, then the
+      interval ${i_0}$ must occur {\em before} ${i_2}$.
+
+      The rest of the section gives a detailed overview of the interval
+      algebra.
+
+      \subsection{Time Lines, Time Points and Time Intervals}
+
+        The preceding introduction hinted the difference between a time point
+        and a time interval. This sub section aims to give a more formal
+        distinction between the two.
+
+        Disregarding relativity, we first make the assumption that time is
+        linear, absolute and universal. That is, time always flows in one
+        direction: from past to future; that the passage of time experienced by
+        one system is the same for any other system; and that all systems
+        define time against a universal frame of reference. For simplicity, we
+        further assume that time is not a continuous line, but is instead made
+        up of discrete time points. 
+
+        A point in time represents an event with zero duration, such as the
+        switching on of a light bulb, or the rising of the sun in the morning.
+        One might argue that such instances are not instantaneous, meaning
+        time, no matter how small a value, has elapsed between the instant that
+        electricity flowed through light bulb's fillament and the instant the
+        light from the bulb reaches the observer's eyes. Then again, the
+        "instant" that electricity flowed through the bulb's fillament is not
+        instantaneous, once we consider that the speed of light and electricity
+        is finite. This argument is more evident in the sunrise example.
+
+        To solve this problem, we allow time point granularity to be chosen
+        arbitrarilty. That is, if we choose a granularity of 1 second, then
+        the switching on of a light bulb is an event that occurres at a
+        specific time point. A granularity of 1 second, however, means that
+        a sunrise is not an event but an interval, given the fact that in most
+        parts of the world, the sun takes a few minutes to rise above the
+        horizon. If, however, we choose a granularity of 1 hour (and we do not
+        live in the polar regions), a sunrise becomes an event that occurs at
+        a single point in time. We can therefore argue that given a specific
+        time granularity, some events can be treated as instantaneously
+        occuring at a specific time point.
+
+        Formally, we define time as a non-coninuous line, made up of time
+        points. A time interval $i$ is a segment on this line, defined by a
+        starting end point ${i^-}$ and a finishing end point ${i^+}$, where
+        ${i^-}$ $<$ ${i^+}$. It is important to note that intervals cannot be
+        of width 0, i.e., they must span at least two time points.
+
+      \subsection{Time Interval Relations}
+
+        As shown in Figure \ref{fig-rels}, the algebra defines 13 disjoint
+        interval relations. Each interval relation can be defined in terms of
+        the relationships of the end points of their intervals:
+
+        \begin{figure}[ht]
+          \begin{center}
+            \includegraphics{rels}
+            \caption{Thirteen Temporal Interval Relations}
+            \label{fig-rels}
+          \end{center}
+        \end{figure}
+
+        \begin{itemize}
+          \item
+            {\em Equals}.
+            Interval ${i_0}$ is said to be {\em equals} interval ${i_1}$ if and
+            only if ${i_0^-}$ $=$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
+
+          \item
+            {\em Before}.
+            Interval ${i_0}$ is said to be {\em before} interval ${i_1}$ if and
+            only if ${i_0^+}$ $<$ ${i_1^-}$.
+
+          \item
+            {\em After}.
+            Interval ${i_0}$ is said to be {\em after} interval ${i_1}$ if and
+            only if ${i_0^-}$ $>$ ${i_1^+}$. Note that this is an inverse of
+            the {\em before} relation.
+
+          \item
+            {\em Meets}.
+            Interval ${i_0}$ is said to {\em meet} interval ${i_1}$ if and only
+            if ${i_0^+}$ $=$ ${i_1^-}$.
+
+          \item
+            {\em Met By}.
+            Interval ${i_0}$ is said to be {\em met by} interval ${i_1}$ if and
+            only if ${i_0^-}$ $=$ ${i_1^+}$. Note that this is an inverse of
+            the {\em meets} relation.
+
+          \item
+            {\em During}.
+            Interval ${i_0}$ is said to be {\em during} interval ${i_1}$ if and
+            only if ${i_0^-}$ $>$ ${i_1^-}$ and ${i_0^+}$ $<$ ${i_1^+}$.
+
+          \item
+            {\em Contains}.
+            Interval ${i_0}$ is said to {\em contain} interval ${i_1}$ if and
+            only if ${i_0^-}$ $<$ ${i_1^-}$ and ${i_0^+}$ $>$ ${i_1^+}$. Note
+            that this is an inverse of the {\em during} relation.
+
+          \item
+            {\em Overlaps}.
+            Interval ${i_0}$ is said to {\em overlap} interval ${i_1}$ if and
+            only if ${i_0^-}$ $<$ ${i_1^-}$, ${i_0^+}$ $>$ ${i_1^-}$ and
+            ${i_0^+}$ $<$ ${i_1^+}$.
+
+          \item
+            {\em Overlapped By}.
+            Interval ${i_0}$ is said to be {\em overlapped by} interval
+            ${i_1}$ if and only if ${i_0^-}$ $>$ ${i_1^-}$, ${i_0^-}$ $<$
+            ${i_1^+}$ and ${i_0^+}$ $>$ ${i_1^+}$. Note that this is an
+            inverse of the {\em overlaps} relation.
+
+          \item
+            {\em Starts}.
+            Interval ${i_0}$ is said to {\em start} interval ${i_1}$ if and
+            only if ${i_0^-}$ $=$ ${i_1^-}$ and ${i_0^+}$ $<$ ${i_1^+}$.
+
+          \item
+            {\em Started By}.
+            Interval ${i_0}$ is said to be {\em started by} interval ${i_1}$ if
+            and only if ${i_0^-}$ $=$ ${i_1^-}$ and ${i_0^+}$ $>$ ${i_1^+}$.
+            Note that this is an inverse of the the {\em starts} relation.
+
+          \item
+            {\em Finishes}.
+            Interval ${i_0}$ is said to {\em finish} interval ${i_1}$ if and
+            only if ${i_0^-}$ $>$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
+
+          \item
+            {\em Finished By}.
+            Interval ${i_0}$ is said to be {\em finished by} interval ${i_1}$
+            if and only if ${i_0^-}$ $<$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
+            Note that this is an inverse of the {\em finishes} relation.
+
+        \end{itemize}
+
+        For example, given intervals {\em lunch hour} and {\em work hours},
+        defined as 1 PM to 2 PM and 9 AM to 5 PM, respectively. Since 1 PM
+        (1300 hours) is greater than 9 AM (0900 hours) and 2 PM (1400 hours) is
+        less than 5 PM (1700 hours), then the interval {\em lunch hour} is
+        {\em during} the interval {\em work hours}.
+
+      \subsection{Inferring New Relations}
+
+        As mentioned earlier, the strength of the algebra is its ability to
+        infer new relations from existing ones, even if the intervals in the
+        relations have unknown end points. This is achieved by taking advantage
+        of the transitive properties of relations. For example, given that
+        interval ${i_0}$ is {\em before} interval ${i_1}$ and interval ${i_1}$
+        is {\em before} interval ${i_2}$. Regardless of what the end points
+        are, interval ${i_0}$ is {\em before} interval ${i_2}$.
+
+        While simple relations like the one shown in the above example may seem
+        intuitive, we quickly realise that it may not be so if we consider that
+        a relation that exists between any two intervals may be given as a
+        disjunctive set of possible relations. For example, the relation
+        between interval ${i_0}$ and interval ${i_1}$ may be given as a set
+        of possible relations \{{\em before}, {\em after}, {\em during}\}.
+
+        Another issue is propagation. Given that the temporal knowledge base
+        is populated by these disjunctive interval relations, adding new
+        pieces of information may narrow down the set of possible relations
+        between two intervals. This in turn may lead to the trimming down of
+        possible relations between another pair of intervals. In fact, as
+        new and more specific intformation are added into the knowledge base,
+        its effects may propagate to other relations.
+
+        \begin{table}[p]
+          \begin{changemargin}{-4cm}{-4cm}
+            \begin{center}
+              \tiny
+              \begin{tabular}[t]{|r|l|l|l|l|l|l|l|l|l|l|l|l|}
+                \hline
+                                        & \textbf{Before}         & \textbf{After}          & \textbf{During}         & \textbf{Contains}       & \textbf{Overlaps}       & \textbf{Overlapped By}  & \textbf{Meets}          & \textbf{Met}            & \textbf{Starts}         & \textbf{Started By}     & \textbf{Finishes}       & \textbf{Finished By}    \\
+                                        & (BEF)                   & (BEI)                   & (DUR)                   & (DUI)                   & (OVR)                   & (OVI)                   & (MET)                   & (MEI)                   & (STA)                   & (STI)                   & (FIN)                   & (FII)                   \\
+                \hline                                                                                                                                                                                                                                                                                                                                          
+                \textbf{Before}         & BEF                     & ?                       & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     \\
+                (BEF)                   &                         &                         & OVR                     &                         &                         & OVR                     &                         & OVR                     &                         &                         & OVR                     &                         \\ 
+                                        &                         &                         & MET                     &                         &                         & MET                     &                         & MET                     &                         &                         & MET                     &                         \\ 
+                                        &                         &                         & DUR                     &                         &                         & DUR                     &                         & DUR                     &                         &                         & DUR                     &                         \\
+                                        &                         &                         & STA                     &                         &                         & STA                     &                         & STA                     &                         &                         & STA                     &                         \\
+                \hline                                                                                                                                                                                                                                                                                                                                         
+                \textbf{After}          & ?                       & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     \\
+                (BEI)                   &                         &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         &                         &                         \\
+                                        &                         &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         &                         &                         \\
+                                        &                         &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         &                         &                         \\
+                                        &                         &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         &                         &                         \\
+                \hline                                                                                                                                                                                                                                                                                                                                         
+                \textbf{During}         & BEF                     & BEI                     & DUR                     & ?                       & BEF                     & BEI                     & BEF                     & BEI                     & DUR                     & BEI                     & DUR                     & BEF                     \\
+                (DUR)                   &                         &                         &                         &                         & OVI                     & OVI                     &                         &                         &                         & OVI                     &                         & OVR                     \\
+                                        &                         &                         &                         &                         & MET                     & MEI                     &                         &                         &                         & MEI                     &                         & MET                     \\
+                                        &                         &                         &                         &                         & DUR                     & DUR                     &                         &                         &                         & DUR                     &                         & DUR                     \\
+                                        &                         &                         &                         &                         & STI                     & FIN                     &                         &                         &                         & FIN                     &                         & STA                     \\
+                \hline
+                \textbf{Contains}       & BEF                     & BEI                     & OVR                     & DUI                     & OVR                     & OVI                     & OVR                     & OVI                     & DUI                     & DUI                     & DUI                     & DUI                     \\
+                (DUI)                   & MET                     & DUI                     & DUR                     &                         & DUI                     & DUI                     & DUI                     & DUI                     & FII                     &                         & STI                     &                         \\
+                                        & DUI                     & MEI                     & STA                     &                         & FII                     & STI                     & FII                     & STI                     & OVR                     &                         & OVI                     &                         \\
+                                        & FII                     & STI                     & FIN                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                \hline
+                \textbf{Overlaps}       & BEF                     & BEI                     & OVR                     & BEF                     & BEF                     & OVR                     & BEF                     & OVI                     & OVR                     & DUI                     & DUR                     & BEF                     \\
+                (OVR)                   &                         & OVI                     & DUR                     & OVR                     & OVR                     & OVI                     &                         & DUI                     &                         & FII                     & STA                     & OVR                     \\
+                                        &                         & DUI                     & STA                     & MET                     & MET                     & DUR                     &                         & STI                     &                         & OVR                     & OVR                     & MET                     \\
+                                        &                         & MEI                     &                         & DUI                     &                         & STA                     &                         &                         &                         &                         &                         &                         \\
+                                        &                         & STI                     &                         & FII                     &                         & FIN                     &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         \\
+                \hline
+                \textbf{Overlapped By}  & BEF                     & BEI                     & OVI                     & BEI                     & OVR                     & BEI                     & OVR                     & BEI                     & OVI                     & OVI                     & OVI                     & OVI                     \\
+                (OVI)                   & OVR                     &                         & DUR                     & OVI                     & OVI                     & OVI                     & DUI                     &                         & DUR                     & BEI                     &                         & DUI                     \\
+                                        & MET                     &                         & FIN                     & MEI                     & DUR                     & MEI                     & FII                     &                         & FIN                     & MEI                     &                         & STI                     \\
+                                        & DUI                     &                         &                         & DUI                     & STA                     &                         &                         &                         &                         &                         &                         &                         \\
+                                        & FII                     &                         &                         & STI                     & FIN                     &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         &                         \\
+                \hline
+                \textbf{Meets}          & BEF                     & BEI                     & OVR                     & BEF                     & BEF                     & OVR                     & BEF                     & FIN                     & MET                     & MET                     & DUR                     & BEF                     \\  
+                (MET)                   &                         & OVI                     & DUR                     &                         &                         & DUR                     &                         & FII                     &                         &                         & STA                     &                         \\
+                                        &                         & MEI                     & STA                     &                         &                         & STA                     &                         & EQL                     &                         &                         & OVR                     &                         \\
+                                        &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                \hline
+                \textbf{Met By}         & BEF                     & BEI                     & OVI                     & BEI                     & OVI                     & BEI                     & STA                     & BEI                     & DUR                     & BEI                     & MEI                     & MEI                     \\
+                (MEI)                   & OVR                     &                         & DUR                     &                         & DUR                     &                         & STI                     &                         & FIN                     &                         &                         &                         \\
+                                        & MET                     &                         & FIN                     &                         & FIN                     &                         & EQL                     &                         & OVI                     &                         &                         &                         \\
+                                        & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                \hline
+                \textbf{Starts}         & BEF                     & BEI                     & DUR                     & BEF                     & BEF                     & OVI                     & BEF                     & MEI                     & STA                     & STA                     & DUR                     & BEF                     \\
+                (STA)                   &                         &                         &                         & OVR                     & OVR                     & DUR                     &                         &                         &                         & STI                     &                         & MET                     \\
+                                        &                         &                         &                         & MET                     & MET                     & FIN                     &                         &                         &                         & EQL                     &                         & OVR                     \\
+                                        &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         &                         \\
+                \hline
+                \textbf{Started By}     & BEF                     & BEI                     & OVI                     & DUI                     & OVR                     & OVI                     & OVR                     & MEI                     & STA                     & STI                     & OVI                     & DUI                     \\
+                (STI)                   & OVR                     &                         & DUR                     &                         & DUI                     &                         & DUI                     &                         & STI                     &                         &                         &                         \\
+                                        & MET                     &                         & FIN                     &                         & FII                     &                         & FII       y             &                         & EQL                     &                         &                         &                         \\
+                                        & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                \hline
+                \textbf{Finishes}       & BEF                     & BEI                     & DUR                     & BEI                     & OVR                     & BEI                     & MET                     & BEI                     & DUR                     & BEI                     & FIN                     & FIN                     \\
+                (FIN)                   &                         &                         &                         & OVI                     & DUR                     & OVI                     &                         &                         &                         & OVI                     &                         & FII                     \\
+                                        &                         &                         &                         & MEI                     & STA                     & MEI                     &                         &                         &                         & MEI                     &                         & EQL                     \\
+                                        &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
+                \hline                                                                                                                                                                                                                                                                                                                                          
+                \textbf{Finished By}    & BEF                     & BEI                     & OVR                     & DUI                     & OVR                     & OVI                     & MET                     & STI                     & OVR                     & DUI                     & FIN                     & FII                     \\
+                (FII)                   &                         & OVI                     & DUR                     &                         &                         & DUI                     &                         & OVI                     &                         &                         & FII                     &                         \\
+                                        &                         & MEI                     & STA                     &                         &                         & STI                     &                         & DUI                     &                         &                         & EQL                     &                         \\
+                                        &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                        &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption[]{Transitivity Table}
+          \end{changemargin}
+        \end{table}
+
+        \subsubsection{Interval Relation Network}
+
+        \subsubsection{Propagation Algorithm}
+
+    \section{Extensions to Allen's Interval Algebra}
+
+    \section{Temporal Constraints in Authorisation Policies}
+
+    \section{Formalisation}
+
+      \subsection{Syntax and Semantics}
+
+      \subsection{Computation and Semantic Properties}
+
+  \chapter{Implementation}
+
+    \section{Algorithms}
+
+    \section{Variable Grounding}
+
+\end{document}
