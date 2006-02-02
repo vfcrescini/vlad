@@ -8,7 +8,7 @@ PDFLATEX=pdflatex
 FIG2DEV=fig2dev
 
 LATEX_SRCS=policyupdater
-XFIG_SRCS=rels net-01
+XFIG_SRCS=rels net-01 net-02 net-03
 
 CLASS=
 STYLE=

@@ -253,7 +253,7 @@
           \end{itemize}
 
           In this example, note that because no relation is defined for intervals
-          ${i_0}$ and ${i_2}$. the corresponding arc between these nodes in Figure
+          ${i_0}$ and ${i_2}$, the corresponding arc between these nodes in Figure
           \ref{fig-net-ex-01} is labelled {\em All}, meaning the relation set contains
           all 13 possible relations.
 
@@ -368,12 +368,13 @@
 
           The algorithm works as follows. As a starting point, we assume that the
           network contains complete interval relation information, i.e. at each node,
-          there is an arc that connects it to every other node. The algorithm is
-          invoked whenever new information is to be added into the network. Whenever
-          a new relation is added into the network, all consequences of this new
-          relation are also added into the network. These consequences are computed
-          through the transitive closure of the network. The following example
-          illustrates this procedure.
+          there is an arc that connects it to every other node. Where there is no
+          defined relationship between two nodes, the default arc is used to connect
+          these two nodes. The algorithm is invoked whenever new information is to be
+          added into the network. Whenever a new relation is added into the network,
+          all consequences of this new relation are also added into the network. These
+          consequences are computed through the transitive closure of the network. The
+          following example illustrates this procedure.
 
           Given 3 intervals $i_0$, $i_1$ and $i_2$, and the relation $i_0$ is
           {\em before} $i_1$. Suppose the new relation $i_2$ is {\em during} $i_1$ is
@@ -407,8 +408,8 @@ FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
   FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
     FOR each \(r\sb{1}\) \(\in\) \(RS\sb{1}\) DO
       \(RS\) = \(RS\) \(\cup\) \(Trans\sb{1}\)(\(r\sb{0}\), \(r\sb{1}\))
-    END DO
-  END DO
+    ENDDO
+  ENDDO
   RETURN \(RS\)
 ENDFUNCTION
           \end{vverbatim}
@@ -457,6 +458,38 @@ FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
 ENDFUNCTION
           \end{vverbatim}
 
+          The $NET.Add()$ algorithm works as follows. Every time a new arc
+          $i_0$, $i_1$ and $rs$ is added, the algorithm finds the transitive
+          relation set $RS$ between each of these intervals and every other
+          interval $I$ in the network, i.e. the algorithm finds $RS$ =
+          $Trans_2$($NET.Get$($I$, $i_0$), $rs$) for every other interval $I'$
+          in the network. If this new relation set $RS$ contains more specific
+          information than what is already in the network, i.e. $RS$ $\subset$
+          $NET.Get$($I$, $i_1$), then this new arc between $I$ and $i_1$ (as
+          shown in Figure \ref{fig-net-ex-02}) is again put through the same
+          algorithm, as it might yield more relation changes.
+
+          \begin{figure}[[tbhp]
+            \begin{center}
+              \includegraphics{net-02}
+              \caption{A new relation $RS$ from interval $I$ and interval $i_1$}
+              \label{fig-net-ex-02}
+            \end{center}
+          \end{figure}
+
+          Note that as shown in Figure \ref{fig-net-ex-03}, the algorithm also
+          attempts to form new transitive relations between the given intervals
+          $i_0$ and $i_1$ and all other intervals $I$ in the network such that
+          interval $I$ is to the right of the other two intervals.
+
+          \begin{figure}[[tbhp]
+            \begin{center}
+              \includegraphics{net-03}
+              \caption{A new relation $RS$ from interval $i_0$ and interval $I$}
+              \label{fig-net-ex-03}
+            \end{center}
+          \end{figure}
+
           [ more explanation + example ]
 
     \section{Extensions to Allen's Interval Algebra}
@@ -485,21 +518,21 @@ ENDFUNCTION
         the discrete time points in the non-continuous time line.
 
         To go around this problem, we allow the time point granularity to be chosen
-        arbitrarilty. Idealy, for a specific application, one would choose a
+        arbitrarilty. Ideally, for a specific application, one would choose a
         granularity that is at least as small as the smallest interval in that
-        application. In practice, however, one can choose a granularity that would
-        encompass the largest interval that one needs to treat as an event.
+        application. In practice, however, such choices are limited by implementing
+        system's clock and other hardware and software latencies.
 
         In the light bulb and sunrise example in the previous section, if we
         choose a granularity of 1 second, then the switching on of a light bulb is an
-        event that occurres at a specific time point. A granularity of 1 second,
+        event that occurrs at a specific time point. A granularity of 1 second,
         however, means that a sunrise is not an event but an interval, given the fact
         that in most parts of the world, the sun takes a few minutes to rise above the
-        horizon. If, however, we choose a granularity of 1 hour (and we do not
+        horizon. However, if we choose a granularity of 1 hour (and we do not
         live in the polar regions), a sunrise becomes an event that occurs at a single
-        point in time. We can therefore argue that given a specific time granularity,
-        some events can be treated as instantaneously occuring at a specific time
-        point.
+        point in our chosen time scale. We can therefore argue that given a specific
+        time granularity, some events can be treated as instantaneously occuring at a
+        specific time point.
 
         Regardless of the granularity chosen, the domain of time points is the set of
         positive integers ${\mathbb Z}^{+}$.
@@ -513,6 +546,77 @@ ENDFUNCTION
           where $i^{-}$ $<$ $i^{+}$. A {\em regular interval} is an interval whose
           end points are not known.
         \end{vdefinition}
+
+        Under this definition, we can conclude that for any two well-defined
+        intervals there is exactly one interval relation that holds between
+        them. We now define a function that will calculate this relation given
+        the end points of two well-defined intervals.
+
+        \begin{vverbatim}
+FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(i\sb{1}\sp{+}\))
+  IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{-}\) THEN
+    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(equals\}\)
+    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(starts\}\)
+    ELSE
+      RETURN \{\(started by\}\)
+    ENDIF 
+  ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{-}\) THEN
+    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(finished by\}\)
+    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{-}\) THEN
+        RETURN \{\(meets\}\)
+      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{-}\) THEN
+        RETURN \{\(before\}\)
+      ELSE
+        RETURN \{\(overlaps\}\)
+      ENDIF
+    ELSE
+      RETURN \{\(contains\}\)
+    ENDIF
+  ELSE
+    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(finishes\}\)
+    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(during\}\)
+    ELSE
+      IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{+}\) THEN 
+        RETURN \{\(met by\}\)
+      ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{+}\) THEN  
+        RETURN \{\(overlapped by\}\)
+      ELSE
+        RETURN \{\(after\}\)
+      ENDIF
+    ENDIF
+  ENDIF
+ENDFUNCTION
+        \end{vverbatim}
+
+        By using the above algorithm, we can now define a new network operator
+        $NET.Bind$($I$, $I^-$, $I^+$) that assigns the end points $I^-$ and
+        $I^+$ to the existing interval $I$ in the network. By allowing such
+        end points to be defined for any interval, thereby making them
+        well-defined intervals, we are also allowing the possibility of
+        introducing new relations with this interval. Furthermore, any new
+        relations gathered by comparing the end points of well-defined
+        intervals are subject to the same propagation algorithms shown in the
+        previous section. The algorithm below shows how the $NET.Bind$()
+        operator achieves this.
+
+        \begin{vverbatim}
+FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
+  FOR each interval \(I'\) \(\in\) \(NET\) DO
+    IF \(I'\) != \(I\) THEN
+      IF \(I'\) is well-defined THEN
+        \(RS\) = \(Compute\)(\(I\sp{-}\), \(I\sp{+}\), \(I'\sp{-}\), \(I'\sp{+}\))
+        \(NET.Add\)(\(I\), \(I'\), \(RS\))
+      ENDIF
+    ENDIF
+  ENDDO
+ENDFUNCTION
+        \end{vverbatim}
 
     \section{Temporal Constraints in Authorisation Policies}
 
