@@ -41,6 +41,15 @@
   \end{alltt}
 }
 
+% create a quote environment without a right-hand margin
+\newenvironment{vquote}
+{
+  \begin{list}{}{\leftmargin 1em}\item[]
+}
+{
+  \end{list}
+}
+
 \begin{document}
   \onehalfspacing
 
@@ -529,29 +538,35 @@ ENDFUNCTION
             complete the transitivity. In other words, the algorithm computes
             the following:
 
-            \begin{vverbatim}
-\(rs\sb{2}\) = \(Trans\sb{2}\)(\(rs\sb{0}\), \(rs\sb{1}\))
-\(rs\sb{2}\) = \(Trans\sb{2}\)(\{\(BEF\), \(MET\), \(OVR\)\}, \{\(STA\), \(FIN\)\})
-            \end{vverbatim}
+            \begin{vquote}
+              $rs_2$ = $Trans_2$($rs_0$, $rs_1$)
+
+              $rs_2$ = $Trans_2$(\{$BEF$, $MET$, $OVR$\}, \{$STA$, $FIN$\})
+            \end{vquote}
 
             By referring to the transitivity table in Table \ref{table-trans},
             we note the following:
 
-            \begin{vverbatim}
-\(Trans\sb{1}\)(\(BEF\), \(STA\)) = \{\(BEF\)\}
-\(Trans\sb{1}\)(\(BEF\), \(FIN\)) = \{\(BEF\), \(OVR\), \(MET\), \(DUR\), \(STA\)\}
-\(Trans\sb{1}\)(\(MET\), \(STA\)) = \{\(MET\)\}
-\(Trans\sb{1}\)(\(MET\), \(FIN\)) = \{\(DUR\), \(STA\), \(OVR\)\}
-\(Trans\sb{1}\)(\(OVR\), \(STA\)) = \{\(OVR\)\}
-\(Trans\sb{1}\)(\(OVR\), \(FIN\)) = \{\(DUR\), \(STA\), \(OVR\)\}
-            \end{vverbatim}
+            \begin{vquote}
+              $Trans_1$($BEF$, $STA$) = \{$BEF$\}
+
+              $Trans_1$($BEF$, $FIN$) = \{$BEF$, $OVR$, $MET$, $DUR$, $STA$\}
+
+              $Trans_1$($MET$, $STA$) = \{$MET$\}
+
+              $Trans_1$($MET$, $FIN$) = \{$DUR$, $STA$, $OVR$\}
+
+              $Trans_1$($OVR$, $STA$) = \{$OVR$\}
+
+              $Trans_1$($OVR$, $FIN$) = \{$DUR$, $STA$, $OVR$\}
+            \end{vquote}
 
             Therefore, as $Trans_2$() takes the union of all the relation sets
             returned by $Trans_1$(), we have:
 
-            \begin{vverbatim}
-\(rs\sb{2}\) = \{\(BEF\), \(OVR\), \(MET\), \(DUR\), \(STA\)\}
-            \end{vverbatim}
+            \begin{vquote}
+              $rs_2$ = \{$BEF$, $OVR$, $MET$, $DUR$, $STA$\}
+            \end{vquote}
 
             Finally, because $rs_2$ is a subset of $NET.Get$($i_0$, $i_2$), the
             algorithm replaces the arc between $i_0$ and $i_2$ with $rs_2$, as
