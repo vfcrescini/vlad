@@ -53,9 +53,88 @@
 \begin{document}
   \onehalfspacing
 
-  \chapter{Temporal Interval Overview}
+  \chapter{Temporal Constraints in Authorisation Policies}
 
     \section{Introduction}
+
+      An obvious limitation of language ${\cal L}$ is its lack of expressive
+      power to represent time-dependent authorisations. Consider the following
+      authorisation rule:
+  
+      \begin{vquote}
+        $Bob$ holds $read$ access to file $f$ between $9:00$ $AM$ and $5:00$
+        $PM$
+      \end{vquote}
+  
+      The authorisation information above can be broken down into two parts: an
+      authorisation part, i.e. "Bob holds read access to file $f$", and a
+      temporal part, i.e. "between 9:00 AM and 5:00 PM". As language ${\cal L}$
+      can already express authorisations, we focus our attention to the
+      temporal part. A naive attempt to extend language ${\cal L}$ to express
+      time may involve adding two extra parameters to each authorisation atom
+      to represent the starting and ending time points of the interval. For
+      example, the authorisation rule above can be represented as:
+  
+      \begin{vquote}
+        $holds$($bob$, $read$, $f$, $900$, $1700$)
+      \end{vquote}
+
+      The atom above may be interpreted to mean that the authorisation holds
+      for all times between 9:00 AM and 5:00 PM, inclusive. In this example,
+      the granularity of time, or the smallest unit of time that can be
+      expressed, is one minute. Of course, a more general approach is to use
+      the domain of positive integers. With this approach, the system can
+      handle different granularities of time, where the choice of what time
+      unit each discrete value is interpreted as is left to the application.
+      For example, if the temporal values are defined to be the number of
+      seconds since 12 midnight, 01 Jan 1970 (i.e. the beginning of the UNIX
+      epoch), then the atom below states that the authorisation holds at an
+      interval starting at 9:00 AM, 18 March 1976 and ending at 5:00 PM, 18
+      March 1976:
+ 
+      \begin{vquote}
+        $holds$($bob$, $read$, $f$, $195951600$, $195980400$)
+      \end{vquote}
+
+      While this approach gives the language enough expressive power to
+      represent authorisations bound by literal time values, it is by no means
+      expressive enough to model relationships between the time values
+      themselves. This deficiency is shown in the example below:
+ 
+      \begin{vquote}
+        $Alice$ holds a $write$ access right to file $f_0$ after $Bob$ holds a
+        $read$ access right to file $f_1$
+      \end{vquote}
+ 
+      Such authorisation rule might arise in a situation where the access right
+      $write$ to file $f_0$ can only be granted at some time after the $read$
+      access right to file $f_1$ has been granted and revoked. This example
+      shows that the specific times at which authorisations hold are not as
+      important as the relationship between the times themselves. This
+      authorisation rule may be represented as follows:
+
+      \begin{vquote}
+        $holds$($alice$, $write$, $f_0$, $i_{1}$)
+ 
+        $holds$($bob$, $read$, $f_0$, $i_{2}$)
+ 
+        $after$($i_0$, $i_1$)
+      \end{vquote}
+ 
+      The example above states that $alice$ holds a $write$ access right to
+      file $f_0$ at some time interval $i_0$, $bob$ holds a $read$ access right
+      to file $f_1$ at some time interval $i_1$, and that the interval $i_0$
+      occurs at some time after the interval $i_1$. As mentioned earlier, the
+      actual values of the time intervals $i_0$ and $i_1$ is not as important
+      as the fact that the interval $i_0$ occurs after interval $i_1$.
+
+      The rest of this chapter discusses how temporal constraints can be
+      incorporated into the authorisation language. The next section introduces
+      Allen's Temporal Interval Algebra to express relations between time
+      values, followed by a section that outlines extensions to this algebra,
+      and finally, the last section gives a detailed formalisation of a new
+      authorisation language that utilises the interval algebra to support
+      temporal constraints.
 
     \section{Allen's Temporal Interval Algebra}
 
@@ -73,11 +152,11 @@
       occurs before the starting end point of interval ${i_1}$.
 
       The strength of the interval algebra can be illustrated by considering
-      intervals without endpoint definitions, but rather disjunctive relations
-      with other intervals. For example, given three intervals ${i_0}$, ${i_1}$
-      and ${i_2}$ whose bounding endpoints are not known. The algebra allows us
-      to conclude that if ${i_0}$ occurs either {\em before} or
-      {\em during} ${i_1}$ and ${i_2}$ occurs {\em after} ${i_1}$, then the
+      intervals without endpoint definitions, but rather as having disjunctive
+      relations with other intervals. For example, given three intervals
+      ${i_0}$, ${i_1}$ and ${i_2}$ whose bounding endpoints are not known. The
+      algebra allows us to conclude that if ${i_0}$ occurs either {\em before}
+      or {\em during} ${i_1}$ and ${i_2}$ occurs {\em after} ${i_1}$, then the
       interval ${i_0}$ must occur {\em before} ${i_2}$.
 
       The rest of the section gives a detailed overview of Allen's interval
@@ -706,8 +785,6 @@ FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
   ENDDO
 ENDFUNCTION
         \end{vverbatim}
-
-    \section{Temporal Constraints in Authorisation Policies}
 
     \section{Formalisation}
 
