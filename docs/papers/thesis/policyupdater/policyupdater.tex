@@ -462,7 +462,7 @@ ENDFUNCTION
           $i_0$, $i_1$ and $rs$ is added, the algorithm finds the transitive
           relation set $RS$ between each of these intervals and every other
           interval $I$ in the network, i.e. the algorithm finds $RS$ =
-          $Trans_2$($NET.Get$($I$, $i_0$), $rs$) for every other interval $I'$
+          $Trans_2$($NET.Get$($I$, $i_0$), $rs$) for every other interval $I$
           in the network. If this new relation set $RS$ contains more specific
           information than what is already in the network, i.e. $RS$ $\subset$
           $NET.Get$($I$, $i_1$), then this new arc between $I$ and $i_1$ (as
@@ -490,7 +490,81 @@ ENDFUNCTION
             \end{center}
           \end{figure}
 
-          [ more explanation + example ]
+          \begin{vexample}
+            Given a network with three intervals $i_0$, $i_1$ and $i_2$ where
+            no relation between any of the intervals are known. As no relations
+            are given, each arc in the network as shown in Figure
+            \ref{fig-net-ex-04} is the default arc.
+
+            \begin{figure}[[tbhp]
+              \begin{center}
+                \includegraphics{net-04}
+                \caption{Network with 3 default arcs}
+                \label{fig-net-ex-04}
+              \end{center}
+            \end{figure}
+
+            Now, suppose the relation between interval $i_0$ and interval $i_1$
+            is narrowed down to the relation set \{$before$, $meets$,
+            $overlaps$\}, i.e., the operation $NET.Add$($i_0$, $i_1$, \{$BEF$,
+            $MET$, $OVR$\}) is executed. This operation will yied the network
+            shown in Figure \ref{fig-net-ex-05}. Note that because every arc
+            in the network contains all relations, the effects of the
+            $NET.ADD$() operation are limited to one arc.
+
+            \begin{figure}[[tbhp]
+              \begin{center}
+                \includegraphics{net-05}
+                \caption{Network after $NET.Add$($i_0$, $i_1$, \{$BEF$, $MET$, $OVR$\})}
+                \label{fig-net-ex-05}
+              \end{center}
+            \end{figure}
+
+            Now, if the relation set \{$starts$, $finishes$\} is added to the
+            arc between interval $i_1$ and interval $i_2$, the $NET.Add$($i_1$,
+            $i_2$, \{$STA$, $FIN$\}) algorithm will also compute the relation
+            set $rs_2$ between interval $i_0$ and interval $i_2$ by using the
+            relation set $rs_0$ between intervals $i_0$ and interval $i_1$, and
+            relation set $rs_1$ between intervals $i_1$ and interval $i_2$ to
+            complete the transitivity. In other words, the algorithm computes
+            the following:
+
+            \begin{vverbatim}
+\(rs\sb{2}\) = \(Trans\sb{2}\)(\(rs\sb{0}\), \(rs\sb{1}\))
+\(rs\sb{2}\) = \(Trans\sb{2}\)(\{\(BEF\), \(MET\), \(OVR\)\}, \{\(STA\), \(FIN\)\})
+            \end{vverbatim}
+
+            By referring to the transitivity table in Table \ref{table-trans},
+            we note the following:
+
+            \begin{vverbatim}
+\(Trans\sb{1}\)(\(BEF\), \(STA\)) = \{\(BEF\)\}
+\(Trans\sb{1}\)(\(BEF\), \(FIN\)) = \{\(BEF\), \(OVR\), \(MET\), \(DUR\), \(STA\)\}
+\(Trans\sb{1}\)(\(MET\), \(STA\)) = \{\(MET\)\}
+\(Trans\sb{1}\)(\(MET\), \(FIN\)) = \{\(DUR\), \(STA\), \(OVR\)\}
+\(Trans\sb{1}\)(\(OVR\), \(STA\)) = \{\(OVR\)\}
+\(Trans\sb{1}\)(\(OVR\), \(FIN\)) = \{\(DUR\), \(STA\), \(OVR\)\}
+            \end{vverbatim}
+
+            Therefore, as $Trans_2$() takes the union of all the relation sets
+            returned by $Trans_1$(), we have:
+
+            \begin{vverbatim}
+\(rs\sb{2}\) = \{\(BEF\), \(OVR\), \(MET\), \(DUR\), \(STA\)\}
+            \end{vverbatim}
+
+            Finally, because $rs_2$ is a subset of $NET.Get$($i_0$, $i_2$), the
+            algorithm replaces the arc between $i_0$ and $i_2$ with $rs_2$, as
+            shown in Figure \ref{fig-net-ex-06}.
+
+            \begin{figure}[[tbhp]
+              \begin{center}
+                \includegraphics{net-06}
+                \caption{Network after $NET.Add$($i_1$, $i_2$, \{$STA$, $FIN$\})}
+                \label{fig-net-ex-06}
+              \end{center}
+            \end{figure}
+          \end{vexample}
 
     \section{Extensions to Allen's Interval Algebra}
 
