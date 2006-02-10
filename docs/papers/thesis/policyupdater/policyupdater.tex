@@ -788,88 +788,160 @@ ENDFUNCTION
 
     \section{Formalisation}
 
+      In this section, we attempt to formalise a new language, ${\cal L^T}$,
+      with the same expressive power as language ${\cal L}$ to represent
+      authorisation policies, but with extensions to also express temporal
+      constraints.
+
       \subsection{Syntax and Semantics}
 
-        Language ${\cal L^T}$ is an extension of Language ${\cal L}$ with
-        provisions to express temporal constraints. The main difference between
-        the two languages is that in addition to the six disjoint entity sorts
-        (subject, access right, object, subject group, etc.), language
-        ${\cal L^T}$ also includes an additional time interval sort, which is
-        also disjoint from the other six.
+        \subsubsection{Components of Language ${\cal L^T}$}
 
-        \subsubsection{Interval Identifier Declaration}
+          \begin{itemize}
 
-          Like entities, interval identifiers must first be declared before
-          apearing anywhere else in the program. Because it occupies a
-          different name space from the entity identifiers, the syntax remains
-          the same: a lowercase character followed by zero or more alpha,
-          numeric or underscore characters.
+            \item
+              {\bf Entity Identifiers}
+
+              As with language ${\cal L}$, language ${\cal L^T}$ includes six
+              disjoint entity sorts: subject, access rights, objects, subject
+              groups, access right groups and object groups. The syntax for
+              each entity type is a single lower case alpha character followed
+              by zero or more alphanumeric or underscore characters:
+
+              \begin{vverbatim}
+[a-z][a-zA-Z0-9\_]
+              \end{vverbatim}
+
+            \item
+              {\bf Interval Identifiers}
+
+              The main difference between language ${\cal L}$ and language
+              ${\cal L^T}$ is that in addition to the six entity sorts, 
+              language ${\cal L^T}$ also includes an additional time interval
+              sort. As it occupies a different name space from the other sorts,
+              interval identifiers share the same syntax:
+
+              \begin{vverbatim}
+[a-z][a-zA-Z0-9\_]
+              \end{vverbatim}
+
+            \item
+              {\bf Interval Atoms and Expressions}
+
+              Noting the fact that the inverse relation between any intervals
+              $i_0$ and $i_1$ is equal to the relation between intervals
+              $i_1$ and $i_0$, for the sake of brevity, language ${\cal L^T}$
+              defines only 7 out of the 13 interval relations in the algebra.
+              These relations, together with two interval identifiers make up
+              the language's interval atoms:
+
+              \begin{vverbatim}
+<rel-id>(<int-id-0>, <int-id-1>)
+              \end{vverbatim}
+
+              where $rel$-$id$ indicates the relation between interval
+              $int$-$id$-$0$ and interval $int$-$id$-$1$, and is one of the
+              following: $equals$, $before$, $during$, $overlaps$, $meets$,
+              $starts$ or $finishes$.
+
+              An interval expression in language ${\cal L^T}$ is a group
+              of interval atoms separated by the comma "," character. As the
+              interval algebra allows disjunctions, the meaning of the comma
+              within an interval expression may be conjunctive or disjunctive.
+              If an interval expression contains two atoms that differ only by
+              their relation (meaning the interval pairs are the same), then
+              the comma between these atoms indicates a logical "or". Commas
+              between other interval atoms indicate a logical "and". For
+              example, the following interval expression is interpreted as
+              "interval $i0$ is before or after interval $i1$ and interval
+              $i2$ is during interval $i0$":
+
+              \begin{vverbatim}
+before(i0, i1), before(i1, i0), during(i2, i0)
+              \end{vverbatim}
+
+            \item
+              {\bf Authorisation Atoms, Facts and Expressions}
+
+              Authorisation atoms of language ${\cal L^T}$ are similar to the
+              to the atoms of language ${\cal L}$, except each atom includes
+              an interval parameter that indicates the time at which that atom
+              holds. As with language ${\cal L}$, there are three types of
+              atoms:
+
+              \begin{itemize}
+                \item
+                  Holds Atom. The syntax below shows an atom that states that
+                  subject $sub$-$id$ holds the access right $acc$-$id$ for
+                  object $obj$-$id$ at time interval $int$-$id$.
+
+                  \begin{vverbatim}
+holds(<sub-id>, <acc-id>, <obj-id>, <int-id>)
+                  \end{vverbatim}
+
+                \item
+                  Member Atom. The syntax shown below is that of an atom that
+                  states that the single entity $single$-$id$ is a member of
+                  the group entity $group$-$id$ for the duration specified by
+                  interval $int$-$id$.
+
+                  \begin{vverbatim}
+memb(<single-id>, <group-id>, <int-id>)
+                  \end{vverbatim}
+
+                \item
+                  Subset Atom. Below is the syntax of an atom that states that 
+                  the group entity $group$-$id$-$0$ is a subset of the group
+                  entity $group$-$id-$-$1$ at time interval $int$-$id$.
+
+                  \begin{vverbatim}
+subst(<group-id-0>, <group-id-1>, <int-id>)
+                  \end{vverbatim}
+
+              \end{itemize}
+
+              As with language ${\cal L}$, language ${\cal L^T}$ facts state
+              that relationship represented by the corresponding atom its
+              negation (as indicated by the "!" character prefix) holds.
+
+              An expression is either a fact or a conjunction of facts
+              separated by the comma "," character.
+
+          \end{itemize}
+
+        \subsubsection{Identifier Declarations}
+
+          In language ${\cal L^T}$, both entity and interval identifiers must
+          be declared before they are used anywhere in the program. The syntax
+          for declaring entity identifiers in language ${\cal L^T}$ is the same
+          as the syntax in language ${\cal L}$.
+
+          Interval identifiers may be declared with or without end points. Note
+          that once intervals are assigned end points, they are bound to those
+          end points for the lifetime of the program. End points, if declared
+          with an interval identifier, must be a positive integer as indicated
+          in the following syntax:
 
           \begin{vverbatim}
-[a-z]([a-zA-Z0-9\_])\{0,126\}
-          \end{vverbatim}
-
-          Interval identifiers may be declared with or without end points with
-          the following syntax:
-
-          \begin{vverbatim}
-interval <int-id> [\(\backslash\)[\(ep\sb{0}\), \(ep\sb{1}\)\(\backslash\)], ... ]
+interval <int-id> [\(\backslash\)[\(ep\sb{0}\), \(ep\sb{1}\)\(\backslash\)], ... ];
           \end{vverbatim}
 
           where $ep_0$ $\in$ ${\mathbb Z}^+$, $ep_1$ $\in$ ${\mathbb Z}^+$ and
           $ep_0$ $<$ $ep_1$.
 
-        \subsubsection{Atoms, Facts and Expressions}
+        \subsubsection{Interval Constraint Definitions}
 
-          The atoms of language ${\cal L^T}$ is different from the atoms of
-          language ${\cal L}$ only by the additional interval identifier
-          parameter. The three atom types remain the same:
-
-          \begin{itemize}
-            \item
-              Holds Atom. The syntax below shows an atom that states that
-              subject $sub\_id$ holds the access right $acc\_id$ for object
-              $obj\_id$ at time interval $int\_id$.
-
-              \begin{vverbatim}
-holds(<sub-id>, <acc-id>, <obj-id>, <int-id>)
-              \end{vverbatim}
-
-            \item
-              Member Atom. The syntax shown below is that of an atom that
-              states that the single entity $single\_id$ is a member of the
-              group entity $group\_id$ for the duration specified by interval
-              $int\_id$.
-
-              \begin{vverbatim}
-memb(<single-id>, <group-id>, <int-id>)
-              \end{vverbatim}
-
-            \item
-              Subset Atom. Below is the syntax of an atom that states that the
-              group entity $group\_id\_0$ is a subset of the group entity
-              $group\_id\_1$ at time interval $int\_id$.
-
-              \begin{vverbatim}
-subst(<group-id-0>, <group-id-1>, <int-id>)
-              \end{vverbatim}
-
-          \end{itemize}
-
-          As with language ${\cal L}$, language ${\cal L^T}$ facts are atoms or
-          their negations (indicated by the "!" character prefix) and
-          expressions are conjunctions of facts joined together by two
-          ampersand "\&\&" characters.
-
-          \subsubsection{Interval Constraint Definitions}
-
-            Interval constrains allow relations between intervals to be
-            defined. Such relations will hold for the entire lifetime of the
-            program. Syntax is as follows:
+          Interval constrains allow relations between intervals to be defined.
+          Such relations will hold for the entire lifetime of the program.
+          Syntax is as follows:
 
             \begin{vverbatim}
-relation <rel>(<int-id-0>, <int-id-1>)[, ...]
+relation <int-exp>[, ...];
             \end{vverbatim}
+
+        \subsubsection{Authorisation Constraint Definitions}
+
+        \subsubsection{Policy Update Defintition}
 
         \subsubsection{Temporal Constraints in Constraint Rule Defintions}
 
