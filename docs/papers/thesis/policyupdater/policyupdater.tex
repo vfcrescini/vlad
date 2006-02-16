@@ -853,8 +853,8 @@ ENDFUNCTION
               the comma between these atoms indicates a logical "or". Commas
               between other interval atoms indicate a logical "and". For
               example, the following interval expression is interpreted as
-              "interval $i0$ is before or after interval $i1$ and interval
-              $i2$ is during interval $i0$":
+              "interval $i_0$ is before or after interval $i_1$ and interval
+              $i_2$ is during interval $i_0$":
 
               \begin{vverbatim}
 before(i0, i1), before(i1, i0), during(i2, i0)
@@ -923,11 +923,19 @@ subst(<group-id-0>, <group-id-1>, <int-id>)
           in the following syntax:
 
           \begin{vverbatim}
-interval <int-id> [\(\backslash\)[\(ep\sb{0}\), \(ep\sb{1}\)\(\backslash\)], ... ];
+interval <int-id> [\(\backslash\)[ep0, ep1\(\backslash\)]][, ... ];
           \end{vverbatim}
 
           where $ep_0$ $\in$ ${\mathbb Z}^+$, $ep_1$ $\in$ ${\mathbb Z}^+$ and
           $ep_0$ $<$ $ep_1$.
+
+          For example, the statement below declares interval $i_0$ without end
+          points, interval $i_1$ with end points [$1000$, $1200$] and
+          interval $i_2$ with endpoints [$1500$, $2300$].
+
+          \begin{vverbatim}
+interval i0, i1 [\(1000\), \(1200\)], i2 [\(1500\), \(2300\)];
+          \end{vverbatim}
 
         \subsubsection{Interval Constraint Definitions}
 
