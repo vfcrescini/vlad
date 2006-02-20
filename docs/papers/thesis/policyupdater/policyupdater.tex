@@ -519,31 +519,31 @@
           relations to the network and propagate its effects.
 
           \begin{vverbatim}
-FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
-  \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
-  WHILE NOT \(Q.IsEmpty\)() DO
-    \(I\sb{0}'\), \(I\sb{1}'\), \(RS'\) = \(Q.Dequeue\)()
-    \(NET.Replace\)(\(I\sb{0}'\), \(I\sb{1}'\), \(RS'\)) 
-    FOR each interval \(I''\) \(\in\) \(NET\) DO
-      IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
-        \(RS''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(I''\), \(I\sb{0}'\)), \(RS'\)) 
-        \(RS'''\) = \(NET.Get\)(\(I''\), \(I\sb{1}'\)) \(\cap\) \(RS''\)
-        IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{1}'\)) THEN
-          \(Q.Add\)(\(I''\), \(I\sb{1}'\), \(RS'''\))
-        ENDIF 
-      ENDIF
+  FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
+    \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
+    WHILE NOT \(Q.IsEmpty\)() DO
+      \(I\sb{0}'\), \(I\sb{1}'\), \(RS'\) = \(Q.Dequeue\)()
+      \(NET.Replace\)(\(I\sb{0}'\), \(I\sb{1}'\), \(RS'\)) 
+      FOR each interval \(I''\) \(\in\) \(NET\) DO
+        IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
+          \(RS''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(I''\), \(I\sb{0}'\)), \(RS'\)) 
+          \(RS'''\) = \(NET.Get\)(\(I''\), \(I\sb{1}'\)) \(\cap\) \(RS''\)
+          IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{1}'\)) THEN
+            \(Q.Add\)(\(I''\), \(I\sb{1}'\), \(RS'''\))
+          ENDIF 
+        ENDIF
+      ENDDO
+      FOR each interval \(I''\) \(\in\) \(NET\) DO
+        IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
+          \(RS''\) =  \(Trans\sb{2}\)(\(RS'\), \(NET.Get\)(\(I\sb{1}'\), \(I''\)))
+          \(RS'''\) = \(NET.Get\)(\(I\sb{0}'\), \(I''\)) \(\cap\) \(RS''\)
+          IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{0}'\)) THEN
+            \(Q.Add\)(\(I\sb{0}'\), \(I''\), \(RS'''\))
+          ENDIF 
+        ENDIF
+      ENDDO
     ENDDO
-    FOR each interval \(I''\) \(\in\) \(NET\) DO
-      IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
-        \(RS''\) =  \(Trans\sb{2}\)(\(RS'\), \(NET.Get\)(\(I\sb{1}'\), \(I''\)))
-        \(RS'''\) = \(NET.Get\)(\(I\sb{0}'\), \(I''\)) \(\cap\) \(RS''\)
-        IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{0}'\)) THEN
-          \(Q.Add\)(\(I\sb{0}'\), \(I''\), \(RS'''\))
-        ENDIF 
-      ENDIF
-    ENDDO
-  ENDDO
-ENDFUNCTION
+  ENDFUNCTION
           \end{vverbatim}
 
           The $NET.Add()$ algorithm works as follows. Every time a new arc
@@ -721,45 +721,45 @@ ENDFUNCTION
         the end points of two well-defined intervals.
 
         \begin{vverbatim}
-FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(i\sb{1}\sp{+}\))
-  IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{-}\) THEN
-    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
-      RETURN \{\(equals\}\)
-    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
-      RETURN \{\(starts\}\)
-    ELSE
-      RETURN \{\(started by\}\)
-    ENDIF 
-  ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{-}\) THEN
-    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
-      RETURN \{\(finished by\}\)
-    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
-      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{-}\) THEN
-        RETURN \{\(meets\}\)
-      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{-}\) THEN
-        RETURN \{\(before\}\)
+  FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(i\sb{1}\sp{+}\))
+    IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{-}\) THEN
+      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+        RETURN \{\(equals\}\)
+      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+        RETURN \{\(starts\}\)
       ELSE
-        RETURN \{\(overlaps\}\)
+        RETURN \{\(started by\}\)
+      ENDIF 
+    ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{-}\) THEN
+      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+        RETURN \{\(finished by\}\)
+      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+        IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{-}\) THEN
+          RETURN \{\(meets\}\)
+        ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{-}\) THEN
+          RETURN \{\(before\}\)
+        ELSE
+          RETURN \{\(overlaps\}\)
+        ENDIF
+      ELSE
+        RETURN \{\(contains\}\)
       ENDIF
     ELSE
-      RETURN \{\(contains\}\)
-    ENDIF
-  ELSE
-    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
-      RETURN \{\(finishes\}\)
-    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
-      RETURN \{\(during\}\)
-    ELSE
-      IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{+}\) THEN 
-        RETURN \{\(met by\}\)
-      ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{+}\) THEN  
-        RETURN \{\(overlapped by\}\)
+      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+        RETURN \{\(finishes\}\)
+      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+        RETURN \{\(during\}\)
       ELSE
-        RETURN \{\(after\}\)
+        IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{+}\) THEN 
+          RETURN \{\(met by\}\)
+        ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{+}\) THEN  
+          RETURN \{\(overlapped by\}\)
+        ELSE
+          RETURN \{\(after\}\)
+        ENDIF
       ENDIF
     ENDIF
-  ENDIF
-ENDFUNCTION
+  ENDFUNCTION
         \end{vverbatim}
 
         By using the above algorithm, we can now define a new network operator
@@ -774,16 +774,16 @@ ENDFUNCTION
         operator achieves this.
 
         \begin{vverbatim}
-FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
-  FOR each interval \(I'\) \(\in\) \(NET\) DO
-    IF \(I'\) != \(I\) THEN
-      IF \(I'\) is well-defined THEN
-        \(RS\) = \(Compute\)(\(I\sp{-}\), \(I\sp{+}\), \(I'\sp{-}\), \(I'\sp{+}\))
-        \(NET.Add\)(\(I\), \(I'\), \(RS\))
+  FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
+    FOR each interval \(I'\) \(\in\) \(NET\) DO
+      IF \(I'\) != \(I\) THEN
+        IF \(I'\) is well-defined THEN
+          \(RS\) = \(Compute\)(\(I\sp{-}\), \(I\sp{+}\), \(I'\sp{-}\), \(I'\sp{+}\))
+          \(NET.Add\)(\(I\), \(I'\), \(RS\))
+        ENDIF
       ENDIF
-    ENDIF
-  ENDDO
-ENDFUNCTION
+    ENDDO
+  ENDFUNCTION
         \end{vverbatim}
 
     \section{Formalisation}
@@ -809,7 +809,7 @@ ENDFUNCTION
               by zero or more alphanumeric or underscore characters:
 
               \begin{vverbatim}
-[a-z][a-zA-Z0-9\_]
+  [a-z][a-zA-Z0-9\_]
               \end{vverbatim}
 
             \item
@@ -822,7 +822,7 @@ ENDFUNCTION
               interval identifiers share the same syntax:
 
               \begin{vverbatim}
-[a-z][a-zA-Z0-9\_]
+  [a-z][a-zA-Z0-9\_]
               \end{vverbatim}
 
             \item
@@ -844,28 +844,28 @@ ENDFUNCTION
                   Subject Variables
 
                   \begin{vverbatim}
-S[SG][a-zA-Z0-9\_]
+  S[SG][a-zA-Z0-9\_]
                   \end{vverbatim}
 
                 \item
                   Access Right Variables
 
                   \begin{vverbatim}
-A[SG][a-zA-Z0-9\_]
+  A[SG][a-zA-Z0-9\_]
                   \end{vverbatim}
 
                 \item
                   Object Variables
 
                   \begin{vverbatim}
-O[SG][a-zA-Z0-9\_]
+  O[SG][a-zA-Z0-9\_]
                   \end{vverbatim}
 
                 \item
                   Interval Variables
 
                   \begin{vverbatim}
-I[a-zA-Z0-9\_]
+  I[a-zA-Z0-9\_]
                   \end{vverbatim}
 
               \end{itemize}
@@ -886,7 +886,10 @@ I[a-zA-Z0-9\_]
                   object $obj$-$id$ at time interval $int$-$id$.
 
                   \begin{vverbatim}
-holds(<sub-id>, <acc-id>, <obj-id>, <int-id>)
+  holds(<sub-id>,
+        <acc-id>,
+        <obj-id>,
+        <int-id>)
                   \end{vverbatim}
 
                 \item
@@ -896,7 +899,7 @@ holds(<sub-id>, <acc-id>, <obj-id>, <int-id>)
                   interval $int$-$id$.
 
                   \begin{vverbatim}
-memb(<single-id>, <group-id>, <int-id>)
+  memb(<single-id>, <group-id>, <int-id>)
                   \end{vverbatim}
 
                 \item
@@ -905,7 +908,7 @@ memb(<single-id>, <group-id>, <int-id>)
                   entity $group$-$id-$-$1$ at time interval $int$-$id$.
 
                   \begin{vverbatim}
-subst(<group-id-0>, <group-id-1>, <int-id>)
+  subst(<group-id-0>, <group-id-1>, <int-id>)
                   \end{vverbatim}
 
               \end{itemize}
@@ -931,7 +934,7 @@ subst(<group-id-0>, <group-id-1>, <int-id>)
               the language's interval atoms:
 
               \begin{vverbatim}
-<rel-id>(<int-id-0>, <int-id-1>)
+  <rel-id>(<int-id-0>, <int-id-1>)
               \end{vverbatim}
 
               where $rel$-$id$ indicates the relation between interval
@@ -952,7 +955,7 @@ subst(<group-id-0>, <group-id-1>, <int-id>)
               $i_2$ is during interval $i_0$":
 
               \begin{vverbatim}
-before(i0, i1), before(i1, i0), during(i2, i0)
+  before(i0, i1), before(i1, i0), during(i2, i0)
               \end{vverbatim}
 
               Like their authroisation counterparts, interval atoms and
@@ -975,7 +978,7 @@ before(i0, i1), before(i1, i0), during(i2, i0)
           in the following syntax:
 
           \begin{vverbatim}
-interval <int-id> [\(\backslash\)[ep0, ep1\(\backslash\)]][, ... ];
+  interval <int-id> [\(\backslash\)[ep0, ep1\(\backslash\)]][, ... ];
           \end{vverbatim}
 
           \noindent
@@ -987,7 +990,7 @@ interval <int-id> [\(\backslash\)[ep0, ep1\(\backslash\)]][, ... ];
           interval in the network:
 
           \begin{vverbatim}
-\(NET.Bind\)(\(i\), \(i\sp{-}\), \(i\sp{+}\))
+  \(NET.Bind\)(\(i\), \(i\sp{-}\), \(i\sp{+}\))
           \end{vverbatim}
 
           For example, the statement below declares interval $i_0$ without end
@@ -995,15 +998,15 @@ interval <int-id> [\(\backslash\)[ep0, ep1\(\backslash\)]][, ... ];
           interval $i_2$ with endpoints [$1500$, $2300$].
 
           \begin{vverbatim}
-interval i0, i1 [\(1000\), \(1200\)], i2 [\(1500\), \(2300\)];
+  interval i0, i1 [\(1000\), \(1200\)], i2 [\(1500\), \(2300\)];
           \end{vverbatim}
 
           The statement above will cause the following functions to be
           executed:
 
           \begin{vverbatim}
-\(NET.Bind\)(\(i\sb{1}\), \(1000\), \(1200\))
-\(NET.Bind\)(\(i\sb{2}\), \(1500\), \(2300\))
+  \(NET.Bind\)(\(i\sb{1}\), \(1000\), \(1200\))
+  \(NET.Bind\)(\(i\sb{2}\), \(1500\), \(2300\))
           \end{vverbatim}
 
         \subsubsection{Initial Fact Definitions}
@@ -1013,7 +1016,7 @@ interval i0, i1 [\(1000\), \(1200\)], i2 [\(1500\), \(2300\)];
           applied. Syntax is as follows:
 
           \begin{vverbatim}
-initially <gnd-auth-exp>;
+  initially <gnd-auth-exp>;
           \end{vverbatim}
 
         \subsubsection{Interval Constraint Definitions}
@@ -1023,7 +1026,7 @@ initially <gnd-auth-exp>;
           Syntax is as follows:
 
           \begin{vverbatim}
-relation <gnd-int-exp>;
+  relation <gnd-int-exp>;
           \end{vverbatim}
 
           For each relation \{$i_0$, $i_1$, $rs$\} in the ground interval
@@ -1031,7 +1034,7 @@ relation <gnd-int-exp>;
           made to add each relation into the network:
 
           \begin{vverbatim}
-\(NET.Add\)(\(i\sb{0}\), \(i\sb{1}\), \(rs\))
+  \(NET.Add\)(\(i\sb{0}\), \(i\sb{1}\), \(rs\))
           \end{vverbatim}
 
           For example, given an interval constraint definition that states
@@ -1039,12 +1042,12 @@ relation <gnd-int-exp>;
           $meets$ $i_2$, and $i_2$ $meets$ $i_3$:
 
           \begin{vverbatim}
-relation
-  before(i0, i1),
-  starts(i0, i1),
-  during(i1, i2),
-  meets(i1, i2),
-  meets(i2, i3);
+  relation
+    before(i0, i1),
+    starts(i0, i1),
+    during(i1, i2),
+    meets(i1, i2),
+    meets(i2, i3);
           \end{vverbatim}
 
           \noindent
@@ -1052,9 +1055,9 @@ relation
           $NET.Add$():
 
           \begin{vverbatim}
-\(NET.Add\)(\(i\sb{0}\), \(i\sb{1}\), \{\(BEF\), \(STA\)\})
-\(NET.Add\)(\(i\sb{1}\), \(i\sb{2}\), \{\(DUR\), \(MET\)\})
-\(NET.Add\)(\(i\sb{2}\), \(i\sb{3}\), \{\(MET\)\})
+  \(NET.Add\)(\(i\sb{0}\), \(i\sb{1}\), \{\(BEF\), \(STA\)\})
+  \(NET.Add\)(\(i\sb{1}\), \(i\sb{2}\), \{\(DUR\), \(MET\)\})
+  \(NET.Add\)(\(i\sb{2}\), \(i\sb{3}\), \{\(MET\)\})
           \end{vverbatim}
 
         \subsubsection{Authorisation Constraint Definitions}
@@ -1065,10 +1068,10 @@ relation
           difference, as shown by the syntax below, is the new "where" clause.
 
           \begin{vverbatim}
-always <auth-exp-0>
-  [implied by <auth-exp-1>]
-  [with absence <auth-exp-2>]
-  [where <int-exp>];
+  always <auth-exp-0>
+    [implied by <auth-exp-1>]
+    [with absence <auth-exp-2>]
+    [where <int-exp>];
           \end{vverbatim}
 
           The meaning of the statement is essentially the same as its language
@@ -1085,10 +1088,10 @@ always <auth-exp-0>
           constraint definition:
 
           \begin{vverbatim}
-always holds(SS, a, o, I0)
-  implied by memb(SS, SG0, I1)
-  with absence !memb(SS, SG1, I1)
-  where starts(I0, I1);
+  always holds(SS, a, o, I0)
+    implied by memb(SS, SG0, I1)
+    with absence !memb(SS, SG1, I1)
+    where starts(I0, I1);
           \end{vverbatim}
 
           \noindent
@@ -1098,9 +1101,9 @@ always holds(SS, a, o, I0)
           interval $i_1$ and interval $i_1$ $start$ing interval $i_2$, i.e.:
 
           \begin{vverbatim}
-\(NET.Get\)(\(i\sb{0}\), \(i\sb{1}\)) = \{\(DUR\)\}
-\(NET.Get\)(\(i\sb{1}\), \(i\sb{2}\)) = \{\(STA\)\}
-\(NET.Get\)(\(i\sb{2}\), \(i\sb{1}\)) = \{\(ALL\)\}
+  \(NET.Get\)(\(i\sb{0}\), \(i\sb{1}\)) = \{\(DUR\)\}
+  \(NET.Get\)(\(i\sb{1}\), \(i\sb{2}\)) = \{\(STA\)\}
+  \(NET.Get\)(\(i\sb{2}\), \(i\sb{1}\)) = \{\(ALL\)\}
           \end{vverbatim}
 
           \noindent
@@ -1133,10 +1136,10 @@ always holds(SS, a, o, I0)
         \subsubsection{Policy Update Defintition}
 
           Like the authorisation constraint defintion, policy update
-          definitions of language ${\cal L^T}$ is similar to that of language
+          definitions of language ${\cal L^T}$ are similar to those of language
           ${\cal L}$, but with the extra "where" clause to limit the intervals
-          that are used to ground interval variables that may occur in the
-          authorisation expressions $auth$-$exp$-$0$ and $auth$-$exp$-$1$.
+          that are used to ground interval variables that may occur in
+          authorisation expressions.
 
           The syntax below describes the definition of a policy update
           $update$-$id$ which, when applied, causes the expression
@@ -1144,10 +1147,10 @@ always holds(SS, a, o, I0)
           holds.
 
           \begin{vverbatim}
-<update-id>(<ent-var-0>[, <ent-var-1>[, ...]])
-  causes <auth-exp-0>
-  [if <auth-exp-1>]
-  [where <int-exp>];
+  <update-id>([<ent-var-0>[, <ent-var-1>[, ...]]])
+    causes <auth-exp-0>
+    [if <auth-exp-1>]
+    [where <int-exp>];
           \end{vverbatim}
 
           When a policy update is applied, entity identifiers are supplied for
