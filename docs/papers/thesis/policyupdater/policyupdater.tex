@@ -826,39 +826,49 @@ ENDFUNCTION
               \end{vverbatim}
 
             \item
-              {\bf Interval Atoms and Expressions}
+              {\bf Variable Identifiers}
 
-              Noting the fact that the inverse relation between any intervals
-              $i_0$ and $i_1$ is equal to the relation between intervals
-              $i_1$ and $i_0$, for the sake of brevity, language ${\cal L^T}$
-              defines only 7 out of the 13 interval relations in the algebra.
-              These relations, together with two interval identifiers make up
-              the language's interval atoms:
+              In language ${\cal L}$, variable identifiers are used to
+              represent entity identifiers. On the other hand, language
+              ${\cal L^T}$ variable identifiers are used to represent both
+              entity and interval identifiers. To distinguish from entity and
+              interval identifiers, the first character of a variable
+              identifier is capitalised. Furthermore, the first character of
+              a variable identifier indicates its type. For entity variable
+              identifiers, the second character may also indicate whether the
+              variable represents a single or group entity. The following is a
+              list of different variable types and their syntax:
 
-              \begin{vverbatim}
-<rel-id>(<int-id-0>, <int-id-1>)
-              \end{vverbatim}
+              \begin{itemize}
+                \item
+                  Subject Variables
 
-              where $rel$-$id$ indicates the relation between interval
-              $int$-$id$-$0$ and interval $int$-$id$-$1$, and is one of the
-              following: $equals$, $before$, $during$, $overlaps$, $meets$,
-              $starts$ or $finishes$.
+                  \begin{vverbatim}
+S[SG][a-zA-Z0-9\_]
+                  \end{vverbatim}
 
-              An interval expression in language ${\cal L^T}$ is a group
-              of interval atoms separated by the comma "," character. As the
-              interval algebra allows disjunctions, the meaning of the comma
-              within an interval expression may be conjunctive or disjunctive.
-              If an interval expression contains two atoms that differ only by
-              their relation (meaning the interval pairs are the same), then
-              the comma between these atoms indicates a logical "or". Commas
-              between other interval atoms indicate a logical "and". For
-              example, the following interval expression is interpreted as
-              "interval $i_0$ is before or after interval $i_1$ and interval
-              $i_2$ is during interval $i_0$":
+                \item
+                  Access Right Variables
 
-              \begin{vverbatim}
-before(i0, i1), before(i1, i0), during(i2, i0)
-              \end{vverbatim}
+                  \begin{vverbatim}
+A[SG][a-zA-Z0-9\_]
+                  \end{vverbatim}
+
+                \item
+                  Object Variables
+
+                  \begin{vverbatim}
+O[SG][a-zA-Z0-9\_]
+                  \end{vverbatim}
+
+                \item
+                  Interval Variables
+
+                  \begin{vverbatim}
+I[a-zA-Z0-9\_]
+                  \end{vverbatim}
+
+              \end{itemize}
 
             \item
               {\bf Authorisation Atoms, Facts and Expressions}
@@ -905,7 +915,49 @@ subst(<group-id-0>, <group-id-1>, <int-id>)
               negation (as indicated by the "!" character prefix) holds.
 
               An expression is either a fact or a conjunction of facts
-              separated by the comma "," character.
+              separated by the comma "," character. An atom, fact or expression
+              composed entirely of entity and interval identifiers (no
+              variables) are called ground atoms, facts or expressions,
+              respectively.
+
+            \item
+              {\bf Interval Atoms and Expressions}
+
+              Noting the fact that the inverse relation between any intervals
+              $i_0$ and $i_1$ is equal to the relation between intervals
+              $i_1$ and $i_0$, for the sake of brevity, language ${\cal L^T}$
+              defines only 7 out of the 13 interval relations in the algebra.
+              These relations, together with two interval identifiers make up
+              the language's interval atoms:
+
+              \begin{vverbatim}
+<rel-id>(<int-id-0>, <int-id-1>)
+              \end{vverbatim}
+
+              where $rel$-$id$ indicates the relation between interval
+              $int$-$id$-$0$ and interval $int$-$id$-$1$, and is one of the
+              following: $equals$, $before$, $during$, $overlaps$, $meets$,
+              $starts$ or $finishes$.
+
+              An interval expression in language ${\cal L^T}$ is a group
+              of interval atoms separated by the comma "," character. As the
+              interval algebra allows disjunctions, the meaning of the comma
+              within an interval expression may be conjunctive or disjunctive.
+              If an interval expression contains two atoms that differ only by
+              their relation (meaning the interval pairs are the same), then
+              the comma between these atoms indicates a logical "or". Commas
+              between other interval atoms indicate a logical "and". For
+              example, the following interval expression is interpreted as
+              "interval $i_0$ is before or after interval $i_1$ and interval
+              $i_2$ is during interval $i_0$":
+
+              \begin{vverbatim}
+before(i0, i1), before(i1, i0), during(i2, i0)
+              \end{vverbatim}
+
+              Like their authroisation counterparts, interval atoms and
+              expressions that do not have variable identifiers are called
+              ground interval atoms and expressions.
 
           \end{itemize}
 
@@ -926,8 +978,17 @@ subst(<group-id-0>, <group-id-1>, <int-id>)
 interval <int-id> [\(\backslash\)[ep0, ep1\(\backslash\)]][, ... ];
           \end{vverbatim}
 
+          \noindent
           where $ep_0$ $\in$ ${\mathbb Z}^+$, $ep_1$ $\in$ ${\mathbb Z}^+$ and
           $ep_0$ $<$ $ep_1$.
+
+          For every interval $i$ defined with end points $i^-$ and $i^+$, a
+          call to the following function is made to bind the end points to the
+          interval in the network:
+
+          \begin{vverbatim}
+\(NET.Bind\)(\(i\), \(i\sp{-}\), \(i\sp{+}\))
+          \end{vverbatim}
 
           For example, the statement below declares interval $i_0$ without end
           points, interval $i_1$ with end points [$1000$, $1200$] and
@@ -937,23 +998,170 @@ interval <int-id> [\(\backslash\)[ep0, ep1\(\backslash\)]][, ... ];
 interval i0, i1 [\(1000\), \(1200\)], i2 [\(1500\), \(2300\)];
           \end{vverbatim}
 
+          The statement above will cause the following functions to be
+          executed:
+
+          \begin{vverbatim}
+\(NET.Bind\)(\(i\sb{1}\), \(1000\), \(1200\))
+\(NET.Bind\)(\(i\sb{2}\), \(1500\), \(2300\))
+          \end{vverbatim}
+
+        \subsubsection{Initial Fact Definitions}
+
+          Like language ${\cal L}$, language ${\cal L^T}$ allows the definition
+          of initial state facts which hold before any policy updates are
+          applied. Syntax is as follows:
+
+          \begin{vverbatim}
+initially <gnd-auth-exp>;
+          \end{vverbatim}
+
         \subsubsection{Interval Constraint Definitions}
 
           Interval constrains allow relations between intervals to be defined.
           Such relations will hold for the entire lifetime of the program.
           Syntax is as follows:
 
-            \begin{vverbatim}
-relation <int-exp>[, ...];
-            \end{vverbatim}
+          \begin{vverbatim}
+relation <gnd-int-exp>;
+          \end{vverbatim}
+
+          For each relation \{$i_0$, $i_1$, $rs$\} in the ground interval
+          expression $gnd$-$int$-$exp$, a call to the following function is 
+          made to add each relation into the network:
+
+          \begin{vverbatim}
+\(NET.Add\)(\(i\sb{0}\), \(i\sb{1}\), \(rs\))
+          \end{vverbatim}
+
+          For example, given an interval constraint definition that states
+          that $i_0$ is $before$ or $starts$ $i_1$, $i_1$ is $during$ or
+          $meets$ $i_2$, and $i_2$ $meets$ $i_3$:
+
+          \begin{vverbatim}
+relation
+  before(i0, i1),
+  starts(i0, i1),
+  during(i1, i2),
+  meets(i1, i2),
+  meets(i2, i3);
+          \end{vverbatim}
+
+          \noindent
+          The above contstraint is equivalent to the following calls to
+          $NET.Add$():
+
+          \begin{vverbatim}
+\(NET.Add\)(\(i\sb{0}\), \(i\sb{1}\), \{\(BEF\), \(STA\)\})
+\(NET.Add\)(\(i\sb{1}\), \(i\sb{2}\), \{\(DUR\), \(MET\)\})
+\(NET.Add\)(\(i\sb{2}\), \(i\sb{3}\), \{\(MET\)\})
+          \end{vverbatim}
 
         \subsubsection{Authorisation Constraint Definitions}
 
+          Like the constraint definitions in language ${\cal L}$, authorisation
+          constraint defintions in language ${\cal L^T}$ are used to define
+          logical rules that always holds, regardless of any update. The
+          difference, as shown by the syntax below, is the new "where" clause.
+
+          \begin{vverbatim}
+always <auth-exp-0>
+  [implied by <auth-exp-1>]
+  [with absence <auth-exp-2>]
+  [where <int-exp>];
+          \end{vverbatim}
+
+          The meaning of the statement is essentially the same as its language
+          ${\cal L}$ counterpart: expression $auth$-$exp$-$0$ holds if
+          expression $auth$-$exp$-$1$ holds and there is no evidence that
+          expression $auth$-$exp$-$2$ holds, while any variables occuring in
+          any of these expressions are grounded to all defined entities and
+          intervals.
+
+          The "where" clause is used to define an interval expression
+          $int$-$exp$, which is used to place a restriction on the intervals
+          used to ground interval variables occurring in the authorisation
+          expressions. For example, given the following authorisation
+          constraint definition:
+
+          \begin{vverbatim}
+always holds(SS, a, o, I0)
+  implied by memb(SS, SG0, I1)
+  with absence !memb(SS, SG1, I1)
+  where starts(I0, I1);
+          \end{vverbatim}
+
+          \noindent
+          Assuming that \{$ss_0$, $ss_1$\} is the set of single subjects,
+          \{$sg_0$, $sg_1$\} is the set of group subjects and \{$i_0$, $i_1$,
+          $i_2$\} is the set of intervals defined, with interval $i_0$ $during$
+          interval $i_1$ and interval $i_1$ $start$ing interval $i_2$, i.e.:
+
+          \begin{vverbatim}
+\(NET.Get\)(\(i\sb{0}\), \(i\sb{1}\)) = \{\(DUR\)\}
+\(NET.Get\)(\(i\sb{1}\), \(i\sb{2}\)) = \{\(STA\)\}
+\(NET.Get\)(\(i\sb{2}\), \(i\sb{1}\)) = \{\(ALL\)\}
+          \end{vverbatim}
+
+          \noindent
+          The constraint definition is then equivalent to the following rules:
+
+          \begin{vquote}
+            $holds$($ss_0$, $a$, $o$, $i_1$) $\leftarrow$
+              $memb$($ss_0$, $sg0$, $i_2$),
+              $NOT$ $\lnot$ $memb$($ss_0$, $sg1$, $i_2$)
+
+            $holds$($ss_1$, $a$, $o$, $i_1$) $\leftarrow$
+              $memb$($ss_1$, $sg0$, $i_2$),
+              $NOT$ $\lnot$ $memb$($ss_1$, $sg1$, $i_2$)
+
+            $holds$($ss_0$, $a$, $o$, $i_1$) $\leftarrow$
+              $memb$($ss_0$, $sg1$, $i_2$),
+              $NOT$ $\lnot$ $memb$($ss_0$, $sg0$, $i_2$)
+
+            $holds$($ss_1$, $a$, $o$, $i_1$) $\leftarrow$
+              $memb$($ss_1$, $sg1$, $i_2$),
+              $NOT$ $\lnot$ $memb$($ss_1$, $sg0$, $i_2$)
+          \end{vquote}
+
+          Although the entity variables $SS$, $SG_0$ and $SG_1$ are grounded
+          to every entity that matches their respective types, the interval
+          variables $I_0$ and $I_1$ are restricted to the intervals $i_1$ and
+          $i_2$, respectively, because they are the only interval pair that
+          satisfies they restriction placed by the "where" clause.
+        
         \subsubsection{Policy Update Defintition}
 
-        \subsubsection{Temporal Constraints in Constraint Rule Defintions}
+          Like the authorisation constraint defintion, policy update
+          definitions of language ${\cal L^T}$ is similar to that of language
+          ${\cal L}$, but with the extra "where" clause to limit the intervals
+          that are used to ground interval variables that may occur in the
+          authorisation expressions $auth$-$exp$-$0$ and $auth$-$exp$-$1$.
 
-        \subsubsection{Temporal Constraints in Policy Update Rule Definitions}
+          The syntax below describes the definition of a policy update
+          $update$-$id$ which, when applied, causes the expression
+          $auth$-$exp$-$0$ to hold if the expression $auth$-$exp$-$1$ already
+          holds.
+
+          \begin{vverbatim}
+<update-id>(<ent-var-0>[, <ent-var-1>[, ...]])
+  causes <auth-exp-0>
+  [if <auth-exp-1>]
+  [where <int-exp>];
+          \end{vverbatim}
+
+          When a policy update is applied, entity identifiers are supplied for
+          each entity variable $ent$-$var$-$n$. These entity identifiers are
+          used to ground any matching entity variables that may occur in either
+          authorisation expressions $auth$-$exp$-$0$ or $auth$-$exp$-$1$.
+          Entity variables occurring in these expressions that do not match
+          the variables in the variable list $ent$-$var$-$n$ are replaced by
+          all defined entity identifiers that match the variable types.
+
+          Like the authorisation constraint definition, interval variables
+          occurring in the authroisation expressions are grounded to all
+          defined intervals with respect to the restriction specified by the
+          "where" clause.
 
       \subsection{Computation and Semantic Properties}
 
