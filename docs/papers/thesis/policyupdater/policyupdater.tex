@@ -491,15 +491,15 @@
           $Trans_1$() function.
 
           \begin{vverbatim}
-FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
-  \(RS\) = \(\emptyset\)
-  FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
-    FOR each \(r\sb{1}\) \(\in\) \(RS\sb{1}\) DO
-      \(RS\) = \(RS\) \(\cup\) \(Trans\sb{1}\)(\(r\sb{0}\), \(r\sb{1}\))
+  FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
+    \(RS\) = \(\emptyset\)
+    FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
+      FOR each \(r\sb{1}\) \(\in\) \(RS\sb{1}\) DO
+        \(RS\) = \(RS\) \(\cup\) \(Trans\sb{1}\)(\(r\sb{0}\), \(r\sb{1}\))
+      ENDDO
     ENDDO
-  ENDDO
-  RETURN \(RS\)
-ENDFUNCTION
+    RETURN \(RS\)
+  ENDFUNCTION
           \end{vverbatim}
 
           We now define some network oprerators. The first operator,
