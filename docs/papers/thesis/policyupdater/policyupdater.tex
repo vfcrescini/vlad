@@ -139,7 +139,7 @@
     \section{Allen's Temporal Interval Algebra}
 
       Allen's interval algebra is based on the fact that for any two well
-      defined time intervals, there exists exacly one interval relation between
+      defined time intervals, there exists exactly one interval relation between
       them. The strength of the algebra lies not just on the formalisation of
       these relations, but also on its ability to handle disjunctive interval
       relations between undefined time intervals.
@@ -169,7 +169,7 @@
         the two.
 
         A point in time represents an event with zero duration, or an event that occurs
-        instantaneouly, such as the switching on of a light bulb, or the moment the sun
+        instantaneously, such as the switching on of a light bulb, or the moment the sun
         has risen in the morning.
 
         A time interval, on the other hand, is defined to be the time that has elapsed
@@ -182,9 +182,9 @@
         One might argue that time point events such as the switching on of a light bulb
         are not instantaneous, meaning that time, no matter how small the value, has
         elapsed between the instant that electricity flowed through light bulb's
-        fillament and the instant the light from the bulb reaches the observer's eyes.
+        filament and the instant the light from the bulb reaches the observer's eyes.
         One can further argue that the "instant" that electricity flowed through the
-        bulb's fillament is not instantaneous, once we consider that the speed of light
+        bulb's filament is not instantaneous, once we consider that the speed of light
         and electricity is finite. In other words, any given event can always be
         divided into sub-events. This argument is more evident in the sunrise example.
 
@@ -502,7 +502,7 @@
   ENDFUNCTION
           \end{vverbatim}
 
-          We now define some network oprerators. The first operator,
+          We now define some network operators. The first operator,
           $NET.Get$($I_0$, $I_1$), returns the relation set on the arc between
           interval $I_0$ and interval $I_1$. The function $NET.Replace$($I_0$, $I_1$,
           $RS$) blindly replaces the relation set of the arc between $I_0$ and $I_1$
@@ -595,7 +595,7 @@
             Now, suppose the relation between interval $i_0$ and interval $i_1$
             is narrowed down to the relation set \{$before$, $meets$,
             $overlaps$\}, i.e., the operation $NET.Add$($i_0$, $i_1$, \{$BEF$,
-            $MET$, $OVR$\}) is executed. This operation will yied the network
+            $MET$, $OVR$\}) is executed. This operation will yield the network
             shown in Figure \ref{fig-net-ex-05}. Note that because every arc
             in the network contains all relations, the effects of the
             $NET.ADD$() operation are limited to one arc.
@@ -686,20 +686,20 @@
         the discrete time points in the non-continuous time line.
 
         To go around this problem, we allow the time point granularity to be chosen
-        arbitrarilty. Ideally, for a specific application, one would choose a
+        arbitrarily. Ideally, for a specific application, one would choose a
         granularity that is at least as small as the smallest interval in that
         application. In practice, however, such choices are limited by implementing
         system's clock and other hardware and software latencies.
 
         In the light bulb and sunrise example in the previous section, if we
         choose a granularity of 1 second, then the switching on of a light bulb is an
-        event that occurrs at a specific time point. A granularity of 1 second,
+        event that occurs at a specific time point. A granularity of 1 second,
         however, means that a sunrise is not an event but an interval, given the fact
         that in most parts of the world, the sun takes a few minutes to rise above the
         horizon. However, if we choose a granularity of 1 hour (and we do not
         live in the polar regions), a sunrise becomes an event that occurs at a single
         point in our chosen time scale. We can therefore argue that given a specific
-        time granularity, some events can be treated as instantaneously occuring at a
+        time granularity, some events can be treated as instantaneously occurring at a
         specific time point.
 
         Regardless of the granularity chosen, the domain of time points is the set of
@@ -958,7 +958,7 @@
   before(i0, i1), before(i1, i0), during(i2, i0)
               \end{vverbatim}
 
-              Like their authroisation counterparts, interval atoms and
+              Like their authorisation counterparts, interval atoms and
               expressions that do not have variable identifiers are called
               ground interval atoms and expressions.
 
@@ -1051,7 +1051,7 @@
           \end{vverbatim}
 
           \noindent
-          The above contstraint is equivalent to the following calls to
+          The above constraint is equivalent to the following calls to
           $NET.Add$():
 
           \begin{vverbatim}
@@ -1077,7 +1077,7 @@
           The meaning of the statement is essentially the same as its language
           ${\cal L}$ counterpart: expression $auth$-$exp$-$0$ holds if
           expression $auth$-$exp$-$1$ holds and there is no evidence that
-          expression $auth$-$exp$-$2$ holds, while any variables occuring in
+          expression $auth$-$exp$-$2$ holds, while any variables occurring in
           any of these expressions are grounded to all defined entities and
           intervals.
 
@@ -1133,9 +1133,9 @@
           $i_2$, respectively, because they are the only interval pair that
           satisfies they restriction placed by the "where" clause.
         
-        \subsubsection{Policy Update Defintition}
+        \subsubsection{Policy Update Definition}
 
-          Like the authorisation constraint defintion, policy update
+          Like the authorisation constraint definition, policy update
           definitions of language ${\cal L^T}$ are similar to those of language
           ${\cal L}$, but with the extra "where" clause to limit the intervals
           that are used to ground interval variables that may occur in
@@ -1162,7 +1162,7 @@
           all defined entity identifiers that match the variable types.
 
           Like the authorisation constraint definition, interval variables
-          occurring in the authroisation expressions are grounded to all
+          occurring in the authorisation expressions are grounded to all
           defined intervals with respect to the restriction specified by the
           "where" clause.
 
