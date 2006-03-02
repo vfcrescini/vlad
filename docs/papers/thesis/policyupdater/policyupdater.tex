@@ -793,7 +793,7 @@
       authorisation policies, but with extensions to also express temporal
       constraints.
 
-      \subsection{Syntax and Semantics}
+      \subsection{Syntax}
 
         \subsubsection{Components of Language ${\cal L^T}$}
 
@@ -913,7 +913,7 @@
 
               \end{itemize}
 
-              As with language ${\cal L}$, language ${\cal L^T}$ facts state
+              Like language ${\cal L}$, language ${\cal L^T}$ facts state
               that relationship represented by the corresponding atom its
               negation (as indicated by the "!" character prefix) holds.
 
@@ -948,9 +948,9 @@
               within an interval expression may be conjunctive or disjunctive.
               If an interval expression contains two atoms that differ only by
               their relation (meaning the interval pairs are the same), then
-              the comma between these atoms indicates a logical "or". Commas
-              between other interval atoms indicate a logical "and". For
-              example, the following interval expression is interpreted as
+              the comma between these atoms indicates a logical {\em or}.
+              Commas between other interval atoms indicate a logical {\em and}.
+              For example, the following interval expression is interpreted as
               "interval $i_0$ is before or after interval $i_1$ and interval
               $i_2$ is during interval $i_0$":
 
@@ -969,7 +969,11 @@
           In language ${\cal L^T}$, both entity and interval identifiers must
           be declared before they are used anywhere in the program. The syntax
           for declaring entity identifiers in language ${\cal L^T}$ is the same
-          as the syntax in language ${\cal L}$.
+          as the syntax in language ${\cal L}$:
+
+          \begin{vverbatim}
+  entity sub|acc|obj[-grp] <ent-id>[, ...];
+          \end{vverbatim}
 
           Interval identifiers may be declared with or without end points. Note
           that once intervals are assigned end points, they are bound to those
@@ -985,61 +989,33 @@
           where $ep_0$ $\in$ ${\mathbb Z}^+$, $ep_1$ $\in$ ${\mathbb Z}^+$ and
           $ep_0$ $<$ $ep_1$.
 
-          For every interval $i$ defined with end points $i^-$ and $i^+$, a
-          call to the following function is made to bind the end points to the
-          interval in the network:
+        \subsubsection{Initial Fact Declarations}
 
-          \begin{vverbatim}
-  \(NET.Bind\)(\(i\), \(i\sp{-}\), \(i\sp{+}\))
-          \end{vverbatim}
-
-          For example, the statement below declares interval $i_0$ without end
-          points, interval $i_1$ with end points [$1000$, $1200$] and
-          interval $i_2$ with endpoints [$1500$, $2300$].
-
-          \begin{vverbatim}
-  interval i0, i1 [\(1000\), \(1200\)], i2 [\(1500\), \(2300\)];
-          \end{vverbatim}
-
-          The statement above will cause the following functions to be
-          executed:
-
-          \begin{vverbatim}
-  \(NET.Bind\)(\(i\sb{1}\), \(1000\), \(1200\))
-  \(NET.Bind\)(\(i\sb{2}\), \(1500\), \(2300\))
-          \end{vverbatim}
-
-        \subsubsection{Initial Fact Definitions}
-
-          Like language ${\cal L}$, language ${\cal L^T}$ allows the definition
-          of initial state facts which hold before any policy updates are
-          applied. Syntax is as follows:
+          Like language ${\cal L}$, language ${\cal L^T}$ allows the
+          declaration of initial state facts. Ground facts declared in this
+          manner hold until a policy update causes them to be otherwise. Syntax
+          is as follows:
 
           \begin{vverbatim}
   initially <gnd-auth-exp>;
           \end{vverbatim}
 
-        \subsubsection{Interval Constraint Definitions}
+        \subsubsection{Interval Constraint Declarations}
 
-          Interval constrains allow relations between intervals to be defined.
-          Such relations will hold for the entire lifetime of the program.
-          Syntax is as follows:
+          Relations between intervals are expressed in language ${\cal L^T}$
+          through interval constraints. Interval relations defined by interval
+          constraints hold for the entire lifetime of the program. Such
+          relations in the form of a ground interval expression may be declared
+          in the following manner:
 
           \begin{vverbatim}
   relation <gnd-int-exp>;
           \end{vverbatim}
 
-          For each relation \{$i_0$, $i_1$, $rs$\} in the ground interval
-          expression $gnd$-$int$-$exp$, a call to the following function is 
-          made to add each relation into the network:
-
-          \begin{vverbatim}
-  \(NET.Add\)(\(i\sb{0}\), \(i\sb{1}\), \(rs\))
-          \end{vverbatim}
-
-          For example, given an interval constraint definition that states
-          that $i_0$ is $before$ or $starts$ $i_1$, $i_1$ is $during$ or
-          $meets$ $i_2$, and $i_2$ $meets$ $i_3$:
+          The example below declares an interval constraint that states that
+          interval $i_0$ is $before$ or $starts$ interval $i_1$, interval $i_1$
+          is $during$ or $meets$ interval $i_2$, and interval $i_2$ $meets$
+          interval $i_3$:
 
           \begin{vverbatim}
   relation
@@ -1050,22 +1026,13 @@
     meets(i2, i3);
           \end{vverbatim}
 
-          \noindent
-          The above constraint is equivalent to the following calls to
-          $NET.Add$():
+        \subsubsection{Authorisation Constraint Declarations}
 
-          \begin{vverbatim}
-  \(NET.Add\)(\(i\sb{0}\), \(i\sb{1}\), \{\(BEF\), \(STA\)\})
-  \(NET.Add\)(\(i\sb{1}\), \(i\sb{2}\), \{\(DUR\), \(MET\)\})
-  \(NET.Add\)(\(i\sb{2}\), \(i\sb{3}\), \{\(MET\)\})
-          \end{vverbatim}
-
-        \subsubsection{Authorisation Constraint Definitions}
-
-          Like the constraint definitions in language ${\cal L}$, authorisation
-          constraint defintions in language ${\cal L^T}$ are used to define
-          logical rules that always holds, regardless of any update. The
-          difference, as shown by the syntax below, is the new "where" clause.
+          Like the constraint declarations in language ${\cal L}$,
+          authorisation constraint declarations in language ${\cal L^T}$ are
+          used to define logical rules that always holds, even after a policy
+          update is applied. The difference, as shown by the syntax below, is 
+          the addition of the {\em where} clause.
 
           \begin{vverbatim}
   always <auth-exp-0>
@@ -1077,15 +1044,24 @@
           The meaning of the statement is essentially the same as its language
           ${\cal L}$ counterpart: expression $auth$-$exp$-$0$ holds if
           expression $auth$-$exp$-$1$ holds and there is no evidence that
-          expression $auth$-$exp$-$2$ holds, while any variables occurring in
+          expression $auth$-$exp$-$2$ holds. Any variables occurring in
           any of these expressions are grounded to all defined entities and
-          intervals.
+          interval identifiers.
 
-          The "where" clause is used to define an interval expression
-          $int$-$exp$, which is used to place a restriction on the intervals
-          used to ground interval variables occurring in the authorisation
-          expressions. For example, given the following authorisation
-          constraint definition:
+          The {\em where} clause is used to define an interval expression
+          $int$-$exp$ which is used to place a restriction on the interval
+          identifiers used to ground interval variables occurring in the
+          authorisation expressions. Only those sets of interval identifiers
+          that satisfy the expresssion $int$-$exp$ is used to replace the
+          set of interval variables in the authorisation expressions. As the
+          {\em where} clause is used in the grounding of variables, it is
+          important to note that it does not make sense to have a ground
+          interval expression in the {\em where} clause. Furthermore, not only
+          does the expression $int$-$exp$ need to be non-ground, but every atom
+          in this expression must also be non-ground.
+
+          For example, given the following authorisation constraint
+          declaration:
 
           \begin{vverbatim}
   always holds(SS, a, o, I0)
@@ -1098,56 +1074,48 @@
           Assuming that \{$ss_0$, $ss_1$\} is the set of single subjects,
           \{$sg_0$, $sg_1$\} is the set of group subjects and \{$i_0$, $i_1$,
           $i_2$\} is the set of intervals defined, with interval $i_0$ $during$
-          interval $i_1$ and interval $i_1$ $start$ing interval $i_2$, i.e.:
+          interval $i_1$ and interval $i_1$ $start$ing interval $i_2$, the
+          statement is equivalent to the following statements:
 
           \begin{vverbatim}
-  \(NET.Get\)(\(i\sb{0}\), \(i\sb{1}\)) = \{\(DUR\)\}
-  \(NET.Get\)(\(i\sb{1}\), \(i\sb{2}\)) = \{\(STA\)\}
-  \(NET.Get\)(\(i\sb{2}\), \(i\sb{1}\)) = \{\(ALL\)\}
+  always holds(ss0, a, o, i1)
+    implied by memb(ss0, sg0, i2)
+    with absence !memb(ss0, sg1, i2);
+
+  always holds(ss1, a, o, i1)
+    implied by memb(ss1, sg0, i2)
+    with absence !memb(ss1, sg1, i2);
+
+  always holds(ss0, a, o, i1)
+    implied by memb(ss0, sg1, i2)
+    with absence !memb(ss0, sg0, i2);
+
+  always holds(ss1, a, o, i1)
+    implied by memb(ss1, sg1, i2)
+    with absence !memb(ss1, sg0, i2);
           \end{vverbatim}
-
-          \noindent
-          The constraint definition is then equivalent to the following rules:
-
-          \begin{vquote}
-            $holds$($ss_0$, $a$, $o$, $i_1$) $\leftarrow$
-              $memb$($ss_0$, $sg0$, $i_2$),
-              $NOT$ $\lnot$ $memb$($ss_0$, $sg1$, $i_2$)
-
-            $holds$($ss_1$, $a$, $o$, $i_1$) $\leftarrow$
-              $memb$($ss_1$, $sg0$, $i_2$),
-              $NOT$ $\lnot$ $memb$($ss_1$, $sg1$, $i_2$)
-
-            $holds$($ss_0$, $a$, $o$, $i_1$) $\leftarrow$
-              $memb$($ss_0$, $sg1$, $i_2$),
-              $NOT$ $\lnot$ $memb$($ss_0$, $sg0$, $i_2$)
-
-            $holds$($ss_1$, $a$, $o$, $i_1$) $\leftarrow$
-              $memb$($ss_1$, $sg1$, $i_2$),
-              $NOT$ $\lnot$ $memb$($ss_1$, $sg0$, $i_2$)
-          \end{vquote}
 
           Although the entity variables $SS$, $SG_0$ and $SG_1$ are grounded
           to every entity that matches their respective types, the interval
           variables $I_0$ and $I_1$ are restricted to the intervals $i_1$ and
           $i_2$, respectively, because they are the only interval pair that
-          satisfies they restriction placed by the "where" clause.
+          satisfies the restriction placed by the {\em where} clause.
         
-        \subsubsection{Policy Update Definition}
+        \subsubsection{Policy Update Declarations}
 
           Like the authorisation constraint definition, policy update
           definitions of language ${\cal L^T}$ are similar to those of language
-          ${\cal L}$, but with the extra "where" clause to limit the intervals
-          that are used to ground interval variables that may occur in
-          authorisation expressions.
+          ${\cal L}$, but with the extra {\em where} clause to limit the
+          interval identifiers that are used to ground interval variables that
+          may occur in authorisation expressions.
 
-          The syntax below describes the definition of a policy update
+          The syntax below describes the declaration of a policy update
           $update$-$id$ which, when applied, causes the expression
           $auth$-$exp$-$0$ to hold if the expression $auth$-$exp$-$1$ already
           holds.
 
           \begin{vverbatim}
-  <update-id>([<ent-var-0>[, <ent-var-1>[, ...]]])
+  <update-id>([<ent-var-0>[, ...]])
     causes <auth-exp-0>
     [if <auth-exp-1>]
     [where <int-exp>];
@@ -1160,11 +1128,364 @@
           Entity variables occurring in these expressions that do not match
           the variables in the variable list $ent$-$var$-$n$ are replaced by
           all defined entity identifiers that match the variable types.
+          Interval variables occurring in the authorisation expressions are
+          grounded to sets of interval identifiers that satisfy the interval
+          expression $int$-$exp$.
 
-          Like the authorisation constraint definition, interval variables
-          occurring in the authorisation expressions are grounded to all
-          defined intervals with respect to the restriction specified by the
-          "where" clause.
+        \subsubsection{Policy Update Directives}
+
+          The policy update directives in language ${\cal L^T}$, like those
+          in language ${\cal L}$, are used to manipulate the policy update
+          sequence list.
+
+          The three directives below are for adding a policy update into the
+          update sequence list, removing an update from the update sequence
+          list, and showing the contents of the update sequence list,
+          respectively.
+
+          \begin{vverbatim}
+  seq add <upd-id>([<id-0>[, ...]]);
+  seq del <n>;
+  seq list;
+          \end{vverbatim}
+
+          The directive is used to apply policy updates one at a time in the
+          order in which they appear in the update sequence list.
+
+          \begin{vverbatim}
+  compute;
+          \end{vverbatim}
+
+        \subsubsection{Query Directives}
+
+          A ground query expression may be given to the system for evaluation.
+          The syntax is as follows:
+
+          \begin{vverbatim}
+  query <gnd-auth-exp>;
+          \end{vverbatim}
+
+          Queries are evaluated against the policy base state derived from the
+          application of policy updates in the update sequence list. The system
+          response for each query directive either {\em true}, {\em false} or
+          {\em unknown}.
+
+      \subsection{Semantics}
+
+        \subsubsection{Domain Description of Language ${\cal L^T}$}
+
+        \subsubsection{Language ${\cal L^{T^*}}$}
+
+        \begin{itemize}
+          \item
+          {\bf Entities}
+
+            Like language ${\cal L^*}$, language ${\cal L^{T^*}}$ defines
+            the set ${\cal E}$ that contains all the defined entities, as well
+            as the subsets single subject ${\cal E}_{ss}$, single access right
+            ${\cal E}_{as}$, single object ${\cal E}_{os}$, group subject
+            ${\cal E}_{sg}$, group access right ${\cal E}_{ag}$ and group
+            object ${\cal E}_{og}$.
+
+          \item
+          {\bf Intervals}
+
+          The interval set ${\cal I}$ contains the set of all intervals.
+
+          \item
+          {\bf Atoms}
+
+          Atoms of language ${\cal L^{T^*}}$ differs from atoms of language
+          ${\cal L^T}$ in that the former also defines the state in which
+          the atom holds.
+
+          The set ${\cal A}^\sigma$ is the set of all atoms in state $\sigma$.
+
+          \item
+          {\bf Facts}
+
+        \end{itemize}
+
+        \subsubsection{Translating Language ${\cal L^T}$ to Language ${\cal L^{T^*}}$}
+
+        \begin{itemize}
+
+          \item
+            {\bf Variable Grounding}
+            
+            The task of grounding entity variables into entities and may be
+            described through the following problem. Given a set of unique
+            variables $V$ = \{$v_0$, \ldots, $v_{|V|}$\}, find a set $T$ of
+            $|V|$-tuples such that for each tuple \{$t_0$, \ldots, $t_{|V|}$\}
+            in $T$, the type of each variable $v_i$ matches the type of the
+            corresponding entity $t_i$, i.e. $Type$($v_i$) = $Type$($t_i$),
+            where $0$ $\leq$ $i$ $\leq$ $|V|$ and the function
+            $Type$($\upsilon$) returns the type (e.g. single subject, single
+            access right, etc.) of the given variable or entity $\upsilon$.
+            
+            Although the task of grounding entity variables is a relatively
+            straightforward procedure, grounding interval variables involves
+            additional steps due to the {\em where} clause of the language.
+            After generating the tuples to replace the variables, they must
+            also be checked to ensure that they satisfy any given temporal
+            constraints.
+            
+            Before we can describe in detail the interval variable grounding
+            procedure, we must first define two functions: $Normalise$() and
+            $Replace$().
+            
+            The $Normalise$($\epsilon$) function reorganises the interval
+            expression input $\epsilon$ of the form $r_0$($i_0$, $j_0$),
+            \ldots, $r_n$($i_n$, $j_n$), where $i$, $j$ $\in$ ${\cal I}$ and
+            $r$ is one of {\em before}, {\em during}, etc. into a set of
+            3-tuples \{\{$i_0$, $j_0$, $rs_0$\}, \ldots, \{$i_m$, $j_m$,
+            $rs_m$\}\}, where each tuple is composed of a pair of intervals
+            and a relation set. For example, given:
+            
+            \begin{vquote}
+              $\epsilon$ =
+                {\em before}($i_0$, $i_1$),
+                {\em starts}($i_0$,$i_1$),
+                {\em before}($i_1$, $i_2$),
+            \end{vquote}
+            
+            then:
+            
+            \begin{vquote}
+              $Normalise$($\epsilon$) =
+                \{\{$i_0$, $i_1$, \{{\em before}, {\em starts}\}\},
+                \{$i_1$, $i_2$, \{{\em before}\}\}\}.
+            \end{vquote}
+            
+            The $Replace$($M$, $V$, $T$) function takes the following as input:
+            a normalised set $M$ of interval relations with variables, a set of
+            interval variables $V$ that occurs in $M$, and a tuple $T$ containing
+            intervals that correspond to the variables in $V$. The function
+            returns a set of interval relations similar to $M$, but with all
+            variables in $V$ replaced with the corresponding intervals in $T$.
+            For example:
+            
+            \begin{vquote}
+              $Replace$(\{$i_0$, $I_0$, \{{\em meets}\}\}, \{$I_0$\}, \{$i_1$\})
+              = \{$i_0$, $i_1$, \{{\em meets}\}\} 
+            \end{vquote}
+            
+            Using these two functions, we can now illustrate how to generate
+            interval tuples that satisfy given temporal constraints. Given an
+            interval expression $\epsilon$ and a set of variables $V$ that occurs
+            in $\epsilon$, a set of interval tuples $T$ is said to satisfy
+            $\epsilon$ if and only if each $t$ $\in$ $T$ in the form
+            \{${\iota}_0$, \ldots, ${\iota}_{|V|}$\} satisfies the following
+            conditions:
+            
+            \begin{itemize}
+              \item
+                ${\iota}_i$ $\in$ ${\cal I}$, $0$ $\leq$ $i$ $<$ $|V|$
+            
+              \item
+                $\epsilon'$ = 
+                $Replace$($Normalise$($\epsilon$), $V$, $t$)
+            
+              \item
+                For each \{${\iota}_0$, ${\iota}_1$, $rs$\} in $\epsilon'$,
+                $NET.Get$(${\iota}_0$, ${\iota}_1$) = $rs$
+            \end{itemize}
+
+          \item
+            {\bf Initial Fact Rules}
+
+          \item
+            {\bf Authorisation Constraint Rules}
+
+          \item
+            {\bf Policy Update Rules}
+
+          \item
+            {\bf Inheritance Rules}
+
+          \item
+            {\bf Transitivity Rules}
+
+          \item
+            {\bf Intertial Rules}
+
+          \item
+            {\bf Identity Rules}
+
+          \item
+            {\bf Temporal Rules}
+
+            \begin{itemize}
+
+              \item
+                {\bf Holds Temporal Rules}
+          
+                \begin{vquote}
+                  $\forall$($s$, $a$, $o$, $\sigma$, $i_0$, $i_1$),
+                
+                  $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_1$) $\leftarrow$
+                  $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_0$)
+                
+                  $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_1$) $\leftarrow$
+                  $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_0$)
+                
+                  where
+                
+                  $s$ $\in$ ${\cal E}_s$,
+                
+                  $a$ $\in$ ${\cal E}_a$,
+                
+                  $0$ $\in$ ${\cal E}_o$,
+                
+                  $i_0$, $i_1$ $\in$ ${\cal I}$,
+                
+                  $NET.Get$($i_0$, $i_1$) $\subseteq$
+                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                
+                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                \end{vquote}
+
+              \item
+                {\bf Membership Temporal Rules}
+
+                \begin{vquote}
+                  $\forall$($s_s$, $s_g$, $\sigma$, $i_0$, $i_1$),
+
+                  $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_1$) $\leftarrow$
+                  $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_0$)
+
+                  $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_1$) $\leftarrow$
+                  $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_0$)
+
+                  where
+                
+                  $s_s$ $\in$ ${\cal E}_{ss}$,
+                
+                  $s_g$ $\in$ ${\cal E}_{sg}$,
+                
+                  $i_0$, $i_1$ $\in$ ${\cal I}$,
+                
+                  $NET.Get$($i_0$, $i_1$) $\subseteq$
+                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                
+                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                \end{vquote}
+
+                \begin{vquote}
+                  $\forall$($a_s$, $a_g$, $\sigma$, $i_0$, $i_1$),
+
+                  $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_1$) $\leftarrow$
+                  $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_0$)
+
+                  $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_1$) $\leftarrow$
+                  $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_0$)
+
+                  where
+                
+                  $a_s$ $\in$ ${\cal E}_{as}$,
+                
+                  $a_g$ $\in$ ${\cal E}_{ag}$,
+                
+                  $i_0$, $i_1$ $\in$ ${\cal I}$,
+                
+                  $NET.Get$($i_0$, $i_1$) $\subseteq$
+                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                
+                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                \end{vquote}
+
+                \begin{vquote}
+                  $\forall$($o_s$, $o_g$, $\sigma$, $i_0$, $i_1$),
+
+                  $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_1$) $\leftarrow$
+                  $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_0$)
+
+                  $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_1$) $\leftarrow$
+                  $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_0$)
+
+                  where
+                
+                  $o_s$ $\in$ ${\cal E}_{os}$,
+                
+                  $o_g$ $\in$ ${\cal E}_{og}$,
+                
+                  $i_0$, $i_1$ $\in$ ${\cal I}$,
+                
+                  $NET.Get$($i_0$, $i_1$) $\subseteq$
+                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                
+                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                \end{vquote}
+
+              \item
+                {\bf Subset Temporal Rules}
+
+                \begin{vquote}
+                  $\forall$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$, $i_1$),
+
+                  $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                  $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$)
+
+                  $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                  $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$)
+
+                  where
+                
+                  $s_{g0}$, $s_{g1}$ $\in$ ${\cal E}_{sg}$,
+                
+                  $i_0$, $i_1$ $\in$ ${\cal I}$,
+                
+                  $NET.Get$($i_0$, $i_1$) $\subseteq$
+                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                
+                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                \end{vquote}
+
+                \begin{vquote}
+                  $\forall$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$, $i_1$),
+
+                  $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                  $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$)
+
+                  $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                  $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$)
+
+                  where
+                
+                  $a_{g0}$, $a_{g1}$ $\in$ ${\cal E}_{ag}$,
+                
+                  $i_0$, $i_1$ $\in$ ${\cal I}$,
+                
+                  $NET.Get$($i_0$, $i_1$) $\subseteq$
+                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                
+                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                \end{vquote}
+
+                \begin{vquote}
+                  $\forall$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$, $i_1$),
+
+                  $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                  $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$)
+
+                  $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                  $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$)
+
+                  where
+                
+                  $o_{g0}$, $o_{g1}$ $\in$ ${\cal E}_{og}$,
+                
+                  $i_0$, $i_1$ $\in$ ${\cal I}$,
+                
+                  $NET.Get$($i_0$, $i_1$) $\subseteq$
+                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                
+                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                \end{vquote}
+
+            \end{itemize}
+
+        \end{itemize}
 
     \section{Discussion}
 
