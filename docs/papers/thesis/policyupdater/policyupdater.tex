@@ -1172,320 +1172,594 @@
 
       \subsection{Semantics}
 
-        \subsubsection{Domain Description of Language ${\cal L^T}$}
+        Like language ${\cal L}$, the semantics of language ${\cal L^T}$ is
+        best described by its translation into an extended logic program,
+        language ${\cal L^{T^*}}$. The main difference between language
+        ${\cal L^T}$ and language ${\cal L^{T^*}}$ is that each atom of the
+        latter also specifies the policy update state in which it holds.
+        Another difference between the two languages is that the temporal
+        constraints of language ${\cal L^T}$ is not directly expressed in
+        language ${\cal L^{T^*}}$. Instead, the interval algebra discussed at
+        the beginning of this chapter is used by the translation process to
+        generate the appropriate authorisation rules with respect to the given
+        temporal constraints.
+
+        Before the translation process can be shown, we must first provide
+        a formal definition of langauge ${\cal L^{T^*}}$.
 
         \subsubsection{Language ${\cal L^{T^*}}$}
 
-        \begin{itemize}
-          \item
-          {\bf Entities}
+          As hinted above, language ${\cal L^{T^*}}$ is an extended logic
+          program which is composed of facts and rules that expresses an
+          authorisation policy. The following are the components of the
+          language:
 
-            Like language ${\cal L^*}$, language ${\cal L^{T^*}}$ defines
-            the set ${\cal E}$ that contains all the defined entities, as well
-            as the subsets single subject ${\cal E}_{ss}$, single access right
-            ${\cal E}_{as}$, single object ${\cal E}_{os}$, group subject
-            ${\cal E}_{sg}$, group access right ${\cal E}_{ag}$ and group
-            object ${\cal E}_{og}$.
+          \begin{itemize}
+            \item
+              {\bf Entities}
 
-          \item
-          {\bf Intervals}
+              Like language ${\cal L^*}$, language ${\cal L^{T^*}}$ defines
+              a set ${\cal E}$ that contains all the defined subject, access
+              right and object (both singles and groups) entities. In addition
+              to this set, we also define all its subsets: single subject
+              ${\cal E}_{ss}$, single access right ${\cal E}_{as}$, single
+              object ${\cal E}_{os}$, group subject ${\cal E}_{sg}$, group
+              access right ${\cal E}_{ag}$ and group object ${\cal E}_{og}$.
 
-          The interval set ${\cal I}$ contains the set of all intervals.
+            \item
+              {\bf Intervals}
 
-          \item
-          {\bf Atoms}
+              The interval set ${\cal I}$ contains the set of all defined
+              time intervals.
 
-          Atoms of language ${\cal L^{T^*}}$ differs from atoms of language
-          ${\cal L^T}$ in that the former also defines the state in which
-          the atom holds.
+            \item
+              {\bf Atoms}
 
-          The set ${\cal A}^\sigma$ is the set of all atoms in state $\sigma$.
+              A language ${\cal L^{T^*}}$ atom is a binding of a set of
+              entities, a temporal interval and a state. The set
+              ${\cal A}^\sigma$ contains all the atoms of state $\sigma$.
+              The sets ${\cal A}^{\sigma}_{h}$, ${\cal A}^{\sigma}_{m}$ and
+              ${\cal A}^{\sigma}_{h}$ denotes all $holds$, $member$ and
+              $subset$ atoms of state $\sigma$, respectively, where
+              ${\cal A}^\sigma$ = ${\cal A}^{\sigma}_{h}$ $\cup$
+              ${\cal A}^{\sigma}_{m}$ $\cup$ ${\cal A}^{\sigma}_{s}$. The
+              definitions of these subsets are shown below. To distinguish
+              between the atoms of the two languages, atoms of language
+              ${\cal L^{T^*}}$ are written with the hat character.
 
-          \item
-          {\bf Facts}
+              \begin{vquote}
+                ${\cal A}^{\sigma}_{h}$ =
+                  $\{\hat{holds}$($s$, $a$, $o$, $\iota$, $\sigma$) $\mid$
+                  $s$ $\in$ ${\cal E}_{s}$,
+                  $a$ $\in$ ${\cal E}_{a}$,
+                  $o$ $\in$ ${\cal E}_{o}$, 
+                  $\iota$ $\in$ ${\cal I}\}$ 
+    
+                ${\cal A}^{\sigma}_{m}$ =
+                  ${\cal A}^{\sigma}_{ms}$ $\cup$
+                  ${\cal A}^{\sigma}_{ma}$ $\cup$
+                  ${\cal A}^{\sigma}_{mo}$
+    
+                ${\cal A}^{\sigma}_{s}$ =
+                  ${\cal A}^{\sigma}_{ss}$ $\cup$
+                  ${\cal A}^{\sigma}_{sa}$ $\cup$
+                  ${\cal A}^{\sigma}_{so}$
+    
+                ${\cal A}^{\sigma}_{ms}$ =
+                  $\{\hat{memb}$($e$, $g$, $\iota$, $\sigma$) $\mid$
+                  $e$ $\in$ ${\cal E}_{ss}$,
+                  $g$ $\in$ ${\cal E}_{sg}$,
+                  $\iota$ $\in$ ${\cal I}\}$
+    
+                ${\cal A}^{\sigma}_{ma}$ =
+                  $\{\hat{memb}$($e$, $g$, $\iota$, $\sigma$) $\mid$
+                  $e$ $\in$ ${\cal E}_{as}$,
+                  $g$ $\in$ ${\cal E}_{ag}$,
+                  $\iota$ $\in$ ${\cal I}\}$
+    
+                ${\cal A}^{\sigma}_{mo}$ =
+                  $\{\hat{memb}$($e$, $g$, $\iota$, $\sigma$) $\mid$
+                  $e$ $\in$ ${\cal E}_{os}$,
+                  $g$ $\in$ ${\cal E}_{og}$,
+                  $\iota$ $\in$ ${\cal I}\}$
+    
+                ${\cal A}^{\sigma}_{ss}$ =
+                  $\{\hat{subst}$($g_{1}$, $g_{2}$, $\iota$, $\sigma$) $\mid$
+                  $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{sg}$,
+                  $\iota$ $\in$ ${\cal I}\}$
+    
+                ${\cal A}^{\sigma}_{sa}$ =
+                  $\{\hat{subst}$($g_{1}$, $g_{2}$, $\iota$, $\sigma$) $\mid$
+                  $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{ag}$,
+                  $\iota$ $\in$ ${\cal I}\}$
+    
+                ${\cal A}^{\sigma}_{so}$ =
+                  $\{\hat{subst}$($g_{1}$, $g_{2}$, $\iota$, $\sigma$) $\mid$
+                  $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{og}$,
+                  $\iota$ $\in$ ${\cal I}\}$
+              \end{vquote}
+          
+            \item
+              {\bf Facts}
 
-        \end{itemize}
+              The definition below states that a fact $\hat{\rho}^\sigma$ is a
+              logical statement that asserts that an atom $\hat{\alpha}$ either
+              holds or does not hold at a given state $\sigma$.
+
+              \begin{vquote}
+                $\hat{\rho}^{\sigma}$ =
+                  $[\lnot]$$\hat{\alpha}$
+
+                where
+                $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$
+              \end{vquote}
+
+            \item
+              {\bf Expressions}
+
+              A language ${\cal L^{T^*}}$ expression is a conjunction of
+              facts separated by the comma character. The expression below
+              asserts that where $0$ $\leq$ $i$ $\leq$ $n$, each fact
+              $\hat{\rho}_i$ holds:
+
+              \begin{vquote}
+                $\hat{\rho}_0$, 
+                $\hat{\rho}_1$, 
+                $\ldots$,
+                $\hat{\rho}_n$, 
+              \end{vquote}
+
+          \end{itemize}
 
         \subsubsection{Translating Language ${\cal L^T}$ to Language ${\cal L^{T^*}}$}
 
-        \begin{itemize}
+          Unlike the translation of language ${\cal L}$ to language
+          ${\cal L^*}$, not all statements of language ${\cal L^T}$ is
+          translated to language ${\cal L^{T^*}}$. In particular, as language
+          ${\cal L^{T^*}}$ does not express relationships between temporal
+          intervals, all language ${\cal L^T}$ statements that denote these
+          relationships are not directly translated. Instead, through the use
+          of Allen's interval algebra, the authorisation rules that result
+          from the consequences of these temporal relations are generated
+          in language ${\cal L^{T^*}}$.
 
-          \item
-            {\bf Variable Grounding}
+          The actual translation process is described in detail below:
+
+          \begin{itemize}
+
+            \item
+              {\bf Initialising the Temporal Interval Relation Network}
+
+              The first step in the translation is to initialise the interval
+              relation network with all the temporal intervals and all the
+              given end points defined in language ${\cal L^T}$. Recall that
+              there are two ways a temporal interval may be declared in
+              language ${\cal L^T}$:
+
+              \begin{vverbatim}
+  interval \(\iota\);
+  interval \(\iota\) [\(ep\sb{0}\), \(ep\sb{1}\)];
+              \end{vverbatim}
+
+              All intervals $\iota$ declared by using the first form are added
+              to the interval network through a call to the following function:
+
+              \begin{vquote}
+                $NET.New$($\iota$)
+              \end{vquote}
+
+              All intervals $\iota$ declared by using the second form, i.e.,
+              with end points $ep_0$ and $ep_1$, are added to the network
+              through the following functions:
+
+              \begin{vquote}
+                $NET.New$($\iota$)
+
+                $NET.Bind$($\iota$, $ep_0$, $ep_1$)
+              \end{vquote}
+
+            \item
+              {\bf Populating the Temporal Interval Relation Network}
+
+              The next step is to encode all temporal constraints in
+              language ${\cal L^T}$ as interval relations in the interval
+              relation network. Temporal constraints are declared in language
+              ${\cal L^T}$ in the following way:
+
+              \begin{vverbatim}
+  relation \(\alpha\sb{0}\), \(\ldots\), \(\alpha\sb{n}\);
+              \end{vverbatim}
+
+              Note that each interval atom ${\alpha}_i$ above is in the form
+              $r_i$(${\iota}0_i$, ${\iota}1_i$), where $r_i$ $\in$ \{$equals$,
+              $before$, $\ldots$\}, ${\iota}0_i$, ${\iota}1_i$ $\in$
+              ${\cal I}$ and $0$ $\leq$ $i$ $\leq$ $n$. We further note that
+              under this notation, it is possible to encounter a situation
+              where two different interval atoms ${\alpha}_i$ and ${\alpha}_j$
+              can both contain the same pair of intervals:
+
+              \begin{vquote}
+                ${\alpha}_i$ $=$ $r_i$(${\iota}0_i$, ${\iota}1_i$) 
+
+                ${\alpha}_j$ $=$ $r_j$(${\iota}0_j$, ${\iota}1_j$)
+
+                where
+                $i$ $\neq$ $j$,
+                $r_i$ $\neq$ $r_j$,
+                ${\iota}0_i$ $=$ ${\iota}0_j$,
+                ${\iota}1_i$ $=$ ${\iota}1_j$.
+              \end{vquote}
+
+              According to the syntax definition of interval atoms in the
+              previous section, in any given interval expression, all interval
+              atom pairs that satisfies the above condition are to be treated
+              as disjunctions in that expression, while those that do not are
+              to be treated as conjunctions.
+
+              For simplicity, we introduce a normalised notation for interval
+              expressions where each interval atom in the expression contains a 
+              unique pair of intervals and a set of relations that hold between
+              those intervals. Formally, we have:
+
+              \begin{vquote}
+                ${\alpha}_0$, $\ldots$, ${\alpha}_n$
+              \end{vquote}
+
+              \noindent
+              where each interval atom ${\alpha}_i$ ($0$ $\leq$ $i$ $\leq$ $n$)
+              in the form:
+
+              \begin{vquote}
+                ${\alpha}_i$ =
+                  (${\iota}0_i$, ${\iota}1_i$, \{$r0_i$, $\ldots$, $rx_i$\})
+              \end{vquote}
+
+              \noindent
+              satisfies the following condition:
+
+              \begin{vquote}
+                $\forall$ $j$
+
+                ${\alpha}_j$ $=$ 
+                  (${\iota}0_j$, ${\iota}1_j$, \{$r0_j$, $\ldots$, $ry_j$\})
+
+                where 
+                (
+                  ${\iota}0_i$ $\neq$ ${\iota}0_j$ $\lor$
+                  ${\iota}1_i$ $\neq$ ${\iota}1_j$
+                ),
+                $0$ $\leq$ $j$ $\leq$ $n$,
+                $i$ $\neq$ $j$
+              \end{vquote}
+
+              Now, we define a function $Normalise$($\varepsilon$) that takes
+              a language ${\cal L^T}$ interval expression $\varepsilon$ as
+              input and returns the normalised equivalent of that expression in
+              the form shown above. Formally, we have:
+
+              \begin{vquote}
+                ${\varepsilon}'$ $=$ $Normalise$($\varepsilon$)
+              \end{vquote}
+
+              \noindent
+              For each
+              (${\iota}0_i$, ${\iota}1_i$, \{$r0_i$, $\ldots$, $rx_i$\})
+              $\in$ ${\varepsilon}'$,
+              where $0$ $\leq$ $i$ $<$ $|{\varepsilon}'|$, the following
+              conditions are satisfied:
+
+              \begin{itemize}
+                \item
+                  For each $r_j$ $\in$ \{$r0_i$, $\ldots$, $rx_i$\}, where $0$
+                  $\leq$ $j$ $\leq$ $i$, there exists an
+                  $r_j$(${\iota}0_i$, ${\iota}1_i$) $\in$ $\varepsilon$
+
+                \item
+                  For each 
+                  (${\iota}0_j$, ${\iota}1_j$, \{$r0_j$, $\ldots$, $ry_j$\})
+                  $\in$ ${\varepsilon}'$, where $0$ $\leq$ $j$ $<$
+                  $|{\varepsilon}'|$ and $i$ $\neq$ $j$, 
+                  (
+                    ${\iota}0_i$ $\neq$ ${\iota}0_j$ $\lor$
+                    ${\iota}1_i$ $\neq$ ${\iota}1_j$
+                  )
+              \end{itemize}
+
+              By using the $Normalise$() function, we can now populate the
+              interval relation network with relations expressed in
+              language ${\cal L^T}$ temporal constraint statements. For every
+              given language ${\cal L^T}$ interval constraint expression
+              $\varepsilon$, a call to the following will register the
+              temporal constraint to the interval relation network:
+
+              \begin{vverbatim}
+  \(NET.Add\)(\(Normalise\)(\(\varepsilon\)))
+              \end{vverbatim}
+              
+
+            \item
+              {\bf Variable Grounding}
+
+              As language ${\cal L^{T^*}}$ does not allow variables, all
+	      language ${\cal L^T}$ expressions containing entity or interval
+              variables must be grounded in the translation process.
             
-            The task of grounding entity variables into entities and may be
-            described through the following problem. Given a set of unique
-            variables $V$ = \{$v_0$, \ldots, $v_{|V|}$\}, find a set $T$ of
-            $|V|$-tuples such that for each tuple \{$t_0$, \ldots, $t_{|V|}$\}
-            in $T$, the type of each variable $v_i$ matches the type of the
-            corresponding entity $t_i$, i.e. $Type$($v_i$) = $Type$($t_i$),
-            where $0$ $\leq$ $i$ $\leq$ $|V|$ and the function
-            $Type$($\upsilon$) returns the type (e.g. single subject, single
-            access right, etc.) of the given variable or entity $\upsilon$.
+	      The task of grounding entity variables into entities and may be
+              described through the following problem. Given a non-ground
+	      language ${\cal L^T}$ expression $\varepsilon$ and a set of
+              entity variables $V$ $=$ \{$v_0$, $\ldots$, $v_n$\} that occurrs
+              in $\varepsilon$, find a set $T$ of $n$-tuples such that the type
+              of each entity $e_i$ in each tuple $t_j$ $\in$ $T$ matches the
+              type of the corresponding variable $v_i$ $\in$ $V$:
+
+              \begin{vquote}
+                $T$ $=$ \{$t_0$, $\ldots$, $t_m$\}
+              \end{vquote}
+
+              \noindent
+              such that for each $t_j$ $\in$ $T$, $0$ $\leq$ $j$ $<$ $m$,
+
+              \begin{vquote}
+                $t_j$ $=$ \{$e_0$, $\ldots$, $e_n$\}
+              \end{vquote}
+
+              \noindent
+              such that for each $e_i$ $\in$ $t_j$, $v_i$ $\in$ $V$,
+              $0$ $\leq$ $i$ $<$ $n$,
+
+              \begin{vquote}
+                $Type$($e_i$) $=$ $Type$($v_i$)
+              \end{vquote}
+
+              \noindent
+              where the $Type$() function returns the type of the given entity
+              or variable, i.e., one of $single$-$subject$, $group$-$subject$,
+              $single$-$access$-$right$, etc.
+
+              Although the task of grounding entity variables is a relatively
+              straightforward procedure, grounding interval variables involves
+              additional steps due to the {\em where} clause of the language.
+              After generating the tuples to replace the variables, they must
+              also be checked to ensure that they satisfy any given temporal
+              constraints.
             
-            Although the task of grounding entity variables is a relatively
-            straightforward procedure, grounding interval variables involves
-            additional steps due to the {\em where} clause of the language.
-            After generating the tuples to replace the variables, they must
-            also be checked to ensure that they satisfy any given temporal
-            constraints.
+              Before we can describe in detail the interval variable grounding
+              procedure, we must first define the $Replace$() function.
             
-            Before we can describe in detail the interval variable grounding
-            procedure, we must first define two functions: $Normalise$() and
-            $Replace$().
+              The $Replace$($\varepsilon$, $V$, $t$) function takes the
+              following as input: a normalised set $\varepsilon$ of interval
+              relations with variables, a set of interval variables $V$ that
+              occurs in $\varepsilon$, and a tuple $t$ containing intervals
+              that correspond to the variables in $V$. The function returns
+              $\varepsilon$ with all variables replaced with the corresponding
+              intervals. For example:
             
-            The $Normalise$($\epsilon$) function reorganises the interval
-            expression input $\epsilon$ of the form $r_0$($i_0$, $j_0$),
-            \ldots, $r_n$($i_n$, $j_n$), where $i$, $j$ $\in$ ${\cal I}$ and
-            $r$ is one of {\em before}, {\em during}, etc. into a set of
-            3-tuples \{\{$i_0$, $j_0$, $rs_0$\}, \ldots, \{$i_m$, $j_m$,
-            $rs_m$\}\}, where each tuple is composed of a pair of intervals
-            and a relation set. For example, given:
+              \begin{vquote}
+                $Replace$(\{($i_0$, $I_0$, \{{\em meets}\})\}, \{$I_0$\}, \{$i_1$\})
+                  = \{$i_0$, $i_1$, \{{\em meets}\}\} 
+              \end{vquote}
             
-            \begin{vquote}
-              $\epsilon$ =
-                {\em before}($i_0$, $i_1$),
-                {\em starts}($i_0$,$i_1$),
-                {\em before}($i_1$, $i_2$),
-            \end{vquote}
+              With this function, we can now illustrate how to generate
+              interval tuples that satisfy given temporal constraints. Given an
+              interval expression $\epsilon$ and a set of variables $V$ that
+              occurr in $\epsilon$, a set of interval tuples $T$ is said to
+              satisfy $\epsilon$ if and only if each $t$ $\in$ $T$ in the form
+              \{${\iota}_0$, \ldots, ${\iota}_{|V|}$\} satisfies the following
+              conditions:
             
-            then:
+             \begin{itemize}
+               \item
+                 ${\iota}_i$ $\in$ ${\cal I}$, $0$ $\leq$ $i$ $<$ $|V|$
+             
+               \item
+                 $\epsilon'$ = 
+                 $Replace$($Normalise$($\epsilon$), $V$, $t$)
+             
+               \item
+                 For each \{${\iota}_0$, ${\iota}_1$, $rs$\} in $\epsilon'$,
+                 $NET.Get$(${\iota}_0$, ${\iota}_1$) = $rs$
+             \end{itemize}
+
+            \item
+              {\bf Initial Fact Rules}
+
+            \item
+              {\bf Authorisation Constraint Rules}
             
-            \begin{vquote}
-              $Normalise$($\epsilon$) =
-                \{\{$i_0$, $i_1$, \{{\em before}, {\em starts}\}\},
-                \{$i_1$, $i_2$, \{{\em before}\}\}\}.
-            \end{vquote}
+            \item
+              {\bf Policy Update Rules}
             
-            The $Replace$($M$, $V$, $T$) function takes the following as input:
-            a normalised set $M$ of interval relations with variables, a set of
-            interval variables $V$ that occurs in $M$, and a tuple $T$ containing
-            intervals that correspond to the variables in $V$. The function
-            returns a set of interval relations similar to $M$, but with all
-            variables in $V$ replaced with the corresponding intervals in $T$.
-            For example:
+            \item
+              {\bf Inheritance Rules}
             
-            \begin{vquote}
-              $Replace$(\{$i_0$, $I_0$, \{{\em meets}\}\}, \{$I_0$\}, \{$i_1$\})
-              = \{$i_0$, $i_1$, \{{\em meets}\}\} 
-            \end{vquote}
+            \item
+              {\bf Transitivity Rules}
             
-            Using these two functions, we can now illustrate how to generate
-            interval tuples that satisfy given temporal constraints. Given an
-            interval expression $\epsilon$ and a set of variables $V$ that occurs
-            in $\epsilon$, a set of interval tuples $T$ is said to satisfy
-            $\epsilon$ if and only if each $t$ $\in$ $T$ in the form
-            \{${\iota}_0$, \ldots, ${\iota}_{|V|}$\} satisfies the following
-            conditions:
+            \item
+              {\bf Intertial Rules}
             
-            \begin{itemize}
-              \item
-                ${\iota}_i$ $\in$ ${\cal I}$, $0$ $\leq$ $i$ $<$ $|V|$
+            \item
+              {\bf Identity Rules}
             
-              \item
-                $\epsilon'$ = 
-                $Replace$($Normalise$($\epsilon$), $V$, $t$)
-            
-              \item
-                For each \{${\iota}_0$, ${\iota}_1$, $rs$\} in $\epsilon'$,
-                $NET.Get$(${\iota}_0$, ${\iota}_1$) = $rs$
+            \item
+              {\bf Temporal Rules}
+
+              Given a fact $\hat{\rho}$ that holds at interval $\iota$. Fact
+              $\hat{\rho}$ also holds at all intervals $\iota'$ where $\iota'$
+              is {\em equals}, {\em during}, {\em starts} or {\em finishes}
+              interval $\iota$.
+
+              \begin{itemize}
+              
+                \item
+                  {\bf Holds Temporal Rules}
+
+                  \begin{vquote}
+                    $\forall$($s$, $a$, $o$, $\sigma$, $i_0$, $i_1$),
+                  
+                    $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_1$) $\leftarrow$
+                    $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_0$)
+                  
+                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_1$) $\leftarrow$
+                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_0$)
+                  
+                    where
+                  
+                    $s$ $\in$ ${\cal E}_s$,
+                  
+                    $a$ $\in$ ${\cal E}_a$,
+                  
+                    $0$ $\in$ ${\cal E}_o$,
+                  
+                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                  
+                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                  
+                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                  \end{vquote}
+              
+                \item
+                  {\bf Membership Temporal Rules}
+              
+                  \begin{vquote}
+                    $\forall$($s_s$, $s_g$, $\sigma$, $i_0$, $i_1$),
+              
+                    $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_1$) $\leftarrow$
+                    $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_0$)
+              
+                    $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_1$) $\leftarrow$
+                    $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_0$)
+              
+                    where
+                  
+                    $s_s$ $\in$ ${\cal E}_{ss}$,
+                  
+                    $s_g$ $\in$ ${\cal E}_{sg}$,
+                  
+                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                  
+                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                  
+                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                  \end{vquote}
+              
+                  \begin{vquote}
+                    $\forall$($a_s$, $a_g$, $\sigma$, $i_0$, $i_1$),
+              
+                    $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_1$) $\leftarrow$
+                    $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_0$)
+              
+                    $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_1$) $\leftarrow$
+                    $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_0$)
+              
+                    where
+                  
+                    $a_s$ $\in$ ${\cal E}_{as}$,
+                  
+                    $a_g$ $\in$ ${\cal E}_{ag}$,
+                  
+                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                  
+                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                  
+                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                  \end{vquote}
+              
+                  \begin{vquote}
+                    $\forall$($o_s$, $o_g$, $\sigma$, $i_0$, $i_1$),
+              
+                    $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_1$) $\leftarrow$
+                    $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_0$)
+              
+                    $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_1$) $\leftarrow$
+                    $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_0$)
+              
+                    where
+                  
+                    $o_s$ $\in$ ${\cal E}_{os}$,
+                  
+                    $o_g$ $\in$ ${\cal E}_{og}$,
+                  
+                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                  
+                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                  
+                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                  \end{vquote}
+              
+                \item
+                  {\bf Subset Temporal Rules}
+              
+                  \begin{vquote}
+                    $\forall$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$, $i_1$),
+              
+                    $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                    $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$)
+              
+                    $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                    $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$)
+              
+                    where
+                  
+                    $s_{g0}$, $s_{g1}$ $\in$ ${\cal E}_{sg}$,
+                  
+                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                  
+                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                  
+                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                  \end{vquote}
+              
+                  \begin{vquote}
+                    $\forall$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$, $i_1$),
+              
+                    $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                    $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$)
+              
+                    $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                    $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$)
+              
+                    where
+                  
+                    $a_{g0}$, $a_{g1}$ $\in$ ${\cal E}_{ag}$,
+                  
+                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                  
+                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                  
+                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                  \end{vquote}
+              
+                  \begin{vquote}
+                    $\forall$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$, $i_1$),
+              
+                    $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                    $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$)
+              
+                    $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_1$) $\leftarrow$
+                    $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$)
+              
+                    where
+                  
+                    $o_{g0}$, $o_{g1}$ $\in$ ${\cal E}_{og}$,
+                  
+                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                  
+                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                  
+                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                  \end{vquote}
+              
+              \end{itemize}
+
             \end{itemize}
-
-          \item
-            {\bf Initial Fact Rules}
-
-          \item
-            {\bf Authorisation Constraint Rules}
-
-          \item
-            {\bf Policy Update Rules}
-
-          \item
-            {\bf Inheritance Rules}
-
-          \item
-            {\bf Transitivity Rules}
-
-          \item
-            {\bf Intertial Rules}
-
-          \item
-            {\bf Identity Rules}
-
-          \item
-            {\bf Temporal Rules}
-
-            \begin{itemize}
-
-              \item
-                {\bf Holds Temporal Rules}
-          
-                \begin{vquote}
-                  $\forall$($s$, $a$, $o$, $\sigma$, $i_0$, $i_1$),
-                
-                  $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_1$) $\leftarrow$
-                  $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_0$)
-                
-                  $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_1$) $\leftarrow$
-                  $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_0$)
-                
-                  where
-                
-                  $s$ $\in$ ${\cal E}_s$,
-                
-                  $a$ $\in$ ${\cal E}_a$,
-                
-                  $0$ $\in$ ${\cal E}_o$,
-                
-                  $i_0$, $i_1$ $\in$ ${\cal I}$,
-                
-                  $NET.Get$($i_0$, $i_1$) $\subseteq$
-                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
-                
-                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
-                \end{vquote}
-
-              \item
-                {\bf Membership Temporal Rules}
-
-                \begin{vquote}
-                  $\forall$($s_s$, $s_g$, $\sigma$, $i_0$, $i_1$),
-
-                  $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_1$) $\leftarrow$
-                  $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_0$)
-
-                  $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_1$) $\leftarrow$
-                  $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_0$)
-
-                  where
-                
-                  $s_s$ $\in$ ${\cal E}_{ss}$,
-                
-                  $s_g$ $\in$ ${\cal E}_{sg}$,
-                
-                  $i_0$, $i_1$ $\in$ ${\cal I}$,
-                
-                  $NET.Get$($i_0$, $i_1$) $\subseteq$
-                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
-                
-                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
-                \end{vquote}
-
-                \begin{vquote}
-                  $\forall$($a_s$, $a_g$, $\sigma$, $i_0$, $i_1$),
-
-                  $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_1$) $\leftarrow$
-                  $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_0$)
-
-                  $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_1$) $\leftarrow$
-                  $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_0$)
-
-                  where
-                
-                  $a_s$ $\in$ ${\cal E}_{as}$,
-                
-                  $a_g$ $\in$ ${\cal E}_{ag}$,
-                
-                  $i_0$, $i_1$ $\in$ ${\cal I}$,
-                
-                  $NET.Get$($i_0$, $i_1$) $\subseteq$
-                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
-                
-                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
-                \end{vquote}
-
-                \begin{vquote}
-                  $\forall$($o_s$, $o_g$, $\sigma$, $i_0$, $i_1$),
-
-                  $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_1$) $\leftarrow$
-                  $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_0$)
-
-                  $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_1$) $\leftarrow$
-                  $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_0$)
-
-                  where
-                
-                  $o_s$ $\in$ ${\cal E}_{os}$,
-                
-                  $o_g$ $\in$ ${\cal E}_{og}$,
-                
-                  $i_0$, $i_1$ $\in$ ${\cal I}$,
-                
-                  $NET.Get$($i_0$, $i_1$) $\subseteq$
-                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
-                
-                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
-                \end{vquote}
-
-              \item
-                {\bf Subset Temporal Rules}
-
-                \begin{vquote}
-                  $\forall$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$, $i_1$),
-
-                  $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                  $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$)
-
-                  $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                  $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$)
-
-                  where
-                
-                  $s_{g0}$, $s_{g1}$ $\in$ ${\cal E}_{sg}$,
-                
-                  $i_0$, $i_1$ $\in$ ${\cal I}$,
-                
-                  $NET.Get$($i_0$, $i_1$) $\subseteq$
-                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
-                
-                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
-                \end{vquote}
-
-                \begin{vquote}
-                  $\forall$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$, $i_1$),
-
-                  $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                  $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$)
-
-                  $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                  $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$)
-
-                  where
-                
-                  $a_{g0}$, $a_{g1}$ $\in$ ${\cal E}_{ag}$,
-                
-                  $i_0$, $i_1$ $\in$ ${\cal I}$,
-                
-                  $NET.Get$($i_0$, $i_1$) $\subseteq$
-                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
-                
-                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
-                \end{vquote}
-
-                \begin{vquote}
-                  $\forall$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$, $i_1$),
-
-                  $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                  $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$)
-
-                  $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                  $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$)
-
-                  where
-                
-                  $o_{g0}$, $o_{g1}$ $\in$ ${\cal E}_{og}$,
-                
-                  $i_0$, $i_1$ $\in$ ${\cal I}$,
-                
-                  $NET.Get$($i_0$, $i_1$) $\subseteq$
-                  \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
-                
-                  $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
-                \end{vquote}
-
-            \end{itemize}
-
-        \end{itemize}
 
     \section{Discussion}
 
