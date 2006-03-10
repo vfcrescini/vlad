@@ -1172,17 +1172,26 @@
 
       \subsection{Semantics}
 
+        The domain description ${\cal D_{L^T}}$ of language ${\cal L^T}$ is
+        a finite set of intervals with end points, initial state facts,
+        temporal constraint rules, authorisation constraint rules, policy
+        update definitions and an ordered set $\psi$ of policy update
+        references.
+
         Like language ${\cal L}$, the semantics of language ${\cal L^T}$ is
         best described by its translation into an extended logic program,
-        language ${\cal L^{T^*}}$. The main difference between language
-        ${\cal L^T}$ and language ${\cal L^{T^*}}$ is that each atom of the
-        latter also specifies the policy update state in which it holds.
-        Another difference between the two languages is that the temporal
-        constraints of language ${\cal L^T}$ is not directly expressed in
-        language ${\cal L^{T^*}}$. Instead, the interval algebra discussed at
-        the beginning of this chapter is used by the translation process to
-        generate the appropriate authorisation rules with respect to the given
-        temporal constraints.
+        language ${\cal L^{T^*}}$. Formally, given a domain description
+        ${\cal D_{L^T}}$ of language ${\cal L^T}$, the translation is denoted
+        by $Trans$(${\cal D_{L^T}}$).
+
+        The main difference between language ${\cal L^T}$ and language
+        ${\cal L^{T^*}}$ is that each atom of the latter also specifies the
+        policy update state in which it holds. Another difference between the
+        two languages is that the temporal constraints of language ${\cal L^T}$
+        is not directly expressed in language ${\cal L^{T^*}}$. Instead, the
+        interval algebra discussed at the beginning of this chapter is used by
+        the translation process to generate the appropriate authorisation rules
+        with respect to the given temporal constraints.
 
         Before the translation process can be shown, we must first provide
         a formal definition of langauge ${\cal L^{T^*}}$.
@@ -1209,8 +1218,8 @@
             \item
               {\bf Intervals}
 
-              The interval set ${\cal I}$ contains the set of all defined
-              time intervals.
+              Language ${\cal L^{T^*}}$ defines a set ${\cal I}$ that contains
+              all the defined time intervals from ${\cal D_{L^T}}$.
 
             \item
               {\bf Atoms}
@@ -1318,12 +1327,38 @@
           translated to language ${\cal L^{T^*}}$. In particular, as language
           ${\cal L^{T^*}}$ does not express relationships between temporal
           intervals, all language ${\cal L^T}$ statements that denote these
-          relationships are not directly translated. Instead, through the use
-          of Allen's interval algebra, the authorisation rules that result
-          from the consequences of these temporal relations are generated
-          in language ${\cal L^{T^*}}$.
+          relationships are not directly translated. Through the use of Allen's
+          interval algebra, the authorisation rules that result from the
+          consequences of these temporal relations are generated instead.
 
-          The actual translation process is described in detail below:
+          To describe the details of the translation $Trans$(${\cal D_{L^T}}$),
+          we first define some translation functions similar to
+          [XXX ref to ${\cal L}$].
+
+          \begin{itemize}
+            \item
+              The $CopyAtom$($\hat{\alpha}$, $\sigma$) function takes as input
+              an atom $\hat{\alpha}$ of language ${\cal L^{T^*}}$ and some
+              state $\sigma$, then returns an atom with the same type and with
+              the same entities and interval as atom $\hat{\alpha}$, but with
+              state $\sigma$ instead of the original state specified by
+              $\hat{\alpha}$.
+
+            \item
+              The $TransAtom$($\alpha$, $\sigma$) function takes as input an
+              atom $\alpha$ of language ${\cal L^T}$ and some state $\sigma$,
+              then returns an equivalent atom of language ${\cal L^{T^*}}$
+              with the same entities and interval specified by $\alpha$.
+
+            \item
+              The $TransFact$($\rho$, $\sigma$) function is similar to the
+              $TransAtom$ function, but instead of translating an atom, it
+              takes a language ${\cal L^T}$ fact $\rho$ and some state $\sigma$
+              then returns the equivalent language ${\cal L}^{T^*}$ fact.
+          \end{itemize}
+
+          With these functions defined, we can now outline the translation
+          process:
 
           \begin{itemize}
 
