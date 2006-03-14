@@ -662,11 +662,27 @@
 
     \section{Extensions to Allen's Interval Algebra}
 
-      In the previous section, we have shown that Allen's Algebra defines temporal
-      intervals as the primitive, where each interval is defined not by time points,
-      but by their relationships with other intervals. In this section, we will attempt
-      to show the extensions to the interval algebra to allow it to express intervals
-      in terms of time points.
+      In an authorisation system, an agent that enforces an authorisation
+      policy must be able to match the policy's entities to objects observable
+      by the agent, e.g. a subject in the policy is mapped to a user that logs
+      in, or an object in the policy is mapped to a certain file in the
+      filesystem. Similarly, an agent must also be able to map time intervals
+      in a policy to events that are observable by the agent. For example,
+      the interval {\em logged\_on} in the policy may be mapped to the time
+      between a certain user logs in and out of the system.
+
+      In certain situations, however, it is convenient to map intervals in the
+      policy to a particular time scale, such as the agent's real time clock.
+      These situations might arise when certain authorisations need to be
+      granted or revoked at a certain time, instead of being triggered by
+      observable events. To map policy intervals to real time, it is necessary
+      to define them in terms of points in real time.
+
+      In the previous section, we have shown that Allen's algebra defines
+      temporal intervals as the primitive, where each interval is defined not
+      by time points, but by their relationships with other intervals. In this
+      section, we will attempt to show the extensions to the interval algebra
+      to allow it to express intervals in terms of time points.
 
       \subsection{Time Points Revisited}
 
