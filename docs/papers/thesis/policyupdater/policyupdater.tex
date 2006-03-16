@@ -802,6 +802,30 @@
   ENDFUNCTION
         \end{vverbatim}
 
+      \subsection{Additional Network Operators}
+
+        For the sake of completeness, we also define two additional network
+        operators:
+
+        \begin{itemize}
+          \item
+            $NET.Init$()
+
+            The $NET.Init$() operator initialises or re-initialises the
+            network. When executed, the operator causes all intervals and
+            relations to be removed from the network.
+
+          \item
+            $NET.Add$($I$)
+
+            The $NET.Add$() operator causes the given interval identifier $I$
+            to be added to the network. As the network maintains complete
+            information and since the new interval $I$ does not have any known
+            relations with any interval in the network, the operator assigns
+            the default relation between $I$ and every other interval in the
+            network.
+        \end{itemize}
+
     \section{Formalisation}
 
       In this section, we attempt to formalise a new language, ${\cal L^T}$,
