@@ -1666,6 +1666,27 @@
             \item
               {\bf Initial Fact Rules}
 
+              The initial fact rules are obtained directly from initial fact
+              declaration statements of languague ${\cal L^T}$:
+
+              \begin{vverbatim}
+  initially \(\rho\sb{0}\), \(\ldots\), \(\rho\sb{n}\);
+              \end{vverbatim}
+
+              Each initial fact declaration statement of language ${\cal L^T}$
+              in the form above corresponds to the following language
+              ${\cal L^{T^*}}$ rules:
+
+              \begin{vquote}
+                $\hat{\rho_i}$ $\leftarrow$
+
+                where
+
+                $\hat{\rho_i}$ $=$ $TransFact$($\rho_i$, $S_0$),
+
+                $0$ $\leq$ $i$ $\leq$ $n$
+              \end{vquote}
+
             \item
               {\bf Authorisation Constraint Rules}
             
