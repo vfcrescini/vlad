@@ -1253,7 +1253,10 @@
               to this set, we also define all its subsets: single subject
               ${\cal E}_{ss}$, single access right ${\cal E}_{as}$, single
               object ${\cal E}_{os}$, group subject ${\cal E}_{sg}$, group
-              access right ${\cal E}_{ag}$ and group object ${\cal E}_{og}$.
+              access right ${\cal E}_{ag}$, group object ${\cal E}_{og}$,
+              single and group subjects ${\cal E}_{s}$, single and group access
+              rights ${\cal E}_{a}$, and single and group objects
+              ${\cal E}_{o}$.
 
             \item
               {\bf Intervals}
@@ -1599,10 +1602,9 @@
               constraints.
             
               Before we can describe in detail the interval variable grounding
-              procedure, we must first define the $Replace$() function.
-            
-              The $Replace$($\varepsilon$, $V$, $t$) function takes the
-              following as input: a normalised set $\varepsilon$ of interval
+              procedure, we must first define another function. The
+              $Replace$($\varepsilon$, $V$, $t$) function takes the following
+              as input: a normalised set $\varepsilon$ of interval
               relations with variables, a set of interval variables $V$ that
               occurs in $\varepsilon$, and a tuple $t$ containing intervals
               that correspond to the variables in $V$. The function returns
@@ -1615,26 +1617,24 @@
               \end{vquote}
             
               With this function, we can now illustrate how to generate
-              interval tuples that satisfy given temporal constraints. Given an
-              interval expression $\epsilon$ and a set of variables $V$ that
-              occurr in $\epsilon$, a set of interval tuples $T$ is said to
-              satisfy $\epsilon$ if and only if each $t$ $\in$ $T$ in the form
-              \{${\iota}_0$, \ldots, ${\iota}_{|V|}$\} satisfies the following
-              conditions:
-            
-             \begin{itemize}
-               \item
-                 ${\iota}_i$ $\in$ ${\cal I}$, $0$ $\leq$ $i$ $<$ $|V|$
-             
-               \item
+              interval tuples that satisfy given temporal constraints. Given a
+              {\em where} clause with an interval expression $\epsilon$ and a
+              set $V$ of variables that occurr in $\epsilon$, a set $T$ of
+              interval tuples is said to satisfy $\epsilon$ if and only if each
+              tuple $t$ $\in$ $T$ in the form \{${\iota}_0$, \ldots,
+              ${\iota}_{|V|}$\}, where ${\iota}_i$ $\in$ ${\cal I}$, $0$ $\leq$
+              $i$ $<$ $|V|$, satisfies the following condition:
+
+              \begin{vquote}
+                 For each \{${\iota}_0$, ${\iota}_1$, $rs$\} in $\epsilon'$,
+                 $NET.Get$(${\iota}_0$, ${\iota}_1$) $\subseteq$ $rs$
+
+                 where
+
                  $\epsilon'$ = 
                  $Replace$($Normalise$($\epsilon$), $V$, $t$)
-             
-               \item
-                 For each \{${\iota}_0$, ${\iota}_1$, $rs$\} in $\epsilon'$,
-                 $NET.Get$(${\iota}_0$, ${\iota}_1$) = $rs$
-             \end{itemize}
-
+              \end{vquote}
+            
             \item
               {\bf Initial Fact Rules}
 
