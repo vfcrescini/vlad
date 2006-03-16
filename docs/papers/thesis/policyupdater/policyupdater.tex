@@ -1477,7 +1477,8 @@
               For simplicity, we introduce a normalised notation for interval
               expressions where each interval atom in the expression contains a 
               unique pair of intervals and a set of relations that hold between
-              those intervals. Formally, we have:
+              those intervals. Formally, a normalised interval expression is
+              in the following form:
 
               \begin{vquote}
                 ${\alpha}_0$, $\ldots$, ${\alpha}_n$
@@ -1496,18 +1497,22 @@
               satisfies the following condition:
 
               \begin{vquote}
-                $\forall$ $j$
 
-                ${\alpha}_j$ $=$ 
-                  (${\iota}0_j$, ${\iota}1_j$, \{$r0_j$, $\ldots$, $ry_j$\})
+                $\lnot$$\exists$${\alpha}_j$,
 
                 where 
-                (
-                  ${\iota}0_i$ $\neq$ ${\iota}0_j$ $\lor$
-                  ${\iota}1_i$ $\neq$ ${\iota}1_j$
-                ),
+
+                ${\alpha}_j$ =
+                  (${\iota}0_j$, ${\iota}1_j$, \{$r0_j$, $\ldots$, $ry_j$\})
+
                 $0$ $\leq$ $j$ $\leq$ $n$,
+
                 $i$ $\neq$ $j$
+
+                such that
+
+                ${\iota}0_i$ $=$ ${\iota}0_j$,
+                ${\iota}1_i$ $=$ ${\iota}1_j$
               \end{vquote}
 
               Now, we define a function $Normalise$($\varepsilon$) that takes
@@ -1543,17 +1548,32 @@
                   )
               \end{itemize}
 
-              By using the $Normalise$() function, we can now populate the
-              interval relation network with relations expressed in
-              language ${\cal L^T}$ temporal constraint statements. For every
-              given language ${\cal L^T}$ interval constraint expression
-              $\varepsilon$, a call to the following will register the
-              temporal constraint to the interval relation network:
+              With the $Normalise$() function defined, we can now populate the
+              interval relation network with relations expressed in language
+              ${\cal L^T}$ interval constraint statements. The steps involved
+              to achieve this is as follows. For each interval constraint
+              statement in language ${\cal L^T}$:
 
               \begin{vverbatim}
-  \(NET.Add\)(\(Normalise\)(\(\varepsilon\)))
+  relation \(\alpha\sb{0}\), \(\ldots\), \(\alpha\sb{n}\);
               \end{vverbatim}
-              
+
+              Now, by using the $Normalise$() function, we obtain a normalised
+              expression $\varepsilon$:
+
+              \begin{vquote}
+                $\varepsilon$ $=$
+                  $Normalise$(\{${\alpha}_0$, $\ldots$, ${\alpha}_n$\})
+              \end{vquote}
+
+              Finally, to register the interval constraint to the interval
+              relation network, we make a call to the following operator
+              for each (${\iota}0_i$, ${\iota}1_i$, $rs_i$) $\in$
+              $\varepsilon$, where $0$ $\leq$ $i$ $<$ $|\varepsilon|$:
+
+              \begin{vverbatim}
+  \(NET.Add\)(\({\iota}0\sb{i}\), \({\iota}1\sb{i}\), \(rs\sb{i}\))
+              \end{vverbatim}
 
             \item
               {\bf Variable Grounding}
@@ -1613,26 +1633,34 @@
             
               \begin{vquote}
                 $Replace$(\{($i_0$, $I_0$, \{{\em meets}\})\}, \{$I_0$\}, \{$i_1$\})
-                  = \{$i_0$, $i_1$, \{{\em meets}\}\} 
+              \end{vquote}
+
+              \noindent
+              since the variable $I_0$ is replaced by the interval $i_1$, the
+              call will yield:
+
+              \begin{vquote}
+                \{$i_0$, $i_1$, \{{\em meets}\}\} 
               \end{vquote}
             
               With this function, we can now illustrate how to generate
               interval tuples that satisfy given temporal constraints. Given a
-              {\em where} clause with an interval expression $\epsilon$ and a
-              set $V$ of variables that occurr in $\epsilon$, a set $T$ of
-              interval tuples is said to satisfy $\epsilon$ if and only if each
-              tuple $t$ $\in$ $T$ in the form \{${\iota}_0$, \ldots,
+              {\em where} clause with an interval expression $\varepsilon$ and
+              a set $V$ of variables that occurr in $\varepsilon$, a set $T$ of
+              interval tuples is said to satisfy $\varepsilon$ if and only if
+              each tuple $t$ $\in$ $T$ in the form \{${\iota}_0$, \ldots,
               ${\iota}_{|V|}$\}, where ${\iota}_i$ $\in$ ${\cal I}$, $0$ $\leq$
               $i$ $<$ $|V|$, satisfies the following condition:
 
               \begin{vquote}
-                 For each \{${\iota}_0$, ${\iota}_1$, $rs$\} in $\epsilon'$,
+                 For each \{${\iota}_0$, ${\iota}_1$, $rs$\} $\in$ $\varepsilon'$,
+
                  $NET.Get$(${\iota}_0$, ${\iota}_1$) $\subseteq$ $rs$
 
                  where
 
                  $\epsilon'$ = 
-                 $Replace$($Normalise$($\epsilon$), $V$, $t$)
+                 $Replace$($Normalise$($\varepsilon$), $V$, $t$)
               \end{vquote}
             
             \item
@@ -1671,13 +1699,13 @@
                   {\bf Holds Temporal Rules}
 
                   \begin{vquote}
-                    $\forall$($s$, $a$, $o$, $\sigma$, $i_0$, $i_1$),
+                    $\forall$($s$, $a$, $o$, $\sigma$, $\iota_0$, $\iota_1$),
                   
-                    $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_1$) $\leftarrow$
-                    $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_0$)
+                    $\hat{holds}$($s$, $a$, $o$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\hat{holds}$($s$, $a$, $o$, $\sigma$, $\iota_0$)
                   
-                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_1$) $\leftarrow$
-                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $i_0$)
+                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $\iota_0$)
                   
                     where
                   
@@ -1687,9 +1715,9 @@
                   
                     $0$ $\in$ ${\cal E}_o$,
                   
-                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                    $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
-                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
                   
                     $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
@@ -1699,13 +1727,13 @@
                   {\bf Membership Temporal Rules}
               
                   \begin{vquote}
-                    $\forall$($s_s$, $s_g$, $\sigma$, $i_0$, $i_1$),
+                    $\forall$($s_s$, $s_g$, $\sigma$, $\iota_0$, $\iota_1$),
               
-                    $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_1$) $\leftarrow$
-                    $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_0$)
+                    $\hat{memb}$($s_s$, $s_g$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\hat{memb}$($s_s$, $s_g$, $\sigma$, $\iota_0$)
               
-                    $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_1$) $\leftarrow$
-                    $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $i_0$)
+                    $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $\iota_0$)
               
                     where
                   
@@ -1713,22 +1741,24 @@
                   
                     $s_g$ $\in$ ${\cal E}_{sg}$,
                   
-                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                    $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
-                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
                   
                     $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
                   \end{vquote}
+
+                  \vspace{0.5em}
               
                   \begin{vquote}
-                    $\forall$($a_s$, $a_g$, $\sigma$, $i_0$, $i_1$),
+                    $\forall$($a_s$, $a_g$, $\sigma$, $\iota_0$, $\iota_1$),
               
-                    $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_1$) $\leftarrow$
-                    $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_0$)
+                    $\hat{memb}$($a_s$, $a_g$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\hat{memb}$($a_s$, $a_g$, $\sigma$, $\iota_0$)
               
-                    $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_1$) $\leftarrow$
-                    $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $i_0$)
+                    $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $\iota_0$)
               
                     where
                   
@@ -1736,22 +1766,24 @@
                   
                     $a_g$ $\in$ ${\cal E}_{ag}$,
                   
-                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                    $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
-                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
                   
                     $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
                   \end{vquote}
+
+                  \vspace{0.5em}
               
                   \begin{vquote}
-                    $\forall$($o_s$, $o_g$, $\sigma$, $i_0$, $i_1$),
+                    $\forall$($o_s$, $o_g$, $\sigma$, $\iota_0$, $\iota_1$),
               
-                    $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_1$) $\leftarrow$
-                    $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_0$)
+                    $\hat{memb}$($o_s$, $o_g$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\hat{memb}$($o_s$, $o_g$, $\sigma$, $\iota_0$)
               
-                    $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_1$) $\leftarrow$
-                    $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $i_0$)
+                    $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $\iota_0$)
               
                     where
                   
@@ -1759,9 +1791,9 @@
                   
                     $o_g$ $\in$ ${\cal E}_{og}$,
                   
-                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                    $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
-                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
                   
                     $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
@@ -1771,63 +1803,67 @@
                   {\bf Subset Temporal Rules}
               
                   \begin{vquote}
-                    $\forall$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$, $i_1$),
+                    $\forall$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_0$, $\iota_1$),
               
-                    $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                    $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$)
+                    $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_0$)
               
-                    $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                    $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $i_0$)
+                    $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_0$)
               
                     where
                   
                     $s_{g0}$, $s_{g1}$ $\in$ ${\cal E}_{sg}$,
                   
-                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                    $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
-                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
                   
                     $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
                   \end{vquote}
               
+                  \vspace{0.5em}
+
                   \begin{vquote}
-                    $\forall$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$, $i_1$),
+                    $\forall$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_0$, $\iota_1$),
               
-                    $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                    $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$)
+                    $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_0$)
               
-                    $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                    $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $i_0$)
+                    $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_0$)
               
                     where
                   
                     $a_{g0}$, $a_{g1}$ $\in$ ${\cal E}_{ag}$,
                   
-                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                    $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
-                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
                   
                     $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
                   \end{vquote}
               
+                  \vspace{0.5em}
+
                   \begin{vquote}
-                    $\forall$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$, $i_1$),
+                    $\forall$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_0$, $\iota_1$),
               
-                    $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                    $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$)
+                    $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_0$)
               
-                    $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_1$) $\leftarrow$
-                    $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $i_0$)
+                    $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
+                    $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_0$)
               
                     where
                   
                     $o_{g0}$, $o_{g1}$ $\in$ ${\cal E}_{og}$,
                   
-                    $i_0$, $i_1$ $\in$ ${\cal I}$,
+                    $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
-                    $NET.Get$($i_0$, $i_1$) $\subseteq$
+                    $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
                   
                     $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
