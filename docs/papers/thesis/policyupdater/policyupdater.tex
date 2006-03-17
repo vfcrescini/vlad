@@ -1580,89 +1580,99 @@
 
               As language ${\cal L^{T^*}}$ does not allow variables, all
 	      language ${\cal L^T}$ expressions containing entity or interval
-              variables must be grounded in the translation process.
-            
-	      The task of grounding entity variables into entities and may be
-              described through the following problem. Given a non-ground
-	      language ${\cal L^T}$ expression $\varepsilon$ and a set of
-              entity variables $V$ $=$ \{$v_0$, $\ldots$, $v_n$\} that occurrs
-              in $\varepsilon$, find a set $T$ of $n$-tuples such that the type
-              of each entity $e_i$ in each tuple $t_j$ $\in$ $T$ matches the
-              type of the corresponding variable $v_i$ $\in$ $V$:
-
-              \begin{vquote}
-                $T$ $=$ \{$t_0$, $\ldots$, $t_m$\}
-              \end{vquote}
-
-              \noindent
-              such that for each $t_j$ $\in$ $T$, $0$ $\leq$ $j$ $<$ $m$,
-
-              \begin{vquote}
-                $t_j$ $=$ \{$e_0$, $\ldots$, $e_n$\}
-              \end{vquote}
-
-              \noindent
-              such that for each $e_i$ $\in$ $t_j$, $v_i$ $\in$ $V$,
-              $0$ $\leq$ $i$ $<$ $n$,
-
-              \begin{vquote}
-                $Type$($e_i$) $=$ $Type$($v_i$)
-              \end{vquote}
-
-              \noindent
-              where the $Type$() function returns the type of the given entity
-              or variable, i.e., one of $single$-$subject$, $group$-$subject$,
-              $single$-$access$-$right$, etc.
-
-              Although the task of grounding entity variables is a relatively
+              variables must be grounded in the translation process. Although
+              the task of grounding entity variables is a relatively
               straightforward procedure, grounding interval variables involves
               additional steps due to the {\em where} clause of the language.
-              After generating the tuples to replace the variables, they must
-              also be checked to ensure that they satisfy any given temporal
-              constraints.
-            
-              Before we can describe in detail the interval variable grounding
-              procedure, we must first define another function. The
-              $Replace$($\varepsilon$, $V$, $t$) function takes the following
-              as input: a normalised set $\varepsilon$ of interval
-              relations with variables, a set of interval variables $V$ that
-              occurs in $\varepsilon$, and a tuple $t$ containing intervals
-              that correspond to the variables in $V$. The function returns
-              $\varepsilon$ with all variables replaced with the corresponding
-              intervals. For example:
-            
+              After generating the tuples to replace the variables, each of
+              these tuples must also be checked to ensure that they satisfy
+              any given temporal constraints.
+
+              Before we can describe the grounding process in greater detail,
+              we first define the following three functions:
+
+              \begin{itemize}
+                \item
+                  $Type$($ev$)
+
+                  The $Type$($ev$) function returns the type of the given
+                  entity or variable $ev$: $interval$, $single$-$subject$,
+                  $group$-$subject$, $single$-$access$-$right$, etc.
+
+                \item
+                  $Var$($\varepsilon$)
+
+                  Given a non-ground language ${\cal L^T}$ authorisation or
+                  interval expression $\varepsilon$, this function returns
+                  a set of unique variables that occurs in $\varepsilon$. If
+                  $\varepsilon$ is ground, the function returns $\emptyset$.
+
+                \item
+                  $Replace$($\varepsilon$, $V$, $t$)
+
+                  The function takes the following as input: a non-ground
+                  language ${\cal L^T}$ authorisation or interval expression
+                  $\varepsilon$, a set of variables $V$ that occur in
+                  $\varepsilon$, and a tuple $t$ containing entities and
+                  intervals that correspond to the variables in $V$ ($|V|$ $=$
+                  $|t|$ and $\forall$$i$, $0$ $\leq$ $i$ $<$ $|V|$,
+                  $Type$($V_i$) $=$ $Type$($t_i$)). The function returns
+                  $\varepsilon$ with all variable occurences replaced with the
+                  corresponding entities or intervals from $t$. If
+                  $\varepsilon$ is a ground expression, $\varepsilon$ is
+                  returned.
+              \end{itemize}
+
+              With these functions defined, we can now generalise the process
+              of grounding both entity and interval variables. Given a set $V$
+              of unique entity and interval variables, the function below
+              returns a set of all possible $|V|$-tuples that can be used to
+              replace the variables in $V$:
+
               \begin{vquote}
-                $Replace$(\{($i_0$, $I_0$, \{{\em meets}\})\}, \{$I_0$\}, \{$i_1$\})
+                $GenTuples_1$($V$) $=$
+                $R_0$ $\times$ $\ldots$ $\times$ $R_{|V|-1}$
+
+                where
+
+                $\forall$ $i$, $0$ $\leq$ $i$ $<$ $|V|$,
+
+                $R_i$ $=$
+                \begin{math}
+                  \begin{cases}
+                    \mbox{${\cal E}_s$, if $Type$($V_i$) $=$ {\em subject}} \\
+                    \mbox{${\cal E}_a$, if $Type$($V_i$) $=$ {\em access right}} \\
+                    \vdots \\
+                    \mbox{${\cal I}$, if $Type$($V_i$) $=$ {\em interval}}
+                  \end{cases}
+                \end{math}
               \end{vquote}
 
-              \noindent
-              since the variable $I_0$ is replaced by the interval $i_1$, the
-              call will yield:
+              A variation of this function, shown below, generates tuples
+              with respect to a given temporal constraint. Given a language
+              ${\cal L^T}$ {\em where} clause with an interval expression
+              $\varepsilon$ and a set $V$ of variables that occur in
+              $\varepsilon$, the following function returns a set of
+              $|V|$-tuples, where each tuple satisfies the condition given
+              in $\varepsilon$:
 
               \begin{vquote}
-                \{$i_0$, $i_1$, \{{\em meets}\}\} 
+                $GenTuples_2$($\varepsilon$, $V$)
+                $=$ \{$t_0$, $\ldots$, $t_{|V|-1}$\}
+
+                where
+
+                $\forall$ $i$, $0$ $\leq$ $i$ $<$ $|V|$,
+                $t_i$ $\in$ $GenTuples_1$($V$),
+
+                $\varepsilon'$ $=$
+                $Normalise$($Replace$($\varepsilon$, $V$, $t_i$)),
+
+                $\forall$ (${\iota}_0$, ${\iota}_1$, $rs$) $\in$
+                $\varepsilon'$,
+                $NET.Get$(${\iota}_0$, ${\iota}_1$) $\subseteq$ $rs$
               \end{vquote}
-            
-              With this function, we can now illustrate how to generate
-              interval tuples that satisfy given temporal constraints. Given a
-              {\em where} clause with an interval expression $\varepsilon$ and
-              a set $V$ of variables that occurr in $\varepsilon$, a set $T$ of
-              interval tuples is said to satisfy $\varepsilon$ if and only if
-              each tuple $t$ $\in$ $T$ in the form \{${\iota}_0$, \ldots,
-              ${\iota}_{|V|}$\}, where ${\iota}_i$ $\in$ ${\cal I}$, $0$ $\leq$
-              $i$ $<$ $|V|$, satisfies the following condition:
 
-              \begin{vquote}
-                 For each \{${\iota}_0$, ${\iota}_1$, $rs$\} $\in$ $\varepsilon'$,
-
-                 $NET.Get$(${\iota}_0$, ${\iota}_1$) $\subseteq$ $rs$
-
-                 where
-
-                 $\epsilon'$ = 
-                 $Replace$($Normalise$($\varepsilon$), $V$, $t$)
-              \end{vquote}
-            
             \item
               {\bf Initial Fact Rules}
 
