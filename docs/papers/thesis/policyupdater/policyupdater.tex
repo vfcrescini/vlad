@@ -1700,27 +1700,272 @@
             \item
               {\bf Authorisation Constraint Rules}
 
+              A authorisation constraint statement in language ${\cal L^T}$
+              is in the form:
+
               \begin{vverbatim}
   always \(a\sb{0}\), \(\ldots\), \(a\sb{m}\)
     implied by \(b\sb{0}\), \(\ldots\), \(b\sb{n}\)
     with absence \(c\sb{0}\), \(\ldots\), \(c\sb{o}\)
-    where \(r\sb{0}\), \(\ldots\), \(r\sb{p}\);
+    where \(d\sb{0}\), \(\ldots\), \(d\sb{p}\);
               \end{vverbatim}
+
+              The first step is to generate a set of variables that may
+              occur in the expressions above:
+
+              \begin{vquote}
+                $V$ $=$
+
+                \hspace{1em}
+                $Var$(($a_0$, $\ldots$, $a_m$)) $\cup$
+
+                \hspace{1em}
+                $Var$(($b_0$, $\ldots$, $b_n$)) $\cup$
+
+                \hspace{1em}
+                $Var$(($c_0$, $\ldots$, $c_o$)) $\cup$
+
+                \hspace{1em}
+                $Var$(($d_0$, $\ldots$, $d_p$))
+              \end{vquote}
+
+              Using the set $V$, we generate a set of tuples $T$ that satisfies
+              the temporal constraint specified by the {\em where} clause:
+
+              \begin{vquote}
+                $T$ $=$ $GenTuples_2$(($d_0$, $\ldots$, $d_p$), $V$)
+              \end{vquote}
+
+              Finally, we have:
+
+              \begin{vquote}
+                $\hat{a}^{\sigma}_{0}$ $\leftarrow$
+                $\hat{b}^{\sigma}_{0}$, \ldots, $\hat{b}^{\sigma}_{n}$,
+                $not$ $\hat{c}^{\sigma}_{0}$, \ldots, $not$ $\hat{c}^{\sigma}_{o}$
+
+                $\vdots$
+
+                $\hat{a}^{\sigma}_{m}$ $\leftarrow$
+                $\hat{b}^{\sigma}_{0}$, \ldots, $\hat{b}^{\sigma}_{n}$,
+                $not$ $\hat{c}^{\sigma}_{0}$, \ldots, $not$ $\hat{c}^{\sigma}_{o}$
+
+                where
+
+                $\hat{a}^{\sigma}_{i}$ = $TransFact$($Replace$($a_{i}$, $V$, $t$), $\sigma$),
+                $0$ $\leq$ $i$ $\leq$ $m$,
+    
+                $\hat{b}^{\sigma}_{j}$ = $TransFact$($Replace$($b_{j}$, $V$, $t$), $\sigma$),
+                $0$ $\leq$ $j$ $\leq$ $n$,
+    
+                $\hat{c}^{\sigma}_{k}$ = $TransFact$($Replace$($c_{k}$, $V$, $t$), $\sigma$),
+                $0$ $\leq$ $k$ $\leq$ $o$,
+    
+                $\forall$ $t$ $\in$ $T$,
+
+                $\forall$ $\sigma$, $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+              \end{vquote}
             
             \item
               {\bf Policy Update Rules}
             
             \item
               {\bf Inheritance Rules}
+
+                \begin{itemize}
+                  \item
+                    {\bf Subject Group Member Inheritance Rules}
+
+                    \begin{vquote}
+                      $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\iota$ $\sigma$),
+                   
+                      $\hat{holds}$($s_{s}$, $a$, $o$, $\iota$, $\sigma$)
+                      $\leftarrow$
+
+                      $\hat{holds}$($s_{g}$, $a$, $o$, $\iota$, $\sigma$),
+                      $\hat{memb}$($s_{s}$, $s_{g}$, $\iota$, $\sigma$),
+                      $not$ $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\iota$, $\sigma$)
+                   
+                      $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                      $\lnot\hat{holds}$($s_{g}$, $a$, $o$, $\iota$, $\sigma$),
+                      $\hat{memb}$($s_{s}$, $s_{g}$, $\iota$, $\sigma$)
+                   
+                      where
+                   
+                      $s_{s}$ $\in$ ${\cal E}_{ss}$,
+
+                      $s_{g}$ $\in$ ${\cal E}_{sg}$,
+
+                      $a$ $\in$ ${\cal E}_{a}$,
+
+                      $o$ $\in$ ${\cal E}_{o}$,
+
+                      $\iota$ $\in$ ${\cal I}$,
+
+                      $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                    \end{vquote}
+                   
+                  \item
+                    {\bf Access Right Group Member Inheritance Rules}
+
+                     \begin{vquote}
+                      $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\iota$ $\sigma$),
+                   
+                      $\hat{holds}$($s$, $a_{s}$, $o$, $\iota$, $\sigma$)
+                      $\leftarrow$
+
+                      $\hat{holds}$($s$, $a_{g}$, $o$, $\iota$, $\sigma$),
+                      $\hat{memb}$($a_{s}$, $a_{g}$, $\iota$, $\sigma$),
+                      $not$ $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\iota$, $\sigma$)
+                   
+                      $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                      $\lnot\hat{holds}$($s$, $a_{g}$, $o$, $\iota$, $\sigma$),
+                      $\hat{memb}$($a_{s}$, $a_{g}$, $\iota$, $\sigma$)
+                   
+                      where
+                   
+                      $s$ $\in$ ${\cal E}_{s}$,
+
+                      $a_{s}$ $\in$ ${\cal E}_{as}$,
+
+                      $a_{g}$ $\in$ ${\cal E}_{ag}$,
+
+                      $o$ $\in$ ${\cal E}_{o}$,
+
+                      $\iota$ $\in$ ${\cal I}$,
+
+                      $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                    \end{vquote} 
+
+                  \item
+                    {\bf Object Group Member Inheritance Rules}
+
+                    \begin{vquote}
+                      $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\iota$ $\sigma$),
+                   
+                      $\hat{holds}$($s$, $a$, $o_{s}$, $\iota$, $\sigma$)
+                      $\leftarrow$
+
+                      $\hat{holds}$($s$, $a$, $o_{g}$, $\iota$, $\sigma$),
+                      $\hat{memb}$($o_{s}$, $o_{g}$, $\iota$, $\sigma$),
+                      $not$ $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\iota$, $\sigma$)
+                   
+                      $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                      $\lnot\hat{holds}$($s$, $a$, $o_{g}$, $\iota$, $\sigma$),
+                      $\hat{memb}$($o_{s}$, $o_{g}$, $\iota$, $\sigma$)
+                   
+                      where
+                   
+                      $s$ $\in$ ${\cal E}_{s}$,
+
+                      $a$ $\in$ ${\cal E}_{a}$,
+
+                      $o_{s}$ $\in$ ${\cal E}_{os}$,
+
+                      $o_{g}$ $\in$ ${\cal E}_{og}$,
+
+                      $\iota$ $\in$ ${\cal I}$,
+
+                      $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                    \end{vquote}
+                  \item
+                    {\bf Subject Group Subset Inheritance Rules}
+                  \item
+                    {\bf Access Right Group Subset Inheritance Rules}
+                  \item
+                    {\bf Object Group Subset Inheritance Rules}
+                \end{itemize}
             
             \item
               {\bf Transitivity Rules}
+
+              \begin{itemize}
+                \item
+                  {\bf Subject Group Transitivity Rules}
+
+                  \begin{vquote}
+                    $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\iota$, $\sigma$),
+
+                    $\hat{subst}$($sg_{1}$, $sg_{3}$, $\iota$, $\sigma$)
+                    $\leftarrow$
+                    $\hat{subst}$($sg_{1}$, $sg_{2}$, $\iota$, $\sigma$),
+                    $\hat{subst}$($sg_{2}$, $sg_{3}$, $\iota$, $\sigma$)
+
+                    where
+
+                    $sg_{1}$, $sg_{2}$, $sg_{3}$ $\in$ ${\cal E}_{sg}$,
+
+                    $sg_{1}$ $\neq$ $sg_{2}$ $\neq$ $sg_{3}$,
+
+                    $\iota$ $\in$ ${\cal I}$,
+
+                    $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                  \end{vquote}
+                \item
+                  {\bf Access Right Group Transitivity Rules}
+
+                  \begin{vquote}
+                    $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\iota$, $\sigma$),
+
+                    $\hat{subst}$($ag_{1}$, $ag_{3}$, $\iota$, $\sigma$)
+                    $\leftarrow$
+                    $\hat{subst}$($ag_{1}$, $ag_{2}$, $\iota$, $\sigma$),
+                    $\hat{subst}$($ag_{2}$, $ag_{3}$, $\iota$, $\sigma$)
+
+                    where
+
+                    $ag_{1}$, $ag_{2}$, $ag_{3}$ $\in$ ${\cal E}_{ag}$,
+
+                    $ag_{1}$ $\neq$ $ag_{2}$ $\neq$ $ag_{3}$,
+
+                    $\iota$ $\in$ ${\cal I}$,
+
+                    $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                  \end{vquote}
+                \item
+                  {\bf Object Group Transitivity Rules}
+
+                  \begin{vquote}
+                    $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\iota$, $\sigma$),
+
+                    $\hat{subst}$($og_{1}$, $og_{3}$, $\iota$, $\sigma$)
+                    $\leftarrow$
+                    $\hat{subst}$($og_{1}$, $og_{2}$, $\iota$, $\sigma$),
+                    $\hat{subst}$($og_{2}$, $og_{3}$, $\iota$, $\sigma$)
+
+                    where
+
+                    $og_{1}$, $og_{2}$, $og_{3}$ $\in$ ${\cal E}_{og}$,
+
+                    $og_{1}$ $\neq$ $og_{2}$ $\neq$ $og_{3}$,
+
+                    $\iota$ $\in$ ${\cal I}$,
+
+                    $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                  \end{vquote}
+              \end{itemize}
             
             \item
               {\bf Intertial Rules}
             
             \item
               {\bf Identity Rules}
+
+              \begin{vquote}
+                $\forall$ ($g$, $\iota$, $\sigma$),
+
+                $\hat{subst}$($g$, $g$, $\iota$, $\sigma$) $\leftarrow$
+
+                where
+
+                $g$ $\in$ (${\cal E}_{sg}$ $\cup$ ${\cal E}_{ag}$ $\cup$ ${\cal E}_{og}$),
+
+                $\iota$ $\in$ ${\cal I}$,
+
+                $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+              \end{vquote}
             
             \item
               {\bf Temporal Rules}
