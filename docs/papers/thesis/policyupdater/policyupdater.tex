@@ -1462,10 +1462,18 @@
                 ${\alpha}_j$ $=$ $r_j$(${\iota}0_j$, ${\iota}1_j$)
 
                 where
+
+                \hspace{1em}
                 $i$ $\neq$ $j$,
+
+                \hspace{1em}
                 $r_i$ $\neq$ $r_j$,
+
+                \hspace{1em}
                 ${\iota}0_i$ $=$ ${\iota}0_j$,
-                ${\iota}1_i$ $=$ ${\iota}1_j$.
+
+                \hspace{1em}
+                ${\iota}1_i$ $=$ ${\iota}1_j$
               \end{vquote}
 
               According to the syntax definition of interval atoms in the
@@ -1497,21 +1505,26 @@
               satisfies the following condition:
 
               \begin{vquote}
-
                 $\lnot$$\exists$${\alpha}_j$,
 
                 where 
 
+                \hspace{1em}
                 ${\alpha}_j$ =
                   (${\iota}0_j$, ${\iota}1_j$, \{$r0_j$, $\ldots$, $ry_j$\})
 
+                \hspace{1em}
                 $0$ $\leq$ $j$ $\leq$ $n$,
 
+                \hspace{1em}
                 $i$ $\neq$ $j$
 
                 such that
 
+                \hspace{1em}
                 ${\iota}0_i$ $=$ ${\iota}0_j$,
+
+                \hspace{1em}
                 ${\iota}1_i$ $=$ ${\iota}1_j$
               \end{vquote}
 
@@ -1632,11 +1645,15 @@
               \begin{vquote}
                 $GenTuples_1$($V$) $=$
                 $R_0$ $\times$ $\ldots$ $\times$ $R_{|V|-1}$
+              \end{vquote}
 
+              \begin{vquote}
                 where
 
+                \hspace{1em}
                 $\forall$ $i$, $0$ $\leq$ $i$ $<$ $|V|$,
 
+                \hspace{1em}
                 $R_i$ $=$
                 \begin{math}
                   \begin{cases}
@@ -1659,15 +1676,20 @@
               \begin{vquote}
                 $GenTuples_2$($\varepsilon$, $V$)
                 $=$ \{$t_0$, $\ldots$, $t_{|V|-1}$\}
+              \end{vquote}
 
+              \begin{vquote}
                 where
 
+                \hspace{1em}
                 $\forall$ $i$, $0$ $\leq$ $i$ $<$ $|V|$,
                 $t_i$ $\in$ $GenTuples_1$($V$),
 
+                \hspace{1em}
                 $\varepsilon'$ $=$
                 $Normalise$($Replace$($\varepsilon$, $V$, $t_i$)),
 
+                \hspace{1em}
                 $\forall$ (${\iota}_0$, ${\iota}_1$, $rs$) $\in$
                 $\varepsilon'$,
                 $NET.Get$(${\iota}_0$, ${\iota}_1$) $\subseteq$ $rs$
@@ -1689,11 +1711,15 @@
 
               \begin{vquote}
                 $\hat{\rho_i}$ $\leftarrow$
+              \end{vquote}
 
+              \begin{vquote}
                 where
 
+                \hspace{1em}
                 $\hat{\rho_i}$ $=$ $TransFact$($\rho_i$, $S_0$),
 
+                \hspace{1em}
                 $0$ $\leq$ $i$ $\leq$ $n$
               \end{vquote}
 
@@ -1729,6 +1755,7 @@
                 $Var$(($d_0$, $\ldots$, $d_p$))
               \end{vquote}
 
+              \noindent
               Using the set $V$, we generate a set of tuples $T$ that satisfies
               the temporal constraint specified by the {\em where} clause:
 
@@ -1736,6 +1763,7 @@
                 $T$ $=$ $GenTuples_2$(($d_0$, $\ldots$, $d_p$), $V$)
               \end{vquote}
 
+              \noindent
               Finally, we have:
 
               \begin{vquote}
@@ -1748,20 +1776,27 @@
                 $\hat{a}^{\sigma}_{m}$ $\leftarrow$
                 $\hat{b}^{\sigma}_{0}$, \ldots, $\hat{b}^{\sigma}_{n}$,
                 $not$ $\hat{c}^{\sigma}_{0}$, \ldots, $not$ $\hat{c}^{\sigma}_{o}$
+              \end{vquote}
 
+              \begin{vquote}
                 where
 
+                \hspace{1em}
                 $\hat{a}^{\sigma}_{i}$ = $TransFact$($Replace$($a_{i}$, $V$, $t$), $\sigma$),
                 $0$ $\leq$ $i$ $\leq$ $m$,
     
+                \hspace{1em}
                 $\hat{b}^{\sigma}_{j}$ = $TransFact$($Replace$($b_{j}$, $V$, $t$), $\sigma$),
                 $0$ $\leq$ $j$ $\leq$ $n$,
     
+                \hspace{1em}
                 $\hat{c}^{\sigma}_{k}$ = $TransFact$($Replace$($c_{k}$, $V$, $t$), $\sigma$),
                 $0$ $\leq$ $k$ $\leq$ $o$,
     
+                \hspace{1em}
                 $\forall$ $t$ $\in$ $T$,
 
+                \hspace{1em}
                 $\forall$ $\sigma$, $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
               \end{vquote}
             
@@ -1776,106 +1811,302 @@
                     {\bf Subject Group Member Inheritance Rules}
 
                     \begin{vquote}
-                      $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\iota$ $\sigma$),
+                      $\forall$ ($ss$, $sg$, $a$, $o$, $\iota$ $\sigma$),
+                    \end{vquote}
                    
-                      $\hat{holds}$($s_{s}$, $a$, $o$, $\iota$, $\sigma$)
+                    \begin{vquote}
+                      $\hat{holds}$($ss$, $a$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
 
-                      $\hat{holds}$($s_{g}$, $a$, $o$, $\iota$, $\sigma$),
-                      $\hat{memb}$($s_{s}$, $s_{g}$, $\iota$, $\sigma$),
-                      $not$ $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\iota$, $\sigma$)
+                      \hspace{1em}
+                      $\hat{holds}$($sg$, $a$, $o$, $\iota$, $\sigma$),
+                      $\hat{memb}$($ss$, $sg$, $\iota$, $\sigma$),
+
+                      \hspace{1em}
+                      $not$ $\lnot\hat{holds}$($ss$, $a$, $o$, $\iota$, $\sigma$)
+                    \end{vquote}
                    
-                      $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\iota$, $\sigma$)
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($ss$, $a$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
-                      $\lnot\hat{holds}$($s_{g}$, $a$, $o$, $\iota$, $\sigma$),
-                      $\hat{memb}$($s_{s}$, $s_{g}$, $\iota$, $\sigma$)
+
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($sg$, $a$, $o$, $\iota$, $\sigma$),
+                      $\hat{memb}$($ss$, $sg$, $\iota$, $\sigma$)
+                    \end{vquote}
                    
+                    \begin{vquote}
                       where
                    
-                      $s_{s}$ $\in$ ${\cal E}_{ss}$,
+                      \hspace{1em}
+                      $ss$ $\in$ ${\cal E}_{ss}$,
 
-                      $s_{g}$ $\in$ ${\cal E}_{sg}$,
+                      \hspace{1em}
+                      $sg$ $\in$ ${\cal E}_{sg}$,
 
+                      \hspace{1em}
                       $a$ $\in$ ${\cal E}_{a}$,
 
+                      \hspace{1em}
                       $o$ $\in$ ${\cal E}_{o}$,
 
+                      \hspace{1em}
                       $\iota$ $\in$ ${\cal I}$,
 
-                      $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                     \end{vquote}
                    
                   \item
                     {\bf Access Right Group Member Inheritance Rules}
 
-                     \begin{vquote}
-                      $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\iota$ $\sigma$),
+                    \begin{vquote}
+                      $\forall$ ($s$, $as$, $ag$, $o$, $\iota$ $\sigma$),
+                    \end{vquote} 
                    
-                      $\hat{holds}$($s$, $a_{s}$, $o$, $\iota$, $\sigma$)
+                    \begin{vquote}
+                      $\hat{holds}$($s$, $as$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
 
-                      $\hat{holds}$($s$, $a_{g}$, $o$, $\iota$, $\sigma$),
-                      $\hat{memb}$($a_{s}$, $a_{g}$, $\iota$, $\sigma$),
-                      $not$ $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\iota$, $\sigma$)
+                      \hspace{1em}
+                      $\hat{holds}$($s$, $ag$, $o$, $\iota$, $\sigma$),
+                      $\hat{memb}$($as$, $ag$, $\iota$, $\sigma$),
+
+                      \hspace{1em}
+                      $not$ $\lnot\hat{holds}$($s$, $as$, $o$, $\iota$, $\sigma$)
+                    \end{vquote} 
                    
-                      $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\iota$, $\sigma$)
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s$, $as$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
-                      $\lnot\hat{holds}$($s$, $a_{g}$, $o$, $\iota$, $\sigma$),
-                      $\hat{memb}$($a_{s}$, $a_{g}$, $\iota$, $\sigma$)
+
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s$, $ag$, $o$, $\iota$, $\sigma$),
+                      $\hat{memb}$($as$, $ag$, $\iota$, $\sigma$)
+                    \end{vquote} 
                    
+                    \begin{vquote}
                       where
                    
+                      \hspace{1em}
                       $s$ $\in$ ${\cal E}_{s}$,
 
-                      $a_{s}$ $\in$ ${\cal E}_{as}$,
+                      \hspace{1em}
+                      $as$ $\in$ ${\cal E}_{as}$,
 
-                      $a_{g}$ $\in$ ${\cal E}_{ag}$,
+                      \hspace{1em}
+                      $ag$ $\in$ ${\cal E}_{ag}$,
 
+                      \hspace{1em}
                       $o$ $\in$ ${\cal E}_{o}$,
 
+                      \hspace{1em}
                       $\iota$ $\in$ ${\cal I}$,
 
-                      $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                     \end{vquote} 
 
                   \item
                     {\bf Object Group Member Inheritance Rules}
 
                     \begin{vquote}
-                      $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\iota$ $\sigma$),
+                      $\forall$ ($s$, $a$, $os$, $og$, $\iota$ $\sigma$),
+                    \end{vquote}
                    
-                      $\hat{holds}$($s$, $a$, $o_{s}$, $\iota$, $\sigma$)
+                    \begin{vquote}
+                      $\hat{holds}$($s$, $a$, $os$, $\iota$, $\sigma$)
                       $\leftarrow$
 
-                      $\hat{holds}$($s$, $a$, $o_{g}$, $\iota$, $\sigma$),
-                      $\hat{memb}$($o_{s}$, $o_{g}$, $\iota$, $\sigma$),
-                      $not$ $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\iota$, $\sigma$)
+                      \hspace{1em}
+                      $\hat{holds}$($s$, $a$, $og$, $\iota$, $\sigma$),
+                      $\hat{memb}$($os$, $og$, $\iota$, $\sigma$),
+
+                      \hspace{1em}
+                      $not$ $\lnot\hat{holds}$($s$, $a$, $os$, $\iota$, $\sigma$)
+                    \end{vquote}
                    
-                      $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\iota$, $\sigma$)
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s$, $a$, $os$, $\iota$, $\sigma$)
                       $\leftarrow$
-                      $\lnot\hat{holds}$($s$, $a$, $o_{g}$, $\iota$, $\sigma$),
-                      $\hat{memb}$($o_{s}$, $o_{g}$, $\iota$, $\sigma$)
+
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s$, $a$, $og$, $\iota$, $\sigma$),
+                      $\hat{memb}$($os$, $og$, $\iota$, $\sigma$)
+                    \end{vquote}
                    
+                    \begin{vquote}
                       where
                    
+                      \hspace{1em}
                       $s$ $\in$ ${\cal E}_{s}$,
 
+                      \hspace{1em}
                       $a$ $\in$ ${\cal E}_{a}$,
 
-                      $o_{s}$ $\in$ ${\cal E}_{os}$,
+                      \hspace{1em}
+                      $os$ $\in$ ${\cal E}_{os}$,
 
-                      $o_{g}$ $\in$ ${\cal E}_{og}$,
+                      \hspace{1em}
+                      $og$ $\in$ ${\cal E}_{og}$,
 
+                      \hspace{1em}
                       $\iota$ $\in$ ${\cal I}$,
 
-                      $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                     \end{vquote}
+
                   \item
                     {\bf Subject Group Subset Inheritance Rules}
+
+                    \begin{vquote}
+                      $\forall$ ($sg_1$, $sg_2$, $a$, $o$, $\iota$, $\sigma$),
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      $\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                    
+                      \hspace{1em}
+                      $\hat{holds}$($sg_2$, $a$, $o$, $\iota$, $\sigma$),
+                      $\hat{subst}$($sg_1$, $sg_2$, $\iota$, $\sigma$),
+                    
+                      \hspace{1em}
+                      $not$ $\lnot\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                    
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($sg_2$, $a$, $o$, $\iota$, $\sigma$),
+                      $\hat{subst}$($sg_1$, $sg_2$, $\iota$, $\sigma$)
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      where
+                    
+                      \hspace{1em}
+                      $sg_1$, $sg_2$ $\in$ ${\cal E}_{sg}$,
+
+                      \hspace{1em}
+                      $a$ $\in$ ${\cal E}_{a}$,
+
+                      \hspace{1em}
+                      $o$ $\in$ ${\cal E}_{o}$,
+
+                      \hspace{1em}
+                      $sg_1$ $\neq$ $sg_2$,
+
+                      \hspace{1em}
+                      $\iota$ $\in$ ${\cal I}$,
+                    
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                  \end{vquote}
+
                   \item
                     {\bf Access Right Group Subset Inheritance Rules}
+
+                    \begin{vquote}
+                      $\forall$ ($s$, $ag_1$, $ag_2$, $o$, $\iota$, $\sigma$),
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      $\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                    
+                      \hspace{1em}
+                      $\hat{holds}$($s$, $ag_2$, $o$, $\iota$, $\sigma$),
+                      $\hat{subst}$($ag_1$, $ag_2$, $\iota$, $\sigma$),
+                    
+                      \hspace{1em}
+                      $not$ $\lnot$ $\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                    
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s$, $ag_2$, $o$, $\iota$, $\sigma$),
+                      $\hat{subst}$($ag_1$, $ag_2$, $\iota$, $\sigma$)
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      where
+                    
+                      \hspace{1em}
+                      $s$ $\in$ ${\cal E}_{s}$,
+
+                      \hspace{1em}
+                      $ag_1$, $ag_2$ $\in$ ${\cal E}_{ag}$,
+
+                      \hspace{1em}
+                      $o$ $\in$ ${\cal E}_{o}$,
+
+                      \hspace{1em}
+                      $ag_1$ $\neq$ $ag_2$,
+                    
+                      \hspace{1em}
+                      $\iota$ $\in$ ${\cal I}$,
+
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                    \end{vquote}
+
                   \item
                     {\bf Object Group Subset Inheritance Rules}
+
+                    \begin{vquote}
+                      $\forall$ ($s$, $a$, $og_1$, $og_2$, $\iota$, $\sigma$),
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      $\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                    
+                      \hspace{1em}
+                      $\hat{holds}$($s$, $a$, $og_2$, $\iota$, $\sigma$),
+                      $\hat{subst}$($og_1$, $og_2$, $\iota$, $\sigma$),
+                    
+                      \hspace{1em}
+                      $not$ $\lnot\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
+                      $\leftarrow$
+                    
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s$, $a$, $og_2$, $\iota$, $\sigma$),
+                      $\hat{subst}$($og_1$, $og_2$, $\iota$, $\sigma$)
+                    \end{vquote}
+                    
+                    \begin{vquote}
+                      where
+                    
+                      \hspace{1em}
+                      $s$ $\in$ ${\cal E}_{s}$,
+
+                      \hspace{1em}
+                      $a$ $\in$ ${\cal E}_{a}$,
+
+                      \hspace{1em}
+                      $og_1$, $og_2$ $\in$ ${\cal E}_{og}$,
+
+                      \hspace{1em}
+                      $og_1$ $\neq$ $og_2$,
+                    
+                      \hspace{1em}
+                      $\iota$ $\in$ ${\cal I}$,
+
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                    \end{vquote}
+
                 \end{itemize}
             
             \item
@@ -1887,63 +2118,94 @@
 
                   \begin{vquote}
                     $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\iota$, $\sigma$),
+                  \end{vquote}
 
+                  \begin{vquote}
                     $\hat{subst}$($sg_{1}$, $sg_{3}$, $\iota$, $\sigma$)
                     $\leftarrow$
+
+                    \hspace{1em}
                     $\hat{subst}$($sg_{1}$, $sg_{2}$, $\iota$, $\sigma$),
                     $\hat{subst}$($sg_{2}$, $sg_{3}$, $\iota$, $\sigma$)
+                  \end{vquote}
 
+                  \begin{vquote}
                     where
 
+                    \hspace{1em}
                     $sg_{1}$, $sg_{2}$, $sg_{3}$ $\in$ ${\cal E}_{sg}$,
 
+                    \hspace{1em}
                     $sg_{1}$ $\neq$ $sg_{2}$ $\neq$ $sg_{3}$,
 
+                    \hspace{1em}
                     $\iota$ $\in$ ${\cal I}$,
 
-                    $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                    \hspace{1em}
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
+
                 \item
                   {\bf Access Right Group Transitivity Rules}
 
                   \begin{vquote}
                     $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\iota$, $\sigma$),
+                  \end{vquote}
 
+                  \begin{vquote}
                     $\hat{subst}$($ag_{1}$, $ag_{3}$, $\iota$, $\sigma$)
                     $\leftarrow$
+
+                    \hspace{1em}
                     $\hat{subst}$($ag_{1}$, $ag_{2}$, $\iota$, $\sigma$),
                     $\hat{subst}$($ag_{2}$, $ag_{3}$, $\iota$, $\sigma$)
+                  \end{vquote}
 
+                  \begin{vquote}
                     where
 
+                    \hspace{1em}
                     $ag_{1}$, $ag_{2}$, $ag_{3}$ $\in$ ${\cal E}_{ag}$,
 
+                    \hspace{1em}
                     $ag_{1}$ $\neq$ $ag_{2}$ $\neq$ $ag_{3}$,
 
+                    \hspace{1em}
                     $\iota$ $\in$ ${\cal I}$,
 
-                    $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                    \hspace{1em}
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
                 \item
                   {\bf Object Group Transitivity Rules}
 
                   \begin{vquote}
                     $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\iota$, $\sigma$),
+                  \end{vquote}
 
+                  \begin{vquote}
                     $\hat{subst}$($og_{1}$, $og_{3}$, $\iota$, $\sigma$)
                     $\leftarrow$
+
+                    \hspace{1em}
                     $\hat{subst}$($og_{1}$, $og_{2}$, $\iota$, $\sigma$),
                     $\hat{subst}$($og_{2}$, $og_{3}$, $\iota$, $\sigma$)
+                  \end{vquote}
 
+                  \begin{vquote}
                     where
 
+                    \hspace{1em}
                     $og_{1}$, $og_{2}$, $og_{3}$ $\in$ ${\cal E}_{og}$,
 
+                    \hspace{1em}
                     $og_{1}$ $\neq$ $og_{2}$ $\neq$ $og_{3}$,
 
+                    \hspace{1em}
                     $\iota$ $\in$ ${\cal I}$,
 
-                    $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                    \hspace{1em}
+                    $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
               \end{itemize}
             
@@ -1955,16 +2217,23 @@
 
               \begin{vquote}
                 $\forall$ ($g$, $\iota$, $\sigma$),
+              \end{vquote}
 
+              \begin{vquote}
                 $\hat{subst}$($g$, $g$, $\iota$, $\sigma$) $\leftarrow$
+              \end{vquote}
 
+              \begin{vquote}
                 where
 
+                \hspace{1em}
                 $g$ $\in$ (${\cal E}_{sg}$ $\cup$ ${\cal E}_{ag}$ $\cup$ ${\cal E}_{og}$),
 
+                \hspace{1em}
                 $\iota$ $\in$ ${\cal I}$,
 
-                $S_{0}$ $\leq$ $\sigma$ $<$ $S_{|\psi|}$
+                \hspace{1em}
+                $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
               \end{vquote}
             
             \item
@@ -1973,8 +2242,8 @@
               The temporal rules are based on the fact that if a fact
               $\hat{\rho}$ holds at interval $\iota$, then the same fact
               $\hat{\rho}$ must also hold at all intervals $\iota'$ where
-              $\iota'$ is {\em equals}, {\em during}, {\em starts} or
-              {\em finishes} interval $\iota$.
+              $\iota'$ is {\em Equals}, {\em During}, {\em Starts} or
+              {\em Finishes} interval $\iota$.
 
               \begin{itemize}
               
@@ -1982,174 +2251,263 @@
                   {\bf Holds Temporal Rules}
 
                   \begin{vquote}
-                    $\forall$($s$, $a$, $o$, $\sigma$, $\iota_0$, $\iota_1$),
+                    $\forall$($s$, $a$, $o$, $\iota_0$, $\iota_1$, $\sigma$),
+                  \end{vquote}
                   
-                    $\hat{holds}$($s$, $a$, $o$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\hat{holds}$($s$, $a$, $o$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\hat{holds}$($s$, $a$, $o$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                    
+                    $\hat{holds}$($s$, $a$, $o$, $\iota_0$, $\sigma$)
+                  \end{vquote}
                   
-                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                            
+                    $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\iota_0$, $\sigma$)
+                  \end{vquote}
                   
+                  \begin{vquote}
                     where
                   
+                    \hspace{1em}
                     $s$ $\in$ ${\cal E}_s$,
                   
+                    \hspace{1em}
                     $a$ $\in$ ${\cal E}_a$,
                   
+                    \hspace{1em}
                     $0$ $\in$ ${\cal E}_o$,
                   
+                    \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
+                    \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
-                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
                   
-                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                    \hspace{1em}
+                    $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
               
                 \item
                   {\bf Membership Temporal Rules}
               
                   \begin{vquote}
-                    $\forall$($s_s$, $s_g$, $\sigma$, $\iota_0$, $\iota_1$),
+                    $\forall$($ss$, $sg$, $\iota_0$, $\iota_1$, $\sigma$),
+                  \end{vquote}
+
+                  \begin{vquote}
+                    $\hat{memb}$($ss$, $sg$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                
+                    $\hat{memb}$($ss$, $sg$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
-                    $\hat{memb}$($s_s$, $s_g$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\hat{memb}$($s_s$, $s_g$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\lnot$ $\hat{memb}$($ss$, $sg$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                        
+                    $\lnot$ $\hat{memb}$($ss$, $sg$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
-                    $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\lnot$ $\hat{memb}$($s_s$, $s_g$, $\sigma$, $\iota_0$)
-              
+                  \begin{vquote}
                     where
                   
-                    $s_s$ $\in$ ${\cal E}_{ss}$,
+                    \hspace{1em}
+                    $ss$ $\in$ ${\cal E}_{ss}$,
                   
-                    $s_g$ $\in$ ${\cal E}_{sg}$,
+                    \hspace{1em}
+                    $sg$ $\in$ ${\cal E}_{sg}$,
                   
+                    \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
+                    \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
-                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
                   
-                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                    \hspace{1em}
+                    $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
 
                   \vspace{0.5em}
               
                   \begin{vquote}
-                    $\forall$($a_s$, $a_g$, $\sigma$, $\iota_0$, $\iota_1$),
+                    $\forall$($as$, $ag$, $\iota_0$, $\iota_1$, $\sigma$),
+                  \end{vquote}
               
-                    $\hat{memb}$($a_s$, $a_g$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\hat{memb}$($a_s$, $a_g$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\hat{memb}$($as$, $ag$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                
+                    $\hat{memb}$($as$, $ag$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
-                    $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\lnot$ $\hat{memb}$($a_s$, $a_g$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\lnot$ $\hat{memb}$($as$, $ag$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                        
+                    $\lnot$ $\hat{memb}$($as$, $ag$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
+                  \begin{vquote}
                     where
                   
-                    $a_s$ $\in$ ${\cal E}_{as}$,
+                    \hspace{1em}
+                    $as$ $\in$ ${\cal E}_{as}$,
                   
-                    $a_g$ $\in$ ${\cal E}_{ag}$,
+                    \hspace{1em}
+                    $ag$ $\in$ ${\cal E}_{ag}$,
                   
+                    \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
+                    \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
-                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
                   
-                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                    \hspace{1em}
+                    $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
 
                   \vspace{0.5em}
               
                   \begin{vquote}
-                    $\forall$($o_s$, $o_g$, $\sigma$, $\iota_0$, $\iota_1$),
+                    $\forall$($os$, $og$, $\iota_0$, $\iota_1$, $\sigma$),
+                  \end{vquote}
               
-                    $\hat{memb}$($o_s$, $o_g$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\hat{memb}$($o_s$, $o_g$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\hat{memb}$($os$, $og$, $\iota_1$, $\sigma$)
+                    $\leftarrow$
+                    $\hat{memb}$($os$, $og$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
-                    $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\lnot$ $\hat{memb}$($o_s$, $o_g$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\lnot$ $\hat{memb}$($os$, $og$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                        
+                    $\lnot$ $\hat{memb}$($os$, $og$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
+                  \begin{vquote}
                     where
                   
-                    $o_s$ $\in$ ${\cal E}_{os}$,
+                    \hspace{1em}
+                    $os$ $\in$ ${\cal E}_{os}$,
                   
-                    $o_g$ $\in$ ${\cal E}_{og}$,
+                    \hspace{1em}
+                    $og$ $\in$ ${\cal E}_{og}$,
                   
+                    \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
+                    \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
-                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
                   
-                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                    \hspace{1em}
+                    $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
               
                 \item
                   {\bf Subset Temporal Rules}
               
                   \begin{vquote}
-                    $\forall$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_0$, $\iota_1$),
+                    $\forall$($sg_0$, $sg_1$, $\iota_0$, $\iota_1$, $\sigma$),
+                  \end{vquote}
               
-                    $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\hat{subst}$($sg_0$, $sg_1$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                     
+                    $\hat{subst}$($sg_0$, $sg_1$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
-                    $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\lnot$ $\hat{subst}$($s_{g0}$, $s_{g1}$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\lnot$ $\hat{subst}$($sg_0$, $sg_1$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                             
+                    $\lnot$ $\hat{subst}$($sg_0$, $sg_1$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
+                  \begin{vquote}
                     where
                   
-                    $s_{g0}$, $s_{g1}$ $\in$ ${\cal E}_{sg}$,
+                    \hspace{1em}
+                    $sg_0$, $sg_1$ $\in$ ${\cal E}_{sg}$,
                   
+                    \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
+                    \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
-                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
                   
-                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                    \hspace{1em}
+                    $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
               
                   \vspace{0.5em}
 
                   \begin{vquote}
-                    $\forall$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_0$, $\iota_1$),
+                    $\forall$($ag_0$, $ag_1$, $\iota_0$, $\iota_1$, $\sigma$),
+                  \end{vquote}
               
-                    $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\hat{subst}$($ag_0$, $ag_1$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                     
+                    $\hat{subst}$($ag_0$, $ag_1$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
-                    $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\lnot$ $\hat{subst}$($a_{g0}$, $a_{g1}$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\lnot$ $\hat{subst}$($ag_0$, $ag_1$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                             
+                    $\lnot$ $\hat{subst}$($ag_0$, $ag_1$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
+                  \begin{vquote}
                     where
                   
-                    $a_{g0}$, $a_{g1}$ $\in$ ${\cal E}_{ag}$,
+                    \hspace{1em}
+                    $ag_0$, $ag_1$ $\in$ ${\cal E}_{ag}$,
                   
+                    \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
+                    \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
-                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
                   
-                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                    \hspace{1em}
+                    $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
               
                   \vspace{0.5em}
 
                   \begin{vquote}
-                    $\forall$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_0$, $\iota_1$),
+                    $\forall$($og_0$, $og_1$, $\iota_0$, $\iota_1$, $\sigma$),
+                  \end{vquote}
               
-                    $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\hat{subst}$($og_0$, $og_1$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                     
+                    $\hat{subst}$($og_0$, $og_1$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
-                    $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_1$) $\leftarrow$
-                    $\lnot$ $\hat{subst}$($o_{g0}$, $o_{g1}$, $\sigma$, $\iota_0$)
+                  \begin{vquote}
+                    $\lnot$ $\hat{subst}$($og_0$, $og_1$, $\iota_1$, $\sigma$)
+                    $\leftarrow$                                             
+                    $\lnot$ $\hat{subst}$($og_0$, $og_1$, $\iota_0$, $\sigma$)
+                  \end{vquote}
               
+                  \begin{vquote}
                     where
                   
-                    $o_{g0}$, $o_{g1}$ $\in$ ${\cal E}_{og}$,
+                    \hspace{1em}
+                    $og_0$, $og_1$ $\in$ ${\cal E}_{og}$,
                   
+                    \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
                   
+                    \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
-                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\}
+                    \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
                   
-                    $S_0$ $\leq$ $\sigma$ $<$ $S_{|V|}$,
+                    \hspace{1em}
+                    $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
               
               \end{itemize}
