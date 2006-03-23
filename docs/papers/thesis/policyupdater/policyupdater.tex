@@ -1379,6 +1379,13 @@
           [XXX ref to ${\cal L}$].
 
           \begin{itemize}
+
+            \item
+              The $Res$($u$, $\sigma$) function takes as input a policy update
+              $u$ $\in$ $\psi$ and a policy state $\sigma$, and returns the
+              policy state that results from applying the update $u$ upon
+              state $\sigma$.
+
             \item
               The $CopyAtom$($\hat{\alpha}$, $\sigma$) function takes as input
               an atom $\hat{\alpha}$ of language ${\cal L^{T^*}}$ and some
@@ -2211,6 +2218,37 @@
             
             \item
               {\bf Intertial Rules}
+
+              \begin{vquote}
+                $\forall$ ($\hat{\alpha}$,$u$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{\alpha}'$
+                $\leftarrow$
+                $\hat{\alpha}$,
+                $not$ $\lnot$ $\hat{\alpha}'$
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{\alpha}'$
+                $\leftarrow$ $\lnot$
+                $\hat{\alpha}$,
+                $not$ $\hat{\alpha}'$
+              \end{vquote}
+
+              \begin{vquote}
+                where
+
+                \hspace{1em}
+                $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
+
+                \hspace{1em}
+                $u$ $\in$ $\psi$,
+
+                \hspace{1em}
+                $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
+              \end{vquote}
             
             \item
               {\bf Identity Rules}
