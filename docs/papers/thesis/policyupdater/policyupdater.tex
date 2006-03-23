@@ -130,7 +130,7 @@
 
       The rest of this chapter discusses how temporal constraints can be
       incorporated into the authorisation language. The next section introduces
-      Allen's Temporal Interval Algebra to express relations between time
+      Allen's temporal interval algebra to express relations between time
       values, followed by a section that outlines extensions to this algebra,
       and finally, the last section gives a detailed formalisation of a new
       authorisation language that utilises the interval algebra to support
@@ -138,11 +138,11 @@
 
     \section{Allen's Temporal Interval Algebra}
 
-      Allen's interval algebra is based on the fact that for any two well
-      defined time intervals, there exists exactly one interval relation between
-      them. The strength of the algebra lies not just on the formalisation of
-      these relations, but also on its ability to handle disjunctive interval
-      relations between undefined time intervals.
+      Allen's interval algebra \cite{AL} is based on the fact that for any
+      two well defined time intervals, there exists exactly one interval
+      relation between them. The strength of the algebra lies not just on
+      the formalisation of these relations, but also on its ability to handle
+      disjunctive interval relations between undefined time intervals.
 
       For example, given an interval ${i_0}$, defined as 24th of September,
       1995 to 25th of September, 1995; and interval ${i_1}$, defined as 25th of
@@ -2521,5 +2521,14 @@
     \section{Algorithms}
 
     \section{Variable Grounding}
+
+  \begin{thebibliography}{00}
+    \bibitem{AL}
+      Allen J. F.,
+      Maintaining Knowledge about Temporal Intervals.
+      {\em Communications of the ACM},
+      Vol. 26, No.11, pp. 832-843,
+      1983.
+  \end{thebibliography}
 
 \end{document}
