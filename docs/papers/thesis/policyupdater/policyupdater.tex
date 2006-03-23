@@ -1733,7 +1733,7 @@
             \item
               {\bf Authorisation Constraint Rules}
 
-              A authorisation constraint statement in language ${\cal L^T}$
+              An authorisation constraint statement in language ${\cal L^T}$
               is in the form:
 
               \begin{vverbatim}
@@ -1743,8 +1743,8 @@
     where \(d\sb{0}\), \(\ldots\), \(d\sb{p}\);
               \end{vverbatim}
 
-              The first step is to generate a set of variables that may
-              occur in the expressions above:
+              The first step is to gather all the entity and interval
+              variables that occur in all the expressions above into a set $V$:
 
               \begin{vquote}
                 $V$ $=$
@@ -1771,7 +1771,12 @@
               \end{vquote}
 
               \noindent
-              Finally, we have:
+              Finally, the language ${\cal L^{T^*}}$ equivalent of the
+              authorisation constraint rule is the following rules:
+
+              \begin{vquote}
+                $\forall$ ($t$, $\sigma$),
+              \end{vquote}
 
               \begin{vquote}
                 $\hat{a}^{\sigma}_{0}$ $\leftarrow$
@@ -1801,17 +1806,93 @@
                 $0$ $\leq$ $k$ $\leq$ $o$,
     
                 \hspace{1em}
-                $\forall$ $t$ $\in$ $T$,
+                $t$ $\in$ $T$,
 
                 \hspace{1em}
-                $\forall$ $\sigma$, $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
               \end{vquote}
             
             \item
               {\bf Policy Update Rules}
+
+              Obviously, only language ${\cal L^T}$ policy update statements
+              that are applied to the policy are actually translated to
+              language ${\cal L^{T^*}}$ rules. The translation process for
+              these rules are again similar to that of language ${\cal L^*}$,
+              except this time, the variable grounding is subject to the
+              constraints specified by the {\em where} clause. A language
+              ${\cal L^T}$ policy update statement is shown below:
+
+              \begin{vverbatim}
+  \(u\) causes \(a\sb{0}\), \(\ldots\), \(a\sb{m}\)
+  if \(b\sb{0}\), \(\ldots\), \(b\sb{n}\)
+  where \(c\sb{0}\), \(\ldots\), \(c\sb{o}\);
+              \end{vverbatim}
+
+              \noindent
+              Like the authorisation constraint rules, the first step in the
+              translation process is to generate a set $V$ of entity and
+              interval variables that occur in all the expressions:
+
+              \begin{vquote}
+                $V$ $=$
+                $Var$($a_0$, $\ldots$, $a_m$) $\cup$
+                $Var$($b_0$, $\ldots$, $b_n$)
+              \end{vquote}
+
+              \noindent
+              With the variable set $V$ and a {\em where} clause expression
+              ($c_0$, $\ldots$, $c_o$), a set of tuples $T$ can be generated
+              such that each tuple $t$ $\in$ $T$ satisfies the {\em where}
+              clause constraint:
             
+              \begin{vquote}
+                $T$ $=$
+                $GenTuples_2$(($c_0$, $\ldots$, $c_o$), $V$)
+              \end{vquote}
+
+              \noindent
+              By using the entities and intervals in each tuple in set $T$
+              to ground all the variables, we can now define the policy
+              update rules in language ${\cal L^{T^*}}$:
+              
+              \begin{vquote}
+                $\forall$ $t$,
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{a_0}$ $\leftarrow$ $\hat{b_0}$, $\ldots$, $\hat{b_n}$
+
+                $\vdots$
+
+                $\hat{a_m}$ $\leftarrow$ $\hat{b_0}$, $\ldots$, $\hat{b_n}$
+              \end{vquote}
+
+              \begin{vquote}
+                where
+
+                \hspace{1em}
+                $\hat{a_i}$ $=$ $TransFact$($Replace$($a_i$, $V$, $t$), $Res$($u$, $\sigma$)), $0$ $\leq$ $i$ $\leq$ $m$,
+
+                \hspace{1em}
+                $\hat{b_j}$ $=$ $TransFact$($Replace$($b_j$, $V$, $t$), $\sigma$), $0$ $\leq$ $j$ $\leq$ $n$,
+
+                \hspace{1em}
+                $t$ $\in$ $T$,
+
+                \hspace{1em}
+                $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+              \end{vquote}
+
             \item
               {\bf Inheritance Rules}
+
+                As with language ${\cal L^*}$, a set of language
+                ${\cal L^{T^*}}$ rules are needed to express the inheritance
+                properties of members and subsets. While these rules are
+                similar to their respective language ${\cal L^*}$ counterparts,
+                the definitions are slightly different due to the
+                representation of temporal intervals.
 
                 \begin{itemize}
                   \item
@@ -2119,6 +2200,11 @@
             \item
               {\bf Transitivity Rules}
 
+              Like their language ${\cal L^*}$ counterparts, these rules ensure
+              that for any three distinct groups $g_0$, $g_1$ and $g_2$, if
+              $g_0$ is a subset of $g_1$ and $g_1$ is a subset of $g_2$, then
+              $g_0$ is also a subset of $g_2$.
+
               \begin{itemize}
                 \item
                   {\bf Subject Group Transitivity Rules}
@@ -2217,7 +2303,14 @@
               \end{itemize}
             
             \item
-              {\bf Intertial Rules}
+              {\bf Inertial Rules}
+
+              The same rules of inertia expressed in language ${\cal L^*}$
+              applies to language ${\cal L^{T^*}}$: every fact $\hat{\rho}$
+              that holds in state $\sigma$ must also hold in state
+              $Res$($u$, $\sigma$) after policy update $u$ is applied,
+              provided that update $u$ does not cause the fact
+              $\lnot\hat{\rho}$ to hold.
 
               \begin{vquote}
                 $\forall$ ($\hat{\alpha}$,$u$),
@@ -2251,7 +2344,10 @@
               \end{vquote}
             
             \item
-              {\bf Identity Rules}
+              {\bf Reflexivity Rules}
+
+              These rules ensure that the reflexive property of sets are
+              preserved: every set is a subset of itself.
 
               \begin{vquote}
                 $\forall$ ($g$, $\iota$, $\sigma$),
@@ -2280,8 +2376,8 @@
               The temporal rules are based on the fact that if a fact
               $\hat{\rho}$ holds at interval $\iota$, then the same fact
               $\hat{\rho}$ must also hold at all intervals $\iota'$ where
-              $\iota'$ is {\em Equals}, {\em During}, {\em Starts} or
-              {\em Finishes} interval $\iota$.
+              the relation between intervals $\iota$ and $\iota'$ is
+              {\em Equals}, {\em During}, {\em Starts} or {\em Finishes}.
 
               \begin{itemize}
               
