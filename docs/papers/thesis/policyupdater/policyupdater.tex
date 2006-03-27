@@ -579,6 +579,7 @@
           \end{figure}
 
           \begin{vexample}
+            \label{ex-1}
             Given a network with three intervals $i_0$, $i_1$ and $i_2$ where
             no relation between any of the intervals are known. As no relations
             are given, each arc in the network as shown in Figure
@@ -1209,6 +1210,95 @@
           application of policy updates in the update sequence list. The system
           response for each query directive either {\em true}, {\em false} or
           {\em unknown}.
+
+        \begin{vexample}
+          \label{ex-2}
+          The example code below shows a full language ${\cal L^T}$ policy
+          description. In this policy, three intervals are defined:
+          $work\_hours$, $morning\_hours$ and $afternoon\_hours$, where
+          $worh\_hours$ starts at 9:00 AM and ends at 5:00 PM. Furthermore,
+          the interval constraint in the policy states that $morning\_hours$
+          either {\em starts} or is {\em during} $work\_hours$,
+          $afternoon\_hours$ either {\em finishes} or is {\em during}
+          $work\_hours$, and $morning\_hours$ is {\em before}
+          $afternoon\_hours$.
+
+          The authorisation constraint states that for all defined intervals
+          $I0$, if $grp1$ holds the $read$ access right to $file$ at interval
+          $I0$, and there is no evidence that $grp3$ does not hold the $write$
+          access right to $file$ at interval $I0$, then $grp1$ holds the
+          $write$ access right to $file$ at interval $I0$.
+
+          The policy update $delete\_read$ definition states that when applied,
+          the update will cause some subject group $SG0$ to lose the $read$
+          access right to some object $OS0$ at all intervals $I0$ that either
+          {\em starts} or is {\em during} the interval $work\_hours$.
+
+          \begin{vverbatim}
+  /* entity declarations */
+
+  entity sub alice;
+  entity sub-grp grp1, grp2, grp3;
+  entity acc read, write;
+  entity obj file;
+
+  /* interval declarations */
+
+  interval work\_hours [0900, 1700];
+  interval morning\_hours;
+  interval afternoon\_hours;
+
+  /* initial fact statements */
+
+  initially
+    memb(alice, grp2, work\_hours),
+    subst(grp2, grp1, morning\_hours),
+    holds(grp1, read, file, work\_hours);
+
+  /* interval constraints */
+
+  relation
+    during(morning\_hours, work\_hours),
+    starts(morning\_hours, work\_hours);
+
+  relation
+    during(afternoon\_hours, work\_hours),
+    finishes(afternoon\_hours, work\_hours);
+
+  relation
+    before(morning\_hours, afternoon\_hours);
+
+  /* authorisation constraints */
+
+  always holds(grp1, write, file, I0)
+    implied by
+      holds(grp1, read, file, I0)
+    with absence
+      !holds(grp3, write, file, I0);
+
+  /* policy update definition */
+
+  delete\_read(SG0, OS0)
+    causes
+      !holds(SG0, read, OS0, I0)
+    where
+      starts(work\_hours, I0),
+      during(work\_hours, I0);
+
+  /* add delete\_read to policy update sequence list */
+
+  seq add delete_read(grp1, file);
+
+  compute;
+
+  /* queries */
+
+  query holds(grp1, write, file, morning\_hours);
+  query holds(grp1, read, file, morning\_hours);
+  query holds(alice, write, file, morning\_hours);
+  query holds(alice, read, file, morning\_hours);
+          \end{vverbatim}
+        \end{vexample}
 
       \subsection{Semantics}
 
@@ -2647,68 +2737,414 @@
               \end{itemize}
             \end{itemize}
 
-      \subsection{An Example}    
+        \begin{vexample}
+          \label{ex-3}
+          The following rules show the language ${\cal L^{T^*}}$ translation
+          of the language ${\cal L^T}$ code listing shown in Example 
+          \ref{ex-2}.
 
-        \begin{vverbatim}
-  /* entity declarations */
+          \begin{enumerate}
+            \item
+              Initial Fact Rules
 
-  entity sub alice;
-  entity sub-grp grp1, grp2, grp3;
-  entity acc read, write;
-  entity obj file;
-  
-  /* interval declarations */
+              \begin{vquote}
+  $\hat{memb}$($alice$, $grp_2$, $work\_hours$, $S_0$) $\leftarrow$
 
-  interval today;
-  interval workhours [0900, 1700];
+  $\hat{subst}$($grp_2$, $grp_1$, $morning\_hours$, $S_0$) $\leftarrow$
 
-  /* initial facts */
+  $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_0$) $\leftarrow$
+              \end{vquote}
 
-  initially
-    memb(alice, grp2, today),
-    holds(grp1, read, file, today),
-    subst(grp2, grp1, today);
-  
-  /* interval constraints */
+            \item
+              Authorisation Constraint Rules
 
-  relation
-    during(workhours, today),
-    starts(workhours, today);
-  
-  relation
-    during(workhours, today),
-    starts(workhours, today),
-    before(today,workhours);
+              \begin{vquote}
+                $\hat{holds}$($grp_1$, $write$, $file$, $work\_hours$, $S_0$) $\leftarrow$
+       
+                \hspace{1em}
+                $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_0$),
+       
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $work\_hours$, $S_0$)
+              \end{vquote}
 
-  /* authorisation constraints */
-  
-  always holds(grp1, write, file, I0)
-    implied by
-      holds(grp1, read, file, I0)
-    with absence
-      !holds(grp3, write, file, I0);
+              \begin{vquote}
+                $\hat{holds}$($grp_1$, $write$, $file$, $work\_hours$, $S_1$) $\leftarrow$
+       
+                \hspace{1em}
+                $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_1$),
+       
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $work\_hours$, $S_1$)
+              \end{vquote}
 
-  /* policy updates */
-  
-  delete\_read(SG0, OS0)
-    causes
-      !holds(SG0, read, OS0, I0)
-    where
-      starts(workhours, I0),
-      during(workhours, I0);
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
 
-  /* apply update */
+              \begin{vquote}
+                $\hat{holds}$($grp_1$, $write$, $file$, $afternoon\_hours$, $S_0$) $\leftarrow$
+       
+                \hspace{1em}
+                $\hat{holds}$($grp_1$, $read$, $file$, $afternoon\_hours$, $S_0$),
+       
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_0$)
+              \end{vquote}
 
-  seq add delete\_read(grp1, file);
-  compute;
+              \begin{vquote}
+                $\hat{holds}$($grp_1$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+       
+                \hspace{1em}
+                $\hat{holds}$($grp_1$, $read$, $file$, $afternoon\_hours$, $S_1$),
+       
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
 
-  /* queries */
+            \item
+              Policy Update Rules
 
-  query holds(grp1, write, file, today);
-  query holds(grp1, read, file, today);
-  query holds(alice, write, file, today);
-  query holds(alice, read, file, today);
-      \end{vverbatim}
+              \begin{vquote}
+                $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_1$) $\leftarrow$
+
+                $\hat{holds}$($grp_1$, $read$, $file$, $morning\_hours$, $S_1$) $\leftarrow$
+
+                $\hat{holds}$($grp_1$, $read$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+              \end{vquote}
+
+            \item
+              Inheritance Rules
+
+              \begin{vquote}
+                $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}$($grp_2$, $read$, $file$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $\hat{subst}$($grp_1$, $grp_2$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_0$)
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{holds}$($grp_2$, $read$, $file$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $\hat{subst}$($grp_1$, $grp_2$, $work\_hours$, $S_0$)
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}$($grp_2$, $write$, $file$, $afternoon\_hours$, $S_1$),
+
+                \hspace{1em}
+                $\hat{subst}$($grp_3$, $grp_2$, $afternoon\_hours$, $S_1$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{holds}$($grp_2$, $write$, $file$, $afternoon\_hours$, $S_1$),
+
+                \hspace{1em}
+                $\hat{subst}$($grp_3$, $grp_2$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $\hat{memb}$($alice$, $grp_1$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_0$)
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $\hat{memb}$($alice$, $grp_1$, $work\_hours$, $S_0$)
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{holds}$($alice$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$),
+
+                \hspace{1em}
+                $\hat{memb}$($alice$, $grp_3$, $afternoon\_hours$, $S_1$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{holds}$($alice$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$),
+
+                \hspace{1em}
+                $\hat{memb}$($alice$, $grp_3$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
+
+            \item
+              Transitivity Rules
+
+              \begin{vquote}
+                $\hat{subst}$($grp_1$, $grp_3$, $work\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}$($grp_1$, $grp_2$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $\hat{subst}$($grp_2$, $grp_3$, $work\_hours$, $S_0$)
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{subst}$($grp_3$, $grp_1$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}$($grp_3$, $grp_2$, $afternoon\_hours$, $S_1$),
+
+                \hspace{1em}
+                $\hat{subst}$($grp_2$, $grp_1$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
+
+            \item
+              Intertial Rules
+
+              \begin{vquote}
+                $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_1$)
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_0$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{memb}$($alice$, $grp_1$, $work\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{memb}$($alice$, $grp_1$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{memb}$($alice$, $grp_1$, $work\_hours$, $S_1$)
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{memb}$($alice$, $grp_3$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{memb}$($alice$, $grp_3$, $afternoon\_hours$, $S_0$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{memb}$($alice$, $grp_3$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{subst}$($grp_1$, $grp_1$, $work\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}$($grp_1$, $grp_1$, $work\_hours$, $S_0$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{subst}$($grp_1$, $grp_1$, $work\_hours$, $S_1$)
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{subst}$($grp_3$, $grp_3$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}$($grp_3$, $grp_3$, $afternoon\_hours$, $S_0$),
+
+                \hspace{1em}
+                $not$ $\lnot$ $\hat{subst}$($grp_3$, $grp_3$, $afternoon\_hours$, $S_1$)
+              \end{vquote}
+
+            \item
+              Reflexivity Rules
+
+              \begin{vquote}
+                $\hat{subst}$($grp_1$, $grp_1$, $work\_hours$, $S_0$) $\leftarrow$
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{subst}$($grp_3$, $grp_3$, $afternoon\_hours$, $S_1$) $\leftarrow$
+              \end{vquote}
+
+            \item
+              Temporal Rules
+
+              \begin{vquote}
+                $\hat{holds}$($alice$, $read$, $file$, $morning\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_0$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $morning\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_0$),
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{holds}$($grp_3$, $write$, $file$, $work\_hours$, $S_1$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $work\_hours$, $S_1$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{memb}$($alice$, $grp_1$, $morning\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{memb}$($alice$, $grp_1$, $work\_hours$, $S_0$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{memb}$($alice$, $grp_1$, $morning\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{memb}$($alice$, $grp_1$, $work\_hours$, $S_0$),
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{memb}$($alice$, $grp_3$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{memb}$($alice$, $grp_3$, $work\_hours$, $S_1$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{memb}$($alice$, $grp_3$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{memb}$($alice$, $grp_3$, $work\_hours$, $S_1$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{subst}$($grp_1$, $grp_2$, $morning\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}$($grp_1$, $grp_2$, $work\_hours$, $S_0$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{subst}$($grp_1$, $grp_2$, $morning\_hours$, $S_0$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{subst}$($grp_1$, $grp_2$, $work\_hours$, $S_0$),
+              \end{vquote}
+
+              \begin{vquote}
+                \hspace{1em}
+                $\vdots$
+              \end{vquote}
+
+              \begin{vquote}
+                $\hat{subst}$($grp_3$, $grp_2$, $afternoon\_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\hat{subst}$($grp_3$, $grp_2$, $work\_hours$, $S_1$),
+              \end{vquote}
+
+              \begin{vquote}
+                $\lnot$ $\hat{subst}$($grp_3$, $grp_2$, $afternoon_hours$, $S_1$) $\leftarrow$
+
+                \hspace{1em}
+                $\lnot$ $\hat{subst}$($grp_3$, $grp_2$, $work\_hours$, $S_1$),
+              \end{vquote}
+          \end{enumerate}
+          
+        \end{vexample}
   
     \section{Discussion}
 
