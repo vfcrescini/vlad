@@ -60,12 +60,12 @@
       An obvious limitation of language ${\cal L}$ is its lack of expressive
       power to represent time-dependent authorisations. Consider the following
       authorisation rule:
-  
+
       \begin{vquote}
         $Bob$ holds $read$ access to file $f$ between $9:00$ $AM$ and $5:00$
         $PM$
       \end{vquote}
-  
+
       The authorisation information above can be broken down into two parts: an
       authorisation part, i.e. "Bob holds read access to file $f$", and a
       temporal part, i.e. "between 9:00 AM and 5:00 PM". As language ${\cal L}$
@@ -74,7 +74,7 @@
       time may involve adding two extra parameters to each authorisation atom
       to represent the starting and ending time points of the interval. For
       example, the authorisation rule above can be represented as:
-  
+
       \begin{vquote}
         $holds$($bob$, $read$, $f$, $900$, $1700$)
       \end{vquote}
@@ -91,7 +91,7 @@
       epoch), then the atom below states that the authorisation holds at an
       interval starting at 9:00 AM, 18 March 1976 and ending at 5:00 PM, 18
       March 1976:
- 
+
       \begin{vquote}
         $holds$($bob$, $read$, $f$, $195951600$, $195980400$)
       \end{vquote}
@@ -100,12 +100,12 @@
       represent authorisations bound by literal time values, it is by no means
       expressive enough to model relationships between the time values
       themselves. This deficiency is shown in the example below:
- 
+
       \begin{vquote}
         $Alice$ holds a $write$ access right to file $f_0$ after $Bob$ holds a
         $read$ access right to file $f_1$
       \end{vquote}
- 
+
       Such authorisation rule might arise in a situation where the access right
       $write$ to file $f_0$ can only be granted at some time after the $read$
       access right to file $f_1$ has been granted and revoked. This example
@@ -115,12 +115,12 @@
 
       \begin{vquote}
         $holds$($alice$, $write$, $f_0$, $i_{1}$)
- 
+
         $holds$($bob$, $read$, $f_0$, $i_{2}$)
- 
+
         $after$($i_0$, $i_1$)
       \end{vquote}
- 
+
       The example above states that $alice$ holds a $write$ access right to
       file $f_0$ at some time interval $i_0$, $bob$ holds a $read$ access right
       to file $f_1$ at some time interval $i_1$, and that the interval $i_0$
@@ -177,7 +177,7 @@
         hour may be defined as the time elapsed between the time points 1 PM and 2 PM.
 
         Formally, a time interval $i$ is defined by its starting end point ${i^-}$ and
-        a finishing end point ${i^+}$, where ${i^-}$ $<$ ${i^+}$. 
+        a finishing end point ${i^+}$, where ${i^-}$ $<$ ${i^+}$.
 
         One might argue that time point events such as the switching on of a light bulb
         are not instantaneous, meaning that time, no matter how small the value, has
@@ -295,7 +295,7 @@
         relations from existing ones. This is achieved by taking advantage of the
         transitive properties of relations. For example, given that interval ${i_0}$ is
         {\em before} interval ${i_1}$ and interval ${i_1}$ is {\em before} interval
-        ${i_2}$. Regardless of what the end points are, interval ${i_0}$ is 
+        ${i_2}$. Regardless of what the end points are, interval ${i_0}$ is
         {\em before} interval ${i_2}$.
 
         While simple relations like the one shown in the above example may seem
@@ -361,19 +361,19 @@
                 \hline
                                         & \textbf{Before}         & \textbf{After}          & \textbf{During}         & \textbf{Contains}       & \textbf{Overlaps}       & \textbf{Overlapped By}  & \textbf{Meets}          & \textbf{Met}            & \textbf{Starts}         & \textbf{Started By}     & \textbf{Finishes}       & \textbf{Finished By}    \\
                                         & (BEF)                   & (BEI)                   & (DUR)                   & (DUI)                   & (OVR)                   & (OVI)                   & (MET)                   & (MEI)                   & (STA)                   & (STI)                   & (FIN)                   & (FII)                   \\
-                \hline                                                                                                                                                                                                                                                                                                                                          
+                \hline
                 \textbf{Before}         & BEF                     & ALL                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     \\
-                (BEF)                   &                         &                         & OVR                     &                         &                         & OVR                     &                         & OVR                     &                         &                         & OVR                     &                         \\ 
-                                        &                         &                         & MET                     &                         &                         & MET                     &                         & MET                     &                         &                         & MET                     &                         \\ 
+                (BEF)                   &                         &                         & OVR                     &                         &                         & OVR                     &                         & OVR                     &                         &                         & OVR                     &                         \\
+                                        &                         &                         & MET                     &                         &                         & MET                     &                         & MET                     &                         &                         & MET                     &                         \\
                                         &                         &                         & DUR                     &                         &                         & DUR                     &                         & DUR                     &                         &                         & DUR                     &                         \\
                                         &                         &                         & STA                     &                         &                         & STA                     &                         & STA                     &                         &                         & STA                     &                         \\
-                \hline                                                                                                                                                                                                                                                                                                                                         
+                \hline
                 \textbf{After}          & ALL                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     \\
                 (BEI)                   &                         &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         &                         &                         \\
                                         &                         &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         &                         &                         \\
                                         &                         &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         &                         &                         \\
                                         &                         &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         &                         &                         \\
-                \hline                                                                                                                                                                                                                                                                                                                                         
+                \hline
                 \textbf{During}         & BEF                     & BEI                     & DUR                     & ALL                     & BEF                     & BEI                     & BEF                     & BEI                     & DUR                     & BEI                     & DUR                     & BEF                     \\
                 (DUR)                   &                         &                         &                         &                         & OVI                     & OVI                     &                         &                         &                         & OVI                     &                         & OVR                     \\
                                         &                         &                         &                         &                         & MET                     & MEI                     &                         &                         &                         & MEI                     &                         & MET                     \\
@@ -409,7 +409,7 @@
                                         &                         &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         \\
                                         &                         &                         &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         &                         \\
                 \hline
-                \textbf{Meets}          & BEF                     & BEI                     & OVR                     & BEF                     & BEF                     & OVR                     & BEF                     & FIN                     & MET                     & MET                     & DUR                     & BEF                     \\  
+                \textbf{Meets}          & BEF                     & BEI                     & OVR                     & BEF                     & BEF                     & OVR                     & BEF                     & FIN                     & MET                     & MET                     & DUR                     & BEF                     \\
                 (MET)                   &                         & OVI                     & DUR                     &                         &                         & DUR                     &                         & FII                     &                         &                         & STA                     &                         \\
                                         &                         & MEI                     & STA                     &                         &                         & STA                     &                         & EQL                     &                         &                         & OVR                     &                         \\
                                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
@@ -438,7 +438,7 @@
                                         &                         &                         &                         & MEI                     & STA                     & MEI                     &                         &                         &                         & MEI                     &                         & EQL                     \\
                                         &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
                                         &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
-                \hline                                                                                                                                                                                                                                                                                                                                          
+                \hline
                 \textbf{Finished By}    & BEF                     & BEI                     & OVR                     & DUI                     & OVR                     & OVI                     & MET                     & STI                     & OVR                     & DUI                     & FIN                     & FII                     \\
                 (FII)                   &                         & OVI                     & DUR                     &                         &                         & DUI                     &                         & OVI                     &                         &                         & FII                     &                         \\
                                         &                         & MEI                     & STA                     &                         &                         & STI                     &                         & DUI                     &                         &                         & EQL                     &                         \\
@@ -523,14 +523,14 @@
     \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
     WHILE NOT \(Q.IsEmpty\)() DO
       \(I\sb{0}'\), \(I\sb{1}'\), \(RS'\) = \(Q.Dequeue\)()
-      \(NET.Replace\)(\(I\sb{0}'\), \(I\sb{1}'\), \(RS'\)) 
+      \(NET.Replace\)(\(I\sb{0}'\), \(I\sb{1}'\), \(RS'\))
       FOR each interval \(I''\) \(\in\) \(NET\) DO
         IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
-          \(RS''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(I''\), \(I\sb{0}'\)), \(RS'\)) 
+          \(RS''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(I''\), \(I\sb{0}'\)), \(RS'\))
           \(RS'''\) = \(NET.Get\)(\(I''\), \(I\sb{1}'\)) \(\cap\) \(RS''\)
           IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{1}'\)) THEN
             \(Q.Add\)(\(I''\), \(I\sb{1}'\), \(RS'''\))
-          ENDIF 
+          ENDIF
         ENDIF
       ENDDO
       FOR each interval \(I''\) \(\in\) \(NET\) DO
@@ -539,7 +539,7 @@
           \(RS'''\) = \(NET.Get\)(\(I\sb{0}'\), \(I''\)) \(\cap\) \(RS''\)
           IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{0}'\)) THEN
             \(Q.Add\)(\(I\sb{0}'\), \(I''\), \(RS'''\))
-          ENDIF 
+          ENDIF
         ENDIF
       ENDDO
     ENDDO
@@ -746,7 +746,7 @@
         RETURN \{\(starts\}\)
       ELSE
         RETURN \{\(started by\}\)
-      ENDIF 
+      ENDIF
     ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{-}\) THEN
       IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
         RETURN \{\(finished by\}\)
@@ -767,9 +767,9 @@
       ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
         RETURN \{\(during\}\)
       ELSE
-        IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{+}\) THEN 
+        IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{+}\) THEN
           RETURN \{\(met by\}\)
-        ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{+}\) THEN  
+        ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{+}\) THEN
           RETURN \{\(overlapped by\}\)
         ELSE
           RETURN \{\(after\}\)
@@ -857,7 +857,7 @@
               {\bf Interval Identifiers}
 
               The main difference between language ${\cal L}$ and language
-              ${\cal L^T}$ is that in addition to the six entity sorts, 
+              ${\cal L^T}$ is that in addition to the six entity sorts,
               language ${\cal L^T}$ also includes an additional time interval
               sort. As it occupies a different name space from the other sorts,
               interval identifiers share the same syntax:
@@ -944,7 +944,7 @@
                   \end{vverbatim}
 
                 \item
-                  Subset Atom. Below is the syntax of an atom that states that 
+                  Subset Atom. Below is the syntax of an atom that states that
                   the group entity $group$-$id$-$0$ is a subset of the group
                   entity $group$-$id-$-$1$ at time interval $int$-$id$.
 
@@ -1072,7 +1072,7 @@
           Like the constraint declarations in language ${\cal L}$,
           authorisation constraint declarations in language ${\cal L^T}$ are
           used to define logical rules that always holds, even after a policy
-          update is applied. The difference, as shown by the syntax below, is 
+          update is applied. The difference, as shown by the syntax below, is
           the addition of the {\em where} clause.
 
           \begin{vverbatim}
@@ -1093,7 +1093,7 @@
           $int$-$exp$ which is used to place a restriction on the interval
           identifiers used to ground interval variables occurring in the
           authorisation expressions. Only those sets of interval identifiers
-          that satisfy the expresssion $int$-$exp$ is used to replace the
+          that satisfy the expression $int$-$exp$ is used to replace the
           set of interval variables in the authorisation expressions. As the
           {\em where} clause is used in the grounding of variables, it is
           important to note that it does not make sense to have a ground
@@ -1141,7 +1141,7 @@
           variables $I_0$ and $I_1$ are restricted to the intervals $i_1$ and
           $i_2$, respectively, because they are the only interval pair that
           satisfies the restriction placed by the {\em where} clause.
-        
+
         \subsubsection{Policy Update Declarations}
 
           Like the authorisation constraint definition, policy update
@@ -1324,7 +1324,7 @@
         with respect to the given temporal constraints.
 
         Before the translation process can be shown, we must first provide
-        a formal definition of langauge ${\cal L^{T^*}}$.
+        a formal definition of language ${\cal L^{T^*}}$.
 
         \subsubsection{Language ${\cal L^{T^*}}$}
 
@@ -1374,53 +1374,53 @@
                   $\{\hat{holds}$($s$, $a$, $o$, $\iota$, $\sigma$) $\mid$
                   $s$ $\in$ ${\cal E}_{s}$,
                   $a$ $\in$ ${\cal E}_{a}$,
-                  $o$ $\in$ ${\cal E}_{o}$, 
-                  $\iota$ $\in$ ${\cal I}\}$ 
-    
+                  $o$ $\in$ ${\cal E}_{o}$,
+                  $\iota$ $\in$ ${\cal I}\}$
+
                 ${\cal A}^{\sigma}_{m}$ =
                   ${\cal A}^{\sigma}_{ms}$ $\cup$
                   ${\cal A}^{\sigma}_{ma}$ $\cup$
                   ${\cal A}^{\sigma}_{mo}$
-    
+
                 ${\cal A}^{\sigma}_{s}$ =
                   ${\cal A}^{\sigma}_{ss}$ $\cup$
                   ${\cal A}^{\sigma}_{sa}$ $\cup$
                   ${\cal A}^{\sigma}_{so}$
-    
+
                 ${\cal A}^{\sigma}_{ms}$ =
                   $\{\hat{memb}$($e$, $g$, $\iota$, $\sigma$) $\mid$
                   $e$ $\in$ ${\cal E}_{ss}$,
                   $g$ $\in$ ${\cal E}_{sg}$,
                   $\iota$ $\in$ ${\cal I}\}$
-    
+
                 ${\cal A}^{\sigma}_{ma}$ =
                   $\{\hat{memb}$($e$, $g$, $\iota$, $\sigma$) $\mid$
                   $e$ $\in$ ${\cal E}_{as}$,
                   $g$ $\in$ ${\cal E}_{ag}$,
                   $\iota$ $\in$ ${\cal I}\}$
-    
+
                 ${\cal A}^{\sigma}_{mo}$ =
                   $\{\hat{memb}$($e$, $g$, $\iota$, $\sigma$) $\mid$
                   $e$ $\in$ ${\cal E}_{os}$,
                   $g$ $\in$ ${\cal E}_{og}$,
                   $\iota$ $\in$ ${\cal I}\}$
-    
+
                 ${\cal A}^{\sigma}_{ss}$ =
                   $\{\hat{subst}$($g_{1}$, $g_{2}$, $\iota$, $\sigma$) $\mid$
                   $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{sg}$,
                   $\iota$ $\in$ ${\cal I}\}$
-    
+
                 ${\cal A}^{\sigma}_{sa}$ =
                   $\{\hat{subst}$($g_{1}$, $g_{2}$, $\iota$, $\sigma$) $\mid$
                   $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{ag}$,
                   $\iota$ $\in$ ${\cal I}\}$
-    
+
                 ${\cal A}^{\sigma}_{so}$ =
                   $\{\hat{subst}$($g_{1}$, $g_{2}$, $\iota$, $\sigma$) $\mid$
                   $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{og}$,
                   $\iota$ $\in$ ${\cal I}\}$
               \end{vquote}
-          
+
             \item
               {\bf Facts}
 
@@ -1445,10 +1445,10 @@
               $\hat{\rho}_i$ holds:
 
               \begin{vquote}
-                $\hat{\rho}_0$, 
-                $\hat{\rho}_1$, 
+                $\hat{\rho}_0$,
+                $\hat{\rho}_1$,
                 $\ldots$,
-                $\hat{\rho}_n$, 
+                $\hat{\rho}_n$,
               \end{vquote}
 
           \end{itemize}
@@ -1554,7 +1554,7 @@
               can both contain the same pair of intervals:
 
               \begin{vquote}
-                ${\alpha}_i$ $=$ $r_i$(${\iota}0_i$, ${\iota}1_i$) 
+                ${\alpha}_i$ $=$ $r_i$(${\iota}0_i$, ${\iota}1_i$)
 
                 ${\alpha}_j$ $=$ $r_j$(${\iota}0_j$, ${\iota}1_j$)
 
@@ -1580,7 +1580,7 @@
               to be treated as conjunctions.
 
               For simplicity, we introduce a normalised notation for interval
-              expressions where each interval atom in the expression contains a 
+              expressions where each interval atom in the expression contains a
               unique pair of intervals and a set of relations that hold between
               those intervals. Formally, a normalised interval expression is
               in the following form:
@@ -1604,7 +1604,7 @@
               \begin{vquote}
                 $\lnot$$\exists$${\alpha}_j$,
 
-                where 
+                where
 
                 \hspace{1em}
                 ${\alpha}_j$ =
@@ -1648,10 +1648,10 @@
                   $r_j$(${\iota}0_i$, ${\iota}1_i$) $\in$ $\varepsilon$
 
                 \item
-                  For each 
+                  For each
                   (${\iota}0_j$, ${\iota}1_j$, \{$r0_j$, $\ldots$, $ry_j$\})
                   $\in$ ${\varepsilon}'$, where $0$ $\leq$ $j$ $<$
-                  $|{\varepsilon}'|$ and $i$ $\neq$ $j$, 
+                  $|{\varepsilon}'|$ and $i$ $\neq$ $j$,
                   (
                     ${\iota}0_i$ $\neq$ ${\iota}0_j$ $\lor$
                     ${\iota}1_i$ $\neq$ ${\iota}1_j$
@@ -1796,7 +1796,7 @@
               {\bf Initial Fact Rules}
 
               The initial fact rules are obtained directly from initial fact
-              declaration statements of languague ${\cal L^T}$:
+              declaration statements of language ${\cal L^T}$:
 
               \begin{vverbatim}
   initially \(\rho\sb{0}\), \(\ldots\), \(\rho\sb{n}\);
@@ -1886,22 +1886,22 @@
                 \hspace{1em}
                 $\hat{a}^{\sigma}_{i}$ = $TransFact$($Replace$($a_{i}$, $V$, $t$), $\sigma$),
                 $0$ $\leq$ $i$ $\leq$ $m$,
-    
+
                 \hspace{1em}
                 $\hat{b}^{\sigma}_{j}$ = $TransFact$($Replace$($b_{j}$, $V$, $t$), $\sigma$),
                 $0$ $\leq$ $j$ $\leq$ $n$,
-    
+
                 \hspace{1em}
                 $\hat{c}^{\sigma}_{k}$ = $TransFact$($Replace$($c_{k}$, $V$, $t$), $\sigma$),
                 $0$ $\leq$ $k$ $\leq$ $o$,
-    
+
                 \hspace{1em}
                 $t$ $\in$ $T$,
 
                 \hspace{1em}
                 $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
               \end{vquote}
-            
+
             \item
               {\bf Policy Update Rules}
 
@@ -1935,7 +1935,7 @@
               ($c_0$, $\ldots$, $c_o$), a set of tuples $T$ can be generated
               such that each tuple $t$ $\in$ $T$ satisfies the {\em where}
               clause constraint:
-            
+
               \begin{vquote}
                 $T$ $=$
                 $GenTuples_2$(($c_0$, $\ldots$, $c_o$), $V$)
@@ -1945,7 +1945,7 @@
               By using the entities and intervals in each tuple in set $T$
               to ground all the variables, we can now define the policy
               update rules in language ${\cal L^{T^*}}$:
-              
+
               \begin{vquote}
                 $\forall$ $t$,
               \end{vquote}
@@ -1991,7 +1991,7 @@
                     \begin{vquote}
                       $\forall$ ($ss$, $sg$, $a$, $o$, $\iota$ $\sigma$),
                     \end{vquote}
-                   
+
                     \begin{vquote}
                       $\hat{holds}$($ss$, $a$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
@@ -2003,7 +2003,7 @@
                       \hspace{1em}
                       $not$ $\lnot\hat{holds}$($ss$, $a$, $o$, $\iota$, $\sigma$)
                     \end{vquote}
-                   
+
                     \begin{vquote}
                       $\lnot\hat{holds}$($ss$, $a$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
@@ -2012,10 +2012,10 @@
                       $\lnot\hat{holds}$($sg$, $a$, $o$, $\iota$, $\sigma$),
                       $\hat{memb}$($ss$, $sg$, $\iota$, $\sigma$)
                     \end{vquote}
-                   
+
                     \begin{vquote}
                       where
-                   
+
                       \hspace{1em}
                       $ss$ $\in$ ${\cal E}_{ss}$,
 
@@ -2034,14 +2034,14 @@
                       \hspace{1em}
                       $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                     \end{vquote}
-                   
+
                   \item
                     {\bf Access Right Group Member Inheritance Rules}
 
                     \begin{vquote}
                       $\forall$ ($s$, $as$, $ag$, $o$, $\iota$ $\sigma$),
-                    \end{vquote} 
-                   
+                    \end{vquote}
+
                     \begin{vquote}
                       $\hat{holds}$($s$, $as$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
@@ -2052,8 +2052,8 @@
 
                       \hspace{1em}
                       $not$ $\lnot\hat{holds}$($s$, $as$, $o$, $\iota$, $\sigma$)
-                    \end{vquote} 
-                   
+                    \end{vquote}
+
                     \begin{vquote}
                       $\lnot\hat{holds}$($s$, $as$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
@@ -2061,11 +2061,11 @@
                       \hspace{1em}
                       $\lnot\hat{holds}$($s$, $ag$, $o$, $\iota$, $\sigma$),
                       $\hat{memb}$($as$, $ag$, $\iota$, $\sigma$)
-                    \end{vquote} 
-                   
+                    \end{vquote}
+
                     \begin{vquote}
                       where
-                   
+
                       \hspace{1em}
                       $s$ $\in$ ${\cal E}_{s}$,
 
@@ -2083,7 +2083,7 @@
 
                       \hspace{1em}
                       $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
-                    \end{vquote} 
+                    \end{vquote}
 
                   \item
                     {\bf Object Group Member Inheritance Rules}
@@ -2091,7 +2091,7 @@
                     \begin{vquote}
                       $\forall$ ($s$, $a$, $os$, $og$, $\iota$ $\sigma$),
                     \end{vquote}
-                   
+
                     \begin{vquote}
                       $\hat{holds}$($s$, $a$, $os$, $\iota$, $\sigma$)
                       $\leftarrow$
@@ -2103,7 +2103,7 @@
                       \hspace{1em}
                       $not$ $\lnot\hat{holds}$($s$, $a$, $os$, $\iota$, $\sigma$)
                     \end{vquote}
-                   
+
                     \begin{vquote}
                       $\lnot\hat{holds}$($s$, $a$, $os$, $\iota$, $\sigma$)
                       $\leftarrow$
@@ -2112,10 +2112,10 @@
                       $\lnot\hat{holds}$($s$, $a$, $og$, $\iota$, $\sigma$),
                       $\hat{memb}$($os$, $og$, $\iota$, $\sigma$)
                     \end{vquote}
-                   
+
                     \begin{vquote}
                       where
-                   
+
                       \hspace{1em}
                       $s$ $\in$ ${\cal E}_{s}$,
 
@@ -2141,31 +2141,31 @@
                     \begin{vquote}
                       $\forall$ ($sg_1$, $sg_2$, $a$, $o$, $\iota$, $\sigma$),
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       $\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
-                    
+
                       \hspace{1em}
                       $\hat{holds}$($sg_2$, $a$, $o$, $\iota$, $\sigma$),
                       $\hat{subst}$($sg_1$, $sg_2$, $\iota$, $\sigma$),
-                    
+
                       \hspace{1em}
                       $not$ $\lnot\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       $\lnot\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
-                    
+
                       \hspace{1em}
                       $\lnot\hat{holds}$($sg_2$, $a$, $o$, $\iota$, $\sigma$),
                       $\hat{subst}$($sg_1$, $sg_2$, $\iota$, $\sigma$)
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       where
-                    
+
                       \hspace{1em}
                       $sg_1$, $sg_2$ $\in$ ${\cal E}_{sg}$,
 
@@ -2180,7 +2180,7 @@
 
                       \hspace{1em}
                       $\iota$ $\in$ ${\cal I}$,
-                    
+
                       \hspace{1em}
                       $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
@@ -2191,31 +2191,31 @@
                     \begin{vquote}
                       $\forall$ ($s$, $ag_1$, $ag_2$, $o$, $\iota$, $\sigma$),
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       $\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
-                    
+
                       \hspace{1em}
                       $\hat{holds}$($s$, $ag_2$, $o$, $\iota$, $\sigma$),
                       $\hat{subst}$($ag_1$, $ag_2$, $\iota$, $\sigma$),
-                    
+
                       \hspace{1em}
                       $not$ $\lnot$ $\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       $\lnot\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
                       $\leftarrow$
-                    
+
                       \hspace{1em}
                       $\lnot\hat{holds}$($s$, $ag_2$, $o$, $\iota$, $\sigma$),
                       $\hat{subst}$($ag_1$, $ag_2$, $\iota$, $\sigma$)
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       where
-                    
+
                       \hspace{1em}
                       $s$ $\in$ ${\cal E}_{s}$,
 
@@ -2227,7 +2227,7 @@
 
                       \hspace{1em}
                       $ag_1$ $\neq$ $ag_2$,
-                    
+
                       \hspace{1em}
                       $\iota$ $\in$ ${\cal I}$,
 
@@ -2241,31 +2241,31 @@
                     \begin{vquote}
                       $\forall$ ($s$, $a$, $og_1$, $og_2$, $\iota$, $\sigma$),
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       $\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
                       $\leftarrow$
-                    
+
                       \hspace{1em}
                       $\hat{holds}$($s$, $a$, $og_2$, $\iota$, $\sigma$),
                       $\hat{subst}$($og_1$, $og_2$, $\iota$, $\sigma$),
-                    
+
                       \hspace{1em}
                       $not$ $\lnot\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       $\lnot\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
                       $\leftarrow$
-                    
+
                       \hspace{1em}
                       $\lnot\hat{holds}$($s$, $a$, $og_2$, $\iota$, $\sigma$),
                       $\hat{subst}$($og_1$, $og_2$, $\iota$, $\sigma$)
                     \end{vquote}
-                    
+
                     \begin{vquote}
                       where
-                    
+
                       \hspace{1em}
                       $s$ $\in$ ${\cal E}_{s}$,
 
@@ -2277,7 +2277,7 @@
 
                       \hspace{1em}
                       $og_1$ $\neq$ $og_2$,
-                    
+
                       \hspace{1em}
                       $\iota$ $\in$ ${\cal I}$,
 
@@ -2286,7 +2286,7 @@
                     \end{vquote}
 
                 \end{itemize}
-            
+
             \item
               {\bf Transitivity Rules}
 
@@ -2391,7 +2391,7 @@
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
               \end{itemize}
-            
+
             \item
               {\bf Inertial Rules}
 
@@ -2432,7 +2432,7 @@
                 \hspace{1em}
                 $\hat{\alpha}'$ = $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
               \end{vquote}
-            
+
             \item
               {\bf Reflexivity Rules}
 
@@ -2459,7 +2459,7 @@
                 \hspace{1em}
                 $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
               \end{vquote}
-            
+
             \item
               {\bf Temporal Rules}
 
@@ -2470,277 +2470,277 @@
               {\em Equals}, {\em During}, {\em Starts} or {\em Finishes}.
 
               \begin{itemize}
-              
+
                 \item
                   {\bf Holds Temporal Rules}
 
                   \begin{vquote}
                     $\forall$($s$, $a$, $o$, $\iota_0$, $\iota_1$, $\sigma$),
                   \end{vquote}
-                  
+
                   \begin{vquote}
                     $\hat{holds}$($s$, $a$, $o$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                    
+                    $\leftarrow$
                     $\hat{holds}$($s$, $a$, $o$, $\iota_0$, $\sigma$)
                   \end{vquote}
-                  
+
                   \begin{vquote}
                     $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                            
+                    $\leftarrow$
                     $\lnot$ $\hat{holds}$($s$, $a$, $o$, $\iota_0$, $\sigma$)
                   \end{vquote}
-                  
+
                   \begin{vquote}
                     where
-                  
+
                     \hspace{1em}
                     $s$ $\in$ ${\cal E}_s$,
-                  
+
                     \hspace{1em}
                     $a$ $\in$ ${\cal E}_a$,
-                  
+
                     \hspace{1em}
                     $0$ $\in$ ${\cal E}_o$,
-                  
+
                     \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
-                  
+
                     \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
-                  
+
                     \hspace{1em}
                     $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
-              
+
                 \item
                   {\bf Membership Temporal Rules}
-              
+
                   \begin{vquote}
                     $\forall$($ss$, $sg$, $\iota_0$, $\iota_1$, $\sigma$),
                   \end{vquote}
 
                   \begin{vquote}
                     $\hat{memb}$($ss$, $sg$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                
+                    $\leftarrow$
                     $\hat{memb}$($ss$, $sg$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\lnot$ $\hat{memb}$($ss$, $sg$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                        
+                    $\leftarrow$
                     $\lnot$ $\hat{memb}$($ss$, $sg$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     where
-                  
+
                     \hspace{1em}
                     $ss$ $\in$ ${\cal E}_{ss}$,
-                  
+
                     \hspace{1em}
                     $sg$ $\in$ ${\cal E}_{sg}$,
-                  
+
                     \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
-                  
+
                     \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
-                  
+
                     \hspace{1em}
                     $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
 
                   \vspace{0.5em}
-              
+
                   \begin{vquote}
                     $\forall$($as$, $ag$, $\iota_0$, $\iota_1$, $\sigma$),
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\hat{memb}$($as$, $ag$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                
+                    $\leftarrow$
                     $\hat{memb}$($as$, $ag$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\lnot$ $\hat{memb}$($as$, $ag$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                        
+                    $\leftarrow$
                     $\lnot$ $\hat{memb}$($as$, $ag$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     where
-                  
+
                     \hspace{1em}
                     $as$ $\in$ ${\cal E}_{as}$,
-                  
+
                     \hspace{1em}
                     $ag$ $\in$ ${\cal E}_{ag}$,
-                  
+
                     \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
-                  
+
                     \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
-                  
+
                     \hspace{1em}
                     $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
 
                   \vspace{0.5em}
-              
+
                   \begin{vquote}
                     $\forall$($os$, $og$, $\iota_0$, $\iota_1$, $\sigma$),
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\hat{memb}$($os$, $og$, $\iota_1$, $\sigma$)
                     $\leftarrow$
                     $\hat{memb}$($os$, $og$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\lnot$ $\hat{memb}$($os$, $og$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                        
+                    $\leftarrow$
                     $\lnot$ $\hat{memb}$($os$, $og$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     where
-                  
+
                     \hspace{1em}
                     $os$ $\in$ ${\cal E}_{os}$,
-                  
+
                     \hspace{1em}
                     $og$ $\in$ ${\cal E}_{og}$,
-                  
+
                     \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
-                  
+
                     \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
-                  
+
                     \hspace{1em}
                     $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
-              
+
                 \item
                   {\bf Subset Temporal Rules}
-              
+
                   \begin{vquote}
                     $\forall$($sg_0$, $sg_1$, $\iota_0$, $\iota_1$, $\sigma$),
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\hat{subst}$($sg_0$, $sg_1$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                     
+                    $\leftarrow$
                     $\hat{subst}$($sg_0$, $sg_1$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\lnot$ $\hat{subst}$($sg_0$, $sg_1$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                             
+                    $\leftarrow$
                     $\lnot$ $\hat{subst}$($sg_0$, $sg_1$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     where
-                  
+
                     \hspace{1em}
                     $sg_0$, $sg_1$ $\in$ ${\cal E}_{sg}$,
-                  
+
                     \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
-                  
+
                     \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
-                  
+
                     \hspace{1em}
                     $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
-              
+
                   \vspace{0.5em}
 
                   \begin{vquote}
                     $\forall$($ag_0$, $ag_1$, $\iota_0$, $\iota_1$, $\sigma$),
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\hat{subst}$($ag_0$, $ag_1$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                     
+                    $\leftarrow$
                     $\hat{subst}$($ag_0$, $ag_1$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\lnot$ $\hat{subst}$($ag_0$, $ag_1$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                             
+                    $\leftarrow$
                     $\lnot$ $\hat{subst}$($ag_0$, $ag_1$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     where
-                  
+
                     \hspace{1em}
                     $ag_0$, $ag_1$ $\in$ ${\cal E}_{ag}$,
-                  
+
                     \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
-                  
+
                     \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
-                  
+
                     \hspace{1em}
                     $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
-              
+
                   \vspace{0.5em}
 
                   \begin{vquote}
                     $\forall$($og_0$, $og_1$, $\iota_0$, $\iota_1$, $\sigma$),
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\hat{subst}$($og_0$, $og_1$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                     
+                    $\leftarrow$
                     $\hat{subst}$($og_0$, $og_1$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     $\lnot$ $\hat{subst}$($og_0$, $og_1$, $\iota_1$, $\sigma$)
-                    $\leftarrow$                                             
+                    $\leftarrow$
                     $\lnot$ $\hat{subst}$($og_0$, $og_1$, $\iota_0$, $\sigma$)
                   \end{vquote}
-              
+
                   \begin{vquote}
                     where
-                  
+
                     \hspace{1em}
                     $og_0$, $og_1$ $\in$ ${\cal E}_{og}$,
-                  
+
                     \hspace{1em}
                     $\iota_0$, $\iota_1$ $\in$ ${\cal I}$,
-                  
+
                     \hspace{1em}
                     $NET.Get$($\iota_0$, $\iota_1$) $\subseteq$
                     \{{\em During}, {\em Starts}, {\em Finishes}, {\em Equals}\},
-                  
+
                     \hspace{1em}
                     $S_0$ $\leq$ $\sigma$ $\leq$ $S_{|V|}$
                   \end{vquote}
-              
+
               \end{itemize}
             \end{itemize}
 
         \begin{vexample}
           \label{ex-3}
           The following rules show the language ${\cal L^{T^*}}$ translation
-          of the language ${\cal L^T}$ code listing shown in Example 
+          of the language ${\cal L^T}$ code listing shown in Example
           \ref{ex-2}.
 
           \begin{enumerate}
@@ -2760,20 +2760,20 @@
 
               \begin{vquote}
                 $\hat{holds}$($grp_1$, $write$, $file$, $work\_hours$, $S_0$) $\leftarrow$
-       
+
                 \hspace{1em}
                 $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_0$),
-       
+
                 \hspace{1em}
                 $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $work\_hours$, $S_0$)
               \end{vquote}
 
               \begin{vquote}
                 $\hat{holds}$($grp_1$, $write$, $file$, $work\_hours$, $S_1$) $\leftarrow$
-       
+
                 \hspace{1em}
                 $\hat{holds}$($grp_1$, $read$, $file$, $work\_hours$, $S_1$),
-       
+
                 \hspace{1em}
                 $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $work\_hours$, $S_1$)
               \end{vquote}
@@ -2785,20 +2785,20 @@
 
               \begin{vquote}
                 $\hat{holds}$($grp_1$, $write$, $file$, $afternoon\_hours$, $S_0$) $\leftarrow$
-       
+
                 \hspace{1em}
                 $\hat{holds}$($grp_1$, $read$, $file$, $afternoon\_hours$, $S_0$),
-       
+
                 \hspace{1em}
                 $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_0$)
               \end{vquote}
 
               \begin{vquote}
                 $\hat{holds}$($grp_1$, $write$, $file$, $afternoon\_hours$, $S_1$) $\leftarrow$
-       
+
                 \hspace{1em}
                 $\hat{holds}$($grp_1$, $read$, $file$, $afternoon\_hours$, $S_1$),
-       
+
                 \hspace{1em}
                 $not$ $\lnot$ $\hat{holds}$($grp_3$, $write$, $file$, $afternoon\_hours$, $S_1$)
               \end{vquote}
@@ -2948,7 +2948,7 @@
               \end{vquote}
 
             \item
-              Intertial Rules
+              Inertial Rules
 
               \begin{vquote}
                 $\hat{holds}$($alice$, $read$, $file$, $work\_hours$, $S_1$) $\leftarrow$
@@ -3143,9 +3143,9 @@
                 $\lnot$ $\hat{subst}$($grp_3$, $grp_2$, $work\_hours$, $S_1$),
               \end{vquote}
           \end{enumerate}
-          
+
         \end{vexample}
-  
+
     \section{Discussion}
 
       \begin{figure}[[tbhp]
