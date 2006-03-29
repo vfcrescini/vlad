@@ -832,7 +832,10 @@
       In this section, we attempt to formalise a new language, ${\cal L^T}$,
       with the same expressive power as language ${\cal L}$ to represent
       authorisation policies, but with extensions to also express temporal
-      constraints.
+      constraints. Like language ${\cal L}$, language ${\cal L^T}$ is also a
+      first-order logic language. As such, any language ${\cal L^T}$ policy
+      can be translated into a normal logic program to derive answer sets,
+      from which queries can be evaluated.
 
       \subsection{Syntax}
 
@@ -3148,6 +3151,82 @@
 
     \section{Discussion}
 
+      A language ${\cal L^T}$ domain description ${\cal D}_{\cal L^T}$ without
+      any variable occurences (and therefore without any {\em where} clauses)
+      may be represented as the following statements:
+
+      \begin{vverbatim}
+  initially \(\rho\sb{0\sb{0}}\), \(\ldots\), \(\rho\sb{0\sb{n\sb{0}}}\), \(!\)\(\rho\sb{1\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{1\sb{n\sb{1}}}\);
+
+  relation \(r\sb{0\sb{0}}\), \(\ldots\), \(r\sb{0\sb{m}}\);
+
+  always \(\rho\sb{2\sb{0}}\), \(\ldots\), \(\rho\sb{2\sb{n\sb{2}}}\), \(!\)\(\rho\sb{3\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{3\sb{n\sb{3}}}\)
+    implied by \(\rho\sb{4\sb{0}}\), \(\ldots\), \(\rho\sb{4\sb{n\sb{4}}}\), \(!\)\(\rho\sb{5\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{5\sb{n\sb{5}}}\)
+    with absence \(\rho\sb{6\sb{0}}\), \(\ldots\), \(\rho\sb{6\sb{n\sb{6}}}\), \(!\)\(\rho\sb{7\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{7\sb{n\sb{7}}}\);
+
+  update \(u\)()
+    causes \(\rho\sb{8\sb{0}}\), \(\ldots\), \(\rho\sb{8\sb{n\sb{8}}}\), \(!\)\(\rho\sb{9\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{9\sb{n\sb{9}}}\) 
+    if \(\rho\sb{10\sb{0}}\), \(\ldots\), \(\rho\sb{10\sb{n\sb{10}}}\), \(!\)\(\rho\sb{11\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{11\sb{n\sb{11}}}\);
+      \end{vverbatim}
+
+      Note that if we disregard the {\em relation} statement and the fact
+      that langauge ${\cal L^T}$ atoms also specify time intervals, language
+      ${\cal L^T}$ statements consisting only of ground expressions as above
+      are identical to the language ${\cal L}$ statements shown in [XXX ref to
+      lang L]. As a consequence, we can use Theorem [XXX ref to theorem in
+      lang L] to define ${\cal D_{L^T}}$ consistency:
+
+      \begin{vdefinition}
+        \label{def-cons1}
+        A domain description ${\cal D_{L^T}}$ is consistent if:
+
+        \begin{enumerate}
+          \item
+            ${\cal D_{L^T}}$ is {\bf normal}, using the same language
+            ${\cal L}$ definition in Definition [XXX ref to lang L]; and
+
+          \item
+            The temporal interval relations defined in ${\cal D_{L^T}}$
+            produces a {\bf consistent interval network}.
+        \end{enumerate}
+      \end{vdefinition}
+
+      Assuming that we already have a normal domain description, we focus on
+      the second condition. Below, we define network consistency:
+
+      \begin{vdefinition}
+        \label{def-cons2}
+        Given a temporal interval network $N$, with nodes $n_0$,
+        $\ldots$ $n_n$ and arcs $a_0$, $\ldots$, $a_m$. An {\bf instance} of
+        interval network $N$ is a subnetwork with nodes $n_0$, $\ldots$, $n_n$,
+        with each arc $a_{i}'$ representing a single relation from the
+        corresponding arc in $N$ ($a_{i}'$ $\in$ $a_i$, $0$ $\leq$ $i$ $\leq$
+        $m$). An {\bf consistent instance} of interval network $N$ is an
+        instance of $N$ such that for any three nodes, the three relations
+        represented by these nodes satisfy the transitivity rules shown in
+        Table \ref{table-trans}. A {\bf consistent interval network} is a
+        network with at least one consistent instance.
+      \end{vdefinition}
+
+      Any given language ${\cal L^T}$ domain description can fail to satisfy
+      condition 2 in Definition \ref{def-cons1} above in two ways. Firstly, an
+      inconsistent domain description can be caused by two or more conflicting
+      interval constraint statements. This conflict occurs when the consequence
+      of an interval constraint is implictly or explicitly excluded by another
+      interval constraint. For example, the following two interval constraint
+      statements are in conflict with each other because the second defines a
+      relation that has been explicitly excluded by the first.
+
+      \begin{vverbatim}
+  relation during(i0, i1), before(i0, i1);
+  relation equals(i0, i1);
+      \end{vverbatim}
+
+      Note that this type of domain inconsistency is detected by the
+      $NET.Add$() algorithm. Unfortunately, the second type of inconsisteny is
+      not. To illustrate this type of inconsistency, we use Allen's \cite{AL}
+      example, shown in Figure \ref{fig-net-ex-07}.
+
       \begin{figure}[[tbhp]
         \begin{center}
           \includegraphics{net-07}
@@ -3155,6 +3234,9 @@
           \label{fig-net-ex-07}
         \end{center}
       \end{figure}
+
+      The network shown above is inconsistent, as no consistent instance of
+      this network exists. 
 
   \chapter{Implementation}
 
