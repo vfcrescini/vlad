@@ -726,9 +726,9 @@
 
         \begin{vdefinition}
           \label{def-interval}
-          A {\em well-defined interval} $i$ is an interval whose end points $i^{-}$
+          A {\bf well-defined interval} $i$ is an interval whose end points $i^{-}$
           $\in$ ${\mathbb Z}^{+}$ and $i^{+}$ $\in$ ${\mathbb Z}^{+}$ are defined,
-          where $i^{-}$ $<$ $i^{+}$. A {\em regular interval} is an interval whose
+          where $i^{-}$ $<$ $i^{+}$. A {\bf regular interval} is an interval whose
           end points are not known.
         \end{vdefinition}
 
@@ -1830,10 +1830,10 @@
               is in the form:
 
               \begin{vverbatim}
-  always \(a\sb{0}\), \(\ldots\), \(a\sb{m}\)
-    implied by \(b\sb{0}\), \(\ldots\), \(b\sb{n}\)
-    with absence \(c\sb{0}\), \(\ldots\), \(c\sb{o}\)
-    where \(d\sb{0}\), \(\ldots\), \(d\sb{p}\);
+  always \(\rho\sb{0\sb{0}}\), \(\ldots\), \(\rho\sb{0\sb{n\sb{0}}}\)
+    implied by \(\rho\sb{1\sb{0}}\), \(\ldots\), \(\rho\sb{1\sb{n\sb{1}}}\)
+    with absence \(\rho\sb{2\sb{0}}\), \(\ldots\), \(\rho\sb{2\sb{n\sb{2}}}\)
+    where \(r\sb{0}\), \(\ldots\), \(r\sb{n\sb{3}}\);
               \end{vverbatim}
 
               The first step is to gather all the entity and interval
@@ -1841,18 +1841,9 @@
 
               \begin{vquote}
                 $V$ $=$
-
-                \hspace{1em}
-                $Var$(($a_0$, $\ldots$, $a_m$)) $\cup$
-
-                \hspace{1em}
-                $Var$(($b_0$, $\ldots$, $b_n$)) $\cup$
-
-                \hspace{1em}
-                $Var$(($c_0$, $\ldots$, $c_o$)) $\cup$
-
-                \hspace{1em}
-                $Var$(($d_0$, $\ldots$, $d_p$))
+                $Var$(($\rho_{0_0}$, $\ldots$, $\rho_{0_{n_0}}$)) $\cup$
+                $Var$(($\rho_{1_0}$, $\ldots$, $\rho_{1_{n_1}}$)) $\cup$
+                $Var$(($\rho_{2_0}$, $\ldots$, $\rho_{2_{n_2}}$))
               \end{vquote}
 
               \noindent
@@ -1860,7 +1851,7 @@
               the temporal constraint specified by the {\em where} clause:
 
               \begin{vquote}
-                $T$ $=$ $GenTuples_2$(($d_0$, $\ldots$, $d_p$), $V$)
+                $T$ $=$ $GenTuples_2$(($r_0$, $\ldots$, $r_{n_3}$), $V$)
               \end{vquote}
 
               \noindent
@@ -1872,31 +1863,34 @@
               \end{vquote}
 
               \begin{vquote}
-                $\hat{a}^{\sigma}_{0}$ $\leftarrow$
-                $\hat{b}^{\sigma}_{0}$, \ldots, $\hat{b}^{\sigma}_{n}$,
-                $not$ $\hat{c}^{\sigma}_{0}$, \ldots, $not$ $\hat{c}^{\sigma}_{o}$
+                $\hat{\rho}^{\sigma}_{0_0}$ $\leftarrow$
+                $\hat{\rho}^{\sigma}_{1_0}$, \ldots, $\hat{\rho}^{\sigma}_{1_{n_1}}$,
+                $not$ $\hat{\rho}^{\sigma}_{2_0}$, \ldots, $not$ $\hat{\rho}^{\sigma}_{2_{n_2}}$
 
                 $\vdots$
 
-                $\hat{a}^{\sigma}_{m}$ $\leftarrow$
-                $\hat{b}^{\sigma}_{0}$, \ldots, $\hat{b}^{\sigma}_{n}$,
-                $not$ $\hat{c}^{\sigma}_{0}$, \ldots, $not$ $\hat{c}^{\sigma}_{o}$
+                $\hat{\rho}^{\sigma}_{0_{n_0}}$ $\leftarrow$
+                $\hat{\rho}^{\sigma}_{1_0}$, \ldots, $\hat{\rho}^{\sigma}_{1_{n_1}}$,
+                $not$ $\hat{\rho}^{\sigma}_{2_0}$, \ldots, $not$ $\hat{\rho}^{\sigma}_{2_{n_2}}$
               \end{vquote}
 
               \begin{vquote}
                 where
 
                 \hspace{1em}
-                $\hat{a}^{\sigma}_{i}$ = $TransFact$($Replace$($a_{i}$, $V$, $t$), $\sigma$),
-                $0$ $\leq$ $i$ $\leq$ $m$,
+                $\hat{\rho}^{\sigma}_{0_i}$ =
+                $TransFact$($Replace$($\rho_{0_i}$, $V$, $t$), $\sigma$),
+                $0$ $\leq$ $i$ $\leq$ $n_0$,
 
                 \hspace{1em}
-                $\hat{b}^{\sigma}_{j}$ = $TransFact$($Replace$($b_{j}$, $V$, $t$), $\sigma$),
-                $0$ $\leq$ $j$ $\leq$ $n$,
+                $\hat{\rho}^{\sigma}_{1_j}$ =
+                $TransFact$($Replace$($\rho_{1_j}$, $V$, $t$), $\sigma$),
+                $0$ $\leq$ $j$ $\leq$ $n_1$,
 
                 \hspace{1em}
-                $\hat{c}^{\sigma}_{k}$ = $TransFact$($Replace$($c_{k}$, $V$, $t$), $\sigma$),
-                $0$ $\leq$ $k$ $\leq$ $o$,
+                $\hat{\rho}^{\sigma}_{2_k}$ =
+                $TransFact$($Replace$($\rho_{1_k}$, $V$, $t$), $\sigma$),
+                $0$ $\leq$ $k$ $\leq$ $n_2$,
 
                 \hspace{1em}
                 $t$ $\in$ $T$,
@@ -1917,9 +1911,9 @@
               ${\cal L^T}$ policy update statement is shown below:
 
               \begin{vverbatim}
-  \(u\) causes \(a\sb{0}\), \(\ldots\), \(a\sb{m}\)
-  if \(b\sb{0}\), \(\ldots\), \(b\sb{n}\)
-  where \(c\sb{0}\), \(\ldots\), \(c\sb{o}\);
+  \(u\) causes \(\rho\sb{0\sb{0}}\), \(\ldots\), \(\rho\sb{0\sb{n\sb{0}}}\)
+    if \(\rho\sb{1\sb{0}}\), \(\ldots\), \(\rho\sb{1\sb{n\sb{1}}}\)
+    where \(r\sb{0}\), \(\ldots\), \(r\sb{n\sb{2}}\);
               \end{vverbatim}
 
               \noindent
@@ -1929,19 +1923,19 @@
 
               \begin{vquote}
                 $V$ $=$
-                $Var$($a_0$, $\ldots$, $a_m$) $\cup$
-                $Var$($b_0$, $\ldots$, $b_n$)
+                $Var$($\rho_{0_0}$, $\ldots$, $\rho_{0_{n_0}}$) $\cup$
+                $Var$($\rho_{1_0}$, $\ldots$, $\rho_{1_{n_1}}$)
               \end{vquote}
 
               \noindent
               With the variable set $V$ and a {\em where} clause expression
-              ($c_0$, $\ldots$, $c_o$), a set of tuples $T$ can be generated
-              such that each tuple $t$ $\in$ $T$ satisfies the {\em where}
-              clause constraint:
+              ($r_0$, $\ldots$, $r_{n_2}$), a set of tuples $T$ can be
+              generated such that each tuple $t$ $\in$ $T$ satisfies the
+              {\em where} clause constraint:
 
               \begin{vquote}
                 $T$ $=$
-                $GenTuples_2$(($c_0$, $\ldots$, $c_o$), $V$)
+                $GenTuples_2$(($r_0$, $\ldots$, $r_{n_2}$), $V$)
               \end{vquote}
 
               \noindent
@@ -1954,21 +1948,27 @@
               \end{vquote}
 
               \begin{vquote}
-                $\hat{a_0}$ $\leftarrow$ $\hat{b_0}$, $\ldots$, $\hat{b_n}$
+                $\hat{\rho}_{0_0}$ $\leftarrow$
+                $\hat{\rho}_{1_0}$, $\ldots$, $\hat{\rho}_{1_{n_1}}$
 
                 $\vdots$
 
-                $\hat{a_m}$ $\leftarrow$ $\hat{b_0}$, $\ldots$, $\hat{b_n}$
+                $\hat{\rho}_{0_{n_0}}$ $\leftarrow$
+                $\hat{\rho}_{1_0}$, $\ldots$, $\hat{\rho}_{1_{n_1}}$
               \end{vquote}
 
               \begin{vquote}
                 where
 
                 \hspace{1em}
-                $\hat{a_i}$ $=$ $TransFact$($Replace$($a_i$, $V$, $t$), $Res$($u$, $\sigma$)), $0$ $\leq$ $i$ $\leq$ $m$,
+                $\hat{\rho}_{0_i}$ $=$
+                $TransFact$($Replace$($\rho_{0_i}$, $V$, $t$), $Res$($u$, $\sigma$)),
+                $0$ $\leq$ $i$ $\leq$ $n_0$,
 
                 \hspace{1em}
-                $\hat{b_j}$ $=$ $TransFact$($Replace$($b_j$, $V$, $t$), $\sigma$), $0$ $\leq$ $j$ $\leq$ $n$,
+                $\hat{\rho}_{1_j}$ $=$
+                $TransFact$($Replace$($\rho_{1_j}$, $V$, $t$), $\sigma$),
+                $0$ $\leq$ $j$ $\leq$ $n_1$,
 
                 \hspace{1em}
                 $t$ $\in$ $T$,
@@ -3183,7 +3183,7 @@
         \begin{enumerate}
           \item
             ${\cal D_{L^T}}$ is {\bf normal}, using the same language
-            ${\cal L}$ definition in Definition [XXX ref to lang L]; and
+            ${\cal L}$ definition in Definition [XXX ref to lang L], and
 
           \item
             The temporal interval relations defined in ${\cal D_{L^T}}$
@@ -3201,7 +3201,7 @@
         interval network $N$ is a subnetwork with nodes $n_0$, $\ldots$, $n_n$,
         with each arc $a_{i}'$ representing a single relation from the
         corresponding arc in $N$ ($a_{i}'$ $\in$ $a_i$, $0$ $\leq$ $i$ $\leq$
-        $m$). An {\bf consistent instance} of interval network $N$ is an
+        $m$). A {\bf consistent instance} of interval network $N$ is an
         instance of $N$ such that for any three nodes, the three relations
         represented by these nodes satisfy the transitivity rules shown in
         Table \ref{table-trans}. A {\bf consistent interval network} is a
