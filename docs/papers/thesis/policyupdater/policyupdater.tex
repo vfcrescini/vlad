@@ -3288,13 +3288,55 @@
 
       \subsection{Network Structure}
 
-        \subsubsection{Relation List}
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|l|l|}
+              \cline{1-3}
+              \cline{5-5}
+              & $i_0$ & $i_1$ & $\ldots$ & $i_n$ \\
+              \cline{1-3}
+              \cline{5-5}
+              $i_0$ & $R_{00}$ & $R_{01}$ & & $R_{0n}$ \\
+              \cline{1-3}
+              \cline{5-5}
+              $i_1$ & $R_{10}$ & $R_{11}$ & & $R_{1n}$ \\
+              \cline{1-3}
+              \cline{5-5}
+              \multicolumn{4}{l}{$\vdots$} & \multicolumn{1}{l}{$\vdots$} \\
+              \cline{1-3}
+              \cline{5-5}
+              $i_n$ & $R_{n0}$ & $R_{n1}$ & $\ldots$ & $R_{nn}$ \\
+              \cline{1-3}
+              \cline{5-5}
+            \end{tabular}
+          \end{center}
+          \caption[]{Conceptual Representation of an Interval Network}
+          \label{table-cons-int-net}
+        \end{table}
 
-        \subsubsection{Network}
+        \subsubsection{Binary Representation of Relation Sets}
+
+        \subsubsection{Relation Set Lists as Network Model}
+
+          \begin{figure}[[tbhp]
+            \begin{center}
+              \includegraphics{net-struct}
+              \caption{Network Structure as a List of Relation Lists}
+              \label{fig-net-struct}
+            \end{center}
+          \end{figure}
 
       \subsection{Network Operators}
 
     \section{Authorisation Engine}
+
+      \subsection{Symbol Table}
+
+      \subsection{Grounding of Variables}
+
+      \subsection{Translation to Normal Logic Program}
+
+    \section{Discussions} 
 
   \begin{thebibliography}{M}
     \bibitem{AL}
