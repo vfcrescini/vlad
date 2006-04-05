@@ -3288,6 +3288,13 @@
 
       \subsection{Network Structure}
 
+        Conceptually, a temporal interval relation network may be represented
+        as a table whose rows and columns both represent all the intervals
+        in the network. As shown in Table \ref{table-cons-int-net}, all the
+        possible relations that exist between intervals $\iota_i$ and
+        $\iota_j$, as stored in the network, are contained in the relation set
+        $RS_{ij}$ from cell ($i$, $j$).
+
         \begin{table}[tbhp]
           \begin{center}
             \begin{tabular}[t]{|c|c|c|c|c|}
@@ -3314,45 +3321,137 @@
           \label{table-cons-int-net}
         \end{table}
 
+        As we shall see, using this representation as a basis for
+        implementation is not a good idea, as it contains redundant information
+        and will incur a high maintenance overhead. First, we note that due
+        to the reflexive property of intervals, all the cells in the diagonal
+        of this representation is defined as follows:
+
+        \begin{vquote}
+          $\forall$ $i$,
+
+          $RS_{ii}$ $=$ {$EQL$}
+
+          where
+
+          \hspace{1em}
+          $0$ $\leq$ $i$ $\leq$ $n$
+        \end{vquote}
+
+        As the reflexive property applies to all intervals, there is no need to
+        store such relations in the network. Another instance of redundancy in
+        this representation is made evident by the following definition:
+
+        \begin{vquote}
+          $\forall$ ($i$, $j$),
+
+          $RS_{ij}$ $=$ $RS^{-1}_{ji}$
+
+          where
+
+          \hspace{1em}
+          $0$ $\leq$ $i$ $\leq$ $n$
+
+          \hspace{1em}
+          $0$ $\leq$ $j$ $\leq$ $n$
+
+          \hspace{1em}
+          $RS^{-1}$ is the inverse set of $RS$
+        \end{vquote}
+
+        The definition above states that a relation set between two intervals
+        $\iota_0$ and $\iota_1$ can be derived by calculating the inverse of
+        the relation set between $\iota_1$ and $\iota_0$. As a consequence,
+        only one relation set between any two intervals needs to be stored
+        as its inverse can be calculated from this relation set if required.
+        Note that under this definition, half of the cells in Table
+        \ref{table-cons-int-net} are redundant.
+
         \subsubsection{Binary Representation of Relation Sets}
 
-        \begin{table}[tbhp]
-          \begin{center}
-            \begin{tabular}[t]{|c|c|c|c|}
-              \hline
-              {\bf Relation} & {\bf Symbol} & {\bf Value} & {\bf Bit Value} \\
-              \hline
-              Equals        & EQL &    1 &  0 \\
-              \hline                        
-              Before        & BEF &    2 &  1 \\
-              \hline                        
-              During        & DUR &    4 &  2 \\
-              \hline                        
-              Overlaps      & OVR &    8 &  3 \\
-              \hline                        
-              Meets         & MET &   16 &  4 \\
-              \hline                        
-              Starts        & STA &   32 &  5 \\
-              \hline                        
-              Finishes      & FIN &   64 &  6 \\
-              \hline                        
-              After         & BEI &  128 &  7 \\
-              \hline                        
-              Contains      & DUI &  256 &  8 \\
-              \hline                        
-              Overlapped By & OVI &  512 &  9 \\
-              \hline
-              Met By        & MEI & 1024 & 10 \\
-              \hline
-              Started By    & STI & 2048 & 11 \\
-              \hline
-              Finished By   & FII & 4096 & 12 \\
-              \hline
-            \end{tabular}
-          \end{center}
-          \caption[]{Temporal Relation Value Assignment}
-          \label{table-rels-value}
-        \end{table}
+          Obviously, relation sets can be conceptually represented as a list of
+          relations. However, from an implementation point of view, maintaining
+          a list of relations for every relation set can incur a lot of
+          overhead as the cost of adding and removing relations from such a
+          list can be computationally expensive. To avoid this problem, we
+          employ a more efficient way of representing these sets in our
+          implementation. Each relation set is represented as a bit
+          vector\footnotemark.
+
+          \footnotetext{A similar method is used in \cite{VB, VI}.}
+
+          \begin{table}[tbhp]
+            \begin{center}
+              \begin{tabular}[t]{|c|c|c|c|}
+                \hline
+                {\bf Relation} & {\bf Symbol} & {\bf Value} & {\bf Bit Value} \\
+                \hline
+                Equals        & EQL &    1 &  0 \\
+                \hline                        
+                Before        & BEF &    2 &  1 \\
+                \hline                        
+                During        & DUR &    4 &  2 \\
+                \hline                        
+                Overlaps      & OVR &    8 &  3 \\
+                \hline                        
+                Meets         & MET &   16 &  4 \\
+                \hline                        
+                Starts        & STA &   32 &  5 \\
+                \hline                        
+                Finishes      & FIN &   64 &  6 \\
+                \hline                        
+                After         & BEI &  128 &  7 \\
+                \hline                        
+                Contains      & DUI &  256 &  8 \\
+                \hline                        
+                Overlapped By & OVI &  512 &  9 \\
+                \hline
+                Met By        & MEI & 1024 & 10 \\
+                \hline
+                Started By    & STI & 2048 & 11 \\
+                \hline
+                Finished By   & FII & 4096 & 12 \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption[]{Temporal Relation Value Assignment}
+            \label{table-rels-value}
+          \end{table}
+
+          To illustrate this representation, we first assign a base-2 value
+          for each basic relation as shown in Table \ref{table-rels-value}.
+          With these value assignments, any relation set composed of any
+          combination of these basic relations can be represented as an integer
+          which is the sum of the relations that it contains. For example,
+          under this system the relation set \{$BEF$, $DUR$, $STA$, $STI$\} can
+          be represented as $2086$.
+
+          Implemented as a bit vector, three important relation set operators
+          can be easily defined by using bitwise operators:
+
+          \begin{itemize}
+            \item
+              Union
+              \begin{vquote}
+                $RS_0$ $\cup$ $RS_1$ $=$ $RS_0$ $|$ $RS_1$
+              \end{vquote}
+  
+            \item
+              Intersection
+              \begin{vquote}
+                $RS_0$ $\cap$ $RS_1$ $=$ $RS_0$ $\&$ $RS_1$
+              \end{vquote}
+
+            \item
+              Inverse
+
+              \begin{vquote}
+                $RS^{-1}$ $=$
+                  (($RS$ $\&$ $8064$) $>>$ $6$) $|$
+                  (($RS$ $\&$ $126$)  $<<$ $6$) $|$
+                  ($RS$ $\&$ $1$)
+              \end{vquote}
+          \end{itemize}
 
         \subsubsection{Relation Set Lists as Network Model}
 
