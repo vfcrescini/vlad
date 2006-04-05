@@ -3290,22 +3290,22 @@
 
         \begin{table}[tbhp]
           \begin{center}
-            \begin{tabular}[t]{|l|l|l|l|l|}
+            \begin{tabular}[t]{|c|c|c|c|c|}
               \cline{1-3}
               \cline{5-5}
-              & $i_0$ & $i_1$ & $\ldots$ & $i_n$ \\
+              & $\iota_0$ & $\iota_1$ & $\ldots$ & $\iota_n$ \\
               \cline{1-3}
               \cline{5-5}
-              $i_0$ & $R_{00}$ & $R_{01}$ & & $R_{0n}$ \\
+              $\iota_0$ & $RS_{00}$ & $RS_{01}$ & & $RS_{0n}$ \\
               \cline{1-3}
               \cline{5-5}
-              $i_1$ & $R_{10}$ & $R_{11}$ & & $R_{1n}$ \\
+              $\iota_1$ & $RS_{10}$ & $RS_{11}$ & & $RS_{1n}$ \\
               \cline{1-3}
               \cline{5-5}
               \multicolumn{4}{l}{$\vdots$} & \multicolumn{1}{l}{$\vdots$} \\
               \cline{1-3}
               \cline{5-5}
-              $i_n$ & $R_{n0}$ & $R_{n1}$ & $\ldots$ & $R_{nn}$ \\
+              $\iota_n$ & $RS_{n0}$ & $RS_{n1}$ & $\ldots$ & $RS_{nn}$ \\
               \cline{1-3}
               \cline{5-5}
             \end{tabular}
@@ -3315,6 +3315,44 @@
         \end{table}
 
         \subsubsection{Binary Representation of Relation Sets}
+
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|c|c|c|c|}
+              \hline
+              {\bf Relation} & {\bf Symbol} & {\bf Value} & {\bf Bit Value} \\
+              \hline
+              Equals        & EQL &    1 &  0 \\
+              \hline                        
+              Before        & BEF &    2 &  1 \\
+              \hline                        
+              During        & DUR &    4 &  2 \\
+              \hline                        
+              Overlaps      & OVR &    8 &  3 \\
+              \hline                        
+              Meets         & MET &   16 &  4 \\
+              \hline                        
+              Starts        & STA &   32 &  5 \\
+              \hline                        
+              Finishes      & FIN &   64 &  6 \\
+              \hline                        
+              After         & BEI &  128 &  7 \\
+              \hline                        
+              Contains      & DUI &  256 &  8 \\
+              \hline                        
+              Overlapped By & OVI &  512 &  9 \\
+              \hline
+              Met By        & MEI & 1024 & 10 \\
+              \hline
+              Started By    & STI & 2048 & 11 \\
+              \hline
+              Finished By   & FII & 4096 & 12 \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption[]{Temporal Relation Value Assignment}
+          \label{table-rels-value}
+        \end{table}
 
         \subsubsection{Relation Set Lists as Network Model}
 
