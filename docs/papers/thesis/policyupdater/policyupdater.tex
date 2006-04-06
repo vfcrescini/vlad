@@ -3489,7 +3489,7 @@
 
           \begin{table}[tbhp]
             \begin{center}
-              \begin{tabular}[t]{|c|c|c|}
+              \begin{tabular}[t]{|l|l|l|}
                 \hline
                 {\bf Field} & {\bf Type} & {\bf Description} \\
                 \hline
@@ -3505,7 +3505,7 @@
 
           \begin{table}[tbhp]
             \begin{center}
-              \begin{tabular}[t]{|c|c|c|}
+              \begin{tabular}[t]{|l|l|l|}
                 \hline
                 {\bf Field} & {\bf Type} & {\bf Description} \\
                 \hline
@@ -3570,9 +3570,170 @@
 
       \subsection{Symbol Table}
 
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              {\bf Field} & {\bf Type} & {\bf Description} \\
+              \hline
+              $ss$  & String List & Single Subject \\
+              \hline
+              $sg$  & String List & Group Subject \\
+              \hline
+              $as$  & String List & Single Access Right \\
+              \hline
+              $ag$  & String List & Group Access Right \\
+              \hline
+              $os$  & String List & Single Object \\
+              \hline
+              $og$  & String List & Group Object \\
+              \hline
+              $int$ & String List & Interval \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption[]{Symbol Table}
+          \label{table-symtab}
+        \end{table}
+
       \subsection{Grounding of Variables}
 
       \subsection{Translation to Normal Logic Program}
+
+        \begin{vquote}
+          $Total_H$ $=$
+
+          \hspace{1em}
+          ($|T_s.ss|$ $+$ $|T_s.sg|$) $\cdot$
+
+          \hspace{1em}
+          ($|T_s.as|$ $+$ $|T_s.ag|$) $\cdot$
+
+          \hspace{1em}
+          ($|T_s.os|$ $+$ $|T_s.og|$) $\cdot$
+
+          \hspace{1em}
+          $|T_s.int|$
+        \end{vquote}
+
+        \begin{vquote}
+          $Total_M$ $=$
+
+          \hspace{1em}
+          ($|T_s.ss|$ $\cdot$ $|T_s.sg|$ $\cdot$ $|T_s.int|$) $+$
+
+          \hspace{1em}
+          ($|T_s.as|$ $\cdot$ $|T_s.ag|$ $\cdot$ $|T_s.int|$) $+$
+
+           \hspace{1em}
+          ($|T_s.os|$ $\cdot$ $|T_s.og|$ $\cdot$ $|T_s.int|$)
+        \end{vquote}
+
+        \begin{vquote}
+          $Total_S$ $=$
+
+          \hspace{1em}
+          ($|T_s.sg|^2$ $\cdot$ $|T_s.int|$) $+$
+
+          \hspace{1em}
+          ($|T_s.ag|^2$ $\cdot$ $|T_s.int|$) $+$
+
+           \hspace{1em}
+          ($|T_s.og|^2$ $\cdot$ $|T_s.int|$)
+        \end{vquote}
+
+        \begin{vquote}
+          $Total_A$ $=$ $Total_H$ $+$ $Total_M$ $+$ $Total_S$
+        \end{vquote}
+
+
+        \begin{vverbatim}
+  FUNCTION \(Encode_Holds\)(\(sub\), \(acc\), \(obj\), \(int\), \(\sigma\), \(tr\))
+    IF \(sub\) is group THEN
+      \(sub\) = \(sub\) + \(|T\sb{s}.ss|\)
+    ENDIF
+    IF \(acc\) is group THEN
+      \(acc\) = \(acc\) + \(|T\sb{s}.as|\)
+    ENDIF
+    IF \(obj\) is group THEN
+      \(obj\) = \(obj\) + \(|T\sb{s}.os|\)
+    ENDIF
+
+    \(offset\) \(=\)
+      (\(sub\) \(\cdot\) (\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+      (\(acc\) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+      (\(obj\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+      \(int\)
+      
+    IF \(tr\) THEN
+      \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
+    ENDIF
+
+    RETURN \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
+  ENDFUNCTION
+        \end{vverbatim}
+
+        \begin{vverbatim}
+  FUNCTION \(Encode_Memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
+    CASE type of member atom OF
+      \(subject\) :
+        \(offset\) \(=\)
+          (\(elt\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          \(int\)
+      \(access right\) :
+        \(offset\) \(=\)
+          (\(elt\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          \(int\)
+      \(object\) :
+        \(offset\) \(=\)
+          (\(elt\) \(\cdot\) \(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          \(int\)
+    ENDCASE
+      
+    IF \(tr\) THEN
+      \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
+    ENDIF
+
+    RETURN \(Total\sb{H}\) \(+\) \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
+  ENDFUNCTION
+        \end{vverbatim}
+
+        \begin{vverbatim}
+  FUNCTION \(Encode_Subst\)(\(grp1\), \(grp2\), \(int\), \(\sigma\), \(tr\))
+    CASE type of subset atom OF
+      \(subject\) :
+        \(offset\) \(=\)
+          (\(grp1\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(grp2\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          \(int\)
+      \(access right\) :
+        \(offset\) \(=\)
+          (\(grp1\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(grp2\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          \(int\)
+      \(object\) :
+        \(offset\) \(=\)
+          (\(grp1\) \(\cdot\) \(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(grp2\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          \(int\)
+    ENDCASE
+      
+    IF \(tr\) THEN
+      \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
+    ENDIF
+
+    RETURN \(Total\sb{H}\) \(+\) \(Total\sb{M}\) \(+\) \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
+  ENDFUNCTION
+        \end{vverbatim}
 
     \section{Discussions} 
 
