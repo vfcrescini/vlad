@@ -3735,6 +3735,48 @@
   ENDFUNCTION
         \end{vverbatim}
 
+
+        \begin{vverbatim}
+  FUNCTION \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
+    \(s\) \(=\) \(id\) \(\div\)
+        ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+    \(id\) \(=\) \(id\) \(\mod\)
+        ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+    \(a\) \(=\) \(id\) \(\div\) ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+    \(id\) \(=\) \(id\) \(\mod\) ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+    \(o\) \(=\) \(id\) \(\div\) \(|T\sb{s}.int|\)
+    \(i\) \(=\) \(id\) \(\mod\) \(|T\sb{s}.int|\)
+
+    IF \(s\) \(\geq\) \(|T\sb{s}.ss|\) THEN
+      \(sub\) = \(T\sb{s}.sg\)[\(s\) \(-\) \(|T\sb{s}.ss|\)]
+    ELSE
+      \(sub\) = \(T\sb{s}.ss\)[\(s\)]
+    ENDIF
+    IF \(a\) \(\geq\) \(|T\sb{s}.as|\) THEN
+      \(acc\) = \(T\sb{s}.ag\)[\(a\) \(-\) \(|T\sb{s}.as|\)]
+    ELSE
+      \(acc\) = \(T\sb{s}.as\)[\(a\)]
+    ENDIF
+    IF \(o\) \(\geq\) \(|T\sb{s}.os|\) THEN
+      \(obj\) = \(T\sb{s}.og\)[\(o\) \(-\) \(|T\sb{s}.os|\)]
+    ELSE
+      \(obj\) = \(T\sb{s}.os\)[\(o\)]
+    ENDIF
+
+    RETURN \(holds\)(\(sub\), \(acc\), \(obj\), \(T\sb{s}.int\)[\(i\)], \(\sigma\), \(tr\))
+  ENDFUNCTION
+        \end{vverbatim}
+
+        \begin{vverbatim}
+  FUNCTION \(Decode_Memb\)(\(id\), \(\sigma\), \(tr\))
+  ENDFUNCTION
+        \end{vverbatim}
+
+        \begin{vverbatim}
+  FUNCTION \(Decode_Subst\)(\(id\), \(\sigma\), \(tr\))
+  ENDFUNCTION
+        \end{vverbatim}
+
     \section{Discussions} 
 
   \begin{thebibliography}{M}
