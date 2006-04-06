@@ -3453,7 +3453,15 @@
               \end{vquote}
           \end{itemize}
 
-        \subsubsection{Relation Set Lists as Network Model}
+        \subsubsection{Network Data Structure}
+
+          The temporal interval network is implemented as a list of all
+          intervals, each with a relation list where information about its
+          relation with other intervals are stored (see Figure
+          \ref{fig-net-struct}). Table \ref{table-net-ds} shows the structure
+          of each node in the network list, while Table
+          \ref{table-rlist-ds} shows the structure of each relation list
+          node in each network list node.
 
           \begin{figure}[[tbhp]
             \begin{center}
@@ -3462,6 +3470,99 @@
               \label{fig-net-struct}
             \end{center}
           \end{figure}
+
+          For example, a network $NET$ containing only the relations
+          $before$($\iota_0$, $\iota_1$) and $during$($\iota_0$, $\iota_1$) are
+          stored in the following manner:
+
+          \begin{vquote}
+            $NET$[$0$].$int\_id$ $=$ $\iota_0$
+
+            $NET$[$0$].$rlist$[$0$].$int\_id$ $=$ $\iota_1$
+
+            $NET$[$0$].$rlist$[$0$].$rs$ $=$ $6$
+
+            $NET$[$1$].$int\_id$ $=$ $\iota_1$
+
+            $NET$[$1$].$rlist$ $=$ $\emptyset$
+          \end{vquote}
+
+          \begin{table}[tbhp]
+            \begin{center}
+              \begin{tabular}[t]{|c|c|c|}
+                \hline
+                {\bf Field} & {\bf Type} & {\bf Description} \\
+                \hline
+                $int\_id$ & String & Interval ID \\
+                \hline
+                $rlist$   & RelList & Relation List \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption[]{Network Node Data Structure}
+            \label{table-net-ds}
+          \end{table}
+
+          \begin{table}[tbhp]
+            \begin{center}
+              \begin{tabular}[t]{|c|c|c|}
+                \hline
+                {\bf Field} & {\bf Type} & {\bf Description} \\
+                \hline
+                $int\_id$ & String & Interval ID \\
+                \hline
+                $rs$      & Integer & Relation Set \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption[]{Relation List Node Data Structure}
+            \label{table-rlist-ds}
+          \end{table}
+
+          Note that in the previous example, the relations between intervals
+          $\iota_0$ and $\iota_1$ are stored in the relation list of interval
+          $\iota_0$, but the inverse relation, the relations between intervals
+          $\iota_1$ and $\iota_0$, is not stored in the relation list of
+          $\iota_1$. This is done for efficiency, as inverse relations can be
+          calculated by the inverse operator for any stored relations.
+
+          However, this method raises the question of how we decide which
+          interval node is used to store a given relation. In the previous
+          example, we arbitrarily chose to store the relation in interval
+          $\iota_0$'s relation list, however, we could just as easily have
+          chosen to store the relation in interval $\iota_1$'s relation list:
+
+          \begin{vquote}
+            $NET$[$0$].$int\_id$ $=$ $\iota_0$
+
+            $NET$[$0$].$rlist$ $=$ $\emptyset$
+
+            $NET$[$1$].$int\_id$ $=$ $\iota_1$
+
+            $NET$[$1$].$rlist$[$0$].$int\_id$ $=$ $\iota_0$
+
+            $NET$[$1$].$rlist$[$0$].$rs$ $=$ $384$
+          \end{vquote}
+
+          To resolve this issue, we adopt a simple rule to determine where a
+          given relation is to be stored in the network. Given a pair of
+          intervals $\iota_0$ and $\iota_1$, and a relation set $rs$, this
+          relation is stored in the node whose interval ID occurs first when
+          sorted alphabetically. For example, if $\iota_0$ is $morning$ and
+          $\iota_1$ is $evening$, then the relation $rs$ would be stored
+          in the node containing $\iota_1$, since $evening$ is alphabetically
+          before $morning$. To enforce this rule, we use the function below
+          before adding a relation to the network:
+
+          \begin{vverbatim}
+  FUNCTION \(Normalise\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
+    IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
+      RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\)) 
+    ELSE
+      RETURN (\(\iota\sb{1}\), \(\iota\sb{0}\), \(rs\sp{-1}\)) 
+    ENDIF
+  ENDFUNCTION
+          \end{vverbatim}
 
       \subsection{Network Operators}
 
