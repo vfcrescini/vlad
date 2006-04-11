@@ -3738,14 +3738,14 @@
 
         \begin{vverbatim}
   FUNCTION \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
-    \(s\) \(=\) \(id\) \(\div\)
+    \(s\) \(=\) \(id\) div
         ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-    \(id\) \(=\) \(id\) \(\mod\)
+    \(id\) \(=\) \(id\) mod
         ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-    \(a\) \(=\) \(id\) \(\div\) ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-    \(id\) \(=\) \(id\) \(\mod\) ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-    \(o\) \(=\) \(id\) \(\div\) \(|T\sb{s}.int|\)
-    \(i\) \(=\) \(id\) \(\mod\) \(|T\sb{s}.int|\)
+    \(a\) \(=\) \(id\) div ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+    \(id\) \(=\) \(id\) mod ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+    \(o\) \(=\) \(id\) div \(|T\sb{s}.int|\)
+    \(i\) \(=\) \(id\) mod \(|T\sb{s}.int|\)
 
     IF \(s\) \(\geq\) \(|T\sb{s}.ss|\) THEN
       \(sub\) = \(T\sb{s}.sg\)[\(s\) \(-\) \(|T\sb{s}.ss|\)]
@@ -3773,21 +3773,21 @@
     \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) 
 
     IF \(id\) \(<\) \(c\sb{0}\) THEN
-      \(elt\) \(=\) \(T\sb{s}.ss\)[\(id\) \(\div\) (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\) \(=\) \(T\sb{s}.sg\)[(\(id\) \(\mod\) (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\div\) \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) \(\mod\) (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\mod\) \(|T\sb{s}.int|\)]
+      \(elt\) \(=\) \(T\sb{s}.ss\)[\(id\) div (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
+      \(grp\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
     ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
       \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
 
-      \(elt\) \(=\) \(T\sb{s}.as\)[\(id\) \(\div\) (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\) \(=\) \(T\sb{s}.ag\)[(\(id\) \(\mod\) (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\div\) \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) \(\mod\) (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\mod\) \(|T\sb{s}.int|\)]
+      \(elt\) \(=\) \(T\sb{s}.as\)[\(id\) div (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
+      \(grp\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
     ELSE
       \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
 
-      \(elt\) \(=\) \(T\sb{s}.os\)[\(id\) \(\div\) (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\) \(=\) \(T\sb{s}.og\)[(\(id\) \(\mod\) (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\div\) \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) \(\mod\) (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\mod\) \(|T\sb{s}.int|\)]
+      \(elt\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
+      \(grp\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
     ENDIF
 
     RETURN \(memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
@@ -3800,21 +3800,21 @@
     \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
 
     IF \(id\) \(<\) \(c\sb{0}\) THEN
-      \(grp\sb{0}\) \(=\) \(T\sb{s}.sg\)[\(id\) \(\div\) (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\sb{1}\) \(=\) \(T\sb{s}.sg\)[(\(id\) \(\mod\) (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\div\) \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) \(\mod\) (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\mod\) \(|T\sb{s}.int|\)]
+      \(grp\sb{0}\) \(=\) \(T\sb{s}.sg\)[\(id\) div (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
+      \(grp\sb{1}\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
     ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
       \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
 
-      \(grp\sb{0}\) \(=\) \(T\sb{s}.ag\)[\(id\) \(\div\) (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\sb{1}\) \(=\) \(T\sb{s}.ag\)[(\(id\) \(\mod\) (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\div\) \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) \(\mod\) (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\mod\) \(|T\sb{s}.int|\)]
+      \(grp\sb{0}\) \(=\) \(T\sb{s}.ag\)[\(id\) div (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
+      \(grp\sb{1}\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
     ELSE
       \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
 
-      \(grp\sb{0}\) \(=\) \(T\sb{s}.os\)[\(id\) \(\div\) (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\sb{1}\) \(=\) \(T\sb{s}.og\)[(\(id\) \(\mod\) (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\div\) \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) \(\mod\) (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) \(\mod\) \(|T\sb{s}.int|\)]
+      \(grp\sb{0}\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
+      \(grp\sb{1}\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
     ENDIF
 
     RETURN \(subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
@@ -3823,8 +3823,8 @@
 
         \begin{vverbatim}
   FUNCTION \(Decode_Fact\)(\(id\))
-    \(\sigma\) \(=\) \(id\) \(\div\) (\(Total\sb{A}\) \(\cdot\) \(2\))
-    \(id\) \(=\) \(id\) \(\mod\) (\(Total\sb{A}\) \(\cdot\) \(2\)) 
+    \(\sigma\) \(=\) \(id\) div (\(Total\sb{A}\) \(\cdot\) \(2\))
+    \(id\) \(=\) \(id\) mod (\(Total\sb{A}\) \(\cdot\) \(2\)) 
 
     IF \(id\) \(\geq\) \(Total\sb{A}\) THEN
       \(tr\) \(=\) \(true\)
@@ -3832,7 +3832,7 @@
       \(tr\) \(=\) \(false\)
     ENDIF
 
-    \(id\) \(=\) \(id\) \(\mod\) \(Total\sb{A}\)
+    \(id\) \(=\) \(id\) mod \(Total\sb{A}\)
 
     IF \(id\) \(<\) \(Total\sb{H}\) THEN
       RETURN \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
