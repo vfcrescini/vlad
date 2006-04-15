@@ -5,6 +5,8 @@
 \usepackage{setspace}
 \usepackage{graphicx}
 \usepackage{alltt}
+\usepackage{float}
+\usepackage{calc}
 
 % a variable margin environment
 \newenvironment{vvarmargin}[2]
@@ -37,8 +39,36 @@
   \begin{alltt}
 }
 {
-  \vspace{-\baselineskip}
+    \vspace{-\baselineskip}
   \end{alltt}
+}
+
+% algorithm environment
+\floatstyle{plain}
+\floatname{valgorithmfloat}{Algorithm}
+\newfloat{valgorithmfloat}{tbph}{alg}[chapter]
+\newsavebox{\valgorithmbox}
+\newlength{\valgorithmboxwidth}
+
+\newenvironment{valgorithm}[3][tbhp]
+{
+  \setlength{\valgorithmboxwidth}{\linewidth-2em}
+
+  \begin{valgorithmfloat}[#1]
+    \caption{#2}
+    \label{#3}
+    \hspace{1em}
+    \begin{lrbox}{\valgorithmbox}
+      \begin{minipage}[l]{\valgorithmboxwidth}
+        \small
+        \begin{vverbatim}
+}
+{
+        \end{vverbatim}
+      \end{minipage}
+    \end{lrbox}
+    \framebox[\valgorithmboxwidth][l]{\usebox{\valgorithmbox}}
+  \end{valgorithmfloat}
 }
 
 % create a quote environment without a right-hand margin
@@ -315,35 +345,50 @@
 
         \subsubsection{Interval Relation Network}
 
-          The temporal interval relation knowledge base is represented as a network
-          whose nodes represent intervals and the arcs between them represent a set
-          of possible relations that hold between the two intervals. Note that although
-          this representation allows the assignment of a set of relations between any
-          two intervals, because the relations are mutually exclusive, we know that
-          only one of these relations actually holds. The fact that some interval
-          pairs have a set of relations between them only suggests that the information
-          given is insufficient to define the exact relation that holds between the
-          intervals.
+          The temporal interval relation knowledge base is represented as a
+          network whose nodes represent intervals and the arcs between them
+          represent a set of possible relations that hold between the two
+          intervals. Note that although this representation allows the
+          assignment of a set of relations between any two intervals, because
+          the relations are mutually exclusive, we know that only one of these
+          relations actually holds. The fact that some interval pairs have a
+          set of relations between them only suggests that the information
+          given is insufficient to define the exact relation that holds
+          between the intervals. Formally, we define the interval relation
+          network as follows:
 
-          The interval relation network is maintained in such a way that each node
-          is connected to every other node in the network. In cases where no
-          information is given to define an arc, we use the default arc which contains
-          a set of all 13 relations. As a matter of convention in the notation, we only
-          show one arc between two nodes. The reverse arc, composed of the inverses of
-          the relations represented by the first arc, is omitted.
+          \begin{vdefinition}
+            \label{def-net}
+            A {\bf interval relation network} is a collection of {\bf nodes}
+            and {\bf arcs}, where each node represents a single temporal
+            interval and each arc represents a set of possible relations
+            between two intervals. For any node pair, there is exactly one arc
+            between them.
+          \end{vdefinition}
 
-          Figure \ref{fig-net-ex-01} gives an example of a network with three nodes:
-          $i_0$, $i_1$ and $i_2$ and the following relations:
+          The interval relation network is maintained in such a way that each
+          node is connected to every other node in the network. In cases where
+          no information is given to define an arc, we use the default arc
+          which  contains a set of all 13 relations. As a matter of convention
+          in the notation, we only show one arc between two nodes. The reverse
+          arc, composed of the inverses of the relations represented by the
+          first arc, is omitted.
+
+          Figure \ref{fig-net-ex-01} gives an example of a network with three
+          nodes: $i_0$, $i_1$ and $i_2$ and the following relations:
 
           \begin{itemize}
-            \item Interval ${i_0}$ is {\em before} or {\em during} interval ${i_1}$.
-            \item Interval ${i_1}$ {\em overlaps} interval $i_2$.
+            \item
+              Interval ${i_0}$ is {\em before} or {\em during} interval
+              ${i_1}$.
+            \item
+              Interval ${i_1}$ {\em overlaps} interval $i_2$.
           \end{itemize}
 
-          In this example, note that because no relation is defined for intervals
-          ${i_0}$ and ${i_2}$, the corresponding arc between these nodes in Figure
-          \ref{fig-net-ex-01} is labelled {\em All}, meaning the relation set contains
-          all 13 possible relations.
+          In this example, note that because no relation is defined for
+          intervals ${i_0}$ and ${i_2}$, the corresponding arc between these
+          nodes in Figure \ref{fig-net-ex-01} is labelled {\em All}, meaning
+          the relation set contains all 13 possible relations.
 
           \begin{figure}[tbhp]
             \begin{center}
@@ -353,211 +398,217 @@
             \end{center}
           \end{figure}
 
-        \begin{table}[p]
-          \begin{vvarmargin}{-4cm}{-4cm}
-            \begin{center}
-              \tiny
-              \begin{tabular}[t]{|r|l|l|l|l|l|l|l|l|l|l|l|l|}
-                \hline
-                                        & \textbf{Before}         & \textbf{After}          & \textbf{During}         & \textbf{Contains}       & \textbf{Overlaps}       & \textbf{Overlapped By}  & \textbf{Meets}          & \textbf{Met}            & \textbf{Starts}         & \textbf{Started By}     & \textbf{Finishes}       & \textbf{Finished By}    \\
-                                        & (BEF)                   & (BEI)                   & (DUR)                   & (DUI)                   & (OVR)                   & (OVI)                   & (MET)                   & (MEI)                   & (STA)                   & (STI)                   & (FIN)                   & (FII)                   \\
-                \hline
-                \textbf{Before}         & BEF                     & ALL                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     \\
-                (BEF)                   &                         &                         & OVR                     &                         &                         & OVR                     &                         & OVR                     &                         &                         & OVR                     &                         \\
-                                        &                         &                         & MET                     &                         &                         & MET                     &                         & MET                     &                         &                         & MET                     &                         \\
-                                        &                         &                         & DUR                     &                         &                         & DUR                     &                         & DUR                     &                         &                         & DUR                     &                         \\
-                                        &                         &                         & STA                     &                         &                         & STA                     &                         & STA                     &                         &                         & STA                     &                         \\
-                \hline
-                \textbf{After}          & ALL                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     \\
-                (BEI)                   &                         &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         &                         &                         \\
-                                        &                         &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         &                         &                         \\
-                                        &                         &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         &                         &                         \\
-                                        &                         &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         &                         &                         \\
-                \hline
-                \textbf{During}         & BEF                     & BEI                     & DUR                     & ALL                     & BEF                     & BEI                     & BEF                     & BEI                     & DUR                     & BEI                     & DUR                     & BEF                     \\
-                (DUR)                   &                         &                         &                         &                         & OVI                     & OVI                     &                         &                         &                         & OVI                     &                         & OVR                     \\
-                                        &                         &                         &                         &                         & MET                     & MEI                     &                         &                         &                         & MEI                     &                         & MET                     \\
-                                        &                         &                         &                         &                         & DUR                     & DUR                     &                         &                         &                         & DUR                     &                         & DUR                     \\
-                                        &                         &                         &                         &                         & STI                     & FIN                     &                         &                         &                         & FIN                     &                         & STA                     \\
-                \hline
-                \textbf{Contains}       & BEF                     & BEI                     & OVR                     & DUI                     & OVR                     & OVI                     & OVR                     & OVI                     & DUI                     & DUI                     & DUI                     & DUI                     \\
-                (DUI)                   & MET                     & DUI                     & DUR                     &                         & DUI                     & DUI                     & DUI                     & DUI                     & FII                     &                         & STI                     &                         \\
-                                        & DUI                     & MEI                     & STA                     &                         & FII                     & STI                     & FII                     & STI                     & OVR                     &                         & OVI                     &                         \\
-                                        & FII                     & STI                     & FIN                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                \hline
-                \textbf{Overlaps}       & BEF                     & BEI                     & OVR                     & BEF                     & BEF                     & OVR                     & BEF                     & OVI                     & OVR                     & DUI                     & DUR                     & BEF                     \\
-                (OVR)                   &                         & OVI                     & DUR                     & OVR                     & OVR                     & OVI                     &                         & DUI                     &                         & FII                     & STA                     & OVR                     \\
-                                        &                         & DUI                     & STA                     & MET                     & MET                     & DUR                     &                         & STI                     &                         & OVR                     & OVR                     & MET                     \\
-                                        &                         & MEI                     &                         & DUI                     &                         & STA                     &                         &                         &                         &                         &                         &                         \\
-                                        &                         & STI                     &                         & FII                     &                         & FIN                     &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         \\
-                \hline
-                \textbf{Overlapped By}  & BEF                     & BEI                     & OVI                     & BEI                     & OVR                     & BEI                     & OVR                     & BEI                     & OVI                     & OVI                     & OVI                     & OVI                     \\
-                (OVI)                   & OVR                     &                         & DUR                     & OVI                     & OVI                     & OVI                     & DUI                     &                         & DUR                     & BEI                     &                         & DUI                     \\
-                                        & MET                     &                         & FIN                     & MEI                     & DUR                     & MEI                     & FII                     &                         & FIN                     & MEI                     &                         & STI                     \\
-                                        & DUI                     &                         &                         & DUI                     & STA                     &                         &                         &                         &                         &                         &                         &                         \\
-                                        & FII                     &                         &                         & STI                     & FIN                     &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         &                         \\
-                \hline
-                \textbf{Meets}          & BEF                     & BEI                     & OVR                     & BEF                     & BEF                     & OVR                     & BEF                     & FIN                     & MET                     & MET                     & DUR                     & BEF                     \\
-                (MET)                   &                         & OVI                     & DUR                     &                         &                         & DUR                     &                         & FII                     &                         &                         & STA                     &                         \\
-                                        &                         & MEI                     & STA                     &                         &                         & STA                     &                         & EQL                     &                         &                         & OVR                     &                         \\
-                                        &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                \hline
-                \textbf{Met By}         & BEF                     & BEI                     & OVI                     & BEI                     & OVI                     & BEI                     & STA                     & BEI                     & DUR                     & BEI                     & MEI                     & MEI                     \\
-                (MEI)                   & OVR                     &                         & DUR                     &                         & DUR                     &                         & STI                     &                         & FIN                     &                         &                         &                         \\
-                                        & MET                     &                         & FIN                     &                         & FIN                     &                         & EQL                     &                         & OVI                     &                         &                         &                         \\
-                                        & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                \hline
-                \textbf{Starts}         & BEF                     & BEI                     & DUR                     & BEF                     & BEF                     & OVI                     & BEF                     & MEI                     & STA                     & STA                     & DUR                     & BEF                     \\
-                (STA)                   &                         &                         &                         & OVR                     & OVR                     & DUR                     &                         &                         &                         & STI                     &                         & MET                     \\
-                                        &                         &                         &                         & MET                     & MET                     & FIN                     &                         &                         &                         & EQL                     &                         & OVR                     \\
-                                        &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         &                         \\
-                \hline
-                \textbf{Started By}     & BEF                     & BEI                     & OVI                     & DUI                     & OVR                     & OVI                     & OVR                     & MEI                     & STA                     & STI                     & OVI                     & DUI                     \\
-                (STI)                   & OVR                     &                         & DUR                     &                         & DUI                     &                         & DUI                     &                         & STI                     &                         &                         &                         \\
-                                        & MET                     &                         & FIN                     &                         & FII                     &                         & FII       y             &                         & EQL                     &                         &                         &                         \\
-                                        & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                \hline
-                \textbf{Finishes}       & BEF                     & BEI                     & DUR                     & BEI                     & OVR                     & BEI                     & MET                     & BEI                     & DUR                     & BEI                     & FIN                     & FIN                     \\
-                (FIN)                   &                         &                         &                         & OVI                     & DUR                     & OVI                     &                         &                         &                         & OVI                     &                         & FII                     \\
-                                        &                         &                         &                         & MEI                     & STA                     & MEI                     &                         &                         &                         & MEI                     &                         & EQL                     \\
-                                        &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
-                \hline
-                \textbf{Finished By}    & BEF                     & BEI                     & OVR                     & DUI                     & OVR                     & OVI                     & MET                     & STI                     & OVR                     & DUI                     & FIN                     & FII                     \\
-                (FII)                   &                         & OVI                     & DUR                     &                         &                         & DUI                     &                         & OVI                     &                         &                         & FII                     &                         \\
-                                        &                         & MEI                     & STA                     &                         &                         & STI                     &                         & DUI                     &                         &                         & EQL                     &                         \\
-                                        &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                                        &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
-                \hline
-              \end{tabular}
-            \end{center}
-            \caption[]{Transitivity Table}
-            \label{table-trans}
-          \end{vvarmargin}
-        \end{table}
+          With the network structure defined, we can now formally define the
+          three basic network operators:
+
+          \begin{vdefinition}
+            \label{def-net-ops}
+            Given a temporal interval network $NET$. The three basic network
+            operations are as follows:
+
+            \begin{itemize}
+              \item
+                The $NET.Get$($I_0$, $I_1$) operator returns the relation
+                set on the arc between intervals $I_0$ and $I_1$.
+              \item
+                The $NET$.$Replace$($I_0$, $I_1$, $RS$) operator replaces the
+                relation set on the arc between intervals $I_0$ and $I_1$ with
+                the relation set $RS$.
+              \item
+                The $NET.Add$($I_0$, $I_1$, $RS$) operator adds the relation
+                set $RS$ to the arc between intervals $I_0$ and $I_1$, and
+                propagates the effects of this change to the rest of the
+                network.
+            \end{itemize}
+          \end{vdefinition}
+
+          As described in the definition above, the $NET.Get$() and
+          $NET.Replace$() operators are simple $get$() and $set$() operations
+          on arc labels. In constrast, the $NET.Add$() operator requires a
+          more complex algorithm to perform the propagation. This algorithm is
+          discussed in detail in the next section.
+
+          \begin{table}[p]
+            \begin{vvarmargin}{-4cm}{-4cm}
+              \begin{center}
+                \tiny
+                \begin{tabular}[t]{|r|l|l|l|l|l|l|l|l|l|l|l|l|}
+                  \hline
+                                          & \textbf{Before}         & \textbf{After}          & \textbf{During}         & \textbf{Contains}       & \textbf{Overlaps}       & \textbf{Overlapped By}  & \textbf{Meets}          & \textbf{Met}            & \textbf{Starts}         & \textbf{Started By}     & \textbf{Finishes}       & \textbf{Finished By}    \\
+                                          & (BEF)                   & (BEI)                   & (DUR)                   & (DUI)                   & (OVR)                   & (OVI)                   & (MET)                   & (MEI)                   & (STA)                   & (STI)                   & (FIN)                   & (FII)                   \\
+                  \hline
+                  \textbf{Before}         & BEF                     & ALL                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     & BEF                     \\
+                  (BEF)                   &                         &                         & OVR                     &                         &                         & OVR                     &                         & OVR                     &                         &                         & OVR                     &                         \\
+                                          &                         &                         & MET                     &                         &                         & MET                     &                         & MET                     &                         &                         & MET                     &                         \\
+                                          &                         &                         & DUR                     &                         &                         & DUR                     &                         & DUR                     &                         &                         & DUR                     &                         \\
+                                          &                         &                         & STA                     &                         &                         & STA                     &                         & STA                     &                         &                         & STA                     &                         \\
+                  \hline
+                  \textbf{After}          & ALL                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     & BEI                     \\
+                  (BEI)                   &                         &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         & OVI                     &                         &                         &                         \\
+                                          &                         &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         & MEI                     &                         &                         &                         \\
+                                          &                         &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         & DUR                     &                         &                         &                         \\
+                                          &                         &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         & FIN                     &                         &                         &                         \\
+                  \hline
+                  \textbf{During}         & BEF                     & BEI                     & DUR                     & ALL                     & BEF                     & BEI                     & BEF                     & BEI                     & DUR                     & BEI                     & DUR                     & BEF                     \\
+                  (DUR)                   &                         &                         &                         &                         & OVI                     & OVI                     &                         &                         &                         & OVI                     &                         & OVR                     \\
+                                          &                         &                         &                         &                         & MET                     & MEI                     &                         &                         &                         & MEI                     &                         & MET                     \\
+                                          &                         &                         &                         &                         & DUR                     & DUR                     &                         &                         &                         & DUR                     &                         & DUR                     \\
+                                          &                         &                         &                         &                         & STI                     & FIN                     &                         &                         &                         & FIN                     &                         & STA                     \\
+                  \hline
+                  \textbf{Contains}       & BEF                     & BEI                     & OVR                     & DUI                     & OVR                     & OVI                     & OVR                     & OVI                     & DUI                     & DUI                     & DUI                     & DUI                     \\
+                  (DUI)                   & MET                     & DUI                     & DUR                     &                         & DUI                     & DUI                     & DUI                     & DUI                     & FII                     &                         & STI                     &                         \\
+                                          & DUI                     & MEI                     & STA                     &                         & FII                     & STI                     & FII                     & STI                     & OVR                     &                         & OVI                     &                         \\
+                                          & FII                     & STI                     & FIN                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                  \textbf{Overlaps}       & BEF                     & BEI                     & OVR                     & BEF                     & BEF                     & OVR                     & BEF                     & OVI                     & OVR                     & DUI                     & DUR                     & BEF                     \\
+                  (OVR)                   &                         & OVI                     & DUR                     & OVR                     & OVR                     & OVI                     &                         & DUI                     &                         & FII                     & STA                     & OVR                     \\
+                                          &                         & DUI                     & STA                     & MET                     & MET                     & DUR                     &                         & STI                     &                         & OVR                     & OVR                     & MET                     \\
+                                          &                         & MEI                     &                         & DUI                     &                         & STA                     &                         &                         &                         &                         &                         &                         \\
+                                          &                         & STI                     &                         & FII                     &                         & FIN                     &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                  \textbf{Overlapped By}  & BEF                     & BEI                     & OVI                     & BEI                     & OVR                     & BEI                     & OVR                     & BEI                     & OVI                     & OVI                     & OVI                     & OVI                     \\
+                  (OVI)                   & OVR                     &                         & DUR                     & OVI                     & OVI                     & OVI                     & DUI                     &                         & DUR                     & BEI                     &                         & DUI                     \\
+                                          & MET                     &                         & FIN                     & MEI                     & DUR                     & MEI                     & FII                     &                         & FIN                     & MEI                     &                         & STI                     \\
+                                          & DUI                     &                         &                         & DUI                     & STA                     &                         &                         &                         &                         &                         &                         &                         \\
+                                          & FII                     &                         &                         & STI                     & FIN                     &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         &                         & EQL                     &                         &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                  \textbf{Meets}          & BEF                     & BEI                     & OVR                     & BEF                     & BEF                     & OVR                     & BEF                     & FIN                     & MET                     & MET                     & DUR                     & BEF                     \\
+                  (MET)                   &                         & OVI                     & DUR                     &                         &                         & DUR                     &                         & FII                     &                         &                         & STA                     &                         \\
+                                          &                         & MEI                     & STA                     &                         &                         & STA                     &                         & EQL                     &                         &                         & OVR                     &                         \\
+                                          &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                  \textbf{Met By}         & BEF                     & BEI                     & OVI                     & BEI                     & OVI                     & BEI                     & STA                     & BEI                     & DUR                     & BEI                     & MEI                     & MEI                     \\
+                  (MEI)                   & OVR                     &                         & DUR                     &                         & DUR                     &                         & STI                     &                         & FIN                     &                         &                         &                         \\
+                                          & MET                     &                         & FIN                     &                         & FIN                     &                         & EQL                     &                         & OVI                     &                         &                         &                         \\
+                                          & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                  \textbf{Starts}         & BEF                     & BEI                     & DUR                     & BEF                     & BEF                     & OVI                     & BEF                     & MEI                     & STA                     & STA                     & DUR                     & BEF                     \\
+                  (STA)                   &                         &                         &                         & OVR                     & OVR                     & DUR                     &                         &                         &                         & STI                     &                         & MET                     \\
+                                          &                         &                         &                         & MET                     & MET                     & FIN                     &                         &                         &                         & EQL                     &                         & OVR                     \\
+                                          &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         & FII                     &                         &                         &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                  \textbf{Started By}     & BEF                     & BEI                     & OVI                     & DUI                     & OVR                     & OVI                     & OVR                     & MEI                     & STA                     & STI                     & OVI                     & DUI                     \\
+                  (STI)                   & OVR                     &                         & DUR                     &                         & DUI                     &                         & DUI                     &                         & STI                     &                         &                         &                         \\
+                                          & MET                     &                         & FIN                     &                         & FII                     &                         & FII       y             &                         & EQL                     &                         &                         &                         \\
+                                          & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          & FII                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                  \textbf{Finishes}       & BEF                     & BEI                     & DUR                     & BEI                     & OVR                     & BEI                     & MET                     & BEI                     & DUR                     & BEI                     & FIN                     & FIN                     \\
+                  (FIN)                   &                         &                         &                         & OVI                     & DUR                     & OVI                     &                         &                         &                         & OVI                     &                         & FII                     \\
+                                          &                         &                         &                         & MEI                     & STA                     & MEI                     &                         &                         &                         & MEI                     &                         & EQL                     \\
+                                          &                         &                         &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         &                         &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                  \textbf{Finished By}    & BEF                     & BEI                     & OVR                     & DUI                     & OVR                     & OVI                     & MET                     & STI                     & OVR                     & DUI                     & FIN                     & FII                     \\
+                  (FII)                   &                         & OVI                     & DUR                     &                         &                         & DUI                     &                         & OVI                     &                         &                         & FII                     &                         \\
+                                          &                         & MEI                     & STA                     &                         &                         & STI                     &                         & DUI                     &                         &                         & EQL                     &                         \\
+                                          &                         & DUI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                                          &                         & STI                     &                         &                         &                         &                         &                         &                         &                         &                         &                         &                         \\
+                  \hline
+                \end{tabular}
+              \end{center}
+              \caption[]{Transitivity Table}
+              \label{table-trans}
+            \end{vvarmargin}
+          \end{table}
 
         \subsubsection{Propagation Algorithm}
 
-          The algorithm works as follows. As a starting point, we assume that the
-          network contains complete interval relation information, i.e. at each node,
-          there is an arc that connects it to every other node. Where there is no
-          defined relationship between two nodes, the default arc is used to connect
-          these two nodes. The algorithm is invoked whenever new information is to be
-          added into the network. Whenever a new relation is added into the network,
-          all consequences of this new relation are also added into the network. These
-          consequences are computed through the transitive closure of the network. The
-          following example illustrates this procedure.
+          The algorithm works as follows. As a starting point, we assume that
+          the network contains complete interval relation information, i.e. at
+          each node, there is an arc that connects it to every other node.
+          Where there is no defined relationship between two nodes, the default
+          arc is used to connect these two nodes. The algorithm is invoked
+          whenever new information is to be added into the network. Whenever a
+          new relation is added into the network, all consequences of this new
+          relation are also added into the network. These consequences are
+          computed through the transitive closure of the network. The following
+          example illustrates this procedure.
 
           Given 3 intervals $i_0$, $i_1$ and $i_2$, and the relation $i_0$ is
-          {\em before} $i_1$. Suppose the new relation $i_2$ is {\em during} $i_1$ is
-          added into the network. The algorithm then infers that $i_0$ is {\em before}
-          $i_2$. This new relation is again added into the network in a similar way,
-          possibly inferring other new relations as it is added. This procedure is
-          repeated until no new information is yielded.
+          {\em before} $i_1$. Suppose the new relation $i_2$ is {\em during}
+          $i_1$ is added into the network. The algorithm then infers that
+          $i_0$ is {\em before} $i_2$. This new relation is again added into
+          the network in a similar way, possibly inferring other new relations
+          as it is added. This procedure is repeated until no new information
+          is yielded.
 
           Table \ref{table-trans} shows the basic transitivity rules. For any 3
           intervals $i_0$, $i_1$ and $i_2$, the relation(s) between intervals
-          $i_0$ and $i_2$ is shown in the intersection of the row that contains the
-          the relation between $i_0$ and $i_1$, and the column that contains the
-          relation between $i_1$ and $i_2$.
+          $i_0$ and $i_2$ is shown in the intersection of the row that contains
+          the relation between $i_0$ and $i_1$, and the column that contains
+          the relation between $i_1$ and $i_2$.
 
           Before we can define the actual algorithm, we must first define a few
-          notational constructs.
-
-          For any single relations $r_0$ and $r_1$, the function $Trans_1$($r_0$, $r_1$)
-          returns the relation set $RS$ that corresponds to the intersection of $r_0$
-          and $r_1$ in Table \ref{table-trans}.
+          functions. For any single relations $r_0$ and $r_1$, the function
+          $Trans_1$($r_0$, $r_1$) returns the relation set $RS$ that
+          corresponds to the intersection of $r_0$ and $r_1$ in Table
+          \ref{table-trans}.
 
           Using this function, we can then define the extended function
-          $Trans_2$($RS_0$, $RS_1$), which takes a pair of relation sets $RS_0$ and
-          $RS_1$ as input, and returns the relation set $RS$ which contains all the
-          possible relations inferred from the two given relation sets using the
-          $Trans_1$() function.
+          $Trans_2$($RS_0$, $RS_1$) shown in Algorithm \ref{algo-trans2}, which
+          takes a pair of relation sets $RS_0$ and $RS_1$ as input, and returns
+          the relation set $RS$ which contains all the possible relations
+          inferred from the two given relation sets using the $Trans_1$()
+          function.
 
-          \begin{vverbatim}
-  FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
-    \(RS\) = \(\emptyset\)
-    FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
-      FOR each \(r\sb{1}\) \(\in\) \(RS\sb{1}\) DO
-        \(RS\) = \(RS\) \(\cup\) \(Trans\sb{1}\)(\(r\sb{0}\), \(r\sb{1}\))
-      ENDDO
+          \begin{valgorithm}[tbhp]{$Trans_{2}()$}{algo-trans2}
+FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
+  \(RS\) = \(\emptyset\)
+  FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
+    FOR each \(r\sb{1}\) \(\in\) \(RS\sb{1}\) DO
+      \(RS\) = \(RS\) \(\cup\) \(Trans\sb{1}\)(\(r\sb{0}\), \(r\sb{1}\))
     ENDDO
-    RETURN \(RS\)
-  ENDFUNCTION
-          \end{vverbatim}
+  ENDDO
+  RETURN \(RS\)
+ENDFUNCTION
+          \end{valgorithm}
 
-          We now define some network operators. The first operator,
-          $NET.Get$($I_0$, $I_1$), returns the relation set on the arc between
-          interval $I_0$ and interval $I_1$. The function $NET.Replace$($I_0$, $I_1$,
-          $RS$) blindly replaces the relation set of the arc between $I_0$ and $I_1$
-          with the given relation set $RS$. In addition to these network operators,
-          we also define a standard queue structure $Q$ which stores a network arc,
-          i.e. a pair of intervals and a relation set that holds between the two
-          intervals. Thus, we have three operators for the queue structure:
-          $Q.Enqueue$($I_0$, $I_1$, $RS$), which enqueues the given arc; and
-          $Q.Dequeue$() which returns and removes the oldest arc stored in the queue
-          $Q$; and $Q.IsEmpty$() which returns true if the queue is empty and false
-          otherwise.
+          In addition to these functions, we also define a standard queue
+          structure $Q$ which stores network arcs, i.e. a pair of intervals
+          and a relation set that holds between the two intervals. Thus, we
+          have three operators for the queue structure:
 
-          With these operators, we can now define the network operator to add new
-          relations to the network and propagate its effects.
+          \begin{itemize}
+            \item
+              $Q.Enqueue$($I_0$, $I_1$, $RS$) stores the given arc to the end
+              of the structure.
+            \item
+              $Q.Dequeue$() returns and removes the arc at the front of the
+              structure.
+            \item
+              $Q.IsEmpty$() returns true if the queue is empty and false
+              otherwise.
+          \end{itemize}
 
-          \begin{vverbatim}
-  FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
-    \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
-    WHILE NOT \(Q.IsEmpty\)() DO
-      \(I\sb{0}'\), \(I\sb{1}'\), \(RS'\) = \(Q.Dequeue\)()
-      \(NET.Replace\)(\(I\sb{0}'\), \(I\sb{1}'\), \(RS'\))
-      FOR each interval \(I''\) \(\in\) \(NET\) DO
-        IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
-          \(RS''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(I''\), \(I\sb{0}'\)), \(RS'\))
-          \(RS'''\) = \(NET.Get\)(\(I''\), \(I\sb{1}'\)) \(\cap\) \(RS''\)
-          IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{1}'\)) THEN
-            \(Q.Add\)(\(I''\), \(I\sb{1}'\), \(RS'''\))
-          ENDIF
-        ENDIF
-      ENDDO
-      FOR each interval \(I''\) \(\in\) \(NET\) DO
-        IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
-          \(RS''\) =  \(Trans\sb{2}\)(\(RS'\), \(NET.Get\)(\(I\sb{1}'\), \(I''\)))
-          \(RS'''\) = \(NET.Get\)(\(I\sb{0}'\), \(I''\)) \(\cap\) \(RS''\)
-          IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{0}'\)) THEN
-            \(Q.Add\)(\(I\sb{0}'\), \(I''\), \(RS'''\))
-          ENDIF
-        ENDIF
-      ENDDO
-    ENDDO
-  ENDFUNCTION
-          \end{vverbatim}
+          The $NET.Add()$ algorithm shown in Algorithm \ref{algo-net-add} works
+          as follows. Every time a new arc ($i_0$, $i_1$, $rs$) is added, the
+          algorithm finds the transitive relation set $RS$ between each of
+          these intervals and every other interval $I$ in the network, i.e.
+          the algorithm finds $RS$ = $Trans_2$($NET.Get$($I$, $i_0$), $rs$) for
+          every other interval $I$ in the network. If this new relation set
+          $RS$ contains more specific information than what is already in the
+          network, i.e. $RS$ $\subset$ $NET.Get$($I$, $i_1$), then this new arc
+          between $I$ and $i_1$ (shown in Figure \ref{fig-net-ex-02}) is again
+          put through the same algorithm, as it might yield more relation
+          changes.
 
-          The $NET.Add()$ algorithm works as follows. Every time a new arc
-          $i_0$, $i_1$ and $rs$ is added, the algorithm finds the transitive
-          relation set $RS$ between each of these intervals and every other
-          interval $I$ in the network, i.e. the algorithm finds $RS$ =
-          $Trans_2$($NET.Get$($I$, $i_0$), $rs$) for every other interval $I$
-          in the network. If this new relation set $RS$ contains more specific
-          information than what is already in the network, i.e. $RS$ $\subset$
-          $NET.Get$($I$, $i_1$), then this new arc between $I$ and $i_1$ (as
-          shown in Figure \ref{fig-net-ex-02}) is again put through the same
-          algorithm, as it might yield more relation changes.
-
-          \begin{figure}[[tbhp]
+          \begin{figure}[tbhp]
             \begin{center}
               \includegraphics{net-02}
               \caption{A new relation $RS$ from interval $I$ and interval $i_1$}
@@ -565,18 +616,46 @@
             \end{center}
           \end{figure}
 
-          Note that as shown in Figure \ref{fig-net-ex-03}, the algorithm also
-          attempts to form new transitive relations between the given intervals
-          $i_0$ and $i_1$ and all other intervals $I$ in the network such that
-          interval $I$ is to the right of the other two intervals.
+          Note that the algorithm also attempts to form new transitive
+          relations between the given intervals $i_0$ and $i_1$ and all other
+          intervals $I$ in the network such that interval $I$ is to the right
+          of the other two intervals (shown in Figure \ref{fig-net-ex-03}).
 
-          \begin{figure}[[tbhp]
+          \begin{figure}[tbhp]
             \begin{center}
               \includegraphics{net-03}
               \caption{A new relation $RS$ from interval $i_0$ and interval $I$}
               \label{fig-net-ex-03}
             \end{center}
           \end{figure}
+
+          \begin{valgorithm}[tbhp]{$NET.Add()$}{algo-net-add}
+FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
+  \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
+  WHILE NOT \(Q.IsEmpty\)() DO
+    \(I\sb{0}'\), \(I\sb{1}'\), \(RS'\) = \(Q.Dequeue\)()
+    \(NET.Replace\)(\(I\sb{0}'\), \(I\sb{1}'\), \(RS'\))
+    FOR each interval \(I''\) \(\in\) \(NET\) DO
+      IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
+        \(RS''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(I''\), \(I\sb{0}'\)), \(RS'\))
+        \(RS'''\) = \(NET.Get\)(\(I''\), \(I\sb{1}'\)) \(\cap\) \(RS''\)
+        IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{1}'\)) THEN
+          \(Q.Add\)(\(I''\), \(I\sb{1}'\), \(RS'''\))
+        ENDIF
+      ENDIF
+    ENDDO
+    FOR each interval \(I''\) \(\in\) \(NET\) DO
+      IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
+        \(RS''\) =  \(Trans\sb{2}\)(\(RS'\), \(NET.Get\)(\(I\sb{1}'\), \(I''\)))
+        \(RS'''\) = \(NET.Get\)(\(I\sb{0}'\), \(I''\)) \(\cap\) \(RS''\)
+        IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{0}'\)) THEN
+          \(Q.Add\)(\(I\sb{0}'\), \(I''\), \(RS'''\))
+        ENDIF
+      ENDIF
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
 
           \begin{vexample}
             \label{ex-1}
@@ -585,7 +664,7 @@
             are given, each arc in the network as shown in Figure
             \ref{fig-net-ex-04} is the default arc.
 
-            \begin{figure}[[tbhp]
+            \begin{figure}[tbhp]
               \begin{center}
                 \includegraphics{net-04}
                 \caption{Network with 3 default arcs}
@@ -601,7 +680,7 @@
             in the network contains all relations, the effects of the
             $NET.ADD$() operation are limited to one arc.
 
-            \begin{figure}[[tbhp]
+            \begin{figure}[tbhp]
               \begin{center}
                 \includegraphics{net-05}
                 \caption{Network after $NET.Add$($i_0$, $i_1$, \{$BEF$, $MET$, $OVR$\})}
@@ -726,87 +805,88 @@
 
         \begin{vdefinition}
           \label{def-interval}
-          A {\bf well-defined interval} $i$ is an interval whose end points $i^{-}$
-          $\in$ ${\mathbb Z}^{+}$ and $i^{+}$ $\in$ ${\mathbb Z}^{+}$ are defined,
-          where $i^{-}$ $<$ $i^{+}$. A {\bf regular interval} is an interval whose
-          end points are not known.
+          A {\bf well-defined interval} $i$ is an interval whose end points
+          $i^{-}$ $\in$ ${\mathbb Z}^{+}$ and $i^{+}$ $\in$ ${\mathbb Z}^{+}$
+          are defined, where $i^{-}$ $<$ $i^{+}$. A {\bf regular interval} is
+          an interval whose end points are not known.
         \end{vdefinition}
 
         Under this definition, we can conclude that for any two well-defined
         intervals there is exactly one interval relation that holds between
-        them. We now define a function that will calculate this relation given
-        the end points of two well-defined intervals.
+        them. Algorithm \ref{algo-comp} shows a function that calculates this
+        relation given the end points of two well-defined intervals.
 
-        \begin{vverbatim}
-  FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(i\sb{1}\sp{+}\))
-    IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{-}\) THEN
-      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
-        RETURN \{\(equals\}\)
-      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
-        RETURN \{\(starts\}\)
+        By using the $Compute$() function in Algorithm \ref{algo-comp}, we can
+        now define a network operator, $NET.Bind$($I$, $I^-$, $I^+$), that
+        assigns the end points $I^-$ and $I^+$ to the existing interval $I$ in
+        the network. By allowing such end points to be defined for any
+        interval, thereby making them well-defined intervals, we are also
+        allowing the possibility of introducing new relations with this
+        interval. Furthermore, any new relations gathered by comparing the end
+        points of well-defined intervals are subject to the same propagation
+        algorithms shown in the previous section. Algorithm \ref{algo-net-bind}
+        shows how the $NET.Bind$() operator achieves this.
+
+        \begin{valgorithm}[tbhp]{$Compute$()}{algo-comp}
+FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(i\sb{1}\sp{+}\))
+  IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{-}\) THEN
+    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(equals\}\)
+    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(starts\}\)
+    ELSE
+      RETURN \{\(started by\}\)
+    ENDIF
+  ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{-}\) THEN
+    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(finished by\}\)
+    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{-}\) THEN
+        RETURN \{\(meets\}\)
+      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{-}\) THEN
+        RETURN \{\(before\}\)
       ELSE
-        RETURN \{\(started by\}\)
-      ENDIF
-    ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{-}\) THEN
-      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
-        RETURN \{\(finished by\}\)
-      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
-        IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{-}\) THEN
-          RETURN \{\(meets\}\)
-        ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{-}\) THEN
-          RETURN \{\(before\}\)
-        ELSE
-          RETURN \{\(overlaps\}\)
-        ENDIF
-      ELSE
-        RETURN \{\(contains\}\)
+        RETURN \{\(overlaps\}\)
       ENDIF
     ELSE
-      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
-        RETURN \{\(finishes\}\)
-      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
-        RETURN \{\(during\}\)
+      RETURN \{\(contains\}\)
+    ENDIF
+  ELSE
+    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(finishes\}\)
+    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+      RETURN \{\(during\}\)
+    ELSE
+      IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{+}\) THEN
+        RETURN \{\(met by\}\)
+      ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{+}\) THEN
+        RETURN \{\(overlapped by\}\)
       ELSE
-        IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{+}\) THEN
-          RETURN \{\(met by\}\)
-        ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{+}\) THEN
-          RETURN \{\(overlapped by\}\)
-        ELSE
-          RETURN \{\(after\}\)
-        ENDIF
+        RETURN \{\(after\}\)
       ENDIF
     ENDIF
-  ENDFUNCTION
-        \end{vverbatim}
+  ENDIF
+ENDFUNCTION
+        \end{valgorithm}
 
-        By using the above algorithm, we can now define a new network operator
-        $NET.Bind$($I$, $I^-$, $I^+$) that assigns the end points $I^-$ and
-        $I^+$ to the existing interval $I$ in the network. By allowing such
-        end points to be defined for any interval, thereby making them
-        well-defined intervals, we are also allowing the possibility of
-        introducing new relations with this interval. Furthermore, any new
-        relations gathered by comparing the end points of well-defined
-        intervals are subject to the same propagation algorithms shown in the
-        previous section. The algorithm below shows how the $NET.Bind$()
-        operator achieves this.
-
-        \begin{vverbatim}
-  FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
-    FOR each interval \(I'\) \(\in\) \(NET\) DO
-      IF \(I'\) != \(I\) THEN
-        IF \(I'\) is well-defined THEN
-          \(RS\) = \(Compute\)(\(I\sp{-}\), \(I\sp{+}\), \(I'\sp{-}\), \(I'\sp{+}\))
-          \(NET.Add\)(\(I\), \(I'\), \(RS\))
-        ENDIF
+        \begin{valgorithm}[tbhp]{$Net.Bind$()}{algo-net-bind}
+FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
+  FOR each interval \(I'\) \(\in\) \(NET\) DO
+    IF \(I'\) != \(I\) THEN
+      IF \(I'\) is well-defined THEN
+        \(RS\) = \(Compute\)(\(I\sp{-}\), \(I\sp{+}\), \(I'\sp{-}\), \(I'\sp{+}\))
+        \(NET.Add\)(\(I\), \(I'\), \(RS\))
       ENDIF
-    ENDDO
-  ENDFUNCTION
-        \end{vverbatim}
+    ENDIF
+  ENDDO
+ENDFUNCTION
+        \end{valgorithm}
 
       \subsection{Additional Network Operators}
 
-        For the sake of completeness, we also define two additional network
-        operators:
+        For the sake of completeness, we define an additional two network
+        operators to complement those shown in Definition \ref{def-net-ops}
+        and the $Net.Bind$() operator discussed in the previous section:
 
         \begin{itemize}
           \item
@@ -3551,18 +3631,19 @@
           sorted alphabetically. For example, if $\iota_0$ is $morning$ and
           $\iota_1$ is $evening$, then the relation $rs$ would be stored
           in the node containing $\iota_1$, since $evening$ is alphabetically
-          before $morning$. To enforce this rule, we use the function below
-          before adding a relation to the network:
+          before $morning$. To enforce this rule, we use the function shown in
+          Algorithm \ref{algo-normalise} before adding a relation to the
+          network:
 
-          \begin{vverbatim}
-  FUNCTION \(Normalise\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
-    IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
-      RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\)) 
-    ELSE
-      RETURN (\(\iota\sb{1}\), \(\iota\sb{0}\), \(rs\sp{-1}\)) 
-    ENDIF
-  ENDFUNCTION
-          \end{vverbatim}
+          \begin{valgorithm}[tbhp]{Normalise()}{algo-normalise}
+FUNCTION \(Normalise\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
+  IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
+    RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\)) 
+  ELSE
+    RETURN (\(\iota\sb{1}\), \(\iota\sb{0}\), \(rs\sp{-1}\)) 
+  ENDIF
+ENDFUNCTION
+          \end{valgorithm}
 
       \subsection{Network Operators}
 
@@ -3646,203 +3727,200 @@
           $Total_A$ $=$ $Total_H$ $+$ $Total_M$ $+$ $Total_S$
         \end{vquote}
 
+        \begin{valgorithm}[tbhp]{Encode\_Holds()}{algo-encode-holds}
+FUNCTION \(Encode_Holds\)(\(sub\), \(acc\), \(obj\), \(int\), \(\sigma\), \(tr\))
+  IF \(sub\) is group THEN
+    \(sub\) = \(sub\) + \(|T\sb{s}.ss|\)
+  ENDIF
+  IF \(acc\) is group THEN
+    \(acc\) = \(acc\) + \(|T\sb{s}.as|\)
+  ENDIF
+  IF \(obj\) is group THEN
+    \(obj\) = \(obj\) + \(|T\sb{s}.os|\)
+  ENDIF
 
-        \begin{vverbatim}
-  FUNCTION \(Encode_Holds\)(\(sub\), \(acc\), \(obj\), \(int\), \(\sigma\), \(tr\))
-    IF \(sub\) is group THEN
-      \(sub\) = \(sub\) + \(|T\sb{s}.ss|\)
-    ENDIF
-    IF \(acc\) is group THEN
-      \(acc\) = \(acc\) + \(|T\sb{s}.as|\)
-    ENDIF
-    IF \(obj\) is group THEN
-      \(obj\) = \(obj\) + \(|T\sb{s}.os|\)
-    ENDIF
+  \(offset\) \(=\)
+    (\(sub\) \(\cdot\) (\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+    (\(acc\) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+    (\(obj\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+    \(int\)
+    
+  IF \(tr\) THEN
+    \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
+  ENDIF
 
-    \(offset\) \(=\)
-      (\(sub\) \(\cdot\) (\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-      (\(acc\) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-      (\(obj\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-      \(int\)
-      
-    IF \(tr\) THEN
-      \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
-    ENDIF
+  RETURN \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
+ENDFUNCTION
+        \end{valgorithm}
 
-    RETURN \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
-  ENDFUNCTION
-        \end{vverbatim}
+        \begin{valgorithm}[tbhp]{Encode\_Memb()}{algo-encode-memb}
+FUNCTION \(Encode_Memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
+  CASE type of member atom OF
+    \(subject\) :
+      \(offset\) \(=\)
+        (\(elt\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        \(int\)
+    \(access right\) :
+      \(offset\) \(=\)
+        (\(elt\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        \(int\)
+    \(object\) :
+      \(offset\) \(=\)
+        (\(elt\) \(\cdot\) \(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        \(int\)
+  ENDCASE
+    
+  IF \(tr\) THEN
+    \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
+  ENDIF
 
-        \begin{vverbatim}
-  FUNCTION \(Encode_Memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
-    CASE type of member atom OF
-      \(subject\) :
-        \(offset\) \(=\)
-          (\(elt\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          \(int\)
-      \(access right\) :
-        \(offset\) \(=\)
-          (\(elt\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          \(int\)
-      \(object\) :
-        \(offset\) \(=\)
-          (\(elt\) \(\cdot\) \(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          \(int\)
-    ENDCASE
-      
-    IF \(tr\) THEN
-      \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
-    ENDIF
+  RETURN \(Total\sb{H}\) \(+\) \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
+ENDFUNCTION
+        \end{valgorithm}
 
-    RETURN \(Total\sb{H}\) \(+\) \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
-  ENDFUNCTION
-        \end{vverbatim}
+        \begin{valgorithm}[tbhp]{Encode\_Subst()}{algo-encode-subst}
+FUNCTION \(Encode_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
+  CASE type of subset atom OF
+    \(subject\) :
+      \(offset\) \(=\)
+        (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        \(int\)
+    \(access right\) :
+      \(offset\) \(=\)
+        (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        \(int\)
+    \(object\) :
+      \(offset\) \(=\)
+        (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        \(int\)
+  ENDCASE
+    
+  IF \(tr\) THEN
+    \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
+  ENDIF
 
-        \begin{vverbatim}
-  FUNCTION \(Encode_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
-    CASE type of subset atom OF
-      \(subject\) :
-        \(offset\) \(=\)
-          (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          \(int\)
-      \(access right\) :
-        \(offset\) \(=\)
-          (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          \(int\)
-      \(object\) :
-        \(offset\) \(=\)
-          (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-          \(int\)
-    ENDCASE
-      
-    IF \(tr\) THEN
-      \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
-    ENDIF
-
-    RETURN \(Total\sb{H}\) \(+\) \(Total\sb{M}\) \(+\) \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
-  ENDFUNCTION
-        \end{vverbatim}
+  RETURN \(Total\sb{H}\) \(+\) \(Total\sb{M}\) \(+\) \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
+ENDFUNCTION
+        \end{valgorithm}
 
 
-        \begin{vverbatim}
-  FUNCTION \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
-    \(s\) \(=\) \(id\) div
-        ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-    \(id\) \(=\) \(id\) mod
-        ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-    \(a\) \(=\) \(id\) div ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-    \(id\) \(=\) \(id\) mod ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-    \(o\) \(=\) \(id\) div \(|T\sb{s}.int|\)
-    \(i\) \(=\) \(id\) mod \(|T\sb{s}.int|\)
+        \begin{valgorithm}[tbhp]{Decode\_Holds()}{algo-decode-holds}
+FUNCTION \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
+  \(s\) \(=\) \(id\) div ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+  \(id\) \(=\) \(id\) mod ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+  \(a\) \(=\) \(id\) div ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+  \(id\) \(=\) \(id\) mod ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
+  \(o\) \(=\) \(id\) div \(|T\sb{s}.int|\)
+  \(i\) \(=\) \(id\) mod \(|T\sb{s}.int|\)
 
-    IF \(s\) \(\geq\) \(|T\sb{s}.ss|\) THEN
-      \(sub\) = \(T\sb{s}.sg\)[\(s\) \(-\) \(|T\sb{s}.ss|\)]
-    ELSE
-      \(sub\) = \(T\sb{s}.ss\)[\(s\)]
-    ENDIF
-    IF \(a\) \(\geq\) \(|T\sb{s}.as|\) THEN
-      \(acc\) = \(T\sb{s}.ag\)[\(a\) \(-\) \(|T\sb{s}.as|\)]
-    ELSE
-      \(acc\) = \(T\sb{s}.as\)[\(a\)]
-    ENDIF
-    IF \(o\) \(\geq\) \(|T\sb{s}.os|\) THEN
-      \(obj\) = \(T\sb{s}.og\)[\(o\) \(-\) \(|T\sb{s}.os|\)]
-    ELSE
-      \(obj\) = \(T\sb{s}.os\)[\(o\)]
-    ENDIF
+  IF \(s\) \(\geq\) \(|T\sb{s}.ss|\) THEN
+    \(sub\) = \(T\sb{s}.sg\)[\(s\) \(-\) \(|T\sb{s}.ss|\)]
+  ELSE
+    \(sub\) = \(T\sb{s}.ss\)[\(s\)]
+  ENDIF
+  IF \(a\) \(\geq\) \(|T\sb{s}.as|\) THEN
+    \(acc\) = \(T\sb{s}.ag\)[\(a\) \(-\) \(|T\sb{s}.as|\)]
+  ELSE
+    \(acc\) = \(T\sb{s}.as\)[\(a\)]
+  ENDIF
+  IF \(o\) \(\geq\) \(|T\sb{s}.os|\) THEN
+    \(obj\) = \(T\sb{s}.og\)[\(o\) \(-\) \(|T\sb{s}.os|\)]
+  ELSE
+    \(obj\) = \(T\sb{s}.os\)[\(o\)]
+  ENDIF
 
-    RETURN \(holds\)(\(sub\), \(acc\), \(obj\), \(T\sb{s}.int\)[\(i\)], \(\sigma\), \(tr\))
-  ENDFUNCTION
-        \end{vverbatim}
+  RETURN \(holds\)(\(sub\), \(acc\), \(obj\), \(T\sb{s}.int\)[\(i\)], \(\sigma\), \(tr\))
+ENDFUNCTION
+        \end{valgorithm}
 
-        \begin{vverbatim}
-  FUNCTION \(Decode_Memb\)(\(id\), \(\sigma\), \(tr\))
-    \(c\sb{0}\) \(=\) (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) 
-    \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) 
+        \begin{valgorithm}[tbhp]{Decode\_Memb()}{algo-decode-memb}
+FUNCTION \(Decode_Memb\)(\(id\), \(\sigma\), \(tr\))
+  \(c\sb{0}\) \(=\) (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) 
+  \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) 
 
-    IF \(id\) \(<\) \(c\sb{0}\) THEN
-      \(elt\) \(=\) \(T\sb{s}.ss\)[\(id\) div (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
-    ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
-      \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
+  IF \(id\) \(<\) \(c\sb{0}\) THEN
+    \(elt\) \(=\) \(T\sb{s}.ss\)[\(id\) div (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
+    \(grp\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+  ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
+    \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
 
-      \(elt\) \(=\) \(T\sb{s}.as\)[\(id\) div (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
-    ELSE
-      \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
+    \(elt\) \(=\) \(T\sb{s}.as\)[\(id\) div (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
+    \(grp\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+  ELSE
+    \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
 
-      \(elt\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
-    ENDIF
+    \(elt\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
+    \(grp\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+  ENDIF
 
-    RETURN \(memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
-  ENDFUNCTION
-        \end{vverbatim}
+  RETURN \(memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
+ENDFUNCTION
+        \end{valgorithm}
 
-        \begin{vverbatim}
-  FUNCTION \(Decode_Subst\)(\(id\), \(\sigma\), \(tr\))
-    \(c\sb{0}\) \(=\) (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
-    \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
+        \begin{valgorithm}[tbhp]{Decode\_Subst()}{algo-decode-subst}
+FUNCTION \(Decode_Subst\)(\(id\), \(\sigma\), \(tr\))
+  \(c\sb{0}\) \(=\) (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
+  \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
 
-    IF \(id\) \(<\) \(c\sb{0}\) THEN
-      \(grp\sb{0}\) \(=\) \(T\sb{s}.sg\)[\(id\) div (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\sb{1}\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
-    ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
-      \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
+  IF \(id\) \(<\) \(c\sb{0}\) THEN
+    \(grp\sb{0}\) \(=\) \(T\sb{s}.sg\)[\(id\) div (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
+    \(grp\sb{1}\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+  ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
+    \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
 
-      \(grp\sb{0}\) \(=\) \(T\sb{s}.ag\)[\(id\) div (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\sb{1}\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
-    ELSE
-      \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
+    \(grp\sb{0}\) \(=\) \(T\sb{s}.ag\)[\(id\) div (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
+    \(grp\sb{1}\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+  ELSE
+    \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
 
-      \(grp\sb{0}\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
-      \(grp\sb{1}\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-      \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
-    ENDIF
+    \(grp\sb{0}\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
+    \(grp\sb{1}\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+  ENDIF
 
-    RETURN \(subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
-  ENDFUNCTION
-        \end{vverbatim}
+  RETURN \(subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
+ENDFUNCTION
+        \end{valgorithm}
 
-        \begin{vverbatim}
-  FUNCTION \(Decode_Fact\)(\(id\))
-    \(\sigma\) \(=\) \(id\) div (\(Total\sb{A}\) \(\cdot\) \(2\))
-    \(id\) \(=\) \(id\) mod (\(Total\sb{A}\) \(\cdot\) \(2\)) 
+        \begin{valgorithm}[tbhp]{Decode\_Fact()}{algo-decode-fact}
+FUNCTION \(Decode_Fact\)(\(id\))
+  \(\sigma\) \(=\) \(id\) div (\(Total\sb{A}\) \(\cdot\) \(2\))
+  \(id\) \(=\) \(id\) mod (\(Total\sb{A}\) \(\cdot\) \(2\)) 
 
-    IF \(id\) \(\geq\) \(Total\sb{A}\) THEN
-      \(tr\) \(=\) \(true\)
-    ELSE
-      \(tr\) \(=\) \(false\)
-    ENDIF
+  IF \(id\) \(\geq\) \(Total\sb{A}\) THEN
+    \(tr\) \(=\) \(true\)
+  ELSE
+    \(tr\) \(=\) \(false\)
+  ENDIF
 
-    \(id\) \(=\) \(id\) mod \(Total\sb{A}\)
+  \(id\) \(=\) \(id\) mod \(Total\sb{A}\)
 
-    IF \(id\) \(<\) \(Total\sb{H}\) THEN
-      RETURN \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
-    ELSEIF \(id\) \(<\) (\(Total\sb{H}\) \(+\) \(Total\sb{M}\)) THEN
-      RETURN \(Decode_Memb\)(\(id\) \(-\) \(Total\sb{H}\), \(\sigma\), \(tr\))
-    ELSE
-      RETURN \(Decode_Subst\)(\(id\) \(-\) (\(Total\sb{H}\) \(+\) \(Total\sb{M}\)), \(\sigma\), \(tr\))
-    ENDIF
-  ENDFUNCTION
-        \end{vverbatim}
+  IF \(id\) \(<\) \(Total\sb{H}\) THEN
+    RETURN \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
+  ELSEIF \(id\) \(<\) (\(Total\sb{H}\) \(+\) \(Total\sb{M}\)) THEN
+    RETURN \(Decode_Memb\)(\(id\) \(-\) \(Total\sb{H}\), \(\sigma\), \(tr\))
+  ELSE
+    RETURN \(Decode_Subst\)(\(id\) \(-\) (\(Total\sb{H}\) \(+\) \(Total\sb{M}\)), \(\sigma\), \(tr\))
+  ENDIF
+ENDFUNCTION
+        \end{valgorithm}
 
     \section{Discussions} 
 
