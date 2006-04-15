@@ -83,6 +83,399 @@
 \begin{document}
   \onehalfspacing
 
+  \tableofcontents
+
+  \chapter{Introduction}
+
+  \chapter{Logic-Based Authorisation System}
+
+    \section{Language $\cal{L}$}
+      \label{sec-langl}
+
+      Language $\cal{L}$ is a first-order logic language that represents a
+      policy base for an authorisation system. Two key features of the
+      language are: (1) providing a means to conditionally and dynamically
+      update the existing policy base and (2) having a mechanism by which
+      queries may be evaluated from the updated policy base.
+
+      \subsection{Syntax}
+
+        Logic programs of language ${\cal L}$ are composed of language
+        statements, each terminated by a semicolon ";" character. C-style
+        comments delimited by the "/*" and "*/" characters may appear anywhere
+        in the logic program.
+   
+        \subsubsection{Components of Language $\cal{L}$}
+
+          Each language ${\cal L}$ statement is composed of the following
+          components: identifiers, atoms, facts and expressions.
+   
+          \begin{itemize}
+            \item
+              {\bf Identifiers}
+
+              The most basic unit of language $\cal{L}$ is the identifier.
+              Identifiers are used to represent the different components of
+              the language. They are classified into three main categories:
+   
+              \begin{enumerate}
+                \item
+                  {\em Entity Identifiers} represent constant entities that
+                  make up a logical atom. They are further divided into three
+                  types, with each type again divided into the {\em singular
+                  entity} and {\em group entity} sub-types:
+   
+                  \begin{enumerate}
+                    \item
+                      {\em Subjects}: e.g. alice, lecturers, user-group.
+                    \item
+                      {\em Access Rights}: e.g. read, write, own.
+                    \item
+                      {\em Objects}: e.g. file, database, directory.
+                  \end{enumerate}
+   
+                  An entity identifier is defined as a single, lower-case
+                  alphabetic character, followed by 0 or more alphanumeric and
+                  underscore characters. The following regular expression
+                  shows the syntax of entity identifiers:
+   
+                  \begin{vverbatim}
+  [a-z][a-zA-Z0-9\_]
+                  \end{vverbatim}
+   
+                \item
+                  {\em Policy Update Identifiers} are used for the sole
+                  purpose of naming a policy update. These identifier names
+                  are then used as labels to refer to policy update
+                  definitions and directives. As labels, identifiers of this
+                  class occupy a different namespace from entity identifiers.
+                  For this reason, policy update identifiers share the same
+                  syntax with entity identifiers:
+   
+                  \begin{vverbatim}
+  [a-z][a-zA-Z0-9\_]
+                  \end{vverbatim}
+   
+                \item
+                  {\em Variable Identifiers} are used as place-holders for
+                  entity identifiers. To distinguish them from entity and
+                  policy update identifiers, variable identifiers are prefixed
+                  with an upper-case character, followed by 0 or more
+                  alphanumeric and underscore characters. The first character
+                  of a variable identifier indicates its type ("S" for
+                  subject, "A" for access right and "O" for object). If the
+                  second character is an "S", then the variable is a
+                  place-holder for a singular entity while a "G" indicates
+                  that it is a place-holder for a group entity. The following
+                  regular expression shows the syntax of variable identifiers:
+   
+                  \begin{vverbatim}
+   [SAO][SG][a-zA-Z0-9\_]
+                  \end{vverbatim}
+              \end{enumerate}
+
+            \item
+              {\bf Atoms}
+
+              An atom is composed of a relation with 2 to 3 entity or
+              variable identifiers that represents a logical relationship
+              between the entities. There are three types of atoms:
+
+              \begin{enumerate}
+                \item
+                  {\em Holds.} An atom of this type states that the subject
+                  identifier $sub$ holds the access right identifier $acc$
+                  for the object identifier $obj$.
+
+                 \begin{vverbatim}
+  holds(<sub>, <acc>, <obj>)
+                 \end{vverbatim}
+
+                \item
+                  {\em Membership.} This type of atom states that the
+                  singular identifier $elt$ is a member or element of the
+                  group identifier $grp$. It is important to note that
+                  identifiers $elt$ and $grp$ must be of the same base type
+                  (e.g. singular subject and group subject).
+
+                  \begin{vverbatim}
+  memb(<elt>, <grp>)
+                  \end{vverbatim}
+
+                \item
+                  {\em Subset.} The subset atom states that the group
+                  identifiers $grp_0$ and $grp_1$ are of the same types and
+                  that group $grp_0$ is a subset of the group $grp_1$.
+
+                  \begin{vverbatim}
+  subst(<grp-0>, <grp-1>)
+                  \end{vverbatim}
+
+              \end{enumerate}
+
+            \item
+              {\bf Facts}
+
+              A fact states that the relationship represented by an atom or
+              its negation holds in the current context. Facts are negated by
+              the use of the negation operator "!". The following shows the
+              formal syntax of a fact:
+
+              \begin{vverbatim}
+  [!]<holds-atom>|<memb-atom>|<subst-atom>
+              \end{vverbatim}
+
+              Note that facts may be made up of atoms that contain variable
+              identifiers. Facts with no variable occurrences are called
+              {\em ground facts}.
+
+            \item
+              {\bf Expressions}
+
+              An expression is either a fact or a logical conjunction of facts,
+              separated by the comma "," character:
+
+              \begin{vverbatim}
+  <fact-0> [, <fact-1> [, ...]]
+              \end{vverbatim}
+
+              Expressions that are made up of only ground facts are called
+              {\em ground expressions}.
+          \end{itemize}
+
+        \subsubsection{Declaration Statements}
+
+          These statements are used to declare the different rules that make up
+          the policy base.
+
+          \begin{itemize}
+            \item
+              {\bf Entity Identifier Declarations}
+
+              All entity identifiers (subjects, access rights, objects and
+              groups) must first be declared before any other statements to
+              define the entity domain of the policy base. The following entity
+              declaration syntax illustrates how to define one or more entity
+              identifiers of a particular type.
+
+              \begin{vverbatim}
+  ident sub|acc|obj[-grp] <entity-id>[, ...];
+              \end{vverbatim}
+
+            \item
+              {\bf Initial Fact Declarations}
+
+              The initial facts of the policy base, those that hold before any
+              policy updates are performed, are declared by using the following
+              syntax:
+
+              \begin{vverbatim}
+  initially <ground-exp>;
+              \end{vverbatim}
+
+            \item
+              {\bf Constraint Declarations}
+
+              A constraint statement is a logical rule that holds regardless
+              of any changes that may occur when the policy base is updated.
+              Constraint rules are true in the initial state and remain true
+              after any policy update.
+
+              The constraint syntax below shows that in any state of the policy
+              base, expression $exp_0$ holds if expression $exp_1$ is true and
+              there is no evidence that $exp_2$ is true. The {\em with absence}
+              clause allows constraints to have a default proposition
+              behaviour, where the absence of proof that an expression holds
+              satisfies the clause condition of the proposition.
+
+              It is important to note that the expressions $exp_0$, $exp_1$ and
+              $exp_2$ may be non-ground expressions, which means an identifier
+              occurring within these expressions may be a variable.
+
+              \begin{vverbatim}
+  always <exp-0>
+    [implied by <exp-0>
+    [with absence <exp-1>]];
+              \end{vverbatim}
+
+            \item
+              {\bf Policy Update Declarations}
+
+              Before a policy update can be applied, it must first be declared
+              by using the following syntax:
+
+              \begin{vverbatim}
+  <update-id>([<var-id>[, ...]])
+    causes <exp-0>
+    [if <exp-1>];
+              \end{vverbatim}
+
+              $upd$-$id$ is the policy update identifier to be used in
+              referencing this policy update. The optional parameter
+              $var$-$id$ is a list which contains the variable identifiers
+              occurring in expressions $exp_0$ and $exp_1$ and will be
+              eventually replaced by entity identifiers when the update is
+              referenced. The postcondition expression $exp_1$ is an expression
+              that will hold in the state after this update is applied.
+              The expression $exp_1$ is a precondition expression that must
+              hold in the current state before this update is applied.
+
+              Note that a policy update definition will have no effect on the
+              policy base until it is applied by the update directive
+              described in the following section.
+
+          \end{itemize}
+
+        \subsubsection{Directive Statements}
+
+          These statements are used to issue policy update and query directives
+          to the PolicyUpdater system.
+
+          \begin{itemize}
+
+            \item
+              {\bf Policy Update Directives}
+
+              The policy update sequence list contains a list of references to
+              define policy updates in the domain. The policy updates in the
+              sequence list are applied to the current state of the policy
+              base one at a time to produce a policy base state against which
+              queries can be evaluated.
+
+              The following four directives are used for policy update
+              sequence list manipulation.
+
+              \begin{enumerate}
+                \item
+                  {\em Adding an update into the sequence.}
+                  Defined policy updates are added into the sequence list
+                  through the use of the following directive:
+
+                  \begin{vverbatim}
+  seq add <update-id>([<entity-id>[, ...]]);
+                  \end{vverbatim}
+
+                  \noindent where $update$-$id$ is the identifier of a declared
+                  policy update and the $entity$-$id$ list is a comma-separated
+                  list of entity identifiers that will replace the variable
+                  identifiers that occur in the declaration of the policy
+                  update.
+
+                \item
+                  {\em Listing the updates in the sequence.}
+                  The following directive may be used to list the current
+                  contents of the policy update sequence list.
+
+                  \begin{vverbatim}
+  seq list;
+                  \end{vverbatim}
+
+                  This directive is answered with an ordinal list of policy
+                  updates in the form
+
+                  \begin{vverbatim}
+  <n> <update-id>([<entity-id>[, ...]])
+                  \end{vverbatim}
+
+                  \noindent where $n$ is the ordinal index of the policy update
+                  in the sequence list starting at 0. $update$-$id$ is the
+                  policy update identifier and the $entity$-$id$ list is the
+                  comma-separated list of entity identifiers used to replace
+                  the variable identifier place-holders.
+
+                \item
+                  {\em Removing an update from the sequence.}
+                  The syntax below shows the directive used to remove a
+                  policy update reference from the list. $n$ is the ordinal
+                  index of the policy update to be removed. Note that removing
+                  a policy update reference from the sequence list may change
+                  the ordinal index of other update references.
+
+                  \begin{vverbatim}
+  seq del <n>;
+                  \end{vverbatim}
+
+                \item
+                  {\em Computing an update sequence.}
+                  The policy updates in the sequence list does not get applied
+                  until the $compute$ directive is issued. The directive causes
+                  the policy update references in the sequence list to be
+                  applied one at a time in the same order that they appear in
+                  the list. The directive also causes the system to generate
+                  the policy base models against which query requests can be
+                  evaluated.
+
+                  \begin{vverbatim}
+  compute;
+                  \end{vverbatim}
+              \end{enumerate}
+
+            \item
+              {\bf Query Directives}
+
+              A ground query expression may be issued against the current state
+              of the policy base. This current state is derived after all the
+              updates in the update sequence have been applied, one at a time,
+              to the initial state. Query expressions are answered with a
+              {\em true}, {\em false} or {\em unknown}, depending on whether
+              the queried expression holds, its negation holds, or neither,
+              respectively. Syntax is as follows:
+
+              \begin{vverbatim}
+  query <ground-exp>;
+              \end{vverbatim}
+
+          \end{itemize}
+
+          \begin{vexample}
+            \label{ex-2-1}
+            The following language ${\cal L}$ program code listing shows a
+            simple rule-based document access control system scenario.
+
+            In this example, the subject $alice$ is initially a member of the
+            subject group $grp_2$, which is a subset of group $grp_1$. The
+            group $grp_1$ also initially holds a $read$ access right for the
+            object $file$. The constraint states that if the group $grp_1$ has
+            $read$ access for $file$, and no other information is present to
+            indicate that $grp_3$ does not have $write$ access for $file$, then
+            the group $grp_1$ is granted $write$ access for $file$. For
+            simplicity, we only consider one policy update $delete\_read$ and a
+            few queries that are evaluated after the policy update is
+            performed.
+
+            \begin{vverbatim}
+  ident sub alice;
+  ident sub-grp grp1, grp2, grp3;
+  ident acc read, write;
+  ident obj file;
+
+  initially
+    memb(alice, grp2),
+    holds(grp1, read, file),
+    subst(grp2, grp1);
+
+  always holds(grp1, write, file)
+    implied by
+      holds(grp1, read, file)
+    with absence
+      !holds(grp3, write, file);
+
+  delete\_read(SG0, OS0)
+    causes !holds(SG0, read, OS0);
+
+  seq add delete\_read(grp1, file);
+
+  compute;
+
+  query holds(grp1, write, file);
+  query holds(grp1, read, file);
+  query holds(alice, write, file);
+  query holds(alice, read, file);
+            \end{vverbatim}
+          \end{vexample}
+
+  \chapter{Implementation and Application}
+
   \chapter{Temporal Constraints in Authorisation Policies}
 
     \section{Introduction}
@@ -658,7 +1051,7 @@ ENDFUNCTION
           \end{valgorithm}
 
           \begin{vexample}
-            \label{ex-1}
+            \label{ex-4-1}
             Given a network with three intervals $i_0$, $i_1$ and $i_2$ where
             no relation between any of the intervals are known. As no relations
             are given, each arc in the network as shown in Figure
@@ -731,7 +1124,7 @@ ENDFUNCTION
             algorithm replaces the arc between $i_0$ and $i_2$ with $rs_2$, as
             shown in Figure \ref{fig-net-ex-06}.
 
-            \begin{figure}[[tbhp]
+            \begin{figure}[tbhp]
               \begin{center}
                 \includegraphics{net-06}
                 \caption{Network after $NET.Add$($i_1$, $i_2$, \{$STA$, $FIN$\})}
@@ -1295,7 +1688,7 @@ ENDFUNCTION
           {\em unknown}.
 
         \begin{vexample}
-          \label{ex-2}
+          \label{ex-4-2}
           The example code below shows a full language ${\cal L^T}$ policy
           description. In this policy, three intervals are defined:
           $work\_hours$, $morning\_hours$ and $afternoon\_hours$, where
@@ -2821,10 +3214,10 @@ ENDFUNCTION
             \end{itemize}
 
         \begin{vexample}
-          \label{ex-3}
+          \label{ex-4-3}
           The following rules show the language ${\cal L^{T^*}}$ translation
           of the language ${\cal L^T}$ code listing shown in Example
-          \ref{ex-2}.
+          \ref{ex-4-2}.
 
           \begin{enumerate}
             \item
@@ -3923,6 +4316,8 @@ ENDFUNCTION
         \end{valgorithm}
 
     \section{Discussions} 
+
+  \chapter{Conclusion}
 
   \begin{thebibliography}{M}
     \bibitem{AL}
