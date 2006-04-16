@@ -87,7 +87,7 @@
 
   \chapter{Introduction}
 
-  \chapter{Logic-Based Authorisation System}
+  \chapter{Logic-Based Authorisation Language}
 
     \section{Language $\cal{L}$}
       \label{sec-langl}
@@ -147,7 +147,7 @@
                   {\em Policy Update Identifiers} are used for the sole
                   purpose of naming a policy update. These identifier names
                   are then used as labels to refer to policy update
-                  definitions and directives. As labels, identifiers of this
+                  declarations and directives. As labels, identifiers of this
                   class occupy a different namespace from entity identifiers.
                   For this reason, policy update identifiers share the same
                   syntax with entity identifiers:
@@ -474,7 +474,9 @@
             \end{vverbatim}
           \end{vexample}
 
-  \chapter{Implementation and Application}
+    \section{Domain Consistency and Query Evaluation}
+
+  \chapter{PolicyUpdater System}
 
   \chapter{Temporal Constraints in Authorisation Policies}
 
@@ -1317,75 +1319,80 @@ ENDFUNCTION
           \begin{itemize}
 
             \item
-              {\bf Entity Identifiers}
+              {\bf Identifiers}
 
-              As with language ${\cal L}$, language ${\cal L^T}$ includes six
-              disjoint entity sorts: subject, access rights, objects, subject
-              groups, access right groups and object groups. The syntax for
-              each entity type is a single lower case alpha character followed
-              by zero or more alphanumeric or underscore characters:
+                In language ${\cal L^T}$, there are 4 general types of
+                identifiers:
 
-              \begin{vverbatim}
+                \begin{enumerate}
+                  \item
+                    {\em Entity Identifiers.}
+                    As with language ${\cal L}$, language ${\cal L^T}$
+                    includes six disjoint entity sorts: subject, access
+                    rights, objects, subject groups, access right groups and
+                    object groups. The syntax for each entity type is a single
+                    lower case alpha character followed by zero or more
+                    alphanumeric or underscore characters:
+
+                    \begin{vverbatim}
   [a-z][a-zA-Z0-9\_]
-              \end{vverbatim}
+                    \end{vverbatim}
 
-            \item
-              {\bf Interval Identifiers}
+                  \item
+                    {\em Interval Identifiers.}
+                    The main difference between language ${\cal L}$ and
+                    language ${\cal L^T}$ is that in addition to the six
+                    entity sorts, language ${\cal L^T}$ also includes an
+                    additional time interval sort. As it occupies a different
+                    name space from the other sorts, interval identifiers share
+                    the same syntax.
+      
+                  \item
+                    {\em Policy Update Identifiers.}
+                    These identifiers are used as labels to name policy
+                    updates. They occupy a different name space from other
+                    identifiers and hence share the same syntax as entity and
+                    interval identifiers.
 
-              The main difference between language ${\cal L}$ and language
-              ${\cal L^T}$ is that in addition to the six entity sorts,
-              language ${\cal L^T}$ also includes an additional time interval
-              sort. As it occupies a different name space from the other sorts,
-              interval identifiers share the same syntax:
+                  \item
+                    {\em Variable Identifiers.}
+                    In language ${\cal L}$, variable identifiers are used to
+                    represent entity identifiers. In contrast, language
+                    ${\cal L^T}$ variable identifiers are used to represent
+                    both entity and interval identifiers. The list below shows
+                    the syntax of the different types of variable identifiers:
 
-              \begin{vverbatim}
-  [a-z][a-zA-Z0-9\_]
-              \end{vverbatim}
+                    \begin{enumerate}
+                      \item
+                        Subject Variables
 
-            \item
-              {\bf Variable Identifiers}
-
-              In language ${\cal L}$, variable identifiers are used to
-              represent entity identifiers. On the other hand, language
-              ${\cal L^T}$ variable identifiers are used to represent both
-              entity and interval identifiers. To distinguish from entity and
-              interval identifiers, the first character of a variable
-              identifier is capitalised. Furthermore, the first character of
-              a variable identifier indicates its type. For entity variable
-              identifiers, the second character may also indicate whether the
-              variable represents a single or group entity. The following is a
-              list of different variable types and their syntax:
-
-              \begin{itemize}
-                \item
-                  Subject Variables
-
-                  \begin{vverbatim}
+                        \begin{vverbatim}
   S[SG][a-zA-Z0-9\_]
-                  \end{vverbatim}
+                        \end{vverbatim}
 
-                \item
-                  Access Right Variables
+                      \item
+                        Access Right Variables
 
-                  \begin{vverbatim}
+                        \begin{vverbatim}
   A[SG][a-zA-Z0-9\_]
-                  \end{vverbatim}
+                        \end{vverbatim}
 
-                \item
-                  Object Variables
+                      \item
+                        Object Variables
 
-                  \begin{vverbatim}
+                        \begin{vverbatim}
   O[SG][a-zA-Z0-9\_]
-                  \end{vverbatim}
+                        \end{vverbatim}
 
-                \item
-                  Interval Variables
+                      \item
+                        Interval Variables
 
-                  \begin{vverbatim}
+                        \begin{vverbatim}
   I[a-zA-Z0-9\_]
-                  \end{vverbatim}
+                        \end{vverbatim}
 
-              \end{itemize}
+                    \end{enumerate}
+                \end{enumerate}
 
             \item
               {\bf Authorisation Atoms, Facts and Expressions}
@@ -1396,10 +1403,10 @@ ENDFUNCTION
               holds. As with language ${\cal L}$, there are three types of
               atoms:
 
-              \begin{itemize}
+              \begin{enumerate}
                 \item
-                  Holds Atom. The syntax below shows an atom that states that
-                  subject $sub$-$id$ holds the access right $acc$-$id$ for
+                  {\em Holds Atom.} The syntax below shows an atom that states
+                  that subject $sub$-$id$ holds the access right $acc$-$id$ for
                   object $obj$-$id$ at time interval $int$-$id$.
 
                   \begin{vverbatim}
@@ -1410,25 +1417,24 @@ ENDFUNCTION
                   \end{vverbatim}
 
                 \item
-                  Member Atom. The syntax shown below is that of an atom that
-                  states that the single entity $single$-$id$ is a member of
-                  the group entity $group$-$id$ for the duration specified by
-                  interval $int$-$id$.
+                  {\em Member Atom.} The syntax shown below is that of an atom
+                  that states that the single entity $single$-$id$ is a member
+                  of the group entity $group$-$id$ for the duration specified
+                  by interval $int$-$id$.
 
                   \begin{vverbatim}
   memb(<single-id>, <group-id>, <int-id>)
                   \end{vverbatim}
 
                 \item
-                  Subset Atom. Below is the syntax of an atom that states that
-                  the group entity $group$-$id$-$0$ is a subset of the group
-                  entity $group$-$id-$-$1$ at time interval $int$-$id$.
+                  {\em Subset Atom.} Below is the syntax of an atom that states
+                  that the group entity $group$-$id$-$0$ is a subset of the
+                  group entity $group$-$id-$-$1$ at time interval $int$-$id$.
 
                   \begin{vverbatim}
   subst(<group-id-0>, <group-id-1>, <int-id>)
                   \end{vverbatim}
-
-              \end{itemize}
+              \end{enumerate}
 
               Like language ${\cal L}$, language ${\cal L^T}$ facts state
               that relationship represented by the corresponding atom its
