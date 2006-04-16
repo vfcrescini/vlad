@@ -30,6 +30,28 @@
 % definition environment
 \newtheorem{vdefinition}{Definition}[chapter]
 
+% theorem environment
+\newtheorem{vvtheorem}{Theorem}[chapter]
+\newenvironment{vtheorem}[1]
+{
+  \begin{vvtheorem}{{\bf (#1)}}
+}
+{
+  \end{vvtheorem}
+}
+
+% proof environment
+\newenvironment{vproof}
+{
+  \noindent
+  {\em Proof}\hspace{0.5em}
+}
+{
+
+  \noindent
+  \rule{0.5em}{0.5em}
+}
+
 % example environment
 \newtheorem{vexample}{Example}[chapter]
 
@@ -99,6 +121,7 @@
       queries may be evaluated from the updated policy base.
 
       \subsection{Syntax}
+        \label{subsect-langl-syntax}
 
         Logic programs of language ${\cal L}$ are composed of language
         statements, each terminated by a semicolon ";" character. C-style
@@ -120,10 +143,10 @@
    
               \begin{enumerate}
                 \item
-                  {\em Entity Identifiers} represent constant entities that
-                  make up a logical atom. They are further divided into three
-                  types, with each type again divided into the {\em singular
-                  entity} and {\em group entity} sub-types:
+                  {\em Entity Identifiers} are used to represent constant
+                  entities that make up a logical atom. They are divided into
+                  three types, with each type divided further into the
+                  {\em singular} and {\em group} entity sub-types:
    
                   \begin{enumerate}
                     \item
@@ -473,6 +496,1641 @@
   query holds(alice, read, file);
             \end{vverbatim}
           \end{vexample}
+
+      \subsection{Semantics}
+        \label{subsec-langl-semantics}
+
+        After giving a detailed syntactic definition of language ${\cal L}$,
+        we now define its formal semantics.
+
+        The semantics of language ${\cal L}$ is based on the well-known answer
+        set (stable model) semantics of extended logic programs proposed by
+        Gelfond and Lifschitz \cite{GE}. The definition below formally defines
+        the answer set of a logic program.
+
+        \begin{vdefinition}
+          \label{def-ans}
+
+          Given an extended logic program $\pi$ composed of ground facts and
+          rules that do not have the negation-as-failure operator $not$ and a
+          set ${\cal F}$ of all ground facts in $\pi$. A set $\lambda$ is
+          then said to be an answer set of $\pi$ if it is the smallest set
+          that satisfies the following conditions:
+
+          \begin{enumerate}
+            \item
+              For any rule of the form $\rho_{0}$ $\leftarrow$ $\rho_{1}$,
+              $\hdots$, $\rho_{n}$ where $n$ $\geq$ 1, if $\rho_{1}$, $\hdots$,
+              $\rho_{n}$ $\in$ $\lambda$, then
+              $\rho_{0}$ $\in$ $\lambda$.
+
+            \item
+              If $\lambda$ contains a pair of complementary facts (i.e. a fact
+              and its negation), then $\lambda$ = ${\cal F}$.
+          \end{enumerate}
+
+          For a ground extended logic program $\pi$ that is composed of rules
+          that may have the negation-as-failure operator $not$, a set $\lambda$
+          is the answer set of $\pi$ if and only if $\lambda$ is the answer set
+          of $\pi'$, where $\pi'$ is obtained from $\pi$ by deleting the
+          following:
+
+          \begin{enumerate}
+            \item
+              Each rule that contains a fact of the form $not$ $\rho$ in its
+              body where $\rho$ $\in$ $\lambda$.
+            \item
+              All facts of the form $not$ $\rho$ in the bodies of the remaining
+              rules.
+          \end{enumerate}
+        \end{vdefinition}
+
+        \subsubsection{Domain Description of Language ${\cal L}$}
+
+          The definition below gives a formal definition of the domain
+          description of language ${\cal L}$.
+
+          \begin{vdefinition}
+            \label{def-langl-domain}
+            The domain description ${\cal D}_{\cal L}$ of language ${\cal L}$
+            is defined as a finite set of ground initial state facts,
+            constraint rules and policy update definitions.
+          \end{vdefinition}
+
+          In addition to the domain description ${\cal D}_{\cal L}$, language
+          ${\cal L}$ also includes an additional ordered set: the sequence list
+          $\psi$. The sequence list $\psi$ is an ordered set that contains a
+          sequence of references to policy update definitions. Each policy
+          update reference consists of the policy update identifier and a
+          series of zero or more identifier entities to replace the variable
+          place-holders in the policy update definitions.
+
+        \subsubsection{Language ${\cal L}^{*}$}
+
+          In language ${\cal L}$, the policy base is subject to change, which
+          is triggered by the application of policy updates. Such changes bring
+          forth the concept of policy base states. Conceptually, a state may be
+          thought of as a set of facts and constraints of the policy base at a
+          particular instant. The state transition notation below shows that a
+          new state $PB'$ is generated from the current state $PB$ after the
+          policy update $u$ is applied.
+
+          \begin{vquote}
+            $PB$ $\overrightarrow{_{u}}$ $PB'$
+          \end{vquote}
+
+          This concept of a state means that for every policy update applied
+          to the policy base, a new instance of the policy base or a new set of
+          facts and constraints are generated. To precisely define the
+          underlying semantics of domain description ${\cal D}_{\cal L}$ in
+          language ${\cal L}$, we introduce language ${\cal L}^{*}$, which is
+          an extended logic program representation of language ${\cal L}$, with
+          state as an explicit sort.
+
+          Language ${\cal L}^{*}$ contains only one special state constant
+          $S_{0}$ to represent the initial state of a given domain description.
+          All other states are represented as a resulting state obtained by
+          applying the $Res$ function. The $Res$ function takes a policy update
+          reference $u$ ($u$ $\in$ $\psi$) and the current state $\sigma$ as
+          input arguments and returns the resulting state $\sigma'$ after
+          update $u$ has been applied to state $\sigma$:
+
+          \begin{vquote}
+            $\sigma'$ $=$ $Res$($u$, $\sigma$)
+          \end{vquote}
+
+          \noindent
+          Given an initial state $S_{0}$ and a policy update sequence list
+          $\psi$, each state $\sigma_{i}$ ($0$ $\leq$ $i$ $\leq$ $|\psi|$)
+          may be represented as follows:
+
+          \begin{vquote}
+            $\sigma_{0}$ $=$ $S_{0}$
+
+            $\sigma_{1}$ $=$ $Res$($u_{0}$, $\sigma_{0}$)
+
+            $\vdots$
+
+            $\sigma_{|\psi|}$ $=$
+              $Res$($u_{|\psi| - 1}$, $\sigma_{|\psi| - 1}$)
+          \end{vquote}
+
+          \noindent
+          Substituting each state with a recursive call to the $Res$ function,
+          the final state $S_{|\psi|}$ is defined as follows:
+
+          \begin{vquote}
+            $S_{|\psi|}$ $=$
+              $Res$($u_{|\psi| - 1}$, $Res$($\ldots$, $Res$($u_{0}$, $S_{0}$)))
+          \end{vquote}
+
+          \paragraph{Entities.}
+
+            The entity set ${\cal E}$ is the union of six disjoint entity sets:
+            single subject ${\cal E}_{ss}$, group subject ${\cal E}_{sg}$,
+            single access right ${\cal E}_{as}$, group access right
+            ${\cal E}_{ag}$, single object ${\cal E}_{os}$ and group object
+            ${\cal E}_{og}$. Each entity in set ${\cal E}$ corresponds directly
+            to the entity identifiers of language ${\cal L}$.
+
+            \begin{vquote}
+              ${\cal E}$ $=$
+              ${\cal E}_{s}$ $\cup$ ${\cal E}_{a}$ $\cup$ ${\cal E}_{o}$
+
+              ${\cal E}_{s}$ $=$ ${\cal E}_{ss}$ $\cup$ ${\cal E}_{sg}$
+
+              ${\cal E}_{a}$ $=$ ${\cal E}_{as}$ $\cup$ ${\cal E}_{ag}$
+
+              ${\cal E}_{o}$ $=$ ${\cal E}_{os}$ $\cup$ ${\cal E}_{og}$
+            \end{vquote}
+
+          \paragraph{Atoms.}
+
+            The main difference between language ${\cal L}$ and language
+            ${\cal L}^{*}$ lies in the definition of an atom. Atoms in language
+            ${\cal L}^{*}$ represent a logical relationship of two to three
+            entities, as with atoms of language ${\cal L}$. Furthermore, atoms
+            of language ${\cal L}^{*}$ extends this definition by defining the
+            state of the policy base in which the relationship holds. In this
+            paper, atoms of language ${\cal L}^{*}$ are written with the
+            hat character ($\hat{holds}$, $\hat{memb}$ and $\hat{subst}$) to
+            differentiate from the atoms of language ${\cal L}$. The atom set
+            ${\cal A}^{\sigma}$ is the set of all atoms in state $\sigma$.
+
+            \begin{vquote}
+              ${\cal A}^{\sigma}$ $=$
+                ${\cal A}^{\sigma}_{h}$ $\cup$
+                ${\cal A}^{\sigma}_{m}$ $\cup$
+                ${\cal A}^{\sigma}_{s}$
+    
+              ${\cal A}^{\sigma}_{h}$ $=$
+                $\{\hat{holds}$($s$, $a$, $o$, $\sigma$) $\mid$
+                  $s$ $\in$ ${\cal E}_{s}$,
+                  $a$ $\in$ ${\cal E}_{a}$,
+                  $o$ $\in$ ${\cal E}_{o}\}$
+    
+              ${\cal A}^{\sigma}_{m}$ $=$
+               ${\cal A}^{\sigma}_{ms}$ $\cup$
+               ${\cal A}^{\sigma}_{ma}$ $\cup$
+               ${\cal A}^{\sigma}_{mo}$
+    
+              ${\cal A}^{\sigma}_{s}$ $=$
+                ${\cal A}^{\sigma}_{ss}$ $\cup$
+                ${\cal A}^{\sigma}_{sa}$ $\cup$
+                ${\cal A}^{\sigma}_{so}$
+    
+              ${\cal A}^{\sigma}_{ms}$ $=$
+                $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$
+                  $e$ $\in$ ${\cal E}_{ss}$,
+                  $g$ $\in$ ${\cal E}_{sg}\}$
+    
+              ${\cal A}^{\sigma}_{ma}$ $=$
+                $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$
+                  $e$ $\in$ ${\cal E}_{as}$,
+                  $g$ $\in$ ${\cal E}_{ag}\}$
+    
+              ${\cal A}^{\sigma}_{mo}$ $=$
+                $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$
+                  $e$ $\in$ ${\cal E}_{os}$,
+                  $g$ $\in$ ${\cal E}_{og}\}$
+    
+              ${\cal A}^{\sigma}_{ss}$ $=$
+                $\{\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$) $\mid$
+                  $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{sg}\}$
+    
+              ${\cal A}^{\sigma}_{sa}$ $=$
+                $\{\hat{subst}(g_{1}, g_{2}, \sigma)$ $\mid$
+                  $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{ag}\}$
+    
+              ${\cal A}^{\sigma}_{so}$ $=$
+                $\{\hat{subst}(g_{1}, g_{2}, \sigma)$ $\mid$
+                  $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{og}\}$
+            \end{vquote}
+
+          \paragraph{Facts.}
+
+            A fact is a logical statement that makes a claim that an atom
+            either holds or does not hold at a particular state. The
+            following is the formal definition of fact $\hat{\rho}$ in
+            state $\sigma$:
+
+            \begin{vquote}
+              $\hat{\rho}^{\sigma}$ $=$
+                $[\lnot]$$\hat{\alpha}$,
+                $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$
+            \end{vquote}
+
+        \subsubsection{Translating Language ${\cal L}$ to Language ${\cal L^{*}}$}
+
+          Given a domain description ${\cal D_{L}}$ of language ${\cal L}$, we
+          translate ${\cal D_{L}}$ into an extended logic program of language
+          ${\cal L^{*}}$, as denoted by $Trans$(${\cal D_{L}}$). The semantics
+          of ${\cal D_{L}}$ are provided by the answer sets of the extended
+          logic program $Trans$(${\cal D_{L}}$). Before we can fully define
+          $Trans$(${\cal D}_{\cal L}$), we must first define the following
+          functions:
+
+          The $CopyAtom$() function takes two arguments: an atom $\hat{\alpha}$
+          of language ${\cal L}^{*}$ at some state $\sigma$ and another state
+          $\sigma'$. The function returns an equivalent atom of the same type
+          and with the same entities, but in the new state specified.
+
+          \begin{vquote}
+            $CopyAtom$($\hat{\alpha}$, $\sigma'$)
+            $=$
+            \begin{math}
+              \begin{cases}
+                \mbox{
+                  $\hat{holds}$($s$, $a$, $o$, $\sigma'$),
+                    if $\hat{\alpha}$ $=$
+                      $\hat{holds}$($s$, $a$, $o$, $\sigma$)
+                } \\
+                \mbox{
+                  $\hat{memb}$($e$, $g$, $\sigma'$),
+                    if $\hat{\alpha}$ $=$
+                      $\hat{memb}$($e$, $g$, $\sigma$)
+                } \\
+                \mbox{
+                  $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma'$),
+                    if $\hat{\alpha}$ $=$
+                      $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$)
+                }
+              \end{cases}
+            \end{math}
+          \end{vquote}
+
+          Another function, $TransAtom$(), takes an atom $\alpha$ of language
+          ${\cal L}$ and an arbitrary state $\sigma$ and returns the equivalent
+          atom of language ${\cal L}^{*}$.
+
+          \begin{vquote}
+            $TransAtom$($\alpha$, $\sigma$)
+            $=$
+            \begin{math}
+              \begin{cases}
+                \mbox{
+                  $\hat{holds}$($s$, $a$, $o$, $\sigma$),
+                    if $\alpha$ $=$ $holds$($s$, $a$, $o$)
+                } \\
+                \mbox{
+                  $\hat{memb}$($e$, $g$, $\sigma$),
+                    if $\alpha$ $=$ $memb$($e$, $g$)
+                } \\
+                \mbox{
+                  $\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$),
+                    if $\alpha$ $=$ $subst$($g_{1}$, $g_{2}$)
+                }
+              \end{cases}
+            \end{math}
+          \end{vquote}
+
+          The $TransFact$() function is similar to the $TransAtom$()
+          function, but instead of translating an atom, it takes a fact
+          from language ${\cal L}$ and a state then returns the equivalent
+          fact in language ${\cal L}^{*}$.
+
+          \paragraph{Initial Fact Rules.}
+
+            The process of translating initial fact expressions of language
+            ${\cal L}$ to language ${\cal L}^{*}$ rules is a trivial procedure:
+            translate each fact that make up the initial fact expression of
+            language ${\cal L}$ with its corresponding equivalent initial state
+            atom of language ${\cal L}^{*}$. Given the following
+            {\em initially} statement in language ${\cal L}$:
+
+            \begin{vverbatim}
+  initially \(\rho\sb{0}\), \ldots, \(\rho\sb{n}\);
+            \end{vverbatim}
+
+            \noindent
+            The language ${\cal L}^{*}$ translation of this statement is shown
+            below:
+
+            \begin{vquote}
+              $\hat{\rho}_{0}$ $\leftarrow$
+
+              $\vdots$
+
+              $\hat{\rho}_{n}$ $\leftarrow$
+            \end{vquote}
+
+            \begin{vquote}
+              where
+
+              \hspace{1em}
+              $\hat{\rho}_{i}$ $=$ $TransFact$($\rho_{i}$, $S_{0}$),
+
+              \hspace{1em}
+              $0$ $\leq$ $i$ $\leq$ $n$
+            \end{vquote}
+
+            As shown above, the number of initial fact rules generated from the
+            translation is the number of facts $n$ in the given language
+            ${\cal L}$ initial fact expression. The following code shows a
+            more realistic example of language ${\cal L}$ {\em initially}
+            statements:
+
+            \begin{vverbatim}
+  initially
+    holds(admins, read, sys\_data),
+    memb(alice, admins);
+
+  initially
+    memb(bob, admins);
+            \end{vverbatim}
+
+            \noindent
+            In language ${\cal L}^{*}$, the above statements are translated to:
+
+            \begin{vquote}
+              $\hat{holds}$($admins$, $read$, $sys\_data$, $S_{0}$)
+                $\leftarrow$
+
+              $\hat{memb}$($alice$, $admins$, $S_{0}$) $\leftarrow$
+
+              $\hat{memb}$($bob$, $admins$, $S_{0}$) $\leftarrow$
+            \end{vquote}
+
+          \paragraph{Constraint Rules.}
+
+            Each constraint rule in language ${\cal L}$ is expressed as a
+            series of logical rules in language ${\cal L}^{*}$. Given that all
+            variable occurrences have been grounded to entity identifiers, a
+            constraint in language ${\cal L}$, with $n_0$, $n_1$, $n_2$ $\geq$
+            $0$ may be represented as:
+
+            \begin{vverbatim}
+  always \(\rho\sb{0\sb{0}}\), \ldots, \(\rho\sb{0\sb{n\sb{0}}}\)
+    implied by \(\rho\sb{1\sb{0}}\), \ldots, \(\rho\sb{1\sb{n\sb{1}}}\)
+    with absence \(\rho\sb{2\sb{0}}\), \ldots, \(\rho\sb{2\sb{n\sb{2}}}\);
+            \end{vverbatim}
+
+            Each fact in the {\em always} clause of language ${\cal L}$
+            corresponds to a new rule, where it is the consequent. Each of
+            these new rules will have expression $\rho_{1}$ in the
+            {\em implied by} clause as the positive premise and the expression
+            $\rho_{2}$ in the {\em with absence} clause as the negative
+            premise.
+
+            \begin{vquote}
+              $\rho_{0_{0}}$ $\leftarrow$
+                $\rho_{1_{0}}$, \ldots, $\rho_{1_{n_1}}$,
+                $not$ $\rho_{2_{0}}$, \ldots, $not$ $\rho_{2_{n_2}}$
+
+              $\vdots$
+
+              $\rho_{0_{n_{0}}}$ $\leftarrow$
+                $\rho_{1_{0}}$, \ldots, $\rho_{1_{n_1}}$,
+                $not$ $\rho_{2_{0}}$, \ldots, $not$ $\rho_{2_{n_2}}$
+            \end{vquote}
+
+            Under the definition of constraint rules, each of the rules listed
+            above must be made to hold in all states as defined by the sequence
+            list $\psi$. This can be accomplished by translating each of the
+            above rules to a set of $|\psi|$ rules, one for each state.
+
+            \begin{vquote}
+              $\hat{\rho}^{S_{0}}_{0_{0}}$ $\leftarrow$
+                $\hat{\rho}^{S_{0}}_{1_{0}}$, \ldots,
+                  $\hat{\rho}^{S_{0}}_{1_{n_1}}$,
+                $not$ $\hat{\rho}^{S_{0}}_{2_{0}}$, \ldots,
+                  $not$ $\hat{\rho}^{S_{0}}_{2_{n_2}}$
+
+              $\vdots$
+
+              $\hat{\rho}^{S_{|\psi|}}_{0_{0}}$ $\leftarrow$
+                $\hat{\rho}^{S_{|\psi|}}_{1_{0}}$, \ldots,
+                  $\hat{\rho}^{S_{|\psi|}}_{1_{n_1}}$,
+                $not$ $\hat{\rho}^{S_{|\psi|}}_{2_{0}}$, \ldots,
+                  $not$ $\hat{\rho}^{S_{|\psi|}}_{2_{n_2}}$
+
+              $\vdots$
+
+              $\hat{\rho}^{S_{0}}_{0_{n_0}}$ $\leftarrow$
+                $\hat{\rho}^{S_{0}}_{1_{0}}$, \ldots,
+                  $\hat{\rho}^{S_{0}}_{1_{n_1}}$,
+                $not$ $\hat{\rho}^{S_{0}}_{2_{0}}$, \ldots,
+                  $not$ $\hat{\rho}^{S_{0}}_{2_{n_2}}$
+
+              $\vdots$
+
+              $\hat{\rho}^{S_{|\psi|}}_{0_{n_0}}$ $\leftarrow$
+                $\hat{\rho}^{S_{|\psi|}}_{1_{0}}$, \ldots,
+                  $\hat{\rho}^{S_{|\psi|}}_{1_{n_1}}$,
+                $not$ $\hat{\rho}^{S_{|\psi|}}_{2_{0}}$, \ldots,
+                  $not$ $\hat{\rho}^{S_{|\psi|}}_{2_{n_2}}$
+            \end{vquote}
+
+            \begin{vquote}
+              where
+
+              \hspace{1em}
+              $\hat{\rho}^{\sigma}_{0_i}$ $=$
+                $TransFact$($\rho_{0_i}$, $\sigma$), $0$ $\leq$ $i$ $\leq$ $n_0$,
+
+              \hspace{1em}
+              $\hat{\rho}^{\sigma}_{1_j}$ $=$
+                $TransFact$($\rho_{1_j}$, $\sigma$), $0$ $\leq$ $j$ $\leq$ $n_1$,
+
+              \hspace{1em}
+              $\hat{\rho}^{\sigma}_{2_k}$ $=$
+                $TransFact$($\rho_{2_k}$, $\sigma$), $0$ $\leq$ $k$ $\leq$ $n_2$,
+
+              \hspace{1em}
+              $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+            \end{vquote}
+
+            For a given language ${\cal L}$ constraint rule, the number of
+            constraint rules generated in the translation is:
+
+            \begin{quote}
+              $n_0$ $|\psi|$
+            \end{quote}
+
+            \begin{quote}
+              where
+
+              \hspace{1em}
+              $n_0$ is the number of facts in the {\em always} clause
+
+              \hspace{1em}
+              $|\psi|$ is the number of states
+            \end{quote}
+
+            The example below shows how the following language ${\cal L}$ code
+            fragment is translated to language ${\cal L}^{*}$:
+
+            \begin{vverbatim}
+  always
+    holds(alice, read, data),
+    holds(alice, write, data)
+  implied by
+    memb(alice, admin)
+  with absence
+    !holds(alice, own, data);
+            \end{vverbatim}
+
+            \noindent
+            Given a policy update reference in the sequence list $\psi$ (i.e.
+            $|\psi|$ = $1$), the language ${\cal L}^{*}$ equivalent is as
+            follows:
+
+            \begin{vquote}
+              $\hat{holds}$($alice$, $read$, $data$, $S_{0}$) $\leftarrow$
+
+              \hspace{1em}
+              $\hat{memb}$($alice$, $admin$, $S_{0}$),
+              $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{0}$)
+
+              $\hat{holds}$($alice$, $write$, $data$, $S_{0}$) $\leftarrow$
+
+              \hspace{1em}
+              $\hat{memb}$($alice$, $admin$, $S_{0}$),
+              $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{0}$)
+            \end{vquote}
+
+            \begin{vquote}
+              $\hat{holds}$($alice$, $read$, $data$, $S_{1}$) $\leftarrow$
+ 
+              \hspace{1em}
+              $\hat{memb}$($alice$, $admin$, $S_{1}$),
+              $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{1}$)
+ 
+              $\hat{holds}$($alice$, $write$, $data$, $S_{1}$) $\leftarrow$
+ 
+              \hspace{1em}
+              $\hat{memb}$($alice$, $admin$, $S_{1}$),
+              $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{1}$)
+            \end{vquote}
+
+          \paragraph{Policy Update Rules.}
+            
+            Given that $n_0$, $n_1$ $\geq$ $0$, all occurrences of variable
+            place-holders grounded to entity identifiers, a policy update $u$
+            in language ${\cal L}$ is in the form:
+
+            \begin{vverbatim}
+  \(u\) causes \(\rho\sb{0\sb{0}}\), \ldots, \(\rho\sb{0\sb{n\sb{0}}}\)
+  if \(\rho\sb{1\sb{0}}\), \ldots, \(\rho\sb{1\sb{n\sb{1}}}\);
+            \end{vverbatim}
+
+            In language ${\cal L}^{*}$, such policy updates may be represented
+            as a set of implications, with each fact $\rho_{0}$ in the
+            postcondition expression as the consequent and precondition
+            expression $\rho_{1}$ as the premise. However, the translation
+            process must also take into account that the premise of the
+            implication holds in the state before the policy update is applied
+            and that the consequent holds in the state after the application.
+
+            \begin{vquote}
+              $\hat{\rho}_{0_{0}}$ $\leftarrow$
+                $\hat{\rho}_{1_{0}}$, \ldots, $\hat{\rho}_{1_{n_1}}$
+
+              $\vdots$
+
+              $\hat{\rho}_{0_{n_0}}$ $\leftarrow$
+                $\hat{\rho}_{1_{0}}$, \ldots, $\hat{\rho}_{1_{n_1}}$
+            \end{vquote}
+
+            \begin{vquote}
+              where
+
+              \hspace{1em}
+              $\hat{\rho}_{0_i}$ $=$
+                $TransFact$($\rho_{0_i}$, $Res$($u$, $\sigma$)),
+                $0$ $\leq$ $i$ $\leq$ $n_0$,
+
+              \hspace{1em}
+              $\hat{\rho}_{1_j}$ $=$
+                $TransFact$($\rho_{1_j}$, $\sigma$),
+                $0$ $\leq$ $j$ $\leq$ $n_1$
+            \end{vquote}
+
+            Intuitively, a given langauge ${\cal L}$ policy update definition
+            will generate $n_0$ policy update rules in language ${\cal L^{*}}$,
+            where $n_0$ is the number of facts in the postcondition expression.
+            For example, given the following 2 language ${\cal L}$ policy
+            update definitions:
+
+            \begin{vverbatim}
+  grant\_read()
+    causes holds(alice, read, file)
+    if memb(alice, readers);
+
+  grant\_write()
+    causes holds(alice, write, file)
+    if memb(alice, writers);
+            \end{vverbatim}
+
+            Given the update sequence list $\psi$ contains
+            \{$grant\_read$, $grant\_write$\}, the above statements are written
+            in language ${\cal L}^{*}$ as:
+
+            \begin{vquote}
+              $\hat{holds}$($alice$, $read$, $file$, $S_{1}$) $\leftarrow$
+              $\hat{memb}$($alice$, $readers$, $S_{0}$)
+            \end{vquote}
+
+            \begin{vquote}
+              $\hat{holds}$($alice$, $write$, $file$, $S_{2}$) $\leftarrow$
+              $\hat{memb}$($alice$, $writers$, $S_{1}$)
+            \end{vquote}
+
+          \paragraph{Additional Constraints.}
+
+            In addition to the translations discussed above, there are a few
+            other implicit constraint rules implied by language ${\cal L}$
+            that need to be explicitly defined in language ${\cal L}^{*}$.
+
+            \begin{enumerate}
+              \item
+                {\em Inheritance Rules.}
+                All properties held by a group is inherited by all the members
+                and subsets of that group. This rule is easy to apply for
+                subject group entities. However, careful attention must be
+                given to access right and object groups. A subject holding an
+                access right for an object group implies that the subject also
+                holds that access right for all objects in the object group.
+                Similarly, a subject holding an access right group for a
+                particular object implies that the subject holds all access
+                rights contained in the access right group for that object.
+
+                A conflict is encountered when a particular property is to be
+                inherited by an entity from a group of which it is a member or
+                subset, and the contained entity already holds the negation of
+                that property. This conflict is resolved by giving negative
+                facts higher precedence over its positive counterpart: by
+                allowing member or subset entities to inherit its parent
+                group's properties only if the entities do not already hold
+                the negation of those properties.
+
+                The following are the inheritance constraint rules to allow the
+                properties held by a group to propagate to its members and
+                subsets that do not already hold the negation of the
+                properties.
+
+                \begin{enumerate}
+                  \item
+                    Subject Group Membership Inheritance Rules
+
+                    \begin{vquote}
+                      $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$),
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$) $\leftarrow$
+
+                      \hspace{1em}
+                      $\hat{holds}$($s_{g}$, $a$, $o$, $\sigma$),
+                      $\hat{memb}$($s_{s}$, $s_{g}$, $\sigma$),
+                      $not$ $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$)
+                      $\leftarrow$
+
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s_{g}$, $a$, $o$, $\sigma$),
+                      $\hat{memb}$($s_{s}$, $s_{g}$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      where
+
+                      \hspace{1em}
+                      $s_{s}$ $\in$ ${\cal E}_{ss}$,
+
+                      \hspace{1em}
+                      $s_{g}$ $\in$ ${\cal E}_{sg}$,
+
+                      \hspace{1em}
+                      $a$ $\in$ ${\cal E}_{a}$,
+
+                      \hspace{1em}
+                      $o$ $\in$ ${\cal E}_{o}$,
+
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                    \end{vquote}
+
+                  \item
+                    Access Right Group Membership Inheritance Rules
+
+                    \begin{vquote}
+                      $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$),
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$) $\leftarrow$
+
+                      \hspace{1em}
+                      $\hat{holds}$($s$, $a_{g}$, $o$, $\sigma$),
+                      $\hat{memb}$($a_{s}$, $a_{g}$, $\sigma$),
+                      $not$ $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$)
+                      $\leftarrow$
+
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s$, $a_{g}$, $o$, $\sigma$),
+                      $\hat{memb}$($a_{s}$, $a_{g}$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      where
+
+                      \hspace{1em}
+                      $s$ $\in$ ${\cal E}_{s}$,
+
+                      \hspace{1em}
+                      $a_{s}$ $\in$ ${\cal E}_{as}$,
+
+                      \hspace{1em}
+                      $a_{g}$ $\in$ ${\cal E}_{ag}$,
+
+                      \hspace{1em}
+                      $o$ $\in$ ${\cal E}_{o}$,
+
+                      \hspace{1em}
+                      $S_{0}$ ${\leq}$ ${\sigma}$ ${\leq}$ $S_{|\psi|}$
+                    \end{vquote}
+
+                  \item
+                    Object Group Membership Inheritance Rules
+
+                    \begin{vquote}
+                      $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$),
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$) $\leftarrow$
+
+                      \hspace{1em}
+                      $\hat{holds}$($s$, $a$, $o_{g}$, $\sigma$),
+                      $\hat{memb}$($o_{s}$, $o_{g}$, $\sigma$),
+                      $not$ $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$)
+                      $\leftarrow$
+
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s$, $a$, $o_{g}$, $\sigma$),
+                      $\hat{memb}$($o_{s}$, $o_{g}$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      where
+
+                      \hspace{1em}
+                      $s$ $\in$ ${\cal E}_{s}$,
+
+                      \hspace{1em}
+                      $a$ $\in$ ${\cal E}_{a}$,
+
+                      \hspace{1em}
+                      $o_{s}$ $\in$ ${\cal E}_{os}$,
+
+                      \hspace{1em}
+                      $o_{g}$ $\in$ ${\cal E}_{og}$,
+
+                      \hspace{1em}
+                      $S_{0}$ ${\leq}$ ${\sigma}$ ${\leq}$ $S_{|\psi|}$
+                    \end{vquote}
+
+                  \item
+                    Subject Group Subset Inheritance Rules
+
+                    \begin{vquote}
+                      $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$),
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$) $\leftarrow$
+
+                      \hspace{1em}
+                      $\hat{holds}$($s_{g2}$, $a$, $o$, $\sigma$),
+                      $\hat{subst}$($s_{g1}$, $s_{g2}$, $\sigma$),
+                      $not$ $\lnot\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$)
+                      $\leftarrow$
+
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s_{g2}$, $a$, $o$, $\sigma$),
+                      $\hat{subst}$($s_{g1}$, $s_{g2}$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      where
+
+                      \hspace{1em}
+                      $s_{g1}$, $s_{g2}$ $\in$ ${\cal E}_{sg}$,
+
+                      \hspace{1em}
+                      $a$ $\in$ ${\cal E}_{a}$,
+
+                      \hspace{1em}
+                      $o$ $\in$ ${\cal E}_{o}$,
+
+                      \hspace{1em}
+                      $s_{g1}$ $\neq$ $s_{g2}$,
+
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq S_{|\psi|}$
+                    \end{vquote}
+
+                  \item
+                    Access Right Group Subset Inheritance Rules
+
+                    \begin{vquote}
+                      $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$),
+                    \end{vquote}
+ 
+                    \begin{vquote}
+                      $\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$) $\leftarrow$
+ 
+                      \hspace{1em}
+                      $\hat{holds}$($s$, $a_{g2}$, $o$, $\sigma$),
+                      $\hat{subst}$($a_{g1}$, $a_{g2}$, $\sigma$),
+                      $not$ $\lnot$ $\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$)
+                    \end{vquote}
+ 
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$)
+                      $\leftarrow$
+ 
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s$, $a_{g2}$, $o$, $\sigma$),
+                      $\hat{subst}$($a_{g1}$, $a_{g2}$, $\sigma$)
+                    \end{vquote}
+ 
+                    \begin{vquote}
+                      where
+ 
+                      \hspace{1em}
+                      $s$ $\in$ ${\cal E}_{s}$,
+ 
+                      \hspace{1em}
+                      $a_{g1}$, $a_{g2}$ $\in$ ${\cal E}_{ag}$,
+ 
+                      \hspace{1em}
+                      $o$ $\in$ ${\cal E}_{o}$,
+ 
+                      \hspace{1em}
+                      $a_{g1}$ $\neq$ $a_{g2}$,
+ 
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                    \end{vquote}
+
+                  \item
+                    Object Group Subset Inheritance Rules
+
+                    \begin{vquote}
+                      $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$),
+                    \end{vquote}
+ 
+                    \begin{vquote}
+                      $\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$) $\leftarrow$
+ 
+                      \hspace{1em}
+                      $\hat{holds}$($s$, $a$, $o_{g2}$, $\sigma$),
+                      $\hat{subst}$($o_{g1}$, $o_{g2}$, $\sigma$),
+                      $not$ $\lnot\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$)
+                    \end{vquote}
+ 
+                    \begin{vquote}
+                      $\lnot\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$)
+                      $\leftarrow$
+ 
+                      \hspace{1em}
+                      $\lnot\hat{holds}$($s$, $a$, $o_{g2}$, $\sigma$),
+                      $\hat{subst}$($o_{g1}$, $o_{g2}$, $\sigma$)
+                    \end{vquote}
+ 
+                    \begin{vquote}
+                      where
+ 
+                      \hspace{1em}
+                      $s$ $\in$ ${\cal E}_{s}$,
+ 
+                      \hspace{1em}
+                      $a$ $\in$ ${\cal E}_{a}$,
+ 
+                      \hspace{1em}
+                      $o_{g1}$, $o_{g2}$ $\in$ ${\cal E}_{og}$,
+ 
+                      \hspace{1em}
+                      $o_{g1}$ $\neq$ $o_{g2}$,
+ 
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                    \end{vquote}
+                \end{enumerate}
+
+              \item
+                {\em Transitivity Rules.}
+                Given three distinct groups $g_0$, $g_1$ and $g_2$. If $g_0$ is
+                a subset of $g_1$ and $g_1$ is a subset of $g_2$, then $g_0$
+                must also be a subset of $g_2$. The following rules ensure that
+                the transitive property of subject, access right and object
+                groups holds:
+
+                \begin{enumerate}
+                  \item
+                    Subject Group Transitivity Rules
+
+                    \begin{vquote}
+                      $\forall$ ($sg_{0}$, $sg_{1}$, $sg_{2}$, $\sigma$),
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\hat{subst}$($sg_{0}$, $sg_{2}$, $\sigma$) $\leftarrow$
+                      $\hat{subst}$($sg_{0}$, $sg_{1}$, $\sigma$),
+                      $\hat{subst}$($sg_{1}$, $sg_{2}$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      where
+
+                      \hspace{1em}
+                      $sg_{0}$, $sg_{1}$, $sg_{2}$ $\in$ ${\cal E}_{sg}$,
+
+                      \hspace{1em}
+                      $sg_{0}$ $\neq$ $sg_{1}$ $\neq$ $sg_{2}$,
+
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                    \end{vquote}
+
+                  \item
+                    Access Right Group Transitivity Rules
+
+                    \begin{vquote}
+                      $\forall$ ($ag_{0}$, $ag_{1}$, $ag_{2}$, $\sigma$),
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\hat{subst}$($ag_{0}$, $ag_{2}$, $\sigma$) $\leftarrow$
+                      $\hat{subst}$($ag_{0}$, $ag_{1}$, $\sigma$),
+                      $\hat{subst}$($ag_{1}$, $ag_{2}$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      where
+
+                      \hspace{1em}
+                      $ag_{0}$, $ag_{1}$, $ag_{2}$ $\in$ ${\cal E}_{ag}$,
+
+                      \hspace{1em}
+                      $ag_{0}$ $\neq$ $ag_{1}$ $\neq$ $ag_{2}$,
+
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                    \end{vquote}
+
+                  \item
+                    Object Group Transitivity Rules
+
+                    \begin{vquote}
+                      $\forall$ ($og_{0}$, $og_{1}$, $og_{2}$, $\sigma$),
+                    \end{vquote}
+
+                    \begin{vquote}
+                      $\hat{subst}$($og_{0}$, $og_{2}$, $\sigma$) $\leftarrow$
+                      $\hat{subst}$($og_{0}$, $og_{1}$, $\sigma$),
+                      $\hat{subst}$($og_{1}$, $og_{2}$, $\sigma$)
+                    \end{vquote}
+
+                    \begin{vquote}
+                      where
+
+                      \hspace{1em}
+                      $og_{0}$, $og_{1}$, $og_{2}$ $\in$ ${\cal E}_{og}$,
+
+                      \hspace{1em}
+                      $og_{0}$ $\neq$ $og_{1}$ $\neq$ $og_{2}$,
+
+                      \hspace{1em}
+                      $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                    \end{vquote}
+                \end{enumerate}
+
+              \item
+                {\em Intertial Rules.}
+                Intuitively, all facts in the current state that are not
+                affected by a policy update should be carried over to the
+                next state after the update. In language ${\cal L}^{*}$,
+                this rule must be explicitly defined as a constraint. Formally,
+                the inertial rules are expressed as follows:
+
+                \begin{vquote}
+                  $\forall$ ($\hat{\alpha}$,$u$) $\exists$$\hat{\alpha}'$,
+                \end{vquote}
+
+                \begin{vquote}
+                  $\hat{\alpha}'$ $\leftarrow$
+                    $\hat{\alpha}$, $not$ $\lnot$ $\hat{\alpha}'$
+
+                  $\lnot$ $\hat{\alpha}'$ $\leftarrow$
+                    $\lnot$ $\hat{\alpha}$, $not$ $\hat{\alpha}'$
+                \end{vquote}
+
+                \begin{vquote}
+                  where
+
+                  \hspace{1em}
+                  $\hat{\alpha}$ $\in$ ${\cal A}^{\sigma}$,
+
+                  \hspace{1em}
+                  $u$ $\in$ $\psi$,
+
+                  \hspace{1em}
+                  $\hat{\alpha}'$ $=$
+                  $CopyAtom$($\hat{\alpha}$, $Res$($u$, $\sigma$))
+                \end{vquote}
+
+              \item
+                {\em Reflexivity Rules.}
+                Finally, explicit rules must be given to show that every set is
+                a subset of itself.
+
+                \begin{vquote}
+                  $\forall$ ($g$, $\sigma$),
+                \end{vquote}
+
+                \begin{vquote}
+                  $\hat{subst}$($g$, $g$, $\sigma$)
+                \end{vquote}
+
+                \begin{vquote}
+                  where
+
+                  \hspace{1em}
+                  $g$ $\in$
+                    (${\cal E}_{sg}$ $\cup$ ${\cal E}_{ag}$ $\cup$ ${\cal E}_{og}$),
+
+                  \hspace{1em}
+                  $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
+                \end{vquote}
+            \end{enumerate}
+
+          \begin{vexample}
+            \label{ex-2-2}
+            The following shows the language ${\cal L^{*}}$ translation of the
+            language ${\cal L}$ program listing shown in Example \ref{ex-2-1}.
+
+            \begin{enumerate}
+              \item
+                Initial Fact Rules
+    
+                \begin{vquote}
+                  $\hat{memb}(alice, grp2, S_{0}) \leftarrow$
+    
+                  $\hat{holds}(grp1, read, file,S_{0}) \leftarrow$
+    
+                  $\hat{subst}(grp2, grp1, S_{0}) \leftarrow$
+                \end{vquote}
+    
+              \item
+                Constraint Rules
+    
+                \begin{vquote}
+                  % constraints (S0)
+                  $\hat{holds}(grp1, write, file, S_{0})$ $\leftarrow$
+    
+                  \hspace{1em}
+                  $\hat{holds}(grp1, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{0})$
+                \end{vquote}
+    
+                \begin{vquote}
+                  % constraints (S1)
+                  $\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+    
+                  \hspace{1em}
+                  $\hat{holds}(grp1, read, file, S_{1})$,
+                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
+                \end{vquote}
+    
+              \item
+                Policy Update Rules
+    
+                \begin{vquote}
+                  $\lnot\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
+                \end{vquote}
+              \item
+                Inheritance Rules
+               
+                \begin{vquote}
+                  % inheritance rules (positive, read, S0)
+                  $\hat{holds}(alice, read, file, S_{0})$ $\leftarrow$
+               
+                  \hspace{1em}
+                  $\hat{holds}(grp1, read, file, S_{0})$,
+                  $\hat{memb}(alice, grp1, S_{0})$,
+               
+                  \hspace{1em}
+                  $not$ $\lnot\hat{holds}(alice, read, file, S_{0})$
+                \end{vquote}
+               
+                \begin{vquote}
+                  % inheritance rules (negative, read, S0)
+                  $\lnot\hat{holds}(alice, read, file, S_{0})$ $\leftarrow$
+               
+                  \hspace{1em}
+                  $\lnot\hat{holds}(grp1, read, file, S_{0})$,
+                  $\hat{memb}(alice, grp1, S_{0})$
+                \end{vquote}
+               
+                \begin{vquote}
+                  \hspace{2em}$\vdots$
+                \end{vquote}
+               
+                \begin{vquote}
+                  % inheritance rules (positive, write, S1)
+                  $\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
+               
+                  \hspace{1em}
+                  $\hat{holds}(grp3, write, file, S_{1})$,
+                  $\hat{memb}(alice, grp3, S_{1})$,
+               
+                  \hspace{1em}
+                  $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
+                \end{vquote}
+
+                \begin{vquote}
+                  % inheritance rules (negative, write, S1)
+                  $\lnot\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
+               
+                  \hspace{1em}
+                  $\lnot\hat{holds}(grp3, write, file, S_{1})$,
+                  $\hat{memb}(alice, grp3, S_{1})$
+                \end{vquote}
+               
+                \begin{vquote}
+                  % inheritance rules (subset positive, read, S0)
+                  $\hat{holds}(grp1, read, file, S_{0})$ $\leftarrow$
+               
+                  \hspace{1em}
+                  $\hat{holds}(grp2, read, file, S_{0})$,
+                  $\hat{subst}(grp1, grp2, S_{0})$
+
+                  \hspace{1em}
+                  $not$ $\lnot\hat{holds}(grp1, read, file, S_{0})$,
+                \end{vquote}
+               
+                \begin{vquote}
+                  % inheritance rules (subset negative, read, S0)
+                  $\lnot\hat{holds}(grp1, read, file, S_{0})$ $\leftarrow$
+               
+                  \hspace{1em}
+                  $\lnot\hat{holds}(grp2, read, file, S_{0})$,
+                  $\hat{subst}(grp1, grp2, S_{0})$
+                \end{vquote}
+               
+                \begin{vquote}
+                  \hspace{2em}$\vdots$
+                \end{vquote}
+               
+                \begin{vquote}
+                  % inheritance rules (subset positive, write, S1)
+                  $\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+               
+                  \hspace{1em}
+                  $\hat{holds}(grp2, write, file, S_{1})$,
+                  $\hat{subst}(grp3, grp2, S_{1})$
+
+                  \hspace{1em}
+                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$,
+                \end{vquote}
+               
+                \begin{vquote}
+                  % inheritance rules (subset negative, write, S1)
+                  $\lnot\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+               
+                  \hspace{1em}
+                  $\lnot\hat{holds}(grp2, write, file, S_{1})$,
+                  $\hat{subst}(grp3, grp2, S_{1})$
+                \end{vquote}
+
+              \item
+                Transitivity Rules
+
+                \begin{vquote}
+                  $\hat{subst}(grp1, grp3, S_{0})$ $\leftarrow$
+                  $\hat{subst}(grp1, grp2, S_{0})$,
+                  $\hat{subst}(grp2, grp3, S_{0})$
+                \end{vquote}
+    
+                \begin{vquote}
+                  \hspace{2em}$\vdots$
+                \end{vquote}
+    
+                \begin{vquote}
+                  $\hat{subst}(grp3, grp1, S_{0})$ $\leftarrow$
+                  $\hat{subst}(grp3, grp2, S_{0})$,
+                  $\hat{subst}(grp2, grp1, S_{0})$
+                \end{vquote}
+    
+                \begin{vquote}
+                  $\hat{subst}(grp1, grp3, S_{1})$ $\leftarrow$
+                  $\hat{subst}(grp1, grp2, S_{1})$,
+                  $\hat{subst}(grp2, grp3, S_{1})$
+                \end{vquote}
+    
+                \begin{vquote}
+                  \hspace{2em}$\vdots$
+                \end{vquote}
+    
+                \begin{vquote}
+                  $\hat{subst}(grp3, grp1, S_{1})$ $\leftarrow$
+                  $\hat{subst}(grp3, grp2, S_{1})$,
+                  $\hat{subst}(grp2, grp1, S_{1})$
+                \end{vquote}
+
+              \item
+                Inertial Rules
+
+                \begin{vquote}
+                  % inertial rule holds(alice, read, file)
+                  $\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
+    
+                  \hspace{1em}
+                  $\hat{holds}(alice, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(alice, read, file, S_{1})$
+                \end{vquote}
+    
+                \begin{vquote}
+                  % inertial rule !holds(alice, read, file)
+                  $\lnot\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
+    
+                  \hspace{1em}
+                  $\lnot\hat{holds}(alice, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(alice, read, file, S_{1})$
+                \end{vquote}
+    
+                \begin{vquote}
+                  % inertial rule holds(alice, write, file)
+                  $\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
+    
+                  \hspace{1em}
+                  $\hat{holds}(alice, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
+                \end{vquote}
+    
+                \begin{vquote}
+                  % inertial rule !holds(alice, write, file)
+                  $\lnot\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
+    
+                  \hspace{1em}
+                  $\lnot\hat{holds}(alice, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
+                \end{vquote}
+    
+                \begin{vquote}
+                  % inertial rule holds(grp1, read, file)
+                  $\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
+    
+                  \hspace{1em}
+                  $\hat{holds}(grp1, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp1, read, file, S_{1})$
+                \end{vquote}
+
+                \begin{vquote}
+                  % inertial rule !holds(grp1, read, file)
+                  $\lnot\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
+   
+                  \hspace{1em}
+                  $\lnot\hat{holds}(grp1, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp1, read, file, S_{1})$
+                \end{vquote}
+   
+                \begin{vquote}
+                  \hspace{2em}$\vdots$
+                \end{vquote}
+                
+                \begin{vquote}
+                  % inertial rule holds(grp3, read, file)
+                  $\hat{holds}(grp3, read, file, S_{1})$ $\leftarrow$
+                
+                  \hspace{1em}
+                  $\hat{holds}(grp3, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp3, read, file, S_{1})$
+                \end{vquote}
+                
+                \begin{vquote}
+                  % inertial rule !holds(grp3, read, file)
+                  $\lnot\hat{holds}(grp3, read, file, S_{1})$ $\leftarrow$
+                
+                  \hspace{1em}
+                  $\lnot\hat{holds}(grp3, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp3, read, file, S_{1})$
+                \end{vquote}
+                
+                \begin{vquote}
+                  % inertial rule holds(grp1, write, file)
+                  $\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+                
+                  \hspace{1em}
+                  $\hat{holds}(grp1, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp1, write, file, S_{1})$
+                \end{vquote}
+
+                \begin{vquote}
+                  % inertial rule !holds(grp1, write, file)
+                  $\lnot\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+                
+                  \hspace{1em}
+                  $\lnot\hat{holds}(grp1, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp1, write, file, S_{1})$
+                \end{vquote}
+                
+                \begin{vquote}
+                  \hspace{2em}$\vdots$
+                \end{vquote}
+                
+                \begin{vquote}
+                  % inertial rule holds(grp3, write, file)
+                  $\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+                
+                  \hspace{1em}
+                  $\hat{holds}(grp3, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
+                \end{vquote}
+                
+                \begin{vquote}
+                  % inertial rule !holds(grp3, write, file)
+                  $\lnot\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+                
+                  \hspace{1em}
+                  $\lnot\hat{holds}(grp3, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
+                \end{vquote}
+                
+                \begin{vquote}
+                  % inertial rule memb(alice, grp1)
+                  $\hat{memb}(alice, grp1, S_{1})$ $\leftarrow$
+                
+                  \hspace{1em}
+                  $\hat{memb}(alice, grp1, S_{0})$,
+                  $not$ $\lnot\hat{memb}(alice, grp1, S_{1})$
+                \end{vquote}
+
+                \begin{vquote}
+                  % inertial rule !memb(alice, grp1)
+                  $\lnot \hat{memb}(alice, grp1, S_{1})$ $\leftarrow$
+            
+                  \hspace{1em}
+                  $\lnot\hat{memb}(alice, grp1, S_{0})$,
+                  $not$ $\hat{memb}(alice, grp1, S_{1})$
+                \end{vquote}
+            
+                \begin{vquote}
+                  \hspace{2em}$\vdots$
+                \end{vquote}
+            
+                \begin{vquote}
+                  % inertial rule memb(alice, grp3)
+                  $\hat{memb}(alice, grp3, S_{1})$ $\leftarrow$
+            
+                  \hspace{1em}
+                  $\hat{memb}(alice, grp3, S_{0})$,
+                  $not$ $\lnot\hat{memb}(alice, grp3, S_{1})$
+                \end{vquote}
+            
+                \begin{vquote}
+                  % inertial rule !memb(alice, grp3)
+                  $\lnot\hat{memb}(alice, grp3, S_{1})$ $\leftarrow$
+            
+                  \hspace{1em}
+                  $\lnot\hat{memb}(alice, grp3, S_{0})$,
+                  $not$ $\hat{memb}(alice, grp3, S_{1})$
+                \end{vquote}
+            
+                \begin{vquote}
+                  % inertial rule subst(grp1, grp1)
+                  $\hat{subst}(grp1, grp1, S_{1})$ $\leftarrow$
+            
+                  \hspace{1em}
+                  $\hat{subst}(grp1, grp1, S_{0})$,
+                  $not$ $\lnot\hat{subst}(grp1, grp1, S_{1})$
+                \end{vquote}
+
+                \begin{vquote}
+                  % inertial rule !subst(grp1, grp1)
+                  $\lnot\hat{subst}(grp1, grp1, S_{1})$ $\leftarrow$
+            
+                  \hspace{1em}
+                  $\lnot\hat{memb}(grp1, grp1, S_{0})$,
+                  $not$ $\hat{memb}(grp1, grp1, S_{1})$
+                \end{vquote}
+            
+                \begin{vquote}
+                  \hspace{2em}$\vdots$
+                \end{vquote}
+            
+                \begin{vquote}
+                  % inertial rule subst(grp3, grp3)
+                  $\hat{subst}(grp3, grp3, S_{1})$ $\leftarrow$
+            
+                  \hspace{1em}
+                  $\hat{subst}(grp3, grp3, S_{0})$,
+                  $not$ $\lnot\hat{subst}(grp3, grp3, S_{1})$
+                \end{vquote}
+            
+                \begin{vquote}
+                  % inertial rule !subst(grp3, grp3)
+                  $\lnot\hat{subst}(grp3, grp3, S_{1})$ $\leftarrow$
+            
+                  \hspace{1em}
+                  $\lnot\hat{memb}(grp3, grp3, S_{0})$,
+                  $not$ $\hat{memb}(grp3, grp3, S_{1})$
+                \end{vquote}
+
+              \item
+                Reflexivity Rules
+
+                \begin{vquote}
+                  $\hat{subset}(grp1, grp1, S_{0})$ $\leftarrow$
+                  
+                  $\hat{subset}(grp2, grp2, S_{0})$ $\leftarrow$
+                  
+                  $\hat{subset}(grp3, grp3, S_{0})$ $\leftarrow$
+                  
+                  $\hat{subset}(grp1, grp1, S_{1})$ $\leftarrow$
+                  
+                  $\hat{subset}(grp2, grp2, S_{1})$ $\leftarrow$
+                  
+                  $\hat{subset}(grp3, grp3, S_{1})$ $\leftarrow$
+               \end{vquote}
+            \end{enumerate}
+          \end{vexample}
+
+          \begin{vdefinition}
+            \label{def-langl-trans}
+            Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
+            the language ${\cal L^{*}}$ translation $Trans$(${\cal D_{L}}$)
+            is an extended logic program of language ${\cal L}$ consisting of:
+            (1) initial fact rules, (2) constraint rules, (3) policy update
+            rules, (4) inheritance rules, (5) transitivity rules, (6) inertial
+            rules, and (7) reflexivity rules as described above.
+          \end{vdefinition}
+
+          Note that given a domain description ${\cal D_{L}}$, the translation
+          $Trans$(${\cal D_{L}}$) may contain more rules than the original
+          statements in ${\cal D_{L}}$. However, as the theorem below defines
+          the maximum number of rules generated in a translation
+          $Trans$(${\cal D_{L}}$), it shows that the size of a translated
+          domain $|$$Trans$(${\cal D_{L}}$)$|$ can only be polynomially larger
+          than the size of the given domain $|$${\cal D_{L}}$$|$. Therefore,
+          from a computational viewpoint, computing the answer sets of
+          $Trans$(${\cal D_{L}}$) is always feasible.
+
+          \begin{vtheorem}{Translation Size}
+            \label{the-size}
+            Given a domain description ${\cal D_{L}}$; the sets $\Gamma_{int}$,
+            $\Gamma_{con}$ and $\Gamma_{upd}$ containing the initially,
+            constraint and policy update statements in ${\cal D_{L}}$,
+            respectively; the set ${\cal E}$ containing all the entities in
+            ${\cal D_{L}}$, including its subsets ${\cal E}_{s}$,
+            ${\cal E}_{a}$, ${\cal E}_{s}$, ${\cal E}_{ss}$, ${\cal E}_{as}$,
+            ${\cal E}_{os}$, ${\cal E}_{sg}$, ${\cal E}_{ag}$, ${\cal E}_{og}$;
+            the set ${\cal A}$ containing all the atoms in ${\cal D_{L}}$; the
+            maximum number of facts $Max$($\Gamma_{int}$) in the expression of
+            any {\em initially} statement in $\Gamma_{int}$; the maximum
+            number of facts $Max$($\Gamma_{con}$) in the {\em always} clause
+            expression of any constraint statement in $\Gamma_{con}$; the
+            maximum number of facts $Max$($\Gamma_{upd}$) in the postcondition
+            expression of any policy update statement in $\Gamma_{upd}$; and
+            finally the policy update sequence list $\psi$, then the size of
+            the translation $Trans$(${\cal D_{L}}$) is:
+
+            \begin{vquote}
+              $|$$Trans$(${\cal D_{L}}$)$|$ $\leq$
+ 
+              % initially
+              \hspace{1em}
+              $Max$($\Gamma_{int}$) $|\Gamma_{int}|$ $+$
+ 
+              % constraints
+              \hspace{1em}
+              $|\psi|$ $Max$($\Gamma_{con}$) $|\Gamma_{con}|$ $+$
+ 
+              % policy updates
+              \hspace{1em}
+              $|\psi|$ $Max$($\Gamma_{upd}$) $+$
+ 
+              % membership inheritance
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ $+$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$ $+$
+ 
+              % subset inheritance
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ $+$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$ $+$
+ 
+              % transitivity rules
+              \hspace{1em}
+              $|\psi|$
+              $($$|{\cal E}_{sg}|^{3}$ $+$
+              $|{\cal E}_{ag}|^{3}$ $+$
+              $|{\cal E}_{og}|^{3}$$)$ $+$
+ 
+              % inertial rules
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal A}|$ $+$
+ 
+              % reflexivity rules
+              \hspace{1em}
+              $|\psi|$
+              $($$|{\cal E}_{sg}|$ $+$ $|{\cal E}_{ag}|$ $+$ $|{\cal E}_{og}|$$)$
+            \end{vquote}
+          \end{vtheorem}
+
+          \begin{vproof}
+            From Definition \ref{def-langl-trans}, it follows that the size of
+            a language ${\cal L}^{*}$ translation is as follows:
+
+            \begin{vquote}
+              $|$$Trans$(${\cal D_{L}}$)$|$ $=$
+                $|{\cal F}_{int}|$ $+$
+                $|{\cal F}_{con}|$ $+$
+                $|{\cal F}_{upd}|$ $+$
+                $|{\cal F}_{inh}|$ $+$
+                $|{\cal F}_{tra}|$ $+$
+                $|{\cal F}_{ine}|$ $+$
+                $|{\cal F}_{ref}|$
+            \end{vquote}
+
+            \noindent
+            where ${\cal F}_{int}$, ${\cal F}_{con}$, ${\cal F}_{upd}$,
+            ${\cal F}_{inh}$, ${\cal F}_{tra}$, ${\cal F}_{ine}$, and
+            ${\cal F}_{ref}$ are the sets of initial fact rules, constraint
+            rules, policy update rules, inheritance rules, transitivity rules,
+            inertial rules, and reflexivity rules, respectively.
+
+            As no {\em initially} statement in the set $\Gamma_{int}$ contain
+            an expression with more than $Max$($\Gamma_{int}$) facts, the
+            maximum number of initial fact rules generated in the translation
+            is:
+
+            \begin{vquote}
+              $|{\cal F}_{int}|$ $\leq$
+                $Max$($\Gamma_{int}$) $|\Gamma_{int}|$
+            \end{vquote}
+
+            Each language ${\cal L}$ constraint statement in $\Gamma_{con}$
+            corresponds to $n$ rules in language ${\cal L}^{*}$, where $n$ is
+            the number of policy update states times the number of facts in the
+            {\em always} clause of the statement. With $Max$($\Gamma_{con}$) as
+            the maximum number of facts in the {\em always} clause of any
+            constraint statement, we have:
+
+            \begin{vquote}
+              $|{\cal F}_{con}|$ $\leq$
+                $|\psi|$ $Max$($\Gamma_{con}$) $|\Gamma_{con}|$
+            \end{vquote}
+
+            For policy update statements, only those that are applied are
+            actually translated to language ${\cal L}^{*}$. With
+            $Max$($\Gamma_{upd}$) as the maximum number of facts in the
+            postcondition expression of any applied policy update statement, we
+            have:
+
+            \begin{vquote}
+              $|{\cal F}_{upd}|$ $\leq$ $|\psi|$ $Max$($\Gamma_{upd}$)
+            \end{vquote}
+
+            The total number of inheritance rules generated in the translation
+            is the sum of the number of member inheritance rules and the number
+            of subset inheritance rules:
+
+            \begin{vquote}
+              $|{\cal F}_{inh}|$ $=$
+                $|{\cal F}_{inh_{mem}}|$ $+$
+                $|{\cal F}_{inh_{sub}}|$
+            \end{vquote}
+
+            Since the membership inheritance rules show the relationships
+            between every possible combination of single and group entities
+            times the number of states times 2 (for negative facts), we have:
+ 
+            \begin{vquote}
+              $|{\cal F}_{inh_{mem}}|$ $=$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ $+$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
+            \end{vquote}
+ 
+            For subset inheritance rules, only the relationships between group
+            entities are considered:
+ 
+            \begin{vquote}
+              $|{\cal F}_{inh_{sub}}|$ $=$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ $+$
+ 
+              \hspace{1em}
+              $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
+            \end{vquote}
+ 
+            As transitivity rules enumerate every possible combinations of any
+            three group entities, for each entity type, the total number of
+            transitivity rules is shown below:
+ 
+            \begin{vquote}
+              $|{\cal F}_{tra}|$ $=$
+              $|\psi|$
+              ($|{\cal E}_{sg}|^{3}$ $+$ $|{\cal E}_{ag}|^{3}$ $+$ $|{\cal E}_{og}|^{3}$)
+            \end{vquote}
+ 
+            A single atom in language ${\cal L}$ corresponds to $n$ inertial
+            rules in language ${\cal L}^{*}$, where $n$ is the number of states
+            times 2 (for negative facts). This means the total number of
+            inertial rules generated is:
+ 
+            \begin{vquote}
+              $|{\cal F}_{ine}|$ $=$ $2$ $|\psi|$ $|{\cal A}|$
+            \end{vquote}
+ 
+            Lastly, the total number of reflexivity rules is equal to the total
+            number of group entities times the number of states:
+ 
+            \begin{vquote}
+              $|{\cal F}_{ref}|$ $=$
+              $|\psi|$
+              ($|{\cal E}_{sg}|$ $+$ $|{\cal E}_{ag}|$ $+$ $|{\cal E}_{og}|$)
+            \end{vquote}
+          \end{vproof}
 
     \section{Domain Consistency and Query Evaluation}
 
@@ -4339,6 +5997,13 @@ ENDFUNCTION
       {\em Journal of the ACM},
       Vol. 29, No. 1, pp. 24-32,
       1982.
+
+    \bibitem{GE}
+      Gelfond M., Lifschitz V.
+      The Stable Model Semantics for Logic Programming.
+      In {\em Proceedings of the Fifth International Conference on Logic Programming},
+      pp. 1070-1080,
+      1988.
 
     \bibitem{LA}
       Ladkin P. B., Reinefeld A.,
