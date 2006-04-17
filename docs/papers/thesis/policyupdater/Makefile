@@ -41,7 +41,7 @@ all : eps dvi ps pdf
 
 clean :
 ifdef LATEX_SRCS
-	$(RM) $(foreach f,$(LATEX_SRCS),$(f).log $(f).aux $(f).cb)
+	$(RM) $(foreach f,$(LATEX_SRCS),$(f).log $(f).aux $(f).cb $(f).toc)
 endif
 
 distclean : clean
