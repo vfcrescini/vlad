@@ -7,6 +7,7 @@
 \usepackage{alltt}
 \usepackage{float}
 \usepackage{calc}
+\usepackage{multirow}
 
 % a variable margin environment
 \newenvironment{vvarmargin}[2]
@@ -2558,6 +2559,13 @@
     \section{System Structure}
       \label{sect-polup-struc}
 
+      As shown in Figure \ref{figu-polup-sysst}, the PolicyUpdater system
+      works with an authorisation agent program that queries the policy base
+      to determine whether to allow users access to resources. Through an
+      authorisation agent program, the PolicyUpdater system also allows
+      administrators to dynamically update the policy base by adding or
+      removing update directives in the policy update table.
+
       \begin{figure}[tbhp]
         \begin{center}
           \includegraphics{sys-01}
@@ -2569,11 +2577,247 @@
       \subsection{Parsers}
         \label{subs-polup-parse}
 
+        As the policy itself is written in language ${\cal L}$, the system uses
+        two parsers to act as interfaces to the authorisation agent and
+        the language ${\cal L}$ policy.
+
+        \subsubsection{Policy Parser}
+
+          The policy parser is responsible for correctly reading the policy
+          file into the core PolicyUpdater system. The parser ensures that
+          the policy file strictly adheres to the language $\cal{L}$ syntax
+          then systematically stores entity identifiers into the symbol table
+          while initial state facts, constraint expressions and policy update
+          definitions are stored into their respective tables in the policy
+          base.
+
+        \subsubsection{Agent Parser}
+
+           The agent parser is the direct link between the core PolicyUpdater
+          system and the authorisation agent program. The parser's sole purpose
+          is to receive language $\cal{L}$ directives from an agent, perform
+          the directive upon the policy base and return a reply if the
+          directive requires one. Such directives may be to query the policy
+          base or to manipulate the policy update sequence table.
+
       \subsection{Data Structures}
         \label{subs-polup-dstru}
 
+        As language ${\cal L}$ program is parsed, each statement containing
+        entity declarations, initial facts, constraint rules and policy
+        updates must first be stored into a structure before the translation
+        process is started. This structure is composed of the symbol table,
+        the policy base and the policy update sequence table. The symbol table
+        is used to store all entity identifiers defined in the policy, while
+        the rest of the policy definitions are stored in the policy base. The
+        sequence of policy update directives are stored separately in the
+        policy update sequence table.
+
+        Each of the tables and lists used in the system inherits from a generic
+        ordered and indexed list implementation. Each node in this list holds a
+        generic data type that can be used to store strings, an arbitrary data
+        type or another list type.
+
+        \subsubsection{Symbol Table}
+
+          The symbol table is used to store the entity identifiers defined by
+          the entity identifier declaration statements of language ${\cal L}$
+          programs. The symbol table is composed of 6 separate string lists
+          as shown in \ref{tabl-polup-stdsr}.
+
+          \begin{table}[tbhp]
+            \begin{center}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type}  & \textbf{Description} \\
+                \hline
+                $ss$           & string list    & single subject \\
+                \hline                          
+                $sg$           & string list    & group subject \\
+                \hline                          
+                $as$           & string list    & single access right \\
+                \hline                          
+                $ag$           & string list    & group access right \\
+                \hline                          
+                $os$           & string list    & single object \\
+                \hline                          
+                $og$           & string list    & group object \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption{Symbol Table Data Structure}
+            \label{tabl-polup-stdsr}
+          \end{table}
+
+          Each entity identifier are sorted in the symbol table lists
+          according to their type, and ordered according to the order in which
+          they are declared in the program. Each list is indexed by positive
+          integers starting from zero.
+
+        \subsubsection{Policy Base}
+
+          When a language ${\cal L}$ program is parsed, each of the facts,
+          rules and policy updates must first be stored into the policy base.
+          The policy base is composed of 4 tables to store the following:
+          initial facts, constraint rules, policy update definitions and
+          the policy update sequence.
+
+          \paragraph{Atoms.}
+
+            The three types of atoms ({\em holds}, {\em membership} and
+            {\em subset}) are represented as structures of 2 to 3 strings,
+            with each string matching an entity identifier from the
+            symbol table. Table \ref{tabl-polup-atdsr} shows the fields
+            associated with each atom type.
+
+            \begin{table}[tbhp]
+              \begin{center}
+                \begin{tabular}[t]{|l|l|l|l|}
+                  \hline
+                  \textbf{Atom}             & \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                  \hline
+                  {\multirow{3}{*}{holds}}  & $sub$          & string        & subject entity \\
+                  \cline{2-4}                                                
+                                            & $acc$          & string        & access right entity \\
+                  \cline{2-4}                                                
+                                            & $obj$          & string        & object entity \\
+                  \hline                                                     
+                  {\multirow{2}{*}{member}} & $elt$          & string        & single entity \\
+                  \cline{2-4}                                                
+                                            & $grp$          & string        & group entity \\
+                  \hline                                                     
+                  {\multirow{2}{*}{subset}} & $grp_0$        & string        & subgroup entity \\
+                  \cline{2-4}                                                
+                                            & $grp_1$        & string        & supergroup entity \\
+                  \hline
+                \end{tabular}
+              \end{center}
+              \caption{Atom Data Structure}
+              \label{tabl-polup-atdsr}
+            \end{table}
+
+          \paragraph{Facts.}
+
+            Facts are stored in a three-element structure composed of the
+            following: polymorphic type which can be any of the three atom
+            structures above; a type indicator to specify whether the fact is
+            {\em holds}, {\em member} or {\em subset} type; and a truth flag
+            to indicate whether the atom is classically negated or not
+            ({\em true} if the fact holds and {\em false} if the negation of
+            the fact holds). Table \ref{tabl-polup-fadsr} shows the data
+            structure for storing facts.
+
+            \begin{table}[tbhp]
+              \begin{center}
+                \begin{tabular}[t]{|l|l|l|}
+                  \hline
+                  \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                  \hline
+                  $atom$         & atom type     & polymorphic structure \\
+                  \hline
+                  $type$         & \{h$|$m$|$s\} & holds, member or subset \\
+                  \hline
+                  $truth$        & boolean       & negation indicator \\
+                  \hline
+                \end{tabular}
+              \end{center}
+              \caption{Fact Data Structure}
+              \label{tabl-polup-fadsr}
+            \end{table}
+
+          \paragraph{Expressions.}
+
+            Since expressions are simply conjunctions of facts, they are
+            represented as a list of fact structures.
+
+          \paragraph{Initial Facts Table.}
+
+            The initial facts table is represented as a single list of
+            fact structures, or an expression. Each fact in all {\em initially}
+            statements are added into the initial facts table.
+
+          \paragraph{Constraint Table.}
+
+            The constraint table, as shown in Table \ref{tabl-polup-cntab}, is
+            represented as a list of constraint structures, with each
+            structure composed of three expression fields.
+
+            \begin{table}[tbhp]
+              \begin{center}
+                \begin{tabular}[t]{|l|l|l|}
+                  \hline
+                  \textbf{Field} & \textbf{Type}   & \textbf{Description} \\
+                  \hline
+                  $exp$          & expression type & consequent \\
+                  \hline
+                  $pcnd$         & expression type & positive premise \\
+                  \hline
+                  $ncnd$         & expression type & negative premise \\
+                  \hline
+                \end{tabular}
+              \end{center}
+              \caption{Constraint Table}
+              \label{tabl-polup-cntab}
+            \end{table}
+
+          \paragraph{Policy Update Definition Table.}
+
+            Another list of structures is the policy update table. Each element
+            structure of this table, as shown in Table \ref{tabl-polup-pdtab}
+            is composed of 4 fields.
+
+            \begin{table}[tbhp]
+              \begin{center}
+                \begin{tabular}[t]{|l|l|l|}
+                  \hline
+                  \textbf{Field} & \textbf{Type}       & \textbf{Description} \\
+                  \hline
+                  $name$         & string              & update identifier \\
+                  \hline
+                  $vlist$        & ordered string list & variables \\
+                  \hline
+                  $pre$          & expression type     & precondition \\
+                  \hline
+                  $post$         & expression type     & postcondition \\
+                  \hline
+                \end{tabular}
+              \end{center}
+              \caption{Policy Update Definition Table}
+              \label{tabl-polup-pdtab}
+            \end{table}
+
+          \paragraph{Policy Update Sequence Table.}
+
+            The policy update sequence table is an ordered list of sequence
+            structures, each with two fields. Table \ref{tabl-polup-pstab}
+            shows the structure of this table.
+
+            \begin{table}[tbhp]
+              \begin{center}
+                \begin{tabular}[t]{|l|l|l|}
+                  \hline
+                  \textbf{Field} & \textbf{Type}       & \textbf{Description} \\
+                  \hline
+                  $name$         & string              & update identifier \\
+                  \hline
+                  $ilist$        & ordered string list & identifiers \\
+                  \hline
+                \end{tabular}
+              \end{center}
+              \caption{Policy Update Sequence Table}
+              \label{tabl-polup-pstab}
+            \end{table}
+
+        \subsubsection{Policy Update Sequence Table}
+
     \section{System Processes}
       \label{sect-polup-proce}
+
+      The processes presented in this section shows how the language
+      ${\cal L}$ policy stored in the data structures is translated into a
+      normal logic program and how it can be dynamically updated and
+      manipulated to evaluate queries. The flowchart in Figure
+      \ref{figu-polup-sysfl} gives an overview of the system processes.
 
       \begin{figure}[tbhp]
         \begin{center}
@@ -2586,20 +2830,704 @@
       \subsection{Grounding Constraint Variables}
         \label{sect-polup-groun}
 
+        As the constraints are in the process of being added into the
+        constraints table, each variable identifier that occurs in a
+        constraint is grounded by replacing that constraint with a set of
+        constraints wherein each instance of the variable is replaced by all
+        entity identifiers defined in the symbol table. Note that only those
+        entity identifiers that are valid for each fact in the current
+        constraint are used to replace the variable (e.g. only singular
+        subject entity identifiers are used to replace an element variable
+        occurring in a subject member fact).
+
+        For example, given that the symbol table contains three singular
+        subject entity identifiers: $alice$, $bob$ and $charlie$, and the
+        following constraint:
+
+        \begin{vverbatim}
+  always holds(SSUB, write, file)
+    implied by
+      holds(SSUB, read, file),
+      memb(SSUB, students)
+    with absence
+      !holds(SSUB, write, file);
+        \end{vverbatim}
+
+        Grounding the constraint statement above yields three new constraint
+        rules, each replacing occurrences of the variable $SSUB$ with
+        $alice$, $bob$ and $charlie$, respectively.
+
       \subsection{Policy Updates}
         \label{subs-polup-polup}
+
+        In Section \ref{sect-langl-seman}, it is shown that policy updates are
+        performed by treating each update as a constraint. This constraint is
+        composed of a premise, which is the precondition in the current state
+        and a consequent, which is the postcondition of the resulting state
+        after the application of the policy update. The resulting state in this
+        procedure represents the updated policy.
+
+        The most crucial step in performing a policy update is the translation
+        of the policy updates into normal logic program constraints. This step
+        involves identifying which policy updates are to be applied from the
+        update sequence table and then composing the required constraint from
+        the update definition in the policy base. Once the policy update
+        constraints are composed, they are then treated as any other
+        constraint rules and are translated with the rest of the policy into
+        a normal logic program.
 
       \subsection{Translation to Normal Logic Program}
         \label{subs-polup-norlp}
 
+        The semantics of language ${\cal L}$ shows that any consistent language
+        ${\cal L}$ program can be translated into an equivalent extended logic
+        program then translated again into an equivalent normal logic program.
+        However, the implementation of such translations can be greatly
+        simplified by translating language ${\cal L}$ programs directly into
+        normal logic programs.
+
+        \subsubsection{Removing Classical Negation}
+
+          In order to remove classical negation from facts of language
+          ${\cal L}$, each classically negated fact $\lnot$$\rho$ is replaced
+          by a new and unique positive fact $\rho'$ that represents the
+          negation of fact $\rho$. To preserve the consistency of the policy
+          base for all facts $\rho$ in the domain, the following constraint
+          rule must be added:
+
+          \begin{vquote}
+            $FALSE$ $\leftarrow$ $\rho$, $\rho'$
+          \end{vquote}
+
+          The removal process involves adding a boolean parameter to each fact
+          to indicate whether the fact is classically negated or not. For
+          example, given the fact:
+
+          \begin{vquote}
+            $\lnot$ $holds$($alice$, $exec$, $file$)
+          \end{vquote}
+
+          \noindent
+          To remove classical negation, it is replaced by:
+
+          \begin{vquote}
+            $holds$($alice$, $exec$, $file$, $false$)
+          \end{vquote}
+
+          \noindent
+          To ensure consistency, that is, to ensure that the fact and its
+          negation are never both true at any one time, the following rule is
+          added:
+
+          \begin{vquote}
+            $FALSE$ $\leftarrow$
+            $holds$($alice$, $exec$, $file$, $true$),
+            $holds$($alice$, $exec$, $file$, $false$)
+          \end{vquote}
+
+        \subsubsection{Representing Facts in Propositional Form}
+
+          A fact expressed in normal logic program form is composed of the
+          atom relation, the state in which it holds and a boolean flag to
+          indicate classical negation. For notational simplicity, this tuple
+          may be represented by a unique positive integer $i$, where
+          $0$ $\leq$ $i$ $<$ $|{\cal F}|$ ($|{\cal F}|$ is the total
+          number of facts in the domain). The process of translating facts of
+          language ${\cal L}$ into normal logic program form is summarised by
+          the following function:
+
+          \begin{vquote}
+            $i$ = $Encode$($\alpha$, $\sigma$, $\tau$)
+          \end{vquote}
+
+          As shown above, the $Encode$ function takes a language ${\cal L}$
+          atom $\alpha$, the state $\sigma$ in which $\alpha$ holds, and a
+          boolean value $\tau$ to indicate whether or not $\alpha$ is
+          classically negated. $Encode$ returns a unique index $i$ for that
+          fact. The steps below outlines how the $Encode$ function computes
+          the index $i$.
+
+          \begin{itemize}
+            \item
+              {\em Enumerate all possible atoms.}
+              By using all the entities in the symbol table, all possible
+              language ${\cal L}$ atoms may be enumerated by grouping together
+              2 to 3 entities together. All possible atoms of type $holds$ are
+              generated by enumerating all possible combinations of subject,
+              access right and object entities. The set of $member$ atoms is
+              generated from all the different combinations of singular and
+              group entities of types subject, access right and object.
+              Similarly, the set of $subset$ atoms is derived from different
+              subject, access right and object group pair combinations.
+
+            \item
+              {\em Arrange the atoms in a predefined order.}
+              This procedure relies on the assumption that the list of all
+              possible atoms derived from the step above is arranged in a
+              predefined order. In this step we ensure that the atoms are
+              enumerated in the following order: $holds$, $subject$ $member$,
+              $access$ $right$ $member$, $object$ $member$, $subject$
+              $subset$, $access$ $right$ $subset$ and $object$ $subset$. In
+              addition to the ordering of atom types, atoms of each type are
+              themselves sorted according to the order in which their entities
+              appear in the symbol table.
+
+            \item
+              {\em Assign an ordinal index for each enumerated atom.}
+              Since the enumerated list of atoms are ordered, consecutive
+              positive integers may be assigned to each atom as an ordinal
+              index $i$, where $0$ $\leq$ $i$ $<$ $n$ ($n$ is the total number
+              of atoms enumerated).
+
+            \item
+              {\em Extend indexing procedure to represent facts.} At the
+              implementation level, facts are just atoms with truth values.
+              As such, we can treat each atom as positive facts. Since negative
+              facts are just mirror images of their positive counterparts,
+              their indices are calculated by adding $n$ to the indices of the
+              corresponding positive facts. Thus, indices $i$, where $n$ $\leq$
+              $i$ $<$ $2n$ are negative facts while indices $i$, where $0$
+              $\leq$ $i$ $<$ $n$ are positive facts. Furthermore, this
+              procedure is again extended to represent the states of the
+              facts. The process is similar: indices $i$, where $0$ $\leq$ $i$
+              $<$ $2n$ represent facts of state $S_{0}$, indices $i$, where
+              $2n$ $\leq$ $i$ $<$ $4n$ represent facts of state $S_{1}$, and
+              so on.
+          \end{itemize}
+
+        \subsubsection{Generating the Normal Logic Program from the Policy Base}
+
+          With the language ${\cal L}$ policy elements stored into the storage
+          structures described in Section \ref{subs-polup-dstru}, a normal
+          logic program can then be generated for evaluation. The following
+          algorithm generates a normal logic program, given the Symbol Table
+          $Ts$, Initial State Facts Table $Ti$, Constraint Rules Table $Tc$,
+          Policy Update Definition Table $Tu$, and Policy Update Sequence Table
+          $Tq$:
+
+          \begin{valgorithm}[tbhp]{$GenNLP$()}{algo-polup-genlp}
+FUNCTION \(GenNLP\)(\(Ts\), \(Ti\), \(Tc\), \(Tu\), \(Tq\))
+  \(TransInitStateRules\)(\(Ti\))
+  \(TransConstRules\)(\(Tc\), \(Tq\))
+  \(TransUpdateRules\)(\(Tu\), \(Tq\))
+  \(GenInherRules\)(\(Ts\), \(Tq\))
+  \(GenTransRules\)(\(Ts\), \(Tq\))
+  \(GenInertRules\)(\(Ts\), \(Tq\))
+  \(GenRefleRules\)(\(Ts\), \(Tq\))
+  \(GenConsiRules\)(\(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          The first three $Trans*$() functions in Algorithm
+          \ref{algo-polup-genlp} perform a direct translation of language
+          ${\cal L}$ statements to normal logic program. The remaining five
+          $Gen*$() functions generate additional constraint rules. In the
+          following algorithms, we use the following rule constructor functions
+          to generate normal logic program rules:
+
+          \begin{itemize}
+            \item
+              $RuleBegin$() marks the beginning of a new rule.
+            \item
+              $RuleHead$($\alpha$, $\tau$) generates the consequent of the
+              rule. $\alpha$ is a numeric representation of an atom (e.g.
+              returned by the $Encode$() function) and $\tau$ is either $T$ or
+              $F$, indicating whether the atom is positive or negative
+              (negation-as-failure).
+            \item
+              $RuleBody$($\alpha$, $\tau$) generates the premise of the rule.
+              The parameters of this function is the same as that of the
+              function $RuleHead$().
+            \item
+              $RuleEnd$() marks the end of a rule.
+          \end{itemize}
+
+          Algorithm \ref{algo-polup-tisr} illustrates how initial state rules
+          are generated from the storage structures. The process itself is
+          straightforward: each fact in the initial state facts table is
+          translated by the $Encode$() function and is made the head of a new
+          rule whose body is the literal $True$ fact.
+
+          \begin{valgorithm}[tbhp]{$TransInitStateRules$()}{algo-polup-tisr}
+FUNCTION \(TransInitStateRules\)(\(Ti\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(Ti\)) DO
+    \(a\) = \(Encode\)(\(Ti\)[\(i\)].\(atm\), \(0\), \(Ti\)[\(i\)].\(tr\))
+    \(RuleBegin\)()
+    \(RuleHead\)(\(a\), \(T\))
+    \(RuleBody\)(\(T\), \(T\))
+    \(RuleEnd\)()
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
+          The constraint rules generating algorithm (Algorithm
+          \ref{algo-polup-tconr}) works by creating a new rule that is
+          composed of facts from the constraints table translated by the
+          $Encode$() function. The outer loop ensures that a rule is
+          generated for every policy update state.
+
+
+          \begin{valgorithm}[tbhp]{$TransConstRules$()}{algo-polup-tconr}
+FUNCTION \(TransConstRules\)(\(Tc\), \(Tq\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
+    FOR \(j\) = \(0\) TO \(Len\)(\(Tc\)) DO
+      \(RuleBegin\)()
+      FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(exp\)) DO
+        \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(exp\)[\(k\)].\(tr\))
+        \(RuleHead\)(\(a\))
+      ENDDO
+      FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(pcnd\)) DO
+        \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(tr\))
+        \(RuleHead\)(\(a\), \(T\))
+      ENDDO
+      FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(ncnd\)) DO
+        \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(tr\))
+        \(RuleHead\)(\(a\), \(F\))
+      ENDDO
+      \(RuleEnd\)()
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
+          Algorithm \ref{algo-polup-tupdr} generates the policy update rules
+          from the given policy update definition table. Note that only those
+          policy updates that also appear in the policy update sequence list
+          are actually translated. The actual translation process is similar
+          to that of constraint rules, except each variable that may occur
+          within the expressions is first grounded and the policy update state
+          of each fact in the rule head is one more than that of each fact in
+          the rule body.
+
+          \begin{valgorithm}[tbhp]{$TransUpdateRules$()}{algo-polup-tupdr}
+FUNCTION \(TransUpdateRules\)(\(Tu\), \(Tq\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
+    FOR \(j\) = \(0\) TO \(Len\)(\(Tu\)) DO
+      IF \(Tq\)[\(i\)].\(name\) == \(Tu\)[\(j\)].\(name\) THEN
+        \(e\) = \(GndUpdate\)(\(Tu\)[\(j\)], \(Tq\)[\(i\)].\(ilist\))
+        \(RuleBegin\)()
+        FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(post\)) DO
+          \(a\) = \(Encode\)(\(e\).\(post\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(post\)[\(k\)].\(tr\))
+          \(RuleHead\)(\(a\), \(T\))
+        ENDDO
+        FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(pre\)) DO
+          \(a\) = \(Encode\)(\(e\).\(pre\)[\(k\)].\(atm\), \(i\), \(e\).\(pre\)[\(k\)].\(tr\))
+          \(RuleBody\)(\(a\), \(T\))
+        ENDDO
+        \(RuleEnd\)()
+      ENDIF
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
+          The function $GndUpdate$($U$, $IL$) used in Algorithm
+          \ref{algo-polup-tupdr} returns a structure composed of two
+          expressions $pre$ and $post$, which corresponds with the $pre$ and
+          $post$ fields of the given policy update definition $U$. All
+          variables occurring in the facts of these expressions are replaced
+          with the corresponding entities from the given entity identifier list
+          $IL$.
+
+          Algorithm \ref{algo-polup-ginhr} generates 6 types of inheritance
+          rules: subset subject, subset access right, subset object, membership
+          subject, membership access right and membership object. Each of
+          these 6 algorithms work in a similar way: a rule is generated by
+          composing every possible combination of either subject, access right
+          and object entities to form either a subset or membership fact. As
+          with the contraint rule generating algorithm, each new rule
+          generated is replicated for each policy update state.
+
+          \begin{valgorithm}[tbhp]{$GenInherRules$()}{algo-polup-ginhr}
+FUNCTION \(GenInherRules\)(\(Ts\), \(Tq\))
+  \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
+  \(GenAccSubstInherRules\)(\(Ts\), \(Tq\))
+  \(GenObjSubstInherRules\)(\(Ts\), \(Tq\))
+  \(GenSubMembInherRules\)(\(Ts\), \(Tq\))
+  \(GenAccMembInherRules\)(\(Ts\), \(Tq\))
+  \(GenObjMembInherRules\)(\(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          Algorithm \ref{algo-polup-gtrar} generates all the transitivity
+          rules. Each subject, access right and object transitivity rule
+          generation algorithm follows a similar procedure: every possible
+          combination of subject, access right or object group entities are
+          used to form subset facts, then each of these facts are used to
+          form a transitivity rule. As with inheritance rules, each
+          transitivity rule is replicated for each policy update state.
+
+          \begin{valgorithm}[tbhp]{$GenTransRules$()}{algo-polup-gtrar}
+FUNCTION \(GenTransRules\)(\(Ts\), \(Tq\))
+  \(GenSubTransRules\)(\(Ts\), \(Tq\))
+  \(GenAccTransRules\)(\(Ts\), \(Tq\))
+  \(GenObjTransRules\)(\(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          The inertial rules generation function shown in Algorithm
+          \ref{algo-polup-giner} is composed of 3 functions that generate
+          inertial rules for each atom type: holds, membership and
+          subset. Each type of rule is generated by composing
+          different combinations of entity identifiers together to form a fact.
+          Each rule is then formed by stating that for each policy update
+          state, a fact holds in the current state if it also holds in the
+          previous state and its negation does not hold in the current state.
+
+          \begin{valgorithm}[tbhp]{$GenInertRules$()}{algo-polup-giner}
+FUNCTION \(GenInertRules\)(\(Ts\), \(Tq\))
+  \(GenHldsInertRules\)(\(Ts\), \(Tq\))
+  \(GenMembInertRules\)(\(Ts\), \(Tq\))
+  \(GenSubsInertRules\)(\(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          The function $GenRefleRules$() shown in Algorithm
+          \ref{algo-polup-grefr} generates the reflexivity rules for each atom
+          type: subject, access right and object. A simple procedure is
+          followed by each of the 3 functions: for every subject, access right
+          and object group entities, a subset rule is formed to
+          show that a group is a subset of itself. As with the other rules,
+          each rule generated by these functions is replicated for each policy
+          update state.
+
+          \begin{valgorithm}[tbhp]{$GenRefleRules$()}{algo-polup-grefr}
+FUNCTION \(GenIdentRules\)(\(Ts\), \(Tq\))
+  \(GenSubRefleRules\)(\(Ts\), \(Tq\))
+  \(GenAccRefleRules\)(\(Ts\), \(Tq\))
+  \(GenObjRefleRules\)(\(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          The last two functions shown in Algorithm \ref{algo-polup-gconr}
+          and Algorithm \ref{algo-polup-ghcor} shows the algorithm to generate
+          consistency rules for each atom type: holds, membership and subset.
+          As these rules use a similar process to generate rules, only the
+          holds consistency rule generation algorithm is shown. The rules that
+          are generated ensure that only a fact or its negation, but never
+          both, holds in the same policy update state.
+
+          \begin{valgorithm}[tbhp]{$GenConsiRules$()}{algo-polup-gconr}
+FUNCTION \(GenConsiRules\)(\(Ts\), \(Tq\))
+  \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
+  \(GenMembConsiRules\)(\(Ts\), \(Tq\))
+  \(GenSubsConsiRules\)(\(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          \begin{valgorithm}[tbhp]{$GenHldsConsiRules$()}{algo-polup-ghcor}
+FUNCTION \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
+    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(s\)) DO
+      FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(a\)) DO
+        FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
+          \(ahlds\).\(sub\) = \(Ts\).\(s\)[\(j\)]
+          \(ahlds\).\(acc\) = \(Ts\).\(a\)[\(k\)]
+          \(ahlds\).\(obj\) = \(Ts\).\(o\)[\(l\)]
+          \(RuleBegin\)()
+          \(RuleHead\)(\(F\), \(T\))
+          \(a\) = \(Encode\)(\(ahlds\), \(i\), \(T\))
+          \(RuleBody\)(\(a\), \(T\))
+          \(a\) = \(Encode\)(\(ahlds\), \(i\), \(F\))
+          \(RuleBody\)(\(a\), \(T\))
+          \(RuleEnd\)()
+        ENDDO
+      ENDDO
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
       \subsection{Query Evaluation}
         \label{subs-polup-evalu}
+
+        Once a normal logic program has been generated from the policy stored
+        in the storage structure, a set of answer sets may then be generated
+        by using the stable model semantics \cite{SIM} with the
+        {\em smodels}\footnotemark program. Query evaluation then becomes
+        possible by checking whether each fact of a given query expression
+        holds in each generated answer set of the normal logic program.
+
+        \footnotetext{
+          Smodels Package from {\tt \scriptsize http://www.tcs.hut.fi/Software/smodels}
+        }
+
+        If a given fact indeed holds in all the answer sets, it is then
+        evaluated to be true. On the other hand, if the negation of a fact
+        holds in every answer set, then it is evaluated to be false. A fact
+        or its negation that does not hold in every answer set is neither true
+        nor false, in which case the system concludes that the truth value of
+        the fact is unknown. Algorithm \ref{algo-polup-evale} shows how, given
+        a state $S$, a query expression $Qe$ can be evaluated against a list of
+        stable models $SM$, where each element in $SM$ is a list of facts.
+
+        \begin{valgorithm}[tbhp]{$EvaluateExp$()}{algo-polup-evale}
+FUNCTION \(EvaluateExp\)(\(Qe\), \(SM\), \(S\))
+  \(result\) = \(T\)
+  FOR \(i\) = \(0\) TO \(Len\)(\(Qe\)) DO
+    \(rv\) = \(EvaluateFact\)(\(Qe\)[\(i\)], \(SM\), \(S\))
+    IF \(rv\) == \(F\) THEN
+      RETURN \(F\)
+    ELSE IF \(rv\) == \(U\) THEN
+      \(result\) = \(U\)
+    ENDIF
+  ENDDO
+  RETURN \(result\)
+ENDFUNCTION
+        \end{valgorithm}
+
+        Algorithm \ref{algo-polup-evale} attempts to evaluate each fact in the
+        query expression. The function $EvaluateFact$() shown in Algorithm
+        \ref{algo-polup-evalf} evaluates a single fact $Qf$ in state $S$,
+        against a list of stable models $SM$.
+
+        \begin{valgorithm}[tbhp]{$EvaluateFact$()}{algo-polup-evalf}
+FUNCTION \(EvaluateFact\)(\(Qf\), \(SM\), \(S\))
+  \(a\) = \(Encode\)(\(Qf\).\(atm\), \(S\), \(Qf\).\(tr\))
+  IF \(IsFactIn\)(\(SM\), \(a\)) THEN
+    RETURN \(T\)
+  ELSE
+    \(a\) = \(Encode\)(\(Qf\).\(atm\), \(S\), NOT \(Qf\).\(tr\))
+    IF \(IsFactIn\)(\(a\), \(SM\)) THEN
+      RETURN \(F\)
+    ELSE
+      RETURN \(U\)
+    ENDIF
+  ENDIF
+ENDFUNCTION
+        \end{valgorithm}
+
+        The function $IsFactIn$() simply returns a boolean value to
+        indicate whether or not the given fact index $Fi$ (as returned by the
+        $Encode$() function) is present in every stable model in $SM$.
+
+        \begin{valgorithm}[tbhp]{$IsFactIn$()}{algo-polup-isinf}
+FUNCTION \(IsFactIn\)(\(Fi\), \(SM\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(SM\)) DO
+    IF NOT \(IsIn\)(\(SM\)[\(i\)], \(Fi\)) THEN
+      RETURN \(F\)
+    ENDIF
+  ENDDO
+  RETURN \(T\)
+ENDFUNCTION
+        \end{valgorithm}
 
     \section{Experimental Results}
       \label{sect-polup-exper}
 
+      In this section, we investigate the effects of domain size over
+      computation time. The following tests  were conducted with PolicyUpdater
+      version 1.0.4 on an AMD Athlon XP 2000+ machine with 512 MB of RAM,
+      running the Debian GNU/Linux 3.0r5 operating system with a plain
+      Linux 2.4.30 kernel.
+
+      Table \ref{tabl-polup-tedom} shows the domain size for each test case.
+      $S_{E_{s}}$ and $S_{E_{g}}$ are the numbers of singular and group
+      entities, respectively; $S_{I}$ is the number of initial state facts;
+      $S_{C}$ is the number of constraint rules; $S_{U}$ is the number of
+      policy update definitions; $S_{S}$ is the number of policy updates in
+      the sequence list; and $S_{Q}$ is the number of facts to be queried.
+
+      \begin{table}[tbhp]
+        \begin{center}
+          \begin{tabular}[t]{|r|r|r|r|r|r|r|r|}
+            \hline
+            &
+            \textbf{$S_{E_{s}}$} &
+            \textbf{$S_{E_{g}}$} &
+            \textbf{$S_{I}$} &
+            \textbf{$S_{C}$} &
+            \textbf{$S_{U}$} &
+            \textbf{$S_{S}$} &
+            \textbf{$S_{Q}$} \\
+            \hline
+            1 & 4 & 3 & 3 & 1 & 1 & 1 & 4 \\
+            \hline
+            2 & 24 & 23 & 3 & 1 & 1 & 1 & 4 \\
+            \hline
+            3 & 104 & 3 & 3 & 1 & 1 & 1 & 4 \\
+            \hline
+            4 & 4 & 103 & 3 & 1 & 1 & 1 & 4 \\
+            \hline
+            5 & 24 & 23 & 103 & 1 & 1 & 1 & 4 \\
+            \hline
+            6 & 24 & 23 & 3 & 101 & 1 & 1 & 4 \\
+            \hline
+            7 & 24 & 23 & 3 & 1 & 101 & 1 & 4 \\
+            \hline
+            8 & 24 & 23 & 3 & 1 & 101 & 101 & 4 \\
+            \hline
+            9 & 24 & 23 & 3 & 1 & 1 & 1 & 104 \\
+            \hline
+            10 & 24 & 23 & 103 & 1 & 101 & 101 & 4 \\
+            \hline
+            11 & 24 & 23 & 3 & 101 & 101 & 101 & 4 \\
+            \hline
+            12 & 24 & 23 & 103 & 101 & 101 & 101 & 104 \\
+            \hline
+            13 & 104 & 103 & 103 & 101 & 101 & 101 & 104 \\
+            \hline
+          \end{tabular}
+        \end{center}
+        \caption[]{Thirteen Test Cases with Different Domain Sizes}
+        \label{tabl-polup-tedom}
+      \end{table}
+
+      The language {\cal L} code listing in Example \ref{exam-langl-syntx} is
+      used in the first test case. In the second test case, the same code is
+      used with 20 new singular entities and 20 new group entities. Test cases
+      3 and 4 are similar to test case 1, except 100 new singular and group
+      entities were added, respectively. Test cases 5 and 6 are similar to test
+      case 2, except 100 new initial state facts and constraint rules were
+      added, respectively. In test case 7, 100 new policy update definitions
+      were added, and in test case 8, these policy update defintions were
+      applied. Test case 9 is similar to test case 2, but this one tries to
+      evaluate 100 additional query facts. Test case 11 is a combination of
+      test cases 6 and 8. Test case 12 is a combination of test cases 5, 9
+      and 11. Finally, test case 13 is a combination of test cases 3 to 9,
+      where the number of each domain component is over 100.
+
+      Table \ref{tabl-polup-teres} shows the execution times of each test case.
+      $T_{C}$ is the total time (in seconds) spent by the system to translate
+      the language {\cal L} statements to a normal logic program and to
+      generate the answer sets. $T_{Q}$ is the total time (in seconds) used by
+      the system to evaluate all the queries. To increase result accuracy,
+      each test was conducted 10 times. The figures in Table
+      \ref{tabl-polup-teres} are the averages.
+
+      \begin{table}[tbhp]
+        \begin{center}
+          \begin{tabular}[t]{|r|r|r|}
+            \hline
+            &
+            \textbf{$T_{C}$} &
+            \textbf{$T_{Q}$} \\
+            \hline
+            1 & 0.000794 & 0.000472 \\
+            \hline
+            2 & 0.261828  & 0.600932 \\
+            \hline
+            3 & 0.072069 & 0.157254 \\
+            \hline
+            4 & 14.017335 & 32.109291 \\
+            \hline
+            5 & 0.309517 & 0.698068 \\
+            \hline
+            6 & 0.306517 & 0.694729 \\
+            \hline
+            7 & 0.304570 & 0.696636 \\
+            \hline
+            8 & 15.315347 & 32.111353 \\
+            \hline
+            9 & 0.301429 & 25.147113 \\
+            \hline
+            10 & 15.375953 & 32.537575 \\
+            \hline
+            11 & 15.889154 & 33.246048 \\
+            \hline
+            12 & 15.715761 & 575.237985 \\
+            \hline
+            13 & - & - \\
+            \hline
+          \end{tabular}
+        \end{center}
+        \caption[]{Average Computation Times in Seconds}
+        \label{tabl-polup-teres}
+      \end{table}
+
+      As shown in Table \ref{tabl-polup-teres}, the first two execution times
+      are minimal when the domain size is small. Test 3 shows that having a
+      large number of singular entities have a measurable, but insignificant
+      effect on computation time. However, test 4 shows that an increase in
+      the number of group entities have a great impact on computation speed.
+      This is to be expected, as Section \ref{sect-langl-seman} shows that the
+      number of group entities directly affect the number of transitivity,
+      inheritance and identity rules generated in the translation.
+
+      Comparing test 2 with tests 5 and 6, where the number of initial state
+      facts and constraint rules are increased by 100, respectively, we observe
+      that that there is a slight increase in the times required to perform the
+      computation and query evaluation. One would expect that an increase in
+      the number of constraint rules will have more impact in execution times
+      than an increase in initial state facts. However, in test 6, the
+      computation times were low because only one policy update was actually
+      applied.
+
+      Test 7 shows that increasing the number of policy update definitions
+      has little impact on the computation times. However, as test 8 shows,
+      if these policy updates are actually applied to the policy base,
+      computation time increases dramatically.
+
+      Test case 9 shows that evaluating 100 additional queries has little
+      effect on translation and computation time, but obviously affects
+      evaluation time.
+
+      Test case 10 shows the combined effects of an increased number of policy
+      updates and initial state facts. As expected, the times are only slightly
+      larger than the times in test case 8, where only the number of policy
+      updates were increased. This is due to the fact that initial state facts
+      are translated directly into normal logic program rules. On the other
+      hand, test case 11 shows a significant increase in both computation and
+      evaluation times. This is expected, as the translation of a single
+      constraint rule results in a constraint rule in every policy update
+      state.
+
+      Test case 12 shows that although large numbers of initial state facts and
+      query requests by themselves have little effect on performance, if
+      combined together with the effects of a large number of policy updates,
+      computation time is significantly increased, paticularly the query
+      evaluation time. Note that the value of $T_{Q}$ for this test is the
+      average total time for 104 query evaluations. Using this value, each
+      query evaluation takes an average of 5.531135 seconds to complete.
+
+      Unfortunately, the test system used in this experiment ran out of memory
+      while performing test case 13. Again, this is expected, as the combined
+      effects of having a large number of entities, constraint rules, policy
+      updates and queries will result in approximately 5.7 billion rules, using
+      the formula given in Theorem \ref{theo-langl-tsize}.
+
     \section{Case Study: Web Server Application}
       \label{sect-polup-cases}
+
+      The expressiveness of language $\cal{L}$ and the effectiveness of the
+      PolicyUpdater system can be demonstrated by a web server authorisation
+      application. In this application, the core PolicyUpdater system serves as
+      an authorisation module for the {\em Apache}\footnotemark web server.
+      
+      \footnotetext{
+        Apache Web Server ({\tt \scriptsize http://www.apache.org})
+      }
+      
+      The Apache web server provides a generic access control system as
+      provided by its {\em mod\_auth} and {\em mod\_access} modules
+      \cite{AP,LAU}. With this built-in access control system, Apache provides
+      the standard HTTP {\em Basic} and {\em Digest} authentication schemes
+      \cite{HTTP2}, as well as an authorisation system to enforce access
+      control policies. Although the PolicyUpdater module do not provide the
+      full functionality of Apache's built-in authorisation module
+      {\em mod\_auth}, it does provide a flexible logic-based authorisation
+      mechanism.
+      
+      As shown in Figure \ref{figu-polup-modul}, Apache's Access Control
+      module, together with its policy base, is replaced by the PolicyUpdater
+      module and its own policy base. The sole purpose of the PolicyUpdater
+      module is to act as an interface between the web server and the core
+      PolicyUpdater system. The system works as follows: as the server is
+      started, the PolicyUpdater module initialises the core PolicyUpdater
+      system by sending the policy base. When a client makes an arbitrary
+      HTTP request for a resource from the server (1), the client (user) is
+      authenticated against the password table by the built-in authentication
+      module; once the client is properly authenticated (2) the request is 
+      transferred to the PolicyUpdater module, which in turn generates a
+      language ${\cal L}$ query (3) from the request details, then sends the
+      query to the core PolicyUpdater system for evaluation; if the query is
+      successful and access control is granted, the original request is sent to
+      the other request handlers of the web server (4) where the request is
+      eventually honoured; then finally (5), the resource (or acknowledgement
+      for HTTP requests other than GET) is sent back to the client. Optionally,
+      client can be an administrator who, after being authenticated, is
+      presented with a special administrator interface by the module to allow
+      the policy base to be updated.
 
       \begin{figure}[tbhp]
         \begin{center}
@@ -2612,14 +3540,113 @@
       \subsection{Policy Description in Language ${\cal L}'$}
         \label{subs-polup-polde}
 
+        The policy description in the policy base is written in language
+        ${\cal L'}$, which is syntactically and semantically similar to
+        language ${\cal L}$ except for the lack of entity identifier
+        definitions. Entity identifiers need not be explicitly defined in
+        the policy definition:
+    
+        \begin{itemize}
+          \item
+            {\em Subjects} of the authorisation policies are the users. Since
+            all users must first be authenticated, the password table used
+            in authentication may also be used to extract the list of subjects.
+          \item
+            {\em Access Rights} are the HTTP request methods defined by the
+            HTTP 1.1 standard \cite{HTTP1}: {\em OPTIONS}, {\em GET},
+            {\em HEAD}, {\em POST}, {\em PUT}, {\em DELETE}, {\em TRACE} and
+            {\em CONNECT}.
+          \item
+            {\em Objects} are the resources available in the server themselves.
+            Assuming that the document root is a hierarchy of directories and
+            files, each of these are mapped as a unique object of language
+            ${\cal L'}$.
+        \end{itemize}
+    
+        Like language ${\cal L}$, language ${\cal L'}$ allows the definition of
+        initial state facts, constraint rules and policy update definitions.
+
       \subsection{Mapping the Policy to Language ${\cal L}$}
         \label{subs-polup-mappi}
+
+        As mentioned above, one task of the PolicyUpdater module is to
+        generate a language ${\cal L}$ policy from the given language
+        ${\cal L'}$ to be evaluated by the core PolicyUpdater system.
+        This process is outlined below:
+
+        \begin{itemize}
+          \item
+            {\em Generating entity identifier definitions.} Subject entities are
+            taken from the authentication (password) table; access rights are
+            hard-coded built-ins; and the list of objects are generated by
+            traversing the document root for files and directories.
+          \item
+            {\em Generating additional constraints.} Additional constraint
+            rules are generated to preserve the relationship between groups
+            and elements. This is useful to model the assertion that unless
+            explicitly stated, users holding particular access rights to a
+            directory automatically hold those access rights to every file in
+            that directory (recursively, if with subdirectories). The module
+            makes this assertion by generating non-conditional constraint rules
+            that state that each file (object) is a member of the directory
+            (object group) in which it is contained.
+        \end{itemize}
+       
+        All other language ${\cal L'}$ statements (initial state declarations,
+        constraint declarations and policy update declarations) are already in
+        language ${\cal L}$ form.
 
       \subsection{Evaluation of HTTP Requests}
         \label{subs-polup-httpr}
 
+         A HTTP request may be represented as a simplified tuple:
+
+         \begin{quote}
+           $<$$usr$, $req\_meth$, $req\_res$$>$
+         \end{quote}
+   
+         $usr$ is the authenticated username that made the request (subject);
+         $req\_meth$ is a standard HTTP request method (access right); and
+         $req\_res$ is the resource associated with the request (object).
+         Intuitively, such a tuple may be expressed as a language ${\cal L}$
+         atom:
+   
+         \begin{vverbatim}
+ holds(usr, req\_meth, req\_res)
+         \end{vverbatim}
+   
+         With each request expressed as language ${\cal L}$ atoms, a language
+         ${\cal L}$ query statement can be composed to check if the request is
+         to be honoured:
+   
+         \begin{vverbatim}
+ query holds(usr, req\_meth, req\_res);
+         \end{vverbatim}
+   
+         Once the query statement is composed, it is then sent by the
+         PolicyUpdater module to the core PolicyUpdater system for evaluation
+         against the policy base.
+
       \subsection{Policy Updates by Administrators}
         \label{subs-polup-admin}
+
+        After being properly authenticated, an administrator can perform policy
+        updates through the use of a special interface generated by the
+        PolicyUpdater module. This interface lists all the predefined policy
+        updates that are allowed, as defined in the policy description in
+        language ${\cal L'}$, as well as all the policy updates that have been
+        previously applied and are in effect. As with the core PolicyUpdater
+        system, administrators are allowed only the following operations:
+
+        \begin{itemize}
+          \item
+            Apply a policy update or a sequence of policy updates to the policy
+            base. Note that like language ${\cal L}$, in language ${\cal L'}$
+            policy updates are predefined within the policy base themselves.
+          \item
+            Revert to a previous state of the policy base by removing a
+            previously applied policy update from the policy base.
+        \end{itemize}
 
   \chapter{Temporal Constraints in Authorisation Policies}
     \label{chap-tempo}
@@ -6502,6 +7529,14 @@ ENDFUNCTION
       Vol. 26, No. 11, pp. 832-843,
       1983.
 
+    \bibitem{AP}
+      Apache Software Foundation,
+      Authentication, Authorization and Access Control.
+      Apache HTTP Server Version 2.1 Documentation,
+      2004.
+
+      {\tt http://httpd.apache.org/docs-2.1/}
+
     \bibitem{BAR}
       Baral C.,
       Knowledge, Representation, Reasoning and Declarative Problem Solving.
@@ -6530,6 +7565,12 @@ ENDFUNCTION
       Vol. 19, No. 3-4, pp. 383-411,
       1997.
 
+    \bibitem{LAU}
+      Laurie B., Laurie P.,
+      Apache: The Definitive Guide (3rd Edition).
+      O'Reilly \& Associates Inc., CA,
+      2003.
+
     \bibitem{LIN}
       Lin F., Zhao X.,
       On Odd and Even Cycles in Normal Logic Programs.
@@ -6537,6 +7578,29 @@ ENDFUNCTION
       and {\em 16th Conference on Innovative Applications of Artificial Intelligence},
       pp. 80,
       2004.
+
+    \bibitem{HTTP1}
+      Network Working Group
+      HTTP 1.1 (RFC 2616).
+      The Internet Society, 1999.
+
+      {\tt ftp://ftp.isi.edu/in-notes/rfc2616.txt}
+
+    \bibitem{HTTP2}
+      Network Working Group
+      HTTP Authentication: Basic and Digest Access Authentication (RFC 2617).
+      The Internet Society, 1999.
+
+      {\tt ftp://ftp.isi.edu/in-notes/rfc2617.txt}
+
+    \bibitem{SIM}
+      Simons P.,
+      Efficient Implementation of the Stable Model Semantics for Normal Logic
+      Programs.
+      Research Reports Number A35, Helsinki University of Technology,
+      1995.
+
+      {\tt http://www.tcs.hut.fi/Publications/reports/A35.ps.Z}
 
     \bibitem{VAL}
       Valdez-Perez R. E.,
