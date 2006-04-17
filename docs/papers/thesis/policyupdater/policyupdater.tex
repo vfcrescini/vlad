@@ -501,12 +501,11 @@
         \label{subsec-langl-semantics}
 
         After giving a detailed syntactic definition of language ${\cal L}$,
-        we now define its formal semantics.
-
-        The semantics of language ${\cal L}$ is based on the well-known answer
-        set (stable model) semantics of extended logic programs proposed by
-        Gelfond and Lifschitz \cite{GE}. The definition below formally defines
-        the answer set of a logic program.
+        we now define its formal semantics. The semantics of language
+        ${\cal L}$ is based on the well-known answer set (stable model)
+        semantics of extended logic programs proposed by Gelfond and Lifschitz
+        \cite{GEL}. The definition below formally defines the answer set of a
+        logic program.
 
         \begin{vdefinition}
           \label{def-ans}
@@ -1532,11 +1531,11 @@
                 Initial Fact Rules
     
                 \begin{vquote}
-                  $\hat{memb}(alice, grp2, S_{0}) \leftarrow$
+                  $\hat{memb}(alice, grp_2, S_{0}) \leftarrow$
     
-                  $\hat{holds}(grp1, read, file,S_{0}) \leftarrow$
+                  $\hat{holds}(grp_1, read, file,S_{0}) \leftarrow$
     
-                  $\hat{subst}(grp2, grp1, S_{0}) \leftarrow$
+                  $\hat{subst}(grp_2, grp_1, S_{0}) \leftarrow$
                 \end{vquote}
     
               \item
@@ -1544,27 +1543,27 @@
     
                 \begin{vquote}
                   % constraints (S0)
-                  $\hat{holds}(grp1, write, file, S_{0})$ $\leftarrow$
+                  $\hat{holds}(grp_1, write, file, S_{0})$ $\leftarrow$
     
                   \hspace{1em}
-                  $\hat{holds}(grp1, read, file, S_{0})$,
-                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{0})$
+                  $\hat{holds}(grp_1, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp_3, write, file, S_{0})$
                 \end{vquote}
     
                 \begin{vquote}
                   % constraints (S1)
-                  $\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+                  $\hat{holds}(grp_1, write, file, S_{1})$ $\leftarrow$
     
                   \hspace{1em}
-                  $\hat{holds}(grp1, read, file, S_{1})$,
-                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
+                  $\hat{holds}(grp_1, read, file, S_{1})$,
+                  $not$ $\lnot\hat{holds}(grp_3, write, file, S_{1})$
                 \end{vquote}
     
               \item
                 Policy Update Rules
     
                 \begin{vquote}
-                  $\lnot\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
+                  $\lnot\hat{holds}(grp_1, read, file, S_{1})$ $\leftarrow$
                 \end{vquote}
               \item
                 Inheritance Rules
@@ -1574,8 +1573,8 @@
                   $\hat{holds}(alice, read, file, S_{0})$ $\leftarrow$
                
                   \hspace{1em}
-                  $\hat{holds}(grp1, read, file, S_{0})$,
-                  $\hat{memb}(alice, grp1, S_{0})$,
+                  $\hat{holds}(grp_1, read, file, S_{0})$,
+                  $\hat{memb}(alice, grp_1, S_{0})$,
                
                   \hspace{1em}
                   $not$ $\lnot\hat{holds}(alice, read, file, S_{0})$
@@ -1586,8 +1585,8 @@
                   $\lnot\hat{holds}(alice, read, file, S_{0})$ $\leftarrow$
                
                   \hspace{1em}
-                  $\lnot\hat{holds}(grp1, read, file, S_{0})$,
-                  $\hat{memb}(alice, grp1, S_{0})$
+                  $\lnot\hat{holds}(grp_1, read, file, S_{0})$,
+                  $\hat{memb}(alice, grp_1, S_{0})$
                 \end{vquote}
                
                 \begin{vquote}
@@ -1599,8 +1598,8 @@
                   $\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
                
                   \hspace{1em}
-                  $\hat{holds}(grp3, write, file, S_{1})$,
-                  $\hat{memb}(alice, grp3, S_{1})$,
+                  $\hat{holds}(grp_3, write, file, S_{1})$,
+                  $\hat{memb}(alice, grp_3, S_{1})$,
                
                   \hspace{1em}
                   $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
@@ -1611,29 +1610,29 @@
                   $\lnot\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
                
                   \hspace{1em}
-                  $\lnot\hat{holds}(grp3, write, file, S_{1})$,
-                  $\hat{memb}(alice, grp3, S_{1})$
+                  $\lnot\hat{holds}(grp_3, write, file, S_{1})$,
+                  $\hat{memb}(alice, grp_3, S_{1})$
                 \end{vquote}
                
                 \begin{vquote}
                   % inheritance rules (subset positive, read, S0)
-                  $\hat{holds}(grp1, read, file, S_{0})$ $\leftarrow$
+                  $\hat{holds}(grp_1, read, file, S_{0})$ $\leftarrow$
                
                   \hspace{1em}
-                  $\hat{holds}(grp2, read, file, S_{0})$,
-                  $\hat{subst}(grp1, grp2, S_{0})$
+                  $\hat{holds}(grp_2, read, file, S_{0})$,
+                  $\hat{subst}(grp_1, grp_2, S_{0})$
 
                   \hspace{1em}
-                  $not$ $\lnot\hat{holds}(grp1, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp_1, read, file, S_{0})$,
                 \end{vquote}
                
                 \begin{vquote}
                   % inheritance rules (subset negative, read, S0)
-                  $\lnot\hat{holds}(grp1, read, file, S_{0})$ $\leftarrow$
+                  $\lnot\hat{holds}(grp_1, read, file, S_{0})$ $\leftarrow$
                
                   \hspace{1em}
-                  $\lnot\hat{holds}(grp2, read, file, S_{0})$,
-                  $\hat{subst}(grp1, grp2, S_{0})$
+                  $\lnot\hat{holds}(grp_2, read, file, S_{0})$,
+                  $\hat{subst}(grp_1, grp_2, S_{0})$
                 \end{vquote}
                
                 \begin{vquote}
@@ -1642,32 +1641,32 @@
                
                 \begin{vquote}
                   % inheritance rules (subset positive, write, S1)
-                  $\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+                  $\hat{holds}(grp_3, write, file, S_{1})$ $\leftarrow$
                
                   \hspace{1em}
-                  $\hat{holds}(grp2, write, file, S_{1})$,
-                  $\hat{subst}(grp3, grp2, S_{1})$
+                  $\hat{holds}(grp_2, write, file, S_{1})$,
+                  $\hat{subst}(grp_3, grp2, S_{1})$
 
                   \hspace{1em}
-                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$,
+                  $not$ $\lnot\hat{holds}(grp_3, write, file, S_{1})$,
                 \end{vquote}
                
                 \begin{vquote}
                   % inheritance rules (subset negative, write, S1)
-                  $\lnot\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+                  $\lnot\hat{holds}(grp_3, write, file, S_{1})$ $\leftarrow$
                
                   \hspace{1em}
-                  $\lnot\hat{holds}(grp2, write, file, S_{1})$,
-                  $\hat{subst}(grp3, grp2, S_{1})$
+                  $\lnot\hat{holds}(grp_2, write, file, S_{1})$,
+                  $\hat{subst}(grp_3, grp_2, S_{1})$
                 \end{vquote}
 
               \item
                 Transitivity Rules
 
                 \begin{vquote}
-                  $\hat{subst}(grp1, grp3, S_{0})$ $\leftarrow$
-                  $\hat{subst}(grp1, grp2, S_{0})$,
-                  $\hat{subst}(grp2, grp3, S_{0})$
+                  $\hat{subst}(grp_1, grp_3, S_{0})$ $\leftarrow$
+                  $\hat{subst}(grp_1, grp_2, S_{0})$,
+                  $\hat{subst}(grp_2, grp_3, S_{0})$
                 \end{vquote}
     
                 \begin{vquote}
@@ -1675,15 +1674,15 @@
                 \end{vquote}
     
                 \begin{vquote}
-                  $\hat{subst}(grp3, grp1, S_{0})$ $\leftarrow$
-                  $\hat{subst}(grp3, grp2, S_{0})$,
-                  $\hat{subst}(grp2, grp1, S_{0})$
+                  $\hat{subst}(grp_3, grp_1, S_{0})$ $\leftarrow$
+                  $\hat{subst}(grp_3, grp_2, S_{0})$,
+                  $\hat{subst}(grp_2, grp_1, S_{0})$
                 \end{vquote}
     
                 \begin{vquote}
-                  $\hat{subst}(grp1, grp3, S_{1})$ $\leftarrow$
-                  $\hat{subst}(grp1, grp2, S_{1})$,
-                  $\hat{subst}(grp2, grp3, S_{1})$
+                  $\hat{subst}(grp_1, grp_3, S_{1})$ $\leftarrow$
+                  $\hat{subst}(grp_1, grp_2, S_{1})$,
+                  $\hat{subst}(grp_2, grp_3, S_{1})$
                 \end{vquote}
     
                 \begin{vquote}
@@ -1691,9 +1690,9 @@
                 \end{vquote}
     
                 \begin{vquote}
-                  $\hat{subst}(grp3, grp1, S_{1})$ $\leftarrow$
-                  $\hat{subst}(grp3, grp2, S_{1})$,
-                  $\hat{subst}(grp2, grp1, S_{1})$
+                  $\hat{subst}(grp_3, grp_1, S_{1})$ $\leftarrow$
+                  $\hat{subst}(grp_3, grp_2, S_{1})$,
+                  $\hat{subst}(grp_2, grp_1, S_{1})$
                 \end{vquote}
 
               \item
@@ -1737,20 +1736,20 @@
     
                 \begin{vquote}
                   % inertial rule holds(grp1, read, file)
-                  $\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
+                  $\hat{holds}(grp_1, read, file, S_{1})$ $\leftarrow$
     
                   \hspace{1em}
-                  $\hat{holds}(grp1, read, file, S_{0})$,
+                  $\hat{holds}(grp_1, read, file, S_{0})$,
                   $not$ $\lnot\hat{holds}(grp1, read, file, S_{1})$
                 \end{vquote}
 
                 \begin{vquote}
                   % inertial rule !holds(grp1, read, file)
-                  $\lnot\hat{holds}(grp1, read, file, S_{1})$ $\leftarrow$
+                  $\lnot\hat{holds}(grp_1, read, file, S_{1})$ $\leftarrow$
    
                   \hspace{1em}
-                  $\lnot\hat{holds}(grp1, read, file, S_{0})$,
-                  $not$ $\lnot\hat{holds}(grp1, read, file, S_{1})$
+                  $\lnot\hat{holds}(grp_1, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp_1, read, file, S_{1})$
                 \end{vquote}
    
                 \begin{vquote}
@@ -1759,38 +1758,38 @@
                 
                 \begin{vquote}
                   % inertial rule holds(grp3, read, file)
-                  $\hat{holds}(grp3, read, file, S_{1})$ $\leftarrow$
+                  $\hat{holds}(grp_3, read, file, S_{1})$ $\leftarrow$
                 
                   \hspace{1em}
-                  $\hat{holds}(grp3, read, file, S_{0})$,
-                  $not$ $\lnot\hat{holds}(grp3, read, file, S_{1})$
+                  $\hat{holds}(grp_3, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp_3, read, file, S_{1})$
                 \end{vquote}
                 
                 \begin{vquote}
                   % inertial rule !holds(grp3, read, file)
-                  $\lnot\hat{holds}(grp3, read, file, S_{1})$ $\leftarrow$
+                  $\lnot\hat{holds}(grp_3, read, file, S_{1})$ $\leftarrow$
                 
                   \hspace{1em}
-                  $\lnot\hat{holds}(grp3, read, file, S_{0})$,
-                  $not$ $\lnot\hat{holds}(grp3, read, file, S_{1})$
+                  $\lnot\hat{holds}(grp_3, read, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp_3, read, file, S_{1})$
                 \end{vquote}
                 
                 \begin{vquote}
                   % inertial rule holds(grp1, write, file)
-                  $\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+                  $\hat{holds}(grp_1, write, file, S_{1})$ $\leftarrow$
                 
                   \hspace{1em}
-                  $\hat{holds}(grp1, write, file, S_{0})$,
-                  $not$ $\lnot\hat{holds}(grp1, write, file, S_{1})$
+                  $\hat{holds}(grp_1, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp_1, write, file, S_{1})$
                 \end{vquote}
 
                 \begin{vquote}
                   % inertial rule !holds(grp1, write, file)
-                  $\lnot\hat{holds}(grp1, write, file, S_{1})$ $\leftarrow$
+                  $\lnot\hat{holds}(grp_1, write, file, S_{1})$ $\leftarrow$
                 
                   \hspace{1em}
-                  $\lnot\hat{holds}(grp1, write, file, S_{0})$,
-                  $not$ $\lnot\hat{holds}(grp1, write, file, S_{1})$
+                  $\lnot\hat{holds}(grp_1, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp_1, write, file, S_{1})$
                 \end{vquote}
                 
                 \begin{vquote}
@@ -1799,38 +1798,38 @@
                 
                 \begin{vquote}
                   % inertial rule holds(grp3, write, file)
-                  $\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+                  $\hat{holds}(grp_3, write, file, S_{1})$ $\leftarrow$
                 
                   \hspace{1em}
                   $\hat{holds}(grp3, write, file, S_{0})$,
-                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
+                  $not$ $\lnot\hat{holds}(grp_3, write, file, S_{1})$
                 \end{vquote}
                 
                 \begin{vquote}
                   % inertial rule !holds(grp3, write, file)
-                  $\lnot\hat{holds}(grp3, write, file, S_{1})$ $\leftarrow$
+                  $\lnot\hat{holds}(grp_3, write, file, S_{1})$ $\leftarrow$
                 
                   \hspace{1em}
-                  $\lnot\hat{holds}(grp3, write, file, S_{0})$,
-                  $not$ $\lnot\hat{holds}(grp3, write, file, S_{1})$
+                  $\lnot\hat{holds}(grp_3, write, file, S_{0})$,
+                  $not$ $\lnot\hat{holds}(grp_3, write, file, S_{1})$
                 \end{vquote}
                 
                 \begin{vquote}
                   % inertial rule memb(alice, grp1)
-                  $\hat{memb}(alice, grp1, S_{1})$ $\leftarrow$
+                  $\hat{memb}(alice, grp_1, S_{1})$ $\leftarrow$
                 
                   \hspace{1em}
-                  $\hat{memb}(alice, grp1, S_{0})$,
-                  $not$ $\lnot\hat{memb}(alice, grp1, S_{1})$
+                  $\hat{memb}(alice, grp_1, S_{0})$,
+                  $not$ $\lnot\hat{memb}(alice, grp_1, S_{1})$
                 \end{vquote}
 
                 \begin{vquote}
                   % inertial rule !memb(alice, grp1)
-                  $\lnot \hat{memb}(alice, grp1, S_{1})$ $\leftarrow$
+                  $\lnot \hat{memb}(alice, grp_1, S_{1})$ $\leftarrow$
             
                   \hspace{1em}
-                  $\lnot\hat{memb}(alice, grp1, S_{0})$,
-                  $not$ $\hat{memb}(alice, grp1, S_{1})$
+                  $\lnot\hat{memb}(alice, grp_1, S_{0})$,
+                  $not$ $\hat{memb}(alice, grp_1, S_{1})$
                 \end{vquote}
             
                 \begin{vquote}
@@ -1839,38 +1838,38 @@
             
                 \begin{vquote}
                   % inertial rule memb(alice, grp3)
-                  $\hat{memb}(alice, grp3, S_{1})$ $\leftarrow$
+                  $\hat{memb}(alice, grp_3, S_{1})$ $\leftarrow$
             
                   \hspace{1em}
-                  $\hat{memb}(alice, grp3, S_{0})$,
-                  $not$ $\lnot\hat{memb}(alice, grp3, S_{1})$
+                  $\hat{memb}(alice, grp_3, S_{0})$,
+                  $not$ $\lnot\hat{memb}(alice, grp_3, S_{1})$
                 \end{vquote}
             
                 \begin{vquote}
                   % inertial rule !memb(alice, grp3)
-                  $\lnot\hat{memb}(alice, grp3, S_{1})$ $\leftarrow$
+                  $\lnot\hat{memb}(alice, grp_3, S_{1})$ $\leftarrow$
             
                   \hspace{1em}
-                  $\lnot\hat{memb}(alice, grp3, S_{0})$,
-                  $not$ $\hat{memb}(alice, grp3, S_{1})$
+                  $\lnot\hat{memb}(alice, grp_3, S_{0})$,
+                  $not$ $\hat{memb}(alice, grp_3, S_{1})$
                 \end{vquote}
             
                 \begin{vquote}
                   % inertial rule subst(grp1, grp1)
-                  $\hat{subst}(grp1, grp1, S_{1})$ $\leftarrow$
+                  $\hat{subst}(grp1, grp_1, S_{1})$ $\leftarrow$
             
                   \hspace{1em}
-                  $\hat{subst}(grp1, grp1, S_{0})$,
-                  $not$ $\lnot\hat{subst}(grp1, grp1, S_{1})$
+                  $\hat{subst}(grp1, grp_1, S_{0})$,
+                  $not$ $\lnot\hat{subst}(grp_1, grp_1, S_{1})$
                 \end{vquote}
 
                 \begin{vquote}
                   % inertial rule !subst(grp1, grp1)
-                  $\lnot\hat{subst}(grp1, grp1, S_{1})$ $\leftarrow$
+                  $\lnot\hat{subst}(grp_1, grp_1, S_{1})$ $\leftarrow$
             
                   \hspace{1em}
-                  $\lnot\hat{memb}(grp1, grp1, S_{0})$,
-                  $not$ $\hat{memb}(grp1, grp1, S_{1})$
+                  $\lnot\hat{memb}(grp_1, grp_1, S_{0})$,
+                  $not$ $\hat{memb}(grp_1, grp_1, S_{1})$
                 \end{vquote}
             
                 \begin{vquote}
@@ -1879,37 +1878,37 @@
             
                 \begin{vquote}
                   % inertial rule subst(grp3, grp3)
-                  $\hat{subst}(grp3, grp3, S_{1})$ $\leftarrow$
+                  $\hat{subst}(grp_3, grp_3, S_{1})$ $\leftarrow$
             
                   \hspace{1em}
-                  $\hat{subst}(grp3, grp3, S_{0})$,
-                  $not$ $\lnot\hat{subst}(grp3, grp3, S_{1})$
+                  $\hat{subst}(grp_3, grp_3, S_{0})$,
+                  $not$ $\lnot\hat{subst}(grp_3, grp_3, S_{1})$
                 \end{vquote}
             
                 \begin{vquote}
                   % inertial rule !subst(grp3, grp3)
-                  $\lnot\hat{subst}(grp3, grp3, S_{1})$ $\leftarrow$
+                  $\lnot\hat{subst}(grp_3, grp_3, S_{1})$ $\leftarrow$
             
                   \hspace{1em}
-                  $\lnot\hat{memb}(grp3, grp3, S_{0})$,
-                  $not$ $\hat{memb}(grp3, grp3, S_{1})$
+                  $\lnot\hat{memb}(grp_3, grp_3, S_{0})$,
+                  $not$ $\hat{memb}(grp_3, grp_3, S_{1})$
                 \end{vquote}
 
               \item
                 Reflexivity Rules
 
                 \begin{vquote}
-                  $\hat{subset}(grp1, grp1, S_{0})$ $\leftarrow$
+                  $\hat{subset}(grp_1, grp_1, S_{0})$ $\leftarrow$
                   
-                  $\hat{subset}(grp2, grp2, S_{0})$ $\leftarrow$
+                  $\hat{subset}(grp_2, grp_2, S_{0})$ $\leftarrow$
                   
-                  $\hat{subset}(grp3, grp3, S_{0})$ $\leftarrow$
+                  $\hat{subset}(grp_3, grp_3, S_{0})$ $\leftarrow$
                   
-                  $\hat{subset}(grp1, grp1, S_{1})$ $\leftarrow$
+                  $\hat{subset}(grp_1, grp_1, S_{1})$ $\leftarrow$
                   
-                  $\hat{subset}(grp2, grp2, S_{1})$ $\leftarrow$
+                  $\hat{subset}(grp_2, grp_2, S_{1})$ $\leftarrow$
                   
-                  $\hat{subset}(grp3, grp3, S_{1})$ $\leftarrow$
+                  $\hat{subset}(grp_3, grp_3, S_{1})$ $\leftarrow$
                \end{vquote}
             \end{enumerate}
           \end{vexample}
@@ -2134,6 +2133,405 @@
 
     \section{Domain Consistency and Query Evaluation}
 
+      A domain description of language ${\cal L}$ must be consistent in order 
+      to generate a consistent answer set for the evaluation of queries. This
+      section considers two issues: the problem of identifying whether a given
+      domain description is consistent, and how query evaluation is performed
+      given a consistent language domain description. By using Definition
+      \ref{def-langl-trans}, we define consistency as follows:
+
+      \begin{vdefinition}
+        \label{def-cons}
+        The domain description ${\cal D_L}$ of language ${\cal L}$ is said to
+        be {\bf consistent} if and only if the translation
+        $Trans$(${\cal D_L}$) has a consistent answer set.
+      \end{vdefinition}
+
+      First, we introduce a few notational constructs. Given a domain
+      description ${\cal D_L}$ composed of the following language ${\cal L}$
+      statements:
+
+      \begin{vverbatim}
+  initially \(\rho\sb{0\sb{0}}\), \(\ldots\), \(\rho\sb{0\sb{n\sb{0}}}\), \(!\)\(\rho\sb{1\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{1\sb{n\sb{1}}}\);
+
+  always \(\rho\sb{2\sb{0}}\), \(\ldots\), \(\rho\sb{2\sb{n\sb{2}}}\), \(!\)\(\rho\sb{3\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{3\sb{n\sb{3}}}\)
+    implied by \(\rho\sb{4\sb{0}}\), \(\ldots\), \(\rho\sb{4\sb{n\sb{4}}}\), \(!\)\(\rho\sb{5\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{5\sb{n\sb{5}}}\)
+    with absence \(\rho\sb{6\sb{0}}\), \(\ldots\), \(\rho\sb{6\sb{n\sb{6}}}\), \(!\)\(\rho\sb{7\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{7\sb{n\sb{7}}}\);
+
+  update \(u\)()
+    causes \(\rho\sb{8\sb{0}}\), \(\ldots\), \(\rho\sb{8\sb{n\sb{8}}}\), \(!\)\(\rho\sb{9\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{9\sb{n\sb{9}}}\) 
+    if \(\rho\sb{10\sb{0}}\), \(\ldots\), \(\rho\sb{10\sb{n\sb{10}}}\), \(!\)\(\rho\sb{11\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{11\sb{n\sb{11}}}\);
+      \end{vverbatim}
+
+      Let $\gamma_{int}$ be an initial fact definition statement,
+      $\gamma_{con}$ a constraint definition statement, and $\gamma_{upd}$
+      a policy update definition statement, where $\gamma_{int}$,
+      $\gamma_{con}$, $\gamma_{upd}$ $\in$ ${\cal D}_{\cal L}$. We then define
+      the following set constructor functions:
+
+      \begin{vquote}
+        ${\cal F}^{+}_{int}$($\gamma_{int}$) $=$
+          \{$\rho_{0_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_0$\}
+ 
+        ${\cal F}^{-}_{int}$($\gamma_{int}$) $=$
+          \{$\rho_{1_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_1$\}
+ 
+        ${\cal F}^{+}_{con}$($\gamma_{upd}$) $=$
+          \{$\rho_{2_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_2$\}
+ 
+        ${\cal F}^{-}_{con}$($\gamma_{upd}$) $=$
+          \{$\rho_{3_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_3$\}
+ 
+        ${\cal F}^{+}_{upd}$($\gamma_{con}$) $=$
+          \{$\rho_{4_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_4$\}
+ 
+        ${\cal F}^{-}_{upd}$($\gamma_{con}$) $=$
+          \{$\rho_{5_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_5$\}
+      \end{vquote}
+ 
+      Using these functions, we define the following sets of ground facts:
+ 
+      \begin{vquote}
+        ${\cal F}^{+}_{int}$ $=$
+        \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{int}$($\gamma_{int}$), $\gamma_{int}$ $\in$ ${\cal D}_{\cal L}$\}
+ 
+        ${\cal F}^{-}_{int}$ $=$
+        \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{int}$($\gamma_{int}$), $\gamma_{int}$ $\in$ ${\cal D}_{\cal L}$\}
+ 
+        ${\cal F}^{+}_{con}$ $=$
+        \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{con}$($\gamma_{con}$), $\gamma_{con}$ $\in$ ${\cal D}_{\cal L}$\}
+ 
+        ${\cal F}^{-}_{con}$ $=$
+        \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{con}$($\gamma_{con}$), $\gamma_{con}$ $\in$ ${\cal D}_{\cal L}$\}
+ 
+        ${\cal F}^{+}_{upd}$ $=$
+        \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{upd}$($\gamma_{upd}$), $\gamma_{upd}$ $\in$ ${\cal D}_{\cal L}$\}
+ 
+        ${\cal F}^{-}_{upd}$ $=$
+        \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{upd}$($\gamma_{upd}$), $\gamma_{upd}$ $\in$ ${\cal D}_{\cal L}$\}
+      \end{vquote}
+
+      Additionally, we use the complementary set notation
+      $\overline{{\cal F}}$ to denote a set containing the negation of
+      facts in set ${\cal F}$.
+
+      \begin{vquote}
+        $\overline{{\cal F}}$ =
+        \{$\lnot\rho$ $\mid$ $\rho$ $\in$ ${\cal F}$\}.
+      \end{vquote}
+
+      Let $\gamma$ be an {\em initially}, {\em constraint} or
+      {\em policy update} declaration statement of language ${\cal L}$. We then
+      define the following functions:
+
+      \begin{vquote}
+        $Eff$($\gamma$)
+        $=$
+        \begin{math}
+          \begin{cases}
+            \mbox{
+              \{
+                $\rho_{0_0}$, \ldots, $\rho_{0_{n_0}}$,
+                $\lnot\rho_{1_0}$, \ldots, $\lnot\rho_{1_{n_1}}$
+              \},
+              if $\gamma$ is {\em initially}
+            } \\
+            \mbox{
+              \{
+                $\rho_{2_0}$, \ldots, $\rho_{2_{n_2}}$,
+                $\lnot\rho_{3_0}$, \ldots, $\lnot\rho_{3_{n_3}}$
+              \},
+              if $\gamma$ is {\em constraint}
+            } \\
+            \mbox{
+              \{
+                $\rho_{8_0}$, \ldots, $\rho_{8_{n_8}}$,
+                $\lnot\rho_{9_0}$, \ldots, $\lnot\rho_{9_{n_9}}$
+              \},
+              if $\gamma$ is {\em policy update}
+            } \\
+          \end{cases}
+        \end{math}
+      \end{vquote}
+
+      \begin{vquote}
+        $Def$($\gamma$)
+        $=$
+        \begin{math}
+          \begin{cases}
+            \mbox{
+              $\emptyset$,
+              if $\gamma$ is {\em initially}
+            } \\
+            \mbox{
+              \{
+                $\rho_{6_0}$, \ldots, $\rho_{6_{n_6}}$,
+                $\lnot\rho_{7_0}$, \ldots, $\lnot\rho_{7_{n_7}}$
+              \},
+              if $\gamma$ is {\em constraint}
+            } \\
+            \mbox{
+              $\emptyset$,
+              if $\gamma$ is {\em policy update}
+            } \\
+          \end{cases}
+        \end{math}
+      \end{vquote}
+
+      \begin{vquote}
+        $Pre$($\gamma$)
+        $=$
+        \begin{math}
+          \begin{cases}
+            \mbox{
+              $\emptyset$,
+              if $\gamma$ is {\em initially}
+            } \\
+            \mbox{
+              \{
+                $\rho_{4_0}$, \ldots, $\rho_{4_{n_4}}$,
+                $\lnot\rho_{5_0}$, \ldots, $\lnot\rho_{5_{n_5}}$
+              \},
+              if $\gamma$ is {\em constraint}
+            } \\
+            \mbox{
+              \{
+                $\rho_{10_0}$, \ldots, $\rho_{10_0}$,
+                $\lnot\rho_{11_0}$, \ldots, $\lnot\rho_{11_{n_11}}$
+              \},
+              if $\gamma$ is {\em policy update}
+            } \\
+          \end{cases}
+        \end{math}
+      \end{vquote}
+
+      \begin{vdefinition}
+        \label{def-mutex}
+        Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
+        two ground facts $\rho$ and $\rho'$ are {\bf mutually exclusive}
+        in ${\cal D_{L}}$ if:
+
+        \begin{vquote}
+          $\rho$ $\in$ \{${\cal F}^{+}_{int}$ $\cup$
+          $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
+          $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
+          $\overline{{\cal F}^{-}_{upd}}$\}
+  
+          implies
+  
+          $\rho'$ $\not\in$ \{${\cal F}^{+}_{int}$ $\cup$
+          $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
+          $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
+          $\overline{{\cal F}^{-}_{upd}}$\}
+        \end{vquote}
+      \end{vdefinition}
+
+      Stated simply, a pair of mutually exclusive facts cannot both be true
+      in any given state. The following two definitions refer to language
+      ${\cal L}$ statements.
+
+      \begin{vdefinition}
+        \label{def-comp}
+        Given a domain description ${\cal D_{L}}$ of language ${\cal L}$,
+        two statements $\gamma$ and $\gamma'$ are {\bf complementary} in
+        ${\cal D_{L}}$ if one of the following conditions holds:
+
+        \begin{enumerate}
+          \item
+            $\gamma$ and $\gamma'$ are both constraint statements and
+            $Eff(\gamma)$ $=$ $\overline{Eff(\gamma')}$.
+          \item
+            $\gamma$ is a constraint statement, $\gamma'$ is a policy update
+            statement and $Eff(\gamma)$ $=$ $\overline{Eff(\gamma')}$.
+        \end{enumerate}
+      \end{vdefinition}
+
+      \begin{vdefinition}
+        \label{def-norm}
+        Given a domain description ${\cal D_{L}}$, ${\cal D_{L}}$ is said to
+        be {\bf normal} if it satisfies all of the following conditions:
+
+        \begin{enumerate}
+          \item
+            \label{def-norm-1}
+            ${\cal F}^{+}_{int}$ $\cap$ ${\cal F}^{-}_{int}$ $=$ $\emptyset$.
+          \item
+            \label{def-norm-2}
+            For any two constraint statements $\gamma$ and $\gamma'$ in
+            ${\cal D_{L}}$, including $\gamma$ $=$ $\gamma'$, $Def(\gamma)$
+            $\cap$ $Eff(\gamma')$ = $\emptyset$.
+          \item
+            \label{def-norm-3}
+            For all constraint statements $\gamma$ in ${\cal D_{L}}$,
+            $\overline{Eff(\gamma)}$ $\cap$ $Pre(\gamma)$ $=$ $\emptyset$.
+          \item
+            \label{def-norm-4}
+            For any two complementary statements $\gamma$ and $\gamma'$
+            in ${\cal D_{L}}$, there exists a pair of ground expression
+            $\epsilon$ $\in$ $Pre(\gamma)$ and $\epsilon'$ $\in$
+            $Pre(\gamma')$ such that $\epsilon$ and $\epsilon'$ are
+            mutually exclusive.
+        \end{enumerate}
+      \end{vdefinition}
+
+      With the above definitions, we can now provide a sufficient condition to
+      ensure the consistency of a domain description.
+
+      \begin{vtheorem}{Domain Consistency}
+        \label{the-cons}
+        A {\bf normal} domain description of language ${\cal L}$ is also
+        {\bf consistent}.
+      \end{vtheorem}
+
+      \begin{vproof}
+        From Definition \ref{def-cons}, given a normal domain description
+        ${\cal D}_{\cal L}$, we only need to show that
+        $Trans$(${\cal D}_{\cal L}$) has at least one consistent answer set to
+        prove that ${\cal D}_{\cal L}$ is also consistent.
+
+        Given a normal domain description ${\cal D}_{\cal L}$, Condition
+        \ref{def-norm-2} in Definition \ref{def-norm} ensures that the
+        translation $Trans$(${\cal D}_{\cal L}$) do not contain rules of the
+        following form:
+
+        \begin{vquote}
+          $\hat{\rho}_{0}$ $\leftarrow$
+            $\hdots$, $not$ $\hat{\rho}_{k}$, $\hdots$
+
+          $\hat{\rho}_{1}$ $\leftarrow$
+            $\hdots$, $\hat{\rho}_{0}$, $\hdots$
+
+          $\vdots$
+
+          $\hat{\rho}_{k - 1}$ $\leftarrow$
+            $\hdots$, $\hat{\rho}_{k - 2}$, $\hdots$
+
+          $\hat{\rho}_{k}$ $\leftarrow$
+            $\hdots$, $\hat{\rho}_{k - 1}$, $\hdots$
+        \end{vquote}
+
+        \noindent
+        The absence of these rules means $Trans$(${\cal D}_{\cal L}$) is a
+        program without negative cycles \cite{LIN}. As no other rule in
+        ${\cal D}_{\cal L}$ can cause $Trans$(${\cal D}_{\cal L}$) to have
+        these rules, we conclude that a normal domain description
+        ${\cal D}_{\cal L}$, as defined by Definition \ref{def-norm}, will
+        generate an extended logic program $Trans$(${\cal D}_{\cal L}$)
+        without negative cycles. Also, from \cite{BAR,LIN}, we further
+        conclude that the translated program $Trans$(${\cal D}_{\cal L}$)
+        must have an answer set.
+
+        Condition \ref{def-norm-1} of Definition \ref{def-norm} prevents rules
+        of the following form from occurring in $Trans$(${\cal D}_{\cal L}$):
+
+        \begin{vquote}
+          $\hat{\rho}^{S_{0}}$ $\leftarrow$
+
+          $\lnot\hat{\rho}^{S_{0}}$ $\leftarrow$
+        \end{vquote}
+
+        \noindent
+        This shows that a subset of the answer set which contains facts from
+        the initial state $S_{0}$ is consistent.
+
+        Condition \ref{def-norm-3} of Definition \ref{def-norm} guarantees that
+        rules of the following form do not occur in
+        $Trans$(${\cal D}_{\cal L}$):
+
+        \begin{vquote}
+          $\hat{\rho}$ $\leftarrow$ $\hdots$, $\lnot\hat{\rho}$, $\hdots$
+        \end{vquote}
+
+        \noindent
+        This ensures that all constraint rules translated from
+        ${\cal D}_{\cal L}$ are consistent.
+
+        Finally, Condition \ref{def-norm-4} of Definition \ref{def-norm}
+        ensures that rules in $Trans$(${\cal D}_{\cal L}$) of the following form:
+
+        \begin{vquote}
+          $\hat{\rho}$ $\leftarrow$ $\hdots$, $\hat{\rho}'$, $\hdots$
+
+          $\lnot \hat{\rho}$ $\leftarrow$ $\hdots$, $\hat{\rho}''$, $\hdots$
+        \end{vquote}
+
+        \noindent
+        cannot both affect the answer set as the premises $\rho'$ and $\rho''$
+        are mutually exclusive and therefore only one is true in any given
+        state.
+
+        These guarantee that the answer set do not contain complementary facts,
+        and therefore guarantee that the answer set is consistent.
+      \end{vproof}
+
+      Since only consistent domain descriptions can be evaluated in terms of
+      user queries, Theorem \ref{the-cons} may be used to check whether a
+      domain description is consistent.
+
+      \begin{vdefinition}
+        \label{def-eval}
+        Given a consistent domain description ${\cal D}_{\cal L}$, a ground
+        query expression $\phi$ and a finite sequence list $\psi$, we say
+        {\em query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
+        in sequence list $\psi$ have been applied}, denoted as
+ 
+        \begin{vquote}
+          ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\}
+        \end{vquote}
+ 
+        \noindent
+        if and only if
+ 
+        \begin{vquote}
+          $\forall$ ($\rho$, $\lambda$),
+          $\hat{\rho}$ $\in$ $\lambda$
+ 
+        \end{vquote}
+ 
+        \begin{vquote}
+          where
+ 
+          \hspace{1em}
+          $\rho$ $\in$ $\phi$,
+
+          \hspace{1em}
+          $\lambda$ $\in$ $\Lambda$,
+ 
+          \hspace{1em}
+          $\hat{\rho}$ $=$ $TransFact$($\rho$, $S_{|\psi|}$),
+ 
+          \hspace{1em}
+          $\Lambda$ $=$ answer sets of $Trans$(${\cal D}_{\cal L}$)
+        \end{vquote}
+      \end{vdefinition}
+
+      Definition \ref{def-eval} shows that given a finite list of policy
+      updates $\psi$, a query expression $\phi$ may be evaluated from a
+      consistent language ${\cal L}$ domain ${\cal D_{L}}$. This is
+      achieved by generating a set of answer sets from the normal logic
+      program translation $Trans$(${\cal D_{L}}$). $\phi$ is then said to
+      hold in ${\cal D_{L}}$ after the policy updates in $\psi$ have been
+      applied if and only if every answer set generated contains every fact
+      in the query expression $\phi$.
+
+      \begin{vexample}
+        \label{ex-2}
+        Given the language ${\cal L}$ code listing in Example \ref{ex-2-1} and
+        its translation in Example \ref{ex-2-2}, where the update sequence list
+        $\psi$ = \{$delete\_read$($grp_1$, $file$)\}. The following shows the
+        evaluated results of each query $\phi$:
+        
+        \begin{vquote}
+          $\phi_{0}$ = $holds$($grp_1$, $write$, $file$) : $TRUE$
+
+          $\phi_{1}$ = $holds$($grp_1$, $read$, $file$) : $FALSE$
+
+          $\phi_{2}$ = $holds$($alice$, $write$, $file$) : $TRUE$
+
+          $\phi_{3}$ = $holds$($alice$, $read$, $file$) : $FALSE$
+        \end{vquote}
+      \end{vexample}
+
   \chapter{PolicyUpdater System}
 
   \chapter{Temporal Constraints in Authorisation Policies}
@@ -2221,7 +2619,7 @@
 
     \section{Allen's Temporal Interval Algebra}
 
-      Allen's interval algebra \cite{AL} is based on the fact that for any
+      Allen's interval algebra \cite{ALE} is based on the fact that for any
       two well defined time intervals, there exists exactly one interval
       relation between them. The strength of the algebra lies not just on
       the formalisation of these relations, but also on its ability to handle
@@ -5318,7 +5716,7 @@ ENDFUNCTION
 
       \begin{vdefinition}
         \label{def-cons1}
-        A domain description ${\cal D_{L^T}}$ is consistent if:
+        A domain description ${\cal D_{L^T}}$ is {\bf consistent} if:
 
         \begin{enumerate}
           \item
@@ -5350,7 +5748,7 @@ ENDFUNCTION
 
       Any given language ${\cal L^T}$ domain description can fail to satisfy
       condition 2 in Definition \ref{def-cons1} above in different ways. In
-      fact, Valdez-Perez \cite{VP} generalised these conditions where an
+      fact, Valdez-Perez \cite{VAL} generalised these conditions where an
       interval network is inconsistent\footnotemark.
       \footnotetext{Valdez-Perez uses the term {\em unsatisfiable}.}
       One such condition arises in language ${\cal L^T}$ when two or more
@@ -5369,7 +5767,7 @@ ENDFUNCTION
       Note that this type of domain inconsistency is detected by the
       $NET.Add$() algorithm. Unfortunately, the second type of inconsisteny is
       not. To illustrate this type of inconsistency, we use Allen's example in
-      \cite{AL}, shown in Figure \ref{fig-net-ex-07}.
+      \cite{ALE}, shown in Figure \ref{fig-net-ex-07}.
 
       \begin{figure}[[tbhp]
         \begin{center}
@@ -5385,14 +5783,14 @@ ENDFUNCTION
       arcs $i_1$ and $i_2$, we cannot assign the relation {\em finishes} or
       {\em finished by} alone.
 
-      In fact, as Allen points out in \cite{AL}, the $NET.Add$() algorithm can
+      In fact, as Allen points out in \cite{ALE}, the $NET.Add$() algorithm can
       only guarantee consistency within any three nodes of the network
-      ({\em 3-consistency}). Unfortunately, Vilain et. al. \cite{VI} points out
+      ({\em 3-consistency}). Unfortunately, Vilain et. al. \cite{VIL} points out
       that algorithms that can ensure full network consistency, i.e.
-      {\em k-consistency} \cite{FR}, are in fact, intractable. Nevertheless,
+      {\em k-consistency} \cite{FRE}, are in fact, intractable. Nevertheless,
       total consistency can be easily checked by employing a simple
       backtracking algorithm. Furthermore, several methods for full network
-      consistency checking, like those in \cite{LA,VB} already exist. In this
+      consistency checking, like those in \cite{LAD,VAN} already exist. In this
       work, we make the assumption that 3-consistency is sufficient for our
       authorisation system as we have observed that this covers all scenarios
       that we have examined.
@@ -5511,7 +5909,7 @@ ENDFUNCTION
           implementation. Each relation set is represented as a bit
           vector\footnotemark.
 
-          \footnotetext{A similar method is used in \cite{VB, VI}.}
+          \footnotetext{A similar method is used in \cite{VAN, VIL}.}
 
           \begin{table}[tbhp]
             \begin{center}
@@ -5980,49 +6378,64 @@ ENDFUNCTION
   \chapter{Conclusion}
 
   \begin{thebibliography}{M}
-    \bibitem{AL}
+    \bibitem{ALE}
       Allen J. F.,
       Maintaining Knowledge about Temporal Intervals.
       {\em Communications of the ACM},
       Vol. 26, No. 11, pp. 832-843,
       1983.
 
-    \bibitem{FR}
+    \bibitem{BAR}
+      Baral C.,
+      Knowledge, Representation, Reasoning and Declarative Problem Solving.
+      Cambridge University Press, UK.
+      pp. 99-100,
+      2003.
+
+    \bibitem{FRE}
       Freuder E. C.,
       A Sufficient Condition for Backtrack-Free Search.
       {\em Journal of the ACM},
       Vol. 29, No. 1, pp. 24-32,
       1982.
 
-    \bibitem{GE}
-      Gelfond M., Lifschitz V.
+    \bibitem{GEL}
+      Gelfond M., Lifschitz V.,
       The Stable Model Semantics for Logic Programming.
       In {\em Proceedings of the Fifth International Conference on Logic Programming},
       pp. 1070-1080,
       1988.
 
-    \bibitem{LA}
+    \bibitem{LAD}
       Ladkin P. B., Reinefeld A.,
       Fast Algebraic Methods for Interval Constraint Problems.
       {\em Annals of Mathematics and Artificial Intelligence},
       Vol. 19, No. 3-4, pp. 383-411,
       1997.
 
-    \bibitem{VP}
+    \bibitem{LIN}
+      Lin F., Zhao X.,
+      On Odd and Even Cycles in Normal Logic Programs.
+      In {\em Proceedings of the 19th National Conference on Artificial Intelligence (AAAI-04)}
+      and {\em 16th Conference on Innovative Applications of Artificial Intelligence},
+      pp. 80,
+      2004.
+
+    \bibitem{VAL}
       Valdez-Perez R. E.,
-      The Satisfiability of Temporal Constraint Networks,
+      The Satisfiability of Temporal Constraint Networks.
       In {\em Proceedings of the Sixth National Conference on Artificial Intelligence (AAAI-87)},
       pp. 256-260,
       1987.
 
-    \bibitem{VB}
+    \bibitem{VAN}
       Van Beek P. G., Manchak D. W.,
       The Design and Experimental Analysis of Algorithms for Temporal Reasoning.
       {\em Journal of Artificial Intelligence Research},
       Vol. 4, pp. 1-18,
       1996.
 
-    \bibitem{VI}
+    \bibitem{VIL}
       Vilain M. B., Kautz H. A., Van Beek P. G.,
       Constraint Propagation Algorithms for Temporal Reasoning: A Revised Report.
       In {\em Readings in Qualitative Reasoning about Physical Systems},
