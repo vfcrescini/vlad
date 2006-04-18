@@ -2786,29 +2786,27 @@
               \label{tabl-polup-pdtab}
             \end{table}
 
-          \paragraph{Policy Update Sequence Table.}
-
-            The policy update sequence table is an ordered list of sequence
-            structures, each with two fields. Table \ref{tabl-polup-pstab}
-            shows the structure of this table.
-
-            \begin{table}[tbhp]
-              \begin{center}
-                \begin{tabular}[t]{|l|l|l|}
-                  \hline
-                  \textbf{Field} & \textbf{Type}       & \textbf{Description} \\
-                  \hline
-                  $name$         & string              & update identifier \\
-                  \hline
-                  $ilist$        & ordered string list & identifiers \\
-                  \hline
-                \end{tabular}
-              \end{center}
-              \caption{Policy Update Sequence Table}
-              \label{tabl-polup-pstab}
-            \end{table}
-
         \subsubsection{Policy Update Sequence Table}
+
+          The policy update sequence table is an ordered list of sequence
+          structures, each with two fields. Table \ref{tabl-polup-pstab}
+          shows the structure of this table.
+
+          \begin{table}[tbhp]
+            \begin{center}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                \textbf{Field} & \textbf{Type}       & \textbf{Description} \\
+                \hline
+                $name$         & string              & update identifier \\
+                \hline
+                $ilist$        & ordered string list & identifiers \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption{Policy Update Sequence Table}
+            \label{tabl-polup-pstab}
+          \end{table}
 
     \section{System Processes}
       \label{sect-polup-proce}
@@ -7382,17 +7380,9 @@ ENDFUNCTION
 
         \begin{vquote}
           $Total_H$ $=$
-
-          \hspace{1em}
           ($|T_s.ss|$ $+$ $|T_s.sg|$) $\cdot$
-
-          \hspace{1em}
           ($|T_s.as|$ $+$ $|T_s.ag|$) $\cdot$
-
-          \hspace{1em}
           ($|T_s.os|$ $+$ $|T_s.og|$) $\cdot$
-
-          \hspace{1em}
           $|T_s.int|$
         \end{vquote}
 
@@ -7411,14 +7401,8 @@ ENDFUNCTION
 
         \begin{vquote}
           $Total_S$ $=$
-
-          \hspace{1em}
           ($|T_s.sg|^2$ $\cdot$ $|T_s.int|$) $+$
-
-          \hspace{1em}
           ($|T_s.ag|^2$ $\cdot$ $|T_s.int|$) $+$
-
-           \hspace{1em}
           ($|T_s.og|^2$ $\cdot$ $|T_s.int|$)
         \end{vquote}
 
