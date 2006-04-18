@@ -2778,7 +2778,7 @@
                   \hline
                   $pre$          & expression type     & precondition \\
                   \hline
-                  $post$         & expression type     & postcondition \\
+                  $pst$          & expression type     & postcondition \\
                   \hline
                 \end{tabular}
               \end{center}
@@ -3074,15 +3074,15 @@ FUNCTION \(TransConstRules\)(\(Tc\), \(Tq\))
       \(RuleBegin\)()
       FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(exp\)) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(exp\)[\(k\)].\(tr\))
-        \(RuleHead\)(\(a\))
+        \(RuleHead\)(\(a\), \(T\))
       ENDDO
       FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(pcnd\)) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(tr\))
-        \(RuleHead\)(\(a\), \(T\))
+        \(RuleBody\)(\(a\), \(T\))
       ENDDO
       FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(ncnd\)) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(tr\))
-        \(RuleHead\)(\(a\), \(F\))
+        \(RuleBody\)(\(a\), \(F\))
       ENDDO
       \(RuleEnd\)()
     ENDDO
@@ -3106,8 +3106,8 @@ FUNCTION \(TransUpdateRules\)(\(Tu\), \(Tq\))
       IF \(Tq\)[\(i\)].\(name\) == \(Tu\)[\(j\)].\(name\) THEN
         \(e\) = \(GndUpdate\)(\(Tu\)[\(j\)], \(Tq\)[\(i\)].\(ilist\))
         \(RuleBegin\)()
-        FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(post\)) DO
-          \(a\) = \(Encode\)(\(e\).\(post\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(post\)[\(k\)].\(tr\))
+        FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(pst\)) DO
+          \(a\) = \(Encode\)(\(e\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(pst\)[\(k\)].\(tr\))
           \(RuleHead\)(\(a\), \(T\))
         ENDDO
         FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(pre\)) DO
@@ -3123,8 +3123,8 @@ ENDFUNCTION
 
           The function $GndUpdate$($U$, $IL$) used in Algorithm
           \ref{algo-polup-tupdr} returns a structure composed of two
-          expressions $pre$ and $post$, which corresponds with the $pre$ and
-          $post$ fields of the given policy update definition $U$. All
+          expressions $pre$ and $pst$, which corresponds with the $pre$ and
+          $pst$ fields of the given policy update definition $U$. All
           variables occurring in the facts of these expressions are replaced
           with the corresponding entities from the given entity identifier list
           $IL$.
@@ -3149,6 +3149,46 @@ FUNCTION \(GenInherRules\)(\(Ts\), \(Tq\))
 ENDFUNCTION
           \end{valgorithm}
 
+          The function $GenSubSubstInherRules()$ shown in Algorithm
+          \ref{algo-polup-gssir} generates the subject subset inheritance
+          rules. Similar techniques are used for the generation of other
+          subset and membership inheritance rules and are therefore not shown.
+
+          \begin{valgorithm}[tbhp]{$GenSubSubstInherRules$()}{algo-polup-gssir}
+FUNCTION \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
+    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+      FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+        IF \(Ts\).\(sg\)[\(j\)] != \(Ts\).\(sg\)[\(k\)] THEN
+          FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(a\)) DO
+            FOR \(m\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
+              \(RuleBegin\)()
+              \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
+              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(T\)), \(T\))
+              \(h\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
+              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(T\)), \(T\))
+              \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
+              \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+              \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
+              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(F\))
+              \(RuleEnd\)()
+              \(RuleBegin\)()
+              \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
+              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(T\))
+              \(h\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
+              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(T\))
+              \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
+              \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+              \(RuleEnd\)()
+            ENDDO
+          ENDDO
+        ENDIF
+      ENDDO
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
           Algorithm \ref{algo-polup-gtrar} generates all the transitivity
           rules. Each subject, access right and object transitivity rule
           generation algorithm follows a similar procedure: every possible
@@ -3156,12 +3196,39 @@ ENDFUNCTION
           used to form subset facts, then each of these facts are used to
           form a transitivity rule. As with inheritance rules, each
           transitivity rule is replicated for each policy update state.
+          As similar techniques are used to generate the access right and
+          object transitivity rules, only the function that generates the
+          subject transitivity rules is shown in Algorithm
+          \ref{algo-polup-gstrr}.
 
           \begin{valgorithm}[tbhp]{$GenTransRules$()}{algo-polup-gtrar}
 FUNCTION \(GenTransRules\)(\(Ts\), \(Tq\))
   \(GenSubTransRules\)(\(Ts\), \(Tq\))
   \(GenAccTransRules\)(\(Ts\), \(Tq\))
   \(GenObjTransRules\)(\(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          \begin{valgorithm}[tbhp]{$GenSubTransRules$()}{algo-polup-gstrr}
+FUNCTION \(GenSubTransRules\)(\(Ts\), \(Tq\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
+    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+      FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+        FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+          IF \(j\) != \(k\) AND \(j\) != \(l\) AND \(k\) != \(l\) THEN
+            RuleBegin()
+            \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(l\)]\}
+            \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+            \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
+            \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+            \(s\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(sg\)[\(l\)]\}
+            \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+            \(RuleEnd\)()
+          ENDIF
+        ENDDO
+      ENDDO
+    ENDDO
+  ENDDO
 ENDFUNCTION
           \end{valgorithm}
 
@@ -3182,6 +3249,35 @@ FUNCTION \(GenInertRules\)(\(Ts\), \(Tq\))
 ENDFUNCTION
           \end{valgorithm}
 
+          Algorithm \ref{algo-polup-ghinr} shows the $GenHldsInertRules$()
+          function which generates the inertial rules for holds atoms. A
+          similar method is used by the functions that generate the inertial
+          rules for the other two atom types.
+
+          \begin{valgorithm}[tbhp]{$GenHldsInertRules$()}{algo-polup-ghinr}
+FUNCTION \(GenHldsInertRules\)(\(Ts\), \(Tq\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
+    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(s\)) DO
+      FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(a\)) DO
+        FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
+          \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
+          \(RuleBegin\)()
+          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(T\)), \(T\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(T\)), \(T\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(F\)), \(F\))
+          \(RuleEnd\)()
+          \(RuleBegin\)()
+          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(F\)), \(T\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(T\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(T\)), \(F\))
+          \(RuleEnd\)()
+        ENDDO
+      ENDDO
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
           The function $GenRefleRules$() shown in Algorithm
           \ref{algo-polup-grefr} generates the reflexivity rules for each atom
           type: subject, access right and object. A simple procedure is
@@ -3189,13 +3285,29 @@ ENDFUNCTION
           and object group entities, a subset rule is formed to
           show that a group is a subset of itself. As with the other rules,
           each rule generated by these functions is replicated for each policy
-          update state.
+          update state. Algorithm \ref{algo-polup-gsrer} shows how the
+          $GenSubRefleRules$() function generates the reflexivity rules for
+          subject groups.
 
           \begin{valgorithm}[tbhp]{$GenRefleRules$()}{algo-polup-grefr}
-FUNCTION \(GenIdentRules\)(\(Ts\), \(Tq\))
+FUNCTION \(GenRefleRules\)(\(Ts\), \(Tq\))
   \(GenSubRefleRules\)(\(Ts\), \(Tq\))
   \(GenAccRefleRules\)(\(Ts\), \(Tq\))
   \(GenObjRefleRules\)(\(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          \begin{valgorithm}[tbhp]{$GenSubRefleRules$()}{algo-polup-gsrer}
+FUNCTION \(GenSubRefleRules\)(\(Ts\), \(Tq\))
+  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
+    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+      \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(j\)]\}
+      \(RuleBegin\)()
+      \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+      \(RuleBody\)(\(T\), \(T\))
+      \(RuleEnd\)()
+    ENDDO
+  ENDDO
 ENDFUNCTION
           \end{valgorithm}
 
@@ -3221,15 +3333,11 @@ FUNCTION \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
     FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(s\)) DO
       FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(a\)) DO
         FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
-          \(ahlds\).\(sub\) = \(Ts\).\(s\)[\(j\)]
-          \(ahlds\).\(acc\) = \(Ts\).\(a\)[\(k\)]
-          \(ahlds\).\(obj\) = \(Ts\).\(o\)[\(l\)]
+          \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
           \(RuleBegin\)()
           \(RuleHead\)(\(F\), \(T\))
-          \(a\) = \(Encode\)(\(ahlds\), \(i\), \(T\))
-          \(RuleBody\)(\(a\), \(T\))
-          \(a\) = \(Encode\)(\(ahlds\), \(i\), \(F\))
-          \(RuleBody\)(\(a\), \(T\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(T\)), \(T\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(T\))
           \(RuleEnd\)()
         ENDDO
       ENDDO
@@ -3283,12 +3391,10 @@ ENDFUNCTION
 
         \begin{valgorithm}[tbhp]{$EvaluateFact$()}{algo-polup-evalf}
 FUNCTION \(EvaluateFact\)(\(Qf\), \(SM\), \(S\))
-  \(a\) = \(Encode\)(\(Qf\).\(atm\), \(S\), \(Qf\).\(tr\))
-  IF \(IsFactIn\)(\(SM\), \(a\)) THEN
+  IF \(IsFactIn\)(\(Encode\)(\(Qf\).\(atm\), \(S\), \(Qf\).\(tr\)), \(SM\)) THEN
     RETURN \(T\)
   ELSE
-    \(a\) = \(Encode\)(\(Qf\).\(atm\), \(S\), NOT \(Qf\).\(tr\))
-    IF \(IsFactIn\)(\(a\), \(SM\)) THEN
+    IF \(IsFactIn\)(\(Encode\)(\(Qf\).\(atm\), \(S\), NOT \(Qf\).\(tr\)), \(SM\)) THEN
       RETURN \(F\)
     ELSE
       RETURN \(U\)
