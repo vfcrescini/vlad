@@ -7327,7 +7327,7 @@ ENDFUNCTION
           Algorithm \ref{algo-impln-norml} before adding a relation to the
           network:
 
-          \begin{valgorithm}[tbhp]{Normalise()}{algo-impln-norml}
+          \begin{valgorithm}[tbhp]{$Normalise$()}{algo-impln-norml}
 FUNCTION \(Normalise\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
     RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\)) 
@@ -7410,7 +7410,7 @@ ENDFUNCTION
           $Total_A$ $=$ $Total_H$ $+$ $Total_M$ $+$ $Total_S$
         \end{vquote}
 
-        \begin{valgorithm}[tbhp]{Encode\_Holds()}{algo-impln-encho}
+        \begin{valgorithm}[tbhp]{$Encode\_Holds$()}{algo-impln-encho}
 FUNCTION \(Encode_Holds\)(\(sub\), \(acc\), \(obj\), \(int\), \(\sigma\), \(tr\))
   IF \(sub\) is group THEN
     \(sub\) = \(sub\) + \(|T\sb{s}.ss|\)
@@ -7436,7 +7436,7 @@ FUNCTION \(Encode_Holds\)(\(sub\), \(acc\), \(obj\), \(int\), \(\sigma\), \(tr\)
 ENDFUNCTION
         \end{valgorithm}
 
-        \begin{valgorithm}[tbhp]{Encode\_Memb()}{algo-impln-encme}
+        \begin{valgorithm}[tbhp]{$Encode\_Memb$()}{algo-impln-encme}
 FUNCTION \(Encode_Memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
   CASE type of member atom OF
     \(subject\) :
@@ -7467,7 +7467,7 @@ FUNCTION \(Encode_Memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
 ENDFUNCTION
         \end{valgorithm}
 
-        \begin{valgorithm}[tbhp]{Encode\_Subst()}{algo-impln-encsu}
+        \begin{valgorithm}[tbhp]{$Encode\_Subst$()}{algo-impln-encsu}
 FUNCTION \(Encode_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
   CASE type of subset atom OF
     \(subject\) :
@@ -7499,7 +7499,7 @@ ENDFUNCTION
         \end{valgorithm}
 
 
-        \begin{valgorithm}[tbhp]{Decode\_Holds()}{algo-implndecho}
+        \begin{valgorithm}[tbhp]{$Decode\_Holds$()}{algo-implndecho}
 FUNCTION \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
   \(s\) \(=\) \(id\) div ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
   \(id\) \(=\) \(id\) mod ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
@@ -7528,7 +7528,7 @@ FUNCTION \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
 ENDFUNCTION
         \end{valgorithm}
 
-        \begin{valgorithm}[tbhp]{Decode\_Memb()}{algo-impln-decme}
+        \begin{valgorithm}[tbhp]{$Decode\_Memb$()}{algo-impln-decme}
 FUNCTION \(Decode_Memb\)(\(id\), \(\sigma\), \(tr\))
   \(c\sb{0}\) \(=\) (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) 
   \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) 
@@ -7555,7 +7555,7 @@ FUNCTION \(Decode_Memb\)(\(id\), \(\sigma\), \(tr\))
 ENDFUNCTION
         \end{valgorithm}
 
-        \begin{valgorithm}[tbhp]{Decode\_Subst()}{algo-impln-decsu}
+        \begin{valgorithm}[tbhp]{$Decode\_Subst$()}{algo-impln-decsu}
 FUNCTION \(Decode_Subst\)(\(id\), \(\sigma\), \(tr\))
   \(c\sb{0}\) \(=\) (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
   \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
@@ -7582,7 +7582,7 @@ FUNCTION \(Decode_Subst\)(\(id\), \(\sigma\), \(tr\))
 ENDFUNCTION
         \end{valgorithm}
 
-        \begin{valgorithm}[tbhp]{Decode\_Fact()}{algo-impln-decfa}
+        \begin{valgorithm}[tbhp]{$Decode\_Fact$()}{algo-impln-decfa}
 FUNCTION \(Decode_Fact\)(\(id\))
   \(\sigma\) \(=\) \(id\) div (\(Total\sb{A}\) \(\cdot\) \(2\))
   \(id\) \(=\) \(id\) mod (\(Total\sb{A}\) \(\cdot\) \(2\)) 
