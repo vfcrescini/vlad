@@ -1130,35 +1130,35 @@
                   Subject Group Membership Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($s_{s}$, $s_{g}$, $a$, $o$, $\sigma$),
+                    $\forall$ ($ss$, $sg$, $a$, $o$, $\sigma$),
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$) $\leftarrow$
+                    $\hat{holds}$($ss$, $a$, $o$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}$($s_{g}$, $a$, $o$, $\sigma$),
-                    $\hat{memb}$($s_{s}$, $s_{g}$, $\sigma$),
-                    $not$ $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$)
+                    $\hat{holds}$($sg$, $a$, $o$, $\sigma$),
+                    $\hat{memb}$($ss$, $sg$, $\sigma$),
+                    $not$ $\lnot\hat{holds}$($ss$, $a$, $o$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}$($s_{s}$, $a$, $o$, $\sigma$)
+                    $\lnot\hat{holds}$($ss$, $a$, $o$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}$($s_{g}$, $a$, $o$, $\sigma$),
-                    $\hat{memb}$($s_{s}$, $s_{g}$, $\sigma$)
+                    $\lnot\hat{holds}$($sg$, $a$, $o$, $\sigma$),
+                    $\hat{memb}$($ss$, $sg$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
                     \hspace{1em}
-                    $s_{s}$ $\in$ ${\cal E}_{ss}$,
+                    $ss$ $\in$ ${\cal E}_{ss}$,
 
                     \hspace{1em}
-                    $s_{g}$ $\in$ ${\cal E}_{sg}$,
+                    $sg$ $\in$ ${\cal E}_{sg}$,
 
                     \hspace{1em}
                     $a$ $\in$ ${\cal E}_{a}$,
@@ -1174,25 +1174,25 @@
                   Access Right Group Membership Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($s$, $a_{s}$, $a_{g}$, $o$, $\sigma$),
+                    $\forall$ ($s$, $as$, $ag$, $o$, $\sigma$),
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$) $\leftarrow$
+                    $\hat{holds}$($s$, $as$, $o$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}$($s$, $a_{g}$, $o$, $\sigma$),
-                    $\hat{memb}$($a_{s}$, $a_{g}$, $\sigma$),
-                    $not$ $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$)
+                    $\hat{holds}$($s$, $ag$, $o$, $\sigma$),
+                    $\hat{memb}$($as$, $ag$, $\sigma$),
+                    $not$ $\lnot\hat{holds}$($s$, $as$, $o$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}$($s$, $a_{s}$, $o$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $as$, $o$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}$($s$, $a_{g}$, $o$, $\sigma$),
-                    $\hat{memb}$($a_{s}$, $a_{g}$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $ag$, $o$, $\sigma$),
+                    $\hat{memb}$($as$, $ag$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
@@ -1202,10 +1202,10 @@
                     $s$ $\in$ ${\cal E}_{s}$,
 
                     \hspace{1em}
-                    $a_{s}$ $\in$ ${\cal E}_{as}$,
+                    $as$ $\in$ ${\cal E}_{as}$,
 
                     \hspace{1em}
-                    $a_{g}$ $\in$ ${\cal E}_{ag}$,
+                    $ag$ $\in$ ${\cal E}_{ag}$,
 
                     \hspace{1em}
                     $o$ $\in$ ${\cal E}_{o}$,
@@ -1218,25 +1218,25 @@
                   Object Group Membership Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($s$, $a$, $o_{s}$, $o_{g}$, $\sigma$),
+                    $\forall$ ($s$, $a$, $os$, $og$, $\sigma$),
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$) $\leftarrow$
+                    $\hat{holds}$($s$, $a$, $os$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}$($s$, $a$, $o_{g}$, $\sigma$),
-                    $\hat{memb}$($o_{s}$, $o_{g}$, $\sigma$),
-                    $not$ $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$)
+                    $\hat{holds}$($s$, $a$, $og$, $\sigma$),
+                    $\hat{memb}$($os$, $og$, $\sigma$),
+                    $not$ $\lnot\hat{holds}$($s$, $a$, $os$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}$($s$, $a$, $o_{s}$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $a$, $os$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}$($s$, $a$, $o_{g}$, $\sigma$),
-                    $\hat{memb}$($o_{s}$, $o_{g}$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $a$, $og$, $\sigma$),
+                    $\hat{memb}$($os$, $og$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
@@ -1249,10 +1249,10 @@
                     $a$ $\in$ ${\cal E}_{a}$,
 
                     \hspace{1em}
-                    $o_{s}$ $\in$ ${\cal E}_{os}$,
+                    $os$ $\in$ ${\cal E}_{os}$,
 
                     \hspace{1em}
-                    $o_{g}$ $\in$ ${\cal E}_{og}$,
+                    $og$ $\in$ ${\cal E}_{og}$,
 
                     \hspace{1em}
                     $S_{0}$ ${\leq}$ ${\sigma}$ ${\leq}$ $S_{|\psi|}$
@@ -1262,32 +1262,32 @@
                   Subject Group Subset Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($s_{g1}$, $s_{g2}$, $a$, $o$, $\sigma$),
+                    $\forall$ ($sg_{0}$, $sg_{1}$, $a$, $o$, $\sigma$),
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$) $\leftarrow$
+                    $\hat{holds}$($sg_{0}$, $a$, $o$, $\sigma$) $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}$($s_{g2}$, $a$, $o$, $\sigma$),
-                    $\hat{subst}$($s_{g1}$, $s_{g2}$, $\sigma$),
-                    $not$ $\lnot\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$)
+                    $\hat{holds}$($sg_{1}$, $a$, $o$, $\sigma$),
+                    $\hat{subst}$($sg_{0}$, $sg_{1}$, $\sigma$),
+                    $not$ $\lnot\hat{holds}$($sg_{0}$, $a$, $o$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}$($s_{g1}$, $a$, $o$, $\sigma$)
+                    $\lnot\hat{holds}$($sg_{0}$, $a$, $o$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}$($s_{g2}$, $a$, $o$, $\sigma$),
-                    $\hat{subst}$($s_{g1}$, $s_{g2}$, $\sigma$)
+                    $\lnot\hat{holds}$($sg_{1}$, $a$, $o$, $\sigma$),
+                    $\hat{subst}$($sg_{0}$, $sg_{1}$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
                     \hspace{1em}
-                    $s_{g1}$, $s_{g2}$ $\in$ ${\cal E}_{sg}$,
+                    $sg_{0}$, $sg_{1}$ $\in$ ${\cal E}_{sg}$,
 
                     \hspace{1em}
                     $a$ $\in$ ${\cal E}_{a}$,
@@ -1296,7 +1296,7 @@
                     $o$ $\in$ ${\cal E}_{o}$,
 
                     \hspace{1em}
-                    $s_{g1}$ $\neq$ $s_{g2}$,
+                    $sg_{0}$ $\neq$ $sg_{1}$,
 
                     \hspace{1em}
                     $S_{0}$ $\leq$ $\sigma$ $\leq S_{|\psi|}$
@@ -1306,25 +1306,25 @@
                   Access Right Group Subset Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($s$, $a_{g1}$, $a_{g2}$, $o$, $\sigma$),
+                    $\forall$ ($s$, $ag_{0}$, $ag_{1}$, $o$, $\sigma$),
                   \end{vquote}
  
                   \begin{vquote}
-                    $\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$) $\leftarrow$
+                    $\hat{holds}$($s$, $ag_{0}$, $o$, $\sigma$) $\leftarrow$
  
                     \hspace{1em}
-                    $\hat{holds}$($s$, $a_{g2}$, $o$, $\sigma$),
-                    $\hat{subst}$($a_{g1}$, $a_{g2}$, $\sigma$),
-                    $not$ $\lnot$ $\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$)
+                    $\hat{holds}$($s$, $ag_{1}$, $o$, $\sigma$),
+                    $\hat{subst}$($ag_{0}$, $ag_{1}$, $\sigma$),
+                    $not$ $\lnot$ $\hat{holds}$($s$, $ag_{0}$, $o$, $\sigma$)
                   \end{vquote}
  
                   \begin{vquote}
-                    $\lnot\hat{holds}$($s$, $a_{g1}$, $o$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $ag_{0}$, $o$, $\sigma$)
                     $\leftarrow$
  
                     \hspace{1em}
-                    $\lnot\hat{holds}$($s$, $a_{g2}$, $o$, $\sigma$),
-                    $\hat{subst}$($a_{g1}$, $a_{g2}$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $ag_{1}$, $o$, $\sigma$),
+                    $\hat{subst}$($ag_{0}$, $ag_{1}$, $\sigma$)
                   \end{vquote}
  
                   \begin{vquote}
@@ -1334,13 +1334,13 @@
                     $s$ $\in$ ${\cal E}_{s}$,
  
                     \hspace{1em}
-                    $a_{g1}$, $a_{g2}$ $\in$ ${\cal E}_{ag}$,
+                    $ag_{0}$, $ag_{1}$ $\in$ ${\cal E}_{ag}$,
  
                     \hspace{1em}
                     $o$ $\in$ ${\cal E}_{o}$,
  
                     \hspace{1em}
-                    $a_{g1}$ $\neq$ $a_{g2}$,
+                    $ag_{0}$ $\neq$ $ag_{1}$,
  
                     \hspace{1em}
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
@@ -1350,25 +1350,25 @@
                   Object Group Subset Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($s$, $a$, $o_{g1}$, $o_{g2}$, $\sigma$),
+                    $\forall$ ($s$, $a$, $og_{0}$, $og_{1}$, $\sigma$),
                   \end{vquote}
  
                   \begin{vquote}
-                    $\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$) $\leftarrow$
+                    $\hat{holds}$($s$, $a$, $og_{0}$, $\sigma$) $\leftarrow$
  
                     \hspace{1em}
-                    $\hat{holds}$($s$, $a$, $o_{g2}$, $\sigma$),
-                    $\hat{subst}$($o_{g1}$, $o_{g2}$, $\sigma$),
-                    $not$ $\lnot\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$)
+                    $\hat{holds}$($s$, $a$, $og_{1}$, $\sigma$),
+                    $\hat{subst}$($og_{0}$, $og_{1}$, $\sigma$),
+                    $not$ $\lnot\hat{holds}$($s$, $a$, $og_{0}$, $\sigma$)
                   \end{vquote}
  
                   \begin{vquote}
-                    $\lnot\hat{holds}$($s$, $a$, $o_{g1}$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $a$, $og_{0}$, $\sigma$)
                     $\leftarrow$
  
                     \hspace{1em}
-                    $\lnot\hat{holds}$($s$, $a$, $o_{g2}$, $\sigma$),
-                    $\hat{subst}$($o_{g1}$, $o_{g2}$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $a$, $og_{1}$, $\sigma$),
+                    $\hat{subst}$($og_{0}$, $og_{1}$, $\sigma$)
                   \end{vquote}
  
                   \begin{vquote}
@@ -1381,10 +1381,10 @@
                     $a$ $\in$ ${\cal E}_{a}$,
  
                     \hspace{1em}
-                    $o_{g1}$, $o_{g2}$ $\in$ ${\cal E}_{og}$,
+                    $og_{0}$, $og_{1}$ $\in$ ${\cal E}_{og}$,
  
                     \hspace{1em}
-                    $o_{g1}$ $\neq$ $o_{g2}$,
+                    $og_{0}$ $\neq$ $og_{1}$,
  
                     \hspace{1em}
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
@@ -3922,7 +3922,7 @@ ENDFUNCTION
         elapsed between the instant that electricity flowed through light bulb's
         filament and the instant the light from the bulb reaches the observer's eyes.
         One can further argue that the "instant" that electricity flowed through the
-        bulb's filament is not instantaneous, once we consider that the speed of light
+        bulb's filament is not instantaneous, once we realise that the speed of light
         and electricity is finite. In other words, any given event can always be
         divided into sub-events. This argument is more evident in the sunrise example.
 
@@ -4482,17 +4482,17 @@ ENDFUNCTION
         By allowing time point definitions to be expressed in the algebra, we must
         formally define time points.
 
-        Disregarding the relativistic effects of gravitation and velocity, we make the
-        assumption that time is linear, absolute and universal. That is, time always
-        flows in one direction: from past to future; that the passage of time as seen
-        by one system is the same for any other system; and that all systems define
-        time against a universal frame of reference. For simplicity, we further assume
-        that time is not a continuous line, but is instead made up of discrete time
-        points.
+        Disregarding the physical effects of gravitation and velocity on time, we
+        make the assumption that time is linear, absolute and universal. That is,
+        time always flows in one direction: from past to future; that the passage of
+        time as seen by one system is the same for any other system; and that all
+        systems define time against a universal frame of reference. For simplicity,
+        we further assume that time is not a continuous line, but is instead made up
+        of discrete time points.
 
         As this definition goes against the more intuitive notion of continuous time
-        lines, one might see the problem of events falling through the gaps between
-        the discrete time points in the non-continuous time line.
+        lines, one might see the problem of events "falling through" the gaps
+        between the discrete time points in the non-continuous time line.
 
         To go around this problem, we allow the time point granularity to be chosen
         arbitrarily. Ideally, for a specific application, one would choose a
@@ -5944,35 +5944,35 @@ ENDFUNCTION
                   Subject Group Subset Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($sg_1$, $sg_2$, $a$, $o$, $\iota$, $\sigma$),
+                    $\forall$ ($sg_0$, $sg_1$, $a$, $o$, $\iota$, $\sigma$),
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
+                    $\hat{holds}$($sg_0$, $a$, $o$, $\iota$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}$($sg_2$, $a$, $o$, $\iota$, $\sigma$),
-                    $\hat{subst}$($sg_1$, $sg_2$, $\iota$, $\sigma$),
+                    $\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$),
+                    $\hat{subst}$($sg_0$, $sg_1$, $\iota$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
+                    $not$ $\lnot\hat{holds}$($sg_0$, $a$, $o$, $\iota$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$)
+                    $\lnot\hat{holds}$($sg_0$, $a$, $o$, $\iota$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}$($sg_2$, $a$, $o$, $\iota$, $\sigma$),
-                    $\hat{subst}$($sg_1$, $sg_2$, $\iota$, $\sigma$)
+                    $\lnot\hat{holds}$($sg_1$, $a$, $o$, $\iota$, $\sigma$),
+                    $\hat{subst}$($sg_0$, $sg_1$, $\iota$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
                     where
 
                     \hspace{1em}
-                    $sg_1$, $sg_2$ $\in$ ${\cal E}_{sg}$,
+                    $sg_0$, $sg_1$ $\in$ ${\cal E}_{sg}$,
 
                     \hspace{1em}
                     $a$ $\in$ ${\cal E}_{a}$,
@@ -5981,7 +5981,7 @@ ENDFUNCTION
                     $o$ $\in$ ${\cal E}_{o}$,
 
                     \hspace{1em}
-                    $sg_1$ $\neq$ $sg_2$,
+                    $sg_0$ $\neq$ $sg_1$,
 
                     \hspace{1em}
                     $\iota$ $\in$ ${\cal I}$,
@@ -5994,28 +5994,28 @@ ENDFUNCTION
                   Access Right Group Subset Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($s$, $ag_1$, $ag_2$, $o$, $\iota$, $\sigma$),
+                    $\forall$ ($s$, $ag_0$, $ag_1$, $o$, $\iota$, $\sigma$),
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
+                    $\hat{holds}$($s$, $ag_0$, $o$, $\iota$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}$($s$, $ag_2$, $o$, $\iota$, $\sigma$),
-                    $\hat{subst}$($ag_1$, $ag_2$, $\iota$, $\sigma$),
+                    $\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$),
+                    $\hat{subst}$($ag_0$, $ag_1$, $\iota$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot$ $\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
+                    $not$ $\lnot$ $\hat{holds}$($s$, $ag_0$, $o$, $\iota$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $ag_0$, $o$, $\iota$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}$($s$, $ag_2$, $o$, $\iota$, $\sigma$),
-                    $\hat{subst}$($ag_1$, $ag_2$, $\iota$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $ag_1$, $o$, $\iota$, $\sigma$),
+                    $\hat{subst}$($ag_0$, $ag_1$, $\iota$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
@@ -6025,13 +6025,13 @@ ENDFUNCTION
                     $s$ $\in$ ${\cal E}_{s}$,
 
                     \hspace{1em}
-                    $ag_1$, $ag_2$ $\in$ ${\cal E}_{ag}$,
+                    $ag_0$, $ag_1$ $\in$ ${\cal E}_{ag}$,
 
                     \hspace{1em}
                     $o$ $\in$ ${\cal E}_{o}$,
 
                     \hspace{1em}
-                    $ag_1$ $\neq$ $ag_2$,
+                    $ag_0$ $\neq$ $ag_1$,
 
                     \hspace{1em}
                     $\iota$ $\in$ ${\cal I}$,
@@ -6044,28 +6044,28 @@ ENDFUNCTION
                   Object Group Subset Inheritance Rules
 
                   \begin{vquote}
-                    $\forall$ ($s$, $a$, $og_1$, $og_2$, $\iota$, $\sigma$),
+                    $\forall$ ($s$, $a$, $og_0$, $og_1$, $\iota$, $\sigma$),
                   \end{vquote}
 
                   \begin{vquote}
-                    $\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
+                    $\hat{holds}$($s$, $a$, $og_0$, $\iota$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\hat{holds}$($s$, $a$, $og_2$, $\iota$, $\sigma$),
-                    $\hat{subst}$($og_1$, $og_2$, $\iota$, $\sigma$),
+                    $\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$),
+                    $\hat{subst}$($og_0$, $og_1$, $\iota$, $\sigma$),
 
                     \hspace{1em}
-                    $not$ $\lnot\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
+                    $not$ $\lnot\hat{holds}$($s$, $a$, $og_0$, $\iota$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
-                    $\lnot\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $a$, $og_0$, $\iota$, $\sigma$)
                     $\leftarrow$
 
                     \hspace{1em}
-                    $\lnot\hat{holds}$($s$, $a$, $og_2$, $\iota$, $\sigma$),
-                    $\hat{subst}$($og_1$, $og_2$, $\iota$, $\sigma$)
+                    $\lnot\hat{holds}$($s$, $a$, $og_1$, $\iota$, $\sigma$),
+                    $\hat{subst}$($og_0$, $og_1$, $\iota$, $\sigma$)
                   \end{vquote}
 
                   \begin{vquote}
@@ -6078,10 +6078,10 @@ ENDFUNCTION
                     $a$ $\in$ ${\cal E}_{a}$,
 
                     \hspace{1em}
-                    $og_1$, $og_2$ $\in$ ${\cal E}_{og}$,
+                    $og_0$, $og_1$ $\in$ ${\cal E}_{og}$,
 
                     \hspace{1em}
-                    $og_1$ $\neq$ $og_2$,
+                    $og_0$ $\neq$ $og_1$,
 
                     \hspace{1em}
                     $\iota$ $\in$ ${\cal I}$,
@@ -6104,26 +6104,26 @@ ENDFUNCTION
                 Subject Group Transitivity Rules
 
                 \begin{vquote}
-                  $\forall$ ($sg_{1}$, $sg_{2}$, $sg_{3}$, $\iota$, $\sigma$),
+                  $\forall$ ($sg_{0}$, $sg_{1}$, $sg_{2}$, $\iota$, $\sigma$),
                 \end{vquote}
 
                 \begin{vquote}
-                  $\hat{subst}$($sg_{1}$, $sg_{3}$, $\iota$, $\sigma$)
+                  $\hat{subst}$($sg_{0}$, $sg_{2}$, $\iota$, $\sigma$)
                   $\leftarrow$
 
                   \hspace{1em}
-                  $\hat{subst}$($sg_{1}$, $sg_{2}$, $\iota$, $\sigma$),
-                  $\hat{subst}$($sg_{2}$, $sg_{3}$, $\iota$, $\sigma$)
+                  $\hat{subst}$($sg_{0}$, $sg_{1}$, $\iota$, $\sigma$),
+                  $\hat{subst}$($sg_{1}$, $sg_{2}$, $\iota$, $\sigma$)
                 \end{vquote}
 
                 \begin{vquote}
                   where
 
                   \hspace{1em}
-                  $sg_{1}$, $sg_{2}$, $sg_{3}$ $\in$ ${\cal E}_{sg}$,
+                  $sg_{0}$, $sg_{1}$, $sg_{2}$ $\in$ ${\cal E}_{sg}$,
 
                   \hspace{1em}
-                  $sg_{1}$ $\neq$ $sg_{2}$ $\neq$ $sg_{3}$,
+                  $sg_{0}$ $\neq$ $sg_{1}$ $\neq$ $sg_{2}$,
 
                   \hspace{1em}
                   $\iota$ $\in$ ${\cal I}$,
@@ -6136,26 +6136,26 @@ ENDFUNCTION
                 Access Right Group Transitivity Rules
 
                 \begin{vquote}
-                  $\forall$ ($ag_{1}$, $ag_{2}$, $ag_{3}$, $\iota$, $\sigma$),
+                  $\forall$ ($ag_{0}$, $ag_{1}$, $ag_{2}$, $\iota$, $\sigma$),
                 \end{vquote}
 
                 \begin{vquote}
-                  $\hat{subst}$($ag_{1}$, $ag_{3}$, $\iota$, $\sigma$)
+                  $\hat{subst}$($ag_{0}$, $ag_{2}$, $\iota$, $\sigma$)
                   $\leftarrow$
 
                   \hspace{1em}
-                  $\hat{subst}$($ag_{1}$, $ag_{2}$, $\iota$, $\sigma$),
-                  $\hat{subst}$($ag_{2}$, $ag_{3}$, $\iota$, $\sigma$)
+                  $\hat{subst}$($ag_{0}$, $ag_{1}$, $\iota$, $\sigma$),
+                  $\hat{subst}$($ag_{1}$, $ag_{2}$, $\iota$, $\sigma$)
                 \end{vquote}
 
                 \begin{vquote}
                   where
 
                   \hspace{1em}
-                  $ag_{1}$, $ag_{2}$, $ag_{3}$ $\in$ ${\cal E}_{ag}$,
+                  $ag_{0}$, $ag_{1}$, $ag_{2}$ $\in$ ${\cal E}_{ag}$,
 
                   \hspace{1em}
-                  $ag_{1}$ $\neq$ $ag_{2}$ $\neq$ $ag_{3}$,
+                  $ag_{0}$ $\neq$ $ag_{1}$ $\neq$ $ag_{2}$,
 
                   \hspace{1em}
                   $\iota$ $\in$ ${\cal I}$,
@@ -6167,26 +6167,26 @@ ENDFUNCTION
                 Object Group Transitivity Rules
 
                 \begin{vquote}
-                  $\forall$ ($og_{1}$, $og_{2}$, $og_{3}$, $\iota$, $\sigma$),
+                  $\forall$ ($og_{0}$, $og_{1}$, $og_{2}$, $\iota$, $\sigma$),
                 \end{vquote}
 
                 \begin{vquote}
-                  $\hat{subst}$($og_{1}$, $og_{3}$, $\iota$, $\sigma$)
+                  $\hat{subst}$($og_{0}$, $og_{2}$, $\iota$, $\sigma$)
                   $\leftarrow$
 
                   \hspace{1em}
-                  $\hat{subst}$($og_{1}$, $og_{2}$, $\iota$, $\sigma$),
-                  $\hat{subst}$($og_{2}$, $og_{3}$, $\iota$, $\sigma$)
+                  $\hat{subst}$($og_{0}$, $og_{1}$, $\iota$, $\sigma$),
+                  $\hat{subst}$($og_{1}$, $og_{2}$, $\iota$, $\sigma$)
                 \end{vquote}
 
                 \begin{vquote}
                   where
 
                   \hspace{1em}
-                  $og_{1}$, $og_{2}$, $og_{3}$ $\in$ ${\cal E}_{og}$,
+                  $og_{0}$, $og_{1}$, $og_{2}$ $\in$ ${\cal E}_{og}$,
 
                   \hspace{1em}
-                  $og_{1}$ $\neq$ $og_{2}$ $\neq$ $og_{3}$,
+                  $og_{0}$ $\neq$ $og_{1}$ $\neq$ $og_{2}$,
 
                   \hspace{1em}
                   $\iota$ $\in$ ${\cal I}$,
@@ -7999,113 +7999,6 @@ FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
   RETURN \(Tot\sb{H}\) \(+\) \(Tot\sb{M}\) \(+\) \(offset\)
 ENDFUNCTION
           \end{valgorithm}
-
-
-        \begin{valgorithm}[tbhp]{$Decode\_Holds$()}{algo-implndecho}
-FUNCTION \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
-  \(s\) \(=\) \(id\) div ((\(|\)\(\theta\).\(as\)\(|\) \(+\) \(|\)\(\theta\).\(ag\)\(|\)) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))
-  \(id\) \(=\) \(id\) mod ((\(|\)\(\theta\).\(as\)\(|\) \(+\) \(|\)\(\theta\).\(ag\)\(|\)) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))
-  \(a\) \(=\) \(id\) div ((\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))
-  \(id\) \(=\) \(id\) mod ((\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))
-  \(o\) \(=\) \(id\) div \(|\)\(\theta\).\(int\)\(|\)
-  \(i\) \(=\) \(id\) mod \(|\)\(\theta\).\(int\)\(|\)
-
-  IF \(s\) \(\geq\) \(|\)\(\theta\).\(ss\)\(|\) THEN
-    \(sub\) = \(T\sb{s}.sg\)[\(s\) \(-\) \(|\)\(\theta\).\(ss\)\(|\)]
-  ELSE
-    \(sub\) = \(T\sb{s}.ss\)[\(s\)]
-  ENDIF
-  IF \(a\) \(\geq\) \(|\)\(\theta\).\(as\)\(|\) THEN
-    \(acc\) = \(T\sb{s}.ag\)[\(a\) \(-\) \(|\)\(\theta\).\(as\)\(|\)]
-  ELSE
-    \(acc\) = \(T\sb{s}.as\)[\(a\)]
-  ENDIF
-  IF \(o\) \(\geq\) \(|\)\(\theta\).\(os\)\(|\) THEN
-    \(obj\) = \(T\sb{s}.og\)[\(o\) \(-\) \(|\)\(\theta\).\(os\)\(|\)]
-  ELSE
-    \(obj\) = \(T\sb{s}.os\)[\(o\)]
-  ENDIF
-
-  RETURN \(holds\)(\(sub\), \(acc\), \(obj\), \(T\sb{s}.int\)[\(i\)], \(\sigma\), \(tr\))
-ENDFUNCTION
-        \end{valgorithm}
-
-        \begin{valgorithm}[tbhp]{$Decode\_Memb$()}{algo-impln-decme}
-FUNCTION \(Decode_Memb\)(\(id\), \(\sigma\), \(tr\))
-  \(c\sb{0}\) \(=\) (\(|\)\(\theta\).\(ss\)\(|\) \(\cdot\) \(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) 
-  \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|\)\(\theta\).\(as\)\(|\) \(\cdot\) \(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) 
-
-  IF \(id\) \(<\) \(c\sb{0}\) THEN
-    \(elt\) \(=\) \(T\sb{s}.ss\)[\(id\) div (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
-    \(grp\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
-  ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
-    \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
-
-    \(elt\) \(=\) \(T\sb{s}.as\)[\(id\) div (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
-    \(grp\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
-  ELSE
-    \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
-
-    \(elt\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
-    \(grp\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
-  ENDIF
-
-  RETURN \(memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
-ENDFUNCTION
-        \end{valgorithm}
-
-        \begin{valgorithm}[tbhp]{$Decode\_Subst$()}{algo-impln-decsu}
-FUNCTION \(Decode_Subst\)(\(id\), \(\sigma\), \(tr\))
-  \(c\sb{0}\) \(=\) (\(|\)\(\theta\).\(sg\)\(|\sp{2}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) 
-  \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|\)\(\theta\).\(ag\)\(|\sp{2}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) 
-
-  IF \(id\) \(<\) \(c\sb{0}\) THEN
-    \(grp\sb{0}\) \(=\) \(T\sb{s}.sg\)[\(id\) div (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
-    \(grp\sb{1}\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
-  ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
-    \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
-
-    \(grp\sb{0}\) \(=\) \(T\sb{s}.ag\)[\(id\) div (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
-    \(grp\sb{1}\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
-  ELSE
-    \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
-
-    \(grp\sb{0}\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
-    \(grp\sb{1}\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
-  ENDIF
-
-  RETURN \(subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
-ENDFUNCTION
-        \end{valgorithm}
-
-        \begin{valgorithm}[tbhp]{$Decode\_Fact$()}{algo-impln-decfa}
-FUNCTION \(Decode_Fact\)(\(id\))
-  \(\sigma\) \(=\) \(id\) div (\(Total\sb{A}\) \(\cdot\) \(2\))
-  \(id\) \(=\) \(id\) mod (\(Total\sb{A}\) \(\cdot\) \(2\)) 
-
-  IF \(id\) \(\geq\) \(Total\sb{A}\) THEN
-    \(tr\) \(=\) \(true\)
-  ELSE
-    \(tr\) \(=\) \(false\)
-  ENDIF
-
-  \(id\) \(=\) \(id\) mod \(Total\sb{A}\)
-
-  IF \(id\) \(<\) \(Total\sb{H}\) THEN
-    RETURN \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
-  ELSEIF \(id\) \(<\) (\(Total\sb{H}\) \(+\) \(Total\sb{M}\)) THEN
-    RETURN \(Decode_Memb\)(\(id\) \(-\) \(Total\sb{H}\), \(\sigma\), \(tr\))
-  ELSE
-    RETURN \(Decode_Subst\)(\(id\) \(-\) (\(Total\sb{H}\) \(+\) \(Total\sb{M}\)), \(\sigma\), \(tr\))
-  ENDIF
-ENDFUNCTION
-        \end{valgorithm}
 
     \section{Discussions} 
       \label{sect-impln-discu}
