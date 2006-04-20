@@ -8,6 +8,7 @@
 \usepackage{float}
 \usepackage{calc}
 \usepackage{multirow}
+\usepackage{rotating}
 
 % a variable margin environment
 \newenvironment{vvarmargin}[2]
@@ -2664,31 +2665,35 @@
 
           \paragraph{Atoms.}
 
-            The three types of atoms ({\em holds}, {\em membership} and
-            {\em subset}) are represented as structures of 2 to 3 strings,
-            with each string matching an entity identifier from the
-            symbol table. Table \ref{tabl-polup-atdsr} shows the fields
-            associated with each atom type.
+            The three types of atoms, i.e. {\em holds}, {\em membership}
+            and {\em subset}, are represented as structures of 2 to 3
+            strings, with each string matching an entity identifier from
+            the symbol table. Table \ref{tabl-polup-atdsr} shows the
+            fields associated with each atom type.
 
             \begin{table}[tbhp]
               \begin{center}
                 \begin{tabular}[t]{|l|l|l|l|}
                   \hline
-                  \textbf{Atom}             & \textbf{Field} & \textbf{Type} & \textbf{Description} \\
-                  \hline
-                  {\multirow{3}{*}{holds}}  & $sub$          & string        & subject entity \\
-                  \cline{2-4}                                                
-                                            & $acc$          & string        & access right entity \\
-                  \cline{2-4}                                                
-                                            & $obj$          & string        & object entity \\
+                  \textbf{Atom}             & \textbf{Field} & \textbf{Type}             & \textbf{Description} \\
+                  \hline                                                                 
+                  {\multirow{3}{*}{holds}}  & $sub$          & string                    & subject entity \\
+                  \cline{2-4}                                                            
+                                            & $acc$          & string                    & access right entity \\
+                  \cline{2-4}                                                            
+                                            & $obj$          & string                    & object entity \\
+                  \hline                                                                 
+                  {\multirow{3}{*}{member}} & $elt$          & string                    & single entity \\
+                  \cline{2-4}                                                            
+                                            & $grp$          & string                    & group entity \\
+                  \cline{2-4}
+                                            & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
                   \hline                                                     
-                  {\multirow{2}{*}{member}} & $elt$          & string        & single entity \\
-                  \cline{2-4}                                                
-                                            & $grp$          & string        & group entity \\
-                  \hline                                                     
-                  {\multirow{2}{*}{subset}} & $grp_0$        & string        & subgroup entity \\
-                  \cline{2-4}                                                
-                                            & $grp_1$        & string        & supergroup entity \\
+                  {\multirow{3}{*}{subset}} & $grp_0$        & string                    & subgroup entity \\
+                  \cline{2-4}                                                            
+                                            & $grp_1$        & string                    & supergroup entity \\
+                  \cline{2-4}
+                                            & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
                   \hline
                 \end{tabular}
               \end{center}
@@ -2711,13 +2716,13 @@
               \begin{center}
                 \begin{tabular}[t]{|l|l|l|}
                   \hline
-                  \textbf{Field} & \textbf{Type} & \textbf{Description} \\
+                  \textbf{Field} & \textbf{Type}       & \textbf{Description} \\
                   \hline
-                  $atom$         & atom type     & polymorphic structure \\
+                  $atom$         & atom type           & polymorphic structure \\
                   \hline
-                  $type$         & \{h$|$m$|$s\} & holds, member or subset \\
+                  $type$         & \{$h$$|$$m$$|$$s$\} & holds, member or subset \\
                   \hline
-                  $truth$        & boolean       & negation indicator \\
+                  $truth$        & boolean             & negation indicator \\
                   \hline
                 \end{tabular}
               \end{center}
@@ -7378,148 +7383,568 @@ ENDFUNCTION
       \subsection{Translation to Normal Logic Program}
         \label{subs-impln-trans}
 
-        \begin{vquote}
-          $Total_H$ $=$
-          ($|T_s.ss|$ $+$ $|T_s.sg|$) $\cdot$
-          ($|T_s.as|$ $+$ $|T_s.ag|$) $\cdot$
-          ($|T_s.os|$ $+$ $|T_s.og|$) $\cdot$
-          $|T_s.int|$
-        \end{vquote}
+        The method used for translating a language ${\cal L^T}$ domain
+        into a normal logic program is similar to the language ${\cal L}$
+        domain translation discussed in Section \ref{subs-polup-norlp}.
+        Obviously, translation of a language ${\cal L^T}$ domain requires
+        extra mechanisms to handle temporal intervals. In this section, focus
+        shall be given to these extensions in a more implementation oriented
+        approach.
 
-        \begin{vquote}
-          $Total_M$ $=$
+        \subsubsection{Encode() Function Revisited}
 
-          \hspace{1em}
-          ($|T_s.ss|$ $\cdot$ $|T_s.sg|$ $\cdot$ $|T_s.int|$) $+$
+          Recall that the $Encode$() function first introduced in Section
+          \ref{subs-polup-norlp} takes as input an atom $\alpha$, a state
+          $\sigma$ and a boolean term $\tau$ to indicate whether the fact is
+          classically negated or not, and returns a positive integer $i$
+          unique to these parameters:
 
-          \hspace{1em}
-          ($|T_s.as|$ $\cdot$ $|T_s.ag|$ $\cdot$ $|T_s.int|$) $+$
+          \begin{vquote}
+            $i$ $=$ $Encode$($\alpha$, $\sigma$, $\tau$)
+          \end{vquote}
 
-           \hspace{1em}
-          ($|T_s.os|$ $\cdot$ $|T_s.og|$ $\cdot$ $|T_s.int|$)
-        \end{vquote}
+          For example, given the fact $holds$($alice$, $exec$, $file$,
+          $today$) which holds at state $S_0$ may be assigned the integer
+          $0$ by the $Encode$ function. Similarly, the negation of the fact
+          may be assigned the integer $1$, and so on:
 
-        \begin{vquote}
-          $Total_S$ $=$
-          ($|T_s.sg|^2$ $\cdot$ $|T_s.int|$) $+$
-          ($|T_s.ag|^2$ $\cdot$ $|T_s.int|$) $+$
-          ($|T_s.og|^2$ $\cdot$ $|T_s.int|$)
-        \end{vquote}
+          \begin{vquote}
+            $0$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_0$, $true$)
 
-        \begin{vquote}
-          $Total_A$ $=$ $Total_H$ $+$ $Total_M$ $+$ $Total_S$
-        \end{vquote}
+            $1$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_0$, $false$)
 
-        \begin{valgorithm}[tbhp]{$Encode\_Holds$()}{algo-impln-encho}
-FUNCTION \(Encode_Holds\)(\(sub\), \(acc\), \(obj\), \(int\), \(\sigma\), \(tr\))
-  IF \(sub\) is group THEN
-    \(sub\) = \(sub\) + \(|T\sb{s}.ss|\)
+            $1$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_1$, $true$)
+
+            $2$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_1$, $false$)
+          \end{vquote}
+          
+          Obviously, a consistent mapping between these integers and these
+          facts are needed, and a systematic representation of facts is
+          required to achieve and maintain this consistent mapping. Table XXX
+          shows a conceptual systematic arrangement of facts using the
+          symbol table $\theta$ discussed in XXX.
+
+          \begin{table}[tbhp]
+            \begin{center}
+              \begin{tabular}[t]{|l|l|l|l|l|l|}
+                \hline
+                % head
+                \multicolumn{2}{|l|}{\textbf{}} &
+                \textbf{Entity 1} &
+                \textbf{Entity 2} &
+                \textbf{Entity 3} &
+                \textbf{Interval} \\
+                \hline
+                % holds line 1
+                \multicolumn{2}{|c|}{
+                  \multirow{3}{*}{
+                    \begin{sideways}
+                      \textbf{Holds}
+                    \end{sideways}
+                  }
+                } &
+                $\theta$.$s$[$0$] &
+                $\theta$.$a$[$0$] &
+                $\theta$.$o$[$0$] & 
+                $\theta$.$int$[$0$] \\
+                % holds line 2
+                \multicolumn{2}{|c|}{} &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots \\
+                % holds line 3
+                \multicolumn{2}{|c|}{} &
+                $\theta$.$s$[$|\theta$.$s|$-$1$] &
+                $\theta$.$a$[$|\theta$.$a|$-$1$] &
+                $\theta$.$o$[$|\theta$.$o|$-$1$] & 
+                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+                \hline
+                % sub memb line 1
+                \multirow{3}{*}{
+                  \begin{sideways}
+                    \textbf{Sub}
+                  \end{sideways}
+                } &
+                \multirow{9}{*}{
+                  \begin{sideways}
+                    \textbf{Member}
+                  \end{sideways}
+                } &
+                $\theta$.$ss$[$0$] &
+                $\theta$.$sg$[$0$] &
+                &
+                $\theta$.$int$[$0$] \\
+                % sub memb line 2
+                &
+                &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots &
+                &
+                \hspace{1em}\vdots \\
+                % sub memb line 3
+                &
+                &
+                $\theta$.$ss$[$|\theta$.$ss|$-$1$] &
+                $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
+                &
+                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+                \cline{1-1}\cline{3-6}
+                % acc memb line 1
+                \multirow{3}{*}{
+                  \begin{sideways}
+                    \textbf{Acc}
+                  \end{sideways}
+                } &
+                &
+                $\theta$.$as$[$0$] &
+                $\theta$.$ag$[$0$] &
+                &
+                $\theta$.$int$[$0$] \\
+                % acc memb line 2
+                &
+                &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots &
+                &
+                \hspace{1em}\vdots \\
+                % acc memb line 3
+                &
+                &
+                $\theta$.$as$[$|\theta$.$as|$-$1$] &
+                $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
+                &
+                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+                \cline{1-1}\cline{3-6}
+                % obj memb line 1
+                \multirow{3}{*}{
+                  \begin{sideways}
+                    \textbf{Obj}
+                  \end{sideways}
+                } &
+                &
+                $\theta$.$os$[$0$] &
+                $\theta$.$og$[$0$] &
+                &
+                $\theta$.$int$[$0$] \\
+                % obj memb line 2
+                &
+                &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots &
+                &
+                \hspace{1em}\vdots \\
+                % obj memb line 3
+                &
+                &
+                $\theta$.$os$[$|\theta$.$os|$-$1$] &
+                $\theta$.$og$[$|\theta$.$og|$-$1$] &
+                &
+                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+                \hline
+                % sub subst line 1
+                \multirow{3}{*}{
+                  \begin{sideways}
+                    \textbf{Sub}
+                  \end{sideways}
+                } &
+                \multirow{9}{*}{
+                  \begin{sideways}
+                    \textbf{Subset}
+                  \end{sideways}
+                } &
+                $\theta$.$sg$[$0$] &
+                $\theta$.$sg$[$0$] &
+                &
+                $\theta$.$int$[$0$] \\
+                % sub subst line 2
+                &
+                &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots &
+                &
+                \hspace{1em}\vdots \\
+                % sub subst line 3
+                &
+                &
+                $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
+                $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
+                &
+                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+                \cline{1-1}\cline{3-6}
+                % acc subst line 1
+                \multirow{3}{*}{
+                  \begin{sideways}
+                    \textbf{Acc}
+                  \end{sideways}
+                } &
+                &
+                $\theta$.$ag$[$0$] &
+                $\theta$.$ag$[$0$] &
+                &
+                $\theta$.$int$[$0$] \\
+                % acc subst line 2
+                &
+                &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots &
+                &
+                \hspace{1em}\vdots \\
+                % acc subst line 3
+                &
+                &
+                $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
+                $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
+                &
+                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+                \cline{1-1}\cline{3-6}
+                % obj subst line 1
+                \multirow{3}{*}{
+                  \begin{sideways}
+                    \textbf{Obj}
+                  \end{sideways}
+                } &
+                &
+                $\theta$.$og$[$0$] &
+                $\theta$.$og$[$0$] &
+                &
+                $\theta$.$int$[$0$] \\
+                % obj subst line 2
+                &
+                &
+                \hspace{1em}\vdots &
+                \hspace{1em}\vdots &
+                &
+                \hspace{1em}\vdots \\
+                % obj subst line 3
+                &
+                &
+                $\theta$.$og$[$|\theta$.$og|$-$1$] &
+                $\theta$.$og$[$|\theta$.$og|$-$1$] &
+                &
+                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption{Conceptual Arrangement of Facts}
+            \label{tabl-impln-ftabl}
+          \end{table}
+
+          Table \ref{tabl-impln-ftabl} shows all the possible combinations of
+          all entity and interval identifiers defined in the symbol table to
+          form all possible facts in one state. Note that the order in which
+          the facts are enumerated may be used as an index for each fact. For
+          example, using the last single access right
+          $\theta$.$as$[$|$$\theta$.$as$$|$-$1$], the last group access
+          right $\theta$.$ag$[$|$$\theta$.$ag$$|$-$1$] and the last interval
+          $\theta$.$int$[$|$$\theta$.$int$$|$-$1$] from the symbol table,
+          we form the following fact:
+
+          \begin{vquote}
+            $memb$($\theta$.$as$[$|$$\theta$.$as$$|$-$1$],
+              $\theta$.$ag$[$|$$\theta$.$ag$$|$-$1$],
+              $\theta$.$int$[$|$$\theta$.$int$$|$-$1$])
+          \end{vquote}
+
+          \noindent
+          The index of the fact above can be derived by considering the
+          enumerated order of this fact from Table \ref{tabl-impln-ftabl},
+          and the fixed order of the symbol table $\theta$:
+
+          \begin{vquote}
+            (
+              $|$$\theta$.$s$$|$ $\times$
+              $|$$\theta$.$a$$|$ $\times$
+              $|$$\theta$.$o$$|$ $\times$
+              $|$$\theta$.$int$$|$
+            ) $+$
+
+            (
+              $|$$\theta$.$ss$$|$ $\times$
+              $|$$\theta$.$sg$$|$ $\times$
+              $|$$\theta$.$int$$|$
+            ) $+$
+
+            (
+              $|$$\theta$.$as$$|$ $\times$
+              $|$$\theta$.$ag$$|$ $\times$
+              $|$$\theta$.$int$$|$
+            ) $-$ $1$
+          \end{vquote}
+
+          Note that in Table \ref{tabl-impln-ftabl}, the indices of positive
+          member facts are offset by the total number of positive holds
+          facts ($|$$\theta$.$s$$|$ $\times$ $|$$\theta$.$a$$|$ $\times$
+          $|$$\theta$.$o$$|$ $\times$ $|$$\theta$.$int$$|$) and the indices of
+          positive access right member facts are offset by the total number of
+          positive holds facts plus the total number of positive subject
+          member facts ($|$$\theta$.$s$$|$ $\times$ $|$$\theta$.$a$$|$ $\times$
+          $|$$\theta$.$o$$|$ $\times$ $|$$\theta$.$int$$|$ $+$
+          $|$$\theta$.$ss$$|$ $\times$ $|$$\theta$.$sg$$|$ $\times$
+          $|$$\theta$.$int$$|$). For notational simplicity, we define the
+          following totals of atoms:
+
+          \begin{vquote}
+            $Tot_A$ $=$ $Tot_H$ $+$ $Tot_M$ $+$ $Tot_S$
+          \end{vquote}
+
+          \begin{vquote}
+            $Tot_H$ $=$ 
+              $|$$\theta$.$s$$|$ $\times$
+              $|$$\theta$.$a$$|$ $\times$
+              $|$$\theta$.$o$$|$ $\times$
+              $|$$\theta$.$int$$|$
+          \end{vquote}
+
+          \begin{vquote}
+            $Tot_M$ $=$
+
+              \hspace{1em}
+              (
+                $|$$\theta$.$ss$$|$ $\times$
+                $|$$\theta$.$sg$$|$ $\times$
+                $|$$\theta$.$int$$|$
+              ) $+$
+
+              \hspace{1em}
+              (
+                $|$$\theta$.$as$$|$ $\times$
+                $|$$\theta$.$ag$$|$ $\times$
+                $|$$\theta$.$int$$|$
+              ) $+$
+
+              \hspace{1em}
+              (
+                $|$$\theta$.$os$$|$ $\times$
+                $|$$\theta$.$og$$|$ $\times$
+                $|$$\theta$.$int$$|$
+              )
+          \end{vquote}
+
+          \begin{vquote}
+            $Tot_S$ $=$
+
+              \hspace{1em}
+              (
+                $|$$\theta$.$sg$$|$ $\times$
+                $|$$\theta$.$sg$$|$ $\times$
+                $|$$\theta$.$int$$|$
+              ) $+$
+
+              \hspace{1em}
+              (
+                $|$$\theta$.$ag$$|$ $\times$
+                $|$$\theta$.$ag$$|$ $\times$
+                $|$$\theta$.$int$$|$
+              ) $+$
+
+              \hspace{1em}
+              (
+                $|$$\theta$.$og$$|$ $\times$
+                $|$$\theta$.$og$$|$ $\times$
+                $|$$\theta$.$int$$|$
+              )
+          \end{vquote}
+
+          With the totals above defined, the offsetting procedure can be
+          extended to find the indices of both positive and negative facts. The
+          index of a negative fact is offset by $Tot_A$, the total number of
+          positive facts. For example, given the first negative subject subset
+          fact:
+
+          \begin{vquote}
+            $\lnot$$subst$($\theta$.$sg$[$0$], $\theta$.$sg$[$0$], $\theta$.$int$[$0$])
+          \end{vquote}
+
+          \noindent
+          The index of the above fact is:
+
+          \begin{vquote}
+            $Tot_A$ $+$ $Tot_H$ $+$ $Tot_M$
+          \end{vquote}
+
+          So far, we have seen that this technique is effective in encoding
+          positive and negative facts in one state only. However, this
+          procedure can be further extended to assign indices to facts in
+          different states. First, we assume that the integers $0$ to
+          ($2$ $\times$ $Tot_A$) - $1$ maps to positive and negative facts of
+          state $S_0$. We can then assign integers ($2$ $\times$ $Tot_A$) to
+          ($4$ $\times$ $Tot_A$) - $1$ to the positive and negative facts of
+          state $S_1$. In general, facts of state $\sigma$ are offset by the
+          facts of state $\sigma$ - $1$.
+
+          Algorithm \ref{algo-impln-encod} shows the implementation of the
+          $Encode$() function using this technique. The first thing the
+          that the function does is to calculate the offset of the atom
+          $\alpha$ based on the given state $\sigma$ and the truth
+          indicator $\tau$. The function then takes the ordinal index of each
+          entity and interval in the atom from the symbol table $\theta$.
+          Depending on the atom type, the $Encode$() then uses one of
+          $Offset\_Holds$(), $Offset\_Memb$() or $Offset\_Subst$() with the
+          indices to calculate the appropriate offsets.
+
+          \begin{valgorithm}[tbhp]{$Encode$()}{algo-impln-encod}
+FUNCTION \(Encode\)(\(\alpha\), \(\sigma\), \(\tau\))
+  \(offset\) = \(\sigma\) \(\cdot\) \(Tot\sb{A}\) \(\cdot\) \(2\)
+  IF \(\tau\) == \(False\) THEN
+    \(offset\) = \(offset\) \(+\) \(Tot\sb{A}\)
   ENDIF
-  IF \(acc\) is group THEN
-    \(acc\) = \(acc\) + \(|T\sb{s}.as|\)
-  ENDIF
-  IF \(obj\) is group THEN
-    \(obj\) = \(obj\) + \(|T\sb{s}.os|\)
-  ENDIF
+  CASE \(\alpha\).\(type\) OF
+    \(holds\) :
+      \(s\) = \(\theta\sb{s}\).\(index\_of\)(\(\alpha\).\(holds\).\(sub\))
+      \(a\) = \(\theta\sb{a}\).\(index\_of\)(\(\alpha\).\(holds\).\(acc\))
+      \(o\) = \(\theta\sb{o}\).\(index\_of\)(\(\alpha\).\(holds\).\(obj\))
+      \(i\) = \(\theta\sb{int}\).\(index\_of\)(\(\alpha\).\(holds\).\(int\))
+      RETURN \(offset\) \(+\) \(Offset\_Holds\)(\(s\), \(a\), \(o\), \(i\))
+    \(member\) :
+      CASE \(\alpha\).\(memb\).\(type\) OF
+        \(sub\) :
+          \(e\) = \(\theta\sb{ss}\).\(index\_of\)(\(\alpha\).\(memb\).\(elt\))
+          \(g\) = \(\theta\sb{sg}\).\(index\_of\)(\(\alpha\).\(memb\).\(grp\))
+        \(acc\) :
+          \(e\) = \(\theta\sb{as}\).\(index\_of\)(\(\alpha\).\(memb\).\(elt\))
+          \(g\) = \(\theta\sb{ag}\).\(index\_of\)(\(\alpha\).\(memb\).\(grp\))
+        \(obj\) :
+          \(e\) = \(\theta\sb{os}\).\(index\_of\)(\(\alpha\).\(memb\).\(elt\))
+          \(g\) = \(\theta\sb{og}\).\(index\_of\)(\(\alpha\).\(memb\).\(grp\))
+      ENDCASE
+      \(i\) = \(\theta\sb{int}\).\(index\_of\)(\(\alpha\).\(memb\).\(int\))
+      RETURN \(offset\) \(+\) \(Offset\_Memb\)(\(e\), \(g\), \(i\), \(\alpha\).\(memb\).\(type\))
+    \(subset\) :
+      CASE \(\alpha\).\(subst\).\(type\) OF
+        \(sub\) :
+          \(g\sb{0}\) = \(\theta\sb{sg}\).\(index\_of\)(\(\alpha\).\(subst\).\(grp\sb{0}\))
+          \(g\sb{1}\) = \(\theta\sb{sg}\).\(index\_of\)(\(\alpha\).\(subst\).\(grp\sb{1}\))
+        \(acc\) :
+          \(g\sb{0}\) = \(\theta\sb{ag}\).\(index\_of\)(\(\alpha\).\(subst\).\(grp\sb{0}\))
+          \(g\sb{1}\) = \(\theta\sb{ag}\).\(index\_of\)(\(\alpha\).\(subst\).\(grp\sb{1}\))
+        \(obj\) :
+          \(g\sb{0}\) = \(\theta\sb{ag}\).\(index\_of\)(\(\alpha\).\(subst\).\(grp\sb{0}\))
+          \(g\sb{1}\) = \(\theta\sb{ag}\).\(index\_of\)(\(\alpha\).\(subst\).\(grp\sb{1}\))
+      ENDCASE
+      \(i\) = \(\theta\sb{int}\).\(index\_of\)(\(\alpha\).\(subst\).\(int\))
+      RETURN \(offset\) \(+\) \(Offset\_Subst\)(\(g\sb{0}\), \(g\sb{1}\), \(i\), \(\alpha\).\(subst\).\(type\))
+  ENDCASE
+ENDFUNCTION
+          \end{valgorithm}
 
-  \(offset\) \(=\)
-    (\(sub\) \(\cdot\) (\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-    (\(acc\) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-    (\(obj\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          The straight forward $Offset\_Holds$() function shown in Algorithm
+          \ref{algo-impln-offho} calculates the offset for atoms of type
+          holds by using the given indices of its elements. As discussed
+          above, the subject offset of a holds atom is obtained by multiplying
+          the actual subject index $sub$ by the total number of access rights
+          by the total number of objects by the total number of intervals
+          defined in the symbol table. Similarly, the access right offset is
+          calculated by multiplying the actual access right index $acc$ by the
+          remaining elements: the total number of objects and the total number
+          of intervals. The offsets for objects and intervals are calculated
+          in the same manner. Finally, the sum of these offsets is the offset
+          for the holds atom, which is returned by this function.
+
+          \begin{valgorithm}[tbhp]{$Offset\_Holds$()}{algo-impln-offho}
+FUNCTION \(Offset_Holds\)(\(sub\), \(acc\), \(obj\), \(int\))
+  RETURN
+    (\(sub\) \(\cdot\) (\(|\)\(\theta\).\(as\)\(|\) \(+\) \(|\)\(\theta\).\(ag\)\(|\)) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+    (\(acc\) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+    (\(obj\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
     \(int\)
-    
-  IF \(tr\) THEN
-    \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
-  ENDIF
-
-  RETURN \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
 ENDFUNCTION
-        \end{valgorithm}
+          \end{valgorithm}
+ 
+          The calculation of the offset for member atoms as shown in Algorithm
+           \ref{algo-impln-offme} uses a similar method, except each type
+          (subject, access right and object) is handled in a different way. 
+          Firstly, the access right index is offset by the total number of
+          subject member atoms ($|$$\theta$.$ss$$|$ $\cdot$ $|$$\theta$.$sg$$|$
+          $\cdot$ $|$$\theta$.$int$). The index for member atoms of type object
+          are similarly offset by the total number of subject and access right
+          member atoms ($|$$\theta$.$ss$$|$ $\cdot$ $|$$\theta$.$sg$$|$
+          $\cdot$ $|$$\theta$.$int$$|$ $+$ $|$$\theta$.$as$$|$ $\cdot$
+          $|$$\theta$.$ag$$|$ $\cdot$ $|$$\theta$.$int$). Furthermore, the
+          index of all atoms of type member is offset by the total number of
+          holds atoms ($Tot_H$).         
 
-        \begin{valgorithm}[tbhp]{$Encode\_Memb$()}{algo-impln-encme}
-FUNCTION \(Encode_Memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
-  CASE type of member atom OF
-    \(subject\) :
-      \(offset\) \(=\)
-        (\(elt\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+          \begin{valgorithm}[tbhp]{$Offset\_Memb$()}{algo-impln-offme}
+FUNCTION \(Offset_Memb\)(\(elt\), \(grp\), \(int\), \(type\))
+  CASE \(type\) OF
+    \(sub\) :
+      \(offset\) =
+        (\(elt\) \(\cdot\) \(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(grp\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
         \(int\)
-    \(access right\) :
-      \(offset\) \(=\)
-        (\(elt\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+    \(acc\) :
+      \(offset\) =
+        (\(|\)\(\theta\).\(ss\)\(|\) \(\cdot\) \(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(elt\) \(\cdot\) \(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(grp\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
         \(int\)
-    \(object\) :
+    \(obj\) :
+      \(offset\) =
+        (\(|\)\(\theta\).\(ss\)\(|\) \(\cdot\) \(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(|\)\(\theta\).\(as\)\(|\) \(\cdot\) \(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(elt\) \(\cdot\) \(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(grp\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        \(int\)
+  ENDCASE
+
+  RETURN \(Tot\sb{H}\) \(+\) \(offset\)
+ENDFUNCTION
+          \end{valgorithm}
+
+          Algorithm \ref{algo-impln-offsu} shows how the $Offset\_Subst$()
+          function calculates the offset for subset atoms. The method is
+          similar to that used by the $Offset\_Memb$() function, except the
+          final index is offset by the total number of holds and member atoms.
+
+          \begin{valgorithm}[tbhp]{$Offset\_Subst$()}{algo-impln-offsu}
+FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
+  CASE \(type\) OF
+    \(sub\) :
+      \(offset\) =
+        (\(grp\sb{0}\) \(\cdot\) \(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(grp\sb{1}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        \(int\)
+    \(acc\) :
+      \(offset\) =
+        (\(|\)\(\theta\).\(sg\)\(|\sp{2}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(grp\sb{0}\) \(\cdot\) \(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(grp\sb{1}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        \(int\)
+    \(obj\) :
       \(offset\) \(=\)
-        (\(elt\) \(\cdot\) \(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(grp\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
+        (\(|\)\(\theta\).\(sg\)\(|\sp{2}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(|\)\(\theta\).\(ag\)\(|\sp{2}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(grp\sb{0}\) \(\cdot\) \(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
+        (\(grp\sb{1}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
         \(int\)
   ENDCASE
     
-  IF \(tr\) THEN
-    \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
-  ENDIF
-
-  RETURN \(Total\sb{H}\) \(+\) \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
+  RETURN \(Tot\sb{H}\) \(+\) \(Tot\sb{M}\) \(+\) \(offset\)
 ENDFUNCTION
-        \end{valgorithm}
-
-        \begin{valgorithm}[tbhp]{$Encode\_Subst$()}{algo-impln-encsu}
-FUNCTION \(Encode_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
-  CASE type of subset atom OF
-    \(subject\) :
-      \(offset\) \(=\)
-        (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        \(int\)
-    \(access right\) :
-      \(offset\) \(=\)
-        (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        \(int\)
-    \(object\) :
-      \(offset\) \(=\)
-        (\(grp\sb{0}\) \(\cdot\) \(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(grp\sb{1}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) \(+\)
-        \(int\)
-  ENDCASE
-    
-  IF \(tr\) THEN
-    \(offset\) \(=\) \(offset\) \(+\) \(Total\sb{A}\)
-  ENDIF
-
-  RETURN \(Total\sb{H}\) \(+\) \(Total\sb{M}\) \(+\) \(offset\) \(+\) (\(\sigma\) \(\cdot\) \(Total\sb{A}\) \(\cdot\) \(2\))
-ENDFUNCTION
-        \end{valgorithm}
+          \end{valgorithm}
 
 
         \begin{valgorithm}[tbhp]{$Decode\_Holds$()}{algo-implndecho}
 FUNCTION \(Decode_Holds\)(\(id\), \(\sigma\), \(tr\))
-  \(s\) \(=\) \(id\) div ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-  \(id\) \(=\) \(id\) mod ((\(|T\sb{s}.as|\) \(+\) \(|T\sb{s}.ag|\)) \(\cdot\) (\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-  \(a\) \(=\) \(id\) div ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-  \(id\) \(=\) \(id\) mod ((\(|T\sb{s}.os|\) \(+\) \(|T\sb{s}.og|\)) \(\cdot\) \(|T\sb{s}.int|\))
-  \(o\) \(=\) \(id\) div \(|T\sb{s}.int|\)
-  \(i\) \(=\) \(id\) mod \(|T\sb{s}.int|\)
+  \(s\) \(=\) \(id\) div ((\(|\)\(\theta\).\(as\)\(|\) \(+\) \(|\)\(\theta\).\(ag\)\(|\)) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))
+  \(id\) \(=\) \(id\) mod ((\(|\)\(\theta\).\(as\)\(|\) \(+\) \(|\)\(\theta\).\(ag\)\(|\)) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))
+  \(a\) \(=\) \(id\) div ((\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))
+  \(id\) \(=\) \(id\) mod ((\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))
+  \(o\) \(=\) \(id\) div \(|\)\(\theta\).\(int\)\(|\)
+  \(i\) \(=\) \(id\) mod \(|\)\(\theta\).\(int\)\(|\)
 
-  IF \(s\) \(\geq\) \(|T\sb{s}.ss|\) THEN
-    \(sub\) = \(T\sb{s}.sg\)[\(s\) \(-\) \(|T\sb{s}.ss|\)]
+  IF \(s\) \(\geq\) \(|\)\(\theta\).\(ss\)\(|\) THEN
+    \(sub\) = \(T\sb{s}.sg\)[\(s\) \(-\) \(|\)\(\theta\).\(ss\)\(|\)]
   ELSE
     \(sub\) = \(T\sb{s}.ss\)[\(s\)]
   ENDIF
-  IF \(a\) \(\geq\) \(|T\sb{s}.as|\) THEN
-    \(acc\) = \(T\sb{s}.ag\)[\(a\) \(-\) \(|T\sb{s}.as|\)]
+  IF \(a\) \(\geq\) \(|\)\(\theta\).\(as\)\(|\) THEN
+    \(acc\) = \(T\sb{s}.ag\)[\(a\) \(-\) \(|\)\(\theta\).\(as\)\(|\)]
   ELSE
     \(acc\) = \(T\sb{s}.as\)[\(a\)]
   ENDIF
-  IF \(o\) \(\geq\) \(|T\sb{s}.os|\) THEN
-    \(obj\) = \(T\sb{s}.og\)[\(o\) \(-\) \(|T\sb{s}.os|\)]
+  IF \(o\) \(\geq\) \(|\)\(\theta\).\(os\)\(|\) THEN
+    \(obj\) = \(T\sb{s}.og\)[\(o\) \(-\) \(|\)\(\theta\).\(os\)\(|\)]
   ELSE
     \(obj\) = \(T\sb{s}.os\)[\(o\)]
   ENDIF
@@ -7530,25 +7955,25 @@ ENDFUNCTION
 
         \begin{valgorithm}[tbhp]{$Decode\_Memb$()}{algo-impln-decme}
 FUNCTION \(Decode_Memb\)(\(id\), \(\sigma\), \(tr\))
-  \(c\sb{0}\) \(=\) (\(|T\sb{s}.ss|\) \(\cdot\) \(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\)) 
-  \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.as|\) \(\cdot\) \(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\)) 
+  \(c\sb{0}\) \(=\) (\(|\)\(\theta\).\(ss\)\(|\) \(\cdot\) \(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) 
+  \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|\)\(\theta\).\(as\)\(|\) \(\cdot\) \(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) 
 
   IF \(id\) \(<\) \(c\sb{0}\) THEN
-    \(elt\) \(=\) \(T\sb{s}.ss\)[\(id\) div (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
-    \(grp\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+    \(elt\) \(=\) \(T\sb{s}.ss\)[\(id\) div (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
+    \(grp\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
   ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
     \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
 
-    \(elt\) \(=\) \(T\sb{s}.as\)[\(id\) div (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
-    \(grp\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+    \(elt\) \(=\) \(T\sb{s}.as\)[\(id\) div (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
+    \(grp\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
   ELSE
     \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
 
-    \(elt\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
-    \(grp\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+    \(elt\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
+    \(grp\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
   ENDIF
 
   RETURN \(memb\)(\(elt\), \(grp\), \(int\), \(\sigma\), \(tr\))
@@ -7557,25 +7982,25 @@ ENDFUNCTION
 
         \begin{valgorithm}[tbhp]{$Decode\_Subst$()}{algo-impln-decsu}
 FUNCTION \(Decode_Subst\)(\(id\), \(\sigma\), \(tr\))
-  \(c\sb{0}\) \(=\) (\(|T\sb{s}.sg|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
-  \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|T\sb{s}.ag|\sp{2}\) \(\cdot\) \(|T\sb{s}.int|\)) 
+  \(c\sb{0}\) \(=\) (\(|\)\(\theta\).\(sg\)\(|\sp{2}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) 
+  \(c\sb{1}\) \(=\) \(c\sb{0}\) \(+\) (\(|\)\(\theta\).\(ag\)\(|\sp{2}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) 
 
   IF \(id\) \(<\) \(c\sb{0}\) THEN
-    \(grp\sb{0}\) \(=\) \(T\sb{s}.sg\)[\(id\) div (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))]
-    \(grp\sb{1}\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.sg|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+    \(grp\sb{0}\) \(=\) \(T\sb{s}.sg\)[\(id\) div (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
+    \(grp\sb{1}\) \(=\) \(T\sb{s}.sg\)[(\(id\) mod (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(sg\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
   ELSE IF \(id\) \(<\) \(c\sb{1}\) THEN
     \(id\) \(=\) \(id\) \(-\) \(c\sb{0}\)
 
-    \(grp\sb{0}\) \(=\) \(T\sb{s}.ag\)[\(id\) div (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))]
-    \(grp\sb{1}\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.ag|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+    \(grp\sb{0}\) \(=\) \(T\sb{s}.ag\)[\(id\) div (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
+    \(grp\sb{1}\) \(=\) \(T\sb{s}.ag\)[(\(id\) mod (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(ag\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
   ELSE
     \(id\) \(=\) \(id\) \(-\) \(c\sb{1}\)
 
-    \(grp\sb{0}\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))]
-    \(grp\sb{1}\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|T\sb{s}.int|\))) div \(|T\sb{s}.int|\)]
-    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|T\sb{s}.og|\) \(\cdot\) \(|T\sb{s}.int|\))) mod \(|T\sb{s}.int|\)]
+    \(grp\sb{0}\) \(=\) \(T\sb{s}.os\)[\(id\) div (\(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))]
+    \(grp\sb{1}\) \(=\) \(T\sb{s}.og\)[(\(id\) mod (\(|T\sb{s}og|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) div \(|\)\(\theta\).\(int\)\(|\)]
+    \(int\) \(=\) \(T\sb{s}.int\)[(\(id\) mod (\(|\)\(\theta\).\(og\)\(|\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\))) mod \(|\)\(\theta\).\(int\)\(|\)]
   ENDIF
 
   RETURN \(subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(\sigma\), \(tr\))
