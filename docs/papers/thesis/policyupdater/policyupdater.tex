@@ -2617,7 +2617,34 @@
         Each of the tables and lists used in the system inherits from a generic
         ordered and indexed list implementation. Each node in this list holds a
         generic data type that can be used to store strings, an arbitrary data
-        type or another list type.
+        type or another list type. This list structure implements, among
+        others, the following operations:
+
+        \begin{itemize}
+          \item
+            $LIST$.$len$() returns the number of elements in $LIST$.
+
+          \item
+            $LIST$.$is_in$($item$) returns true if $item$ is in the list and
+            false otherwise.
+
+          \item
+            $LIST$.$index\_of$($item$) returns the index of the item $item$
+            in $LIST$.
+
+          \item
+            $LIST$.$get$($index$) returns the $index$'th item in $LIST$.
+        \end{itemize}
+
+        \noindent
+        For simplicity, the following notations are used in the rest of this
+        paper:
+
+        \begin{vquote}
+          $|LIST|$ = $LIST$.$len$()
+
+          $LIST$[$i$] = $LIST$.$get$($i$)
+        \end{vquote}
 
         \subsubsection{Symbol Table}
 
@@ -2650,6 +2677,9 @@
             \label{tabl-polup-stdsr}
           \end{table}
 
+          In addition to the 6 lists in the symbol table, 3 additional lists
+          are defined: $s$, $a$ and $o$. These lists are simple concatenations
+          of the other lists in the table (i.e. $s$ = $ss$ $+$ $sg$, etc.).
           Each entity identifier are sorted in the symbol table lists
           according to their type, and ordered according to the order in which
           they are declared in the program. Each list is indexed by positive
@@ -3049,15 +3079,15 @@ ENDFUNCTION
           are generated from the storage structures. The process itself is
           straightforward: each fact in the initial state facts table is
           translated by the $Encode$() function and is made the head of a new
-          rule whose body is the literal $True$ fact.
+          rule whose body is the literal $true$ fact.
 
           \begin{valgorithm}[tbhp]{$TransInitStateRules$()}{algo-polup-tisr}
 FUNCTION \(TransInitStateRules\)(\(Ti\))
   FOR \(i\) = \(0\) TO \(Len\)(\(Ti\)) DO
     \(a\) = \(Encode\)(\(Ti\)[\(i\)].\(atm\), \(0\), \(Ti\)[\(i\)].\(tr\))
     \(RuleBegin\)()
-    \(RuleHead\)(\(a\), \(T\))
-    \(RuleBody\)(\(T\), \(T\))
+    \(RuleHead\)(\(a\), \(true\))
+    \(RuleBody\)(\(true\), \(true\))
     \(RuleEnd\)()
   ENDDO
 ENDFUNCTION
@@ -3077,15 +3107,15 @@ FUNCTION \(TransConstRules\)(\(Tc\), \(Tq\))
       \(RuleBegin\)()
       FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(exp\)) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(exp\)[\(k\)].\(tr\))
-        \(RuleHead\)(\(a\), \(T\))
+        \(RuleHead\)(\(a\), \(true\))
       ENDDO
       FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(pcnd\)) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(tr\))
-        \(RuleBody\)(\(a\), \(T\))
+        \(RuleBody\)(\(a\), \(true\))
       ENDDO
       FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(ncnd\)) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(tr\))
-        \(RuleBody\)(\(a\), \(F\))
+        \(RuleBody\)(\(a\), \(false\))
       ENDDO
       \(RuleEnd\)()
     ENDDO
@@ -3111,11 +3141,11 @@ FUNCTION \(TransUpdateRules\)(\(Tu\), \(Tq\))
         \(RuleBegin\)()
         FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(pst\)) DO
           \(a\) = \(Encode\)(\(e\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(pst\)[\(k\)].\(tr\))
-          \(RuleHead\)(\(a\), \(T\))
+          \(RuleHead\)(\(a\), \(true\))
         ENDDO
         FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(pre\)) DO
           \(a\) = \(Encode\)(\(e\).\(pre\)[\(k\)].\(atm\), \(i\), \(e\).\(pre\)[\(k\)].\(tr\))
-          \(RuleBody\)(\(a\), \(T\))
+          \(RuleBody\)(\(a\), \(true\))
         ENDDO
         \(RuleEnd\)()
       ENDIF
@@ -3167,21 +3197,21 @@ FUNCTION \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
             FOR \(m\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
               \(RuleBegin\)()
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(T\)), \(T\))
+              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(T\)), \(T\))
+              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
               \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
-              \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+              \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(F\))
+              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(false\))
               \(RuleEnd\)()
               \(RuleBegin\)()
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(T\))
+              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(T\))
+              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
               \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
-              \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+              \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
               \(RuleEnd\)()
             ENDDO
           ENDDO
@@ -3221,11 +3251,11 @@ FUNCTION \(GenSubTransRules\)(\(Ts\), \(Tq\))
           IF \(j\) != \(k\) AND \(j\) != \(l\) AND \(k\) != \(l\) THEN
             RuleBegin()
             \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(l\)]\}
-            \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+            \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
             \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
-            \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+            \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
             \(s\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(sg\)[\(l\)]\}
-            \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
+            \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
             \(RuleEnd\)()
           ENDIF
         ENDDO
@@ -3265,14 +3295,14 @@ FUNCTION \(GenHldsInertRules\)(\(Ts\), \(Tq\))
         FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
           \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
           \(RuleBegin\)()
-          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(T\)), \(T\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(T\)), \(T\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(F\)), \(F\))
+          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(true\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(false\)), \(false\))
           \(RuleEnd\)()
           \(RuleBegin\)()
-          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(F\)), \(T\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(T\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(T\)), \(F\))
+          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(false\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(true\)), \(false\))
           \(RuleEnd\)()
         ENDDO
       ENDDO
@@ -3306,8 +3336,8 @@ FUNCTION \(GenSubRefleRules\)(\(Ts\), \(Tq\))
     FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
       \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(j\)]\}
       \(RuleBegin\)()
-      \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(T\)), \(T\))
-      \(RuleBody\)(\(T\), \(T\))
+      \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
+      \(RuleBody\)(\(true\), \(true\))
       \(RuleEnd\)()
     ENDDO
   ENDDO
@@ -3338,9 +3368,9 @@ FUNCTION \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
         FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
           \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
           \(RuleBegin\)()
-          \(RuleHead\)(\(F\), \(T\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(T\)), \(T\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(F\)), \(T\))
+          \(RuleHead\)(\(false\), \(true\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
           \(RuleEnd\)()
         ENDDO
       ENDDO
@@ -3374,13 +3404,13 @@ ENDFUNCTION
 
         \begin{valgorithm}[tbhp]{$EvaluateExp$()}{algo-polup-evale}
 FUNCTION \(EvaluateExp\)(\(Qe\), \(SM\), \(S\))
-  \(result\) = \(T\)
+  \(result\) = \(true\)
   FOR \(i\) = \(0\) TO \(Len\)(\(Qe\)) DO
     \(rv\) = \(EvaluateFact\)(\(Qe\)[\(i\)], \(SM\), \(S\))
-    IF \(rv\) == \(F\) THEN
-      RETURN \(F\)
-    ELSE IF \(rv\) == \(U\) THEN
-      \(result\) = \(U\)
+    IF \(rv\) == \(false\) THEN
+      RETURN \(false\)
+    ELSE IF \(rv\) == \(unknown\) THEN
+      \(result\) = \(unknown\)
     ENDIF
   ENDDO
   RETURN \(result\)
@@ -3395,12 +3425,12 @@ ENDFUNCTION
         \begin{valgorithm}[tbhp]{$EvaluateFact$()}{algo-polup-evalf}
 FUNCTION \(EvaluateFact\)(\(Qf\), \(SM\), \(S\))
   IF \(IsFactIn\)(\(Encode\)(\(Qf\).\(atm\), \(S\), \(Qf\).\(tr\)), \(SM\)) THEN
-    RETURN \(T\)
+    RETURN \(true\)
   ELSE
     IF \(IsFactIn\)(\(Encode\)(\(Qf\).\(atm\), \(S\), NOT \(Qf\).\(tr\)), \(SM\)) THEN
-      RETURN \(F\)
+      RETURN \(false\)
     ELSE
-      RETURN \(U\)
+      RETURN \(unknown\)
     ENDIF
   ENDIF
 ENDFUNCTION
@@ -3413,11 +3443,11 @@ ENDFUNCTION
         \begin{valgorithm}[tbhp]{$IsFactIn$()}{algo-polup-isinf}
 FUNCTION \(IsFactIn\)(\(Fi\), \(SM\))
   FOR \(i\) = \(0\) TO \(Len\)(\(SM\)) DO
-    IF NOT \(IsIn\)(\(SM\)[\(i\)], \(Fi\)) THEN
-      RETURN \(F\)
+    IF NOT \(is\_in\)(\(SM\)[\(i\)], \(Fi\)) THEN
+      RETURN \(false\)
     ENDIF
   ENDDO
-  RETURN \(T\)
+  RETURN \(true\)
 ENDFUNCTION
         \end{valgorithm}
 
@@ -7348,34 +7378,74 @@ ENDFUNCTION
     \section{Authorisation Engine}
       \label{sect-impln-authe}
 
-      \subsection{Symbol Table}
-         \label{subs-impln-symtb}
+      \subsection{Extended Data Structures}
+        \label{subs-impln-symtb}
 
-        \begin{table}[tbhp]
-          \begin{center}
-            \begin{tabular}[t]{|l|l|l|}
-              \hline
-              {\bf Field} & {\bf Type} & {\bf Description} \\
-              \hline
-              $ss$  & String List & Single Subject \\
-              \hline
-              $sg$  & String List & Group Subject \\
-              \hline
-              $as$  & String List & Single Access Right \\
-              \hline
-              $ag$  & String List & Group Access Right \\
-              \hline
-              $os$  & String List & Single Object \\
-              \hline
-              $og$  & String List & Group Object \\
-              \hline
-              $int$ & String List & Interval \\
-              \hline
-            \end{tabular}
-          \end{center}
-          \caption[]{Symbol Table}
-          \label{tabl-impln-symtb}
-        \end{table}
+        \subsubsection{Extended Atom Structure}
+
+          \begin{table}[tbhp]
+            \begin{center}
+              \begin{tabular}[t]{|l|l|l|l|}
+                \hline
+                \textbf{Atom}             & \textbf{Field} & \textbf{Type}             & \textbf{Description} \\
+                \hline                                                                 
+                {\multirow{3}{*}{holds}}  & $sub$          & string                    & subject entity \\
+                \cline{2-4}                                                            
+                                          & $acc$          & string                    & access right entity \\
+                \cline{2-4}                                                            
+                                          & $obj$          & string                    & object entity \\
+                \cline{2-4}                                                            
+                                          & $int$          & string                    & interval \\
+                \hline                                                                 
+                {\multirow{4}{*}{member}} & $elt$          & string                    & single entity \\
+                \cline{2-4}                                                            
+                                          & $grp$          & string                    & group entity \\
+                \cline{2-4}                                                            
+                                          & $int$          & string                    & interval \\
+                \cline{2-4}
+                                          & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
+                \hline                                                     
+                {\multirow{4}{*}{subset}} & $grp_0$        & string                    & subgroup entity \\
+                \cline{2-4}                                                            
+                                          & $grp_1$        & string                    & supergroup entity \\
+                \cline{2-4}                                                            
+                                          & $int$          & string                    & interval \\
+                \cline{2-4}
+                                          & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption{Extended Atom Data Structure}
+            \label{tabl-impln-atdsr}
+          \end{table}
+
+         \subsubsection{Extended Symbol Table}
+
+          \begin{table}[tbhp]
+            \begin{center}
+              \begin{tabular}[t]{|l|l|l|}
+                \hline
+                {\bf Field} & {\bf Type} & {\bf Description} \\
+                \hline
+                $ss$  & String List & Single Subject \\
+                \hline
+                $sg$  & String List & Group Subject \\
+                \hline
+                $as$  & String List & Single Access Right \\
+                \hline
+                $ag$  & String List & Group Access Right \\
+                \hline
+                $os$  & String List & Single Object \\
+                \hline
+                $og$  & String List & Group Object \\
+                \hline
+                $int$ & String List & Interval \\
+                \hline
+              \end{tabular}
+            \end{center}
+            \caption[]{Extended Symbol Table}
+            \label{tabl-impln-symtb}
+          \end{table}
 
       \subsection{Grounding of Variables}
         \label{subs-impln-grndg}
@@ -7420,9 +7490,10 @@ ENDFUNCTION
           
           Obviously, a consistent mapping between these integers and these
           facts are needed, and a systematic representation of facts is
-          required to achieve and maintain this consistent mapping. Table XXX
-          shows a conceptual systematic arrangement of facts using the
-          symbol table $\theta$ discussed in XXX.
+          required to achieve and maintain this consistent mapping. Table 
+          \ref{tabl-impln-ftabl} shows a conceptual systematic arrangement of
+          facts using the symbol table $\theta$ shown in
+          \ref{tabl-impln-symtb}.
 
           \begin{table}[tbhp]
             \begin{center}
@@ -7786,7 +7857,7 @@ ENDFUNCTION
           \begin{valgorithm}[tbhp]{$Encode$()}{algo-impln-encod}
 FUNCTION \(Encode\)(\(\alpha\), \(\sigma\), \(\tau\))
   \(offset\) = \(\sigma\) \(\cdot\) \(Tot\sb{A}\) \(\cdot\) \(2\)
-  IF \(\tau\) == \(False\) THEN
+  IF \(\tau\) == \(false\) THEN
     \(offset\) = \(offset\) \(+\) \(Tot\sb{A}\)
   ENDIF
   CASE \(\alpha\).\(type\) OF
