@@ -3064,8 +3064,8 @@ ENDFUNCTION
             \item
               $RuleHead$($\alpha$, $\tau$) generates the consequent of the
               rule. $\alpha$ is a numeric representation of an atom (e.g.
-              returned by the $Encode$() function) and $\tau$ is either $T$ or
-              $F$, indicating whether the atom is positive or negative
+              returned by the $Encode$() function) and $\tau$ is either $true$
+              or $false$, indicating whether the atom is positive or negative
               (negation-as-failure).
             \item
               $RuleBody$($\alpha$, $\tau$) generates the premise of the rule.
@@ -3083,10 +3083,9 @@ ENDFUNCTION
 
           \begin{valgorithm}[tbhp]{$TransInitStateRules$()}{algo-polup-tisr}
 FUNCTION \(TransInitStateRules\)(\(Ti\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(Ti\)) DO
-    \(a\) = \(Encode\)(\(Ti\)[\(i\)].\(atm\), \(0\), \(Ti\)[\(i\)].\(tr\))
+  FOR \(i\) = \(0\) TO \(|Ti|\) DO
     \(RuleBegin\)()
-    \(RuleHead\)(\(a\), \(true\))
+    \(RuleHead\)(\(Encode\)(\(Ti\)[\(i\)].\(atm\), \(0\), \(Ti\)[\(i\)].\(tr\)), \(true\))
     \(RuleBody\)(\(true\), \(true\))
     \(RuleEnd\)()
   ENDDO
@@ -3102,18 +3101,18 @@ ENDFUNCTION
 
           \begin{valgorithm}[tbhp]{$TransConstRules$()}{algo-polup-tconr}
 FUNCTION \(TransConstRules\)(\(Tc\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
-    FOR \(j\) = \(0\) TO \(Len\)(\(Tc\)) DO
+  FOR \(i\) = \(0\) TO \(|Tq|\) DO
+    FOR \(j\) = \(0\) TO \(|Tc|\) DO
       \(RuleBegin\)()
-      FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(exp\)) DO
+      FOR \(k\) = \(0\) TO \(|\)\(Tc\)[\(j\)].\(exp\)\(|\) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(exp\)[\(k\)].\(tr\))
         \(RuleHead\)(\(a\), \(true\))
       ENDDO
-      FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(pcnd\)) DO
+      FOR \(k\) = \(0\) TO \(|\)\(Tc\)[\(j\)].\(pcnd\)\(|\) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(tr\))
         \(RuleBody\)(\(a\), \(true\))
       ENDDO
-      FOR \(k\) = \(0\) TO \(Len\)(\(Tc\)[\(j\)].\(ncnd\)) DO
+      FOR \(k\) = \(0\) TO \(|\)\(Tc\)[\(j\)].\(ncnd\)\(|\) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(tr\))
         \(RuleBody\)(\(a\), \(false\))
       ENDDO
@@ -3134,16 +3133,16 @@ ENDFUNCTION
 
           \begin{valgorithm}[tbhp]{$TransUpdateRules$()}{algo-polup-tupdr}
 FUNCTION \(TransUpdateRules\)(\(Tu\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
-    FOR \(j\) = \(0\) TO \(Len\)(\(Tu\)) DO
+  FOR \(i\) = \(0\) TO \(|Tq|\) DO
+    FOR \(j\) = \(0\) TO \(|Tu|\) DO
       IF \(Tq\)[\(i\)].\(name\) == \(Tu\)[\(j\)].\(name\) THEN
         \(e\) = \(GndUpdate\)(\(Tu\)[\(j\)], \(Tq\)[\(i\)].\(ilist\))
         \(RuleBegin\)()
-        FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(pst\)) DO
+        FOR \(k\) = \(0\) TO \(|\)\(e\).\(pst\)\(|\) DO
           \(a\) = \(Encode\)(\(e\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(pst\)[\(k\)].\(tr\))
           \(RuleHead\)(\(a\), \(true\))
         ENDDO
-        FOR \(k\) = \(0\) TO \(Len\)(\(e\).\(pre\)) DO
+        FOR \(k\) = \(0\) TO \(|\)(\(e\).\(pre\)\(|\) DO
           \(a\) = \(Encode\)(\(e\).\(pre\)[\(k\)].\(atm\), \(i\), \(e\).\(pre\)[\(k\)].\(tr\))
           \(RuleBody\)(\(a\), \(true\))
         ENDDO
@@ -3189,12 +3188,12 @@ ENDFUNCTION
 
           \begin{valgorithm}[tbhp]{$GenSubSubstInherRules$()}{algo-polup-gssir}
 FUNCTION \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
-    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
-      FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+  FOR \(i\) = \(0\) TO \(|Tq|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
         IF \(Ts\).\(sg\)[\(j\)] != \(Ts\).\(sg\)[\(k\)] THEN
-          FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(a\)) DO
-            FOR \(m\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
+          FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(a\)\(|\) DO
+            FOR \(m\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
               \(RuleBegin\)()
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
               \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
@@ -3244,10 +3243,10 @@ ENDFUNCTION
 
           \begin{valgorithm}[tbhp]{$GenSubTransRules$()}{algo-polup-gstrr}
 FUNCTION \(GenSubTransRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
-    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
-      FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
-        FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+  FOR \(i\) = \(0\) TO \(|Tq|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
+        FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
           IF \(j\) != \(k\) AND \(j\) != \(l\) AND \(k\) != \(l\) THEN
             RuleBegin()
             \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(l\)]\}
@@ -3289,10 +3288,10 @@ ENDFUNCTION
 
           \begin{valgorithm}[tbhp]{$GenHldsInertRules$()}{algo-polup-ghinr}
 FUNCTION \(GenHldsInertRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
-    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(s\)) DO
-      FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(a\)) DO
-        FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
+  FOR \(i\) = \(0\) TO \(|Tq|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(s\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(a\)\(|\) DO
+        FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
           \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
           \(RuleBegin\)()
           \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(true\)), \(true\))
@@ -3332,8 +3331,8 @@ ENDFUNCTION
 
           \begin{valgorithm}[tbhp]{$GenSubRefleRules$()}{algo-polup-gsrer}
 FUNCTION \(GenSubRefleRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
-    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(sg\)) DO
+  FOR \(i\) = \(0\) TO \(|Tq|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
       \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(j\)]\}
       \(RuleBegin\)()
       \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
@@ -3362,10 +3361,10 @@ ENDFUNCTION
 
           \begin{valgorithm}[tbhp]{$GenHldsConsiRules$()}{algo-polup-ghcor}
 FUNCTION \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(Tq\)) DO
-    FOR \(j\) = \(0\) TO \(Len\)(\(Ts\).\(s\)) DO
-      FOR \(k\) = \(0\) TO \(Len\)(\(Ts\).\(a\)) DO
-        FOR \(l\) = \(0\) TO \(Len\)(\(Ts\).\(o\)) DO
+  FOR \(i\) = \(0\) TO \(|Tq|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(s\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(a\)\(|\) DO
+        FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
           \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
           \(RuleBegin\)()
           \(RuleHead\)(\(false\), \(true\))
@@ -3405,7 +3404,7 @@ ENDFUNCTION
         \begin{valgorithm}[tbhp]{$EvaluateExp$()}{algo-polup-evale}
 FUNCTION \(EvaluateExp\)(\(Qe\), \(SM\), \(S\))
   \(result\) = \(true\)
-  FOR \(i\) = \(0\) TO \(Len\)(\(Qe\)) DO
+  FOR \(i\) = \(0\) TO \(|Qe|\) DO
     \(rv\) = \(EvaluateFact\)(\(Qe\)[\(i\)], \(SM\), \(S\))
     IF \(rv\) == \(false\) THEN
       RETURN \(false\)
@@ -3442,8 +3441,8 @@ ENDFUNCTION
 
         \begin{valgorithm}[tbhp]{$IsFactIn$()}{algo-polup-isinf}
 FUNCTION \(IsFactIn\)(\(Fi\), \(SM\))
-  FOR \(i\) = \(0\) TO \(Len\)(\(SM\)) DO
-    IF NOT \(is\_in\)(\(SM\)[\(i\)], \(Fi\)) THEN
+  FOR \(i\) = \(0\) TO \(|SM|\) DO
+    IF NOT \(SM\)[\(i\)].\(is\_in\)(\(Fi\)) THEN
       RETURN \(false\)
     ENDIF
   ENDDO
