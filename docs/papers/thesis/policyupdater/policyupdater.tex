@@ -8013,6 +8013,54 @@ FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
 ENDFUNCTION
           \end{valgorithm}
 
+        \subsubsection{Extending GenNLP()}
+
+          The $GenNLP$() function in Algoritm \ref{algo-polup-genlp} and the
+          rest of the functions in Section \ref{subs-polup-norlp} require only
+          little modifications to generate a normal logic program from a
+          language ${\cal L^T}$ domain. In fact, the only major difference is
+          that the new $GenNLP$() function must support the language
+          ${\cal L^T}$ atoms that includes an additional temporal interval
+          parameter. This means that most of the rule-generationg functions
+          are extended simply by the addition of an extra interval loop, which
+          passes intervals to the new $Encode$() function discussed in the
+          previous section.
+
+          However, as Section \ref{subs-tempo-seman} have shown,
+          translating a language ${\cal L^T}$ domain to a normal logic program
+          requires the generation of temporal relation rules. The semantics of
+          the language tells us that the purpose of these rules is to assert
+          that an atom that holds in a particular time interval $\iota$ must
+          also hold in every other interval $\iota'$ that is "within" $\iota$,
+          that is, $\iota'$ is {\em equal}, is {\em during}, {\em starts} or
+          {\em finishes} $\iota$.
+
+          Algorithm \ref{algo-impln-gente} shows the $GenTempoRules$() function
+          which will be called by our extended $GenNLP$() function. $GenNLP$()
+          takes three parameters as input: $NET$, the interval relation network
+          structure; $Ts$, the symbol table; and $Tq$, the policy update
+          sequence table. These parameters are passed to the three functions
+          that generate the three types of temporal rules which correspond to
+          the three atom types.
+
+          The $GenHldsTempoRules$() function shown in Algorithm
+          \ref{algo-impln-ghdtr}, as the name implies, generates the temporal
+          rules for {\em holds} atoms. The first loop goes through every policy
+          update state while the next 3 loops goes through all defined
+          entities. The fifth and sixth loop goes through all possible pairs
+          of intervals defined in the symbol table.
+
+          Inside these loops, the relation between the interval pair is
+          retrieved from the interval network structure. The if-statement
+          ensures that one interval is "within" the other. The number $101$ is
+          the sum of the values of the relations {\em equals}, {\em during},
+          {\em starts} and {\em finishes} as defined in Table
+          \ref{tabl-impln-valas}. Thus, if the relation between the pair of
+          intervals is a subset of the relation set \{{\em equal},
+          {\em during}, {\em starts}, {\em finishes}\}, the holds temporal
+          rules are generated. A similar method is used for the other two
+          functions $GenMembTempoRules$() and $GenSubsTempoRules$().
+
           \begin{valgorithm}[tbhp]{GenTempoRules()}{algo-impln-gente}
 FUNCTION \(GenTempoRules\)(\(NET\), \(Ts\), \(Tq\))
   \(GenHldsTempoRules\)(\(NET\), \(Ts\), \(Tq\))
