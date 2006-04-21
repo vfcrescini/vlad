@@ -3077,15 +3077,14 @@ ENDFUNCTION
             \item
               $RuleBegin$() marks the beginning of a new rule.
             \item
-              $RuleHead$($\alpha$, $\tau$) generates the consequent of the
-              rule. $\alpha$ is a numeric representation of an atom (e.g.
-              returned by the $Encode$() function) and $\tau$ is either $true$
-              or $false$, indicating whether the atom is positive or negative
-              (negation-as-failure).
+              $RuleHead$($\alpha$) generates the consequent of the rule.
+              $\alpha$ is a numeric representation of an atom (e.g. returned by
+              the $Encode$() function). 
             \item
               $RuleBody$($\alpha$, $\tau$) generates the premise of the rule.
-              The parameters of this function is the same as that of the
-              function $RuleHead$().
+              $\alpha$ is an atom in numeric form like that of $RuleHead$().
+              $\tau$ is either $true$ or $false$, indicating whether the atom
+              is positive or negative (negation-as-failure).
             \item
               $RuleEnd$() marks the end of a rule.
           \end{itemize}
@@ -3100,7 +3099,7 @@ ENDFUNCTION
 FUNCTION \(TransInitStateRules\)(\(Ti\))
   FOR \(i\) = \(0\) TO \(|Ti|\) DO
     \(RuleBegin\)()
-    \(RuleHead\)(\(Encode\)(\(Ti\)[\(i\)].\(atm\), \(0\), \(Ti\)[\(i\)].\(tr\)), \(true\))
+    \(RuleHead\)(\(Encode\)(\(Ti\)[\(i\)].\(atm\), \(0\), \(Ti\)[\(i\)].\(tr\)))
     \(RuleBody\)(\(true\), \(true\))
     \(RuleEnd\)()
   ENDDO
@@ -3121,7 +3120,7 @@ FUNCTION \(TransConstRules\)(\(Tc\), \(Tq\))
       \(RuleBegin\)()
       FOR \(k\) = \(0\) TO \(|\)\(Tc\)[\(j\)].\(exp\)\(|\) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(exp\)[\(k\)].\(tr\))
-        \(RuleHead\)(\(a\), \(true\))
+        \(RuleHead\)(\(a\))
       ENDDO
       FOR \(k\) = \(0\) TO \(|\)\(Tc\)[\(j\)].\(pcnd\)\(|\) DO
         \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(tr\))
@@ -3155,7 +3154,7 @@ FUNCTION \(TransUpdateRules\)(\(Tu\), \(Tq\))
         \(RuleBegin\)()
         FOR \(k\) = \(0\) TO \(|\)\(e\).\(pst\)\(|\) DO
           \(a\) = \(Encode\)(\(e\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(pst\)[\(k\)].\(tr\))
-          \(RuleHead\)(\(a\), \(true\))
+          \(RuleHead\)(\(a\))
         ENDDO
         FOR \(k\) = \(0\) TO \(|\)(\(e\).\(pre\)\(|\) DO
           \(a\) = \(Encode\)(\(e\).\(pre\)[\(k\)].\(atm\), \(i\), \(e\).\(pre\)[\(k\)].\(tr\))
@@ -3211,7 +3210,7 @@ FUNCTION \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
             FOR \(m\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
               \(RuleBegin\)()
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
+              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)))
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
               \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
               \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
@@ -3221,7 +3220,7 @@ FUNCTION \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
               \(RuleEnd\)()
               \(RuleBegin\)()
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
+              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)))
               \(h\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
               \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
               \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
@@ -3265,7 +3264,7 @@ FUNCTION \(GenSubTransRules\)(\(Ts\), \(Tq\))
           IF \(j\) != \(k\) AND \(j\) != \(l\) AND \(k\) != \(l\) THEN
             RuleBegin()
             \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(l\)]\}
-            \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
+            \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)))
             \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
             \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
             \(s\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(sg\)[\(l\)]\}
@@ -3309,12 +3308,12 @@ FUNCTION \(GenHldsInertRules\)(\(Ts\), \(Tq\))
         FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
           \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
           \(RuleBegin\)()
-          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(true\)), \(true\))
+          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(true\)))
           \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
           \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(false\)), \(false\))
           \(RuleEnd\)()
           \(RuleBegin\)()
-          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(false\)), \(true\))
+          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(false\)))
           \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
           \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(true\)), \(false\))
           \(RuleEnd\)()
@@ -3350,7 +3349,7 @@ FUNCTION \(GenSubRefleRules\)(\(Ts\), \(Tq\))
     FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
       \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(j\)]\}
       \(RuleBegin\)()
-      \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
+      \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)))
       \(RuleBody\)(\(true\), \(true\))
       \(RuleEnd\)()
     ENDDO
@@ -3382,7 +3381,7 @@ FUNCTION \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
         FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
           \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
           \(RuleBegin\)()
-          \(RuleHead\)(\(false\), \(true\))
+          \(RuleHead\)(\(false\))
           \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
           \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
           \(RuleEnd\)()
@@ -8035,11 +8034,11 @@ FUNCTION \(GenHldsTempoRules\)(\(NET\), \(Ts\), \(Tq\))
                 \(a\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)], \(Ts\).\(int\)[\(n\)]\}
                 \(b\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)], \(Ts\).\(int\)[\(m\)]\}
                 \(RuleBegin\)()
-                \(RuleHead\)(\(Encode\)(\(a\), \(i\), \(true\)), \(true\))
+                \(RuleHead\)(\(Encode\)(\(a\), \(i\), \(true\)))
                 \(RuleBody\)(\(Encode\)(\(b\), \(i\), \(true\)), \(true\))
                 \(RuleEnd\)()
                 \(RuleBegin\)()
-                \(RuleHead\)(\(Encode\)(\(a\), \(i\), \(false\)), \(true\))
+                \(RuleHead\)(\(Encode\)(\(a\), \(i\), \(false\)))
                 \(RuleBody\)(\(Encode\)(\(b\), \(i\), \(false\)), \(true\))
                 \(RuleEnd\)()
               ENDIF
