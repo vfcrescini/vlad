@@ -3049,20 +3049,20 @@
           structures described in Section \ref{subs-polup-dstru}, a normal
           logic program can then be generated for evaluation. The following
           algorithm generates a normal logic program, given the Symbol Table
-          $Ts$, Initial State Facts Table $Ti$, Constraint Rules Table $Tc$,
-          Policy Update Definition Table $Tu$, and Policy Update Sequence Table
-          $Tq$:
+          $\theta$, Initial State Facts Table $\omega_i$, Constraint Rules
+          Table $\omega_c$, Policy Update Definition Table $\omega_u$, and
+          Policy Update Sequence Table $\psi$:
 
           \begin{valgorithm}[tbhp]{GenNLP()}{algo-polup-genlp}
-FUNCTION \(GenNLP\)(\(Ts\), \(Ti\), \(Tc\), \(Tu\), \(Tq\))
-  \(TransInitStateRules\)(\(Ti\))
-  \(TransConstRules\)(\(Tc\), \(Tq\))
-  \(TransUpdateRules\)(\(Tu\), \(Tq\))
-  \(GenInherRules\)(\(Ts\), \(Tq\))
-  \(GenTransRules\)(\(Ts\), \(Tq\))
-  \(GenInertRules\)(\(Ts\), \(Tq\))
-  \(GenRefleRules\)(\(Ts\), \(Tq\))
-  \(GenConsiRules\)(\(Ts\), \(Tq\))
+FUNCTION \(GenNLP\)(\(\theta\), \(\omega\sb{i}\), \(\omega\sb{c}\), \(\omega\sb{u}\), \(\psi\))
+  \(TransInitStateRules\)(\(\omega\sb{i}\))
+  \(TransConstRules\)(\(\omega\sb{c}\), \(\psi\))
+  \(TransUpdateRules\)(\(\omega\sb{u}\), \(\psi\))
+  \(GenInherRules\)(\(\theta\), \(\psi\))
+  \(GenTransRules\)(\(\theta\), \(\psi\))
+  \(GenInertRules\)(\(\theta\), \(\psi\))
+  \(GenRefleRules\)(\(\theta\), \(\psi\))
+  \(GenConsiRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
@@ -3096,10 +3096,10 @@ ENDFUNCTION
           rule whose body is the literal $true$ fact.
 
           \begin{valgorithm}[tbhp]{TransInitStateRules()}{algo-polup-tisr}
-FUNCTION \(TransInitStateRules\)(\(Ti\))
-  FOR \(i\) = \(0\) TO \(|Ti|\) DO
+FUNCTION \(TransInitStateRules\)(\(\omega\sb{i}\))
+  FOR \(i\) = \(0\) TO \(|\omega\sb{i}|\) DO
     \(RuleBegin\)()
-    \(RuleHead\)(\(Encode\)(\(Ti\)[\(i\)].\(atm\), \(0\), \(Ti\)[\(i\)].\(tr\)))
+    \(RuleHead\)(\(Encode\)(\(\omega\sb{i}\)[\(i\)].\(atm\), \(0\), \(\omega\sb{i}\)[\(i\)].\(tr\)))
     \(RuleBody\)(\(true\), \(true\))
     \(RuleEnd\)()
   ENDDO
@@ -3114,21 +3114,21 @@ ENDFUNCTION
 
 
           \begin{valgorithm}[tbhp]{TransConstRules()}{algo-polup-tconr}
-FUNCTION \(TransConstRules\)(\(Tc\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(|Tq|\) DO
-    FOR \(j\) = \(0\) TO \(|Tc|\) DO
+FUNCTION \(TransConstRules\)(\(\omega\sb{c}\), \(\psi\))
+  FOR \(i\) = \(0\) TO \(|\theta|\) DO
+    FOR \(j\) = \(0\) TO \(|\omega\sb{c}|\) DO
       \(RuleBegin\)()
-      FOR \(k\) = \(0\) TO \(|\)\(Tc\)[\(j\)].\(exp\)\(|\) DO
-        \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(exp\)[\(k\)].\(tr\))
-        \(RuleHead\)(\(a\))
+      FOR \(k\) = \(0\) TO \(|\)\(\omega\sb{c}\)[\(j\)].\(exp\)\(|\) DO
+        \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(exp\)[\(k\)].\(tr\))
+        \(RuleHead\)(\(\alpha\))
       ENDDO
-      FOR \(k\) = \(0\) TO \(|\)\(Tc\)[\(j\)].\(pcnd\)\(|\) DO
-        \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(pcnd\)[\(k\)].\(tr\))
-        \(RuleBody\)(\(a\), \(true\))
+      FOR \(k\) = \(0\) TO \(|\)\(\omega\sb{c}\)[\(j\)].\(pcnd\)\(|\) DO
+        \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(pcnd\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(pcnd\)[\(k\)].\(tr\))
+        \(RuleBody\)(\(\alpha\), \(true\))
       ENDDO
-      FOR \(k\) = \(0\) TO \(|\)\(Tc\)[\(j\)].\(ncnd\)\(|\) DO
-        \(a\) = \(Encode\)(\(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(atm\), \(i\), \(Tc\)[\(j\)].\(ncnd\)[\(k\)].\(tr\))
-        \(RuleBody\)(\(a\), \(false\))
+      FOR \(k\) = \(0\) TO \(|\)\(\omega\sb{c}\)[\(j\)].\(ncnd\)\(|\) DO
+        \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(ncnd\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(ncnd\)[\(k\)].\(tr\))
+        \(RuleBody\)(\(\alpha\), \(false\))
       ENDDO
       \(RuleEnd\)()
     ENDDO
@@ -3146,19 +3146,19 @@ ENDFUNCTION
           the rule body.
 
           \begin{valgorithm}[tbhp]{TransUpdateRules()}{algo-polup-tupdr}
-FUNCTION \(TransUpdateRules\)(\(Tu\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(|Tq|\) DO
-    FOR \(j\) = \(0\) TO \(|Tu|\) DO
-      IF \(Tq\)[\(i\)].\(name\) == \(Tu\)[\(j\)].\(name\) THEN
-        \(e\) = \(GndUpdate\)(\(Tu\)[\(j\)], \(Tq\)[\(i\)].\(ilist\))
+FUNCTION \(TransUpdateRules\)(\(\omega\sb{u}\), \(\psi\))
+  FOR \(i\) = \(0\) TO \(|\psi|\) DO
+    FOR \(j\) = \(0\) TO \(|\omega\sb{u}|\) DO
+      IF \(\psi\)[\(i\)].\(name\) == \(\omega\sb{u}\)[\(j\)].\(name\) THEN
+        \(e\) = \(GndUpdate\)(\(\omega\sb{u}\)[\(j\)], \(\psi\)[\(i\)].\(ilist\))
         \(RuleBegin\)()
         FOR \(k\) = \(0\) TO \(|\)\(e\).\(pst\)\(|\) DO
-          \(a\) = \(Encode\)(\(e\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(pst\)[\(k\)].\(tr\))
-          \(RuleHead\)(\(a\))
+          \(\alpha\) = \(Encode\)(\(e\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(pst\)[\(k\)].\(tr\))
+          \(RuleHead\)(\(\alpha\))
         ENDDO
-        FOR \(k\) = \(0\) TO \(|\)(\(e\).\(pre\)\(|\) DO
-          \(a\) = \(Encode\)(\(e\).\(pre\)[\(k\)].\(atm\), \(i\), \(e\).\(pre\)[\(k\)].\(tr\))
-          \(RuleBody\)(\(a\), \(true\))
+        FOR \(k\) = \(0\) TO \(|\)\(e\).\(pre\)\(|\) DO
+          \(\alpha\) = \(Encode\)(\(e\).\(pre\)[\(k\)].\(atm\), \(i\), \(e\).\(pre\)[\(k\)].\(tr\))
+          \(RuleBody\)(\(\alpha\), \(true\))
         ENDDO
         \(RuleEnd\)()
       ENDIF
@@ -3167,13 +3167,13 @@ FUNCTION \(TransUpdateRules\)(\(Tu\), \(Tq\))
 ENDFUNCTION
           \end{valgorithm}
 
-          The function $GndUpdate$($U$, $IL$) used in Algorithm
+          The function $GndUpdate$($u$, $ilist$) used in Algorithm
           \ref{algo-polup-tupdr} returns a structure composed of two
           expressions $pre$ and $pst$, which corresponds with the $pre$ and
-          $pst$ fields of the given policy update definition $U$. All
+          $pst$ fields of the given policy update definition $u$. All
           variables occurring in the facts of these expressions are replaced
           with the corresponding entities from the given entity identifier list
-          $IL$.
+          $ilist$.
 
           Algorithm \ref{algo-polup-ginhr} generates 6 types of inheritance
           rules: subset subject, subset access right, subset object, membership
@@ -3185,13 +3185,13 @@ ENDFUNCTION
           generated is replicated for each policy update state.
 
           \begin{valgorithm}[tbhp]{GenInherRules()}{algo-polup-ginhr}
-FUNCTION \(GenInherRules\)(\(Ts\), \(Tq\))
-  \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
-  \(GenAccSubstInherRules\)(\(Ts\), \(Tq\))
-  \(GenObjSubstInherRules\)(\(Ts\), \(Tq\))
-  \(GenSubMembInherRules\)(\(Ts\), \(Tq\))
-  \(GenAccMembInherRules\)(\(Ts\), \(Tq\))
-  \(GenObjMembInherRules\)(\(Ts\), \(Tq\))
+FUNCTION \(GenInherRules\)(\(\theta\), \(\psi\))
+  \(GenSubSubstInherRules\)(\(\theta\), \(\psi\))
+  \(GenAccSubstInherRules\)(\(\theta\), \(\psi\))
+  \(GenObjSubstInherRules\)(\(\theta\), \(\psi\))
+  \(GenSubMembInherRules\)(\(\theta\), \(\psi\))
+  \(GenAccMembInherRules\)(\(\theta\), \(\psi\))
+  \(GenObjMembInherRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
@@ -3201,30 +3201,26 @@ ENDFUNCTION
           subset and membership inheritance rules and are therefore not shown.
 
           \begin{valgorithm}[tbhp]{GenSubSubstInherRules()}{algo-polup-gssir}
-FUNCTION \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(|Tq|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
-        IF \(Ts\).\(sg\)[\(j\)] != \(Ts\).\(sg\)[\(k\)] THEN
-          FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(a\)\(|\) DO
-            FOR \(m\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
+FUNCTION \(GenSubSubstInherRules\)(\(\theta\), \(\psi\))
+  FOR \(i\) = \(0\) TO \(|\psi|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
+        IF \(\theta\).\(sg\)[\(j\)] != \(\theta\).\(sg\)[\(k\)] THEN
+          FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
+            FOR \(m\) = \(0\) TO \(|\)\(\theta\).\(o\)\(|\) DO
+              \(\alpha\sb{0}\) = \(holds\)(\(\theta\).\(sg\)[\(j\)], \(\theta\).\(ag\)[\(l\)], \(\theta\).\(og\)[\(m\)])
+              \(\alpha\sb{1}\) = \(holds\)(\(\theta\).\(sg\)[\(k\)], \(\theta\).\(ag\)[\(l\)], \(\theta\).\(og\)[\(m\)])
+              \(\alpha\sb{2}\) = \(subst\)(\(\theta\).\(sg\)[\(j\)], \(\theta\).\(sg\)[\(k\)])
               \(RuleBegin\)()
-              \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)))
-              \(h\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
-              \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
-              \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
-              \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(false\))
+              \(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(true\)))
+              \(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(true\)), \(true\))
+              \(RuleBody\)(\(Encode\)(\(\alpha\sb{2}\), \(i\), \(true\)), \(true\))
+              \(RuleBody\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(false\)), \(false\))
               \(RuleEnd\)()
               \(RuleBegin\)()
-              \(h\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)))
-              \(h\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(ag\)[\(l\)], \(Ts\).\(og\)[\(m\)]\}
-              \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
-              \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
-              \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
+              \(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(false\)))
+              \(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(false\)), \(true\))
+              \(RuleBody\)(\(Encode\)(\(\alpha\sb{2}\), \(i\), \(true\)), \(true\))
               \(RuleEnd\)()
             ENDDO
           ENDDO
@@ -3248,27 +3244,27 @@ ENDFUNCTION
           \ref{algo-polup-gstrr}.
 
           \begin{valgorithm}[tbhp]{GenTransRules()}{algo-polup-gtrar}
-FUNCTION \(GenTransRules\)(\(Ts\), \(Tq\))
-  \(GenSubTransRules\)(\(Ts\), \(Tq\))
-  \(GenAccTransRules\)(\(Ts\), \(Tq\))
-  \(GenObjTransRules\)(\(Ts\), \(Tq\))
+FUNCTION \(GenTransRules\)(\(\theta\), \(\psi\))
+  \(GenSubTransRules\)(\(\theta\), \(\psi\))
+  \(GenAccTransRules\)(\(\theta\), \(\psi\))
+  \(GenObjTransRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
           \begin{valgorithm}[tbhp]{GenSubTransRules()}{algo-polup-gstrr}
-FUNCTION \(GenSubTransRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(|Tq|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
-        FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
+FUNCTION \(GenSubTransRules\)(\(\theta\), \(\psi\))
+  FOR \(i\) = \(0\) TO \(|\psi|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
+        FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
           IF \(j\) != \(k\) AND \(j\) != \(l\) AND \(k\) != \(l\) THEN
-            RuleBegin()
-            \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(l\)]\}
-            \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)))
-            \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(k\)]\}
-            \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
-            \(s\_atm\) = \{\(Ts\).\(sg\)[\(k\)], \(Ts\).\(sg\)[\(l\)]\}
-            \(RuleBody\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)), \(true\))
+            \(\alpha\sb{0}\) = \(subst\)(\(\theta\).\(sg\)[\(j\)], \(\theta\).\(sg\)[\(l\)])
+            \(\alpha\sb{1}\) = \(subst\)(\{\(\theta\).\(sg\)[\(j\)], \(\theta\).\(sg\)[\(k\)])
+            \(\alpha\sb{2}\) = \(subst\)(\{\(\theta\).\(sg\)[\(k\)], \(\theta\).\(sg\)[\(l\)])
+            \(RuleBegin\)()
+            \(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(true\)))
+            \(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(true\)), \(true\))
+            \(RuleBody\)(\(Encode\)(\(\alpha\sb{2}\), \(i\), \(true\)), \(true\))
             \(RuleEnd\)()
           ENDIF
         ENDDO
@@ -3288,10 +3284,10 @@ ENDFUNCTION
           previous state and its negation does not hold in the current state.
 
           \begin{valgorithm}[tbhp]{GenInertRules()}{algo-polup-giner}
-FUNCTION \(GenInertRules\)(\(Ts\), \(Tq\))
-  \(GenHldsInertRules\)(\(Ts\), \(Tq\))
-  \(GenMembInertRules\)(\(Ts\), \(Tq\))
-  \(GenSubsInertRules\)(\(Ts\), \(Tq\))
+FUNCTION \(GenInertRules\)(\(\theta\), \(\psi\))
+  \(GenHldsInertRules\)(\(\theta\), \(\psi\))
+  \(GenMembInertRules\)(\(\theta\), \(\psi\))
+  \(GenSubsInertRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
@@ -3301,21 +3297,21 @@ ENDFUNCTION
           rules for the other two atom types.
 
           \begin{valgorithm}[tbhp]{GenHldsInertRules()}{algo-polup-ghinr}
-FUNCTION \(GenHldsInertRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(|Tq|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(s\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(a\)\(|\) DO
-        FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
-          \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
+FUNCTION \(GenHldsInertRules\)(\(\theta\), \(\psi\))
+  FOR \(i\) = \(0\) TO \(|\psi|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
+        FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(o\)\(|\) DO
+          \(\alpha\) = \(holds\)(\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)])
           \(RuleBegin\)()
-          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(true\)))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(false\)), \(false\))
+          \(RuleHead\)(\(Encode\)(\(\alpha\), \(i\) \(+\) \(1\), \(true\)))
+          \(RuleBody\)(\(Encode\)(\(\alpha\), \(i\), \(true\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(\alpha\), \(i\) \(+\) \(1\), \(false\)), \(false\))
           \(RuleEnd\)()
           \(RuleBegin\)()
-          \(RuleHead\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(false\)))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\) \(+\) \(1\), \(true\)), \(false\))
+          \(RuleHead\)(\(Encode\)(\(\alpha\), \(i\) \(+\) \(1\), \(false\)))
+          \(RuleBody\)(\(Encode\)(\(\alpha\), \(i\), \(false\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(\alpha\), \(i\) \(+\) \(1\), \(true\)), \(false\))
           \(RuleEnd\)()
         ENDDO
       ENDDO
@@ -3336,20 +3332,19 @@ ENDFUNCTION
           subject groups.
 
           \begin{valgorithm}[tbhp]{GenRefleRules()}{algo-polup-grefr}
-FUNCTION \(GenRefleRules\)(\(Ts\), \(Tq\))
-  \(GenSubRefleRules\)(\(Ts\), \(Tq\))
-  \(GenAccRefleRules\)(\(Ts\), \(Tq\))
-  \(GenObjRefleRules\)(\(Ts\), \(Tq\))
+FUNCTION \(GenRefleRules\)(\(\theta\), \(\psi\))
+  \(GenSubRefleRules\)(\(\theta\), \(\psi\))
+  \(GenAccRefleRules\)(\(\theta\), \(\psi\))
+  \(GenObjRefleRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
           \begin{valgorithm}[tbhp]{GenSubRefleRules()}{algo-polup-gsrer}
-FUNCTION \(GenSubRefleRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(|Tq|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
-      \(s\_atm\) = \{\(Ts\).\(sg\)[\(j\)], \(Ts\).\(sg\)[\(j\)]\}
+FUNCTION \(GenSubRefleRules\)(\(\theta\), \(\psi\))
+  FOR \(i\) = \(0\) TO \(|\psi|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
       \(RuleBegin\)()
-      \(RuleHead\)(\(Encode\)(\(s\_atm\), \(i\), \(true\)))
+      \(RuleHead\)(\(Encode\)(\(subst\)(\(\theta\).\(sg\)[\(j\)], \(\theta\).\(sg\)[\(j\)]), \(i\), \(true\)))
       \(RuleBody\)(\(true\), \(true\))
       \(RuleEnd\)()
     ENDDO
@@ -3366,24 +3361,24 @@ ENDFUNCTION
           both, holds in the same policy update state.
 
           \begin{valgorithm}[tbhp]{GenConsiRules()}{algo-polup-gconr}
-FUNCTION \(GenConsiRules\)(\(Ts\), \(Tq\))
-  \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
-  \(GenMembConsiRules\)(\(Ts\), \(Tq\))
-  \(GenSubsConsiRules\)(\(Ts\), \(Tq\))
+FUNCTION \(GenConsiRules\)(\(\theta\), \(\psi\))
+  \(GenHldsConsiRules\)(\(\theta\), \(\psi\))
+  \(GenMembConsiRules\)(\(\theta\), \(\psi\))
+  \(GenSubsConsiRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
           \begin{valgorithm}[tbhp]{GenHldsConsiRules()}{algo-polup-ghcor}
-FUNCTION \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(|Tq|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(s\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(a\)\(|\) DO
-        FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
-          \(h\_atm\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)]\}
+FUNCTION \(GenHldsConsiRules\)(\(\theta\), \(\psi\))
+  FOR \(i\) = \(0\) TO \(|\psi|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
+        FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(o\)\(|\) DO
+          \(\alpha\) = \(holds\)(\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)])
           \(RuleBegin\)()
           \(RuleHead\)(\(false\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(true\)), \(true\))
-          \(RuleBody\)(\(Encode\)(\(h\_atm\), \(i\), \(false\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(\alpha\), \(i\), \(true\)), \(true\))
+          \(RuleBody\)(\(Encode\)(\(\alpha\), \(i\), \(false\)), \(true\))
           \(RuleEnd\)()
         ENDDO
       ENDDO
@@ -3412,14 +3407,15 @@ ENDFUNCTION
         or its negation that does not hold in every answer set is neither true
         nor false, in which case the system concludes that the truth value of
         the fact is unknown. Algorithm \ref{algo-polup-evale} shows how, given
-        a state $S$, a query expression $Qe$ can be evaluated against a list of
-        stable models $SM$, where each element in $SM$ is a list of facts.
+        a state $\sigma$, a query expression $\epsilon$ can be evaluated
+        against a list of stable models $\Lambda$, where each element in
+        $\Lambda$ is a list of facts.
 
         \begin{valgorithm}[tbhp]{EvaluateExp()}{algo-polup-evale}
-FUNCTION \(EvaluateExp\)(\(Qe\), \(SM\), \(S\))
+FUNCTION \(EvaluateExp\)(\(\epsilon\), \(\Lambda\), \(\sigma\))
   \(result\) = \(true\)
-  FOR \(i\) = \(0\) TO \(|Qe|\) DO
-    \(rv\) = \(EvaluateFact\)(\(Qe\)[\(i\)], \(SM\), \(S\))
+  FOR \(i\) = \(0\) TO \(|\epsilon|\) DO
+    \(rv\) = \(EvaluateFact\)(\(\epsilon\)[\(i\)], \(\Lambda\), \(\sigma\))
     IF \(rv\) == \(false\) THEN
       RETURN \(false\)
     ELSE IF \(rv\) == \(unknown\) THEN
@@ -3432,31 +3428,29 @@ ENDFUNCTION
 
         Algorithm \ref{algo-polup-evale} attempts to evaluate each fact in the
         query expression. The function $EvaluateFact$() shown in Algorithm
-        \ref{algo-polup-evalf} evaluates a single fact $Qf$ in state $S$,
-        against a list of stable models $SM$.
+        \ref{algo-polup-evalf} evaluates a single fact $\rho$ in state
+        $\sigma$, against a list of stable models $\Lambda$.
 
         \begin{valgorithm}[tbhp]{EvaluateFact()}{algo-polup-evalf}
-FUNCTION \(EvaluateFact\)(\(Qf\), \(SM\), \(S\))
-  IF \(IsFactIn\)(\(Encode\)(\(Qf\).\(atm\), \(S\), \(Qf\).\(tr\)), \(SM\)) THEN
+FUNCTION \(EvaluateFact\)(\(\rho\), \(\Lambda\), \(\sigma\))
+  IF \(IsFactIn\)(\(Encode\)(\(\rho\).\(atm\), \(\sigma\), \(\rho\).\(tr\)), \(\Lambda\)) THEN
     RETURN \(true\)
-  ELSE
-    IF \(IsFactIn\)(\(Encode\)(\(Qf\).\(atm\), \(S\), NOT \(Qf\).\(tr\)), \(SM\)) THEN
-      RETURN \(false\)
-    ELSE
-      RETURN \(unknown\)
-    ENDIF
+  ELSE IF \(IsFactIn\)(\(Encode\)(\(\rho\).\(atm\), \(\sigma\), NOT \(\rho\).\(tr\)), \(\Lambda\)) THEN
+    RETURN \(false\)
   ENDIF
+  RETURN \(unknown\)
 ENDFUNCTION
         \end{valgorithm}
 
         The function $IsFactIn$() simply returns a boolean value to
-        indicate whether or not the given fact index $Fi$ (as returned by the
-        $Encode$() function) is present in every stable model in $SM$.
+        indicate whether or not the given fact index $\varrho$ (as returned
+        by the $Encode$() function) is present in every stable model in
+        $\Lambda$.
 
         \begin{valgorithm}[tbhp]{IsFactIn()}{algo-polup-isinf}
-FUNCTION \(IsFactIn\)(\(Fi\), \(SM\))
-  FOR \(i\) = \(0\) TO \(|SM|\) DO
-    IF NOT \(SM\)[\(i\)].\(is\_in\)(\(Fi\)) THEN
+FUNCTION \(IsFactIn\)(\(\varrho\), \(\Lambda\))
+  FOR \(i\) = \(0\) TO \(|\Lambda|\) DO
+    IF NOT \(\Lambda\)[\(i\)].\(is\_in\)(\(\varrho\)) THEN
       RETURN \(false\)
     ENDIF
   ENDDO
@@ -5443,33 +5437,33 @@ ENDFUNCTION
               ${\iota}1_i$ $=$ ${\iota}1_j$
             \end{vquote}
 
-            Now, we define a function $Normalise$($\varepsilon$) that takes
-            a language ${\cal L^T}$ interval expression $\varepsilon$ as
+            Now, we define a function $Normalise$($\epsilon$) that takes
+            a language ${\cal L^T}$ interval expression $\epsilon$ as
             input and returns the normalised equivalent of that expression in
             the form shown above. Formally, we have:
 
             \begin{vquote}
-              ${\varepsilon}'$ $=$ $Normalise$($\varepsilon$)
+              ${\epsilon}'$ $=$ $Normalise$($\epsilon$)
             \end{vquote}
 
             \noindent
             For each
             (${\iota}0_i$, ${\iota}1_i$, \{$r0_i$, $\ldots$, $rx_i$\})
-            $\in$ ${\varepsilon}'$,
-            where $0$ $\leq$ $i$ $<$ $|{\varepsilon}'|$, the following
+            $\in$ ${\epsilon}'$,
+            where $0$ $\leq$ $i$ $<$ $|{\epsilon}'|$, the following
             conditions are satisfied:
 
             \begin{enumerate}
               \item
                 For each $r_j$ $\in$ \{$r0_i$, $\ldots$, $rx_i$\}, where $0$
                 $\leq$ $j$ $\leq$ $i$, there exists an
-                $r_j$(${\iota}0_i$, ${\iota}1_i$) $\in$ $\varepsilon$
+                $r_j$(${\iota}0_i$, ${\iota}1_i$) $\in$ $\epsilon$
 
               \item
                 For each
                 (${\iota}0_j$, ${\iota}1_j$, \{$r0_j$, $\ldots$, $ry_j$\})
-                $\in$ ${\varepsilon}'$, where $0$ $\leq$ $j$ $<$
-                $|{\varepsilon}'|$ and $i$ $\neq$ $j$,
+                $\in$ ${\epsilon}'$, where $0$ $\leq$ $j$ $<$
+                $|{\epsilon}'|$ and $i$ $\neq$ $j$,
                 (
                   ${\iota}0_i$ $\neq$ ${\iota}0_j$ $\lor$
                   ${\iota}1_i$ $\neq$ ${\iota}1_j$
@@ -5487,17 +5481,17 @@ ENDFUNCTION
             \end{vverbatim}
 
             Now, by using the $Normalise$() function, we obtain a normalised
-            expression $\varepsilon$:
+            expression $\epsilon$:
 
             \begin{vquote}
-              $\varepsilon$ $=$
+              $\epsilon$ $=$
                 $Normalise$(\{${\alpha}_0$, $\ldots$, ${\alpha}_n$\})
             \end{vquote}
 
             Finally, to register the interval constraint to the interval
             relation network, we make a call to the following operator
             for each (${\iota}0_i$, ${\iota}1_i$, $rs_i$) $\in$
-            $\varepsilon$, where $0$ $\leq$ $i$ $<$ $|\varepsilon|$:
+            $\epsilon$, where $0$ $\leq$ $i$ $<$ $|\epsilon|$:
 
             \begin{vverbatim}
   \(NET.Add\)(\({\iota}0\sb{i}\), \({\iota}1\sb{i}\), \(rs\sb{i}\))
@@ -5528,26 +5522,26 @@ ENDFUNCTION
                 $group$-$subject$, $single$-$access$-$right$, etc.
 
               \item
-                $Var$($\varepsilon$)
+                $Var$($\epsilon$)
 
                 Given a non-ground language ${\cal L^T}$ authorisation or
-                interval expression $\varepsilon$, this function returns
-                a set of unique variables that occurs in $\varepsilon$. If
-                $\varepsilon$ is ground, the function returns $\emptyset$.
+                interval expression $\epsilon$, this function returns
+                a set of unique variables that occurs in $\epsilon$. If
+                $\epsilon$ is ground, the function returns $\emptyset$.
 
               \item
-                $Replace$($\varepsilon$, $V$, $t$)
+                $Replace$($\epsilon$, $V$, $t$)
 
                 The function takes the following as input: a non-ground
                 language ${\cal L^T}$ authorisation or interval expression
-                $\varepsilon$, a set of variables $V$ that occur in
-                $\varepsilon$, and a tuple $t$ containing entities and
+                $\epsilon$, a set of variables $V$ that occur in
+                $\epsilon$, and a tuple $t$ containing entities and
                 intervals that correspond to the variables in $V$ ($|V|$ $=$
                 $|t|$ and $\forall$$i$, $0$ $\leq$ $i$ $<$ $|V|$,
                 $Type$($V_i$) $=$ $Type$($t_i$)). The function returns
-                $\varepsilon$ with all variable occurences replaced with the
+                $\epsilon$ with all variable occurences replaced with the
                 corresponding entities or intervals from $t$. If
-                $\varepsilon$ is a ground expression, $\varepsilon$ is
+                $\epsilon$ is a ground expression, $\epsilon$ is
                 returned.
             \end{itemize}
 
@@ -5583,13 +5577,13 @@ ENDFUNCTION
             A variation of this function, shown below, generates tuples
             with respect to a given temporal constraint. Given a language
             ${\cal L^T}$ {\em where} clause with an interval expression
-            $\varepsilon$ and a set $V$ of variables that occur in
-            $\varepsilon$, the following function returns a set of
+            $\epsilon$ and a set $V$ of variables that occur in
+            $\epsilon$, the following function returns a set of
             $|V|$-tuples, where each tuple satisfies the condition given
-            in $\varepsilon$:
+            in $\epsilon$:
 
             \begin{vquote}
-              $GenTuples_2$($\varepsilon$, $V$)
+              $GenTuples_2$($\epsilon$, $V$)
               $=$ \{$t_0$, $\ldots$, $t_{|V|-1}$\}
             \end{vquote}
 
@@ -5601,12 +5595,12 @@ ENDFUNCTION
               $t_i$ $\in$ $GenTuples_1$($V$),
 
               \hspace{1em}
-              $\varepsilon'$ $=$
-              $Normalise$($Replace$($\varepsilon$, $V$, $t_i$)),
+              $\epsilon'$ $=$
+              $Normalise$($Replace$($\epsilon$, $V$, $t_i$)),
 
               \hspace{1em}
               $\forall$ (${\iota}_0$, ${\iota}_1$, $rs$) $\in$
-              $\varepsilon'$,
+              $\epsilon'$,
               $NET.Get$(${\iota}_0$, ${\iota}_1$) $\subseteq$ $rs$
             \end{vquote}
 
@@ -8038,10 +8032,10 @@ ENDFUNCTION
           Algorithm \ref{algo-impln-gente} shows the $GenTempoRules$() function
           which will be called by our extended $GenNLP$() function. $GenNLP$()
           takes three parameters as input: $NET$, the interval relation network
-          structure; $Ts$, the symbol table; and $Tq$, the policy update
-          sequence table. These parameters are passed to the three functions
-          that generate the three types of temporal rules which correspond to
-          the three atom types.
+          structure; $\theta$, the symbol table; and $\psi$, the policy
+          update sequence table. These parameters are passed to the three
+          functions that generate the three types of temporal rules which
+          correspond to the three atom types.
 
           The $GenHldsTempoRules$() function shown in Algorithm
           \ref{algo-impln-ghdtr}, as the name implies, generates the temporal
@@ -8062,32 +8056,32 @@ ENDFUNCTION
           functions $GenMembTempoRules$() and $GenSubsTempoRules$().
 
           \begin{valgorithm}[tbhp]{GenTempoRules()}{algo-impln-gente}
-FUNCTION \(GenTempoRules\)(\(NET\), \(Ts\), \(Tq\))
-  \(GenHldsTempoRules\)(\(NET\), \(Ts\), \(Tq\))
-  \(GenMembTempoRules\)(\(NET\), \(Ts\), \(Tq\))
-  \(GenSubsTempoRules\)(\(NET\), \(Ts\), \(Tq\))
+FUNCTION \(GenTempoRules\)(\(NET\), \(\theta\), \(\psi\))
+  \(GenHldsTempoRules\)(\(NET\), \(\theta\), \(\psi\))
+  \(GenMembTempoRules\)(\(NET\), \(\theta\), \(\psi\))
+  \(GenSubsTempoRules\)(\(NET\), \(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
           \begin{valgorithm}[tbhp]{GenHldsTempoRules()}{algo-impln-ghdtr}
-FUNCTION \(GenHldsTempoRules\)(\(NET\), \(Ts\), \(Tq\))
-  FOR \(i\) = \(0\) TO \(|Tq|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(s\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(a\)\(|\) DO
-        FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
-          FOR \(m\) = \(0\) TO \(|\)\(Ts\).\(int\)\(|\) DO
-            FOR \(n\) = \(0\) TO \(|\)\(Ts\).\(int\)\(|\) DO
+FUNCTION \(GenHldsTempoRules\)(\(NET\), \(\theta\), \(\psi\))
+  FOR \(i\) = \(0\) TO \(|\psi|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
+        FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(o\)\(|\) DO
+          FOR \(m\) = \(0\) TO \(|\)\(\theta\).\(int\)\(|\) DO
+            FOR \(n\) = \(0\) TO \(|\)\(\theta\).\(int\)\(|\) DO
               \(rs\) = \(NET\).\(get\)(\(m\), \(n\))
               IF (\(rs\) | \(101\)) == \(101\) THEN
-                \(a\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)], \(Ts\).\(int\)[\(n\)]\}
-                \(b\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)], \(Ts\).\(int\)[\(m\)]\}
+                \(\alpha\sb{0}\) = \{\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)], \(\theta\).\(int\)[\(n\)]\}
+                \(\alpha\sb{1}\) = \{\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)], \(\theta\).\(int\)[\(m\)]\}
                 \(RuleBegin\)()
-                \(RuleHead\)(\(Encode\)(\(a\), \(i\), \(true\)))
-                \(RuleBody\)(\(Encode\)(\(b\), \(i\), \(true\)), \(true\))
+                \(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(true\)))
+                \(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(true\)), \(true\))
                 \(RuleEnd\)()
                 \(RuleBegin\)()
-                \(RuleHead\)(\(Encode\)(\(a\), \(i\), \(false\)))
-                \(RuleBody\)(\(Encode\)(\(b\), \(i\), \(false\)), \(true\))
+                \(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(false\)))
+                \(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(false\)), \(true\))
                 \(RuleEnd\)()
               ENDIF
           ENDDO
