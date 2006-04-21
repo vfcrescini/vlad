@@ -8014,6 +8014,43 @@ FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
 ENDFUNCTION
           \end{valgorithm}
 
+          \begin{valgorithm}[tbhp]{GenTempoRules()}{algo-impln-gente}
+FUNCTION \(GenTempoRules\)(\(NET\), \(Ts\), \(Tq\))
+  \(GenHldsTempoRules\)(\(NET\), \(Ts\), \(Tq\))
+  \(GenMembTempoRules\)(\(NET\), \(Ts\), \(Tq\))
+  \(GenSubsTempoRules\)(\(NET\), \(Ts\), \(Tq\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          \begin{valgorithm}[tbhp]{GenHldsTempoRules()}{algo-impln-ghdtr}
+FUNCTION \(GenHldsTempoRules\)(\(NET\), \(Ts\), \(Tq\))
+  FOR \(i\) = \(0\) TO \(|Tq|\) DO
+    FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(s\)\(|\) DO
+      FOR \(k\) = \(0\) TO \(|\)\(Ts\).\(a\)\(|\) DO
+        FOR \(l\) = \(0\) TO \(|\)\(Ts\).\(o\)\(|\) DO
+          FOR \(m\) = \(0\) TO \(|\)\(Ts\).\(int\)\(|\) DO
+            FOR \(n\) = \(0\) TO \(|\)\(Ts\).\(int\)\(|\) DO
+              \(rs\) = \(NET\).\(get\)(\(m\), \(n\))
+              IF (\(rs\) | \(101\)) == \(101\) THEN
+                \(a\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)], \(Ts\).\(int\)[\(n\)]\}
+                \(b\) = \{\(Ts\).\(s\)[\(j\)], \(Ts\).\(a\)[\(k\)], \(Ts\).\(o\)[\(l\)], \(Ts\).\(int\)[\(m\)]\}
+                \(RuleBegin\)()
+                \(RuleHead\)(\(Encode\)(\(a\), \(i\), \(true\)), \(true\))
+                \(RuleBody\)(\(Encode\)(\(b\), \(i\), \(true\)), \(true\))
+                \(RuleEnd\)()
+                \(RuleBegin\)()
+                \(RuleHead\)(\(Encode\)(\(a\), \(i\), \(false\)), \(true\))
+                \(RuleBody\)(\(Encode\)(\(b\), \(i\), \(false\)), \(true\))
+                \(RuleEnd\)()
+              ENDIF
+          ENDDO
+        ENDDO
+      ENDDO
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
     \section{Discussions} 
       \label{sect-impln-discu}
 
