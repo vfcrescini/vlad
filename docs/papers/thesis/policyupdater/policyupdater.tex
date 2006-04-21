@@ -106,8 +106,23 @@
 
 \begin{document}
   \onehalfspacing
+  \title{
+    Implementation of a Logic-Based Access Control System with
+    Temporal Constraints
+  }
+  \author{Vino Fernando Crescini}
+  \date{April 2006}
 
+  \pagenumbering{roman}
+
+  \maketitle
   \tableofcontents
+  \listof{valgorithmfloat}{List of Algorithms}
+  \listoffigures
+  \listoftables
+  \newpage
+
+  \pagenumbering{arabic}
 
   \chapter{Introduction}
     \label{chap-intro}
@@ -3038,7 +3053,7 @@
           Policy Update Definition Table $Tu$, and Policy Update Sequence Table
           $Tq$:
 
-          \begin{valgorithm}[tbhp]{$GenNLP$()}{algo-polup-genlp}
+          \begin{valgorithm}[tbhp]{GenNLP()}{algo-polup-genlp}
 FUNCTION \(GenNLP\)(\(Ts\), \(Ti\), \(Tc\), \(Tu\), \(Tq\))
   \(TransInitStateRules\)(\(Ti\))
   \(TransConstRules\)(\(Tc\), \(Tq\))
@@ -3081,7 +3096,7 @@ ENDFUNCTION
           translated by the $Encode$() function and is made the head of a new
           rule whose body is the literal $true$ fact.
 
-          \begin{valgorithm}[tbhp]{$TransInitStateRules$()}{algo-polup-tisr}
+          \begin{valgorithm}[tbhp]{TransInitStateRules()}{algo-polup-tisr}
 FUNCTION \(TransInitStateRules\)(\(Ti\))
   FOR \(i\) = \(0\) TO \(|Ti|\) DO
     \(RuleBegin\)()
@@ -3099,7 +3114,7 @@ ENDFUNCTION
           generated for every policy update state.
 
 
-          \begin{valgorithm}[tbhp]{$TransConstRules$()}{algo-polup-tconr}
+          \begin{valgorithm}[tbhp]{TransConstRules()}{algo-polup-tconr}
 FUNCTION \(TransConstRules\)(\(Tc\), \(Tq\))
   FOR \(i\) = \(0\) TO \(|Tq|\) DO
     FOR \(j\) = \(0\) TO \(|Tc|\) DO
@@ -3131,7 +3146,7 @@ ENDFUNCTION
           of each fact in the rule head is one more than that of each fact in
           the rule body.
 
-          \begin{valgorithm}[tbhp]{$TransUpdateRules$()}{algo-polup-tupdr}
+          \begin{valgorithm}[tbhp]{TransUpdateRules()}{algo-polup-tupdr}
 FUNCTION \(TransUpdateRules\)(\(Tu\), \(Tq\))
   FOR \(i\) = \(0\) TO \(|Tq|\) DO
     FOR \(j\) = \(0\) TO \(|Tu|\) DO
@@ -3170,7 +3185,7 @@ ENDFUNCTION
           with the contraint rule generating algorithm, each new rule
           generated is replicated for each policy update state.
 
-          \begin{valgorithm}[tbhp]{$GenInherRules$()}{algo-polup-ginhr}
+          \begin{valgorithm}[tbhp]{GenInherRules()}{algo-polup-ginhr}
 FUNCTION \(GenInherRules\)(\(Ts\), \(Tq\))
   \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
   \(GenAccSubstInherRules\)(\(Ts\), \(Tq\))
@@ -3186,7 +3201,7 @@ ENDFUNCTION
           rules. Similar techniques are used for the generation of other
           subset and membership inheritance rules and are therefore not shown.
 
-          \begin{valgorithm}[tbhp]{$GenSubSubstInherRules$()}{algo-polup-gssir}
+          \begin{valgorithm}[tbhp]{GenSubSubstInherRules()}{algo-polup-gssir}
 FUNCTION \(GenSubSubstInherRules\)(\(Ts\), \(Tq\))
   FOR \(i\) = \(0\) TO \(|Tq|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
@@ -3233,7 +3248,7 @@ ENDFUNCTION
           subject transitivity rules is shown in Algorithm
           \ref{algo-polup-gstrr}.
 
-          \begin{valgorithm}[tbhp]{$GenTransRules$()}{algo-polup-gtrar}
+          \begin{valgorithm}[tbhp]{GenTransRules()}{algo-polup-gtrar}
 FUNCTION \(GenTransRules\)(\(Ts\), \(Tq\))
   \(GenSubTransRules\)(\(Ts\), \(Tq\))
   \(GenAccTransRules\)(\(Ts\), \(Tq\))
@@ -3241,7 +3256,7 @@ FUNCTION \(GenTransRules\)(\(Ts\), \(Tq\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{$GenSubTransRules$()}{algo-polup-gstrr}
+          \begin{valgorithm}[tbhp]{GenSubTransRules()}{algo-polup-gstrr}
 FUNCTION \(GenSubTransRules\)(\(Ts\), \(Tq\))
   FOR \(i\) = \(0\) TO \(|Tq|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
@@ -3273,7 +3288,7 @@ ENDFUNCTION
           state, a fact holds in the current state if it also holds in the
           previous state and its negation does not hold in the current state.
 
-          \begin{valgorithm}[tbhp]{$GenInertRules$()}{algo-polup-giner}
+          \begin{valgorithm}[tbhp]{GenInertRules()}{algo-polup-giner}
 FUNCTION \(GenInertRules\)(\(Ts\), \(Tq\))
   \(GenHldsInertRules\)(\(Ts\), \(Tq\))
   \(GenMembInertRules\)(\(Ts\), \(Tq\))
@@ -3286,7 +3301,7 @@ ENDFUNCTION
           similar method is used by the functions that generate the inertial
           rules for the other two atom types.
 
-          \begin{valgorithm}[tbhp]{$GenHldsInertRules$()}{algo-polup-ghinr}
+          \begin{valgorithm}[tbhp]{GenHldsInertRules()}{algo-polup-ghinr}
 FUNCTION \(GenHldsInertRules\)(\(Ts\), \(Tq\))
   FOR \(i\) = \(0\) TO \(|Tq|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(s\)\(|\) DO
@@ -3321,7 +3336,7 @@ ENDFUNCTION
           $GenSubRefleRules$() function generates the reflexivity rules for
           subject groups.
 
-          \begin{valgorithm}[tbhp]{$GenRefleRules$()}{algo-polup-grefr}
+          \begin{valgorithm}[tbhp]{GenRefleRules()}{algo-polup-grefr}
 FUNCTION \(GenRefleRules\)(\(Ts\), \(Tq\))
   \(GenSubRefleRules\)(\(Ts\), \(Tq\))
   \(GenAccRefleRules\)(\(Ts\), \(Tq\))
@@ -3329,7 +3344,7 @@ FUNCTION \(GenRefleRules\)(\(Ts\), \(Tq\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{$GenSubRefleRules$()}{algo-polup-gsrer}
+          \begin{valgorithm}[tbhp]{GenSubRefleRules()}{algo-polup-gsrer}
 FUNCTION \(GenSubRefleRules\)(\(Ts\), \(Tq\))
   FOR \(i\) = \(0\) TO \(|Tq|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(sg\)\(|\) DO
@@ -3351,7 +3366,7 @@ ENDFUNCTION
           are generated ensure that only a fact or its negation, but never
           both, holds in the same policy update state.
 
-          \begin{valgorithm}[tbhp]{$GenConsiRules$()}{algo-polup-gconr}
+          \begin{valgorithm}[tbhp]{GenConsiRules()}{algo-polup-gconr}
 FUNCTION \(GenConsiRules\)(\(Ts\), \(Tq\))
   \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
   \(GenMembConsiRules\)(\(Ts\), \(Tq\))
@@ -3359,7 +3374,7 @@ FUNCTION \(GenConsiRules\)(\(Ts\), \(Tq\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{$GenHldsConsiRules$()}{algo-polup-ghcor}
+          \begin{valgorithm}[tbhp]{GenHldsConsiRules()}{algo-polup-ghcor}
 FUNCTION \(GenHldsConsiRules\)(\(Ts\), \(Tq\))
   FOR \(i\) = \(0\) TO \(|Tq|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(Ts\).\(s\)\(|\) DO
@@ -3401,7 +3416,7 @@ ENDFUNCTION
         a state $S$, a query expression $Qe$ can be evaluated against a list of
         stable models $SM$, where each element in $SM$ is a list of facts.
 
-        \begin{valgorithm}[tbhp]{$EvaluateExp$()}{algo-polup-evale}
+        \begin{valgorithm}[tbhp]{EvaluateExp()}{algo-polup-evale}
 FUNCTION \(EvaluateExp\)(\(Qe\), \(SM\), \(S\))
   \(result\) = \(true\)
   FOR \(i\) = \(0\) TO \(|Qe|\) DO
@@ -3421,7 +3436,7 @@ ENDFUNCTION
         \ref{algo-polup-evalf} evaluates a single fact $Qf$ in state $S$,
         against a list of stable models $SM$.
 
-        \begin{valgorithm}[tbhp]{$EvaluateFact$()}{algo-polup-evalf}
+        \begin{valgorithm}[tbhp]{EvaluateFact()}{algo-polup-evalf}
 FUNCTION \(EvaluateFact\)(\(Qf\), \(SM\), \(S\))
   IF \(IsFactIn\)(\(Encode\)(\(Qf\).\(atm\), \(S\), \(Qf\).\(tr\)), \(SM\)) THEN
     RETURN \(true\)
@@ -3439,7 +3454,7 @@ ENDFUNCTION
         indicate whether or not the given fact index $Fi$ (as returned by the
         $Encode$() function) is present in every stable model in $SM$.
 
-        \begin{valgorithm}[tbhp]{$IsFactIn$()}{algo-polup-isinf}
+        \begin{valgorithm}[tbhp]{IsFactIn()}{algo-polup-isinf}
 FUNCTION \(IsFactIn\)(\(Fi\), \(SM\))
   FOR \(i\) = \(0\) TO \(|SM|\) DO
     IF NOT \(SM\)[\(i\)].\(is\_in\)(\(Fi\)) THEN
@@ -3507,7 +3522,7 @@ ENDFUNCTION
             \hline
           \end{tabular}
         \end{center}
-        \caption[]{Thirteen Test Cases with Different Domain Sizes}
+        \caption{Thirteen Test Cases with Different Domain Sizes}
         \label{tabl-polup-tedom}
       \end{table}
 
@@ -3569,7 +3584,7 @@ ENDFUNCTION
             \hline
           \end{tabular}
         \end{center}
-        \caption[]{Average Computation Times in Seconds}
+        \caption{Average Computation Times in Seconds}
         \label{tabl-polup-teres}
       \end{table}
 
@@ -4232,7 +4247,7 @@ ENDFUNCTION
                   \hline
                 \end{tabular}
               \end{center}
-              \caption[]{Transitivity Table}
+              \caption{Transitivity Table}
               \label{tabl-tempo-ttabl}
             \end{vvarmargin}
           \end{table}
@@ -4277,7 +4292,7 @@ ENDFUNCTION
           relations inferred from the two given relation sets using the
           $Trans_1$() function.
 
-          \begin{valgorithm}[tbhp]{$Trans_{2}()$}{algo-tempo-trns2}
+          \begin{valgorithm}[tbhp]{Trans$_2$()}{algo-tempo-trns2}
 FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
   \(RS\) = \(\emptyset\)
   FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
@@ -4321,7 +4336,7 @@ ENDFUNCTION
           \begin{figure}[tbhp]
             \begin{center}
               \includegraphics{net-02}
-              \caption{A new relation $RS$ from interval $I$ and interval $i_1$}
+              \caption{New Relation $RS$ From Interval $I$ and Interval $i_1$}
               \label{figu-tempo-ntwk2}
             \end{center}
           \end{figure}
@@ -4334,12 +4349,12 @@ ENDFUNCTION
           \begin{figure}[tbhp]
             \begin{center}
               \includegraphics{net-03}
-              \caption{A new relation $RS$ from interval $i_0$ and interval $I$}
+              \caption{New Relation $RS$ From Interval $i_0$ and Interval $I$}
               \label{figu-tempo-ntwk3}
             \end{center}
           \end{figure}
 
-          \begin{valgorithm}[tbhp]{$NET.Add()$}{algo-tempo-ntadd}
+          \begin{valgorithm}[tbhp]{NET.Add()}{algo-tempo-ntadd}
 FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
   \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
   WHILE NOT \(Q.IsEmpty\)() DO
@@ -4377,7 +4392,7 @@ ENDFUNCTION
             \begin{figure}[tbhp]
               \begin{center}
                 \includegraphics{net-04}
-                \caption{Network with 3 default arcs}
+                \caption{Network with 3 Default Arcs}
                 \label{figu-tempo-ntwk4}
               \end{center}
             \end{figure}
@@ -4541,7 +4556,7 @@ ENDFUNCTION
         \ref{algo-tempo-ntbin} shows how the $NET.Bind$() operator achieves
         this.
 
-        \begin{valgorithm}[tbhp]{$Compute$()}{algo-tempo-compu}
+        \begin{valgorithm}[tbhp]{Compute()}{algo-tempo-compu}
 FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(i\sb{1}\sp{+}\))
   IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{-}\) THEN
     IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
@@ -4583,7 +4598,7 @@ FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(
 ENDFUNCTION
         \end{valgorithm}
 
-        \begin{valgorithm}[tbhp]{$Net.Bind$()}{algo-tempo-ntbin}
+        \begin{valgorithm}[tbhp]{Net.Bind()}{algo-tempo-ntbin}
 FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
   FOR each interval \(I'\) \(\in\) \(NET\) DO
     IF \(I'\) != \(I\) THEN
@@ -7123,7 +7138,7 @@ ENDFUNCTION
               \cline{5-5}
             \end{tabular}
           \end{center}
-          \caption[]{Conceptual Representation of an Interval Network}
+          \caption{Conceptual Representation of an Interval Network}
           \label{tabl-impln-concp}
         \end{table}
 
@@ -7220,7 +7235,7 @@ ENDFUNCTION
                 \hline
               \end{tabular}
             \end{center}
-            \caption[]{Temporal Relation Value Assignment}
+            \caption{Temporal Relation Value Assignment}
             \label{tabl-impln-valas}
           \end{table}
 
@@ -7305,7 +7320,7 @@ ENDFUNCTION
                 \hline
               \end{tabular}
             \end{center}
-            \caption[]{Network Node Data Structure}
+            \caption{Network Node Data Structure}
             \label{tabl-impln-nwdsr}
           \end{table}
 
@@ -7321,7 +7336,7 @@ ENDFUNCTION
                 \hline
               \end{tabular}
             \end{center}
-            \caption[]{Relation List Node Data Structure}
+            \caption{Relation List Node Data Structure}
             \label{tabl-impln-rldsr}
           \end{table}
 
@@ -7361,7 +7376,7 @@ ENDFUNCTION
           Algorithm \ref{algo-impln-norml} before adding a relation to the
           network:
 
-          \begin{valgorithm}[tbhp]{$Normalise$()}{algo-impln-norml}
+          \begin{valgorithm}[tbhp]{Normalise()}{algo-impln-norml}
 FUNCTION \(Normalise\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
     RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\)) 
@@ -7448,7 +7463,7 @@ ENDFUNCTION
                 \hline
               \end{tabular}
             \end{center}
-            \caption[]{Extended Symbol Table}
+            \caption{Extended Symbol Table}
             \label{tabl-impln-symtb}
           \end{table}
 
@@ -7859,7 +7874,7 @@ ENDFUNCTION
           $Offset\_Holds$(), $Offset\_Memb$() or $Offset\_Subst$() with the
           indices to calculate the appropriate offsets.
 
-          \begin{valgorithm}[tbhp]{$Encode$()}{algo-impln-encod}
+          \begin{valgorithm}[tbhp]{Encode()}{algo-impln-encod}
 FUNCTION \(Encode\)(\(\alpha\), \(\sigma\), \(\tau\))
   \(offset\) = \(\sigma\) \(\cdot\) \(Tot\sb{A}\) \(\cdot\) \(2\)
   IF \(\tau\) == \(false\) THEN
@@ -7917,7 +7932,7 @@ ENDFUNCTION
           in the same manner. Finally, the sum of these offsets is the offset
           for the holds atom, which is returned by this function.
 
-          \begin{valgorithm}[tbhp]{$Offset\_Holds$()}{algo-impln-offho}
+          \begin{valgorithm}[tbhp]{Offset\_Holds()}{algo-impln-offho}
 FUNCTION \(Offset_Holds\)(\(sub\), \(acc\), \(obj\), \(int\))
   RETURN
     (\(sub\) \(\cdot\) (\(|\)\(\theta\).\(as\)\(|\) \(+\) \(|\)\(\theta\).\(ag\)\(|\)) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
@@ -7940,7 +7955,7 @@ ENDFUNCTION
           index of all atoms of type member is offset by the total number of
           holds atoms ($Tot_H$).         
 
-          \begin{valgorithm}[tbhp]{$Offset\_Memb$()}{algo-impln-offme}
+          \begin{valgorithm}[tbhp]{Offset\_Memb()}{algo-impln-offme}
 FUNCTION \(Offset_Memb\)(\(elt\), \(grp\), \(int\), \(type\))
   CASE \(type\) OF
     \(sub\) :
@@ -7972,7 +7987,7 @@ ENDFUNCTION
           similar to that used by the $Offset\_Memb$() function, except the
           final index is offset by the total number of holds and member atoms.
 
-          \begin{valgorithm}[tbhp]{$Offset\_Subst$()}{algo-impln-offsu}
+          \begin{valgorithm}[tbhp]{Offset\_Subst()}{algo-impln-offsu}
 FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
   CASE \(type\) OF
     \(sub\) :
