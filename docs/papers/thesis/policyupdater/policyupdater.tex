@@ -2646,23 +2646,25 @@
         Each of the tables and lists used in the system inherits from a generic
         ordered and indexed list implementation. Each node in this list holds a
         generic data type that can be used to store strings, an arbitrary data
-        type or another list type. This list structure implements, among
-        others, the following operations:
+        type or another list type. This list structure implements the following
+        operations:
 
         \begin{itemize}
           \item
-            $LIST$.$len$() returns the number of elements in $LIST$.
+            $LIST$.$Add$($item$) appends $item$ to the end of $LIST$.
+          \item
+            $LIST$.$Length$() returns the number of elements in $LIST$.
 
           \item
-            $LIST$.$is_in$($item$) returns true if $item$ is in the list and
+            $LIST$.$Find$($item$) returns true if $item$ is in the list and
             false otherwise.
 
           \item
-            $LIST$.$index\_of$($item$) returns the index of the item $item$
+            $LIST$.$Index$($item$) returns the index of the item $item$
             in $LIST$.
 
           \item
-            $LIST$.$get$($index$) returns the $index$'th item in $LIST$.
+            $LIST$.$Get$($index$) returns the $index$'th item in $LIST$.
         \end{itemize}
 
         \noindent
@@ -2670,9 +2672,9 @@
         paper:
 
         \begin{vquote}
-          $|LIST|$ = $LIST$.$len$()
+          $|LIST|$ = $LIST$.$Length$()
 
-          $LIST$[$i$] = $LIST$.$get$($i$)
+          $LIST$[$i$] = $LIST$.$Get$($i$)
         \end{vquote}
 
         \subsubsection{Symbol Table}
@@ -3464,7 +3466,7 @@ ENDFUNCTION
         \begin{valgorithm}[tbhp]{IsFactIn()}{algo-polup-isinf}
 FUNCTION \(IsFactIn\)(\(\varrho\), \(\Lambda\))
   FOR \(i\) = \(0\) TO \(|\Lambda|\) DO
-    IF NOT \(\Lambda\)[\(i\)].\(is\_in\)(\(\varrho\)) THEN
+    IF NOT \(\Lambda\)[\(i\)].\(Find\)(\(\varrho\)) THEN
       RETURN \(false\)
     ENDIF
   ENDDO
