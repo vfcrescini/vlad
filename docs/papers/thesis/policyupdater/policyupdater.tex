@@ -5345,6 +5345,7 @@ ENDFUNCTION
   interval \(\iota\) [\(ep\sb{0}\), \(ep\sb{1}\)];
             \end{vverbatim}
 
+            \noindent
             All intervals $\iota$ declared by using the first form are added
             to the interval network through a call to the following function:
 
@@ -5352,6 +5353,7 @@ ENDFUNCTION
               $NET.New$($\iota$)
             \end{vquote}
 
+            \noindent
             All intervals $\iota$ declared by using the second form, i.e.,
             with end points $ep_0$ and $ep_1$, are added to the network
             through the following functions:
@@ -5454,13 +5456,13 @@ ENDFUNCTION
               ${\iota}1_i$ $=$ ${\iota}1_j$
             \end{vquote}
 
-            Now, we define a function $Normalise$($\epsilon$) that takes
+            Now, we define a function $NormaliseExp$($\epsilon$) that takes
             a language ${\cal L^T}$ interval expression $\epsilon$ as
             input and returns the normalised equivalent of that expression in
             the form shown above. Formally, we have:
 
             \begin{vquote}
-              ${\epsilon}'$ $=$ $Normalise$($\epsilon$)
+              ${\epsilon}'$ $=$ $NormaliseExp$($\epsilon$)
             \end{vquote}
 
             \noindent
@@ -5487,7 +5489,7 @@ ENDFUNCTION
                 )
             \end{enumerate}
 
-            With the $Normalise$() function defined, we can now populate the
+            With the $NormaliseExp$() function defined, we can now populate the
             interval relation network with relations expressed in language
             ${\cal L^T}$ interval constraint statements. The steps involved
             to achieve this is as follows. For each interval constraint
@@ -5497,14 +5499,16 @@ ENDFUNCTION
   relation \(\alpha\sb{0}\), \(\ldots\), \(\alpha\sb{n}\);
             \end{vverbatim}
 
-            Now, by using the $Normalise$() function, we obtain a normalised
+            \noindent
+            By using the $NormaliseExp$() function, we obtain the normalised
             expression $\epsilon$:
 
             \begin{vquote}
               $\epsilon$ $=$
-                $Normalise$(\{${\alpha}_0$, $\ldots$, ${\alpha}_n$\})
+                $NormaliseExp$(\{${\alpha}_0$, $\ldots$, ${\alpha}_n$\})
             \end{vquote}
 
+            \noindent
             Finally, to register the interval constraint to the interval
             relation network, we make a call to the following operator
             for each (${\iota}0_i$, ${\iota}1_i$, $rs_i$) $\in$
@@ -5613,7 +5617,7 @@ ENDFUNCTION
 
               \hspace{1em}
               $\epsilon'$ $=$
-              $Normalise$($Replace$($\epsilon$, $V$, $t_i$)),
+              $NormaliseExp$($Replace$($\epsilon$, $V$, $t_i$)),
 
               \hspace{1em}
               $\forall$ (${\iota}_0$, ${\iota}_1$, $rs$) $\in$
@@ -5631,6 +5635,7 @@ ENDFUNCTION
   initially \(\rho\sb{0}\), \(\ldots\), \(\rho\sb{n}\);
             \end{vverbatim}
 
+            \noindent
             Each initial fact declaration statement of language ${\cal L^T}$
             in the form above corresponds to the following language
             ${\cal L^{T^*}}$ rules:
@@ -7386,8 +7391,8 @@ ENDFUNCTION
           Algorithm \ref{algo-impln-norml} before adding a relation to the
           network:
 
-          \begin{valgorithm}[tbhp]{Normalise()}{algo-impln-norml}
-FUNCTION \(Normalise\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
+          \begin{valgorithm}[tbhp]{NormaliseRel()}{algo-impln-norml}
+FUNCTION \(NormaliseRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
     RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\)) 
   ELSE
