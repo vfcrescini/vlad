@@ -3166,17 +3166,17 @@ FUNCTION \(TransUpdateRules\)(\(\omega\sb{u}\), \(\psi\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\omega\sb{u}|\) DO
       IF \(\psi\)[\(i\)].\(name\) == \(\omega\sb{u}\)[\(j\)].\(name\) THEN
-        \(e\) = \(GndUpdate\)(\(\omega\sb{u}\)[\(j\)], \(\psi\)[\(i\)].\(ilist\))
-        \(RuleBegin\)()
-        FOR \(k\) = \(0\) TO \(|\)\(e\).\(pst\)\(|\) DO
-          \(\alpha\) = \(Encode\)(\(e\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(e\).\(pst\)[\(k\)].\(tr\))
+        \(upd\) = \(GndUpdate\)(\(\omega\sb{u}\)[\(j\)], \(\psi\)[\(i\)].\(ilist\))
+        FOR \(k\) = \(0\) TO \(|\)\(upd\).\(pst\)\(|\) DO
+          \(\alpha\) = \(Encode\)(\(upd\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(upd\).\(pst\)[\(k\)].\(tr\))
+          \(RuleBegin\)()
           \(RuleHead\)(\(\alpha\))
+          FOR \(l\) = \(0\) TO \(|\)\(upd\).\(pre\)\(|\) DO
+            \(\alpha\) = \(Encode\)(\(upd\).\(pre\)[\(l\)].\(atm\), \(i\), \(upd\).\(pre\)[\(l\)].\(tr\))
+            \(RuleBody\)(\(\alpha\), \(true\))
+          ENDDO
+          \(RuleEnd\)()
         ENDDO
-        FOR \(k\) = \(0\) TO \(|\)\(e\).\(pre\)\(|\) DO
-          \(\alpha\) = \(Encode\)(\(e\).\(pre\)[\(k\)].\(atm\), \(i\), \(e\).\(pre\)[\(k\)].\(tr\))
-          \(RuleBody\)(\(\alpha\), \(true\))
-        ENDDO
-        \(RuleEnd\)()
       ENDIF
     ENDDO
   ENDDO
