@@ -144,13 +144,13 @@
       comments delimited by the "/*" and "*/" characters may appear anywhere
       in the logic program. The full BNF specification of the language is
       shown in Section \ref{sect-langs-bnfll}.
-   
+
       \subsubsection{Components of Language $\cal{L}$}
         \label{subs-langl-compo}
 
         Each language ${\cal L}$ statement is composed of the following
         components: identifiers, atoms, facts and expressions.
-   
+
         \begin{itemize}
           \item
             {\bf Identifiers}
@@ -158,14 +158,14 @@
             The most basic unit of language $\cal{L}$ is the identifier.
             Identifiers are used to represent the different components of
             the language. They are classified into three main categories:
-   
+
             \begin{enumerate}
               \item
                 {\em Entity Identifiers} are used to represent constant
                 entities that make up a logical atom. They are divided into
                 three types, with each type divided further into the
                 {\em singular} and {\em group} entity sub-types:
-   
+
                 \begin{enumerate}
                   \item
                     {\em Subjects}: e.g. alice, lecturers, user-group.
@@ -174,16 +174,16 @@
                   \item
                     {\em Objects}: e.g. file, database, directory.
                 \end{enumerate}
-   
+
                 An entity identifier is defined as a single, lower-case
                 alphabetic character, followed by 0 or more alphanumeric and
                 underscore characters. The following regular expression
                 shows the syntax of entity identifiers:
-   
+
                 \begin{vverbatim}
   [a-z][a-zA-Z0-9\_]
                 \end{vverbatim}
-   
+
               \item
                 {\em Policy Update Identifiers} are used for the sole
                 purpose of naming a policy update. These identifier names
@@ -192,11 +192,11 @@
                 class occupy a different namespace from entity identifiers.
                 For this reason, policy update identifiers share the same
                 syntax with entity identifiers:
-   
+
                 \begin{vverbatim}
   [a-z][a-zA-Z0-9\_]
                 \end{vverbatim}
-   
+
               \item
                 {\em Variable Identifiers} are used as place-holders for
                 entity identifiers. To distinguish them from entity and
@@ -209,7 +209,7 @@
                 place-holder for a singular entity while a "G" indicates
                 that it is a place-holder for a group entity. The following
                 regular expression shows the syntax of variable identifiers:
-   
+
                 \begin{vverbatim}
    [SAO][SG][a-zA-Z0-9\_]
                 \end{vverbatim}
@@ -693,46 +693,46 @@
               ${\cal A}^{\sigma}_{h}$ $\cup$
               ${\cal A}^{\sigma}_{m}$ $\cup$
               ${\cal A}^{\sigma}_{s}$
-    
+
             ${\cal A}^{\sigma}_{h}$ $=$
               $\{\hat{holds}$($s$, $a$, $o$, $\sigma$) $\mid$
                 $s$ $\in$ ${\cal E}_{s}$,
                 $a$ $\in$ ${\cal E}_{a}$,
                 $o$ $\in$ ${\cal E}_{o}\}$
-    
+
             ${\cal A}^{\sigma}_{m}$ $=$
              ${\cal A}^{\sigma}_{ms}$ $\cup$
              ${\cal A}^{\sigma}_{ma}$ $\cup$
              ${\cal A}^{\sigma}_{mo}$
-    
+
             ${\cal A}^{\sigma}_{s}$ $=$
               ${\cal A}^{\sigma}_{ss}$ $\cup$
               ${\cal A}^{\sigma}_{sa}$ $\cup$
               ${\cal A}^{\sigma}_{so}$
-    
+
             ${\cal A}^{\sigma}_{ms}$ $=$
               $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$
                 $e$ $\in$ ${\cal E}_{ss}$,
                 $g$ $\in$ ${\cal E}_{sg}\}$
-    
+
             ${\cal A}^{\sigma}_{ma}$ $=$
               $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$
                 $e$ $\in$ ${\cal E}_{as}$,
                 $g$ $\in$ ${\cal E}_{ag}\}$
-    
+
             ${\cal A}^{\sigma}_{mo}$ $=$
               $\{\hat{memb}$($e$, $g$, $\sigma$) $\mid$
                 $e$ $\in$ ${\cal E}_{os}$,
                 $g$ $\in$ ${\cal E}_{og}\}$
-    
+
             ${\cal A}^{\sigma}_{ss}$ $=$
               $\{\hat{subst}$($g_{1}$, $g_{2}$, $\sigma$) $\mid$
                 $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{sg}\}$
-    
+
             ${\cal A}^{\sigma}_{sa}$ $=$
               $\{\hat{subst}(g_{1}, g_{2}, \sigma)$ $\mid$
                 $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{ag}\}$
-    
+
             ${\cal A}^{\sigma}_{so}$ $=$
               $\{\hat{subst}(g_{1}, g_{2}, \sigma)$ $\mid$
                 $g_{1}$, $g_{2}$ $\in$ ${\cal E}_{og}\}$
@@ -1023,20 +1023,20 @@
 
           \begin{vquote}
             $\hat{holds}$($alice$, $read$, $data$, $S_{1}$) $\leftarrow$
- 
+
             \hspace{1em}
             $\hat{memb}$($alice$, $admin$, $S_{1}$),
             $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{1}$)
- 
+
             $\hat{holds}$($alice$, $write$, $data$, $S_{1}$) $\leftarrow$
- 
+
             \hspace{1em}
             $\hat{memb}$($alice$, $admin$, $S_{1}$),
             $not$ $\lnot\hat{holds}$($alice$, $own$, $data$, $S_{1}$)
           \end{vquote}
 
         \subsubsection{Policy Update Rules}
-          
+
           Given that $n_0$, $n_1$ $\geq$ $0$, all occurrences of variable
           place-holders grounded to entity identifiers, a policy update $u$
           in language ${\cal L}$ is in the form:
@@ -1324,40 +1324,40 @@
                   \begin{vquote}
                     $\forall$ ($s$, $ag_{0}$, $ag_{1}$, $o$, $\sigma$),
                   \end{vquote}
- 
+
                   \begin{vquote}
                     $\hat{holds}$($s$, $ag_{0}$, $o$, $\sigma$) $\leftarrow$
- 
+
                     \hspace{1em}
                     $\hat{holds}$($s$, $ag_{1}$, $o$, $\sigma$),
                     $\hat{subst}$($ag_{0}$, $ag_{1}$, $\sigma$),
                     $not$ $\lnot$ $\hat{holds}$($s$, $ag_{0}$, $o$, $\sigma$)
                   \end{vquote}
- 
+
                   \begin{vquote}
                     $\lnot\hat{holds}$($s$, $ag_{0}$, $o$, $\sigma$)
                     $\leftarrow$
- 
+
                     \hspace{1em}
                     $\lnot\hat{holds}$($s$, $ag_{1}$, $o$, $\sigma$),
                     $\hat{subst}$($ag_{0}$, $ag_{1}$, $\sigma$)
                   \end{vquote}
- 
+
                   \begin{vquote}
                     where
- 
+
                     \hspace{1em}
                     $s$ $\in$ ${\cal E}_{s}$,
- 
+
                     \hspace{1em}
                     $ag_{0}$, $ag_{1}$ $\in$ ${\cal E}_{ag}$,
- 
+
                     \hspace{1em}
                     $o$ $\in$ ${\cal E}_{o}$,
- 
+
                     \hspace{1em}
                     $ag_{0}$ $\neq$ $ag_{1}$,
- 
+
                     \hspace{1em}
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
@@ -1368,40 +1368,40 @@
                   \begin{vquote}
                     $\forall$ ($s$, $a$, $og_{0}$, $og_{1}$, $\sigma$),
                   \end{vquote}
- 
+
                   \begin{vquote}
                     $\hat{holds}$($s$, $a$, $og_{0}$, $\sigma$) $\leftarrow$
- 
+
                     \hspace{1em}
                     $\hat{holds}$($s$, $a$, $og_{1}$, $\sigma$),
                     $\hat{subst}$($og_{0}$, $og_{1}$, $\sigma$),
                     $not$ $\lnot\hat{holds}$($s$, $a$, $og_{0}$, $\sigma$)
                   \end{vquote}
- 
+
                   \begin{vquote}
                     $\lnot\hat{holds}$($s$, $a$, $og_{0}$, $\sigma$)
                     $\leftarrow$
- 
+
                     \hspace{1em}
                     $\lnot\hat{holds}$($s$, $a$, $og_{1}$, $\sigma$),
                     $\hat{subst}$($og_{0}$, $og_{1}$, $\sigma$)
                   \end{vquote}
- 
+
                   \begin{vquote}
                     where
- 
+
                     \hspace{1em}
                     $s$ $\in$ ${\cal E}_{s}$,
- 
+
                     \hspace{1em}
                     $a$ $\in$ ${\cal E}_{a}$,
- 
+
                     \hspace{1em}
                     $og_{0}$, $og_{1}$ $\in$ ${\cal E}_{og}$,
- 
+
                     \hspace{1em}
                     $og_{0}$ $\neq$ $og_{1}$,
- 
+
                     \hspace{1em}
                     $S_{0}$ $\leq$ $\sigma$ $\leq$ $S_{|\psi|}$
                   \end{vquote}
@@ -1563,78 +1563,78 @@
           \begin{enumerate}
             \item
               Initial Fact Rules
-    
+
               \begin{vquote}
                 $\hat{memb}(alice, grp_2, S_{0}) \leftarrow$
-    
+
                 $\hat{holds}(grp_1, read, file,S_{0}) \leftarrow$
-    
+
                 $\hat{subst}(grp_2, grp_1, S_{0}) \leftarrow$
               \end{vquote}
-    
+
             \item
               Constraint Rules
-    
+
               \begin{vquote}
                 % constraints (S0)
                 $\hat{holds}(grp_1, write, file, S_{0})$ $\leftarrow$
-    
+
                 \hspace{1em}
                 $\hat{holds}(grp_1, read, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp_3, write, file, S_{0})$
               \end{vquote}
-    
+
               \begin{vquote}
                 % constraints (S1)
                 $\hat{holds}(grp_1, write, file, S_{1})$ $\leftarrow$
-    
+
                 \hspace{1em}
                 $\hat{holds}(grp_1, read, file, S_{1})$,
                 $not$ $\lnot\hat{holds}(grp_3, write, file, S_{1})$
               \end{vquote}
-    
+
             \item
               Policy Update Rules
-    
+
               \begin{vquote}
                 $\lnot\hat{holds}(grp_1, read, file, S_{1})$ $\leftarrow$
               \end{vquote}
             \item
               Inheritance Rules
-             
+
               \begin{vquote}
                 % inheritance rules (positive, read, S0)
                 $\hat{holds}(alice, read, file, S_{0})$ $\leftarrow$
-             
+
                 \hspace{1em}
                 $\hat{holds}(grp_1, read, file, S_{0})$,
                 $\hat{memb}(alice, grp_1, S_{0})$,
-             
+
                 \hspace{1em}
                 $not$ $\lnot\hat{holds}(alice, read, file, S_{0})$
               \end{vquote}
-             
+
               \begin{vquote}
                 % inheritance rules (negative, read, S0)
                 $\lnot\hat{holds}(alice, read, file, S_{0})$ $\leftarrow$
-             
+
                 \hspace{1em}
                 $\lnot\hat{holds}(grp_1, read, file, S_{0})$,
                 $\hat{memb}(alice, grp_1, S_{0})$
               \end{vquote}
-             
+
               \begin{vquote}
                 \hspace{2em}$\vdots$
               \end{vquote}
-             
+
               \begin{vquote}
                 % inheritance rules (positive, write, S1)
                 $\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
-             
+
                 \hspace{1em}
                 $\hat{holds}(grp_3, write, file, S_{1})$,
                 $\hat{memb}(alice, grp_3, S_{1})$,
-             
+
                 \hspace{1em}
                 $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
               \end{vquote}
@@ -1642,16 +1642,16 @@
               \begin{vquote}
                 % inheritance rules (negative, write, S1)
                 $\lnot\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
-             
+
                 \hspace{1em}
                 $\lnot\hat{holds}(grp_3, write, file, S_{1})$,
                 $\hat{memb}(alice, grp_3, S_{1})$
               \end{vquote}
-             
+
               \begin{vquote}
                 % inheritance rules (subset positive, read, S0)
                 $\hat{holds}(grp_1, read, file, S_{0})$ $\leftarrow$
-             
+
                 \hspace{1em}
                 $\hat{holds}(grp_2, read, file, S_{0})$,
                 $\hat{subst}(grp_1, grp_2, S_{0})$
@@ -1659,24 +1659,24 @@
                 \hspace{1em}
                 $not$ $\lnot\hat{holds}(grp_1, read, file, S_{0})$,
               \end{vquote}
-             
+
               \begin{vquote}
                 % inheritance rules (subset negative, read, S0)
                 $\lnot\hat{holds}(grp_1, read, file, S_{0})$ $\leftarrow$
-             
+
                 \hspace{1em}
                 $\lnot\hat{holds}(grp_2, read, file, S_{0})$,
                 $\hat{subst}(grp_1, grp_2, S_{0})$
               \end{vquote}
-             
+
               \begin{vquote}
                 \hspace{2em}$\vdots$
               \end{vquote}
-             
+
               \begin{vquote}
                 % inheritance rules (subset positive, write, S1)
                 $\hat{holds}(grp_3, write, file, S_{1})$ $\leftarrow$
-             
+
                 \hspace{1em}
                 $\hat{holds}(grp_2, write, file, S_{1})$,
                 $\hat{subst}(grp_3, grp2, S_{1})$
@@ -1684,11 +1684,11 @@
                 \hspace{1em}
                 $not$ $\lnot\hat{holds}(grp_3, write, file, S_{1})$,
               \end{vquote}
-             
+
               \begin{vquote}
                 % inheritance rules (subset negative, write, S1)
                 $\lnot\hat{holds}(grp_3, write, file, S_{1})$ $\leftarrow$
-             
+
                 \hspace{1em}
                 $\lnot\hat{holds}(grp_2, write, file, S_{1})$,
                 $\hat{subst}(grp_3, grp_2, S_{1})$
@@ -1702,27 +1702,27 @@
                 $\hat{subst}(grp_1, grp_2, S_{0})$,
                 $\hat{subst}(grp_2, grp_3, S_{0})$
               \end{vquote}
-    
+
               \begin{vquote}
                 \hspace{2em}$\vdots$
               \end{vquote}
-    
+
               \begin{vquote}
                 $\hat{subst}(grp_3, grp_1, S_{0})$ $\leftarrow$
                 $\hat{subst}(grp_3, grp_2, S_{0})$,
                 $\hat{subst}(grp_2, grp_1, S_{0})$
               \end{vquote}
-    
+
               \begin{vquote}
                 $\hat{subst}(grp_1, grp_3, S_{1})$ $\leftarrow$
                 $\hat{subst}(grp_1, grp_2, S_{1})$,
                 $\hat{subst}(grp_2, grp_3, S_{1})$
               \end{vquote}
-    
+
               \begin{vquote}
                 \hspace{2em}$\vdots$
               \end{vquote}
-    
+
               \begin{vquote}
                 $\hat{subst}(grp_3, grp_1, S_{1})$ $\leftarrow$
                 $\hat{subst}(grp_3, grp_2, S_{1})$,
@@ -1735,43 +1735,43 @@
               \begin{vquote}
                 % inertial rule holds(alice, read, file)
                 $\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
-    
+
                 \hspace{1em}
                 $\hat{holds}(alice, read, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(alice, read, file, S_{1})$
               \end{vquote}
-    
+
               \begin{vquote}
                 % inertial rule !holds(alice, read, file)
                 $\lnot\hat{holds}(alice, read, file, S_{1})$ $\leftarrow$
-    
+
                 \hspace{1em}
                 $\lnot\hat{holds}(alice, read, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(alice, read, file, S_{1})$
               \end{vquote}
-    
+
               \begin{vquote}
                 % inertial rule holds(alice, write, file)
                 $\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
-    
+
                 \hspace{1em}
                 $\hat{holds}(alice, write, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
               \end{vquote}
-    
+
               \begin{vquote}
                 % inertial rule !holds(alice, write, file)
                 $\lnot\hat{holds}(alice, write, file, S_{1})$ $\leftarrow$
-    
+
                 \hspace{1em}
                 $\lnot\hat{holds}(alice, write, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(alice, write, file, S_{1})$
               \end{vquote}
-    
+
               \begin{vquote}
                 % inertial rule holds(grp1, read, file)
                 $\hat{holds}(grp_1, read, file, S_{1})$ $\leftarrow$
-    
+
                 \hspace{1em}
                 $\hat{holds}(grp_1, read, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp1, read, file, S_{1})$
@@ -1780,38 +1780,38 @@
               \begin{vquote}
                 % inertial rule !holds(grp1, read, file)
                 $\lnot\hat{holds}(grp_1, read, file, S_{1})$ $\leftarrow$
-   
+
                 \hspace{1em}
                 $\lnot\hat{holds}(grp_1, read, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp_1, read, file, S_{1})$
               \end{vquote}
-   
+
               \begin{vquote}
                 \hspace{2em}$\vdots$
               \end{vquote}
-              
+
               \begin{vquote}
                 % inertial rule holds(grp3, read, file)
                 $\hat{holds}(grp_3, read, file, S_{1})$ $\leftarrow$
-              
+
                 \hspace{1em}
                 $\hat{holds}(grp_3, read, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp_3, read, file, S_{1})$
               \end{vquote}
-              
+
               \begin{vquote}
                 % inertial rule !holds(grp3, read, file)
                 $\lnot\hat{holds}(grp_3, read, file, S_{1})$ $\leftarrow$
-              
+
                 \hspace{1em}
                 $\lnot\hat{holds}(grp_3, read, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp_3, read, file, S_{1})$
               \end{vquote}
-              
+
               \begin{vquote}
                 % inertial rule holds(grp1, write, file)
                 $\hat{holds}(grp_1, write, file, S_{1})$ $\leftarrow$
-              
+
                 \hspace{1em}
                 $\hat{holds}(grp_1, write, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp_1, write, file, S_{1})$
@@ -1820,38 +1820,38 @@
               \begin{vquote}
                 % inertial rule !holds(grp1, write, file)
                 $\lnot\hat{holds}(grp_1, write, file, S_{1})$ $\leftarrow$
-              
+
                 \hspace{1em}
                 $\lnot\hat{holds}(grp_1, write, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp_1, write, file, S_{1})$
               \end{vquote}
-              
+
               \begin{vquote}
                 \hspace{2em}$\vdots$
               \end{vquote}
-              
+
               \begin{vquote}
                 % inertial rule holds(grp3, write, file)
                 $\hat{holds}(grp_3, write, file, S_{1})$ $\leftarrow$
-              
+
                 \hspace{1em}
                 $\hat{holds}(grp3, write, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp_3, write, file, S_{1})$
               \end{vquote}
-              
+
               \begin{vquote}
                 % inertial rule !holds(grp3, write, file)
                 $\lnot\hat{holds}(grp_3, write, file, S_{1})$ $\leftarrow$
-              
+
                 \hspace{1em}
                 $\lnot\hat{holds}(grp_3, write, file, S_{0})$,
                 $not$ $\lnot\hat{holds}(grp_3, write, file, S_{1})$
               \end{vquote}
-              
+
               \begin{vquote}
                 % inertial rule memb(alice, grp1)
                 $\hat{memb}(alice, grp_1, S_{1})$ $\leftarrow$
-              
+
                 \hspace{1em}
                 $\hat{memb}(alice, grp_1, S_{0})$,
                 $not$ $\lnot\hat{memb}(alice, grp_1, S_{1})$
@@ -1860,38 +1860,38 @@
               \begin{vquote}
                 % inertial rule !memb(alice, grp1)
                 $\lnot \hat{memb}(alice, grp_1, S_{1})$ $\leftarrow$
-          
+
                 \hspace{1em}
                 $\lnot\hat{memb}(alice, grp_1, S_{0})$,
                 $not$ $\hat{memb}(alice, grp_1, S_{1})$
               \end{vquote}
-          
+
               \begin{vquote}
                 \hspace{2em}$\vdots$
               \end{vquote}
-          
+
               \begin{vquote}
                 % inertial rule memb(alice, grp3)
                 $\hat{memb}(alice, grp_3, S_{1})$ $\leftarrow$
-          
+
                 \hspace{1em}
                 $\hat{memb}(alice, grp_3, S_{0})$,
                 $not$ $\lnot\hat{memb}(alice, grp_3, S_{1})$
               \end{vquote}
-          
+
               \begin{vquote}
                 % inertial rule !memb(alice, grp3)
                 $\lnot\hat{memb}(alice, grp_3, S_{1})$ $\leftarrow$
-          
+
                 \hspace{1em}
                 $\lnot\hat{memb}(alice, grp_3, S_{0})$,
                 $not$ $\hat{memb}(alice, grp_3, S_{1})$
               \end{vquote}
-          
+
               \begin{vquote}
                 % inertial rule subst(grp1, grp1)
                 $\hat{subst}(grp1, grp_1, S_{1})$ $\leftarrow$
-          
+
                 \hspace{1em}
                 $\hat{subst}(grp1, grp_1, S_{0})$,
                 $not$ $\lnot\hat{subst}(grp_1, grp_1, S_{1})$
@@ -1900,29 +1900,29 @@
               \begin{vquote}
                 % inertial rule !subst(grp1, grp1)
                 $\lnot\hat{subst}(grp_1, grp_1, S_{1})$ $\leftarrow$
-          
+
                 \hspace{1em}
                 $\lnot\hat{memb}(grp_1, grp_1, S_{0})$,
                 $not$ $\hat{memb}(grp_1, grp_1, S_{1})$
               \end{vquote}
-          
+
               \begin{vquote}
                 \hspace{2em}$\vdots$
               \end{vquote}
-          
+
               \begin{vquote}
                 % inertial rule subst(grp3, grp3)
                 $\hat{subst}(grp_3, grp_3, S_{1})$ $\leftarrow$
-          
+
                 \hspace{1em}
                 $\hat{subst}(grp_3, grp_3, S_{0})$,
                 $not$ $\lnot\hat{subst}(grp_3, grp_3, S_{1})$
               \end{vquote}
-          
+
               \begin{vquote}
                 % inertial rule !subst(grp3, grp3)
                 $\lnot\hat{subst}(grp_3, grp_3, S_{1})$ $\leftarrow$
-          
+
                 \hspace{1em}
                 $\lnot\hat{memb}(grp_3, grp_3, S_{0})$,
                 $not$ $\hat{memb}(grp_3, grp_3, S_{1})$
@@ -1933,15 +1933,15 @@
 
               \begin{vquote}
                 $\hat{subset}(grp_1, grp_1, S_{0})$ $\leftarrow$
-                
+
                 $\hat{subset}(grp_2, grp_2, S_{0})$ $\leftarrow$
-                
+
                 $\hat{subset}(grp_3, grp_3, S_{0})$ $\leftarrow$
-                
+
                 $\hat{subset}(grp_1, grp_1, S_{1})$ $\leftarrow$
-                
+
                 $\hat{subset}(grp_2, grp_2, S_{1})$ $\leftarrow$
-                
+
                 $\hat{subset}(grp_3, grp_3, S_{1})$ $\leftarrow$
              \end{vquote}
           \end{enumerate}
@@ -1988,50 +1988,50 @@
 
           \begin{vquote}
             $|$$Trans$(${\cal D_{L}}$)$|$ $\leq$
- 
+
             % initially
             \hspace{1em}
             $Max$($\Gamma_{int}$) $|\Gamma_{int}|$ $+$
- 
+
             % constraints
             \hspace{1em}
             $|\psi|$ $Max$($\Gamma_{con}$) $|\Gamma_{con}|$ $+$
- 
+
             % policy updates
             \hspace{1em}
             $|\psi|$ $Max$($\Gamma_{upd}$) $+$
- 
+
             % membership inheritance
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ $+$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$ $+$
- 
+
             % subset inheritance
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ $+$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$ $+$
- 
+
             % transitivity rules
             \hspace{1em}
             $|\psi|$
             $($$|{\cal E}_{sg}|^{3}$ $+$
             $|{\cal E}_{ag}|^{3}$ $+$
             $|{\cal E}_{og}|^{3}$$)$ $+$
- 
+
             % inertial rules
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal A}|$ $+$
- 
+
             % reflexivity rules
             \hspace{1em}
             $|\psi|$
@@ -2106,58 +2106,58 @@
           Since the membership inheritance rules show the relationships
           between every possible combination of single and group entities
           times the number of states times 2 (for negative facts), we have:
- 
+
           \begin{vquote}
             $|{\cal F}_{inh_{mem}}|$ $=$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{ss}|$ $|{\cal E}_{sg}|$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{as}|$ $|{\cal E}_{ag}|$ $|{\cal E}_{o}|$ $+$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{os}|$ $|{\cal E}_{og}|$
           \end{vquote}
- 
+
           For subset inheritance rules, only the relationships between group
           entities are considered:
- 
+
           \begin{vquote}
             $|{\cal F}_{inh_{sub}}|$ $=$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{sg}|^{2}$ $|{\cal E}_{a}|$ $|{\cal E}_{o}|$ $+$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{ag}|^{2}$ $|{\cal E}_{o}|$ $+$
- 
+
             \hspace{1em}
             $2$ $|\psi|$ $|{\cal E}_{s}|$ $|{\cal E}_{a}|$ $|{\cal E}_{og}|^{2}$
           \end{vquote}
- 
+
           As transitivity rules enumerate every possible combinations of any
           three group entities, for each entity type, the total number of
           transitivity rules is shown below:
- 
+
           \begin{vquote}
             $|{\cal F}_{tra}|$ $=$
             $|\psi|$
             ($|{\cal E}_{sg}|^{3}$ $+$ $|{\cal E}_{ag}|^{3}$ $+$ $|{\cal E}_{og}|^{3}$)
           \end{vquote}
- 
+
           A single atom in language ${\cal L}$ corresponds to $n$ inertial
           rules in language ${\cal L}^{*}$, where $n$ is the number of states
           times 2 (for negative facts). This means the total number of
           inertial rules generated is:
- 
+
           \begin{vquote}
             $|{\cal F}_{ine}|$ $=$ $2$ $|\psi|$ $|{\cal A}|$
           \end{vquote}
- 
+
           Lastly, the total number of reflexivity rules is equal to the total
           number of group entities times the number of states:
- 
+
           \begin{vquote}
             $|{\cal F}_{ref}|$ $=$
             $|\psi|$
@@ -2168,7 +2168,7 @@
     \section{Domain Consistency and Query Evaluation}
       \label{sect-langl-consi}
 
-      A domain description of language ${\cal L}$ must be consistent in order 
+      A domain description of language ${\cal L}$ must be consistent in order
       to generate a consistent answer set for the evaluation of queries. This
       section considers two issues: the problem of identifying whether a given
       domain description is consistent, and how query evaluation is performed
@@ -2194,7 +2194,7 @@
     with absence \(\rho\sb{6\sb{0}}\), \(\ldots\), \(\rho\sb{6\sb{n\sb{6}}}\), \(!\)\(\rho\sb{7\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{7\sb{n\sb{7}}}\);
 
   update \(u\)()
-    causes \(\rho\sb{8\sb{0}}\), \(\ldots\), \(\rho\sb{8\sb{n\sb{8}}}\), \(!\)\(\rho\sb{9\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{9\sb{n\sb{9}}}\) 
+    causes \(\rho\sb{8\sb{0}}\), \(\ldots\), \(\rho\sb{8\sb{n\sb{8}}}\), \(!\)\(\rho\sb{9\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{9\sb{n\sb{9}}}\)
     if \(\rho\sb{10\sb{0}}\), \(\ldots\), \(\rho\sb{10\sb{n\sb{10}}}\), \(!\)\(\rho\sb{11\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{11\sb{n\sb{11}}}\);
       \end{vverbatim}
 
@@ -2207,41 +2207,41 @@
       \begin{vquote}
         ${\cal F}^{+}_{int}$($\gamma_{int}$) $=$
           \{$\rho_{0_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_0$\}
- 
+
         ${\cal F}^{-}_{int}$($\gamma_{int}$) $=$
           \{$\rho_{1_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_1$\}
- 
+
         ${\cal F}^{+}_{con}$($\gamma_{upd}$) $=$
           \{$\rho_{2_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_2$\}
- 
+
         ${\cal F}^{-}_{con}$($\gamma_{upd}$) $=$
           \{$\rho_{3_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_3$\}
- 
+
         ${\cal F}^{+}_{upd}$($\gamma_{con}$) $=$
           \{$\rho_{4_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_4$\}
- 
+
         ${\cal F}^{-}_{upd}$($\gamma_{con}$) $=$
           \{$\rho_{5_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_5$\}
       \end{vquote}
- 
+
       Using these functions, we define the following sets of ground facts:
- 
+
       \begin{vquote}
         ${\cal F}^{+}_{int}$ $=$
         \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{int}$($\gamma_{int}$), $\gamma_{int}$ $\in$ ${\cal D}_{\cal L}$\}
- 
+
         ${\cal F}^{-}_{int}$ $=$
         \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{int}$($\gamma_{int}$), $\gamma_{int}$ $\in$ ${\cal D}_{\cal L}$\}
- 
+
         ${\cal F}^{+}_{con}$ $=$
         \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{con}$($\gamma_{con}$), $\gamma_{con}$ $\in$ ${\cal D}_{\cal L}$\}
- 
+
         ${\cal F}^{-}_{con}$ $=$
         \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{con}$($\gamma_{con}$), $\gamma_{con}$ $\in$ ${\cal D}_{\cal L}$\}
- 
+
         ${\cal F}^{+}_{upd}$ $=$
         \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{+}_{upd}$($\gamma_{upd}$), $\gamma_{upd}$ $\in$ ${\cal D}_{\cal L}$\}
- 
+
         ${\cal F}^{-}_{upd}$ $=$
         \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{upd}$($\gamma_{upd}$), $\gamma_{upd}$ $\in$ ${\cal D}_{\cal L}$\}
       \end{vquote}
@@ -2351,9 +2351,9 @@
           $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
           $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
           $\overline{{\cal F}^{-}_{upd}}$\}
-  
+
           implies
-  
+
           $\rho'$ $\not\in$ \{${\cal F}^{+}_{int}$ $\cup$
           $\overline{{\cal F}^{-}_{int}}$ $\cup$ ${\cal F}^{+}_{con}$ $\cup$
           $\overline{{\cal F}^{-}_{con}}$ $\cup$ ${\cal F}^{+}_{upd}$ $\cup$
@@ -2511,32 +2511,32 @@
         query expression $\phi$ and a finite sequence list $\psi$, we say
         {\em query $\phi$ holds in ${\cal D}_{\cal L}$ after the policy updates
         in sequence list $\psi$ have been applied}, denoted as
- 
+
         \begin{vquote}
           ${\cal D}_{\cal L}$ $\models$ \{$\phi$, $\psi$\}
         \end{vquote}
- 
+
         \noindent
         if and only if
- 
+
         \begin{vquote}
           $\forall$ ($\rho$, $\lambda$),
           $\hat{\rho}$ $\in$ $\lambda$
- 
+
         \end{vquote}
- 
+
         \begin{vquote}
           where
- 
+
           \hspace{1em}
           $\rho$ $\in$ $\phi$,
 
           \hspace{1em}
           $\lambda$ $\in$ $\Lambda$,
- 
+
           \hspace{1em}
           $\hat{\rho}$ $=$ $TransFact$($\rho$, $S_{|\psi|}$),
- 
+
           \hspace{1em}
           $\Lambda$ $=$ answer sets of $Trans$(${\cal D}_{\cal L}$)
         \end{vquote}
@@ -2558,7 +2558,7 @@
         \ref{exam-langl-seman}, where the update sequence list
         $\psi$ = \{$delete\_read$($grp_1$, $file$)\}. The following shows the
         evaluated results of each query $\phi$:
-        
+
         \begin{vquote}
           $\phi_{0}$ = $holds$($grp_1$, $write$, $file$) : $TRUE$
 
@@ -2691,15 +2691,15 @@
                 \textbf{Field} & \textbf{Type}  & \textbf{Description} \\
                 \hline
                 $ss$           & string list    & single subject \\
-                \hline                          
+                \hline
                 $sg$           & string list    & group subject \\
-                \hline                          
+                \hline
                 $as$           & string list    & single access right \\
-                \hline                          
+                \hline
                 $ag$           & string list    & group access right \\
-                \hline                          
+                \hline
                 $os$           & string list    & single object \\
-                \hline                          
+                \hline
                 $og$           & string list    & group object \\
                 \hline
               \end{tabular}
@@ -2737,21 +2737,21 @@
                 \begin{tabular}[t]{|l|l|l|l|}
                   \hline
                   \textbf{Atom}             & \textbf{Field} & \textbf{Type}             & \textbf{Description} \\
-                  \hline                                                                 
+                  \hline
                   {\multirow{3}{*}{holds}}  & $sub$          & string                    & subject entity \\
-                  \cline{2-4}                                                            
+                  \cline{2-4}
                                             & $acc$          & string                    & access right entity \\
-                  \cline{2-4}                                                            
+                  \cline{2-4}
                                             & $obj$          & string                    & object entity \\
-                  \hline                                                                 
+                  \hline
                   {\multirow{3}{*}{member}} & $elt$          & string                    & single entity \\
-                  \cline{2-4}                                                            
+                  \cline{2-4}
                                             & $grp$          & string                    & group entity \\
                   \cline{2-4}
                                             & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
-                  \hline                                                     
+                  \hline
                   {\multirow{3}{*}{subset}} & $grp_0$        & string                    & subgroup entity \\
-                  \cline{2-4}                                                            
+                  \cline{2-4}
                                             & $grp_1$        & string                    & supergroup entity \\
                   \cline{2-4}
                                             & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
@@ -3095,7 +3095,7 @@ ENDFUNCTION
             \item
               $RuleHead$($\alpha$) generates the consequent of the rule.
               $\alpha$ is a numeric representation of an atom (e.g. returned by
-              the $Encode$() function). 
+              the $Encode$() function).
             \item
               $RuleBody$($\alpha$, $\tau$) generates the premise of the rule.
               $\alpha$ is an atom in numeric form like that of $RuleHead$().
@@ -3655,11 +3655,11 @@ ENDFUNCTION
       PolicyUpdater system can be demonstrated by a web server authorisation
       application. In this application, the core PolicyUpdater system serves as
       an authorisation module for the {\em Apache}\footnotemark web server.
-      
+
       \footnotetext{
         Apache Web Server ({\tt \scriptsize http://www.apache.org})
       }
-      
+
       The Apache web server provides a generic access control system as
       provided by its {\em mod\_auth} and {\em mod\_access} modules
       \cite{AP,LAU}. With this built-in access control system, Apache provides
@@ -3669,7 +3669,7 @@ ENDFUNCTION
       full functionality of Apache's built-in authorisation module
       {\em mod\_auth}, it does provide a flexible logic-based authorisation
       mechanism.
-      
+
       As shown in Figure \ref{figu-polup-modul}, Apache's Access Control
       module, together with its policy base, is replaced by the PolicyUpdater
       module and its own policy base. The sole purpose of the PolicyUpdater
@@ -3679,7 +3679,7 @@ ENDFUNCTION
       system by sending the policy base. When a client makes an arbitrary
       HTTP request for a resource from the server (1), the client (user) is
       authenticated against the password table by the built-in authentication
-      module; once the client is properly authenticated (2) the request is 
+      module; once the client is properly authenticated (2) the request is
       transferred to the PolicyUpdater module, which in turn generates a
       language ${\cal L}$ query (3) from the request details, then sends the
       query to the core PolicyUpdater system for evaluation; if the query is
@@ -3707,7 +3707,7 @@ ENDFUNCTION
         language ${\cal L}$ except for the lack of entity identifier
         definitions. Entity identifiers need not be explicitly defined in
         the policy definition:
-    
+
         \begin{itemize}
           \item
             {\em Subjects} of the authorisation policies are the users. Since
@@ -3724,7 +3724,7 @@ ENDFUNCTION
             files, each of these are mapped as a unique object of language
             ${\cal L'}$.
         \end{itemize}
-    
+
         Like language ${\cal L}$, language ${\cal L'}$ allows the definition of
         initial state facts, constraint rules and policy update definitions.
 
@@ -3753,7 +3753,7 @@ ENDFUNCTION
             that state that each file (object) is a member of the directory
             (object group) in which it is contained.
         \end{itemize}
-       
+
         All other language ${\cal L'}$ statements (initial state declarations,
         constraint declarations and policy update declarations) are already in
         language ${\cal L}$ form.
@@ -3766,25 +3766,25 @@ ENDFUNCTION
          \begin{quote}
            $<$$usr$, $req\_meth$, $req\_res$$>$
          \end{quote}
-   
+
          $usr$ is the authenticated username that made the request (subject);
          $req\_meth$ is a standard HTTP request method (access right); and
          $req\_res$ is the resource associated with the request (object).
          Intuitively, such a tuple may be expressed as a language ${\cal L}$
          atom:
-   
+
          \begin{vverbatim}
  holds(usr, req\_meth, req\_res)
          \end{vverbatim}
-   
+
          With each request expressed as language ${\cal L}$ atoms, a language
          ${\cal L}$ query statement can be composed to check if the request is
          to be honoured:
-   
+
          \begin{vverbatim}
  query holds(usr, req\_meth, req\_res);
          \end{vverbatim}
-   
+
          Once the query statement is composed, it is then sent by the
          PolicyUpdater module to the core PolicyUpdater system for evaluation
          against the policy base.
@@ -4694,7 +4694,7 @@ ENDFUNCTION
                     additional time interval sort. As it occupies a different
                     name space from the other sorts, interval identifiers share
                     the same syntax.
-      
+
                   \item
                     {\em Policy Update Identifiers.}
                     These identifiers are used as labels to name policy
@@ -6986,7 +6986,7 @@ ENDFUNCTION
       used to translate langauge ${\cal L^{T^*}}$ into a normal logic program
       for query evaluation. However, one outstanding issue remains for langauge
       ${\cal L^T}$: domain consistency.
-      
+
       A language ${\cal L^T}$ domain description ${\cal D}_{\cal L^T}$ without
       any variable occurences (and therefore without any {\em where} clauses)
       may be represented as the following statements:
@@ -7001,7 +7001,7 @@ ENDFUNCTION
     with absence \(\rho\sb{6\sb{0}}\), \(\ldots\), \(\rho\sb{6\sb{n\sb{6}}}\), \(!\)\(\rho\sb{7\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{7\sb{n\sb{7}}}\);
 
   update \(u\)()
-    causes \(\rho\sb{8\sb{0}}\), \(\ldots\), \(\rho\sb{8\sb{n\sb{8}}}\), \(!\)\(\rho\sb{9\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{9\sb{n\sb{9}}}\) 
+    causes \(\rho\sb{8\sb{0}}\), \(\ldots\), \(\rho\sb{8\sb{n\sb{8}}}\), \(!\)\(\rho\sb{9\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{9\sb{n\sb{9}}}\)
     if \(\rho\sb{10\sb{0}}\), \(\ldots\), \(\rho\sb{10\sb{n\sb{10}}}\), \(!\)\(\rho\sb{11\sb{0}}\), \(\ldots\), \(!\)\(\rho\sb{11\sb{n\sb{11}}}\);
       \end{vverbatim}
 
@@ -7220,23 +7220,23 @@ ENDFUNCTION
                 {\bf Relation} & {\bf Symbol} & {\bf Value} & {\bf Bit Value} \\
                 \hline
                 Equals        & EQL &    1 &  0 \\
-                \hline                        
+                \hline
                 Before        & BEF &    2 &  1 \\
-                \hline                        
+                \hline
                 During        & DUR &    4 &  2 \\
-                \hline                        
+                \hline
                 Overlaps      & OVR &    8 &  3 \\
-                \hline                        
+                \hline
                 Meets         & MET &   16 &  4 \\
-                \hline                        
+                \hline
                 Starts        & STA &   32 &  5 \\
-                \hline                        
+                \hline
                 Finishes      & FIN &   64 &  6 \\
-                \hline                        
+                \hline
                 After         & BEI &  128 &  7 \\
-                \hline                        
+                \hline
                 Contains      & DUI &  256 &  8 \\
-                \hline                        
+                \hline
                 Overlapped By & OVI &  512 &  9 \\
                 \hline
                 Met By        & MEI & 1024 & 10 \\
@@ -7268,7 +7268,7 @@ ENDFUNCTION
               \begin{vquote}
                 $RS_0$ $\cup$ $RS_1$ $=$ $RS_0$ $|$ $RS_1$
               \end{vquote}
-  
+
             \item
               Intersection
               \begin{vquote}
@@ -7391,9 +7391,9 @@ ENDFUNCTION
           \begin{valgorithm}[tbhp]{NormaliseRel()}{algo-impln-norml}
 FUNCTION \(NormaliseRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
-    RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\)) 
+    RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   ELSE
-    RETURN (\(\iota\sb{1}\), \(\iota\sb{0}\), \(rs\sp{-1}\)) 
+    RETURN (\(\iota\sb{1}\), \(\iota\sb{0}\), \(rs\sp{-1}\))
   ENDIF
 ENDFUNCTION
           \end{valgorithm}
@@ -7414,27 +7414,27 @@ ENDFUNCTION
               \begin{tabular}[t]{|l|l|l|l|}
                 \hline
                 \textbf{Atom}             & \textbf{Field} & \textbf{Type}             & \textbf{Description} \\
-                \hline                                                                 
+                \hline
                 {\multirow{3}{*}{holds}}  & $sub$          & string                    & subject entity \\
-                \cline{2-4}                                                            
+                \cline{2-4}
                                           & $acc$          & string                    & access right entity \\
-                \cline{2-4}                                                            
+                \cline{2-4}
                                           & $obj$          & string                    & object entity \\
-                \cline{2-4}                                                            
+                \cline{2-4}
                                           & $int$          & string                    & interval \\
-                \hline                                                                 
+                \hline
                 {\multirow{4}{*}{member}} & $elt$          & string                    & single entity \\
-                \cline{2-4}                                                            
+                \cline{2-4}
                                           & $grp$          & string                    & group entity \\
-                \cline{2-4}                                                            
+                \cline{2-4}
                                           & $int$          & string                    & interval \\
                 \cline{2-4}
                                           & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
-                \hline                                                     
+                \hline
                 {\multirow{4}{*}{subset}} & $grp_0$        & string                    & subgroup entity \\
-                \cline{2-4}                                                            
+                \cline{2-4}
                                           & $grp_1$        & string                    & supergroup entity \\
-                \cline{2-4}                                                            
+                \cline{2-4}
                                           & $int$          & string                    & interval \\
                 \cline{2-4}
                                           & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
@@ -7538,10 +7538,10 @@ ENDFUNCTION
 
           $3$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_1$, $false$)
         \end{vquote}
-        
+
         Obviously, a consistent mapping between these integers and these
         facts are needed, and a systematic representation of facts is
-        required to achieve and maintain this consistent mapping. Table 
+        required to achieve and maintain this consistent mapping. Table
         \ref{tabl-impln-ftabl} shows a conceptual systematic arrangement of
         facts using the symbol table $\theta$ shown in
         \ref{tabl-impln-symtb}.
@@ -7567,7 +7567,7 @@ ENDFUNCTION
               } &
               $\theta$.$s$[$0$] &
               $\theta$.$a$[$0$] &
-              $\theta$.$o$[$0$] & 
+              $\theta$.$o$[$0$] &
               $\theta$.$int$[$0$] \\
               % holds line 2
               \multicolumn{2}{|c|}{} &
@@ -7579,7 +7579,7 @@ ENDFUNCTION
               \multicolumn{2}{|c|}{} &
               $\theta$.$s$[$|\theta$.$s|$-$1$] &
               $\theta$.$a$[$|\theta$.$a|$-$1$] &
-              $\theta$.$o$[$|\theta$.$o|$-$1$] & 
+              $\theta$.$o$[$|\theta$.$o|$-$1$] &
               $\theta$.$int$[$|\theta$.$int|$-$1$] \\
               \hline
               % sub memb line 1
@@ -7811,7 +7811,7 @@ ENDFUNCTION
         \end{vquote}
 
         \begin{vquote}
-          $Tot_H$ $=$ 
+          $Tot_H$ $=$
             $|$$\theta$.$s$$|$ $\times$
             $|$$\theta$.$a$$|$ $\times$
             $|$$\theta$.$o$$|$ $\times$
@@ -7972,10 +7972,10 @@ FUNCTION \(Offset_Holds\)(\(sub\), \(acc\), \(obj\), \(int\))
     \(int\)
 ENDFUNCTION
         \end{valgorithm}
- 
+
         The calculation of the offset for member atoms as shown in Algorithm
          \ref{algo-impln-offme} uses a similar method, except each type
-        (subject, access right and object) is handled in a different way. 
+        (subject, access right and object) is handled in a different way.
         Firstly, the access right index is offset by the total number of
         subject member atoms ($|$$\theta$.$ss$$|$ $\cdot$ $|$$\theta$.$sg$$|$
         $\cdot$ $|$$\theta$.$int$). The index for member atoms of type object
@@ -7984,7 +7984,7 @@ ENDFUNCTION
         $\cdot$ $|$$\theta$.$int$$|$ $+$ $|$$\theta$.$as$$|$ $\cdot$
         $|$$\theta$.$ag$$|$ $\cdot$ $|$$\theta$.$int$). Furthermore, the
         index of all atoms of type member is offset by the total number of
-        holds atoms ($Tot_H$).         
+        holds atoms ($Tot_H$).
 
         \begin{valgorithm}[tbhp]{Offset\_Memb()}{algo-impln-offme}
 FUNCTION \(Offset_Memb\)(\(elt\), \(grp\), \(int\), \(type\))
@@ -8040,7 +8040,7 @@ FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
         (\(grp\sb{1}\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
         \(int\)
   ENDCASE
-    
+
   RETURN \(Tot\sb{H}\) \(+\) \(Tot\sb{M}\) \(+\) \(offset\)
 ENDFUNCTION
         \end{valgorithm}
@@ -8225,7 +8225,7 @@ ENDFUNCTION
           $\iota'$ is {\em equal}, is {\em during}, {\em starts} or
           {\em finishes} $\iota$. Algorithm \ref{algo-impln-gente} shows the
           $GenTempoRules$() function which generates these rules.
- 
+
           \begin{valgorithm}[tbhp]{GenTempoRules()}{algo-impln-gente}
 FUNCTION \(GenTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
   \(GenHldsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
@@ -8233,14 +8233,14 @@ FUNCTION \(GenTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
   \(GenSubsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
 ENDFUNCTION
           \end{valgorithm}
- 
+
           The $GenHldsTempoRules$() function shown in Algorithm
           \ref{algo-impln-ghdtr}, as the name implies, generates the temporal
           rules for {\em holds} atoms. The first loop goes through every policy
           update state while the next 3 loops goes through all defined
           entities. The fifth and sixth loop goes through all possible pairs
           of intervals defined in the symbol table.
- 
+
           Inside these loops, the relation between the interval pair is
           retrieved from the interval network structure. The if-statement
           ensures that one interval is "within" the other. The number $101$ is
@@ -8251,7 +8251,7 @@ ENDFUNCTION
           {\em during}, {\em starts}, {\em finishes}\}, the holds temporal
           rules are generated. A similar method is used for the other two
           functions $GenMembTempoRules$() and $GenSubsTempoRules$().
- 
+
           \begin{valgorithm}[tbhp]{GenHldsTempoRules()}{algo-impln-ghdtr}
 FUNCTION \(GenHldsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
@@ -8319,14 +8319,14 @@ FUNCTION \(TransConstRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
         FOR \(k\) = \(0\) TO \(|\theta|\) DO
           FOR \(l\) = \(0\) TO \(|\epsilon\sb{0}|\) DO
             \(SM\).\(RuleBegin\)()
-            \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atm\), \(k\), \(\epsilon\sb{0}\)[\(l\)].\(tr\)) 
+            \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atm\), \(k\), \(\epsilon\sb{0}\)[\(l\)].\(tr\))
             \(SM\).\(RuleHead\)(\(\alpha\))
             FOR \(m\) = \(0\) TO \(|\epsilon\sb{1}|\) DO
-              \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(m\)].\(atm\), \(k\), \(\epsilon\sb{1}\)[\(m\)].\(tr\)) 
+              \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(m\)].\(atm\), \(k\), \(\epsilon\sb{1}\)[\(m\)].\(tr\))
               \(SM\).\(RuleBody\)(\(\alpha\), \(true\))
             ENDDO
             FOR \(n\) = \(0\) TO \(|\epsilon\sb{2}|\) DO
-              \(\alpha\) = \(Encode\)(\(\epsilon\sb{2}\)[\(n\)].\(atm\), \(k\), \(\epsilon\sb{2}\)[\(n\)].\(tr\)) 
+              \(\alpha\) = \(Encode\)(\(\epsilon\sb{2}\)[\(n\)].\(atm\), \(k\), \(\epsilon\sb{2}\)[\(n\)].\(tr\))
               \(SM\).\(RuleBody\)(\(\alpha\), \(false\))
             ENDDO
             \(SM\).\(RuleEnd\)()
@@ -8374,7 +8374,7 @@ FUNCTION \(TransUpdateRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
 ENDFUNCTION
           \end{valgorithm}
 
-    \section{Discussions} 
+    \section{Discussions}
       \label{sect-impln-discu}
 
   \chapter{Conclusion}
