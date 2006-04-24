@@ -7104,9 +7104,6 @@ ENDFUNCTION
   \chapter{Implementation Issues}
     \label{chap-impln}
 
-    \section{Introduction}
-      \label{sect-impln-intro}
-
     \section{System Structure}
       \label{sect-impln-sysst}
 
@@ -7387,9 +7384,9 @@ ENDFUNCTION
           sorted alphabetically. For example, if $\iota_0$ is $morning$ and
           $\iota_1$ is $evening$, then the relation $rs$ would be stored
           in the node containing $\iota_1$, since $evening$ is alphabetically
-          before $morning$. To enforce this rule, we use the function shown in
-          Algorithm \ref{algo-impln-norml} before adding a relation to the
-          network:
+          before $morning$. To enforce this rule, we use the function shown
+          in Algorithm \ref{algo-impln-norml} before adding a relation to the
+          network.
 
           \begin{valgorithm}[tbhp]{NormaliseRel()}{algo-impln-norml}
 FUNCTION \(NormaliseRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
@@ -7485,411 +7482,430 @@ ENDFUNCTION
       \subsection{Grounding of Variables}
         \label{subs-impln-grndg}
 
-      \subsection{Translation to Normal Logic Program}
-        \label{subs-impln-trans}
+        \begin{itemize}
+          \item
+            $GetVList$($\epsilon$)
 
-        The method used for translating a language ${\cal L^T}$ domain
-        into a normal logic program is similar to the language ${\cal L}$
-        domain translation discussed in Section \ref{subs-polup-norlp}.
-        Obviously, translation of a language ${\cal L^T}$ domain requires
-        extra mechanisms to handle temporal intervals. In this section, focus
-        shall be given to these extensions in a more implementation oriented
-        approach.
+            The function returns a list of variable identifiers that occur
+            in the expression $\epsilon$.
 
-        \subsubsection{Encode() Function Revisited}
+          \item
+            $GenTupleList$($vlist$)
 
-          Recall that the $Encode$() function first introduced in Section
-          \ref{subs-polup-norlp} takes as input an atom $\alpha$, a state
-          $\sigma$ and a boolean term $\tau$ to indicate whether the fact is
-          classically negated or not, and returns a positive integer $i$
-          unique to these parameters:
+            Given a list of variables $vlist$, the function returns a list of
+            tuples. Each tuple in this list contains entities and intervals
+            of the same type as the corresponding variable in $vlist$.
 
-          \begin{vquote}
-            $i$ $=$ $Encode$($\alpha$, $\sigma$, $\tau$)
-          \end{vquote}
+          \item
+            $CheckTuple$($tuple$, $rlist$, $NET$)
 
-          For example, given the fact $holds$($alice$, $exec$, $file$,
-          $today$) which holds at state $S_0$ may be assigned the integer
-          $0$ by the $Encode$ function. Similarly, the negation of the fact
-          may be assigned the integer $1$, and so on:
+            The function returns $true$ if the intervals in $tuple$ satisfy
+            the interval relations specified in $rlist$.
 
-          \begin{vquote}
-            $0$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_0$, $true$)
+          \item
+            $Replace$($vlist$, $tuple$, $\epsilon$)
 
-            $1$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_0$, $false$)
+            Given a list of variables $vlist$, a list of entities and
+            intervals $tuple$ and an expression $\epsilon$, the function
+            returns the expression $\epsilon$ with all variables in $vlist$
+            replaced by corresponding entities and intervals from $tuple$.
+        \end{itemize}
 
-            $2$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_1$, $true$)
+      \subsection{Encoding Atoms}
+        \label{subs-impln-encod}
 
-            $3$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_1$, $false$)
-          \end{vquote}
-          
-          Obviously, a consistent mapping between these integers and these
-          facts are needed, and a systematic representation of facts is
-          required to achieve and maintain this consistent mapping. Table 
-          \ref{tabl-impln-ftabl} shows a conceptual systematic arrangement of
-          facts using the symbol table $\theta$ shown in
-          \ref{tabl-impln-symtb}.
+        Recall that the $Encode$() function first introduced in Section
+        \ref{subs-polup-norlp} takes as input an atom $\alpha$, a state
+        $\sigma$ and a boolean term $\tau$ to indicate whether the fact is
+        classically negated or not, and returns a positive integer $i$
+        unique to these parameters:
 
-          \begin{table}[tbhp]
-            \begin{center}
-              \begin{tabular}[t]{|l|l|l|l|l|l|}
-                \hline
-                % head
-                \multicolumn{2}{|l|}{\textbf{}} &
-                \textbf{Entity 1} &
-                \textbf{Entity 2} &
-                \textbf{Entity 3} &
-                \textbf{Interval} \\
-                \hline
-                % holds line 1
-                \multicolumn{2}{|c|}{
-                  \multirow{3}{*}{
-                    \begin{sideways}
-                      \textbf{Holds}
-                    \end{sideways}
-                  }
-                } &
-                $\theta$.$s$[$0$] &
-                $\theta$.$a$[$0$] &
-                $\theta$.$o$[$0$] & 
-                $\theta$.$int$[$0$] \\
-                % holds line 2
-                \multicolumn{2}{|c|}{} &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots \\
-                % holds line 3
-                \multicolumn{2}{|c|}{} &
-                $\theta$.$s$[$|\theta$.$s|$-$1$] &
-                $\theta$.$a$[$|\theta$.$a|$-$1$] &
-                $\theta$.$o$[$|\theta$.$o|$-$1$] & 
-                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
-                \hline
-                % sub memb line 1
+        \begin{vquote}
+          $i$ $=$ $Encode$($\alpha$, $\sigma$, $\tau$)
+        \end{vquote}
+
+        For example, given the fact $holds$($alice$, $exec$, $file$,
+        $today$) which holds at state $S_0$ may be assigned the integer
+        $0$ by the $Encode$ function. Similarly, the negation of the fact
+        may be assigned the integer $1$, and so on:
+
+        \begin{vquote}
+          $0$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_0$, $true$)
+
+          $1$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_0$, $false$)
+
+          $2$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_1$, $true$)
+
+          $3$ $=$ $Encode$($holds$($alice$, $exec$, $file$, $today$), $S_1$, $false$)
+        \end{vquote}
+        
+        Obviously, a consistent mapping between these integers and these
+        facts are needed, and a systematic representation of facts is
+        required to achieve and maintain this consistent mapping. Table 
+        \ref{tabl-impln-ftabl} shows a conceptual systematic arrangement of
+        facts using the symbol table $\theta$ shown in
+        \ref{tabl-impln-symtb}.
+
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|l|l|l|}
+              \hline
+              % head
+              \multicolumn{2}{|l|}{\textbf{}} &
+              \textbf{Entity 1} &
+              \textbf{Entity 2} &
+              \textbf{Entity 3} &
+              \textbf{Interval} \\
+              \hline
+              % holds line 1
+              \multicolumn{2}{|c|}{
                 \multirow{3}{*}{
                   \begin{sideways}
-                    \textbf{Sub}
+                    \textbf{Holds}
                   \end{sideways}
-                } &
-                \multirow{9}{*}{
-                  \begin{sideways}
-                    \textbf{Member}
-                  \end{sideways}
-                } &
-                $\theta$.$ss$[$0$] &
-                $\theta$.$sg$[$0$] &
-                &
-                $\theta$.$int$[$0$] \\
-                % sub memb line 2
-                &
-                &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots &
-                &
-                \hspace{1em}\vdots \\
-                % sub memb line 3
-                &
-                &
-                $\theta$.$ss$[$|\theta$.$ss|$-$1$] &
-                $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
-                &
-                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
-                \cline{1-1}\cline{3-6}
-                % acc memb line 1
-                \multirow{3}{*}{
-                  \begin{sideways}
-                    \textbf{Acc}
-                  \end{sideways}
-                } &
-                &
-                $\theta$.$as$[$0$] &
-                $\theta$.$ag$[$0$] &
-                &
-                $\theta$.$int$[$0$] \\
-                % acc memb line 2
-                &
-                &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots &
-                &
-                \hspace{1em}\vdots \\
-                % acc memb line 3
-                &
-                &
-                $\theta$.$as$[$|\theta$.$as|$-$1$] &
-                $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
-                &
-                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
-                \cline{1-1}\cline{3-6}
-                % obj memb line 1
-                \multirow{3}{*}{
-                  \begin{sideways}
-                    \textbf{Obj}
-                  \end{sideways}
-                } &
-                &
-                $\theta$.$os$[$0$] &
-                $\theta$.$og$[$0$] &
-                &
-                $\theta$.$int$[$0$] \\
-                % obj memb line 2
-                &
-                &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots &
-                &
-                \hspace{1em}\vdots \\
-                % obj memb line 3
-                &
-                &
-                $\theta$.$os$[$|\theta$.$os|$-$1$] &
-                $\theta$.$og$[$|\theta$.$og|$-$1$] &
-                &
-                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
-                \hline
-                % sub subst line 1
-                \multirow{3}{*}{
-                  \begin{sideways}
-                    \textbf{Sub}
-                  \end{sideways}
-                } &
-                \multirow{9}{*}{
-                  \begin{sideways}
-                    \textbf{Subset}
-                  \end{sideways}
-                } &
-                $\theta$.$sg$[$0$] &
-                $\theta$.$sg$[$0$] &
-                &
-                $\theta$.$int$[$0$] \\
-                % sub subst line 2
-                &
-                &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots &
-                &
-                \hspace{1em}\vdots \\
-                % sub subst line 3
-                &
-                &
-                $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
-                $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
-                &
-                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
-                \cline{1-1}\cline{3-6}
-                % acc subst line 1
-                \multirow{3}{*}{
-                  \begin{sideways}
-                    \textbf{Acc}
-                  \end{sideways}
-                } &
-                &
-                $\theta$.$ag$[$0$] &
-                $\theta$.$ag$[$0$] &
-                &
-                $\theta$.$int$[$0$] \\
-                % acc subst line 2
-                &
-                &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots &
-                &
-                \hspace{1em}\vdots \\
-                % acc subst line 3
-                &
-                &
-                $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
-                $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
-                &
-                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
-                \cline{1-1}\cline{3-6}
-                % obj subst line 1
-                \multirow{3}{*}{
-                  \begin{sideways}
-                    \textbf{Obj}
-                  \end{sideways}
-                } &
-                &
-                $\theta$.$og$[$0$] &
-                $\theta$.$og$[$0$] &
-                &
-                $\theta$.$int$[$0$] \\
-                % obj subst line 2
-                &
-                &
-                \hspace{1em}\vdots &
-                \hspace{1em}\vdots &
-                &
-                \hspace{1em}\vdots \\
-                % obj subst line 3
-                &
-                &
-                $\theta$.$og$[$|\theta$.$og|$-$1$] &
-                $\theta$.$og$[$|\theta$.$og|$-$1$] &
-                &
-                $\theta$.$int$[$|\theta$.$int|$-$1$] \\
-                \hline
-              \end{tabular}
-            \end{center}
-            \caption{Conceptual Arrangement of Facts}
-            \label{tabl-impln-ftabl}
-          \end{table}
+                }
+              } &
+              $\theta$.$s$[$0$] &
+              $\theta$.$a$[$0$] &
+              $\theta$.$o$[$0$] & 
+              $\theta$.$int$[$0$] \\
+              % holds line 2
+              \multicolumn{2}{|c|}{} &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots \\
+              % holds line 3
+              \multicolumn{2}{|c|}{} &
+              $\theta$.$s$[$|\theta$.$s|$-$1$] &
+              $\theta$.$a$[$|\theta$.$a|$-$1$] &
+              $\theta$.$o$[$|\theta$.$o|$-$1$] & 
+              $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+              \hline
+              % sub memb line 1
+              \multirow{3}{*}{
+                \begin{sideways}
+                  \textbf{Sub}
+                \end{sideways}
+              } &
+              \multirow{9}{*}{
+                \begin{sideways}
+                  \textbf{Member}
+                \end{sideways}
+              } &
+              $\theta$.$ss$[$0$] &
+              $\theta$.$sg$[$0$] &
+              &
+              $\theta$.$int$[$0$] \\
+              % sub memb line 2
+              &
+              &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots &
+              &
+              \hspace{1em}\vdots \\
+              % sub memb line 3
+              &
+              &
+              $\theta$.$ss$[$|\theta$.$ss|$-$1$] &
+              $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
+              &
+              $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+              \cline{1-1}\cline{3-6}
+              % acc memb line 1
+              \multirow{3}{*}{
+                \begin{sideways}
+                  \textbf{Acc}
+                \end{sideways}
+              } &
+              &
+              $\theta$.$as$[$0$] &
+              $\theta$.$ag$[$0$] &
+              &
+              $\theta$.$int$[$0$] \\
+              % acc memb line 2
+              &
+              &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots &
+              &
+              \hspace{1em}\vdots \\
+              % acc memb line 3
+              &
+              &
+              $\theta$.$as$[$|\theta$.$as|$-$1$] &
+              $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
+              &
+              $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+              \cline{1-1}\cline{3-6}
+              % obj memb line 1
+              \multirow{3}{*}{
+                \begin{sideways}
+                  \textbf{Obj}
+                \end{sideways}
+              } &
+              &
+              $\theta$.$os$[$0$] &
+              $\theta$.$og$[$0$] &
+              &
+              $\theta$.$int$[$0$] \\
+              % obj memb line 2
+              &
+              &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots &
+              &
+              \hspace{1em}\vdots \\
+              % obj memb line 3
+              &
+              &
+              $\theta$.$os$[$|\theta$.$os|$-$1$] &
+              $\theta$.$og$[$|\theta$.$og|$-$1$] &
+              &
+              $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+              \hline
+              % sub subst line 1
+              \multirow{3}{*}{
+                \begin{sideways}
+                  \textbf{Sub}
+                \end{sideways}
+              } &
+              \multirow{9}{*}{
+                \begin{sideways}
+                  \textbf{Subset}
+                \end{sideways}
+              } &
+              $\theta$.$sg$[$0$] &
+              $\theta$.$sg$[$0$] &
+              &
+              $\theta$.$int$[$0$] \\
+              % sub subst line 2
+              &
+              &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots &
+              &
+              \hspace{1em}\vdots \\
+              % sub subst line 3
+              &
+              &
+              $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
+              $\theta$.$sg$[$|\theta$.$sg|$-$1$] &
+              &
+              $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+              \cline{1-1}\cline{3-6}
+              % acc subst line 1
+              \multirow{3}{*}{
+                \begin{sideways}
+                  \textbf{Acc}
+                \end{sideways}
+              } &
+              &
+              $\theta$.$ag$[$0$] &
+              $\theta$.$ag$[$0$] &
+              &
+              $\theta$.$int$[$0$] \\
+              % acc subst line 2
+              &
+              &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots &
+              &
+              \hspace{1em}\vdots \\
+              % acc subst line 3
+              &
+              &
+              $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
+              $\theta$.$ag$[$|\theta$.$ag|$-$1$] &
+              &
+              $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+              \cline{1-1}\cline{3-6}
+              % obj subst line 1
+              \multirow{3}{*}{
+                \begin{sideways}
+                  \textbf{Obj}
+                \end{sideways}
+              } &
+              &
+              $\theta$.$og$[$0$] &
+              $\theta$.$og$[$0$] &
+              &
+              $\theta$.$int$[$0$] \\
+              % obj subst line 2
+              &
+              &
+              \hspace{1em}\vdots &
+              \hspace{1em}\vdots &
+              &
+              \hspace{1em}\vdots \\
+              % obj subst line 3
+              &
+              &
+              $\theta$.$og$[$|\theta$.$og|$-$1$] &
+              $\theta$.$og$[$|\theta$.$og|$-$1$] &
+              &
+              $\theta$.$int$[$|\theta$.$int|$-$1$] \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption{Conceptual Arrangement of Facts}
+          \label{tabl-impln-ftabl}
+        \end{table}
 
-          Table \ref{tabl-impln-ftabl} shows all the possible combinations of
-          all entity and interval identifiers defined in the symbol table to
-          form all possible facts in one state. Note that the order in which
-          the facts are enumerated may be used as an index for each fact. For
-          example, using the last single access right
-          $\theta$.$as$[$|$$\theta$.$as$$|$-$1$], the last group access
-          right $\theta$.$ag$[$|$$\theta$.$ag$$|$-$1$] and the last interval
-          $\theta$.$int$[$|$$\theta$.$int$$|$-$1$] from the symbol table,
-          we form the following fact:
+        Table \ref{tabl-impln-ftabl} shows all the possible combinations of
+        all entity and interval identifiers defined in the symbol table to
+        form all possible facts in one state. Note that the order in which
+        the facts are enumerated may be used as an index for each fact. For
+        example, using the last single access right
+        $\theta$.$as$[$|$$\theta$.$as$$|$-$1$], the last group access
+        right $\theta$.$ag$[$|$$\theta$.$ag$$|$-$1$] and the last interval
+        $\theta$.$int$[$|$$\theta$.$int$$|$-$1$] from the symbol table,
+        we form the following fact:
 
-          \begin{vquote}
-            $memb$($\theta$.$as$[$|$$\theta$.$as$$|$-$1$],
-              $\theta$.$ag$[$|$$\theta$.$ag$$|$-$1$],
-              $\theta$.$int$[$|$$\theta$.$int$$|$-$1$])
-          \end{vquote}
+        \begin{vquote}
+          $memb$($\theta$.$as$[$|$$\theta$.$as$$|$-$1$],
+            $\theta$.$ag$[$|$$\theta$.$ag$$|$-$1$],
+            $\theta$.$int$[$|$$\theta$.$int$$|$-$1$])
+        \end{vquote}
 
-          \noindent
-          The index of the fact above can be derived by considering the
-          enumerated order of this fact from Table \ref{tabl-impln-ftabl},
-          and the fixed order of the symbol table $\theta$:
+        \noindent
+        The index of the fact above can be derived by considering the
+        enumerated order of this fact from Table \ref{tabl-impln-ftabl},
+        and the fixed order of the symbol table $\theta$:
 
-          \begin{vquote}
-            (
-              $|$$\theta$.$s$$|$ $\times$
-              $|$$\theta$.$a$$|$ $\times$
-              $|$$\theta$.$o$$|$ $\times$
-              $|$$\theta$.$int$$|$
-            ) $+$
+        \begin{vquote}
+          (
+            $|$$\theta$.$s$$|$ $\times$
+            $|$$\theta$.$a$$|$ $\times$
+            $|$$\theta$.$o$$|$ $\times$
+            $|$$\theta$.$int$$|$
+          ) $+$
 
+          (
+            $|$$\theta$.$ss$$|$ $\times$
+            $|$$\theta$.$sg$$|$ $\times$
+            $|$$\theta$.$int$$|$
+          ) $+$
+
+          (
+            $|$$\theta$.$as$$|$ $\times$
+            $|$$\theta$.$ag$$|$ $\times$
+            $|$$\theta$.$int$$|$
+          ) $-$ $1$
+        \end{vquote}
+
+        Note that in Table \ref{tabl-impln-ftabl}, the indices of positive
+        member facts are offset by the total number of positive holds
+        facts ($|$$\theta$.$s$$|$ $\times$ $|$$\theta$.$a$$|$ $\times$
+        $|$$\theta$.$o$$|$ $\times$ $|$$\theta$.$int$$|$) and the indices of
+        positive access right member facts are offset by the total number of
+        positive holds facts plus the total number of positive subject
+        member facts ($|$$\theta$.$s$$|$ $\times$ $|$$\theta$.$a$$|$ $\times$
+        $|$$\theta$.$o$$|$ $\times$ $|$$\theta$.$int$$|$ $+$
+        $|$$\theta$.$ss$$|$ $\times$ $|$$\theta$.$sg$$|$ $\times$
+        $|$$\theta$.$int$$|$). For notational simplicity, we define the
+        following totals of atoms:
+
+        \begin{vquote}
+          $Tot_A$ $=$ $Tot_H$ $+$ $Tot_M$ $+$ $Tot_S$
+        \end{vquote}
+
+        \begin{vquote}
+          $Tot_H$ $=$ 
+            $|$$\theta$.$s$$|$ $\times$
+            $|$$\theta$.$a$$|$ $\times$
+            $|$$\theta$.$o$$|$ $\times$
+            $|$$\theta$.$int$$|$
+        \end{vquote}
+
+        \begin{vquote}
+          $Tot_M$ $=$
+
+            \hspace{1em}
             (
               $|$$\theta$.$ss$$|$ $\times$
               $|$$\theta$.$sg$$|$ $\times$
               $|$$\theta$.$int$$|$
             ) $+$
 
+            \hspace{1em}
             (
               $|$$\theta$.$as$$|$ $\times$
               $|$$\theta$.$ag$$|$ $\times$
               $|$$\theta$.$int$$|$
-            ) $-$ $1$
-          \end{vquote}
+            ) $+$
 
-          Note that in Table \ref{tabl-impln-ftabl}, the indices of positive
-          member facts are offset by the total number of positive holds
-          facts ($|$$\theta$.$s$$|$ $\times$ $|$$\theta$.$a$$|$ $\times$
-          $|$$\theta$.$o$$|$ $\times$ $|$$\theta$.$int$$|$) and the indices of
-          positive access right member facts are offset by the total number of
-          positive holds facts plus the total number of positive subject
-          member facts ($|$$\theta$.$s$$|$ $\times$ $|$$\theta$.$a$$|$ $\times$
-          $|$$\theta$.$o$$|$ $\times$ $|$$\theta$.$int$$|$ $+$
-          $|$$\theta$.$ss$$|$ $\times$ $|$$\theta$.$sg$$|$ $\times$
-          $|$$\theta$.$int$$|$). For notational simplicity, we define the
-          following totals of atoms:
-
-          \begin{vquote}
-            $Tot_A$ $=$ $Tot_H$ $+$ $Tot_M$ $+$ $Tot_S$
-          \end{vquote}
-
-          \begin{vquote}
-            $Tot_H$ $=$ 
-              $|$$\theta$.$s$$|$ $\times$
-              $|$$\theta$.$a$$|$ $\times$
-              $|$$\theta$.$o$$|$ $\times$
+            \hspace{1em}
+            (
+              $|$$\theta$.$os$$|$ $\times$
+              $|$$\theta$.$og$$|$ $\times$
               $|$$\theta$.$int$$|$
-          \end{vquote}
+            )
+        \end{vquote}
 
-          \begin{vquote}
-            $Tot_M$ $=$
+        \begin{vquote}
+          $Tot_S$ $=$
 
-              \hspace{1em}
-              (
-                $|$$\theta$.$ss$$|$ $\times$
-                $|$$\theta$.$sg$$|$ $\times$
-                $|$$\theta$.$int$$|$
-              ) $+$
+            \hspace{1em}
+            (
+              $|$$\theta$.$sg$$|$ $\times$
+              $|$$\theta$.$sg$$|$ $\times$
+              $|$$\theta$.$int$$|$
+            ) $+$
 
-              \hspace{1em}
-              (
-                $|$$\theta$.$as$$|$ $\times$
-                $|$$\theta$.$ag$$|$ $\times$
-                $|$$\theta$.$int$$|$
-              ) $+$
+            \hspace{1em}
+            (
+              $|$$\theta$.$ag$$|$ $\times$
+              $|$$\theta$.$ag$$|$ $\times$
+              $|$$\theta$.$int$$|$
+            ) $+$
 
-              \hspace{1em}
-              (
-                $|$$\theta$.$os$$|$ $\times$
-                $|$$\theta$.$og$$|$ $\times$
-                $|$$\theta$.$int$$|$
-              )
-          \end{vquote}
+            \hspace{1em}
+            (
+              $|$$\theta$.$og$$|$ $\times$
+              $|$$\theta$.$og$$|$ $\times$
+              $|$$\theta$.$int$$|$
+            )
+        \end{vquote}
 
-          \begin{vquote}
-            $Tot_S$ $=$
+        With the totals above defined, the offsetting procedure can be
+        extended to find the indices of both positive and negative facts. The
+        index of a negative fact is offset by $Tot_A$, the total number of
+        positive facts. For example, given the first negative subject subset
+        fact:
 
-              \hspace{1em}
-              (
-                $|$$\theta$.$sg$$|$ $\times$
-                $|$$\theta$.$sg$$|$ $\times$
-                $|$$\theta$.$int$$|$
-              ) $+$
+        \begin{vquote}
+          $\lnot$$subst$($\theta$.$sg$[$0$], $\theta$.$sg$[$0$], $\theta$.$int$[$0$])
+        \end{vquote}
 
-              \hspace{1em}
-              (
-                $|$$\theta$.$ag$$|$ $\times$
-                $|$$\theta$.$ag$$|$ $\times$
-                $|$$\theta$.$int$$|$
-              ) $+$
+        \noindent
+        The index of the above fact is:
 
-              \hspace{1em}
-              (
-                $|$$\theta$.$og$$|$ $\times$
-                $|$$\theta$.$og$$|$ $\times$
-                $|$$\theta$.$int$$|$
-              )
-          \end{vquote}
+        \begin{vquote}
+          $Tot_A$ $+$ $Tot_H$ $+$ $Tot_M$
+        \end{vquote}
 
-          With the totals above defined, the offsetting procedure can be
-          extended to find the indices of both positive and negative facts. The
-          index of a negative fact is offset by $Tot_A$, the total number of
-          positive facts. For example, given the first negative subject subset
-          fact:
+        So far, we have seen that this technique is effective in encoding
+        positive and negative facts in one state only. However, this
+        procedure can be further extended to assign indices to facts in
+        different states. First, we assume that the integers $0$ to
+        ($2$ $\times$ $Tot_A$) - $1$ maps to positive and negative facts of
+        state $S_0$. We can then assign integers ($2$ $\times$ $Tot_A$) to
+        ($4$ $\times$ $Tot_A$) - $1$ to the positive and negative facts of
+        state $S_1$. In general, facts of state $\sigma$ are offset by the
+        facts of state $\sigma$ - $1$.
 
-          \begin{vquote}
-            $\lnot$$subst$($\theta$.$sg$[$0$], $\theta$.$sg$[$0$], $\theta$.$int$[$0$])
-          \end{vquote}
+        Algorithm \ref{algo-impln-encod} shows the implementation of the
+        $Encode$() function using this technique. The first thing the
+        that the function does is to calculate the offset of the atom
+        $\alpha$ based on the given state $\sigma$ and the truth
+        indicator $\tau$. The function then takes the ordinal index of each
+        entity and interval in the atom from the symbol table $\theta$.
+        Depending on the atom type, the $Encode$() then uses one of
+        $Offset\_Holds$(), $Offset\_Memb$() or $Offset\_Subst$() with the
+        indices to calculate the appropriate offsets.
 
-          \noindent
-          The index of the above fact is:
-
-          \begin{vquote}
-            $Tot_A$ $+$ $Tot_H$ $+$ $Tot_M$
-          \end{vquote}
-
-          So far, we have seen that this technique is effective in encoding
-          positive and negative facts in one state only. However, this
-          procedure can be further extended to assign indices to facts in
-          different states. First, we assume that the integers $0$ to
-          ($2$ $\times$ $Tot_A$) - $1$ maps to positive and negative facts of
-          state $S_0$. We can then assign integers ($2$ $\times$ $Tot_A$) to
-          ($4$ $\times$ $Tot_A$) - $1$ to the positive and negative facts of
-          state $S_1$. In general, facts of state $\sigma$ are offset by the
-          facts of state $\sigma$ - $1$.
-
-          Algorithm \ref{algo-impln-encod} shows the implementation of the
-          $Encode$() function using this technique. The first thing the
-          that the function does is to calculate the offset of the atom
-          $\alpha$ based on the given state $\sigma$ and the truth
-          indicator $\tau$. The function then takes the ordinal index of each
-          entity and interval in the atom from the symbol table $\theta$.
-          Depending on the atom type, the $Encode$() then uses one of
-          $Offset\_Holds$(), $Offset\_Memb$() or $Offset\_Subst$() with the
-          indices to calculate the appropriate offsets.
-
-          \begin{valgorithm}[tbhp]{Encode()}{algo-impln-encod}
+        \begin{valgorithm}[tbhp]{Encode()}{algo-impln-encod}
 FUNCTION \(Encode\)(\(\alpha\), \(\sigma\), \(\tau\))
   \(offset\) = \(\sigma\) \(\cdot\) \(Tot\sb{A}\) \(\cdot\) \(2\)
   IF \(\tau\) == \(false\) THEN
@@ -7932,22 +7948,22 @@ FUNCTION \(Encode\)(\(\alpha\), \(\sigma\), \(\tau\))
       RETURN \(offset\) \(+\) \(Offset\_Subst\)(\(g\sb{0}\), \(g\sb{1}\), \(i\), \(\alpha\).\(subst\).\(type\))
   ENDCASE
 ENDFUNCTION
-          \end{valgorithm}
+        \end{valgorithm}
 
-          The straight forward $Offset\_Holds$() function shown in Algorithm
-          \ref{algo-impln-offho} calculates the offset for atoms of type
-          holds by using the given indices of its elements. As discussed
-          above, the subject offset of a holds atom is obtained by multiplying
-          the actual subject index $sub$ by the total number of access rights
-          by the total number of objects by the total number of intervals
-          defined in the symbol table. Similarly, the access right offset is
-          calculated by multiplying the actual access right index $acc$ by the
-          remaining elements: the total number of objects and the total number
-          of intervals. The offsets for objects and intervals are calculated
-          in the same manner. Finally, the sum of these offsets is the offset
-          for the holds atom, which is returned by this function.
+        The straight forward $Offset\_Holds$() function shown in Algorithm
+        \ref{algo-impln-offho} calculates the offset for atoms of type
+        holds by using the given indices of its elements. As discussed
+        above, the subject offset of a holds atom is obtained by multiplying
+        the actual subject index $sub$ by the total number of access rights
+        by the total number of objects by the total number of intervals
+        defined in the symbol table. Similarly, the access right offset is
+        calculated by multiplying the actual access right index $acc$ by the
+        remaining elements: the total number of objects and the total number
+        of intervals. The offsets for objects and intervals are calculated
+        in the same manner. Finally, the sum of these offsets is the offset
+        for the holds atom, which is returned by this function.
 
-          \begin{valgorithm}[tbhp]{Offset\_Holds()}{algo-impln-offho}
+        \begin{valgorithm}[tbhp]{Offset\_Holds()}{algo-impln-offho}
 FUNCTION \(Offset_Holds\)(\(sub\), \(acc\), \(obj\), \(int\))
   RETURN
     (\(sub\) \(\cdot\) (\(|\)\(\theta\).\(as\)\(|\) \(+\) \(|\)\(\theta\).\(ag\)\(|\)) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
@@ -7955,22 +7971,22 @@ FUNCTION \(Offset_Holds\)(\(sub\), \(acc\), \(obj\), \(int\))
     (\(obj\) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
     \(int\)
 ENDFUNCTION
-          \end{valgorithm}
+        \end{valgorithm}
  
-          The calculation of the offset for member atoms as shown in Algorithm
-           \ref{algo-impln-offme} uses a similar method, except each type
-          (subject, access right and object) is handled in a different way. 
-          Firstly, the access right index is offset by the total number of
-          subject member atoms ($|$$\theta$.$ss$$|$ $\cdot$ $|$$\theta$.$sg$$|$
-          $\cdot$ $|$$\theta$.$int$). The index for member atoms of type object
-          are similarly offset by the total number of subject and access right
-          member atoms ($|$$\theta$.$ss$$|$ $\cdot$ $|$$\theta$.$sg$$|$
-          $\cdot$ $|$$\theta$.$int$$|$ $+$ $|$$\theta$.$as$$|$ $\cdot$
-          $|$$\theta$.$ag$$|$ $\cdot$ $|$$\theta$.$int$). Furthermore, the
-          index of all atoms of type member is offset by the total number of
-          holds atoms ($Tot_H$).         
+        The calculation of the offset for member atoms as shown in Algorithm
+         \ref{algo-impln-offme} uses a similar method, except each type
+        (subject, access right and object) is handled in a different way. 
+        Firstly, the access right index is offset by the total number of
+        subject member atoms ($|$$\theta$.$ss$$|$ $\cdot$ $|$$\theta$.$sg$$|$
+        $\cdot$ $|$$\theta$.$int$). The index for member atoms of type object
+        are similarly offset by the total number of subject and access right
+        member atoms ($|$$\theta$.$ss$$|$ $\cdot$ $|$$\theta$.$sg$$|$
+        $\cdot$ $|$$\theta$.$int$$|$ $+$ $|$$\theta$.$as$$|$ $\cdot$
+        $|$$\theta$.$ag$$|$ $\cdot$ $|$$\theta$.$int$). Furthermore, the
+        index of all atoms of type member is offset by the total number of
+        holds atoms ($Tot_H$).         
 
-          \begin{valgorithm}[tbhp]{Offset\_Memb()}{algo-impln-offme}
+        \begin{valgorithm}[tbhp]{Offset\_Memb()}{algo-impln-offme}
 FUNCTION \(Offset_Memb\)(\(elt\), \(grp\), \(int\), \(type\))
   CASE \(type\) OF
     \(sub\) :
@@ -7995,14 +8011,14 @@ FUNCTION \(Offset_Memb\)(\(elt\), \(grp\), \(int\), \(type\))
 
   RETURN \(Tot\sb{H}\) \(+\) \(offset\)
 ENDFUNCTION
-          \end{valgorithm}
+        \end{valgorithm}
 
-          Algorithm \ref{algo-impln-offsu} shows how the $Offset\_Subst$()
-          function calculates the offset for subset atoms. The method is
-          similar to that used by the $Offset\_Memb$() function, except the
-          final index is offset by the total number of holds and member atoms.
+        Algorithm \ref{algo-impln-offsu} shows how the $Offset\_Subst$()
+        function calculates the offset for subset atoms. The method is
+        similar to that used by the $Offset\_Memb$() function, except the
+        final index is offset by the total number of holds and member atoms.
 
-          \begin{valgorithm}[tbhp]{Offset\_Subst()}{algo-impln-offsu}
+        \begin{valgorithm}[tbhp]{Offset\_Subst()}{algo-impln-offsu}
 FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
   CASE \(type\) OF
     \(sub\) :
@@ -8027,45 +8043,204 @@ FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
     
   RETURN \(Tot\sb{H}\) \(+\) \(Tot\sb{M}\) \(+\) \(offset\)
 ENDFUNCTION
+        \end{valgorithm}
+
+      \subsection{Populating the Policy Base}
+
+        \subsubsection{Registering Entities and Intervals}
+
+          \begin{valgorithm}[tbhp]{AddEntity()}{algo-impln-adent}
+FUNCTION \(PB\).\(AddEntity\)(\(id\), \(type\))
+  CASE \(type\) OF
+    \(sub\)-\(sin\) :
+      \(PB\).\(symtab\).\(ss\).\(Add\)(\(id\))
+    \(sub\)-\(grp\) :
+      \(PB\).\(symtab\).\(sg\).\(Add\)(\(id\))
+    \(acc\)-\(sin\) :
+      \(PB\).\(symtab\).\(as\).\(Add\)(\(id\))
+    \(acc\)-\(grp\) :
+      \(PB\).\(symtab\).\(ag\).\(Add\)(\(id\))
+    \(obj\)-\(sin\) :
+      \(PB\).\(symtab\).\(os\).\(Add\)(\(id\))
+    \(obj\)-\(grp\) :
+      \(PB\).\(symtab\).\(og\).\(Add\)(\(id\))
+  ENDCASE
+ENDFUNCTION
           \end{valgorithm}
 
-        \subsubsection{Extending GenNLP()}
+          \begin{valgorithm}[tbhp]{AddInterval()}{algo-impln-adint}
+FUNCTION \(PB\).\(AddInterval\)(\(id\))
+  \(PB\).\(symtab\).\(int\).\(Add\)(\(id\));
+  \(PB\).\(netwk\).\(New\)(\(id\));
+ENDFUNCTION
+          \end{valgorithm}
 
-          The $GenNLP$() function in Algoritm \ref{algo-polup-genlp} and the
-          rest of the functions in Section \ref{subs-polup-norlp} require only
-          little modifications to generate a normal logic program from a
-          language ${\cal L^T}$ domain. In fact, the only major difference is
-          that the new $GenNLP$() function must support the language
-          ${\cal L^T}$ atoms that includes an additional temporal interval
-          parameter. This means that most of the rule-generationg functions
-          are extended simply by the addition of an extra interval loop, which
-          passes intervals to the new $Encode$() function discussed in the
-          previous section.
+          \begin{valgorithm}[tbhp]{AddIntervalEP()}{algo-impln-adine}
+FUNCTION \(PB\).\(AddIntervalEP\)(\(id\), \(ep\sb{0}\), \(ep\sb{1}\))
+  \(PB\).\(AddInterval\)(\(id\))
+  \(PB\).\(netwk\).\(Bind\)(\(id\), \(ep\sb{0}\), \(ep\sb{1}\))
+ENDFUNCTION
+          \end{valgorithm}
 
-          However, as Section \ref{subs-tempo-seman} have shown,
-          translating a language ${\cal L^T}$ domain to a normal logic program
-          requires the generation of temporal relation rules. The semantics of
-          the language tells us that the purpose of these rules is to assert
-          that an atom that holds in a particular time interval $\iota$ must
-          also hold in every other interval $\iota'$ that is "within" $\iota$,
-          that is, $\iota'$ is {\em equal}, is {\em during}, {\em starts} or
-          {\em finishes} $\iota$.
+        \subsubsection{Adding Temporal Interval Constraints}
 
-          Algorithm \ref{algo-impln-gente} shows the $GenTempoRules$() function
-          which will be called by our extended $GenNLP$() function. $GenNLP$()
-          takes three parameters as input: $NET$, the interval relation network
-          structure; $\theta$, the symbol table; and $\psi$, the policy
-          update sequence table. These parameters are passed to the three
-          functions that generate the three types of temporal rules which
-          correspond to the three atom types.
+          \begin{valgorithm}[tbhp]{AddRelation()}{algo-impln-adrel}
+FUNCTION \(PB\).\(AddRelation\)(\(rexp\))
+  \(rlist\) = \(NormaliseExp\)(\(rexp\))
+  FOR \(i\) = \(0\) TO \(|rlist|\) DO
+    \(PB\).\(netwk\).\(Add\)(\(rlist\)[\(i\)].\(int\sb{0}\), \(rlist\)[\(i\)].\(int\sb{1}\), \(rlist\)[\(i\)].\(rs\))
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
 
+        \subsubsection{Adding Initial State Facts}
+
+          \begin{valgorithm}[tbhp]{AddInitially()}{algo-impln-adini}
+FUNCTION \(PB\).\(AddInitially\)(\(exp\))
+  FOR \(i\) = \(0\) TO \(|exp|\) DO
+    \(PB\).\(inittab\).\(Add\)(\(exp\)[\(i\)])
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
+        \subsubsection{Adding Authorisation Constraints}
+
+          \begin{valgorithm}[tbhp]{AddConstraint()}{algo-impln-adcon}
+FUNCTION \(PB\).\(AddConstraint\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rexp\))
+  \(rlist\) = \(NormaliseExp\)(\(rexp\))
+  \(PB\).\(consttab\).\(Add\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rlist\))
+ENDFUNCTION
+          \end{valgorithm}
+
+        \subsubsection{Adding Policy Update Declarations}
+
+          \begin{valgorithm}[tbhp]{AddUpdate()}{algo-impln-adupd}
+FUNCTION \(PB\).\(AddUpdate\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rexp\))
+  \(rlist\) = \(NormaliseExp\)(\(rexp\))
+  \(PB\).\(updatetab\).\(Add\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rlist\))
+ENDFUNCTION
+          \end{valgorithm}
+
+        \subsubsection{Policy Update Sequence Manipulation}
+
+          \begin{valgorithm}[tbhp]{AddSequence()}{algo-impln-adseq}
+FUNCTION \(PB\).\(AddSequence\)(\(u\), \(ilist\))
+  \(PB\).\(seqtab\).\(Add\)(\(u\), \(ilist\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          \begin{valgorithm}[tbhp]{DelSequence()}{algo-impln-deseq}
+FUNCTION \(PB\).\(DelSequence\)(\(index\))
+  \(PB\).\(seqtab\).\(Del\)(\(index\))
+ENDFUNCTION
+          \end{valgorithm}
+
+          \begin{valgorithm}[tbhp]{ListSequence()}{algo-impln-lsseq}
+FUNCTION \(PB\).\(ListSequence\)(\(\))
+  RETURN \(PB\).\(seqtab\)
+ENDFUNCTION
+          \end{valgorithm}
+
+      \subsection{Calculating the Answer Set}
+
+        The $GenNLP$() function in Algorithm \ref{algo-polup-genlp} and the
+        rest of the functions in Section \ref{subs-polup-norlp} illustrates
+        how a language ${\cal L}$ domain is translated into a normal logic
+        program and from answer sets derived from that normal logic program,
+        how queries are evaluated. This section focuses on extending these
+        methods to generate answer sets and evaluate queries from language
+        ${\cal L^T}$ domains, as well as showing how these techniques are
+        utilised in the policy base structures discussed in the previous
+        section.
+
+        Firstly, we define an {\em SModels} object $SM$ with support for the
+        following operations:
+
+        \begin{itemize}
+          \item
+            $SM$.$Init$() initialises the object. Any previous operations are
+            reset.
+
+          \item
+            $SM$.$RuleBegin$() marks the beginning of a rule.
+
+          \item
+            $SM$.$RuleHead$($\alpha$) registers the atom $\alpha$ as the
+            head of the rule.
+
+          \item
+            $SM$.$RuleBody$($\alpha$, $\tau$) registers the atom $\alpha$,
+            whose negation-as-failure value is $\tau$, as a body of the
+            current rule.
+
+          \item
+            $SM$.$RuleEnd$() marks the ending of the current rule.
+
+          \item
+            $SM$.$GetAnswerSet$() returns a list of answer sets.
+        \end{itemize}
+
+        With the stable model object defined, we can now define the policy
+        base operation that generates an answer set based on the policy
+        stored. Algorithm \ref{algo-impln-genas} shows the policy base
+        operation that extends the original $GenNLP$() function to
+        generate an answer set.
+
+        \begin{valgorithm}[tbhp]{GenAnswerSets()}{algo-impln-genas}
+FUNCTION \(PB\).\(GetAnswerSets\)(\(SM\))
+  \(TransInitStateRules\)(\(PB\).\(inittab\), \(SM\))
+  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
+    \(PB\).\(netwk\), \(SM\))
+  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
+    \(PB\).\(netwk\), \(SM\))
+  \(GenInherRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
+  \(GenTransRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
+  \(GenInertRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
+  \(GenRefleRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
+  \(GenTempoRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\), \(SM\))
+  \(GenConsiRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
+  RETURN \(SM\).\(Compute\)()
+ENDFUNCTION
+        \end{valgorithm}
+
+        Note that most of the functions called by \(PB\).\(GetAnswerSets\)()
+        are similar to the functions defined in Section
+        \ref{subs-polup-norlp}. These functions require only little
+        modifications to generate a normal logic program from a language
+        ${\cal L^T}$ domain. In fact, the only major difference is
+        that the new functions must support the language ${\cal L^T}$ atoms
+        that include an additional temporal interval parameter. This means
+        that most of the rule-generationg functions are extended simply by
+        the addition of an extra interval loop, which passes intervals to the
+        new $Encode$() function discussed in Section \ref{subs-impln-encod}.
+
+        \subsubsection{Generating Temporal Rules}
+
+          Recall that Section \ref{subs-tempo-seman} has shown that translating
+          a language ${\cal L^T}$ domain to a normal logic program requires the
+          generation of temporal relation rules. The semantics of the language
+          tells us that the purpose of these rules is to assert that an atom
+          that holds in a particular time interval $\iota$ must also hold in
+          every other interval $\iota'$ that is "within" $\iota$, that is,
+          $\iota'$ is {\em equal}, is {\em during}, {\em starts} or
+          {\em finishes} $\iota$. Algorithm \ref{algo-impln-gente} shows the
+          $GenTempoRules$() function which generates these rules.
+ 
+          \begin{valgorithm}[tbhp]{GenTempoRules()}{algo-impln-gente}
+FUNCTION \(GenTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
+  \(GenHldsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
+  \(GenMembTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
+  \(GenSubsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
+ENDFUNCTION
+          \end{valgorithm}
+ 
           The $GenHldsTempoRules$() function shown in Algorithm
           \ref{algo-impln-ghdtr}, as the name implies, generates the temporal
           rules for {\em holds} atoms. The first loop goes through every policy
           update state while the next 3 loops goes through all defined
           entities. The fifth and sixth loop goes through all possible pairs
           of intervals defined in the symbol table.
-
+ 
           Inside these loops, the relation between the interval pair is
           retrieved from the interval network structure. The if-statement
           ensures that one interval is "within" the other. The number $101$ is
@@ -8076,17 +8251,9 @@ ENDFUNCTION
           {\em during}, {\em starts}, {\em finishes}\}, the holds temporal
           rules are generated. A similar method is used for the other two
           functions $GenMembTempoRules$() and $GenSubsTempoRules$().
-
-          \begin{valgorithm}[tbhp]{GenTempoRules()}{algo-impln-gente}
-FUNCTION \(GenTempoRules\)(\(NET\), \(\theta\), \(\psi\))
-  \(GenHldsTempoRules\)(\(NET\), \(\theta\), \(\psi\))
-  \(GenMembTempoRules\)(\(NET\), \(\theta\), \(\psi\))
-  \(GenSubsTempoRules\)(\(NET\), \(\theta\), \(\psi\))
-ENDFUNCTION
-          \end{valgorithm}
-
+ 
           \begin{valgorithm}[tbhp]{GenHldsTempoRules()}{algo-impln-ghdtr}
-FUNCTION \(GenHldsTempoRules\)(\(NET\), \(\theta\), \(\psi\))
+FUNCTION \(GenHldsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
       FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
@@ -8097,18 +8264,111 @@ FUNCTION \(GenHldsTempoRules\)(\(NET\), \(\theta\), \(\psi\))
               IF (\(rs\) | \(101\)) == \(101\) THEN
                 \(\alpha\sb{0}\) = \{\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)], \(\theta\).\(int\)[\(n\)]\}
                 \(\alpha\sb{1}\) = \{\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)], \(\theta\).\(int\)[\(m\)]\}
-                \(RuleBegin\)()
-                \(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(true\)))
-                \(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(true\)), \(true\))
-                \(RuleEnd\)()
-                \(RuleBegin\)()
-                \(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(false\)))
-                \(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(false\)), \(true\))
-                \(RuleEnd\)()
+                \(SM\).\(RuleBegin\)()
+                \(SM\).\(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(true\)))
+                \(SM\).\(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(true\)), \(true\))
+                \(SM\).\(RuleEnd\)()
+                \(SM\).\(RuleBegin\)()
+                \(SM\).\(RuleHead\)(\(Encode\)(\(\alpha\sb{0}\), \(i\), \(false\)))
+                \(SM\).\(RuleBody\)(\(Encode\)(\(\alpha\sb{1}\), \(i\), \(false\)), \(true\))
+                \(SM\).\(RuleEnd\)()
               ENDIF
           ENDDO
         ENDDO
       ENDDO
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
+        \subsubsection{Translating Constraint and Policy Update Rules}
+
+          The language ${\cal L}$ versions of the $TransConstRules$() and
+          $TransUpdateRules$() functions defined in Algorithm
+          \ref{algo-polup-tconr} and Algorithm \ref{algo-polup-tupdr} assume
+          that expressions are already grounded. In this section, we extend
+          these functions to handle the interval relations of language
+          ${\cal L^T}$ as well as ground variables.
+
+          The $TransConstRules$() function shown in Algorithm
+          \ref{algo-impln-traco} starts by creating a list of variables
+          $vlist$ that occurs in the constraint expressions. With this list,
+          a list of tuples $tlist$ is generated by the use of the
+          $GenTupleList$() function. As the algorithm goes through each tuple
+          in $tlist$, it checks whether the intervals in the current tuple
+          satisfies the temporal constraints associated with the current
+          constraint rule. If the tuple is valid, the algorithm then uses
+          this to ground all the variables in the expressions. Once grounded,
+          the expressions are passed to the $SM$ object to construct the
+          normal logic program rule.
+
+          \begin{valgorithm}[tbhp]{TransConstRules()}{algo-impln-traco}
+FUNCTION \(TransConstRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
+  FOR \(i\) = \(0\) TO \(|\omega|\) DO
+    \(vlist\).\(Init\)()
+    \(vlist\).\(Append\)(\(GetVList\)(\(\omega\)[\(i\)].\(exp\))
+    \(vlist\).\(Append\)(\(GetVList\)(\(\omega\)[\(i\)].\(pcn\))
+    \(vlist\).\(Append\)(\(GetVList\)(\(\omega\)[\(i\)].\(ncn\))
+    \(tlist\) = \(GenTupleList\)(\(\theta\), \(vlist\))
+    \(rlist\) = \(NormaliseExp\)(\(\omega\)[\(i\)].\(rexp\))
+    FOR \(j\) = \(0\) TO \(|tlist|\) DO
+      IF \(CheckTuple\)(\(tlist\)[\(j\)], \(rlist\), \(NET\)) THEN
+        \(\epsilon\sb{0}\) = \(Replace\)(\(vlist\), \(tlist\)[\(j\)], \(\omega\)[\(i\)].\(exp\))
+        \(\epsilon\sb{1}\) = \(Replace\)(\(vlist\), \(tlist\)[\(j\)], \(\omega\)[\(i\)].\(pcn\))
+        \(\epsilon\sb{2}\) = \(Replace\)(\(vlist\), \(tlist\)[\(j\)], \(\omega\)[\(i\)].\(ncn\))
+        FOR \(k\) = \(0\) TO \(|\theta|\) DO
+          FOR \(l\) = \(0\) TO \(|\epsilon\sb{0}|\) DO
+            \(SM\).\(RuleBegin\)()
+            \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atm\), \(k\), \(\epsilon\sb{0}\)[\(l\)].\(tr\)) 
+            \(SM\).\(RuleHead\)(\(\alpha\))
+            FOR \(m\) = \(0\) TO \(|\epsilon\sb{1}|\) DO
+              \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(m\)].\(atm\), \(k\), \(\epsilon\sb{1}\)[\(m\)].\(tr\)) 
+              \(SM\).\(RuleBody\)(\(\alpha\), \(true\))
+            ENDDO
+            FOR \(n\) = \(0\) TO \(|\epsilon\sb{2}|\) DO
+              \(\alpha\) = \(Encode\)(\(\epsilon\sb{2}\)[\(n\)].\(atm\), \(k\), \(\epsilon\sb{2}\)[\(n\)].\(tr\)) 
+              \(SM\).\(RuleBody\)(\(\alpha\), \(false\))
+            ENDDO
+            \(SM\).\(RuleEnd\)()
+          ENDDO
+        ENDDO
+      ENDIF
+    ENDDO
+  ENDDO
+ENDFUNCTION
+          \end{valgorithm}
+
+          A similar method is used by the $TransUpdateRules$() function
+          shown in Algorithm \ref{algo-impln-traup}.
+
+          \begin{valgorithm}[tbhp]{TransUpdateRules()}{algo-impln-traup}
+FUNCTION \(TransUpdateRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
+  FOR \(i\) = \(0\) TO \(|\psi|\) DO
+    FOR \(j\) = \(0\) TO \(|\omega|\) DO
+      IF \(\psi\)[\(i\)].\(name\) == \(\omega\)[\(j\)].\(name\) THEN
+        \(upd\) = \(GndUpdate\)(\(\omega\)[\(j\)], \(\psi\)[\(i\)].\(ilist\))
+        \(vlist\).\(Init\)()
+        \(vlist\).\(Append\)(\(GetVList\)(\(upd\).\(pre\))
+        \(vlist\).\(Append\)(\(GetVList\)(\(upd\).\(pst\))
+        \(tlist\) = \(GenTupleList\)(\(\theta\), \(vlist\))
+        \(rlist\) = \(NormaliseExp\)(\(\omega\)[\(j\)].\(rexp\))
+        FOR \(k\) = \(0\) TO \(|tlist|\) DO
+          IF \(CheckTuple\)(\(tlist\)[\(k\)], \(rlist\), \(NET\)) THEN
+            \(\epsilon\sb{0}\) = \(Replace\)(\(vlist\), \(tlist\)[\(k\)], \(upd\).\(pre\))
+            \(\epsilon\sb{1}\) = \(Replace\)(\(vlist\), \(tlist\)[\(k\)], \(upd\).\(pst\))
+            FOR \(l\) = \(0\) TO \(|\)\(\epsilon\sb{1}\)\(|\) DO
+              \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(l\)].\(atm\), \(i\) + \(1\), \(\epsilon\sb{1}\)[\(l\)].\(tr\))
+              \(SM\).\(RuleBegin\)()
+              \(SM\).\(RuleHead\)(\(\alpha\))
+              FOR \(m\) = \(0\) TO \(|\)\(\epsilon\sb{0}\)\(|\) DO
+                \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atm\), \(i\), \(\epsilon\sb{0}\)[\(l\)].\(tr\))
+                \(SM\).\(RuleBody\)(\(\alpha\), \(true\))
+              ENDDO
+              \(SM\).\(RuleEnd\)()
+            ENDDO
+          ENDIF
+        ENDDO
+      ENDIF
     ENDDO
   ENDDO
 ENDFUNCTION
