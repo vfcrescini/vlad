@@ -8287,10 +8287,10 @@ ENDFUNCTION
         \begin{valgorithm}{GenAnswerSets()}{algo-impln-genas}
 FUNCTION \(PB\).\(GetAnswerSets\)(\(SM\))
   \(TransInitStateRules\)(\(PB\).\(inittab\), \(SM\))
-  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\),
-    \(SM\))
-  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\),
-    \(SM\))
+  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
+    \(PB\).\(netwk\), \(SM\))
+  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
+    \(PB\).\(netwk\), \(SM\))
   \(GenInherRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenTransRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenInertRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
