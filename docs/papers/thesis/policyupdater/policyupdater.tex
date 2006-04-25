@@ -90,18 +90,119 @@
   \end{list}
 }
 
+% dedication environment
+\newenvironment{vdedication}
+{
+  \thispagestyle{empty}
+  \vspace*{\stretch{2}}
+  \em
+  \begin{center}
+}
+{
+  \end{center}
+  \vspace*{\stretch{10}}
+  \newpage
+}
+
+% copyright environment
+\newenvironment{vcopyright}
+{
+  \thispagestyle{empty}
+  \vspace*{\stretch{10}}
+  \begin{center}
+}
+{
+  \end{center}
+  \vspace*{\stretch{2}}
+  \newpage
+}
+
+% cerification environment
+\newenvironment{vcertificate}
+{
+  \thispagestyle{empty}
+  \vspace*{\stretch{8}}
+}
+{
+  \vspace*{\stretch{10}}
+  \newpage
+}
+
 \begin{document}
   \onehalfspacing
-  \title{
-    Implementation of a Logic-Based Access Control System with
-    Temporal Constraints
-  }
-  \author{Vino Fernando Crescini}
-  \date{April 2006}
 
   \pagenumbering{roman}
 
-  \maketitle
+  \begin{titlepage}
+    \begin{center}
+      \vspace*{\stretch{1}}
+
+      {
+        \huge \bf
+        Implementation of a \\
+        Logic-Based Access Control System with \\
+        Dynamic Policy Updates and \\
+        Temporal Constraints \\
+      }
+
+      \vspace*{\stretch{1}}
+
+      {
+        \Large \bf
+        Vino Fernando Crescini
+      }
+
+      \vspace*{\stretch{2}}
+
+      {
+        \Large
+        A thesis submitted for the Degree of \\
+        Doctor of Philosophy at \\
+        University of Western Syndey \\
+      }
+
+      \vspace*{\stretch{1}}
+
+      {
+        \Large
+        April 2006
+      }
+
+      \vspace*{\stretch{1}}
+    \end{center}
+  \end{titlepage}
+
+  \begin{vcopyright}
+    Copyright \copyright
+    V. F. Crescini
+    2006
+
+    \vspace{1em}
+
+    \small
+    Typeset in Times by \TeX and \LaTeXe.
+  \end{vcopyright}
+
+  \begin{vcertificate}
+    \noindent
+    Except where otherwise indicated, this thesis is my own origial work.
+    No part of this thesis has been submitted as part of any other degree.
+
+    \vspace{5em}
+
+    \noindent
+    V. F. Crescini \\
+    30 April 2006
+  \end{vcertificate}
+
+  \begin{vdedication}
+    For Huai Zheng
+  \end{vdedication}
+
+  \chapter*{Acknowledgements}
+
+  \chapter*{Abstract}
+
   \tableofcontents
   \listoffigures
   \listoftables
@@ -9026,6 +9127,8 @@ ENDFUNCTION
                            <digit> |
                            <underscore>
     \end{vverbatim}
+
+  \addcontentsline{toc}{chapter}{Bibliography}
 
   \begin{thebibliography}{M}
     \bibitem{ALE}
