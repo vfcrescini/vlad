@@ -68,31 +68,17 @@
 }
 
 % algorithm environment
-\floatstyle{plain}
-\floatname{valgorithmfloat}{Algorithm}
-\newfloat{valgorithmfloat}{tbph}{alg}[chapter]
-\newsavebox{\valgorithmbox}
-\newlength{\valgorithmboxwidth}
-
-\newenvironment{valgorithm}[3][tbhp]
+\newtheorem{vvalgorithm}{Algorithm}[chapter]
+\newenvironment{valgorithm}[2]
 {
-  \setlength{\valgorithmboxwidth}{\linewidth-2em}
-
-  \begin{valgorithmfloat}[#1]
-    \caption{#2}
-    \label{#3}
-    \hspace{1em}
-    \begin{lrbox}{\valgorithmbox}
-      \begin{minipage}[l]{\valgorithmboxwidth}
-        \small
-        \begin{vverbatim}
+  \begin{vvalgorithm}{#1}
+    \label{#2}
+    \small
+    \begin{vverbatim}
 }
 {
-        \end{vverbatim}
-      \end{minipage}
-    \end{lrbox}
-    \framebox[\valgorithmboxwidth][l]{\usebox{\valgorithmbox}}
-  \end{valgorithmfloat}
+    \end{vverbatim}
+  \end{vvalgorithm}
 }
 
 % create a quote environment without a right-hand margin
@@ -117,7 +103,6 @@
 
   \maketitle
   \tableofcontents
-  \listof{valgorithmfloat}{List of Algorithms}
   \listoffigures
   \listoftables
   \newpage
@@ -3081,7 +3066,7 @@
           Table $\omega_c$, Policy Update Definition Table $\omega_u$, and
           Policy Update Sequence Table $\psi$:
 
-          \begin{valgorithm}[tbhp]{GenNLP()}{algo-polup-genlp}
+          \begin{valgorithm}{GenNLP()}{algo-polup-genlp}
 FUNCTION \(GenNLP\)(\(\theta\), \(\omega\sb{i}\), \(\omega\sb{c}\), \(\omega\sb{u}\), \(\psi\))
   \(TransInitStateRules\)(\(\omega\sb{i}\))
   \(TransConstRules\)(\(\omega\sb{c}\), \(\psi\))
@@ -3123,7 +3108,7 @@ ENDFUNCTION
           translated by the $Encode$() function and is made the head of a new
           rule whose body is the literal $true$ fact.
 
-          \begin{valgorithm}[tbhp]{TransInitStateRules()}{algo-polup-tisr}
+          \begin{valgorithm}{TransInitStateRules()}{algo-polup-tisr}
 FUNCTION \(TransInitStateRules\)(\(\omega\sb{i}\))
   FOR \(i\) = \(0\) TO \(|\omega\sb{i}|\) DO
     \(RuleBegin\)()
@@ -3141,7 +3126,7 @@ ENDFUNCTION
           generated for every policy update state.
 
 
-          \begin{valgorithm}[tbhp]{TransConstRules()}{algo-polup-tconr}
+          \begin{valgorithm}{TransConstRules()}{algo-polup-tconr}
 FUNCTION \(TransConstRules\)(\(\omega\sb{c}\), \(\psi\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\omega\sb{c}|\) DO
@@ -3173,7 +3158,7 @@ ENDFUNCTION
           of each fact in the rule head is one more than that of each fact in
           the rule body.
 
-          \begin{valgorithm}[tbhp]{TransUpdateRules()}{algo-polup-tupdr}
+          \begin{valgorithm}{TransUpdateRules()}{algo-polup-tupdr}
 FUNCTION \(TransUpdateRules\)(\(\omega\sb{u}\), \(\psi\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\omega\sb{u}|\) DO
@@ -3212,7 +3197,7 @@ ENDFUNCTION
           with the contraint rule generating algorithm, each new rule
           generated is replicated for each policy update state.
 
-          \begin{valgorithm}[tbhp]{GenInherRules()}{algo-polup-ginhr}
+          \begin{valgorithm}{GenInherRules()}{algo-polup-ginhr}
 FUNCTION \(GenInherRules\)(\(\theta\), \(\psi\))
   \(GenSubSubstInherRules\)(\(\theta\), \(\psi\))
   \(GenAccSubstInherRules\)(\(\theta\), \(\psi\))
@@ -3228,7 +3213,7 @@ ENDFUNCTION
           rules. Similar techniques are used for the generation of other
           subset and membership inheritance rules and are therefore not shown.
 
-          \begin{valgorithm}[tbhp]{GenSubSubstInherRules()}{algo-polup-gssir}
+          \begin{valgorithm}{GenSubSubstInherRules()}{algo-polup-gssir}
 FUNCTION \(GenSubSubstInherRules\)(\(\theta\), \(\psi\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
@@ -3271,7 +3256,7 @@ ENDFUNCTION
           subject transitivity rules is shown in Algorithm
           \ref{algo-polup-gstrr}.
 
-          \begin{valgorithm}[tbhp]{GenTransRules()}{algo-polup-gtrar}
+          \begin{valgorithm}{GenTransRules()}{algo-polup-gtrar}
 FUNCTION \(GenTransRules\)(\(\theta\), \(\psi\))
   \(GenSubTransRules\)(\(\theta\), \(\psi\))
   \(GenAccTransRules\)(\(\theta\), \(\psi\))
@@ -3279,7 +3264,7 @@ FUNCTION \(GenTransRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{GenSubTransRules()}{algo-polup-gstrr}
+          \begin{valgorithm}{GenSubTransRules()}{algo-polup-gstrr}
 FUNCTION \(GenSubTransRules\)(\(\theta\), \(\psi\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
@@ -3311,7 +3296,7 @@ ENDFUNCTION
           state, a fact holds in the current state if it also holds in the
           previous state and its negation does not hold in the current state.
 
-          \begin{valgorithm}[tbhp]{GenInertRules()}{algo-polup-giner}
+          \begin{valgorithm}{GenInertRules()}{algo-polup-giner}
 FUNCTION \(GenInertRules\)(\(\theta\), \(\psi\))
   \(GenHldsInertRules\)(\(\theta\), \(\psi\))
   \(GenMembInertRules\)(\(\theta\), \(\psi\))
@@ -3324,7 +3309,7 @@ ENDFUNCTION
           similar method is used by the functions that generate the inertial
           rules for the other two atom types.
 
-          \begin{valgorithm}[tbhp]{GenHldsInertRules()}{algo-polup-ghinr}
+          \begin{valgorithm}{GenHldsInertRules()}{algo-polup-ghinr}
 FUNCTION \(GenHldsInertRules\)(\(\theta\), \(\psi\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
@@ -3359,7 +3344,7 @@ ENDFUNCTION
           $GenSubRefleRules$() function generates the reflexivity rules for
           subject groups.
 
-          \begin{valgorithm}[tbhp]{GenRefleRules()}{algo-polup-grefr}
+          \begin{valgorithm}{GenRefleRules()}{algo-polup-grefr}
 FUNCTION \(GenRefleRules\)(\(\theta\), \(\psi\))
   \(GenSubRefleRules\)(\(\theta\), \(\psi\))
   \(GenAccRefleRules\)(\(\theta\), \(\psi\))
@@ -3367,7 +3352,7 @@ FUNCTION \(GenRefleRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{GenSubRefleRules()}{algo-polup-gsrer}
+          \begin{valgorithm}{GenSubRefleRules()}{algo-polup-gsrer}
 FUNCTION \(GenSubRefleRules\)(\(\theta\), \(\psi\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
@@ -3388,7 +3373,7 @@ ENDFUNCTION
           are generated ensure that only a fact or its negation, but never
           both, holds in the same policy update state.
 
-          \begin{valgorithm}[tbhp]{GenConsiRules()}{algo-polup-gconr}
+          \begin{valgorithm}{GenConsiRules()}{algo-polup-gconr}
 FUNCTION \(GenConsiRules\)(\(\theta\), \(\psi\))
   \(GenHldsConsiRules\)(\(\theta\), \(\psi\))
   \(GenMembConsiRules\)(\(\theta\), \(\psi\))
@@ -3396,7 +3381,7 @@ FUNCTION \(GenConsiRules\)(\(\theta\), \(\psi\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{GenHldsConsiRules()}{algo-polup-ghcor}
+          \begin{valgorithm}{GenHldsConsiRules()}{algo-polup-ghcor}
 FUNCTION \(GenHldsConsiRules\)(\(\theta\), \(\psi\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
@@ -3439,7 +3424,7 @@ ENDFUNCTION
         against a list of stable models $\Lambda$, where each element in
         $\Lambda$ is a list of facts.
 
-        \begin{valgorithm}[tbhp]{EvaluateExp()}{algo-polup-evale}
+        \begin{valgorithm}{EvaluateExp()}{algo-polup-evale}
 FUNCTION \(EvaluateExp\)(\(\epsilon\), \(\Lambda\), \(\sigma\))
   \(result\) = \(true\)
   FOR \(i\) = \(0\) TO \(|\epsilon|\) DO
@@ -3459,7 +3444,7 @@ ENDFUNCTION
         \ref{algo-polup-evalf} evaluates a single fact $\rho$ in state
         $\sigma$, against a list of stable models $\Lambda$.
 
-        \begin{valgorithm}[tbhp]{EvaluateFact()}{algo-polup-evalf}
+        \begin{valgorithm}{EvaluateFact()}{algo-polup-evalf}
 FUNCTION \(EvaluateFact\)(\(\rho\), \(\Lambda\), \(\sigma\))
   IF \(IsFactIn\)(\(Encode\)(\(\rho\).\(atm\), \(\sigma\), \(\rho\).\(tr\)), \(\Lambda\)) THEN
     RETURN \(true\)
@@ -3475,7 +3460,7 @@ ENDFUNCTION
         by the $Encode$() function) is present in every stable model in
         $\Lambda$.
 
-        \begin{valgorithm}[tbhp]{IsFactIn()}{algo-polup-isinf}
+        \begin{valgorithm}{IsFactIn()}{algo-polup-isinf}
 FUNCTION \(IsFactIn\)(\(\varrho\), \(\Lambda\))
   FOR \(i\) = \(0\) TO \(|\Lambda|\) DO
     IF NOT \(\Lambda\)[\(i\)].\(Find\)(\(\varrho\)) THEN
@@ -4313,7 +4298,7 @@ ENDFUNCTION
           relations inferred from the two given relation sets using the
           $Trans_1$() function.
 
-          \begin{valgorithm}[tbhp]{Trans$_2$()}{algo-tempo-trns2}
+          \begin{valgorithm}{Trans$_2$()}{algo-tempo-trns2}
 FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
   \(RS\) = \(\emptyset\)
   FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
@@ -4375,7 +4360,7 @@ ENDFUNCTION
             \end{center}
           \end{figure}
 
-          \begin{valgorithm}[tbhp]{NET.Add()}{algo-tempo-ntadd}
+          \begin{valgorithm}{NET.Add()}{algo-tempo-ntadd}
 FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
   \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
   WHILE NOT \(Q.IsEmpty\)() DO
@@ -4577,7 +4562,7 @@ ENDFUNCTION
         \ref{algo-tempo-ntbin} shows how the $NET.Bind$() operator achieves
         this.
 
-        \begin{valgorithm}[tbhp]{Compute()}{algo-tempo-compu}
+        \begin{valgorithm}{Compute()}{algo-tempo-compu}
 FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(i\sb{1}\sp{+}\))
   IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{-}\) THEN
     IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
@@ -4619,7 +4604,7 @@ FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(
 ENDFUNCTION
         \end{valgorithm}
 
-        \begin{valgorithm}[tbhp]{Net.Bind()}{algo-tempo-ntbin}
+        \begin{valgorithm}{Net.Bind()}{algo-tempo-ntbin}
 FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
   FOR each interval \(I'\) \(\in\) \(NET\) DO
     IF \(I'\) != \(I\) THEN
@@ -7400,7 +7385,7 @@ ENDFUNCTION
           in Algorithm \ref{algo-impln-norml} before adding a relation to the
           network.
 
-          \begin{valgorithm}[tbhp]{NormaliseRel()}{algo-impln-norml}
+          \begin{valgorithm}{NormaliseRel()}{algo-impln-norml}
 FUNCTION \(NormaliseRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
     RETURN (\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
@@ -7917,7 +7902,7 @@ ENDFUNCTION
         $Offset\_Holds$(), $Offset\_Memb$() or $Offset\_Subst$() with the
         indices to calculate the appropriate offsets.
 
-        \begin{valgorithm}[tbhp]{Encode()}{algo-impln-encod}
+        \begin{valgorithm}{Encode()}{algo-impln-encod}
 FUNCTION \(Encode\)(\(\alpha\), \(\sigma\), \(\tau\))
   \(offset\) = \(\sigma\) \(\cdot\) \(Tot\sb{A}\) \(\cdot\) \(2\)
   IF \(\tau\) == \(false\) THEN
@@ -7975,7 +7960,7 @@ ENDFUNCTION
         in the same manner. Finally, the sum of these offsets is the offset
         for the holds atom, which is returned by this function.
 
-        \begin{valgorithm}[tbhp]{Offset\_Holds()}{algo-impln-offho}
+        \begin{valgorithm}{Offset\_Holds()}{algo-impln-offho}
 FUNCTION \(Offset_Holds\)(\(sub\), \(acc\), \(obj\), \(int\))
   RETURN
     (\(sub\) \(\cdot\) (\(|\)\(\theta\).\(as\)\(|\) \(+\) \(|\)\(\theta\).\(ag\)\(|\)) \(\cdot\) (\(|\)\(\theta\).\(os\)\(|\) \(+\) \(|\)\(\theta\).\(og\)\(|\)) \(\cdot\) \(|\)\(\theta\).\(int\)\(|\)) \(+\)
@@ -7998,7 +7983,7 @@ ENDFUNCTION
         index of all atoms of type member is offset by the total number of
         holds atoms ($Tot_H$).
 
-        \begin{valgorithm}[tbhp]{Offset\_Memb()}{algo-impln-offme}
+        \begin{valgorithm}{Offset\_Memb()}{algo-impln-offme}
 FUNCTION \(Offset_Memb\)(\(elt\), \(grp\), \(int\), \(type\))
   CASE \(type\) OF
     \(sub\) :
@@ -8030,7 +8015,7 @@ ENDFUNCTION
         similar to that used by the $Offset\_Memb$() function, except the
         final index is offset by the total number of holds and member atoms.
 
-        \begin{valgorithm}[tbhp]{Offset\_Subst()}{algo-impln-offsu}
+        \begin{valgorithm}{Offset\_Subst()}{algo-impln-offsu}
 FUNCTION \(Off_Subst\)(\(grp\sb{0}\), \(grp\sb{1}\), \(int\), \(type\))
   CASE \(type\) OF
     \(sub\) :
@@ -8061,7 +8046,7 @@ ENDFUNCTION
 
         \subsubsection{Registering Entities and Intervals}
 
-          \begin{valgorithm}[tbhp]{AddEntity()}{algo-impln-adent}
+          \begin{valgorithm}{AddEntity()}{algo-impln-adent}
 FUNCTION \(PB\).\(AddEntity\)(\(id\), \(type\))
   CASE \(type\) OF
     \(sub\)-\(sin\) :
@@ -8080,14 +8065,14 @@ FUNCTION \(PB\).\(AddEntity\)(\(id\), \(type\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{AddInterval()}{algo-impln-adint}
+          \begin{valgorithm}{AddInterval()}{algo-impln-adint}
 FUNCTION \(PB\).\(AddInterval\)(\(id\))
   \(PB\).\(symtab\).\(int\).\(Add\)(\(id\));
   \(PB\).\(netwk\).\(New\)(\(id\));
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{AddIntervalEP()}{algo-impln-adine}
+          \begin{valgorithm}{AddIntervalEP()}{algo-impln-adine}
 FUNCTION \(PB\).\(AddIntervalEP\)(\(id\), \(ep\sb{0}\), \(ep\sb{1}\))
   \(PB\).\(AddInterval\)(\(id\))
   \(PB\).\(netwk\).\(Bind\)(\(id\), \(ep\sb{0}\), \(ep\sb{1}\))
@@ -8096,7 +8081,7 @@ ENDFUNCTION
 
         \subsubsection{Adding Temporal Interval Constraints}
 
-          \begin{valgorithm}[tbhp]{AddRelation()}{algo-impln-adrel}
+          \begin{valgorithm}{AddRelation()}{algo-impln-adrel}
 FUNCTION \(PB\).\(AddRelation\)(\(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
   FOR \(i\) = \(0\) TO \(|rlist|\) DO
@@ -8107,7 +8092,7 @@ ENDFUNCTION
 
         \subsubsection{Adding Initial State Facts}
 
-          \begin{valgorithm}[tbhp]{AddInitially()}{algo-impln-adini}
+          \begin{valgorithm}{AddInitially()}{algo-impln-adini}
 FUNCTION \(PB\).\(AddInitially\)(\(exp\))
   FOR \(i\) = \(0\) TO \(|exp|\) DO
     \(PB\).\(inittab\).\(Add\)(\(exp\)[\(i\)])
@@ -8117,7 +8102,7 @@ ENDFUNCTION
 
         \subsubsection{Adding Authorisation Constraints}
 
-          \begin{valgorithm}[tbhp]{AddConstraint()}{algo-impln-adcon}
+          \begin{valgorithm}{AddConstraint()}{algo-impln-adcon}
 FUNCTION \(PB\).\(AddConstraint\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
   \(PB\).\(consttab\).\(Add\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rlist\))
@@ -8126,7 +8111,7 @@ ENDFUNCTION
 
         \subsubsection{Adding Policy Update Declarations}
 
-          \begin{valgorithm}[tbhp]{AddUpdate()}{algo-impln-adupd}
+          \begin{valgorithm}{AddUpdate()}{algo-impln-adupd}
 FUNCTION \(PB\).\(AddUpdate\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
   \(PB\).\(updatetab\).\(Add\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rlist\))
@@ -8135,19 +8120,19 @@ ENDFUNCTION
 
         \subsubsection{Policy Update Sequence Manipulation}
 
-          \begin{valgorithm}[tbhp]{AddSequence()}{algo-impln-adseq}
+          \begin{valgorithm}{AddSequence()}{algo-impln-adseq}
 FUNCTION \(PB\).\(AddSequence\)(\(u\), \(ilist\))
   \(PB\).\(seqtab\).\(Add\)(\(u\), \(ilist\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{DelSequence()}{algo-impln-deseq}
+          \begin{valgorithm}{DelSequence()}{algo-impln-deseq}
 FUNCTION \(PB\).\(DelSequence\)(\(index\))
   \(PB\).\(seqtab\).\(Del\)(\(index\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}[tbhp]{ListSequence()}{algo-impln-lsseq}
+          \begin{valgorithm}{ListSequence()}{algo-impln-lsseq}
 FUNCTION \(PB\).\(ListSequence\)(\(\))
   RETURN \(PB\).\(seqtab\)
 ENDFUNCTION
@@ -8198,13 +8183,13 @@ ENDFUNCTION
         operation that extends the original $GenNLP$() function to
         generate an answer set.
 
-        \begin{valgorithm}[tbhp]{GenAnswerSets()}{algo-impln-genas}
+        \begin{valgorithm}{GenAnswerSets()}{algo-impln-genas}
 FUNCTION \(PB\).\(GetAnswerSets\)(\(SM\))
   \(TransInitStateRules\)(\(PB\).\(inittab\), \(SM\))
-  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
-    \(PB\).\(netwk\), \(SM\))
-  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
-    \(PB\).\(netwk\), \(SM\))
+  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\),
+    \(SM\))
+  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\),
+    \(SM\))
   \(GenInherRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenTransRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenInertRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
@@ -8238,7 +8223,7 @@ ENDFUNCTION
           {\em finishes} $\iota$. Algorithm \ref{algo-impln-gente} shows the
           $GenTempoRules$() function which generates these rules.
 
-          \begin{valgorithm}[tbhp]{GenTempoRules()}{algo-impln-gente}
+          \begin{valgorithm}{GenTempoRules()}{algo-impln-gente}
 FUNCTION \(GenTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
   \(GenHldsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
   \(GenMembTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
@@ -8264,7 +8249,7 @@ ENDFUNCTION
           rules are generated. A similar method is used for the other two
           functions $GenMembTempoRules$() and $GenSubsTempoRules$().
 
-          \begin{valgorithm}[tbhp]{GenHldsTempoRules()}{algo-impln-ghdtr}
+          \begin{valgorithm}{GenHldsTempoRules()}{algo-impln-ghdtr}
 FUNCTION \(GenHldsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
@@ -8314,7 +8299,7 @@ ENDFUNCTION
           the expressions are passed to the $SM$ object to construct the
           normal logic program rule.
 
-          \begin{valgorithm}[tbhp]{TransConstRules()}{algo-impln-traco}
+          \begin{valgorithm}{TransConstRules()}{algo-impln-traco}
 FUNCTION \(TransConstRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
   FOR \(i\) = \(0\) TO \(|\omega|\) DO
     \(vlist\).\(Init\)()
@@ -8353,7 +8338,7 @@ ENDFUNCTION
           A similar method is used by the $TransUpdateRules$() function
           shown in Algorithm \ref{algo-impln-traup}.
 
-          \begin{valgorithm}[tbhp]{TransUpdateRules()}{algo-impln-traup}
+          \begin{valgorithm}{TransUpdateRules()}{algo-impln-traup}
 FUNCTION \(TransUpdateRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
   FOR \(i\) = \(0\) TO \(|\psi|\) DO
     FOR \(j\) = \(0\) TO \(|\omega|\) DO
