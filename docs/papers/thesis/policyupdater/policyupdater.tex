@@ -8507,7 +8507,8 @@ ENDFUNCTION
                            <expression> <if-clause>
                            <semicolon>
 
-<if-clause>              : <nil> | <if> <expression>
+<if-clause>              : <nil> |
+                           <if> <expression>
 
 <update-var-def>         : <open-parent>
                            <close-parent> |
@@ -8851,7 +8852,8 @@ ENDFUNCTION
                            <expression> <if-clause>
                            <where-clause> <semicolon>
 
-<if-clause>              : <nil> | <if> <expression>
+<if-clause>              : <nil> |
+                           <if> <expression>
 
 <update-var-def>         : <open-parent>
                            <close-parent> |
@@ -9016,7 +9018,7 @@ ENDFUNCTION
 
 <digit>                  : [0-9]
 
-<number>                 : <digit>{1,127}
+<number>                 : <digit>
 
 <alpha>                  : [a-zA-Z]
 
