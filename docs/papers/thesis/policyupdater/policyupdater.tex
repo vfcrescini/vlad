@@ -8539,9 +8539,9 @@ ENDFUNCTION
       \begin{vverbatim}
 <start>                  : <program>
 
-<program>                : <start> <body> <end>
+<program>                : <head> <body> <tail>
 
-<start>                  : <nil>
+<head>                   : <nil>
 
 <body>                   : <entity-section>
                            <initial-section>
@@ -8549,7 +8549,7 @@ ENDFUNCTION
                            <update-section>
                            <directive-section>
 
-<end>                    : <nil>
+<tail>                   : <nil>
 
 <entity-section>         : <nil> |
                            <entity-stmt-list>
@@ -8813,9 +8813,9 @@ ENDFUNCTION
     \begin{vverbatim}
 <start>                  : <program>
 
-<program>                : <start> <body> <end>
+<program>                : <head> <body> <tail>
 
-<start>                  : <nil>
+<head>                   : <nil>
 
 <body>                   : <identifier-section>
                            <initial-section>
@@ -8824,7 +8824,7 @@ ENDFUNCTION
                            <update-section>
                            <directive-section>
 
-<end>                    : <nil>
+<tail>                   : <nil>
 
 <identifier-section>     : <nil> |
                            <identifier-stmt-list>
