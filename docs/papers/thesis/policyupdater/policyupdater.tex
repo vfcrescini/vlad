@@ -146,7 +146,7 @@
   {
     \raggedright
     \normalfont
-    \LARGE \bf \chaptername \space \thechapter
+    \LARGE \bf \@chapapp \space \thechapter
     \par
     \vspace{1em}
     \hrule
@@ -221,19 +221,19 @@
   \end{titlepage}
 
   \begin{vcopyright}
-    Copyright \copyright
+    Copyright \copyright \space
     V. F. Crescini
     2006
 
     \vspace{1em}
 
     \small
-    Typeset in Times by \TeX and \LaTeXe.
+    Typeset in Times by \TeX \space and \LaTeXe.
   \end{vcopyright}
 
   \begin{vcertificate}
     \noindent
-    Except where otherwise indicated, this thesis is my own origial work.
+    Except where otherwise indicated, this thesis is my own original work.
     No part of this thesis has been submitted as part of any other degree.
 
     \vspace{5em}
@@ -248,8 +248,10 @@
   \end{vdedication}
 
   \chapter*{Acknowledgements}
+  \addcontentsline{toc}{chapter}{Acknowledgements}
 
   \chapter*{Abstract}
+  \addcontentsline{toc}{chapter}{Abstract}
 
   \tableofcontents
   \listoffigures
@@ -9176,9 +9178,9 @@ ENDFUNCTION
                            <underscore>
     \end{vverbatim}
 
-  \addcontentsline{toc}{chapter}{Bibliography}
 
   \begin{thebibliography}{M}
+    \addcontentsline{toc}{chapter}{Bibliography}
     \bibitem{ALE}
       Allen J. F.,
       Maintaining Knowledge about Temporal Intervals.
