@@ -9,6 +9,7 @@
 \usepackage{calc}
 \usepackage{multirow}
 \usepackage{rotating}
+\usepackage{fancyheadings}
 
 % a variable margin environment
 \newenvironment{vvarmargin}[2]
@@ -128,10 +129,57 @@
   \cleardoublepage
 }
 
+% headings and footers
+\setlength{\headheight}{2em}
+\lhead{\leftmark}
+\chead[]{}
+\rhead[]{}
+\lfoot{}
+\cfoot{\hfil\textrm{\thepage}\hfil}
+\rfoot[]{}
+
+% lines in chapter headings
+\makeatletter
+\renewcommand{\@makechapterhead}[1]
+{
+  \vspace*{3em}
+  {
+    \raggedright
+    \normalfont
+    \LARGE \bf \chaptername \space \thechapter
+    \par
+    \vspace{1em}
+    \hrule
+    \vspace{15pt}
+    \Huge \bf #1\par
+    \vspace{15pt}
+    \hrule
+    \vspace{1.5em}
+  }
+}
+\renewcommand{\@makeschapterhead}[1]
+{
+  \vspace*{3em}
+  {
+    \raggedright
+    \normalfont
+    \vspace{1em}
+    \hrule
+    \vspace{15pt}
+    \Huge \bf #1\par
+    \vspace{15pt}
+    \hrule
+    \vspace{1.5em}
+  }
+}
+\makeatother
+
 \begin{document}
   \onehalfspacing
 
   \pagenumbering{roman}
+
+  \pagestyle{fancy}
 
   \begin{titlepage}
     \begin{center}
