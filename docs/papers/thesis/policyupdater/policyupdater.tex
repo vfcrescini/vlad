@@ -7252,6 +7252,29 @@ ENDFUNCTION
   \chapter{Implementation Issues}
     \label{chap-impln}
 
+    This chapter focuses on two issues: (1) the implementation of
+    {\em PolicyUpdater} version 2, which includes support for temporal
+    constraints; and (2) an in-depth discussion on other implementation issues
+    not previously covered in the other chapters.
+
+    The source code and other techical information of all the versions of
+    the {\em PolicyUpdater} core system, {\em vlad}, is available in the
+    project website:
+
+    \begin{vquote}
+      {\tt\scriptsize http://www.cit.uws.edu.au/\~{}jcrescin/projects/policyupdater/index.html}
+    \end{vquote}
+
+    The PolicyUpdater software package makes use of a temporal reasoner engine
+    to evaluate temporal interval relations under the rules of the interval
+    algebra discussed in Chapter \ref{chap-tempo}. The source code and other
+    implementation details of a full library implementation of the temporal
+    reasoner engine, {\em tribe}, can be found in the following website:
+
+    \begin{vquote}
+      {\tt\scriptsize http://www.cit.uws.edu.au/\~{}jcrescin/projects/tribe/index.html}
+    \end{vquote}
+
     \section{System Structure}
       \label{sect-impln-sysst}
 
