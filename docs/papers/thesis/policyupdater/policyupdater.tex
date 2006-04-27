@@ -7286,6 +7286,34 @@ ENDFUNCTION
         \end{center}
       \end{figure}
 
+      Figure \ref{figu-impln-flwch} shows the internal processes of the system.
+      The fundamental process of the system is similar to that of the
+      previous version:
+
+      An access control policy, written in language ${\cal L^T}$ syntax, is
+      translated into a normal logic program, which in turn is fed to
+      {\em SModels} to generate answer sets. From these answer sets, the system
+      can evauate authorisation queries.
+
+      What makes {\em PolicyUpdater 2} different from its predecessor is that
+      it uses a temporal reasoner to generate a normal logic program. The
+      system gathers all temporal intervals and relations from the policy and
+      makes use of the temporal reasoner to derive new interval relations not
+      explicitly stated in the policy.
+
+      Another difference is the variable grounding process. With
+      {\em PolicyUpdater 1}, variables are resolved just before they are stored
+      in the policy base. This is possible because in {\em PolicyUpdater 1},
+      the only variables that occur in the policy are resolved to all entities
+      defined that are of the same type. However, in {\em PolicyUpdater 2},
+      the intervals used to ground interval variables are subject to some
+      resrictions defined by {\em where} clauses in policy statements. As a
+      result, the variable grounding process of {\em PolicyUpdater 2} needs
+      some interaction with the temporal reasoner engine.
+
+      The internal mechanisms of both the temporal reasoner engine and the
+      policy base shall be discussed in detail in the following sections.
+      
     \section{Temporal Reasoner}
       \label{sect-impln-treas}
 
