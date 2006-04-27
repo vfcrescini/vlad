@@ -7317,6 +7317,14 @@ ENDFUNCTION
     \section{Temporal Reasoner}
       \label{sect-impln-treas}
 
+      The primary purpose of the temporal reasoner engine is to maintain a
+      complete network of temporal intervals and their relations to each
+      other, as discussed in Chapter \ref{chap-tempo}, such that: (1) the
+      effects of adding a new relation are propagated to the entire network;
+      and (2) the relation between any two intervals can be looked up at any
+      given time. This section focuses on the methods used in the
+      implementation of this reasoner engine.
+
       \subsection{Network Structure}
         \label{subs-impln-struc}
 
@@ -7397,7 +7405,8 @@ ENDFUNCTION
         only one relation set between any two intervals needs to be stored
         as its inverse can be calculated from this relation set if required.
         Note that under this definition, half of the cells in Table
-        \ref{tabl-impln-concp} are redundant.
+        \ref{tabl-impln-concp} are redundant. The information stored above the
+        diagonal is the inverse of those stored below.
 
         \subsubsection{Binary Representation of Relation Sets}
 
@@ -7463,19 +7472,27 @@ ENDFUNCTION
 
           \begin{itemize}
             \item
-              Union
+              The {\em Union} between two relation sets is caclulated by
+              performing a {\em bitwise and} between the two sets.
+
               \begin{vquote}
                 $RS_0$ $\cup$ $RS_1$ $=$ $RS_0$ $|$ $RS_1$
               \end{vquote}
 
             \item
-              Intersection
+              The {\em Intersection} between two relation sets is simply the
+              opposite of the union operation: a {\em bitwise or} between
+              the two sets.
+
               \begin{vquote}
                 $RS_0$ $\cap$ $RS_1$ $=$ $RS_0$ $\&$ $RS_1$
               \end{vquote}
 
             \item
-              Inverse
+              The {\em Inverse} of a relation set can be calculated by
+              replacing each relation bit, as defined by
+              \ref{tabl-impln-valas}, by its inverse relation bit. This
+              is achieved by a series of bit masking and shifting:
 
               \begin{vquote}
                 $RS^{-1}$ $=$
@@ -7508,13 +7525,13 @@ ENDFUNCTION
           stored in the following manner:
 
           \begin{vquote}
-            $NET$[$0$].$int\_id$ $=$ $\iota_0$
+            $NET$[$0$].$int$ $=$ $\iota_0$
 
-            $NET$[$0$].$rlist$[$0$].$int\_id$ $=$ $\iota_1$
+            $NET$[$0$].$rlist$[$0$].$int$ $=$ $\iota_1$
 
             $NET$[$0$].$rlist$[$0$].$rs$ $=$ $6$
 
-            $NET$[$1$].$int\_id$ $=$ $\iota_1$
+            $NET$[$1$].$int$ $=$ $\iota_1$
 
             $NET$[$1$].$rlist$ $=$ $\emptyset$
           \end{vquote}
@@ -7525,7 +7542,7 @@ ENDFUNCTION
                 \hline
                 {\bf Field} & {\bf Type} & {\bf Description} \\
                 \hline
-                $int\_id$ & String & Interval ID \\
+                $int$ & String & Interval ID \\
                 \hline
                 $rlist$   & RelList & Relation List \\
                 \hline
@@ -7541,7 +7558,7 @@ ENDFUNCTION
                 \hline
                 {\bf Field} & {\bf Type} & {\bf Description} \\
                 \hline
-                $int\_id$ & String & Interval ID \\
+                $int$ & String & Interval ID \\
                 \hline
                 $rs$      & Integer & Relation Set \\
                 \hline
@@ -7565,13 +7582,13 @@ ENDFUNCTION
           chosen to store the relation in interval $\iota_1$'s relation list:
 
           \begin{vquote}
-            $NET$[$0$].$int\_id$ $=$ $\iota_0$
+            $NET$[$0$].$int$ $=$ $\iota_0$
 
             $NET$[$0$].$rlist$ $=$ $\emptyset$
 
-            $NET$[$1$].$int\_id$ $=$ $\iota_1$
+            $NET$[$1$].$int$ $=$ $\iota_1$
 
-            $NET$[$1$].$rlist$[$0$].$int\_id$ $=$ $\iota_0$
+            $NET$[$1$].$rlist$[$0$].$int$ $=$ $\iota_0$
 
             $NET$[$1$].$rlist$[$0$].$rs$ $=$ $384$
           \end{vquote}
