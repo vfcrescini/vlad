@@ -4288,7 +4288,7 @@ ENDFUNCTION
             Given a temporal interval network $NET$. The three basic network
             operations are as follows:
 
-            \begin{itemize}
+            \begin{enumerate}
               \item
                 The $NET.Get$($I_0$, $I_1$) operator returns the relation
                 set on the arc between intervals $I_0$ and $I_1$.
@@ -4301,7 +4301,7 @@ ENDFUNCTION
                 set $RS$ to the arc between intervals $I_0$ and $I_1$, and
                 propagates the effects of this change to the rest of the
                 network.
-            \end{itemize}
+            \end{enumerate}
           \end{vdefinition}
 
           As described in the definition above, the $NET.Get$() and
@@ -7596,6 +7596,41 @@ ENDFUNCTION
       \subsection{Network Operators}
         \label{subs-impln-netop}
 
+        The following defines the entire operator set allowed for the interval
+        network. Note that this definiton supercedes the basic operations
+        shown in Definition \ref{defn-tempo-oprtn}.
+
+        \begin{vdefinition}
+          Given a temporal interval network $NET$. The following shows the
+          full operator set:
+
+          \begin{enumerate}
+            \item
+              The $NET.Init$() operator initialises or re-initialises the
+              network.
+
+            \item
+              The $NET.AddInt$($\iota$) operator causes the given interval
+              identifier $\iota$ to be added to the network. 
+
+            \item
+              The $NET$.$AddRel$($\iota_0$, $\iota_1$, $rs$) operator adds the
+              relation set $rs$ to the network as the set of possible
+              relations between intervals $\iota_0$ and $\iota_1$, and
+              propagates the effects of this relation to the entire network.
+
+            \item
+              The $NET$.$Bind$($\iota$, $ep_0$, $ep_1$) operator registers the
+              points $ep_0$ and $ep_1$ as the end points of interval $\iota$,
+              then calculates the relation of this interval with other
+              intervals based on their end points.
+
+            \item
+              The $NET$.$Get$($\iota_0$, $\iota_1$) operator returns the
+              relation set between the intervals $\iota_0$ and $\iota_1$.
+          \end{enumerate}
+        \end{vdefinition}
+
     \section{Authorisation Engine}
       \label{sect-impln-authe}
 
@@ -8266,7 +8301,7 @@ ENDFUNCTION
           \begin{valgorithm}{AddInterval()}{algo-impln-adint}
 FUNCTION \(PB\).\(AddInterval\)(\(id\))
   \(PB\).\(symtab\).\(int\).\(Add\)(\(id\));
-  \(PB\).\(netwk\).\(New\)(\(id\));
+  \(PB\).\(netwk\).\(AddInt\)(\(id\));
 ENDFUNCTION
           \end{valgorithm}
 
