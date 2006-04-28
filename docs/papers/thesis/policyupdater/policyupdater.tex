@@ -4297,7 +4297,7 @@ ENDFUNCTION
                 relation set on the arc between intervals $I_0$ and $I_1$ with
                 the relation set $RS$.
               \item
-                The $NET.Add$($I_0$, $I_1$, $RS$) operator adds the relation
+                The $NET.AddRel$($I_0$, $I_1$, $RS$) operator adds the relation
                 set $RS$ to the arc between intervals $I_0$ and $I_1$, and
                 propagates the effects of this change to the rest of the
                 network.
@@ -4306,7 +4306,7 @@ ENDFUNCTION
 
           As described in the definition above, the $NET.Get$() and
           $NET.Replace$() operators are simple $get$() and $set$() operations
-          on arc labels. In constrast, the $NET.Add$() operator requires a
+          on arc labels. In constrast, the $NET.AddRel$() operator requires a
           more complex algorithm to perform the propagation. This algorithm is
           discussed in detail in the next section.
 
@@ -4478,17 +4478,17 @@ ENDFUNCTION
               otherwise.
           \end{itemize}
 
-          The $NET.Add()$ algorithm shown in Algorithm \ref{algo-tempo-ntadd}
-          works as follows. Every time a new arc ($i_0$, $i_1$, $rs$) is added,
-          the algorithm finds the transitive relation set $RS$ between each of
-          these intervals and every other interval $I$ in the network, i.e.
-          the algorithm finds $RS$ = $Trans_2$($NET.Get$($I$, $i_0$), $rs$) for
-          every other interval $I$ in the network. If this new relation set
-          $RS$ contains more specific information than what is already in the
-          network, i.e. $RS$ $\subset$ $NET.Get$($I$, $i_1$), then this new arc
-          between $I$ and $i_1$ (shown in Figure \ref{figu-tempo-ntwk2}) is
-          again put through the same algorithm, as it might yield more relation
-          changes.
+          The $NET.AddRel()$ algorithm shown in Algorithm
+          \ref{algo-tempo-ntadd} works as follows. Every time a new arc
+          ($i_0$, $i_1$, $rs$) is added, the algorithm finds the transitive
+          relation set $RS$ between each of these intervals and every other
+          interval $I$ in the network, i.e. the algorithm finds $RS$ =
+          $Trans_2$($NET.Get$($I$, $i_0$), $rs$) for every other interval $I$
+          in the network. If this new relation set $RS$ contains more specific
+          information than what is already in the network, i.e. $RS$ $\subset$
+          $NET.Get$($I$, $i_1$), then this new arc between $I$ and $i_1$
+          (shown in Figure \ref{figu-tempo-ntwk2}) is again put through the
+          same algorithm, as it might yield more relation changes.
 
           \begin{figure}[tbhp]
             \begin{center}
@@ -4511,8 +4511,8 @@ ENDFUNCTION
             \end{center}
           \end{figure}
 
-          \begin{valgorithm}{NET.Add()}{algo-tempo-ntadd}
-FUNCTION \(NET.Add\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
+          \begin{valgorithm}{NET.AddRel()}{algo-tempo-ntadd}
+FUNCTION \(NET.AddRel\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
   \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
   WHILE NOT \(Q.IsEmpty\)() DO
     \(I\sb{0}'\), \(I\sb{1}'\), \(RS'\) = \(Q.Dequeue\)()
@@ -4554,30 +4554,43 @@ ENDFUNCTION
               \end{center}
             \end{figure}
 
+            \noindent
             Now, suppose the relation between interval $i_0$ and interval $i_1$
             is narrowed down to the relation set \{$before$, $meets$,
-            $overlaps$\}, i.e., the operation $NET.Add$($i_0$, $i_1$, \{$BEF$,
-            $MET$, $OVR$\}) is executed. This operation will yield the network
-            shown in Figure \ref{figu-tempo-ntwk5}. Note that because every arc
-            in the network contains all relations, the effects of the
-            $NET.ADD$() operation are limited to one arc.
+            $overlaps$\}, i.e., the following operation is executed:
+
+            \begin{vquote}
+              $NET.AddRel$($i_0$, $i_1$, \{$BEF$, $MET$, $OVR$\})
+            \end{vquote}
+
+            \noindent
+            This operation will yield the network shown in Figure
+            \ref{figu-tempo-ntwk5}. Note that because every arc in the network
+            contains all relations, the effects of the $NET.AddRel$() operation
+            are limited to one arc.
 
             \begin{figure}[tbhp]
               \begin{center}
                 \includegraphics{net-05}
-                \caption{Network after $NET.Add$($i_0$, $i_1$, \{$BEF$, $MET$, $OVR$\})}
+                \caption{Network after $NET.AddRel$($i_0$, $i_1$, \{$BEF$, $MET$, $OVR$\})}
                 \label{figu-tempo-ntwk5}
               \end{center}
             \end{figure}
 
+            \noindent
             Now, if the relation set \{$starts$, $finishes$\} is added to the
-            arc between interval $i_1$ and interval $i_2$, the $NET.Add$($i_1$,
-            $i_2$, \{$STA$, $FIN$\}) algorithm will also compute the relation
-            set $rs_2$ between interval $i_0$ and interval $i_2$ by using the
-            relation set $rs_0$ between intervals $i_0$ and interval $i_1$, and
-            relation set $rs_1$ between intervals $i_1$ and interval $i_2$ to
-            complete the transitivity. In other words, the algorithm computes
-            the following:
+            arc between interval $i_1$ and interval $i_2$:
+
+            \begin{vquote}
+              $NET.AddRel$($i_1$, $i_2$, \{$STA$, $FIN$\})
+            \end{vquote}
+
+            \noindent
+            The algorithm will also compute the relation set $rs_2$ between
+            interval $i_0$ and interval $i_2$ by using the relation set $rs_0$
+            between intervals $i_0$ and interval $i_1$, and relation set $rs_1$
+            between intervals $i_1$ and interval $i_2$ to complete the
+            transitivity. In other words, the algorithm computes the following:
 
             \begin{vquote}
               $rs_2$ = $Trans_2$($rs_0$, $rs_1$)
@@ -4585,6 +4598,7 @@ ENDFUNCTION
               $rs_2$ = $Trans_2$(\{$BEF$, $MET$, $OVR$\}, \{$STA$, $FIN$\})
             \end{vquote}
 
+            \noindent
             By referring to the transitivity table in Table
             \ref{tabl-tempo-ttabl}, we note the following:
 
@@ -4602,6 +4616,7 @@ ENDFUNCTION
               $Trans_1$($OVR$, $FIN$) = \{$DUR$, $STA$, $OVR$\}
             \end{vquote}
 
+            \noindent
             Therefore, as $Trans_2$() takes the union of all the relation sets
             returned by $Trans_1$(), we have:
 
@@ -4609,6 +4624,7 @@ ENDFUNCTION
               $rs_2$ = \{$BEF$, $OVR$, $MET$, $DUR$, $STA$\}
             \end{vquote}
 
+            \noindent
             Finally, because $rs_2$ is a subset of $NET.Get$($i_0$, $i_2$), the
             algorithm replaces the arc between $i_0$ and $i_2$ with $rs_2$, as
             shown in Figure \ref{figu-tempo-ntwk6}.
@@ -4616,7 +4632,7 @@ ENDFUNCTION
             \begin{figure}[tbhp]
               \begin{center}
                 \includegraphics{net-06}
-                \caption{Network after $NET.Add$($i_1$, $i_2$, \{$STA$, $FIN$\})}
+                \caption{Network after $NET.AddRel$($i_1$, $i_2$, \{$STA$, $FIN$\})}
                 \label{figu-tempo-ntwk6}
               \end{center}
             \end{figure}
@@ -4761,7 +4777,7 @@ FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
     IF \(I'\) != \(I\) THEN
       IF \(I'\) is well-defined THEN
         \(RS\) = \(Compute\)(\(I\sp{-}\), \(I\sp{+}\), \(I'\sp{-}\), \(I'\sp{+}\))
-        \(NET.Add\)(\(I\), \(I'\), \(RS\))
+        \(NET.AddRel\)(\(I\), \(I'\), \(RS\))
       ENDIF
     ENDIF
   ENDDO
@@ -5663,7 +5679,7 @@ ENDFUNCTION
             $\epsilon$, where $0$ $\leq$ $i$ $<$ $|\epsilon|$:
 
             \begin{vverbatim}
-  \(NET.Add\)(\({\iota}0\sb{i}\), \({\iota}1\sb{i}\), \(rs\sb{i}\))
+  \(NET.AddRel\)(\({\iota}0\sb{i}\), \({\iota}1\sb{i}\), \(rs\sb{i}\))
             \end{vverbatim}
 
           \paragraph
@@ -7213,9 +7229,9 @@ ENDFUNCTION
       \end{vverbatim}
 
       Note that this type of domain inconsistency is detected by the
-      $NET.Add$() algorithm. Unfortunately, the second type of inconsisteny is
-      not. To illustrate this type of inconsistency, we use Allen's example in
-      \cite{ALE}, shown in Figure \ref{figu-tempo-ntwk7}.
+      $NET.AddRel$() algorithm. Unfortunately, the second type of inconsisteny
+      is not. To illustrate this type of inconsistency, we use Allen's example
+      in \cite{ALE}, shown in Figure \ref{figu-tempo-ntwk7}.
 
       \begin{figure}[tbhp]
         \begin{center}
@@ -7227,14 +7243,14 @@ ENDFUNCTION
 
       The network shown in Figure \ref{figu-tempo-ntwk7} is in fact
       inconsistent, as none of its 32 instances are consistent. To see this, we
-      note that although the $NET.Add$() algorithm accepts the relation shown
-      between the arcs $i_1$ and $i_2$, we cannot assign the relation
+      note that although the $NET.AddRel$() algorithm accepts the relation
+      shown between the arcs $i_1$ and $i_2$, we cannot assign the relation
       {\em finishes} or {\em finished by} alone.
 
-      In fact, as Allen points out in \cite{ALE}, the $NET.Add$() algorithm can
-      only guarantee consistency within any three nodes of the network
-      ({\em 3-consistency}). Unfortunately, Vilain et. al. \cite{VIL} points out
-      that algorithms that can ensure full network consistency, i.e.
+      In fact, as Allen points out in \cite{ALE}, the $NET.AddRel$() algorithm
+      can only guarantee consistency within any three nodes of the network
+      ({\em 3-consistency}). Unfortunately, Vilain et. al. \cite{VIL} points
+      out that algorithms that can ensure full network consistency, i.e.
       {\em k-consistency} \cite{FRE}, are in fact, intractable. Nevertheless,
       total consistency can be easily checked by employing a simple
       backtracking algorithm. Furthermore, several methods for full network
