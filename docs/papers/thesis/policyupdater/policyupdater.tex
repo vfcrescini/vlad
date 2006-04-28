@@ -4618,7 +4618,7 @@ ENDFUNCTION
 
             \noindent
             Therefore, as $Trans_2$() takes the union of all the relation sets
-            returned by $Trans_1$(), we have:
+            returned by calls to $Trans_1$(), we have:
 
             \begin{vquote}
               $rs_2$ = \{$BEF$, $OVR$, $MET$, $DUR$, $STA$\}
@@ -4783,33 +4783,6 @@ FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
   ENDDO
 ENDFUNCTION
         \end{valgorithm}
-
-      \subsection{Additional Network Operators}
-        \label{subs-tempo-ntops}
-
-        For the sake of completeness, we define an additional two network
-        operators to complement those shown in Definition
-        \ref{defn-tempo-oprtn} and the $Net.Bind$() operator in
-        Algorithm \ref{algo-tempo-ntbin}:
-
-        \begin{itemize}
-          \item
-            $NET.Init$()
-
-            The $NET.Init$() operator initialises or re-initialises the
-            network. When executed, the operator causes all intervals and
-            relations to be removed from the network.
-
-          \item
-            $NET.New$($I$)
-
-            The $NET.New$() operator causes the given interval identifier $I$
-            to be added to the network. As the network maintains complete
-            information and since the new interval $I$ does not have any known
-            relations with any interval in the network, the operator assigns
-            the default relation between $I$ and every other interval in the
-            network.
-        \end{itemize}
 
     \section{Formalisation}
        \label{sect-tempo-fmstn}
@@ -5510,21 +5483,11 @@ ENDFUNCTION
             \end{vverbatim}
 
             \noindent
-            All intervals $\iota$ declared by using the first form are added
-            to the interval network through a call to the following function:
+            For both forms, the interval $\iota$ is added to the interval
+            network. However, the second form requires an additional step
+            to register the end points:
 
             \begin{vquote}
-              $NET.New$($\iota$)
-            \end{vquote}
-
-            \noindent
-            All intervals $\iota$ declared by using the second form, i.e.,
-            with end points $ep_0$ and $ep_1$, are added to the network
-            through the following functions:
-
-            \begin{vquote}
-              $NET.New$($\iota$)
-
               $NET.Bind$($\iota$, $ep_0$, $ep_1$)
             \end{vquote}
 
