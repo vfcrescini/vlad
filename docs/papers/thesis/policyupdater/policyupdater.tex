@@ -4021,19 +4021,20 @@ ENDFUNCTION
       authorisation rule may be represented as follows:
 
       \begin{vquote}
-        $holds$($alice$, $write$, $f_0$, $i_{1}$)
+        $holds$($alice$, $write$, $f_0$, $\iota_0$)
 
-        $holds$($bob$, $read$, $f_0$, $i_{2}$)
+        $holds$($bob$, $read$, $f_0$, $\iota_1$)
 
-        $after$($i_0$, $i_1$)
+        $after$($\iota_0$, $\iota_1$)
       \end{vquote}
 
       The example above states that $alice$ holds a $write$ access right to
-      file $f_0$ at some time interval $i_0$, $bob$ holds a $read$ access right
-      to file $f_1$ at some time interval $i_1$, and that the interval $i_0$
-      occurs at some time after the interval $i_1$. As mentioned earlier, the
-      actual values of the time intervals $i_0$ and $i_1$ is not as important
-      as the fact that the interval $i_0$ occurs after interval $i_1$.
+      file $f_0$ at some time interval $\iota_0$, $bob$ holds a $read$ access
+      right to file $f_1$ at some time interval $\iota_1$, and that the
+      interval $\iota_0$ occurs at some time after the interval $\iota_1$. As
+      mentioned earlier, the actual values of the time intervals $\iota_0$ and
+      $\iota_1$ is not as important as the fact that the interval $\iota_0$
+      occurs after interval $\iota_1$.
 
       The rest of this chapter discusses how temporal constraints can be
       incorporated into the authorisation language. The next section introduces
@@ -4052,20 +4053,20 @@ ENDFUNCTION
       the formalisation of these relations, but also on its ability to handle
       disjunctive interval relations between undefined time intervals.
 
-      For example, given an interval ${i_0}$, defined as 24th of September,
-      1995 to 25th of September, 1995; and interval ${i_1}$, defined as 25th of
-      December 1995 to 1st of January 1996. From the definitions of these
-      intervals, it is easy to conclude that interval ${i_0}$ is {\em before}
-      interval ${i_1}$, since the finishing end point of interval ${i_0}$
-      occurs before the starting end point of interval ${i_1}$.
+      For example, given an interval $\iota_0$, defined as 24th of September,
+      1995 to 25th of September, 1995; and interval $\iota_1$, defined as 25th
+      of December 1995 to 1st of January 1996. From the definitions of these
+      intervals, it is easy to conclude that interval $\iota_0$ is {\em before}
+      interval $\iota_1$, since the finishing end point of interval $\iota_0$
+      occurs before the starting end point of interval $\iota_1$.
 
       The strength of the interval algebra can be illustrated by considering
       intervals without endpoint definitions, but rather as having disjunctive
       relations with other intervals. For example, given three intervals
-      ${i_0}$, ${i_1}$ and ${i_2}$ whose bounding endpoints are not known. The
-      algebra allows us to conclude that if ${i_0}$ occurs either {\em before}
-      or {\em during} ${i_1}$ and ${i_2}$ occurs {\em after} ${i_1}$, then the
-      interval ${i_0}$ must occur {\em before} ${i_2}$.
+      $\iota_0$, $\iota_1$ and $\iota_2$ whose bounding endpoints are not
+      known. The algebra allows us to conclude that if $\iota_0$ occurs either
+      {\em before} or {\em during} $\iota_1$ and $\iota_2$ occurs {\em after}
+      $\iota_1$, then the interval $\iota_0$ must occur {\em before} $\iota_2$.
 
       The rest of the section gives a detailed overview of Allen's interval
       algebra.
@@ -4073,34 +4074,37 @@ ENDFUNCTION
       \subsection{Time Points and Time Intervals}
         \label{subs-tempo-tpint}
 
-        The preceding introduction hinted the difference between a time point and a
-        time interval. This sub section aims to give a more formal distinction between
-        the two.
+        The preceding introduction hinted the difference between a time point
+        and a time interval. This sub section aims to give a more formal
+        distinction between the two.
 
-        A point in time represents an event with zero duration, or an event that occurs
-        instantaneously, such as the switching on of a light bulb, or the moment the sun
-        has risen in the morning.
+        A point in time represents an event with zero duration, or an event
+        that occurs instantaneously, such as the switching on of a light bulb,
+        or the moment the sun has risen in the morning.
 
-        A time interval, on the other hand, is defined to be the time that has elapsed
-        between two given time points. For example, the interval one might call lunch
-        hour may be defined as the time elapsed between the time points 1 PM and 2 PM.
+        A time interval, on the other hand, is defined to be the time that has
+        elapsed between two given time points. For example, the interval one
+        might call lunch hour may be defined as the time elapsed between the
+        time points 1 PM and 2 PM.
 
-        Formally, a time interval $i$ is defined by its starting end point ${i^-}$ and
-        a finishing end point ${i^+}$, where ${i^-}$ $<$ ${i^+}$.
+        Formally, a time interval $\iota$ is defined by its starting end point
+        $\iota^-$ and a finishing end point $\iota^+$, where $\iota^-$ $<$
+        $\iota^+$.
 
-        One might argue that time point events such as the switching on of a light bulb
-        are not instantaneous, meaning that time, no matter how small the value, has
-        elapsed between the instant that electricity flowed through light bulb's
-        filament and the instant the light from the bulb reaches the observer's eyes.
-        One can further argue that the "instant" that electricity flowed through the
-        bulb's filament is not instantaneous, once we realise that the speed of light
-        and electricity is finite. In other words, any given event can always be
-        divided into sub-events. This argument is more evident in the sunrise example.
+        One might argue that time point events such as the switching on of a
+        light bulb are not instantaneous, meaning that time, no matter how
+        small the value, has elapsed between the instant that electricity
+        flowed through light bulb's filament and the instant the light from
+        the bulb reaches the observer's eyes. One can further argue that the
+        "instant" that electricity flowed through the bulb's filament is not
+        instantaneous, once we realise that the speed of light and electricity
+        is finite. In other words, any given event can always be divided into
+        sub-events. This argument is more evident in the sunrise example.
 
-        To solve this problem, Allen's algebra defines time intervals as the most basic
-        entities. This means time points are not used to define time intervals, but
-        instead, each interval is defined only in terms of its relationship with other
-        intervals.
+        To solve this problem, Allen's algebra defines time intervals as the
+        most basic entities. This means time points are not used to define
+        time intervals, but instead, each interval is defined only in terms
+        of its relationship with other intervals.
 
       \subsection{Time Interval Relations}
         \label{subs-tempo-inrel}
@@ -4119,80 +4123,86 @@ ENDFUNCTION
           \end{center}
         \end{figure}
 
-        \begin{itemize}
+        \begin{enumerate}
           \item
             {\em Before}.
-            Interval ${i_0}$ is said to be {\em before} interval ${i_1}$ if and
-            only if ${i_0^+}$ $<$ ${i_1^-}$.
+            Interval $\iota_0$ is said to be {\em before} interval $\iota_1$
+            if and only if $\iota_0^+$ $<$ $\iota_1^-$.
 
           \item
             {\em After}.
-            Interval ${i_0}$ is said to be {\em after} interval ${i_1}$ if and
-            only if ${i_0^-}$ $>$ ${i_1^+}$. Note that this is an inverse of
-            the {\em before} relation.
+            Interval $\iota_0$ is said to be {\em after} interval $\iota_1$ if
+            and only if $\iota_0^-$ $>$ $\iota_1^+$. Note that this is an
+            inverse of the {\em before} relation.
 
           \item
             {\em Meets}.
-            Interval ${i_0}$ is said to {\em meet} interval ${i_1}$ if and only
-            if ${i_0^+}$ $=$ ${i_1^-}$.
+            Interval $\iota_0$ is said to {\em meet} interval $\iota_1$ if and
+            only if $\iota_0^+$ $=$ $\iota_1^-$.
 
           \item
             {\em Met By}.
-            Interval ${i_0}$ is said to be {\em met by} interval ${i_1}$ if and
-            only if ${i_0^-}$ $=$ ${i_1^+}$. Note that this is an inverse of
-            the {\em meets} relation.
+            Interval $\iota_0$ is said to be {\em met by} interval $\iota_1$ if
+            and only if $\iota_0^-$ $=$ $\iota_1^+$. Note that this is an
+            inverse of the {\em meets} relation.
 
           \item
             {\em During}.
-            Interval ${i_0}$ is said to be {\em during} interval ${i_1}$ if and
-            only if ${i_0^-}$ $>$ ${i_1^-}$ and ${i_0^+}$ $<$ ${i_1^+}$.
+            Interval $\iota_0$ is said to be {\em during} interval $\iota_1$ if
+            and only if $\iota_0^-$ $>$ $\iota_1^-$ and $\iota_0^+$ $<$
+            $\iota_1^+$.
 
           \item
             {\em Contains}.
-            Interval ${i_0}$ is said to {\em contain} interval ${i_1}$ if and
-            only if ${i_0^-}$ $<$ ${i_1^-}$ and ${i_0^+}$ $>$ ${i_1^+}$. Note
-            that this is an inverse of the {\em during} relation.
+            Interval $\iota_0$ is said to {\em contain} interval $\iota_1$ if
+            and only if $\iota_0^-$ $<$ $\iota_1^-$ and $\iota_0^+$ $>$
+            $\iota_1^+$. Note that this is an inverse of the {\em during}
+            relation.
 
           \item
             {\em Overlaps}.
-            Interval ${i_0}$ is said to {\em overlap} interval ${i_1}$ if and
-            only if ${i_0^-}$ $<$ ${i_1^-}$, ${i_0^+}$ $>$ ${i_1^-}$ and
-            ${i_0^+}$ $<$ ${i_1^+}$.
+            Interval $\iota_0$ is said to {\em overlap} interval $\iota_1$ if
+            and only if $\iota_0^-$ $<$ $\iota_1^-$, $\iota_0^+$ $>$
+            $\iota_1^-$ and $\iota_0^+$ $<$ $\iota_1^+$.
 
           \item
             {\em Overlapped By}.
-            Interval ${i_0}$ is said to be {\em overlapped by} interval
-            ${i_1}$ if and only if ${i_0^-}$ $>$ ${i_1^-}$, ${i_0^-}$ $<$
-            ${i_1^+}$ and ${i_0^+}$ $>$ ${i_1^+}$. Note that this is an
-            inverse of the {\em overlaps} relation.
+            Interval $\iota_0$ is said to be {\em overlapped by} interval
+            $\iota_1$ if and only if $\iota_0^-$ $>$ $\iota_1^-$, $\iota_0^-$
+            $<$ $\iota_1^+$ and $\iota_0^+$ $>$ $\iota_1^+$. Note that this is
+            an inverse of the {\em overlaps} relation.
 
           \item
             {\em Starts}.
-            Interval ${i_0}$ is said to {\em start} interval ${i_1}$ if and
-            only if ${i_0^-}$ $=$ ${i_1^-}$ and ${i_0^+}$ $<$ ${i_1^+}$.
+            Interval $\iota_0$ is said to {\em start} interval $\iota_1$ if and
+            only if $\iota_0^-$ $=$ $\iota_1^-$ and $\iota_0^+$ $<$
+            $\iota_1^+$.
 
           \item
             {\em Started By}.
-            Interval ${i_0}$ is said to be {\em started by} interval ${i_1}$ if
-            and only if ${i_0^-}$ $=$ ${i_1^-}$ and ${i_0^+}$ $>$ ${i_1^+}$.
-            Note that this is an inverse of the the {\em starts} relation.
+            Interval $\iota_0$ is said to be {\em started by} interval
+            $\iota_1$ if and only if $\iota_0^-$ $=$ $\iota_1^-$ and
+            $\iota_0^+$ $>$ $\iota_1^+$. Note that this is an inverse of the
+            the {\em starts} relation.
 
           \item
             {\em Finishes}.
-            Interval ${i_0}$ is said to {\em finish} interval ${i_1}$ if and
-            only if ${i_0^-}$ $>$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
+            Interval $\iota_0$ is said to {\em finish} interval $\iota_1$ if
+            and only if $\iota_0^-$ $>$ $\iota_1^-$ and $\iota_0^+$ $=$
+            $\iota_1^+$.
 
           \item
             {\em Finished By}.
-            Interval ${i_0}$ is said to be {\em finished by} interval ${i_1}$
-            if and only if ${i_0^-}$ $<$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
-            Note that this is an inverse of the {\em finishes} relation.
+            Interval $\iota_0$ is said to be {\em finished by} interval
+            $\iota_1$ if and only if $\iota_0^-$ $<$ $\iota_1^-$ and
+            $\iota_0^+$ $=$ $\iota_1^+$. Note that this is an inverse of the
+            {\em finishes} relation.
 
           \item
             {\em Equals}.
-            Interval ${i_0}$ {\em equals} interval ${i_1}$ if and only if ${i_0^-}$
-            $=$ ${i_1^-}$ and ${i_0^+}$ $=$ ${i_1^+}$.
-        \end{itemize}
+            Interval $\iota_0$ {\em equals} interval $\iota_1$ if and only if
+            $\iota_0^-$ $=$ $\iota_1^-$ and $\iota_0^+$ $=$ $\iota_1^+$.
+        \end{enumerate}
 
         For example, given intervals {\em lunch hour} and {\em work hours},
         defined as 1 PM to 2 PM and 9 AM to 5 PM, respectively. Since 1 PM
@@ -4203,18 +4213,19 @@ ENDFUNCTION
       \subsection{Inferring New Relations}
         \label{subs-tempo-infer}
 
-        As mentioned earlier, the strength of the algebra is its ability to infer new
-        relations from existing ones. This is achieved by taking advantage of the
-        transitive properties of relations. For example, given that interval ${i_0}$ is
-        {\em before} interval ${i_1}$ and interval ${i_1}$ is {\em before} interval
-        ${i_2}$. Regardless of what the end points are, interval ${i_0}$ is
-        {\em before} interval ${i_2}$.
+        As mentioned earlier, the strength of the algebra is its ability to
+        infer new relations from existing ones. This is achieved by taking
+        advantage of the transitive properties of relations. For example,
+        given that interval $\iota_0$ is {\em before} interval $\iota_1$ and
+        interval $\iota_1$ is {\em before} interval $\iota_2$. Regardless of
+        what the end points are, interval $\iota_0$ is {\em before} interval
+        $\iota_2$.
 
         While simple relations like the one shown in the above example may seem
         intuitive, we quickly realise that it may not be so if we consider that
         a relation that exists between any two intervals may be given as a
         disjunctive set of possible relations. For example, the relation
-        between interval ${i_0}$ and interval ${i_1}$ may be given as a set
+        between interval $\iota_0$ and interval $\iota_1$ may be given as a set
         of possible relations \{{\em before}, {\em after}, {\em during}\}.
 
         Another issue is propagation. Given that the temporal knowledge base
@@ -4257,20 +4268,21 @@ ENDFUNCTION
           first arc, is omitted.
 
           Figure \ref{figu-tempo-ntwk1} gives an example of a network with
-          three nodes: $i_0$, $i_1$ and $i_2$ and the following relations:
+          three nodes: $\iota_0$, $\iota_1$ and $\iota_2$ and the following
+          relations:
 
           \begin{itemize}
             \item
-              Interval ${i_0}$ is {\em before} or {\em during} interval
-              ${i_1}$.
+              Interval $\iota_0$ is {\em before} or {\em during} interval
+              $\iota_1$.
             \item
-              Interval ${i_1}$ {\em overlaps} interval $i_2$.
+              Interval $\iota_1$ {\em overlaps} interval $\iota_2$.
           \end{itemize}
 
           In this example, note that because no relation is defined for
-          intervals ${i_0}$ and ${i_2}$, the corresponding arc between these
-          nodes in Figure \ref{figu-tempo-ntwk1} is labelled {\em All}, meaning
-          the relation set contains all 13 possible relations.
+          intervals $\iota_0$ and $\iota_2$, the corresponding arc between
+          these nodes in Figure \ref{figu-tempo-ntwk1} is labelled {\em All},
+          meaning the relation set contains all 13 possible relations.
 
           \begin{figure}[tbhp]
             \begin{center}
@@ -4290,17 +4302,19 @@ ENDFUNCTION
 
             \begin{enumerate}
               \item
-                The $NET.Get$($I_0$, $I_1$) operator returns the relation
-                set on the arc between intervals $I_0$ and $I_1$.
+                The $NET.Get$($\iota_0$, $\iota_1$) operator returns the
+                relation set on the arc between intervals $\iota_0$ and
+                $\iota_1$.
+
               \item
-                The $NET$.$Replace$($I_0$, $I_1$, $RS$) operator replaces the
-                relation set on the arc between intervals $I_0$ and $I_1$ with
-                the relation set $RS$.
+                The $NET$.$Replace$($\iota_0$, $\iota_1$, $rs$) operator
+                replaces the relation set on the arc between intervals
+                $\iota_0$ and $\iota_1$ with the relation set $rs$.
               \item
-                The $NET.AddRel$($I_0$, $I_1$, $RS$) operator adds the relation
-                set $RS$ to the arc between intervals $I_0$ and $I_1$, and
-                propagates the effects of this change to the rest of the
-                network.
+                The $NET.AddRel$($\iota_0$, $\iota_1$, $rs$) operator adds the
+                relation set $rs$ to the arc between intervals $\iota_0$ and
+                $\iota_1$, and propagates the effects of this change to the
+                rest of the network.
             \end{enumerate}
           \end{vdefinition}
 
@@ -4422,42 +4436,43 @@ ENDFUNCTION
           computed through the transitive closure of the network. The following
           example illustrates this procedure.
 
-          Given 3 intervals $i_0$, $i_1$ and $i_2$, and the relation $i_0$ is
-          {\em before} $i_1$. Suppose the new relation $i_2$ is {\em during}
-          $i_1$ is added into the network. The algorithm then infers that
-          $i_0$ is {\em before} $i_2$. This new relation is again added into
-          the network in a similar way, possibly inferring other new relations
-          as it is added. This procedure is repeated until no new information
-          is yielded.
+          Given 3 intervals $\iota_0$, $\iota_1$ and $\iota_2$, and the
+          relation $\iota_0$ is {\em before} $\iota_1$. Suppose the new
+          relation $\iota_2$ is {\em during} $\iota_1$ is added into the
+          network. The algorithm then infers that $\iota_0$ is {\em before}
+          $\iota_2$. This new relation is again added into the network in a
+          similar way, possibly inferring other new relations as it is added.
+          This procedure is repeated until no new information is yielded.
 
           Table \ref{tabl-tempo-ttabl} shows the basic transitivity rules. For
-          any 3 intervals $i_0$, $i_1$ and $i_2$, the relation(s) between
-          intervals $i_0$ and $i_2$ is shown in the intersection of the row
-          that contains the relation between $i_0$ and $i_1$, and the column
-          that contains the relation between $i_1$ and $i_2$.
+          any 3 intervals $\iota_0$, $\iota_1$ and $\iota_2$, the relation(s)
+          between intervals $\iota_0$ and $\iota_2$ is shown in the
+          intersection of the row that contains the relation between $\iota_0$
+          and $\iota_1$, and the column that contains the relation between
+          $\iota_1$ and $\iota_2$.
 
           Before we can define the actual algorithm, we must first define a few
           functions. For any single relations $r_0$ and $r_1$, the function
-          $Trans_1$($r_0$, $r_1$) returns the relation set $RS$ that
+          $Trans_1$($r_0$, $r_1$) returns the relation set $rs$ that
           corresponds to the intersection of $r_0$ and $r_1$ in Table
           \ref{tabl-tempo-ttabl}.
 
           Using this function, we can then define the extended function
-          $Trans_2$($RS_0$, $RS_1$) shown in Algorithm \ref{algo-tempo-trns2},
-          which takes a pair of relation sets $RS_0$ and $RS_1$ as input, and
-          returns the relation set $RS$ which contains all the possible
+          $Trans_2$($rs_0$, $rs_1$) shown in Algorithm \ref{algo-tempo-trns2},
+          which takes a pair of relation sets $rs_0$ and $rs_1$ as input, and
+          returns the relation set $rs$ which contains all the possible
           relations inferred from the two given relation sets using the
           $Trans_1$() function.
 
           \begin{valgorithm}{Trans$_2$()}{algo-tempo-trns2}
-FUNCTION \(Trans\sb{2}\)(\(RS\sb{0}\), \(RS\sb{1}\))
-  \(RS\) = \(\emptyset\)
-  FOR each \(r\sb{0}\) \(\in\) \(RS\sb{0}\) DO
-    FOR each \(r\sb{1}\) \(\in\) \(RS\sb{1}\) DO
-      \(RS\) = \(RS\) \(\cup\) \(Trans\sb{1}\)(\(r\sb{0}\), \(r\sb{1}\))
+FUNCTION \(Trans\sb{2}\)(\(rs\sb{0}\), \(rs\sb{1}\))
+  \(rs\) = \(\emptyset\)
+  FOR each \(r\sb{0}\) \(\in\) \(rs\sb{0}\) DO
+    FOR each \(r\sb{1}\) \(\in\) \(rs\sb{1}\) DO
+      \(rs\) = \(rs\) \(\cup\) \(Trans\sb{1}\)(\(r\sb{0}\), \(r\sb{1}\))
     ENDDO
   ENDDO
-  RETURN \(RS\)
+  RETURN \(rs\)
 ENDFUNCTION
           \end{valgorithm}
 
@@ -4468,11 +4483,13 @@ ENDFUNCTION
 
           \begin{itemize}
             \item
-              $Q.Enqueue$($I_0$, $I_1$, $RS$) stores the given arc to the end
-              of the structure.
+              $Q.Enqueue$($\iota_0$, $\iota_1$, $RS$) stores the given arc to
+              the end of the structure.
+
             \item
               $Q.Dequeue$() returns and removes the arc at the front of the
               structure.
+
             \item
               $Q.IsEmpty$() returns true if the queue is empty and false
               otherwise.
@@ -4480,58 +4497,60 @@ ENDFUNCTION
 
           The $NET.AddRel()$ algorithm shown in Algorithm
           \ref{algo-tempo-ntadd} works as follows. Every time a new arc
-          ($i_0$, $i_1$, $rs$) is added, the algorithm finds the transitive
-          relation set $RS$ between each of these intervals and every other
-          interval $I$ in the network, i.e. the algorithm finds $RS$ =
-          $Trans_2$($NET.Get$($I$, $i_0$), $rs$) for every other interval $I$
-          in the network. If this new relation set $RS$ contains more specific
-          information than what is already in the network, i.e. $RS$ $\subset$
-          $NET.Get$($I$, $i_1$), then this new arc between $I$ and $i_1$
-          (shown in Figure \ref{figu-tempo-ntwk2}) is again put through the
-          same algorithm, as it might yield more relation changes.
+          ($\iota_0$, $\iota_1$, $rs$) is added, the algorithm finds the
+          transitive relation set $RS$ between each of these intervals and
+          every other interval $I$ in the network, i.e. the algorithm finds
+          $RS$ = $Trans_2$($NET.Get$($\iota$, $\iota_0$), $rs$) for every other
+          interval $I$ in the network. If this new relation set $RS$
+          contains more specific information than what is already in the
+          network, i.e. $RS$ $\subset$ $NET.Get$($I$, $\iota_1$), then this new
+          arc between $I$ and $\iota_1$ (shown in Figure
+          \ref{figu-tempo-ntwk2}) is again put through the same algorithm, as
+          it might yield more relation changes.
 
           \begin{figure}[tbhp]
             \begin{center}
               \includegraphics{net-02}
-              \caption{New Relation $RS$ From Interval $I$ and Interval $i_1$}
+              \caption{New Relation $RS$ From Interval $I$ and Interval $\iota_1$}
               \label{figu-tempo-ntwk2}
             \end{center}
           \end{figure}
 
           Note that the algorithm also attempts to form new transitive
-          relations between the given intervals $i_0$ and $i_1$ and all other
-          intervals $I$ in the network such that interval $I$ is to the right
-          of the other two intervals (shown in Figure \ref{figu-tempo-ntwk3}).
+          relations between the given intervals $\iota_0$ and $\iota_1$ and all
+          other intervals $I$ in the network such that interval $I$ is to the
+          right of the other two intervals (shown in Figure
+          \ref{figu-tempo-ntwk3}).
 
           \begin{figure}[tbhp]
             \begin{center}
               \includegraphics{net-03}
-              \caption{New Relation $RS$ From Interval $i_0$ and Interval $I$}
+              \caption{New Relation $RS$ From Interval $\iota_0$ and Interval $I$}
               \label{figu-tempo-ntwk3}
             \end{center}
           \end{figure}
 
           \begin{valgorithm}{NET.AddRel()}{algo-tempo-ntadd}
-FUNCTION \(NET.AddRel\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
-  \(Q.Enqueue\)(\(I\sb{0}\), \(I\sb{1}\), \(RS\))
+FUNCTION \(NET.AddRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
+  \(Q.Enqueue\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   WHILE NOT \(Q.IsEmpty\)() DO
-    \(I\sb{0}'\), \(I\sb{1}'\), \(RS'\) = \(Q.Dequeue\)()
-    \(NET.Replace\)(\(I\sb{0}'\), \(I\sb{1}'\), \(RS'\))
-    FOR each interval \(I''\) \(\in\) \(NET\) DO
-      IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
-        \(RS''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(I''\), \(I\sb{0}'\)), \(RS'\))
-        \(RS'''\) = \(NET.Get\)(\(I''\), \(I\sb{1}'\)) \(\cap\) \(RS''\)
-        IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{1}'\)) THEN
-          \(Q.Add\)(\(I''\), \(I\sb{1}'\), \(RS'''\))
+    \(\iota\sb{0}'\), \(\iota\sb{1}'\), \(rs'\) = \(Q.Dequeue\)()
+    \(NET.Replace\)(\(\iota\sb{0}'\), \(\iota\sb{1}'\), \(rs'\))
+    FOR each interval \(\iota''\) \(\in\) \(NET\) DO
+      IF \(\iota''\) != \(\iota\sb{0}'\) AND \(\iota''\) != \(\iota\sb{1}'\) THEN
+        \(rs''\) =  \(Trans\sb{2}\)(\(NET.Get\)(\(\iota''\), \(\iota\sb{0}'\)), \(rs'\))
+        \(rs'''\) = \(NET.Get\)(\(\iota''\), \(\iota\sb{1}'\)) \(\cap\) \(rs''\)
+        IF \(rs'''\) \(\subset\) \(NET.Get\)(\(\iota''\), \(\iota\sb{1}'\)) THEN
+          \(Q.Add\)(\(\iota''\), \(\iota\sb{1}'\), \(rs'''\))
         ENDIF
       ENDIF
     ENDDO
-    FOR each interval \(I''\) \(\in\) \(NET\) DO
-      IF \(I''\) != \(I\sb{0}'\) AND \(I''\) != \(I\sb{1}'\) THEN
-        \(RS''\) =  \(Trans\sb{2}\)(\(RS'\), \(NET.Get\)(\(I\sb{1}'\), \(I''\)))
-        \(RS'''\) = \(NET.Get\)(\(I\sb{0}'\), \(I''\)) \(\cap\) \(RS''\)
-        IF \(RS'''\) \(\subset\) \(NET.Get\)(\(I''\), \(I\sb{0}'\)) THEN
-          \(Q.Add\)(\(I\sb{0}'\), \(I''\), \(RS'''\))
+    FOR each interval \(\iota''\) \(\in\) \(NET\) DO
+      IF \(\iota''\) != \(\iota\sb{0}'\) AND \(\iota''\) != \(\iota\sb{1}'\) THEN
+        \(rs''\) =  \(Trans\sb{2}\)(\(rs'\), \(NET.Get\)(\(\iota\sb{1}'\), \(\iota''\)))
+        \(rs'''\) = \(NET.Get\)(\(\iota\sb{0}'\), \(\iota''\)) \(\cap\) \(rs''\)
+        IF \(rs'''\) \(\subset\) \(NET.Get\)(\(\iota''\), \(\iota\sb{0}'\)) THEN
+          \(Q.Add\)(\(\iota\sb{0}'\), \(\iota''\), \(rs'''\))
         ENDIF
       ENDIF
     ENDDO
@@ -4541,10 +4560,10 @@ ENDFUNCTION
 
           \begin{vexample}
             \label{exam-tempo-expl1}
-            Given a network with three intervals $i_0$, $i_1$ and $i_2$ where
-            no relation between any of the intervals are known. As no relations
-            are given, each arc in the network as shown in Figure
-            \ref{figu-tempo-ntwk4} is the default arc.
+            Given a network with three intervals $\iota_0$, $\iota_1$ and
+            $\iota_2$ where no relation between any of the intervals are known.
+            As no relations are given, each arc in the network as shown in
+            Figurr \ref{figu-tempo-ntwk4} is the default arc.
 
             \begin{figure}[tbhp]
               \begin{center}
@@ -4555,12 +4574,12 @@ ENDFUNCTION
             \end{figure}
 
             \noindent
-            Now, suppose the relation between interval $i_0$ and interval $i_1$
-            is narrowed down to the relation set \{$before$, $meets$,
+            Now, suppose the relation between interval $\iota_0$ and interval
+            $\iota_1$ is narrowed down to the relation set \{$before$, $meets$,
             $overlaps$\}, i.e., the following operation is executed:
 
             \begin{vquote}
-              $NET.AddRel$($i_0$, $i_1$, \{$BEF$, $MET$, $OVR$\})
+              $NET.AddRel$($\iota_0$, $\iota_1$, \{$BEF$, $MET$, $OVR$\})
             \end{vquote}
 
             \noindent
@@ -4572,25 +4591,26 @@ ENDFUNCTION
             \begin{figure}[tbhp]
               \begin{center}
                 \includegraphics{net-05}
-                \caption{Network after $NET.AddRel$($i_0$, $i_1$, \{$BEF$, $MET$, $OVR$\})}
+                \caption{Network after $NET.AddRel$($\iota_0$, $\iota_1$, \{$BEF$, $MET$, $OVR$\})}
                 \label{figu-tempo-ntwk5}
               \end{center}
             \end{figure}
 
             \noindent
             Now, if the relation set \{$starts$, $finishes$\} is added to the
-            arc between interval $i_1$ and interval $i_2$:
+            arc between interval $\iota_1$ and interval $\iota_2$:
 
             \begin{vquote}
-              $NET.AddRel$($i_1$, $i_2$, \{$STA$, $FIN$\})
+              $NET.AddRel$($\iota_1$, $\iota_2$, \{$STA$, $FIN$\})
             \end{vquote}
 
             \noindent
             The algorithm will also compute the relation set $rs_2$ between
-            interval $i_0$ and interval $i_2$ by using the relation set $rs_0$
-            between intervals $i_0$ and interval $i_1$, and relation set $rs_1$
-            between intervals $i_1$ and interval $i_2$ to complete the
-            transitivity. In other words, the algorithm computes the following:
+            interval $\iota_0$ and interval $\iota_2$ by using the relation set
+            $rs_0$ between intervals $\iota_0$ and interval $\iota_1$, and
+            relation set $rs_1$ between intervals $\iota_1$ and interval
+            $\iota_2$ to complete the transitivity. In other words, the
+            algorithm computes the following:
 
             \begin{vquote}
               $rs_2$ = $Trans_2$($rs_0$, $rs_1$)
@@ -4625,14 +4645,14 @@ ENDFUNCTION
             \end{vquote}
 
             \noindent
-            Finally, because $rs_2$ is a subset of $NET.Get$($i_0$, $i_2$), the
-            algorithm replaces the arc between $i_0$ and $i_2$ with $rs_2$, as
-            shown in Figure \ref{figu-tempo-ntwk6}.
+            Finally, because $rs_2$ is a subset of $NET.Get$($\iota_0$,
+            $\iota_2$), the algorithm replaces the arc between $\iota_0$ and
+            $\iota_2$ with $rs_2$, as shown in Figure \ref{figu-tempo-ntwk6}.
 
             \begin{figure}[tbhp]
               \begin{center}
                 \includegraphics{net-06}
-                \caption{Network after $NET.AddRel$($i_1$, $i_2$, \{$STA$, $FIN$\})}
+                \caption{Network after $NET.AddRel$($\iota_1$, $\iota_2$, \{$STA$, $FIN$\})}
                 \label{figu-tempo-ntwk6}
               \end{center}
             \end{figure}
@@ -4666,50 +4686,50 @@ ENDFUNCTION
       \subsection{Time Points Revisited}
         \label{subs-tempo-tprev}
 
-        By allowing time point definitions to be expressed in the algebra, we must
-        formally define time points.
+        By allowing time point definitions to be expressed in the algebra, we
+        must formally define time points.
 
-        Disregarding the physical effects of gravitation and velocity on time, we
-        make the assumption that time is linear, absolute and universal. That is,
-        time always flows in one direction: from past to future; that the passage of
-        time as seen by one system is the same for any other system; and that all
-        systems define time against a universal frame of reference. For simplicity,
-        we further assume that time is not a continuous line, but is instead made up
-        of discrete time points.
+        Disregarding the physical effects of gravitation and velocity on time,
+        we make the assumption that time is linear, absolute and universal.
+        That is, time always flows in one direction: from past to future; that
+        the passage of time as seen by one system is the same for any other
+        system; and that all systems define time against a universal frame of
+        reference. For simplicity, we further assume that time is not a
+        continuous line, but is instead made up of discrete time points.
 
-        As this definition goes against the more intuitive notion of continuous time
-        lines, one might see the problem of events "falling through" the gaps
-        between the discrete time points in the non-continuous time line.
+        As this definition goes against the more intuitive notion of continuous
+        time lines, one might see the problem of events "falling through" the
+        gaps between the discrete time points in the non-continuous time line.
 
-        To go around this problem, we allow the time point granularity to be chosen
-        arbitrarily. Ideally, for a specific application, one would choose a
-        granularity that is at least as small as the smallest interval in that
-        application. In practice, however, such choices are limited by implementing
-        system's clock and other hardware and software latencies.
+        To go around this problem, we allow the time point granularity to be
+        chosen arbitrarily. Ideally, for a specific application, one would
+        choose a granularity that is at least as small as the smallest interval
+        in that application. In practice, however, such choices are limited by
+        implementing system's clock and other hardware and software latencies.
 
         In the light bulb and sunrise example in the previous section, if we
-        choose a granularity of 1 second, then the switching on of a light bulb is an
-        event that occurs at a specific time point. A granularity of 1 second,
-        however, means that a sunrise is not an event but an interval, given the fact
-        that in most parts of the world, the sun takes a few minutes to rise above the
-        horizon. However, if we choose a granularity of 1 hour (and we do not
-        live in the polar regions), a sunrise becomes an event that occurs at a single
-        point in our chosen time scale. We can therefore argue that given a specific
-        time granularity, some events can be treated as instantaneously occurring at a
-        specific time point.
+        choose a granularity of 1 second, then the switching on of a light bulb
+        is an event that occurs at a specific time point. A granularity of 1
+        second, however, means that a sunrise is not an event but an interval,
+        given the fact that in most parts of the world, the sun takes a few
+        minutes to rise above the horizon. However, if we choose a granularity
+        of 1 hour (and we do not live in the polar regions), a sunrise becomes
+        an event that occurs at a single point in our chosen time scale. We can
+        therefore argue that given a specific time granularity, some events can
+        be treated as instantaneously occurring at a specific time point.
 
-        Regardless of the granularity chosen, the domain of time points is the set of
-        positive integers ${\mathbb Z}^{+}$.
+        Regardless of the granularity chosen, the domain of time points is the
+        set of positive integers ${\mathbb Z}^{+}$.
 
       \subsection{Defining Intervals in Terms of Time Points}
         \label{subs-tempo-inttp}
 
         \begin{vdefinition}
           \label{defn-tempo-intvl}
-          A {\bf well-defined interval} $i$ is an interval whose end points
-          $i^{-}$ $\in$ ${\mathbb Z}^{+}$ and $i^{+}$ $\in$ ${\mathbb Z}^{+}$
-          are defined, where $i^{-}$ $<$ $i^{+}$. A {\bf regular interval} is
-          an interval whose end points are not known.
+          A {\bf well-defined interval} $\iota$ is an interval whose end points
+          $\iota^{-}$ $\in$ ${\mathbb Z}^{+}$ and $\iota^{+}$ $\in$
+          ${\mathbb Z}^{+}$ are defined, where $\iota^{-}$ $<$ $\iota^{+}$. A
+          {\bf regular interval} is an interval whose end points are not known.
         \end{vdefinition}
 
         Under this definition, we can conclude that for any two well-defined
@@ -4718,34 +4738,34 @@ ENDFUNCTION
         this relation given the end points of two well-defined intervals.
 
         By using the $Compute$() function in Algorithm \ref{algo-tempo-compu},
-        we can now define a network operator, $NET.Bind$($I$, $I^-$, $I^+$),
-        that assigns the end points $I^-$ and $I^+$ to the existing interval
-        $I$ in the network. By allowing such end points to be defined for any
-        interval, thereby making them well-defined intervals, we are also
-        allowing the possibility of introducing new relations with this
-        interval. Furthermore, any new relations gathered by comparing the end
-        points of well-defined intervals are subject to the same propagation
-        algorithms shown in the previous section. Algorithm
-        \ref{algo-tempo-ntbin} shows how the $NET.Bind$() operator achieves
-        this.
+        we can now define a network operator, $NET.Bind$($\iota$, $\iota^-$,
+        $\iota^+$), that assigns the end points $\iota^-$ and $\iota^+$ to the
+        existing interval $\iota$ in the network. By allowing such end points
+        to be defined for any interval, thereby making them well-defined
+        intervals, we are also allowing the possibility of introducing new
+        relations with this interval. Furthermore, any new relations gathered
+        by comparing the end points of well-defined intervals are subject to
+        the same propagation algorithms shown in the previous section.
+        Algorithm \ref{algo-tempo-ntbin} shows how the $NET.Bind$() operator
+        achieves this.
 
         \begin{valgorithm}{Compute()}{algo-tempo-compu}
-FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(i\sb{1}\sp{+}\))
-  IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{-}\) THEN
-    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+FUNCTION \(Compute\)(\(\iota\sb{0}\sp{-}\), \(\iota\sb{0}\sp{+}\), \(\iota\sb{1}\sp{-}\), \(\iota\sb{1}\sp{+}\))
+  IF \(\iota\sb{0}\sp{-}\) == \(\iota\sb{1}\sp{-}\) THEN
+    IF \(\iota\sb{0}\sp{+}\) == \(\iota\sb{1}\sp{+}\) THEN
       RETURN \{\(equals\}\)
-    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+    ELSE IF \(\iota\sb{0}\sp{+}\) < \(\iota\sb{1}\sp{+}\) THEN
       RETURN \{\(starts\}\)
     ELSE
       RETURN \{\(started by\}\)
     ENDIF
-  ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{-}\) THEN
-    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+  ELSE IF \(\iota\sb{0}\sp{-}\) < \(\iota\sb{1}\sp{-}\) THEN
+    IF \(\iota\sb{0}\sp{+}\) == \(\iota\sb{1}\sp{+}\) THEN
       RETURN \{\(finished by\}\)
-    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
-      IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{-}\) THEN
+    ELSE IF \(\iota\sb{0}\sp{+}\) < \(\iota\sb{1}\sp{+}\) THEN
+      IF \(\iota\sb{0}\sp{+}\) == \(\iota\sb{1}\sp{-}\) THEN
         RETURN \{\(meets\}\)
-      ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{-}\) THEN
+      ELSE IF \(\iota\sb{0}\sp{+}\) < \(\iota\sb{1}\sp{-}\) THEN
         RETURN \{\(before\}\)
       ELSE
         RETURN \{\(overlaps\}\)
@@ -4754,14 +4774,14 @@ FUNCTION \(Compute\)(\(i\sb{0}\sp{-}\), \(i\sb{0}\sp{+}\), \(i\sb{1}\sp{-}\), \(
       RETURN \{\(contains\}\)
     ENDIF
   ELSE
-    IF \(i\sb{0}\sp{+}\) == \(i\sb{1}\sp{+}\) THEN
+    IF \(\iota\sb{0}\sp{+}\) == \(\iota\sb{1}\sp{+}\) THEN
       RETURN \{\(finishes\}\)
-    ELSE IF \(i\sb{0}\sp{+}\) < \(i\sb{1}\sp{+}\) THEN
+    ELSE IF \(\iota\sb{0}\sp{+}\) < \(\iota\sb{1}\sp{+}\) THEN
       RETURN \{\(during\}\)
     ELSE
-      IF \(i\sb{0}\sp{-}\) == \(i\sb{1}\sp{+}\) THEN
+      IF \(\iota\sb{0}\sp{-}\) == \(\iota\sb{1}\sp{+}\) THEN
         RETURN \{\(met by\}\)
-      ELSE IF \(i\sb{0}\sp{-}\) < \(i\sb{1}\sp{+}\) THEN
+      ELSE IF \(\iota\sb{0}\sp{-}\) < \(\iota\sb{1}\sp{+}\) THEN
         RETURN \{\(overlapped by\}\)
       ELSE
         RETURN \{\(after\}\)
@@ -4772,12 +4792,12 @@ ENDFUNCTION
         \end{valgorithm}
 
         \begin{valgorithm}{Net.Bind()}{algo-tempo-ntbin}
-FUNCTION \(NET.Bind\)(\(I\), \(I\sp{-}\), \(I\sp{+}\))
-  FOR each interval \(I'\) \(\in\) \(NET\) DO
-    IF \(I'\) != \(I\) THEN
-      IF \(I'\) is well-defined THEN
-        \(RS\) = \(Compute\)(\(I\sp{-}\), \(I\sp{+}\), \(I'\sp{-}\), \(I'\sp{+}\))
-        \(NET.AddRel\)(\(I\), \(I'\), \(RS\))
+FUNCTION \(NET.Bind\)(\(\iota\), \(\iota\sp{-}\), \(\iota\sp{+}\))
+  FOR each interval \(\iota'\) \(\in\) \(NET\) DO
+    IF \(\iota'\) != \(\iota\) THEN
+      IF \(\iota'\) is well-defined THEN
+        \(rs\) = \(Compute\)(\(\iota\sp{-}\), \(\iota\sp{+}\), \(\iota'\sp{-}\), \(\iota'\sp{+}\))
+        \(NET.AddRel\)(\(\iota\), \(\iota'\), \(rs\))
       ENDIF
     ENDIF
   ENDDO
