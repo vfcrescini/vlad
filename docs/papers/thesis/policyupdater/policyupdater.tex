@@ -4496,7 +4496,7 @@ ENDFUNCTION
           \end{itemize}
 
           The $NET.AddRel()$ algorithm shown in Algorithm
-          \ref{algo-tempo-ntadd} works as follows. Every time a new arc
+          \ref{algo-tempo-ntadr} works as follows. Every time a new arc
           ($\iota_0$, $\iota_1$, $rs$) is added, the algorithm finds the
           transitive relation set $RS$ between each of these intervals and
           every other interval $I$ in the network, i.e. the algorithm finds
@@ -4530,7 +4530,7 @@ ENDFUNCTION
             \end{center}
           \end{figure}
 
-          \begin{valgorithm}{NET.AddRel()}{algo-tempo-ntadd}
+          \begin{valgorithm}{NET.AddRel()}{algo-tempo-ntadr}
 FUNCTION \(NET.AddRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   \(Q.Enqueue\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   WHILE NOT \(Q.IsEmpty\)() DO
