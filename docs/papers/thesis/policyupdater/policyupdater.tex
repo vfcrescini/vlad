@@ -4534,7 +4534,7 @@ ENDFUNCTION
 FUNCTION \(NET.AddRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   \(Q.Enqueue\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   WHILE NOT \(Q.IsEmpty\)() DO
-    \(\iota\sb{0}'\), \(\iota\sb{1}'\), \(rs'\) = \(Q.Dequeue\)()
+    (\(\iota\sb{0}'\), \(\iota\sb{1}'\), \(rs'\)) = \(Q.Dequeue\)()
     \(NET.Replace\)(\(\iota\sb{0}'\), \(\iota\sb{1}'\), \(rs'\))
     FOR each interval \(\iota''\) \(\in\) \(NET\) DO
       IF \(\iota''\) != \(\iota\sb{0}'\) AND \(\iota''\) != \(\iota\sb{1}'\) THEN
@@ -4549,7 +4549,7 @@ FUNCTION \(NET.AddRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
       IF \(\iota''\) != \(\iota\sb{0}'\) AND \(\iota''\) != \(\iota\sb{1}'\) THEN
         \(rs''\) =  \(Trans\sb{2}\)(\(rs'\), \(NET.Get\)(\(\iota\sb{1}'\), \(\iota''\)))
         \(rs'''\) = \(NET.Get\)(\(\iota\sb{0}'\), \(\iota''\)) \(\cap\) \(rs''\)
-        IF \(rs'''\) \(\subset\) \(NET.Get\)(\(\iota''\), \(\iota\sb{0}'\)) THEN
+        IF \(rs'''\) \(\subset\) \(NET.Get\)(\(\iota\sb{0}'\), \(\iota''\)) THEN
           \(Q.Add\)(\(\iota\sb{0}'\), \(\iota''\), \(rs'''\))
         ENDIF
       ENDIF
