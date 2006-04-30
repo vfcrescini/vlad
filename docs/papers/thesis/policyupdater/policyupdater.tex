@@ -3261,7 +3261,7 @@ ENDFUNCTION
 
           \begin{valgorithm}{TransInitStateRules()}{algo-polup-tisr}
 FUNCTION \(TransInitStateRules\)(\(\omega\sb{i}\))
-  FOR \(i\) = \(0\) TO \(|\omega\sb{i}|\) - \(1\) DO
+  FOR \(i\) = \(0\) TO (\(|\omega\sb{i}|\) - \(1\)) DO
     \(RuleBegin\)()
     \(RuleHead\)(\(Encode\)(\(\omega\sb{i}\)[\(i\)].\(atm\), \(0\), \(\omega\sb{i}\)[\(i\)].\(tr\)))
     \(RuleBody\)(\(true\), \(true\))
@@ -3279,17 +3279,17 @@ ENDFUNCTION
 
           \begin{valgorithm}{TransConstRules()}{algo-polup-tconr}
 FUNCTION \(TransConstRules\)(\(\omega\sb{c}\), \(\psi\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\omega\sb{c}|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(\omega\sb{c}\)[\(j\)].\(exp\)\(|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\omega\sb{c}|\) - \(1\)) DO
+      FOR \(k\) = \(0\) TO (\(|\)\(\omega\sb{c}\)[\(j\)].\(exp\)\(|\) - \(1\)) DO
         \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(exp\)[\(k\)].\(tr\))
         \(RuleBegin\)()
         \(RuleHead\)(\(\alpha\))
-        FOR \(k\) = \(0\) TO \(|\)\(\omega\sb{c}\)[\(j\)].\(pcn\)\(|\) DO
+        FOR \(k\) = \(0\) TO (\(|\)\(\omega\sb{c}\)[\(j\)].\(pcn\)\(|\) - \(1\)) DO
           \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(pcn\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(pcn\)[\(k\)].\(tr\))
           \(RuleBody\)(\(\alpha\), \(true\))
         ENDDO
-        FOR \(k\) = \(0\) TO \(|\)\(\omega\sb{c}\)[\(j\)].\(ncn\)\(|\) DO
+        FOR \(k\) = \(0\) TO (\(|\)\(\omega\sb{c}\)[\(j\)].\(ncn\)\(|\) - \(1\)) DO
           \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(ncn\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(ncn\)[\(k\)].\(tr\))
           \(RuleBody\)(\(\alpha\), \(false\))
         ENDDO
@@ -3311,15 +3311,15 @@ ENDFUNCTION
 
           \begin{valgorithm}{TransUpdateRules()}{algo-polup-tupdr}
 FUNCTION \(TransUpdateRules\)(\(\omega\sb{u}\), \(\psi\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\omega\sb{u}|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\omega\sb{u}|\) - \(1\)) DO
       IF \(\psi\)[\(i\)].\(name\) == \(\omega\sb{u}\)[\(j\)].\(name\) THEN
         \(upd\) = \(GndUpdate\)(\(\omega\sb{u}\)[\(j\)], \(\psi\)[\(i\)].\(ilist\))
-        FOR \(k\) = \(0\) TO \(|\)\(upd\).\(pst\)\(|\) DO
+        FOR \(k\) = \(0\) TO (\(|\)\(upd\).\(pst\)\(|\) - \(1\)) DO
           \(\alpha\) = \(Encode\)(\(upd\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(upd\).\(pst\)[\(k\)].\(tr\))
           \(RuleBegin\)()
           \(RuleHead\)(\(\alpha\))
-          FOR \(l\) = \(0\) TO \(|\)\(upd\).\(pre\)\(|\) DO
+          FOR \(l\) = \(0\) TO (\(|\)\(upd\).\(pre\)\(|\) - \(1\)) DO
             \(\alpha\) = \(Encode\)(\(upd\).\(pre\)[\(l\)].\(atm\), \(i\), \(upd\).\(pre\)[\(l\)].\(tr\))
             \(RuleBody\)(\(\alpha\), \(true\))
           ENDDO
@@ -3366,12 +3366,12 @@ ENDFUNCTION
 
           \begin{valgorithm}{GenSubSubstInherRules()}{algo-polup-gssir}
 FUNCTION \(GenSubSubstInherRules\)(\(\theta\), \(\psi\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\)\(\theta\).\(sg\)\(|\) - \(1\)) DO
+      FOR \(k\) = \(0\) TO (\(|\)\(\theta\).\(sg\)\(|\) - \(1\)) DO
         IF \(\theta\).\(sg\)[\(j\)] != \(\theta\).\(sg\)[\(k\)] THEN
-          FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
-            FOR \(m\) = \(0\) TO \(|\)\(\theta\).\(o\)\(|\) DO
+          FOR \(l\) = \(0\) TO (\(|\)\(\theta\).\(a\)\(|\) - \(1\)) DO
+            FOR \(m\) = \(0\) TO (\(|\)\(\theta\).\(o\)\(|\) - \(1\)) DO
               \(\alpha\sb{0}\) = \(holds\)(\(\theta\).\(sg\)[\(j\)], \(\theta\).\(ag\)[\(l\)], \(\theta\).\(og\)[\(m\)])
               \(\alpha\sb{1}\) = \(holds\)(\(\theta\).\(sg\)[\(k\)], \(\theta\).\(ag\)[\(l\)], \(\theta\).\(og\)[\(m\)])
               \(\alpha\sb{2}\) = \(subst\)(\(\theta\).\(sg\)[\(j\)], \(\theta\).\(sg\)[\(k\)])
@@ -3417,10 +3417,10 @@ ENDFUNCTION
 
           \begin{valgorithm}{GenSubTransRules()}{algo-polup-gstrr}
 FUNCTION \(GenSubTransRules\)(\(\theta\), \(\psi\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
-        FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\)\(\theta\).\(sg\)\(|\) - \(1\)) DO
+      FOR \(k\) = \(0\) TO (\(|\)\(\theta\).\(sg\)\(|\) - \(1\)) DO
+        FOR \(l\) = \(0\) TO (\(|\)\(\theta\).\(sg\)\(|\) - \(1\)) DO
           IF \(j\) != \(k\) AND \(j\) != \(l\) AND \(k\) != \(l\) THEN
             \(\alpha\sb{0}\) = \(subst\)(\(\theta\).\(sg\)[\(j\)], \(\theta\).\(sg\)[\(l\)])
             \(\alpha\sb{1}\) = \(subst\)(\{\(\theta\).\(sg\)[\(j\)], \(\theta\).\(sg\)[\(k\)])
@@ -3462,10 +3462,10 @@ ENDFUNCTION
 
           \begin{valgorithm}{GenHldsInertRules()}{algo-polup-ghinr}
 FUNCTION \(GenHldsInertRules\)(\(\theta\), \(\psi\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
-        FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(o\)\(|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\)\(\theta\).\(s\)\(|\) - \(1\)) DO
+      FOR \(k\) = \(0\) TO (\(|\)\(\theta\).\(a\)\(|\) - \(1\)) DO
+        FOR \(l\) = \(0\) TO (\(|\)\(\theta\).\(o\)\(|\) - \(1\)) DO
           \(\alpha\) = \(holds\)(\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)])
           \(RuleBegin\)()
           \(RuleHead\)(\(Encode\)(\(\alpha\), \(i\) \(+\) \(1\), \(true\)))
@@ -3505,8 +3505,8 @@ ENDFUNCTION
 
           \begin{valgorithm}{GenSubRefleRules()}{algo-polup-gsrer}
 FUNCTION \(GenSubRefleRules\)(\(\theta\), \(\psi\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(sg\)\(|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\)\(\theta\).\(sg\)\(|\) - \(1\)) DO
       \(RuleBegin\)()
       \(RuleHead\)(\(Encode\)(\(subst\)(\(\theta\).\(sg\)[\(j\)], \(\theta\).\(sg\)[\(j\)]), \(i\), \(true\)))
       \(RuleBody\)(\(true\), \(true\))
@@ -3534,10 +3534,10 @@ ENDFUNCTION
 
           \begin{valgorithm}{GenHldsConsiRules()}{algo-polup-ghcor}
 FUNCTION \(GenHldsConsiRules\)(\(\theta\), \(\psi\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
-        FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(o\)\(|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\)\(\theta\).\(s\)\(|\) - \(1\)) DO
+      FOR \(k\) = \(0\) TO (\(|\)\(\theta\).\(a\)\(|\) - \(1\)) DO
+        FOR \(l\) = \(0\) TO (\(|\)\(\theta\).\(o\)\(|\) - \(1\)) DO
           \(\alpha\) = \(holds\)(\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)])
           \(RuleBegin\)()
           \(RuleHead\)(\(false\))
@@ -3578,7 +3578,7 @@ ENDFUNCTION
         \begin{valgorithm}{EvaluateExp()}{algo-polup-evale}
 FUNCTION \(EvaluateExp\)(\(\epsilon\), \(\Lambda\), \(\sigma\))
   \(result\) = \(true\)
-  FOR \(i\) = \(0\) TO \(|\epsilon|\) DO
+  FOR \(i\) = \(0\) TO (\(|\epsilon|\) - \(1\)) DO
     \(rv\) = \(EvaluateFact\)(\(\epsilon\)[\(i\)], \(\Lambda\), \(\sigma\))
     IF \(rv\) == \(false\) THEN
       RETURN \(false\)
@@ -3613,7 +3613,7 @@ ENDFUNCTION
 
         \begin{valgorithm}{IsFactIn()}{algo-polup-isinf}
 FUNCTION \(IsFactIn\)(\(\varrho\), \(\Lambda\))
-  FOR \(i\) = \(0\) TO \(|\Lambda|\) DO
+  FOR \(i\) = \(0\) TO (\(|\Lambda|\) - \(1\)) DO
     IF NOT \(\Lambda\)[\(i\)].\(Find\)(\(\varrho\)) THEN
       RETURN \(false\)
     ENDIF
@@ -8402,7 +8402,7 @@ ENDFUNCTION
           \begin{valgorithm}{AddRelation()}{algo-impln-adrel}
 FUNCTION \(PB\).\(AddRelation\)(\(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
-  FOR \(i\) = \(0\) TO \(|rlist|\) DO
+  FOR \(i\) = \(0\) TO (\(|rlist|\) - \(1\)) DO
     \(PB\).\(netwk\).\(Add\)(\(rlist\)[\(i\)].\(int\sb{0}\), \(rlist\)[\(i\)].\(int\sb{1}\), \(rlist\)[\(i\)].\(rs\))
   ENDDO
 ENDFUNCTION
@@ -8412,7 +8412,7 @@ ENDFUNCTION
 
           \begin{valgorithm}{AddInitially()}{algo-impln-adini}
 FUNCTION \(PB\).\(AddInitially\)(\(exp\))
-  FOR \(i\) = \(0\) TO \(|exp|\) DO
+  FOR \(i\) = \(0\) TO (\(|exp|\) - \(1\)) DO
     \(PB\).\(inittab\).\(Add\)(\(exp\)[\(i\)])
   ENDDO
 ENDFUNCTION
@@ -8569,12 +8569,12 @@ ENDFUNCTION
 
           \begin{valgorithm}{GenHldsTempoRules()}{algo-impln-ghdtr}
 FUNCTION \(GenHldsTempoRules\)(\(\theta\), \(\psi\), \(NET\), \(SM\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\)\(\theta\).\(s\)\(|\) DO
-      FOR \(k\) = \(0\) TO \(|\)\(\theta\).\(a\)\(|\) DO
-        FOR \(l\) = \(0\) TO \(|\)\(\theta\).\(o\)\(|\) DO
-          FOR \(m\) = \(0\) TO \(|\)\(\theta\).\(int\)\(|\) DO
-            FOR \(n\) = \(0\) TO \(|\)\(\theta\).\(int\)\(|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\)\(\theta\).\(s\)\(|\) - \(1\)) DO
+      FOR \(k\) = \(0\) TO (\(|\)\(\theta\).\(a\)\(|\) - \(1\)) DO
+        FOR \(l\) = \(0\) TO (\(|\)\(\theta\).\(o\)\(|\) - \(1\)) DO
+          FOR \(m\) = \(0\) TO (\(|\)\(\theta\).\(int\)\(|\) - \(1\)) DO
+            FOR \(n\) = \(0\) TO (\(|\)\(\theta\).\(int\)\(|\) - \(1\)) DO
               \(rs\) = \(NET\).\(get\)(\(m\), \(n\))
               IF (\(rs\) | \(101\)) == \(101\) THEN
                 \(\alpha\sb{0}\) = \{\(\theta\).\(s\)[\(j\)], \(\theta\).\(a\)[\(k\)], \(\theta\).\(o\)[\(l\)], \(\theta\).\(int\)[\(n\)]\}
@@ -8619,28 +8619,28 @@ ENDFUNCTION
 
           \begin{valgorithm}{TransConstRules()}{algo-impln-traco}
 FUNCTION \(TransConstRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
-  FOR \(i\) = \(0\) TO \(|\omega|\) DO
+  FOR \(i\) = \(0\) TO (\(|\omega|\) - \(1\)) DO
     \(vlist\).\(Init\)()
     \(vlist\).\(Append\)(\(GetVList\)(\(\omega\)[\(i\)].\(exp\))
     \(vlist\).\(Append\)(\(GetVList\)(\(\omega\)[\(i\)].\(pcn\))
     \(vlist\).\(Append\)(\(GetVList\)(\(\omega\)[\(i\)].\(ncn\))
     \(tlist\) = \(GenTupleList\)(\(\theta\), \(vlist\))
     \(rlist\) = \(NormaliseExp\)(\(\omega\)[\(i\)].\(rexp\))
-    FOR \(j\) = \(0\) TO \(|tlist|\) DO
+    FOR \(j\) = \(0\) TO (\(|tlist|\) - \(1\)) DO
       IF \(CheckTuple\)(\(tlist\)[\(j\)], \(rlist\), \(NET\)) THEN
         \(\epsilon\sb{0}\) = \(Replace\)(\(vlist\), \(tlist\)[\(j\)], \(\omega\)[\(i\)].\(exp\))
         \(\epsilon\sb{1}\) = \(Replace\)(\(vlist\), \(tlist\)[\(j\)], \(\omega\)[\(i\)].\(pcn\))
         \(\epsilon\sb{2}\) = \(Replace\)(\(vlist\), \(tlist\)[\(j\)], \(\omega\)[\(i\)].\(ncn\))
-        FOR \(k\) = \(0\) TO \(|\theta|\) DO
-          FOR \(l\) = \(0\) TO \(|\epsilon\sb{0}|\) DO
+        FOR \(k\) = \(0\) TO (\(|\theta|\) - \(1\)) DO
+          FOR \(l\) = \(0\) TO (\(|\epsilon\sb{0}|\) - \(1\)) DO
             \(SM\).\(RuleBegin\)()
             \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atm\), \(k\), \(\epsilon\sb{0}\)[\(l\)].\(tr\))
             \(SM\).\(RuleHead\)(\(\alpha\))
-            FOR \(m\) = \(0\) TO \(|\epsilon\sb{1}|\) DO
+            FOR \(m\) = \(0\) TO (\(|\epsilon\sb{1}|\) - \(1\)) DO
               \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(m\)].\(atm\), \(k\), \(\epsilon\sb{1}\)[\(m\)].\(tr\))
               \(SM\).\(RuleBody\)(\(\alpha\), \(true\))
             ENDDO
-            FOR \(n\) = \(0\) TO \(|\epsilon\sb{2}|\) DO
+            FOR \(n\) = \(0\) TO (\(|\epsilon\sb{2}|\) - \(1\)) DO
               \(\alpha\) = \(Encode\)(\(\epsilon\sb{2}\)[\(n\)].\(atm\), \(k\), \(\epsilon\sb{2}\)[\(n\)].\(tr\))
               \(SM\).\(RuleBody\)(\(\alpha\), \(false\))
             ENDDO
@@ -8658,8 +8658,8 @@ ENDFUNCTION
 
           \begin{valgorithm}{TransUpdateRules()}{algo-impln-traup}
 FUNCTION \(TransUpdateRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
-  FOR \(i\) = \(0\) TO \(|\psi|\) DO
-    FOR \(j\) = \(0\) TO \(|\omega|\) DO
+  FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
+    FOR \(j\) = \(0\) TO (\(|\omega|\) - \(1\)) DO
       IF \(\psi\)[\(i\)].\(name\) == \(\omega\)[\(j\)].\(name\) THEN
         \(upd\) = \(GndUpdate\)(\(\omega\)[\(j\)], \(\psi\)[\(i\)].\(ilist\))
         \(vlist\).\(Init\)()
@@ -8667,15 +8667,15 @@ FUNCTION \(TransUpdateRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
         \(vlist\).\(Append\)(\(GetVList\)(\(upd\).\(pst\))
         \(tlist\) = \(GenTupleList\)(\(\theta\), \(vlist\))
         \(rlist\) = \(NormaliseExp\)(\(\omega\)[\(j\)].\(rexp\))
-        FOR \(k\) = \(0\) TO \(|tlist|\) DO
+        FOR \(k\) = \(0\) TO (\(|tlist|\) - \(1\)) DO
           IF \(CheckTuple\)(\(tlist\)[\(k\)], \(rlist\), \(NET\)) THEN
             \(\epsilon\sb{0}\) = \(Replace\)(\(vlist\), \(tlist\)[\(k\)], \(upd\).\(pre\))
             \(\epsilon\sb{1}\) = \(Replace\)(\(vlist\), \(tlist\)[\(k\)], \(upd\).\(pst\))
-            FOR \(l\) = \(0\) TO \(|\)\(\epsilon\sb{1}\)\(|\) DO
+            FOR \(l\) = \(0\) TO (\(|\)\(\epsilon\sb{1}\)\(|\) - \(1\)) DO
               \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(l\)].\(atm\), \(i\) + \(1\), \(\epsilon\sb{1}\)[\(l\)].\(tr\))
               \(SM\).\(RuleBegin\)()
               \(SM\).\(RuleHead\)(\(\alpha\))
-              FOR \(m\) = \(0\) TO \(|\)\(\epsilon\sb{0}\)\(|\) DO
+              FOR \(m\) = \(0\) TO (\(|\)\(\epsilon\sb{0}\)\(|\) - \(1\)) DO
                 \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atm\), \(i\), \(\epsilon\sb{0}\)[\(l\)].\(tr\))
                 \(SM\).\(RuleBody\)(\(\alpha\), \(true\))
               ENDDO
