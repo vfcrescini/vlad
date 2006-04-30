@@ -21,7 +21,7 @@ XFIG_SRCS=      \
   sys-02        \
   sys-03        \
   sys-04        \
-  net-struct    \
+  net-struct-01 \
   net-struct-02 \
   net-struct-03 \
   net-struct-04 \
