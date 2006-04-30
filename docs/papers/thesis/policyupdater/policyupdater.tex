@@ -7511,30 +7511,6 @@ ENDFUNCTION
           \ref{tabl-impln-rldsr} shows the structure of each relation list
           node in each network list node.
 
-          \begin{figure}[tbhp]
-            \begin{center}
-              \includegraphics{net-struct}
-              \caption{Network Structure as a List of Relation Lists}
-              \label{figu-impln-nwstr}
-            \end{center}
-          \end{figure}
-
-          For example, a network $NET$ containing only the relations
-          $before$($\iota_0$, $\iota_1$) and $during$($\iota_0$, $\iota_1$) are
-          stored in the following manner:
-
-          \begin{vquote}
-            $NET$[$0$].$int$ $=$ $\iota_0$
-
-            $NET$[$0$].$rlist$[$0$].$int$ $=$ $\iota_1$
-
-            $NET$[$0$].$rlist$[$0$].$rs$ $=$ $6$
-
-            $NET$[$1$].$int$ $=$ $\iota_1$
-
-            $NET$[$1$].$rlist$ $=$ $\emptyset$
-          \end{vquote}
-
           \begin{table}[tbhp]
             \begin{center}
               \begin{tabular}[t]{|l|l|l|}
@@ -7567,6 +7543,38 @@ ENDFUNCTION
             \label{tabl-impln-rldsr}
           \end{table}
 
+          \begin{figure}[tbhp]
+            \begin{center}
+              \includegraphics{net-struct}
+              \caption{Network Structure as a List of Relation Lists}
+              \label{figu-impln-nwstr}
+            \end{center}
+          \end{figure}
+
+          For example, Figure \ref{figu-impln-nws02} shows a network $NET$
+          containing only the relations $before$($\iota_0$, $\iota_1$) and
+          $during$($\iota_0$, $\iota_1$) are stored in the following manner:
+
+          \begin{figure}[tbhp]
+            \begin{center}
+              \includegraphics{net-struct-02}
+              \caption{Network Structure Containing $before$($\iota_0$, $\iota_1$) and $during$($\iota_0$, $\iota_1$)}
+              \label{figu-impln-nws02}
+            \end{center}
+          \end{figure}
+
+          \begin{vquote}
+            $NET$[$0$].$int$ $=$ $\iota_0$
+
+            $NET$[$0$].$rlist$[$0$].$int$ $=$ $\iota_1$
+
+            $NET$[$0$].$rlist$[$0$].$rs$ $=$ $6$
+
+            $NET$[$1$].$int$ $=$ $\iota_1$
+
+            $NET$[$1$].$rlist$ $=$ $\emptyset$
+          \end{vquote}
+
           Note that in the previous example, the relations between intervals
           $\iota_0$ and $\iota_1$ are stored in the relation list of interval
           $\iota_0$, but the inverse relation, the relations between intervals
@@ -7577,8 +7585,17 @@ ENDFUNCTION
           However, this method raises the question of how we decide which
           interval node is used to store a given relation. In the previous
           example, we arbitrarily chose to store the relation in interval
-          $\iota_0$'s relation list, however, we could just as easily have
-          chosen to store the relation in interval $\iota_1$'s relation list:
+          $\iota_0$'s relation list, however, as shown in Figure
+          \ref{figu-impln-nws03}, we could just as easily have chosen to store
+          the relation in interval $\iota_1$'s relation list:
+
+          \begin{figure}[tbhp]
+            \begin{center}
+              \includegraphics{net-struct-03}
+              \caption{Equivalent Representation of $before$($\iota_0$, $\iota_1$) and $during$($\iota_0$, $\iota_1$)}
+              \label{figu-impln-nws03}
+            \end{center}
+          \end{figure}
 
           \begin{vquote}
             $NET$[$0$].$int$ $=$ $\iota_0$
@@ -7612,6 +7629,53 @@ FUNCTION \(NormaliseRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
   ENDIF
 ENDFUNCTION
           \end{valgorithm}
+
+          Another issue to be considered arises from the network's completeness
+          property (from Definition \ref{defn-tempo-netwk}), i.e. every node in
+          the network must be connected to every other node. As mentioned in
+          Section \ref{subs-tempo-infer}, this property is maintained even
+          between nodes containing intervals with no defined relations by
+          assigning the default arc, which represents a relation set containing
+          all 13 relations. Now, considering that the network is implemented
+          as a list of intervals, each with its own list of relations with
+          other intervals, it is easy to see that storing these default
+          relations will incur a lot of overhead. When a new interval is added
+          to the network, a relation list containing all the other intervals
+          must also be added, and each node in this relation list contains the
+          default relation. 
+
+          Figure \ref{figu-impln-nws04} shows how such implementation might
+          represent a network with 3 intervals and the relations {\em starts}
+          or {\em finishes} between intervals $\iota_0$ and $\iota_1$. Note
+          that although only the relation between intervals $\iota_0$ and
+          $\iota_1$ is given, the default relation is still stored between
+          intervals $\iota_0$ and $\iota_2$ and between intervals $\iota_1$ and
+          $\iota_2$.
+
+          \begin{figure}[tbhp]
+            \begin{center}
+              \includegraphics{net-struct-04}
+              \caption{Network Structure with Default Relations Stored}
+              \label{figu-impln-nws04}
+            \end{center}
+          \end{figure}
+
+          This issue is easily resolved by simply not storing default
+          relations. In other words, an interval that is not in the relation
+          list of another interval is assumed to have the default relation with
+          that interval. By adopting this technique, we can be certain that the
+          network implementation will only store the minimum information
+          required, and yet the relations between any two intervals can be
+          derived. Figure \ref{figu-impln-nws05} shows how the network in
+          the above example is stored by using this method.
+
+          \begin{figure}[tbhp]
+            \begin{center}
+              \includegraphics{net-struct-05}
+              \caption{Network Structure with Default Relations Omitted}
+              \label{figu-impln-nws05}
+            \end{center}
+          \end{figure}
 
       \subsection{Network Operators}
         \label{subs-impln-netop}

@@ -8,20 +8,24 @@ PDFLATEX=pdflatex
 FIG2DEV=fig2dev
 
 LATEX_SRCS=policyupdater
-XFIG_SRCS=   \
-  rels       \
-  net-01     \
-  net-02     \
-  net-03     \
-  net-04     \
-  net-05     \
-  net-06     \
-  net-07     \
-  sys-01     \
-  sys-02     \
-  sys-03     \
-  sys-04     \
-  net-struct \
+XFIG_SRCS=      \
+  rels          \
+  net-01        \
+  net-02        \
+  net-03        \
+  net-04        \
+  net-05        \
+  net-06        \
+  net-07        \
+  sys-01        \
+  sys-02        \
+  sys-03        \
+  sys-04        \
+  net-struct    \
+  net-struct-02 \
+  net-struct-03 \
+  net-struct-04 \
+  net-struct-05 \
 
 CLASS=
 STYLE=
