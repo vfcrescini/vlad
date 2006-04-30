@@ -3261,7 +3261,7 @@ ENDFUNCTION
 
           \begin{valgorithm}{TransInitStateRules()}{algo-polup-tisr}
 FUNCTION \(TransInitStateRules\)(\(\omega\sb{i}\))
-  FOR \(i\) = \(0\) TO \(|\omega\sb{i}|\) DO
+  FOR \(i\) = \(0\) TO \(|\omega\sb{i}|\) - \(1\) DO
     \(RuleBegin\)()
     \(RuleHead\)(\(Encode\)(\(\omega\sb{i}\)[\(i\)].\(atm\), \(0\), \(\omega\sb{i}\)[\(i\)].\(tr\)))
     \(RuleBody\)(\(true\), \(true\))
