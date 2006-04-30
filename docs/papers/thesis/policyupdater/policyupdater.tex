@@ -7511,6 +7511,14 @@ ENDFUNCTION
           \ref{tabl-impln-rldsr} shows the structure of each relation list
           node in each network list node.
 
+          \begin{figure}[tbhp]
+            \begin{center}
+              \includegraphics{net-struct-01}
+              \caption{Network Structure as a List of Relation Lists}
+              \label{figu-impln-nws01}
+            \end{center}
+          \end{figure}
+
           \begin{table}[tbhp]
             \begin{center}
               \begin{tabular}[t]{|l|l|l|}
@@ -7543,25 +7551,10 @@ ENDFUNCTION
             \label{tabl-impln-rldsr}
           \end{table}
 
-          \begin{figure}[tbhp]
-            \begin{center}
-              \includegraphics{net-struct-01}
-              \caption{Network Structure as a List of Relation Lists}
-              \label{figu-impln-nws01}
-            \end{center}
-          \end{figure}
-
-          For example, Figure \ref{figu-impln-nws02} shows a network $NET$
-          containing only the relations $before$($\iota_0$, $\iota_1$) and
-          $during$($\iota_0$, $\iota_1$) are stored in the following manner:
-
-          \begin{figure}[tbhp]
-            \begin{center}
-              \includegraphics{net-struct-02}
-              \caption{Network Structure Containing $before$($\iota_0$, $\iota_1$) and $during$($\iota_0$, $\iota_1$)}
-              \label{figu-impln-nws02}
-            \end{center}
-          \end{figure}
+          For example, the network shown in Figure \ref{figu-impln-nws02}
+          contains only the relations $before$($\iota_0$, $\iota_1$) and
+          $during$($\iota_0$, $\iota_1$). This network, $NET$, is stored in the
+          following manner:
 
           \begin{vquote}
             $NET$[$0$].$int$ $=$ $\iota_0$
@@ -7575,10 +7568,18 @@ ENDFUNCTION
             $NET$[$1$].$rlist$ $=$ $\emptyset$
           \end{vquote}
 
+          \begin{figure}[tbhp]
+            \begin{center}
+              \includegraphics{net-struct-02}
+              \caption{Network Structure Containing $before$($\iota_0$, $\iota_1$) and $during$($\iota_0$, $\iota_1$)}
+              \label{figu-impln-nws02}
+            \end{center}
+          \end{figure}
+
           Note that in the previous example, the relations between intervals
           $\iota_0$ and $\iota_1$ are stored in the relation list of interval
-          $\iota_0$, but the inverse relation, the relations between intervals
-          $\iota_1$ and $\iota_0$, is not stored in the relation list of
+          $\iota_0$, but the inverse relations, those between intervals
+          $\iota_1$ and $\iota_0$, are not stored in the relation list of
           $\iota_1$. This is done for efficiency, as inverse relations can be
           calculated by the inverse operator for any stored relations.
 
@@ -7588,14 +7589,6 @@ ENDFUNCTION
           $\iota_0$'s relation list, however, as shown in Figure
           \ref{figu-impln-nws03}, we could just as easily have chosen to store
           the relation in interval $\iota_1$'s relation list:
-
-          \begin{figure}[tbhp]
-            \begin{center}
-              \includegraphics{net-struct-03}
-              \caption{Equivalent Representation of $before$($\iota_0$, $\iota_1$) and $during$($\iota_0$, $\iota_1$)}
-              \label{figu-impln-nws03}
-            \end{center}
-          \end{figure}
 
           \begin{vquote}
             $NET$[$0$].$int$ $=$ $\iota_0$
@@ -7608,6 +7601,14 @@ ENDFUNCTION
 
             $NET$[$1$].$rlist$[$0$].$rs$ $=$ $384$
           \end{vquote}
+
+          \begin{figure}[tbhp]
+            \begin{center}
+              \includegraphics{net-struct-03}
+              \caption{Equivalent Representation of $before$($\iota_0$, $\iota_1$) and $during$($\iota_0$, $\iota_1$)}
+              \label{figu-impln-nws03}
+            \end{center}
+          \end{figure}
 
           To resolve this issue, we adopt a simple rule to determine where a
           given relation is to be stored in the network. Given a pair of
@@ -7631,7 +7632,7 @@ ENDFUNCTION
           \end{valgorithm}
 
           Another issue to be considered arises from the network's completeness
-          property (from Definition \ref{defn-tempo-netwk}), i.e. every node in
+          property from Definition \ref{defn-tempo-netwk}, i.e. every node in
           the network must be connected to every other node. As mentioned in
           Section \ref{subs-tempo-infer}, this property is maintained even
           between nodes containing intervals with no defined relations by
