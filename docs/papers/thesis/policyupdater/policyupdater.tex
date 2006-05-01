@@ -4296,7 +4296,7 @@ ENDFUNCTION
           three basic network operators:
 
           \begin{vdefinition}
-            \label{defn-tempo-oprtn}
+            \label{defn-tempo-netop}
             Given a temporal interval network $NET$. The three basic network
             operations are as follows:
 
@@ -7237,7 +7237,7 @@ ENDFUNCTION
       {\em k-consistency} \cite{FRE}, are in fact, intractable. Nevertheless,
       total consistency can be easily checked by employing a simple
       backtracking algorithm. Furthermore, several methods for full network
-      consistency checking, like those in \cite{LAD,VAN} already exist. In this
+      consistency checking, like those in \cite{LAD,VA2} already exist. In this
       work, we make the assumption that 3-consistency is sufficient for our
       authorisation system as we have observed that this covers all scenarios
       that we have examined.
@@ -7418,7 +7418,7 @@ ENDFUNCTION
           implementation. Each relation set is represented as a bit
           vector\footnotemark.
 
-          \footnotetext{A similar method is used in \cite{VAN, VIL}.}
+          \footnotetext{A similar method is used in \cite{VA2, VIL}.}
 
           \begin{table}[tbhp]
             \begin{center}
@@ -7685,13 +7685,14 @@ ENDFUNCTION
       \subsection{Network Operators}
         \label{subs-impln-netop}
 
-        The following defines the entire operator set allowed for the interval
-        network. Note that this definiton supercedes the basic operations
-        shown in Definition \ref{defn-tempo-oprtn}.
+        The following defines the full operator set allowed for the interval
+        network. This definiton supercedes the basic operators shown in
+        Definition \ref{defn-tempo-netop}. 
 
         \begin{vdefinition}
-          Given a temporal interval network $NET$. The following shows the
-          full operator set:
+          \label{defn-impln-netop}
+          The following shows the full operator set of an interval relation
+          network $NET$:
 
           \begin{enumerate}
             \item
@@ -7719,6 +7720,128 @@ ENDFUNCTION
               relation set between the intervals $\iota_0$ and $\iota_1$.
           \end{enumerate}
         \end{vdefinition}
+
+        We note that the network operators shown in Definition
+        \ref{defn-impln-netop} do not include the $NET.Replace$() operator.
+        This is due to the fact that this is an internal operator used only by
+        the $NET.AddRel$() operator. Nevertheless, the details of how this
+        operator replaces the network relation between the two given intervals
+        by the given relation set is shown in Algorithm \ref{algo-impln-ntrep}.
+
+        \begin{valgorithm}{NET.Replace()}{algo-impln-ntrep}
+FUNCTION \(NET\).\(Replace\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
+  (\(\iota\sb{0}'\), \(\iota\sb{1}'\), \(rs\)) = \(NormaliseRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
+  \(index\sb{0}\) = \(NET\).\(Index\)(\(\iota\sb{0}'\))
+  IF \(NET\)[\(index\sb{0}\)].\(rlist\).\(Find\)(\(\iota\sb{1}'\)) THEN
+    \(index\sb{1}\) = \(NET\)[\(index\sb{0}\)].\(rlist\).\(Index\)(\(\iota\sb{1}'\))
+    \(NET\)[\(index\sb{0}\)].\(rlist\)[\(index\sb{1}\)].\(rs\) = \(rs'\)
+  ELSE
+    \(rlnode\).\(int\) = \(\iota\sb{1}'\)
+    \(rlnode\).\(rs\) = \(rs'\)
+    \(NET\)[\(index\sb{0}\)].\(rlist\).\(Add\)(\(rlnode\))
+  ENDIF
+ENDFUNCTION
+        \end{valgorithm}
+
+        The $NET$.$Init$() operator is a simple routine that initialises the
+        network when called for the first time, and otherwise deletes all the
+        nodes in the network, including all relation list nodes within these
+        network nodes.
+
+        Algorithm \ref{algo-impln-ntadi} shows the $NET$.$AddInt$($\iota$)
+        operator. It works by firstly checking whether a network node with the
+        interval $\iota$ is already defined. If not, a new network node is
+        allocated and appended to the end of the network list. Since the $NET$
+        structure is implemented as a list, the $LIST$.$Add$() can be used to 
+        add nodes.
+
+        \begin{valgorithm}{NET.AddInt()}{algo-impln-ntadi}
+FUNCTION \(NET\).\(AddInt\)(\(\iota\))
+  IF \(\iota\) is not in \(NET\) THEN
+    \(nnode\).\(int\) = \(\iota\)
+    \(nnode\).\(rlist\) = \(\emptyset\)
+    \(NET\).\(Add\)(\(nnode\))
+  ENDIF
+ENDFUNCTION
+        \end{valgorithm}
+
+        The $NET$.$AddRel$() operator shown in Algorithm \ref{algo-tempo-ntadr}
+        illustrates the relation propagation algorithm based solely on Allen's
+        $ToAdd$() function in \cite{ALE}. Algorithm \ref{algo-impln-ntadr}
+        shows a simplified algorithm without the using a queue structure. This
+        is made possible by the fact that the order in which relations are
+        propagated makes no difference in the resulting network \cite{MAC,VAN}.
+        While the algorithm that uses a queue structure performs breadth-first
+        propagation, the recursive algorithm below performs depth-first
+        propagation.
+
+        \begin{valgorithm}{NET.AddRel()}{algo-impln-ntadr}
+FUNCTION \(NET\).\(AddRel\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
+  IF \(rs\) \(\subset\) \(NET\).\(Get\)(\(\iota\sb{0}\), \(\iota\sb{1}\)) THEN
+    \(NET\).\(Replace\)(\(\iota\sb{0}\), \(\iota\sb{1}\), \(rs\))
+    FOR each interval \(\iota'\) \(\in\) \(NET\) DO
+      IF \(\iota'\) != \(\iota\sb{0}\) AND \(\iota'\) != \(\iota\sb{1}\) THEN
+        \(rs'\) =  \(NET.Get\)(\(\iota'\), \(\iota\sb{0}\))
+        IF NOT \(Skip\)(\(rs'\), \(rs\)) THEN
+          \(NET\).\(AddRel\)(\(\iota'\), \(\iota\sb{1}\), \(NET.Get\)(\(\iota'\), \(\iota\sb{1}\)) \(\cap\) \(Trans\sb{2}\)(\(rs'\), \(rs\)))
+        ENDIF
+      ENDIF
+    ENDDO
+    FOR each interval \(\iota'\) \(\in\) \(NET\) DO
+      IF \(\iota'\) != \(\iota\sb{0}\) AND \(\iota'\) != \(\iota\sb{1}\) THEN
+        \(rs'\) =  \(NET.Get\)(\(\iota\sb{1}\), \(\iota'\))
+        IF NOT \(Skip\)(\(rs\), \(rs'\)) THEN
+          \(NET\).\(AddRel\)(\(\iota\sb{0}\), \(\iota'\), \(NET.Get\)(\(\iota\sb{0}\), \(\iota'\)) \(\cap\) \(Trans\sb{2}\)(\(rs\), \(rs'\)))
+        ENDIF
+      ENDIF
+    ENDDO
+  ENDIF
+ENDFUNCTION
+          \end{valgorithm}
+
+        Algorithm \ref{algo-impln-ntadr} also takes advantage of Van Beek and
+        Manchak's observation that certain relation set combinations will not
+        yield new information \cite{VA2}. These combinations are summarised in
+        the $Skip$() function shown in Algorithm \ref{algo-impln-skipp}.
+
+        \begin{valgorithm}{Skip()}{algo-impln-skipp}
+FUNCTION \(Skip\)(\(rs\sb{0}\), \(rs\sb{1}\))
+  IF (\(rs\sb{0}\) == \{\(ALL\)\}) OR
+     (\(rs\sb{1}\) == \{\(ALL\)\}) OR
+     (\(BEF\) \(\in\) \(rs\sb{0}\) AND \(BEI\) \(\in\) \(rs\sb{1}\)) OR
+     (\(BEI\) \(\in\) \(rs\sb{0}\) AND \(BEF\) \(\in\) \(rs\sb{1}\)) OR
+     (\(DUR\) \(\in\) \(rs\sb{0}\) AND \(DUI\) \(\in\) \(rs\sb{1}\)) THEN
+    RETURN TRUE
+  ENDIF
+  RETURN FALSE
+ENDFUNCTION
+        \end{valgorithm}
+
+        Finally, as the details of the $NET$.$Bind$() operator is already shown
+        in Algorithm \ref{algo-tempo-ntbin}, we show the $NET$.$Get$() operator
+        in Algorithm \ref{algo-impln-ntget}.
+
+        \begin{valgorithm}{NET.Get()}{algo-impln-ntget}
+FUNCTION \(NET\).\(Get\)(\(\iota\sb{0}\), \(\iota\sb{1}\))
+  IF \(\iota\sb{0}\) \(\leq\) \(\iota\sb{1}\) THEN
+    \(index\) = \(NET\).\(Index\)(\(\iota\sb{0}\))
+    IF \(NET\)[\(index\)].\(rlist\).\(Find\)(\(\iota\sb{1}\)) THEN
+      RETURN \(NET\)[\(index\)].\(rlist\)[\(NET\)[\(index\)].\(rlist\).\(Index\)(\(\iota\sb{1}\))].\(rs\)
+    ELSE
+      RETURN \(ALL\)
+    ENDIF
+  ELSE
+    \(index\) = \(NET\).\(Index\)(\(\iota\sb{1}\))
+    IF \(NET\)[\(index\)].\(rlist\).\(Find\)(\(\iota\sb{0}\)) THEN
+      RETURN \(NET\)[\(index\)].\(rlist\)[\(NET\)[\(index\)].\(rlist\).\(Index\)(\(\iota\sb{0}\))].\(rs\)\(\sp{-1}\)
+    ELSE
+      RETURN \(ALL\)
+    ENDIF
+  ENDIF
+ENDFUNCTION
+        \end{valgorithm}
+
+        
 
     \section{Authorisation Engine}
       \label{sect-impln-authe}
@@ -9409,6 +9532,13 @@ ENDFUNCTION
       pp. 80,
       2004.
 
+    \bibitem{MAC}
+      Mackworth, A.K.,
+      Consistency in Networks of Relations.
+      {\em Artificial Intelligence},
+      Vol. 8, No. 1, pp. 99-118,
+      1977.
+
     \bibitem{HTTP1}
       Network Working Group
       HTTP 1.1 (RFC 2616).
@@ -9440,6 +9570,13 @@ ENDFUNCTION
       1987.
 
     \bibitem{VAN}
+      Van Beek P. G., Cohen, R.
+      Exact and Approximate Reasoning about Temporal Relations.
+      {\em Computational Intelligence},
+      Vol. 6., No. 3, pp. 132-147,
+      1990.
+
+    \bibitem{VA2}
       Van Beek P. G., Manchak D. W.,
       The Design and Experimental Analysis of Algorithms for Temporal Reasoning.
       {\em Journal of Artificial Intelligence Research},
