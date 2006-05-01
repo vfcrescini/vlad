@@ -3556,7 +3556,7 @@ ENDFUNCTION
 
         Once a normal logic program has been generated from the policy stored
         in the storage structure, a set of answer sets may then be generated
-        by using the stable model semantics \cite{SIM} with the
+        by using the stable model semantics \cite{SIM1,NIE} with the
         {\em SModels}\footnotemark program. Query evaluation then becomes
         possible by checking whether each fact of a given query expression
         holds in each generated answer set of the normal logic program.
@@ -7237,10 +7237,10 @@ ENDFUNCTION
       {\em k-consistency} \cite{FRE}, are in fact, intractable. Nevertheless,
       total consistency can be easily checked by employing a simple
       backtracking algorithm. Furthermore, several methods for full network
-      consistency checking, like those in \cite{LAD,VAN2} already exist. In this
-      work, we make the assumption that 3-consistency is sufficient for our
-      authorisation system as we have observed that this covers all scenarios
-      that we have examined.
+      consistency checking, like those in \cite{LAD,VAN2} already exist. In
+      this work, we make the assumption that 3-consistency is sufficient for
+      our authorisation system as we have observed that this covers all
+      scenarios that we have examined.
 
       In this chapter, we have introduced an algebra for expressing time
       interval relations and an authorisation language that employs this
@@ -8593,32 +8593,41 @@ ENDFUNCTION
         utilised in the policy base structures discussed in the previous
         section.
 
-        Firstly, we define an {\em SModels} object $SM$ with support for the
-        following operations:
+        Firstly, we need to formally define a stable models object capable
+        of generating answer sets from normal logic programs. Definition
+        \ref{defn-impln-smobj} formalises a suitable object based on the
+        interface provided by the {\em SModels} system in \cite{NIE,SIM2}.
 
-        \begin{itemize}
-          \item
-            $SM$.$Init$() initialises the object. Any previous operations are
-            reset.
+        \begin{vdefinition}
+          \label{defn-impln-smobj}
 
-          \item
-            $SM$.$RuleBegin$() marks the beginning of a rule.
+          An SModels object $SM$ is a stable models implementation with
+          support for the following operations:
 
-          \item
-            $SM$.$RuleHead$($\alpha$) registers the atom $\alpha$ as the
-            head of the rule.
-
-          \item
-            $SM$.$RuleBody$($\alpha$, $\tau$) registers the atom $\alpha$,
-            whose negation-as-failure value is $\tau$, as a body of the
-            current rule.
-
-          \item
-            $SM$.$RuleEnd$() marks the ending of the current rule.
-
-          \item
-            $SM$.$GetAnswerSet$() returns a list of answer sets.
-        \end{itemize}
+          \begin{itemize}
+            \item
+              $SM$.$Init$() initialises the object. Any previous operations are
+              reset.
+ 
+            \item
+              $SM$.$RuleBegin$() marks the beginning of a rule.
+ 
+            \item
+              $SM$.$RuleHead$($\alpha$) registers the atom $\alpha$ as the
+              head of the rule.
+ 
+            \item
+              $SM$.$RuleBody$($\alpha$, $\tau$) registers the atom $\alpha$,
+              whose negation-as-failure value is $\tau$, as a body of the
+              current rule.
+ 
+            \item
+              $SM$.$RuleEnd$() marks the ending of the current rule.
+ 
+            \item
+              $SM$.$GetAnswerSet$() returns a list of answer sets.
+          \end{itemize}
+        \end{vdefinition}
 
         With the stable model object defined, we can now define the policy
         base operation that generates an answer set based on the policy
@@ -9551,7 +9560,16 @@ ENDFUNCTION
 
       {\tt ftp://ftp.isi.edu/in-notes/rfc2617.txt}
 
-    \bibitem{SIM}
+    \bibitem{NIE}
+      Niemel{\"a} I., Simons P.,
+      Smodels - An Implementation of the Stable Model and Well-Founded
+      Semantics for Normal Logic Programs.
+      In {\em Proceedings of the 4th International Conference on Logic Programming and Nonmonotonic Reasoning (LPNMR-97)}
+      and {\em Lecture Notes in Computer Science},
+      Vol. 1265, pp. 421-430,
+      1997.
+
+    \bibitem{SIM1}
       Simons P.,
       Efficient Implementation of the Stable Model Semantics for Normal Logic
       Programs.
@@ -9559,6 +9577,13 @@ ENDFUNCTION
       1995.
 
       {\tt http://www.tcs.hut.fi/Publications/reports/A35.ps.Z}
+
+    \bibitem{SIM2}
+      Simons P., Niemel{\"a} I., Soininen T.,
+      Extending and Implementing the Stable Model Semantics.
+      {\em Artificial Intelligence},
+      Vol. 138, No. 1-2, pp. 181-234,
+      2002.
 
     \bibitem{VAL}
       Valdez-Perez R. E.,
