@@ -7312,7 +7312,7 @@ ENDFUNCTION
 
       The internal mechanisms of both the temporal reasoner engine and the
       policy base shall be discussed in detail in the following sections.
-      
+
     \section{Temporal Reasoner}
       \label{sect-impln-treas}
 
@@ -7647,7 +7647,7 @@ ENDFUNCTION
           relations will incur a lot of overhead. When a new interval is added
           to the network, a relation list containing all the other intervals
           must also be added, and each node in this relation list contains the
-          default relation. 
+          default relation.
 
           Figure \ref{figu-impln-nws04} shows how such implementation might
           represent a network with 3 intervals and the relations {\em starts}
@@ -7687,7 +7687,7 @@ ENDFUNCTION
 
         The following defines the full operator set allowed for the interval
         network. This definiton supercedes the basic operators shown in
-        Definition \ref{defn-tempo-netop}. 
+        Definition \ref{defn-tempo-netop}.
 
         \begin{vdefinition}
           \label{defn-impln-netop}
@@ -7701,7 +7701,7 @@ ENDFUNCTION
 
             \item
               The $NET.AddInt$($\iota$) operator causes the given interval
-              identifier $\iota$ to be added to the network. 
+              identifier $\iota$ to be added to the network.
 
             \item
               The $NET$.$AddRel$($\iota_0$, $\iota_1$, $rs$) operator adds the
@@ -7752,7 +7752,7 @@ ENDFUNCTION
         operator. It works by firstly checking whether a network node with the
         interval $\iota$ is already defined. If not, a new network node is
         allocated and appended to the end of the network list. Since the $NET$
-        structure is implemented as a list, the $LIST$.$Add$() can be used to 
+        structure is implemented as a list, the $LIST$.$Add$() can be used to
         add nodes.
 
         \begin{valgorithm}{NET.AddInt()}{algo-impln-ntadi}
@@ -7840,8 +7840,6 @@ FUNCTION \(NET\).\(Get\)(\(\iota\sb{0}\), \(\iota\sb{1}\))
   ENDIF
 ENDFUNCTION
         \end{valgorithm}
-
-        
 
     \section{Authorisation Engine}
       \label{sect-impln-authe}
@@ -9540,14 +9538,14 @@ ENDFUNCTION
       1977.
 
     \bibitem{HTTP1}
-      Network Working Group
+      Network Working Group,
       HTTP 1.1 (RFC 2616).
       The Internet Society, 1999.
 
       {\tt ftp://ftp.isi.edu/in-notes/rfc2616.txt}
 
     \bibitem{HTTP2}
-      Network Working Group
+      Network Working Group,
       HTTP Authentication: Basic and Digest Access Authentication (RFC 2617).
       The Internet Society, 1999.
 
@@ -9570,7 +9568,7 @@ ENDFUNCTION
       1987.
 
     \bibitem{VAN}
-      Van Beek P. G., Cohen, R.
+      Van Beek P. G., Cohen, R.,
       Exact and Approximate Reasoning about Temporal Relations.
       {\em Computational Intelligence},
       Vol. 6., No. 3, pp. 132-147,
