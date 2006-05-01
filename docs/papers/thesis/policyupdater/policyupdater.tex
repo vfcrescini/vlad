@@ -7237,7 +7237,7 @@ ENDFUNCTION
       {\em k-consistency} \cite{FRE}, are in fact, intractable. Nevertheless,
       total consistency can be easily checked by employing a simple
       backtracking algorithm. Furthermore, several methods for full network
-      consistency checking, like those in \cite{LAD,VA2} already exist. In this
+      consistency checking, like those in \cite{LAD,VAN2} already exist. In this
       work, we make the assumption that 3-consistency is sufficient for our
       authorisation system as we have observed that this covers all scenarios
       that we have examined.
@@ -7418,7 +7418,7 @@ ENDFUNCTION
           implementation. Each relation set is represented as a bit
           vector\footnotemark.
 
-          \footnotetext{A similar method is used in \cite{VA2, VIL}.}
+          \footnotetext{A similar method is used in \cite{VAN2, VIL}.}
 
           \begin{table}[tbhp]
             \begin{center}
@@ -7770,7 +7770,7 @@ ENDFUNCTION
         $ToAdd$() function in \cite{ALE}. Algorithm \ref{algo-impln-ntadr}
         shows a simplified algorithm without the using a queue structure. This
         is made possible by the fact that the order in which relations are
-        propagated makes no difference in the resulting network \cite{MAC,VAN}.
+        propagated makes no difference in the resulting network \cite{MAC,VAN1}.
         While the algorithm that uses a queue structure performs breadth-first
         propagation, the recursive algorithm below performs depth-first
         propagation.
@@ -7801,7 +7801,7 @@ ENDFUNCTION
 
         Algorithm \ref{algo-impln-ntadr} also takes advantage of Van Beek and
         Manchak's observation that certain relation set combinations will not
-        yield new information \cite{VA2}. These combinations are summarised in
+        yield new information \cite{VAN2}. These combinations are summarised in
         the $Skip$() function shown in Algorithm \ref{algo-impln-skipp}.
 
         \begin{valgorithm}{Skip()}{algo-impln-skipp}
@@ -9567,14 +9567,14 @@ ENDFUNCTION
       pp. 256-260,
       1987.
 
-    \bibitem{VAN}
+    \bibitem{VAN1}
       Van Beek P. G., Cohen, R.,
       Exact and Approximate Reasoning about Temporal Relations.
       {\em Computational Intelligence},
       Vol. 6., No. 3, pp. 132-147,
       1990.
 
-    \bibitem{VA2}
+    \bibitem{VAN2}
       Van Beek P. G., Manchak D. W.,
       The Design and Experimental Analysis of Algorithms for Temporal Reasoning.
       {\em Journal of Artificial Intelligence Research},
