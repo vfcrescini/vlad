@@ -7418,7 +7418,7 @@ ENDFUNCTION
 
         As the reflexive property applies to all intervals, there is no need to
         store such relations in the network. Another instance of redundancy in
-        this representation is made evident by the following definition:
+        this representation is made evident by the following property:
 
         \begin{vquote}
           $\forall$ ($i$, $j$),
@@ -7437,12 +7437,12 @@ ENDFUNCTION
           $RS^{-1}$ is the inverse set of $RS$
         \end{vquote}
 
-        The definition above states that a relation set between two intervals
+        The property above states that a relation set between two intervals
         $\iota_0$ and $\iota_1$ can be derived by calculating the inverse of
         the relation set between $\iota_1$ and $\iota_0$. As a consequence,
         only one relation set between any two intervals needs to be stored
         as its inverse can be calculated from this relation set if required.
-        Note that under this definition, half of the cells in Table
+        Note that due to this property, half of the cells in Table
         \ref{tabl-impln-concp} are redundant. The information stored above the
         diagonal is the inverse of those stored below.
 
@@ -7511,7 +7511,7 @@ ENDFUNCTION
           \begin{itemize}
             \item
               The {\em Union} between two relation sets is caclulated by
-              performing a {\em bitwise and} between the two sets.
+              performing a {\em bitwise and} operation between the two sets.
 
               \begin{vquote}
                 $RS_0$ $\cup$ $RS_1$ $=$ $RS_0$ $|$ $RS_1$
@@ -7519,8 +7519,8 @@ ENDFUNCTION
 
             \item
               The {\em Intersection} between two relation sets is simply the
-              opposite of the union operation: a {\em bitwise or} between
-              the two sets.
+              opposite of the union operation: a {\em bitwise or} operation
+              between the two sets.
 
               \begin{vquote}
                 $RS_0$ $\cap$ $RS_1$ $=$ $RS_0$ $\&$ $RS_1$
@@ -7530,7 +7530,7 @@ ENDFUNCTION
               The {\em Inverse} of a relation set can be calculated by
               replacing each relation bit, as defined by Table
               \ref{tabl-impln-valas}, by its inverse relation bit. This
-              is achieved by a series of bit masking and shifting:
+              is achieved by a series of bit masking and shifting operations:
 
               \begin{vquote}
                 $RS^{-1}$ $=$
