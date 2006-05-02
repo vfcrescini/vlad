@@ -2838,17 +2838,17 @@
                 \hline
                 \textbf{Field} & \textbf{Type}  & \textbf{Description} \\
                 \hline
-                $ss$           & string list    & single subject \\
+                $ss$           & String List    & Single Subject \\
                 \hline
-                $sg$           & string list    & group subject \\
+                $sg$           & String List    & Group Subject \\
                 \hline
-                $as$           & string list    & single access right \\
+                $as$           & String List    & Single Access Right \\
                 \hline
-                $ag$           & string list    & group access right \\
+                $ag$           & String List    & Group Access Right \\
                 \hline
-                $os$           & string list    & single object \\
+                $os$           & String List    & Single Object \\
                 \hline
-                $og$           & string list    & group object \\
+                $og$           & String List    & Group Object \\
                 \hline
               \end{tabular}
             \end{center}
@@ -2886,23 +2886,23 @@
                   \hline
                   \textbf{Atom}             & \textbf{Field} & \textbf{Type}             & \textbf{Description} \\
                   \hline
-                  {\multirow{3}{*}{holds}}  & $sub$          & string                    & subject entity \\
+                  {\multirow{3}{*}{holds}}  & $sub$          & String                    & Subject Entity \\
                   \cline{2-4}
-                                            & $acc$          & string                    & access right entity \\
+                                            & $acc$          & String                    & Access Right Entity \\
                   \cline{2-4}
-                                            & $obj$          & string                    & object entity \\
+                                            & $obj$          & String                    & Object Rntity \\
                   \hline
-                  {\multirow{3}{*}{member}} & $elt$          & string                    & single entity \\
+                  {\multirow{3}{*}{member}} & $elt$          & String                    & Single Rntity \\
                   \cline{2-4}
-                                            & $grp$          & string                    & group entity \\
+                                            & $grp$          & String                    & Group Rntity \\
                   \cline{2-4}
-                                            & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
+                                            & $type$         & \{$sub$$|$$acc$$|$$obj$\} & Type Specifier \\
                   \hline
-                  {\multirow{3}{*}{subset}} & $grp_0$        & string                    & subgroup entity \\
+                  {\multirow{3}{*}{subset}} & $grp_0$        & String                    & Subgroup Entity \\
                   \cline{2-4}
-                                            & $grp_1$        & string                    & supergroup entity \\
+                                            & $grp_1$        & String                    & Supergroup Entity \\
                   \cline{2-4}
-                                            & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
+                                            & $type$         & \{$sub$$|$$acc$$|$$obj$\} & Type Specifier \\
                   \hline
                 \end{tabular}
               \end{center}
@@ -2927,11 +2927,11 @@
                   \hline
                   \textbf{Field} & \textbf{Type}       & \textbf{Description} \\
                   \hline
-                  $atom$         & atom type           & polymorphic structure \\
+                  $atom$         & Atom Type           & Polymorphic Structure \\
                   \hline
-                  $type$         & \{$h$$|$$m$$|$$s$\} & holds, member or subset \\
+                  $type$         & \{$h$$|$$m$$|$$s$\} & Holds, Member or Subset \\
                   \hline
-                  $truth$        & boolean             & negation indicator \\
+                  $truth$        & Boolean             & Negation Indicator \\
                   \hline
                 \end{tabular}
               \end{center}
@@ -2962,11 +2962,11 @@
                   \hline
                   \textbf{Field} & \textbf{Type}   & \textbf{Description} \\
                   \hline
-                  $exp$          & expression type & consequent \\
+                  $exp$          & Expression Type & Consequent \\
                   \hline
-                  $pcn$          & expression type & positive premise \\
+                  $pcn$          & Expression Type & Positive Premise \\
                   \hline
-                  $ncn$          & expression type & negative premise \\
+                  $ncn$          & Expression Type & Negative Premise \\
                   \hline
                 \end{tabular}
               \end{center}
@@ -2986,13 +2986,13 @@
                   \hline
                   \textbf{Field} & \textbf{Type}       & \textbf{Description} \\
                   \hline
-                  $name$         & string              & update identifier \\
+                  $name$         & String              & Update Identifier \\
                   \hline
-                  $vlist$        & ordered string list & variables \\
+                  $vlist$        & Ordered String List & Variables \\
                   \hline
-                  $pre$          & expression type     & precondition \\
+                  $pre$          & Expression Type     & Precondition \\
                   \hline
-                  $pst$          & expression type     & postcondition \\
+                  $pst$          & Expression Type     & Postcondition \\
                   \hline
                 \end{tabular}
               \end{center}
@@ -3012,9 +3012,9 @@
                 \hline
                 \textbf{Field} & \textbf{Type}       & \textbf{Description} \\
                 \hline
-                $name$         & string              & update identifier \\
+                $name$         & String              & Update Identifier \\
                 \hline
-                $ilist$        & ordered string list & identifiers \\
+                $ilist$        & Ordered String List & Identifiers \\
                 \hline
               \end{tabular}
             \end{center}
