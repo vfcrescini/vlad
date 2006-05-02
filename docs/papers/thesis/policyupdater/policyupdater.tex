@@ -7883,80 +7883,215 @@ ENDFUNCTION
     \section{Policy Base Engine}
       \label{sect-impln-polba}
 
-      \subsection{Extended Data Structures}
-        \label{subs-impln-symtb}
+      The focus of this section is the internal mechanisms of the policy base
+      and other implementation issues. In essence, the policy base is the
+      core authorisation engine of the PolicyUpdater system. While Chapter
+      \ref{chap-polup} gave a general overview of the system data structures
+      and processes, here we shall attempt to provide a more detailed
+      formalisation of these internal mechanisms, and to show how the policy
+      base makes use of the temporal reasoner engine.
 
-        \subsubsection{Extended Atom Structure}
+      \subsection{Data Structures}
+        \label{subs-impln-dstru}
 
-          \begin{table}[tbhp]
-            \begin{center}
-              \begin{tabular}[t]{|l|l|l|l|}
-                \hline
-                \textbf{Atom}             & \textbf{Field} & \textbf{Type}             & \textbf{Description} \\
-                \hline
-                {\multirow{3}{*}{holds}}  & $sub$          & string                    & subject entity \\
-                \cline{2-4}
-                                          & $acc$          & string                    & access right entity \\
-                \cline{2-4}
-                                          & $obj$          & string                    & object entity \\
-                \cline{2-4}
-                                          & $int$          & string                    & interval \\
-                \hline
-                {\multirow{4}{*}{member}} & $elt$          & string                    & single entity \\
-                \cline{2-4}
-                                          & $grp$          & string                    & group entity \\
-                \cline{2-4}
-                                          & $int$          & string                    & interval \\
-                \cline{2-4}
-                                          & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
-                \hline
-                {\multirow{4}{*}{subset}} & $grp_0$        & string                    & subgroup entity \\
-                \cline{2-4}
-                                          & $grp_1$        & string                    & supergroup entity \\
-                \cline{2-4}
-                                          & $int$          & string                    & interval \\
-                \cline{2-4}
-                                          & $type$         & \{$sub$$|$$acc$$|$$obj$\} & type specifier \\
-                \hline
-              \end{tabular}
-            \end{center}
-            \caption{Extended Atom Data Structure}
-            \label{tabl-impln-atdsr}
-          \end{table}
+        The policy base is composed of different data structures on which
+        its operators are performed. Table \ref{tabl-impln-polba} sumarises
+        these structures. These structures are used by the policy base to
+        store the different components of the policy prior to the normal logic
+        program translation. Note that because of the similarities of
+        PolicyUpdater version 1 and version 2, some of the more fundamental
+        structures have already been defined in Section \ref{subs-polup-dstru}.
 
-         \subsubsection{Extended Symbol Table}
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              {\bf Field} & {\bf Type}               & {\bf Description} \\
+              \hline                                 
+              $symtab$    & Symbol Table             & List of Entity and Interval Identifiers \\
+              \hline                                 
+              $inittab$   & Expression               & List of Initial Facts \\
+              \hline                                 
+              $consttab$  & Constraints Table        & List of Constraints \\
+              \hline
+              $updatetab$ & Update Declaration Table & List of Policy Update Declarations \\
+              \hline
+              $seqtab$    & Update Sequence Table    & List of Policy Update Declarations \\
+              \hline
+              $netwk$     & Relation Network         & Interval Relation Network \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption{Policy Base Structure}
+          \label{tabl-impln-polba}
+        \end{table}
 
-          \begin{table}[tbhp]
-            \begin{center}
-              \begin{tabular}[t]{|l|l|l|}
-                \hline
-                {\bf Field} & {\bf Type} & {\bf Description} \\
-                \hline
-                $ss$  & String List & Single Subject \\
-                \hline
-                $sg$  & String List & Group Subject \\
-                \hline
-                $as$  & String List & Single Access Right \\
-                \hline
-                $ag$  & String List & Group Access Right \\
-                \hline
-                $os$  & String List & Single Object \\
-                \hline
-                $og$  & String List & Group Object \\
-                \hline
-                $s$   & String List & $ss$ $+$ $sg$ \\
-                \hline
-                $a$   & String List & $as$ $+$ $ag$ \\
-                \hline
-                $o$   & String List & $os$ $+$ $og$ \\
-                \hline
-                $int$ & String List & Interval \\
-                \hline
-              \end{tabular}
-            \end{center}
-            \caption{Extended Symbol Table}
-            \label{tabl-impln-symtb}
-          \end{table}
+        The symbol table $PB$.$symtab$, whose structure is shown in Table
+        \ref{tabl-impln-sytab}, is used by the policy base to store
+        identifiers. The main difference of this symbol table to that of
+        version 1 (shown in Table \ref{tabl-polup-sytab}) is that it also
+        stores interval identifiers. However, the general structure remains
+        the same: each field is a list containing all defined entities and
+        intervals of a specific type.
+
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              {\bf Field} & {\bf Type} & {\bf Description} \\
+              \hline
+              $ss$  & String List & Single Subject \\
+              \hline
+              $sg$  & String List & Group Subject \\
+              \hline
+              $as$  & String List & Single Access Right \\
+              \hline
+              $ag$  & String List & Group Access Right \\
+              \hline
+              $os$  & String List & Single Object \\
+              \hline
+              $og$  & String List & Group Object \\
+              \hline
+              $s$   & String List & $ss$ $+$ $sg$ \\
+              \hline
+              $a$   & String List & $as$ $+$ $ag$ \\
+              \hline
+              $o$   & String List & $os$ $+$ $og$ \\
+              \hline
+              $int$ & String List & Interval \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption{Extended Symbol Table}
+          \label{tabl-impln-sytab}
+        \end{table}
+
+        The initial facts table $PB$.$inittab$ is a list of all facts declared
+        in the language ${\cal L^T}$ {\em initially} statement. Recall from
+        Section \ref{subs-polup-dstru} that the fact structure is composed
+        of an atom, a type specifier $type$ $\in$ \{$h$, $m$, $s$\} and a
+        truth indicator $truth$ $\in$ \{$true$, $false$\}. Table
+        \ref{tabl-impln-atdsr} shows the data structure used to store atoms.
+        Note that the atom structure is extended to include interval
+        identifiers for each atom type.
+
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|l|}
+              \hline
+              \textbf{Atom}             & \textbf{Field} & \textbf{Type}             & \textbf{Description} \\
+              \hline
+              {\multirow{3}{*}{holds}}  & $sub$          & String                    & Subject Entity \\
+              \cline{2-4}
+                                        & $acc$          & String                    & Access Right Entity \\
+              \cline{2-4}
+                                        & $obj$          & String                    & Object Entity \\
+              \cline{2-4}
+                                        & $int$          & String                    & Interval \\
+              \hline
+              {\multirow{4}{*}{member}} & $elt$          & String                    & Single Entity \\
+              \cline{2-4}
+                                        & $grp$          & String                    & Group Entity \\
+              \cline{2-4}
+                                        & $int$          & String                    & Interval \\
+              \cline{2-4}
+                                        & $type$         & \{$sub$$|$$acc$$|$$obj$\} & Type Specifier \\
+              \hline
+              {\multirow{4}{*}{subset}} & $grp_0$        & String                    & Subgroup Entity \\
+              \cline{2-4}
+                                        & $grp_1$        & String                    & Supergroup Entity \\
+              \cline{2-4}
+                                        & $int$          & String                    & Interval \\
+              \cline{2-4}
+                                        & $type$         & \{$sub$$|$$acc$$|$$obj$\} & Type Specifier \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption{Extended Atom Data Structure}
+          \label{tabl-impln-atdsr}
+        \end{table}
+
+        The constraints table $PB$.$consttab$ is used to store authorisation
+        constraints. The table is implemented as a list where each item is
+        composed of the following fields: three authorisation expressions
+        (the consequent, and the positive and negative premises) and an
+        interval relation expression. Table \ref{tabl-impln-cntab} shows the
+        strucutre of each node of this list.
+
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              \textbf{Field} & \textbf{Type}          & \textbf{Description} \\
+              \hline                                  
+              $exp$          & Expression Type        & Consequent \\
+              \hline                                  
+              $pcn$          & Expression Type        & Positive Premise \\
+              \hline
+              $ncn$          & Expression Type        & Negative Premise \\
+              \hline
+              $rexp$         & Interval Relation List & {\em where} Clause \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption{Constraints Table Node}
+          \label{tabl-impln-cntab}
+        \end{table}
+
+        The interval relation list used by the constraints table is a list
+        whose nodes are composed of two intervals and a relation set. The
+        details of this structure is shown in Table \ref{tabl-impln-irlst}.
+
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              \textbf{Field} & \textbf{Type}          & \textbf{Description} \\
+              \hline                                  
+              $int_0$        & String                 & Interval \\
+              \hline                                  
+              $int_1$        & String                 & Interval \\
+              \hline
+              $rs$           & Integer                & Relation Set \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption{Interval Relation List Node}
+          \label{tabl-impln-irlst}
+        \end{table}
+
+        Table \ref{tabl-impln-pdtab} shows the structure of each entry in the
+        policy update declarations table $PB$.$updatetab$. This table is used
+        by the policy base to store all policy update declarations. On the
+        other hand, the policy update sequence $PB$.$seqtab$ is a list whose
+        node structure is the same as those already shown in Table
+        \ref{tabl-polup-pstab}.
+
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|}
+              \hline
+              \textbf{Field} & \textbf{Type}          & \textbf{Description} \\
+              \hline
+              $name$         & String                 & Update Identifier \\
+              \hline                                  
+              $vlist$        & Ordered String List    & Variables \\
+              \hline                                  
+              $pre$          & Expression Type        & Precondition \\
+              \hline                                  
+              $pst$          & Expression Type        & Postcondition \\
+              \hline
+              $rexp$         & Interval Relation List & {\em where} Clause \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption{Policy Update Declarations Table Node}
+          \label{tabl-impln-pdtab}
+        \end{table}
+
+        Lastly, the relation network field $PB$.$netwk$ is an instance of the
+        interval relation network object described in Definition
+        \ref{defn-impln-netop}.
 
       \subsection{Grounding of Variables}
         \label{subs-impln-grndg}
@@ -8023,7 +8158,7 @@ ENDFUNCTION
         required to achieve and maintain this consistent mapping. Table
         \ref{tabl-impln-ftabl} shows a conceptual systematic arrangement of
         facts using the symbol table $\theta$ shown in
-        \ref{tabl-impln-symtb}.
+        \ref{tabl-impln-sytab}.
 
         \begin{table}[tbhp]
           \begin{center}
