@@ -7311,7 +7311,46 @@ ENDFUNCTION
       some interaction with the temporal reasoner engine.
 
       The internal mechanisms of both the temporal reasoner engine and the
-      policy base shall be discussed in detail in the following sections.
+      policy base engine shall be discussed in detail in the following
+      sections. However, before we do so, we first formalise a list structure 
+      first introduced in Section \ref{subs-polup-dstru} as the implementation
+      of both engines makes use of this structure.
+
+      \begin{vdefinition}
+        \label{defn-impln-lists}
+        A list object $LIST$ is defined as a linked-list implementation with
+        the following operators:
+
+        \begin{enumerate}
+          \item
+            $LIST$.$Init$() initialises or re-initialises $LIST$. Any items
+            in the list is removed after this operator is called.
+
+          \item
+            $LIST$.$Length$() returns the number of items stored in $LIST$.
+            The shorthand notation $|LIST|$ is equivalent to $LIST$.$Length$().
+
+          \item
+            $LIST$.$Find$($item$) returns {\em true} if $item$ is stored in
+            $LIST$, {\em false} otherwise.
+
+          \item
+            $LIST$.$Index$($item$) returns the ordinal index of $item$ as it
+            is stored in $LIST$.
+
+          \item
+            $LIST$.$Add$($item$) attaches $item$ to the end of $LIST$.
+
+          \item
+            $LIST$.$Get$($index$) returns the $index$'th item in $LIST$. The
+            shorthand notation $LIST$[$index$] is equivalent to
+            $LIST$.$Get$($index$).
+
+          \item
+            $LIST$.$Append$($list$) attaches the items in $list$ at the end of
+            $LIST$.
+        \end{enumerate}
+      \end{vdefinition}
 
     \section{Temporal Reasoner}
       \label{sect-impln-treas}
