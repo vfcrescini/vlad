@@ -8628,6 +8628,7 @@ ENDFUNCTION
         \end{valgorithm}
 
       \subsection{Populating the Policy Base}
+        \label{subs-impln-poppb}
 
         Now, we describe the process of storing the different components of the
         policy into the policy base structures shown in Section
@@ -8647,7 +8648,7 @@ ENDFUNCTION
           \ref{algo-impln-adent} registers the identifier $id$ of type $type$
           to the appropriate list in the symbol table.
 
-          \begin{valgorithm}{AddEntity()}{algo-impln-adent}
+          \begin{valgorithm}{PB.AddEntity()}{algo-impln-adent}
 FUNCTION \(PB\).\(AddEntity\)(\(id\), \(type\))
   CASE \(type\) OF
     \(sub\)-\(sin\) :
@@ -8675,14 +8676,14 @@ ENDFUNCTION
           identifier to both the symbol table and the network object, then
           binds the interval with the given end points in the network object.
 
-          \begin{valgorithm}{AddInterval()}{algo-impln-adint}
+          \begin{valgorithm}{PB.AddInterval()}{algo-impln-adint}
 FUNCTION \(PB\).\(AddInterval\)(\(id\))
   \(PB\).\(symtab\).\(int\).\(Add\)(\(id\));
   \(PB\).\(netwk\).\(AddInt\)(\(id\));
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}{AddIntervalEP()}{algo-impln-adine}
+          \begin{valgorithm}{PB.AddIntervalEP()}{algo-impln-adine}
 FUNCTION \(PB\).\(AddIntervalEP\)(\(id\), \(ep\sb{0}\), \(ep\sb{1}\))
   \(PB\).\(AddInterval\)(\(id\))
   \(PB\).\(netwk\).\(Bind\)(\(id\), \(ep\sb{0}\), \(ep\sb{1}\))
@@ -8699,7 +8700,7 @@ ENDFUNCTION
           \ref{algo-impln-ntadr}, the effects of each added relation is
           propagated to the entire network.
 
-          \begin{valgorithm}{AddRelation()}{algo-impln-adrel}
+          \begin{valgorithm}{PB.AddRelation()}{algo-impln-adrel}
 FUNCTION \(PB\).\(AddRelation\)(\(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
   FOR \(i\) = \(0\) TO (\(|rlist|\) - \(1\)) DO
@@ -8719,7 +8720,7 @@ ENDFUNCTION
           operators add their entries directly into the appropriate table
           in the policy base.
 
-          \begin{valgorithm}{AddInitially()}{algo-impln-adini}
+          \begin{valgorithm}{PB.AddInitially()}{algo-impln-adini}
 FUNCTION \(PB\).\(AddInitially\)(\(exp\))
   FOR \(i\) = \(0\) TO (\(|exp|\) - \(1\)) DO
     \(PB\).\(inittab\).\(Add\)(\(exp\)[\(i\)])
@@ -8727,14 +8728,14 @@ FUNCTION \(PB\).\(AddInitially\)(\(exp\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}{AddConstraint()}{algo-impln-adcon}
+          \begin{valgorithm}{PB.AddConstraint()}{algo-impln-adcon}
 FUNCTION \(PB\).\(AddConstraint\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
   \(PB\).\(consttab\).\(Add\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rlist\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}{AddUpdate()}{algo-impln-adupd}
+          \begin{valgorithm}{PB.AddUpdate()}{algo-impln-adupd}
 FUNCTION \(PB\).\(AddUpdate\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
   \(PB\).\(updatetab\).\(Add\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rlist\))
@@ -8748,19 +8749,19 @@ ENDFUNCTION
           to the {\em seq add}, {\em seq del} and {\em seq list} language
           ${\cal L^T}$ statements, respectively.
 
-          \begin{valgorithm}{AddSequence()}{algo-impln-adseq}
+          \begin{valgorithm}{PB.AddSequence()}{algo-impln-adseq}
 FUNCTION \(PB\).\(AddSequence\)(\(u\), \(ilist\))
   \(PB\).\(seqtab\).\(Add\)(\(u\), \(ilist\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}{DelSequence()}{algo-impln-deseq}
+          \begin{valgorithm}{PB.DelSequence()}{algo-impln-deseq}
 FUNCTION \(PB\).\(DelSequence\)(\(index\))
   \(PB\).\(seqtab\).\(Del\)(\(index\))
 ENDFUNCTION
           \end{valgorithm}
 
-          \begin{valgorithm}{ListSequence()}{algo-impln-lsseq}
+          \begin{valgorithm}{PB.ListSequence()}{algo-impln-lsseq}
 FUNCTION \(PB\).\(ListSequence\)(\(\))
   RETURN \(PB\).\(seqtab\)
 ENDFUNCTION
@@ -8820,7 +8821,7 @@ ENDFUNCTION
         operation that extends the original $GenNLP$() function to
         generate an answer set.
 
-        \begin{valgorithm}{GenAnswerSets()}{algo-impln-genas}
+        \begin{valgorithm}{PB.GenAnswerSets()}{algo-impln-genas}
 FUNCTION \(PB\).\(GetAnswerSets\)(\(SM\))
   \(TransInitStateRules\)(\(PB\).\(inittab\), \(SM\))
   \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
