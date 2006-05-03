@@ -3562,65 +3562,28 @@ ENDFUNCTION
         holds in each generated answer set of the normal logic program.
 
         \footnotetext{
-          Smodels Package from {\tt \scriptsize http://www.tcs.hut.fi/Software/smodels}
+          Smodels Package from
+          {\tt \scriptsize http://www.tcs.hut.fi/Software/smodels}
         }
 
-        If a given fact indeed holds in all the answer sets, it is then
-        evaluated to be true. On the other hand, if the negation of a fact
-        holds in every answer set, then it is evaluated to be false. A fact
-        or its negation that does not hold in every answer set is neither true
-        nor false, in which case the system concludes that the truth value of
-        the fact is unknown. Algorithm \ref{algo-polup-evale} shows how, given
-        a state $\sigma$, a query expression $\epsilon$ can be evaluated
-        against a list of stable models $\Lambda$, where each element in
-        $\Lambda$ is a list of facts.
+        Query evaluation works as follows. Given a set of answer sets
+        $\Lambda$, an expression $exp$, the process of query evaluation returns
+        either either {\em true}, {\em false} or {\em unknown} depending on the
+        following conditions:
 
-        \begin{valgorithm}{EvaluateExp()}{algo-polup-evale}
-FUNCTION \(EvaluateExp\)(\(\epsilon\), \(\Lambda\), \(\sigma\))
-  \(result\) = \(true\)
-  FOR \(i\) = \(0\) TO (\(|\epsilon|\) - \(1\)) DO
-    \(rv\) = \(EvaluateFact\)(\(\epsilon\)[\(i\)], \(\Lambda\), \(\sigma\))
-    IF \(rv\) == \(false\) THEN
-      RETURN \(false\)
-    ELSE IF \(rv\) == \(unknown\) THEN
-      \(result\) = \(unknown\)
-    ENDIF
-  ENDDO
-  RETURN \(result\)
-ENDFUNCTION
-        \end{valgorithm}
+        \begin{enumerate}
+          \item
+            If each fact in the query expression $exp$ is also in every answer
+            set $\Lambda$, then $exp$ is evaluated as {\em true}.
 
-        Algorithm \ref{algo-polup-evale} attempts to evaluate each fact in the
-        query expression. The function $EvaluateFact$() shown in Algorithm
-        \ref{algo-polup-evalf} evaluates a single fact $\rho$ in state
-        $\sigma$, against a list of stable models $\Lambda$.
+          \item
+            If the negation of each fact in $exp$ is also in every answer set
+            $\Lambda$, then $exp$ is evaluated as {\em false}.
 
-        \begin{valgorithm}{EvaluateFact()}{algo-polup-evalf}
-FUNCTION \(EvaluateFact\)(\(\rho\), \(\Lambda\), \(\sigma\))
-  IF \(IsFactIn\)(\(Encode\)(\(\rho\).\(atm\), \(\sigma\), \(\rho\).\(tr\)), \(\Lambda\)) THEN
-    RETURN \(true\)
-  ELSE IF \(IsFactIn\)(\(Encode\)(\(\rho\).\(atm\), \(\sigma\), NOT \(\rho\).\(tr\)), \(\Lambda\)) THEN
-    RETURN \(false\)
-  ENDIF
-  RETURN \(unknown\)
-ENDFUNCTION
-        \end{valgorithm}
-
-        The function $IsFactIn$() simply returns a boolean value to
-        indicate whether or not the given fact index $\varrho$ (as returned
-        by the $Encode$() function) is present in every stable model in
-        $\Lambda$.
-
-        \begin{valgorithm}{IsFactIn()}{algo-polup-isinf}
-FUNCTION \(IsFactIn\)(\(\varrho\), \(\Lambda\))
-  FOR \(i\) = \(0\) TO (\(|\Lambda|\) - \(1\)) DO
-    IF NOT \(\Lambda\)[\(i\)].\(Find\)(\(\varrho\)) THEN
-      RETURN \(false\)
-    ENDIF
-  ENDDO
-  RETURN \(true\)
-ENDFUNCTION
-        \end{valgorithm}
+          \item
+            If none of the first two conditions are met, then $exp$ is
+            evaluated as {\em unknown}.
+        \end{enumerate}
 
     \section{Experimental Results}
       \label{sect-polup-exper}
@@ -8769,14 +8732,22 @@ ENDFUNCTION
 
       \subsection{Calculating the Answer Set}
 
+        Once the policy update sequence table has been populated by the
+        sequence manipulation operators described above, the policy base must
+        be made to generate answer sets based on the stored policies and
+        updates. The answer sets must be generated prior to any query
+        evaluation requests. This process, of course, is triggered by the
+        parser when it encounters the {\em compute} statement in the language
+        ${\cal L^T}$ policy.
+
         The $GenNLP$() function in Algorithm \ref{algo-polup-genlp} and the
         rest of the functions in Section \ref{subs-polup-norlp} illustrates
         how a language ${\cal L}$ domain is translated into a normal logic
         program and from answer sets derived from that normal logic program,
         how queries are evaluated. This section focuses on extending these
-        methods to generate answer sets and evaluate queries from language
-        ${\cal L^T}$ domains, as well as showing how these techniques are
-        applied to the policy base structures.
+        methods to generate answer sets from language ${\cal L^T}$ domains, as
+        well as showing how these techniques are applied to the policy base
+        structures.
 
         Firstly, we need to formally define a stable models object capable
         of generating answer sets from normal logic programs. Definition
@@ -8824,10 +8795,10 @@ ENDFUNCTION
 FUNCTION \(PB\).\(GenAnswerSets\)()
   \(SM\).\(Init\)()
   \(TransInitStateRules\)(\(PB\).\(inittab\), \(SM\))
-  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\),
-    \(SM\))
-  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\),
-    \(SM\))
+  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
+    \(PB\).\(netwk\), \(SM\))
+  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
+    \(PB\).\(netwk\), \(SM\))
   \(GenInherRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenTransRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenInertRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
@@ -9036,8 +9007,63 @@ FUNCTION \(TransUpdateRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
 ENDFUNCTION
           \end{valgorithm}
 
-    \section{Discussions}
-      \label{sect-impln-discu}
+      \subsection{Evaluating Query Expressions}
+        \label{subs-impln-evalu}
+
+        Once the answer sets have been generated, the policy base can accept
+        query evaluation requests through the $PB$.$EvaluateExp$($exp$)
+        operator. The operator works by checking the presence of queried facts
+        or their negations in every answer sets generated. Algorithm
+        \ref{algo-impln-evale} shows how a given expression $exp$ can be
+        evaluated against a list of answer sets $\Lambda$, as returned by
+        the $PB$.$GenAnswerSets$() operator.
+
+        \begin{valgorithm}{PB.EvaluateExp()}{algo-impln-evale}
+FUNCTION \(PB\).\(EvaluateExp\)(\(exp\), \(\Lambda\))
+  \(result\) = \(true\)
+  FOR \(i\) = \(0\) TO (\(|exp|\) - \(1\)) DO
+    \(rv\) = \(EvaluateFact\)(\(exp\)[\(i\)], \(|\)\(PB\).\(seqtab\)\(|\), \(\Lambda\))
+    IF \(rv\) == \(false\) THEN
+      RETURN \(false\)
+    ELSE IF \(rv\) == \(unknown\) THEN
+      \(result\) = \(unknown\)
+    ENDIF
+  ENDDO
+  RETURN \(result\)
+ENDFUNCTION
+        \end{valgorithm}
+
+        The $PB$.$EvaluateExp$() operator evaluates each fact from the given
+        query expression by calling the function $EvaluateFact$() shown in
+        Algorithm \ref{algo-impln-evalf} which evaluates a single fact $\rho$
+        in state $\sigma$, against a list of answer sets $\Lambda$.
+
+        \begin{valgorithm}{EvaluateFact()}{algo-impln-evalf}
+FUNCTION \(EvaluateFact\)(\(\rho\), \(\sigma\), \(\Lambda\))
+  IF \(IsFactIn\)(\(Encode\)(\(\rho\).\(atom\), \(\sigma\), \(\rho\).\(truth\)), \(\Lambda\)) THEN
+    RETURN \(true\)
+  ELSE IF \(IsFactIn\)(\(Encode\)(\(\rho\).\(atom\), \(\sigma\), NOT \(\rho\).\(truth\)), \(\Lambda\)) THEN
+    RETURN \(false\)
+  ENDIF
+  RETURN \(unknown\)
+ENDFUNCTION
+        \end{valgorithm}
+
+        The function $IsFactIn$() simply returns a boolean value to
+        indicate whether or not the given fact index $index$ (as returned
+        by the $Encode$() function) is present in every answer set in
+        $\Lambda$.
+
+        \begin{valgorithm}{IsFactIn()}{algo-impln-isinf}
+FUNCTION \(IsFactIn\)(\(index\), \(\Lambda\))
+  FOR \(i\) = \(0\) TO (\(|\Lambda|\) - \(1\)) DO
+    IF NOT \(\Lambda\)[\(i\)].\(Find\)(\(index\)) THEN
+      RETURN \(false\)
+    ENDIF
+  ENDDO
+  RETURN \(true\)
+ENDFUNCTION
+        \end{valgorithm}
 
   \chapter{Conclusion}
     \label{chap-concl}
