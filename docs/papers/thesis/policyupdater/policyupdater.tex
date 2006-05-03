@@ -8532,18 +8532,18 @@ FUNCTION \(Encode\)(\(\alpha\), \(\sigma\), \(\tau\))
 ENDFUNCTION
         \end{valgorithm}
 
-        The straight forward $Offset\_Holds$() function shown in Algorithm
-        \ref{algo-impln-offho} calculates the offset for atoms of type
-        holds by using the given indices of its elements. As discussed
-        above, the subject offset of a holds atom is obtained by multiplying
-        the actual subject index $sub$ by the total number of access rights
-        by the total number of objects by the total number of intervals
-        defined in the symbol table. Similarly, the access right offset is
-        calculated by multiplying the actual access right index $acc$ by the
-        remaining elements: the total number of objects and the total number
-        of intervals. The offsets for objects and intervals are calculated
-        in the same manner. Finally, the sum of these offsets is the offset
-        for the holds atom, which is returned by this function.
+        The $Offset\_Holds$() function shown in Algorithm
+        \ref{algo-impln-offho} calculates the offset for atoms of type holds by
+        using the given indices of its elements. As discussed above, the
+        subject offset of a holds atom is obtained by multiplying the actual
+        subject index $sub$ by the total number of access rights by the total
+        number of objects by the total number of intervals defined in the 
+        symbol table. Similarly, the access right offset is calculated by
+        multiplying the actual access right index $acc$ by the remaining
+        elements: the total number of objects and the total number of
+        intervals. The offsets for objects and intervals are calculated in the
+        same manner. Finally, the sum of these offsets is the offset for the
+        holds atom, which is returned by this function.
 
         \begin{valgorithm}{Offset\_Holds()}{algo-impln-offho}
 FUNCTION \(Offset_Holds\)(\(sub\), \(acc\), \(obj\), \(int\))
@@ -8629,7 +8629,23 @@ ENDFUNCTION
 
       \subsection{Populating the Policy Base}
 
+        Now, we describe the process of storing the different components of the
+        policy into the policy base structures shown in Section
+        \ref{subs-impln-dstru}. In this section, this process is broken up into
+        several policy base operators that the policy parser can call as it
+        parses a language ${\cal L^T}$ policy.
+
         \subsubsection{Registering Entities and Intervals}
+
+          Before the policy base can be made to perform any task, it must first
+          be made aware of all entities and intervals defined in the policy.
+          The operators $PB$.$AddEntity$(), $PB$.$AddInterval$() and
+          $PB$.$AddIntervalEP$() are called by the parser as it goes through
+          the entity and interval declarations of the policy.
+
+          The $PB$.$AddEntity$($id$, $type$) function shown in Algorithm
+          \ref{algo-impln-adent} registers the identifier $id$ of type $type$
+          to the appropriate list in the symbol table.
 
           \begin{valgorithm}{AddEntity()}{algo-impln-adent}
 FUNCTION \(PB\).\(AddEntity\)(\(id\), \(type\))
@@ -8650,6 +8666,15 @@ FUNCTION \(PB\).\(AddEntity\)(\(id\), \(type\))
 ENDFUNCTION
           \end{valgorithm}
 
+          Algorithm \ref{algo-impln-adint} shows the $PB$.$AddInterval$($id$)
+          operator which registers the interval identifier $id$ to the
+          interval list in the symbol table and the interval network object.
+          If the parser encounters a declaration of a well-defined interval,
+          it makes a call to the $PB$.$AddIntervalEP$() function (Algorithm
+          \ref{algo-impln-adine}) instead. This function registers the interval
+          identifier to both the symbol table and the network object, then
+          binds the interval with the given end points in the network object.
+
           \begin{valgorithm}{AddInterval()}{algo-impln-adint}
 FUNCTION \(PB\).\(AddInterval\)(\(id\))
   \(PB\).\(symtab\).\(int\).\(Add\)(\(id\));
@@ -8666,16 +8691,33 @@ ENDFUNCTION
 
         \subsubsection{Adding Temporal Interval Constraints}
 
+          When the parser encounters a temporal constraint, the
+          $PB$.$AddRelation$() operator shown in Algorithm
+          \ref{algo-impln-adrel} is called. The operator normalises the given
+          interval expression first before passing it on to the network object
+          one relation at a time. Note that as shown in Algorithm
+          \ref{algo-impln-ntadr}, the effects of each added relation is
+          propagated to the entire network.
+
           \begin{valgorithm}{AddRelation()}{algo-impln-adrel}
 FUNCTION \(PB\).\(AddRelation\)(\(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
   FOR \(i\) = \(0\) TO (\(|rlist|\) - \(1\)) DO
-    \(PB\).\(netwk\).\(Add\)(\(rlist\)[\(i\)].\(int\sb{0}\), \(rlist\)[\(i\)].\(int\sb{1}\), \(rlist\)[\(i\)].\(rs\))
+    \(PB\).\(netwk\).\(AddRel\)(\(rlist\)[\(i\)].\(int\sb{0}\), \(rlist\)[\(i\)].\(int\sb{1}\), \(rlist\)[\(i\)].\(rs\))
   ENDDO
 ENDFUNCTION
           \end{valgorithm}
 
-        \subsubsection{Adding Initial State Facts}
+        \subsubsection{Adding Authorisation Statements}
+
+          Algorithms \ref{algo-impln-adini}, \ref{algo-impln-adcon} and
+          \ref{algo-impln-adupd} are called by the parser to register initial
+          state rules, authorisation constraint rules and policy update
+          declarations, respectively. While the $PB$.$AddInitially$() operator
+          simply adds the initial expression to the initial facts table
+          one fact at a time, the $PB$.$AddConstraint$() and $PB$.$AddUpdate$()
+          operators add their entries directly into the appropriate table
+          in the policy base.
 
           \begin{valgorithm}{AddInitially()}{algo-impln-adini}
 FUNCTION \(PB\).\(AddInitially\)(\(exp\))
@@ -8685,16 +8727,12 @@ FUNCTION \(PB\).\(AddInitially\)(\(exp\))
 ENDFUNCTION
           \end{valgorithm}
 
-        \subsubsection{Adding Authorisation Constraints}
-
           \begin{valgorithm}{AddConstraint()}{algo-impln-adcon}
 FUNCTION \(PB\).\(AddConstraint\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rexp\))
   \(rlist\) = \(NormaliseExp\)(\(rexp\))
   \(PB\).\(consttab\).\(Add\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rlist\))
 ENDFUNCTION
           \end{valgorithm}
-
-        \subsubsection{Adding Policy Update Declarations}
 
           \begin{valgorithm}{AddUpdate()}{algo-impln-adupd}
 FUNCTION \(PB\).\(AddUpdate\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rexp\))
@@ -8704,6 +8742,11 @@ ENDFUNCTION
           \end{valgorithm}
 
         \subsubsection{Policy Update Sequence Manipulation}
+
+          Algorithms \ref{algo-impln-adseq}, \ref{algo-impln-deseq} and
+          \ref{algo-impln-lsseq} are the policy base operators that correspond
+          to the {\em seq add}, {\em seq del} and {\em seq list} language
+          ${\cal L^T}$ statements, respectively.
 
           \begin{valgorithm}{AddSequence()}{algo-impln-adseq}
 FUNCTION \(PB\).\(AddSequence\)(\(u\), \(ilist\))
