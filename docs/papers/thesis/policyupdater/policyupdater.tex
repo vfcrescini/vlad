@@ -8776,8 +8776,7 @@ ENDFUNCTION
         how queries are evaluated. This section focuses on extending these
         methods to generate answer sets and evaluate queries from language
         ${\cal L^T}$ domains, as well as showing how these techniques are
-        utilised in the policy base structures discussed in the previous
-        section.
+        applied to the policy base structures.
 
         Firstly, we need to formally define a stable models object capable
         of generating answer sets from normal logic programs. Definition
@@ -8811,7 +8810,7 @@ ENDFUNCTION
               $SM$.$RuleEnd$() marks the ending of the current rule.
  
             \item
-              $SM$.$GetAnswerSet$() returns a list of answer sets.
+              $SM$.$GetAnswerSets$() returns a list of answer sets.
           \end{enumerate}
         \end{vdefinition}
 
@@ -8822,23 +8821,24 @@ ENDFUNCTION
         generate an answer set.
 
         \begin{valgorithm}{PB.GenAnswerSets()}{algo-impln-genas}
-FUNCTION \(PB\).\(GetAnswerSets\)(\(SM\))
+FUNCTION \(PB\).\(GenAnswerSets\)()
+  \(SM\).\(Init\)()
   \(TransInitStateRules\)(\(PB\).\(inittab\), \(SM\))
-  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
-    \(PB\).\(netwk\), \(SM\))
-  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\),
-    \(PB\).\(netwk\), \(SM\))
+  \(TransConstRules\)(\(PB\).\(consttab\), \(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\),
+    \(SM\))
+  \(TransUpdateRules\)(\(PB\).\(updatetab\), \(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\),
+    \(SM\))
   \(GenInherRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenTransRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenInertRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenRefleRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
   \(GenTempoRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(PB\).\(netwk\), \(SM\))
   \(GenConsiRules\)(\(PB\).\(symtab\), \(PB\).\(seqtab\), \(SM\))
-  RETURN \(SM\).\(Compute\)()
+  RETURN \(SM\).\(GetAnswerSets\)()
 ENDFUNCTION
         \end{valgorithm}
 
-        Note that most of the functions called by \(PB\).\(GetAnswerSets\)()
+        Note that most of the functions called by \(PB\).\(GenAnswerSets\)()
         are similar to the functions defined in Section
         \ref{subs-polup-norlp}. These functions require only little
         modifications to generate a normal logic program from a language
