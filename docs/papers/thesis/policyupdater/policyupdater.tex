@@ -8093,38 +8093,6 @@ ENDFUNCTION
         interval relation network object described in Definition
         \ref{defn-impln-netop}.
 
-      \subsection{Grounding of Variables}
-        \label{subs-impln-grndg}
-
-        \begin{itemize}
-          \item
-            $GetVList$($\epsilon$)
-
-            The function returns a list of variable identifiers that occur
-            in the expression $\epsilon$.
-
-          \item
-            $GenTupleList$($vlist$)
-
-            Given a list of variables $vlist$, the function returns a list of
-            tuples. Each tuple in this list contains entities and intervals
-            of the same type as the corresponding variable in $vlist$.
-
-          \item
-            $CheckTuple$($tuple$, $rlist$, $NET$)
-
-            The function returns $true$ if the intervals in $tuple$ satisfy
-            the interval relations specified in $rlist$.
-
-          \item
-            $Replace$($vlist$, $tuple$, $\epsilon$)
-
-            Given a list of variables $vlist$, a list of entities and
-            intervals $tuple$ and an expression $\epsilon$, the function
-            returns the expression $\epsilon$ with all variables in $vlist$
-            replaced by corresponding entities and intervals from $tuple$.
-        \end{itemize}
-
       \subsection{Encoding Atoms}
         \label{subs-impln-encod}
 
@@ -8157,7 +8125,7 @@ ENDFUNCTION
         facts are needed, and a systematic representation of facts is
         required to achieve and maintain this consistent mapping. Table
         \ref{tabl-impln-ftabl} shows a conceptual systematic arrangement of
-        facts using the symbol table $\theta$ shown in
+        facts using the symbol table $\theta$ shown in Table
         \ref{tabl-impln-sytab}.
 
         \begin{table}[tbhp]
@@ -8912,6 +8880,33 @@ ENDFUNCTION
           that expressions are already grounded. In this section, we extend
           these functions to handle the interval relations of language
           ${\cal L^T}$ as well as ground variables.
+
+          First, we define the following functions to be used to ground the
+          variables:
+
+          \begin{itemize}
+            \item
+              $GetVList$($\epsilon$) returns a list of variable identifiers
+              that occur in the given expression $\epsilon$.
+         
+            \item
+              $GenTupleList$($vlist$) returns a list of tuples, given a list of
+              variables $vlist$. Each tuple in the returned list contains
+              entities and intervals of the same type as the corresponding
+              variable in $vlist$.
+         
+            \item
+              $CheckTuple$($tuple$, $rlist$, $NET$) returns {\em true} if the
+              intervals in $tuple$ satisfy the interval relations specified in
+              $rlist$.
+         
+            \item
+              $Replace$($vlist$, $tuple$, $\epsilon$). Given a list of
+              variables $vlist$, a list of entities and intervals $tuple$ and
+              an expression $\epsilon$, the function returns the expression
+              $\epsilon$ with all variables in $vlist$ replaced by
+              corresponding entities and intervals from $tuple$.
+          \end{itemize}
 
           The $TransConstRules$() function shown in Algorithm
           \ref{algo-impln-traco} starts by creating a list of variables
