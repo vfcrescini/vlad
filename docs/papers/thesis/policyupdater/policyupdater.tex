@@ -3263,7 +3263,7 @@ ENDFUNCTION
 FUNCTION \(TransInitStateRules\)(\(\omega\sb{i}\))
   FOR \(i\) = \(0\) TO (\(|\omega\sb{i}|\) - \(1\)) DO
     \(RuleBegin\)()
-    \(RuleHead\)(\(Encode\)(\(\omega\sb{i}\)[\(i\)].\(atm\), \(0\), \(\omega\sb{i}\)[\(i\)].\(tr\)))
+    \(RuleHead\)(\(Encode\)(\(\omega\sb{i}\)[\(i\)].\(atom\), \(0\), \(\omega\sb{i}\)[\(i\)].\(truth\)))
     \(RuleBody\)(\(true\), \(true\))
     \(RuleEnd\)()
   ENDDO
@@ -3282,15 +3282,15 @@ FUNCTION \(TransConstRules\)(\(\omega\sb{c}\), \(\psi\))
   FOR \(i\) = \(0\) TO (\(|\psi|\) - \(1\)) DO
     FOR \(j\) = \(0\) TO (\(|\omega\sb{c}|\) - \(1\)) DO
       FOR \(k\) = \(0\) TO (\(|\)\(\omega\sb{c}\)[\(j\)].\(exp\)\(|\) - \(1\)) DO
-        \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(exp\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(exp\)[\(k\)].\(tr\))
+        \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(exp\)[\(k\)].\(atom\), \(i\), \(\omega\sb{c}\)[\(j\)].\(exp\)[\(k\)].\(truth\))
         \(RuleBegin\)()
         \(RuleHead\)(\(\alpha\))
         FOR \(k\) = \(0\) TO (\(|\)\(\omega\sb{c}\)[\(j\)].\(pcn\)\(|\) - \(1\)) DO
-          \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(pcn\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(pcn\)[\(k\)].\(tr\))
+          \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(pcn\)[\(k\)].\(atom\), \(i\), \(\omega\sb{c}\)[\(j\)].\(pcn\)[\(k\)].\(truth\))
           \(RuleBody\)(\(\alpha\), \(true\))
         ENDDO
         FOR \(k\) = \(0\) TO (\(|\)\(\omega\sb{c}\)[\(j\)].\(ncn\)\(|\) - \(1\)) DO
-          \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(ncn\)[\(k\)].\(atm\), \(i\), \(\omega\sb{c}\)[\(j\)].\(ncn\)[\(k\)].\(tr\))
+          \(\alpha\) = \(Encode\)(\(\omega\sb{c}\)[\(j\)].\(ncn\)[\(k\)].\(atom\), \(i\), \(\omega\sb{c}\)[\(j\)].\(ncn\)[\(k\)].\(truth\))
           \(RuleBody\)(\(\alpha\), \(false\))
         ENDDO
         \(RuleEnd\)()
@@ -3316,11 +3316,11 @@ FUNCTION \(TransUpdateRules\)(\(\omega\sb{u}\), \(\psi\))
       IF \(\psi\)[\(i\)].\(name\) == \(\omega\sb{u}\)[\(j\)].\(name\) THEN
         \(upd\) = \(GndUpdate\)(\(\omega\sb{u}\)[\(j\)], \(\psi\)[\(i\)].\(ilist\))
         FOR \(k\) = \(0\) TO (\(|\)\(upd\).\(pst\)\(|\) - \(1\)) DO
-          \(\alpha\) = \(Encode\)(\(upd\).\(pst\)[\(k\)].\(atm\), \(i\) + \(1\), \(upd\).\(pst\)[\(k\)].\(tr\))
+          \(\alpha\) = \(Encode\)(\(upd\).\(pst\)[\(k\)].\(atom\), \(i\) + \(1\), \(upd\).\(pst\)[\(k\)].\(truth\))
           \(RuleBegin\)()
           \(RuleHead\)(\(\alpha\))
           FOR \(l\) = \(0\) TO (\(|\)\(upd\).\(pre\)\(|\) - \(1\)) DO
-            \(\alpha\) = \(Encode\)(\(upd\).\(pre\)[\(l\)].\(atm\), \(i\), \(upd\).\(pre\)[\(l\)].\(tr\))
+            \(\alpha\) = \(Encode\)(\(upd\).\(pre\)[\(l\)].\(atom\), \(i\), \(upd\).\(pre\)[\(l\)].\(truth\))
             \(RuleBody\)(\(\alpha\), \(true\))
           ENDDO
           \(RuleEnd\)()
@@ -7305,6 +7305,9 @@ ENDFUNCTION
             $LIST$.$Add$($item$) attaches $item$ to the end of $LIST$.
 
           \item
+            $LIST$.$Del$($index$) removes the $index$'th item from $LIST$.
+
+          \item
             $LIST$.$Get$($index$) returns the $index$'th item in $LIST$. The
             shorthand notation $LIST$[$index$] is equivalent to
             $LIST$.$Get$($index$).
@@ -8693,15 +8696,15 @@ ENDFUNCTION
 
           \begin{valgorithm}{PB.AddConstraint()}{algo-impln-adcon}
 FUNCTION \(PB\).\(AddConstraint\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rexp\))
-  \(rlist\) = \(NormaliseExp\)(\(rexp\))
-  \(PB\).\(consttab\).\(Add\)(\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(rlist\))
+  \(cnode\) = (\(exp\sb{0}\), \(exp\sb{1}\), \(exp\sb{2}\), \(NormaliseExp\)(\(rexp\)))
+  \(PB\).\(consttab\).\(Add\)(\(cnode\))
 ENDFUNCTION
           \end{valgorithm}
 
           \begin{valgorithm}{PB.AddUpdate()}{algo-impln-adupd}
 FUNCTION \(PB\).\(AddUpdate\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rexp\))
-  \(rlist\) = \(NormaliseExp\)(\(rexp\))
-  \(PB\).\(updatetab\).\(Add\)(\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(rlist\))
+  \(unode\) = (\(u\), \(exp\sb{0}\), \(exp\sb{1}\), \(NormaliseExp\)(\(rexp\)))
+  \(PB\).\(updatetab\).\(Add\)(\(unode\))
 ENDFUNCTION
           \end{valgorithm}
 
@@ -8714,7 +8717,8 @@ ENDFUNCTION
 
           \begin{valgorithm}{PB.AddSequence()}{algo-impln-adseq}
 FUNCTION \(PB\).\(AddSequence\)(\(u\), \(ilist\))
-  \(PB\).\(seqtab\).\(Add\)(\(u\), \(ilist\))
+  \(snode\) = (\(u\), \(ilist\))
+  \(PB\).\(seqtab\).\(Add\)(\(snode\))
 ENDFUNCTION
           \end{valgorithm}
 
@@ -8901,8 +8905,8 @@ ENDFUNCTION
 
           \begin{itemize}
             \item
-              $GetVList$($\epsilon$) returns a list of variable identifiers
-              that occur in the given expression $\epsilon$.
+              $GetVList$($exp$) returns a list of variable identifiers
+              that occur in the given expression $exp$.
          
             \item
               $GenTupleList$($vlist$) returns a list of tuples, given a list of
@@ -8916,9 +8920,9 @@ ENDFUNCTION
               $rlist$.
          
             \item
-              $Replace$($vlist$, $tuple$, $\epsilon$). Given a list of
+              $Replace$($vlist$, $tuple$, $exp$). Given a list of
               variables $vlist$, a list of entities and intervals $tuple$ and
-              an expression $\epsilon$, the function returns the expression
+              an expression $exp$, the function returns the expression
               $\epsilon$ with all variables in $vlist$ replaced by
               corresponding entities and intervals from $tuple$.
           \end{itemize}
@@ -8952,14 +8956,14 @@ FUNCTION \(TransConstRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
         FOR \(k\) = \(0\) TO (\(|\theta|\) - \(1\)) DO
           FOR \(l\) = \(0\) TO (\(|\epsilon\sb{0}|\) - \(1\)) DO
             \(SM\).\(RuleBegin\)()
-            \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atm\), \(k\), \(\epsilon\sb{0}\)[\(l\)].\(tr\))
+            \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atom\), \(k\), \(\epsilon\sb{0}\)[\(l\)].\(truth\))
             \(SM\).\(RuleHead\)(\(\alpha\))
             FOR \(m\) = \(0\) TO (\(|\epsilon\sb{1}|\) - \(1\)) DO
-              \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(m\)].\(atm\), \(k\), \(\epsilon\sb{1}\)[\(m\)].\(tr\))
+              \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(m\)].\(atom\), \(k\), \(\epsilon\sb{1}\)[\(m\)].\(truth\))
               \(SM\).\(RuleBody\)(\(\alpha\), \(true\))
             ENDDO
             FOR \(n\) = \(0\) TO (\(|\epsilon\sb{2}|\) - \(1\)) DO
-              \(\alpha\) = \(Encode\)(\(\epsilon\sb{2}\)[\(n\)].\(atm\), \(k\), \(\epsilon\sb{2}\)[\(n\)].\(tr\))
+              \(\alpha\) = \(Encode\)(\(\epsilon\sb{2}\)[\(n\)].\(atom\), \(k\), \(\epsilon\sb{2}\)[\(n\)].\(truth\))
               \(SM\).\(RuleBody\)(\(\alpha\), \(false\))
             ENDDO
             \(SM\).\(RuleEnd\)()
@@ -8990,11 +8994,11 @@ FUNCTION \(TransUpdateRules\)(\(\omega\), \(\theta\), \(\psi\), \(NET\), \(SM\))
             \(\epsilon\sb{0}\) = \(Replace\)(\(vlist\), \(tlist\)[\(k\)], \(upd\).\(pre\))
             \(\epsilon\sb{1}\) = \(Replace\)(\(vlist\), \(tlist\)[\(k\)], \(upd\).\(pst\))
             FOR \(l\) = \(0\) TO (\(|\)\(\epsilon\sb{1}\)\(|\) - \(1\)) DO
-              \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(l\)].\(atm\), \(i\) + \(1\), \(\epsilon\sb{1}\)[\(l\)].\(tr\))
+              \(\alpha\) = \(Encode\)(\(\epsilon\sb{1}\)[\(l\)].\(atom\), \(i\) + \(1\), \(\epsilon\sb{1}\)[\(l\)].\(truth\))
               \(SM\).\(RuleBegin\)()
               \(SM\).\(RuleHead\)(\(\alpha\))
               FOR \(m\) = \(0\) TO (\(|\)\(\epsilon\sb{0}\)\(|\) - \(1\)) DO
-                \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atm\), \(i\), \(\epsilon\sb{0}\)[\(l\)].\(tr\))
+                \(\alpha\) = \(Encode\)(\(\epsilon\sb{0}\)[\(l\)].\(atom\), \(i\), \(\epsilon\sb{0}\)[\(l\)].\(truth\))
                 \(SM\).\(RuleBody\)(\(\alpha\), \(true\))
               ENDDO
               \(SM\).\(RuleEnd\)()
