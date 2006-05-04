@@ -278,11 +278,15 @@
   \chapter{Logic-Based Authorisation Language}
     \label{chap-langl}
 
-    Language $\cal{L}$ is a first-order logic language that represents a
-    policy base for an authorisation system. Two key features of the
-    language are: (1) providing a means to conditionally and dynamically
+    Language $\cal{L}$\footnotemark is a first-order logic language that
+    represents a policy base for an authorisation system. Two key features of
+    the language are: (1) providing a means to conditionally and dynamically
     update the existing policy base and (2) having a mechanism by which
     queries may be evaluated from the updated policy base.
+
+    \footnotetext{
+      Language ${\cal L}$ was first introduced in \cite{CRE1}.
+    }
 
     \section{Syntax}
       \label{sect-langl-syntx}
@@ -2728,12 +2732,19 @@
     \label{chap-polup}
 
     The PolicyUpdater system is a fully-implemented access control system
-    that uses language ${\cal L}$ policy descriptions. This chapter focuses
-    on the underlying mechanisms that make up the system. The final section
-    of the chapter describes a web server that utilises the PolicyUpdater
-    system to enforce logic-based authorisation policies.
+    that uses language ${\cal L}$ policy descriptions. The first part of this
+    chapter focuses on the underlying mechanisms that make up the system,
+    followed by an analysis of the performance of the implementation. The final
+    part of the chapter describes the application of a PolicyUpdater module to
+    a web server to enforce logic-based authorisation policies\footnotemark.
 
-    The source code and other technical information can be found in the
+    \footnotetext{
+      Implementation and performance analysis was published in \cite{CRE1}. The
+      web server module was first introduced in \cite{CRE3}.
+    }
+
+    The source code and other technical information of the
+    core PolicyUpdater system and the web server module can be found in the
     PolicyUpdater website at:
 
     \begin{vquote}
@@ -9752,6 +9763,27 @@ ENDFUNCTION
       Cambridge University Press, UK.
       pp. 99-100,
       2003.
+
+    \bibitem{CRE1}
+      Crescini V. F., Zhang Y.,
+      PolicyUpdater: A System for Dynamic Access Control.
+      {\em International Journal of Information Security},
+      DOI 10.1007/s10207-005-0078-8,
+      2005.
+
+    \bibitem{CRE2}
+      Crescini V. F., Zhang Y.,
+      A Logic Based Approach for Dynamic Access Control.
+      In {\em Proceedings of the 17th Australian Joint Conference on Artificial Intelligence (AI 2004, LNCS/LNAI)}
+      Vol. 3339, pp. 623-635,
+      2004.
+      
+    \bibitem{CRE3}
+      Crescini V. F., Zhang Y., Wang W.,
+      Web Server Authorisation with the PolicyUpdater Access Control System.
+      In {\em Proceedings of the IADIS International Conference (WWW/Internet 2004)},
+      Vol. 2, pp. 945-948,
+      2004.
 
     \bibitem{FRE}
       Freuder E. C.,
