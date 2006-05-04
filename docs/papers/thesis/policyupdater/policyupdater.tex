@@ -2319,9 +2319,15 @@
       A domain description of language ${\cal L}$ must be consistent in order
       to generate a consistent answer set for the evaluation of queries. This
       section considers two issues: the problem of identifying whether a given
-      domain description is consistent, and how query evaluation is performed
-      given a consistent language domain description. By using Definition
-      \ref{defn-langl-trans}, we define consistency as follows:
+      domain description is consistent\footnotemark, and how query evaluation
+      is performed given a consistent language domain description. By using
+      Definition \ref{defn-langl-trans}, we define consistency as follows:
+
+      \footnotetext{
+        The strategy used here for determining domain consistency is based on a
+        similar strategy used by Zhang \cite{ZHA} for characterising consistent
+        action domains.
+      }
 
       \begin{vdefinition}
         \label{defn-langl-consi}
@@ -9855,6 +9861,13 @@ ENDFUNCTION
       In {\em Readings in Qualitative Reasoning about Physical Systems},
       pp. 373-381,
       1989.
+
+    \bibitem{ZHA}
+      Zhang Y.,
+      Handling Defeasibilities in Action Domains.
+      {\em Theory and Practice of Logic Programming},
+      Vol. 3, No. 3, pp. 329-376,
+      2003.
   \end{thebibliography}
 
 \end{document}
