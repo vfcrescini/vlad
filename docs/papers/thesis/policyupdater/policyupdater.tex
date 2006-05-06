@@ -118,7 +118,7 @@
   \clearpage
 }
 
-% cerification environment
+% certification environment
 \newenvironment{vcertificate}
 {
   \thispagestyle{empty}
@@ -265,6 +265,108 @@
 
     \section{General Background}
       \label{sect-intro-genbg}
+
+      Generally, the term access control refers to a mechanism by which access
+      to resources, digital or otherwise, are restricted. This restriction is
+      enforced in such a way that only authorised entities are allowed access
+      to the resources protected by the mechanism, and that any other entities
+      are not. Access control restrictions are typically expressed as an
+      access control {\em policy}, which defines the rules that determine
+      whether or not an entity is granted access to protected resources.
+
+      In the broadest sense of the term, an access control system is a
+      collection of mechanisms that enforces access control policies. An access
+      control system may be divided into two sub-systems: the
+      {\em authentication} sub-system and the {\em authorisation} sub-system.
+      The goal of authentication is to obtain and verify the identity of every
+      entity that requests access to protected resources. This may be achieved
+      by simple mechanisms like username/password verification, digital
+      certificates, physical/digital keys, or more complex systems like
+      biometric authentication which include fingerprint verification, voice
+      print verification, iris scanning, etc.
+
+      In constrast, an authorisation system's purpose is to decide whether or
+      not an authenticated entity is to be allowed access to resources or not.
+      It is therefore in the authorisation sub-system where the access control
+      policy is kept and maintained. It is perhaps for this reason that the
+      term access control is ofter used interchangeably with authorisation.
+
+      Another system that may be considered as an access control sub-system
+      is the {\em enforcement} system. The sole task of this system is to
+      ensure that an authenticated and authorised entity is allowed access and
+      that all other entities are denied access. While in some literatures
+      the enforcement system is considered to be part of the authorisation
+      sub-system, others place it outside the domain of access control
+      altogether. In this view, the task of an access control system is limited
+      to identifying (authentication) requesting entities and deciding whether
+      to grant or deny (authorisation) access requests. Enforcement of these
+      decisions is left to an external enformcement system. 
+
+      In this thesis, we shall focus on the authorisation sub-system,
+      specifically how the policies are expressed, read and maintained. It
+      therefore assumes that the access control environment in which it is used
+      provides adequate authentication and enforement mechanisms.
+
+      \subsection{Authorisation Rules}
+
+        Example \ref{exam-intro-poli1} shows a simple example of a parial
+        policy that defines the authorisation rules of a file system. Note that
+        in all three, a rule can be broken up into three general sorts:
+        {\em subjects}, {\em access rights} and {\em objects}. In this example,
+        the subjects are: $Alice$, $Bob$ and $Charlie$; the access rights are:
+        $read$, $write$ and $execute$; while the objects are: $file_0$,
+        $file_1$ and $file_2$. From this example, it is easy to see what each
+        sort is. Subjects are the entities which are granted or denied access
+        to the resources, access rights are the types of priviledges assigned
+        to subjects for resources, and objects are the resources themselves.
+        An {\em authorisation rule}, therefore, is a binding of subjects,
+        access rights and object.
+
+        \begin{vexample}
+          \label{exam-intro-poli1}
+          Below is an example of a partial file system policy:
+          \begin{itemize}
+            \item
+              $Alice$ is allowed to $read$ $file_0$
+            \item
+              $Bob$ is allowed to $read$, $write$ and $execute$ $file_1$
+            \item
+              $Charlie$ is allowed to $read$ $file_0$, $file_1$ and $file_2$
+          \end{itemize}
+        \end{vexample}
+
+      \subsection{Policy Base}
+
+        A policy base is used by an authorisation system as a full repository
+        of authorisation policies. Note that it is inaccurate to say that a
+        policy base is simply a collection of authorisation rules. In Example
+        \ref{exam-intro-poli1} above, the three rules establishes the
+        priviledges granted to subjects $Alice$, $Bob$ and $Charlie$. However,
+        the set of three rules are incomplete: it provides no information as to
+        what authorisations are allowed for $Dennis$, nor does it state that
+        $Alice$ is not allowed to $write$ to $file_1$. A policy base must
+        contain a full or complete policy.
+
+        To rectify the problem mentioned above, one solution might be to
+        have the policy base adopt a closed discipline where any authorisation
+        requests that are not explicitly addressed by a rule are rejected.
+        The partial policy shown in Example \ref{exam-intro-poli1} need only a
+        a slight modification to make it complete:
+
+        \begin{vexample}
+          \label{exam-intro-poli2}
+          A complete file system policy:
+          \begin{itemize}
+            \item
+              Nobody is allowed any access to any resource, except:
+            \item
+              $Alice$ is allowed to $read$ $file_0$
+            \item
+              $Bob$ is allowed to $read$, $write$ and $execute$ $file_1$
+            \item
+              $Charlie$ is allowed to $read$ $file_0$, $file_1$ and $file_2$
+          \end{itemize}
+        \end{vexample}
 
     \section{Key Issues}
       \label{sect-intro-keyis}
