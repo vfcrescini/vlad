@@ -502,6 +502,40 @@
 
       \subsection{Temporal Constraints}
 
+        An authorisation rule composed only of the binding of a subject, an
+        access right and an object represents a single authorisation that
+        answers the question of {\em who} is allowed {\em what} permission to
+        {\em which} resource. There is nothing to express {\em when} this
+        authorisation rule is to hold. So far, in the examples given in the
+        previous sections, we have made the assumption that these rules apply
+        at all times. That is, from some time in the past, either from the time
+        the rules were defined or the time the access control system went
+        active, to the time the system is shut down. However, there are special
+        situations where authorisation rules need to specify the time at which
+        is it in effect as well as the usual subject-access right-object
+        binding. Such situations might arise, for example, in a roster-based
+        organisation where one user is granted access to some resource from
+        9AM to 2PM, another user from 2PM to 8PM and so on.
+
+        This need to express time in authorisation rules can be satisfied
+        easily by extending the rule specification to a quadruple binding
+        of subjects, access rights, objects and time. For example, the
+        rule ($Alice$, $read$, $file_0$, $1PM$ to $2PM$) might be used to
+        represent a rule granting $Alice$ $read$ access to $file_0$ at lunch
+        time. However, this approach is insufficient to express time-bound
+        rules where the relationship between the time attributes is more
+        important than the time attributes themselves. For example, this
+        approach is unable to express the following abstract rule:
+
+        \begin{vquote}
+          $Alice$ is authorised to $read$ file $file_0$ only while $Bob$
+          holds $read$ and $write$ access to the same file.
+        \end{vquote}
+
+        An authorisation system with support for temporal constraints must
+        have its formal policy specification defined to express rules such
+        as this.
+
       \subsection{Implementation}
 
     \section{Literature Review}
