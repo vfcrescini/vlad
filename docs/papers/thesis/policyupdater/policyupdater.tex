@@ -470,9 +470,35 @@
           \end{itemize}
         \end{vexample}
          
-
-        
       \subsection{Policy Updates}
+
+        Up to this point, we have been dealing only with static policies. A
+        typical policy base, however, requires at least a means of changing
+        the rules of the policy. A naive authorisation system implementation
+        might only have the ability to handle static policies, but this would
+        require a system reset everytime the policy is changed. A robust
+        authorisation system therefore needs a built-in mechanism that would
+        allow its policy base to be changed or updated at run time. We call
+        such updates that are performed at run time {\em dynamic updates}.
+
+        Continuing from our previous examples, suppose we need to add another
+        file, say $file_3$, into the policy. With the current policy
+        description, this file is "caught" by the negative authorisation rule
+        which makes this file unreadable, unwritable and unexecutable by
+        everyone. Now suppose we wish to make it readable by all current
+        subjects, but not by any subject that might be added later. To do this,
+        we need to add three new rules to the policy: one for $Alice$, one for
+        $Bob$ and another for $Charlie$. Similarly, if we wish to revoke
+        the $write$ permission held by $Bob$ for $file_1$, we simply update
+        the policy base by deleting the appropriate rule.
+
+        While the policy updating scenario described above is simple, more
+        complex update requirements do exist. One such requirement might arise
+        in situations where a policy needs to be updated only when when certain
+        conditions are met. For example, we might require the subject $Alice$
+        to be granted a $write$ access right to $file_2$ if she already holds
+        a $read$ access right to the same file. Such updates are called
+        {\em conditional updates}.
 
       \subsection{Temporal Constraints}
 
