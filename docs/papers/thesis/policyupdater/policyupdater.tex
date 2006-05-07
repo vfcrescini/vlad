@@ -384,6 +384,94 @@
 
       \subsection{Formal Specification of Policies}
 
+        The first issue to consider in an authorisation system is the
+        structure of the policies. In the previous examples, the policies are
+        defined as abstract descriptions of authorisation rules. However, in a
+        real access control system, or to continue with the example, a real
+        file system with hundreds of subjects and several levels of directories
+        will require several pages of policy descriptions if expressed in this
+        abstract form. A real authorisation system requires a formalised
+        specification to express policies.
+
+        At the very least, a formal specification of an authorisation policy
+        requires (1) a formal definition of entities (subjects, access rights
+        and objects); (2) a formal specification of rules to bind together
+        these entities to represent authorisation rules.
+
+        The first requirement deals with the issue of mapping authorisation
+        entities, conceptual or otherwise, into formal representations which
+        will be used in the definition of authorisation policies. In the
+        previous example, this mapping is straight forward: system users to
+        subjects, file permissions to access rights and files to objects.
+        However, in some scenarios, entities may be mapped to more something
+        more abstract like "accounting documents" as objects or
+        "administrators" as subjects. Generally, this requirement defines the
+        mapping rules of entities as well as the formal definitions of the
+        entities themselves.
+
+        The second requirement ensures that there is a formal method of
+        expressing the rules themselves. In Example \ref{exam-intro-poli1},
+        the rules are expressed as a simple binding of the entities. However,
+        as mentioned before, this example is only a partial policy since it
+        does not state the rules that deal with other subjects or other
+        objects. Example \ref{exam-intro-poli2} rectified this problem, but
+        note that the format of the first rule does not match the
+        subject-access right-object binding format of the other three rules.
+        This second requirement aims to formalise the definition of each rule.
+
+        For example, to formalise the policy specification of our file system
+        policy, we define the following:
+
+        \begin{itemize}
+          \item
+            An entity is an alphanumeric string.
+          \item
+            $Everybody$ is a special subject entity which comprises of all
+            defined subjects, $AllAccess$ is an access right entity
+            composed of all defined access rights, and $AllFiles$ is an object
+            entity composed of all defined objects.
+          \item
+            An authorisation rule is composed of a boolean value to indicate
+            whether the rule is a positive or a negative authorisation,
+            followed by a binding of a subject, access right and object.
+          \item
+            In cases where two rules are in conflict, the most recent rule
+            (between two rules, the one appearing lower in the list is more
+            recent) overrides the other rule.
+        \end{itemize}
+
+        As shown above, the policy specification eliminates all ambiguities
+        by providing a formal specification for each rule. Note that the
+        positive and negative authorisation rule specification also defines how
+        each rule is to be interpreted by the enforcement or access control
+        system. Another issue handled by the above specification is how to
+        interpret two conflicting rules. Example \ref{exam-intro-poli3} shows
+        the same policy used in the previous examples expressed in the above
+        formalisation.
+
+        \begin{vexample}
+          \label{exam-intro-poli3}
+          A formalised file system policy:
+          \begin{itemize}
+            \item
+              $False$, $Everyone$, $AllAccess$, $AllFiles$
+            \item
+              $True$, $Alice$, $read$, $file_0$
+            \item
+              $True$, $Bob$, $read$, $file_1$
+            \item
+              $True$, $Bob$, $write$, $file_1$
+            \item
+              $True$, $Bob$, $execute$, $file_1$
+            \item
+              $True$, $Charlie$, $read$, $file_2$
+            \item
+              $True$, $Charlie$, $read$, $file_2$
+          \end{itemize}
+        \end{vexample}
+         
+
+        
       \subsection{Policy Updates}
 
       \subsection{Temporal Constraints}
