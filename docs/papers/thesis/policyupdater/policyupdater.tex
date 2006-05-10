@@ -561,6 +561,84 @@
     \section{Literature Review}
       \label{sect-intro-litre}
 
+      \subsection{Discretionary Access Control}
+        \label{subs-intro-dacmo}
+
+        The {\em Discretionary Access Control} ({\em DAC}) model is an
+        authorisation model where policies are defined in such a way that a
+        subject's identity determines what access rights it holds over which
+        objects \cite{CAS}. The two distinct characteristics of this model are:
+        (1) every resource (object) in the system is owned by a subject; and
+        (2) authorisation rules in the policy are bindings of subjects, access
+        rights and objects. This access control model is discretionary in the
+        sense that object owners (subjects) are capable of granting or revoking
+        other subjects access rights to objects that they own. 
+
+        A very simple authorisation system based on the DAC model is the
+        {\em access control matrix}, which was first proposed by Lampson
+        \cite{LAM}, then subsequently extended in \cite{GRA,CON,HAR}. The
+        access control matrix is a simple yet powerful policy base
+        implementation where every subject's access rights of every object
+        are stored. The matrix is composed of rows that represent the subjects
+        of the system. Each column represents the objects of the system. The
+        subject - object intersection, a cell, contains the access rights held
+        by that subject to that object. An empty cell therefore means that the
+        subject in that row do not possess any access rights to the object in
+        that column. Table \ref{tabl-intro-acmat} shows an access control
+        matrix with the same policy used in Example \ref{exam-intro-poli3}.
+
+        \begin{table}[tbhp]
+          \begin{center}
+            \begin{tabular}[t]{|l|l|l|l|}
+              \hline
+                        & $file_0$    & $file_1$    & $file_2$ \\
+              \hline                  
+              $Alice$   & $r$         &             &          \\
+              \hline                  
+              $Bob$     &             & $r$,$w$,$x$ &          \\
+              \hline                  
+              $Charlie$ & $r$         & $r$         & $r$      \\
+              \hline                  
+              $Dennis$  &             &             &          \\
+              \hline
+            \end{tabular}
+          \end{center}
+          \caption{An Example of an Access Control Matrix}
+          \label{tabl-intro-acmat}
+        \end{table}
+
+        As one might imagine, an access control matrix for a system composed
+        mainly of user's personal data will be very sparse: only cells
+        intersecting objects and their owners will have access rights stored.
+        As a result, some applications of access control matrices take up more
+        space that what is actually needed. Another implementation, the
+        {\em access control list}, resolves this issue by storing authorisation
+        rules in individual lists instead of one common matrix. In an access
+        control list implementation, the access control system maintains a list
+        of subjects with access rights for each object in the system. Access
+        control lists are typically used to implement low level authorisation
+        mechanisms like those used in file systems. Figure
+        \ref{figu-intro-aclis} shows a set of access control lists that
+        contains the same policy stored in the access control matrix in Table
+        \ref{tabl-intro-acmat}.
+
+        \begin{figure}[tbhp]
+          \begin{center}
+            \includegraphics{acl}
+            \caption{Access Control Lists}
+            \label{figu-intro-aclis}
+          \end{center}
+        \end{figure}
+
+      \subsection{Mandatory Access Control}
+        \label{subs-intro-macmo}
+
+      \subsection{Role-Based Access Control}
+        \label{subs-intro-racmo}
+
+      \subsection{Logic-Based Access Control}
+        \label{subs-intro-lacmo}
+
     \section{Structure of the Thesis}
       \label{sect-intro-struc}
 
@@ -10054,6 +10132,19 @@ ENDFUNCTION
       pp. 99-100,
       2003.
 
+    \bibitem{CAS}
+      Castano S., Fugini M., Martella G., Samarati P.,
+      Database Security.
+      Addison-Wesley Publishing Co.,
+      1995.
+
+    \bibitem{CON}
+      Conway R. W., Maxwell W. L., Morgan H. L.,
+      On the Implementation of Security Measures in Information Systems.
+      {\em Communications of the ACM}
+      Vol. 15, No. 4, pp. 211-220,
+      1972.
+
     \bibitem{CRE1}
       Crescini V. F., Zhang Y.,
       PolicyUpdater: A System for Dynamic Access Control.
@@ -10089,12 +10180,33 @@ ENDFUNCTION
       pp. 1070-1080,
       1988.
 
+    \bibitem{GRA}
+      Graham G. S., Denning P. J.,
+      Protection - Principles and Practice.
+      In {\em Proceedings of the AFIPS Spring Joint Computer Conference},
+      Vol. 40, pp. 427-429,
+      1972.
+
+    \bibitem{HAR}
+      Harrison M. H., Ruzzo W. L., Ullman J. D.,
+      Protection in Operating Systems.
+      {\em Communications of the ACM},
+      Vol. 19, No. 8, pp. 461-471,
+      1976.
+
     \bibitem{LAD}
       Ladkin P. B., Reinefeld A.,
       Fast Algebraic Methods for Interval Constraint Problems.
       {\em Annals of Mathematics and Artificial Intelligence},
       Vol. 19, No. 3-4, pp. 383-411,
       1997.
+
+    \bibitem{LAM}
+      Lampson, B. W.,
+      Protection.
+      In {\em Proceedings of the 5th Princeton Symposium on Information Science and Systems},
+      pp. 437-464,
+      1971.
 
     \bibitem{LAU}
       Laurie B., Laurie P.,
