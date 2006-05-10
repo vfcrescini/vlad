@@ -9,6 +9,7 @@ FIG2DEV=fig2dev
 
 LATEX_SRCS=policyupdater
 XFIG_SRCS=      \
+  acl           \
   acc-ctrl      \
   rels          \
   net-01        \
