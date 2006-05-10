@@ -608,16 +608,16 @@
         \end{table}
 
         As one might imagine, an access control matrix for a system composed
-        mainly of user's personal data will be very sparse: only cells
-        intersecting objects and their owners will have access rights stored.
-        As a result, some applications of access control matrices take up more
-        space that what is actually needed. Another implementation, the
-        {\em access control list}, resolves this issue by storing authorisation
-        rules in individual lists instead of one common matrix. In an access
-        control list implementation, the access control system maintains a list
-        of subjects with access rights for each object in the system. Access
-        control lists are typically used to implement low level authorisation
-        mechanisms like those used in file systems. Figure
+        mainly of user's personal data will be very sparse: only cells of
+        intersecting objects and their owners will have access right entries
+        stored in them. As a result, some applications of access control
+        matrices take up more space that what is actually needed. Another
+        implementation, the {\em access control list}, resolves this issue by
+        storing authorisation rules in individual lists instead of one common
+        matrix. In an access control list implementation, the access control
+        system maintains a list of subjects with access rights for each object
+        in the system. Access control lists are typically used to implement low
+        level authorisation mechanisms like those used in file systems. Figure
         \ref{figu-intro-aclis} shows a set of access control lists that
         contains the same policy stored in the access control matrix in Table
         \ref{tabl-intro-acmat}.
@@ -627,6 +627,24 @@
             \includegraphics{acl}
             \caption{Access Control Lists}
             \label{figu-intro-aclis}
+          \end{center}
+        \end{figure}
+
+        In some situations, it is more convienent to store authorisation
+        policies in such a way that for each subject, the system maintains
+        a {\em capability list} which contains all access rights the subject
+        holds for certain objects. Since each subject has its own capability
+        list, there might be cases where a certain subject's capability list
+        is empty. This means the subject is not authorised to access any
+        object. Figure \ref{figu-intro-calis} shows a set of capability lists
+        that contains the same policy stored in the access control list shown
+        in \ref{figu-intro-aclis}.
+
+        \begin{figure}[tbhp]
+          \begin{center}
+            \includegraphics{cap}
+            \caption{Capability Lists}
+            \label{figu-intro-calis}
           \end{center}
         \end{figure}
 
