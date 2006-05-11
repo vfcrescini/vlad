@@ -206,7 +206,7 @@
         \Large
         A thesis submitted for the Degree of \\
         Doctor of Philosophy at \\
-        University of Western Syndey \\
+        University of Western Sydney \\
       }
 
       \vspace*{\stretch{1}}
@@ -285,7 +285,7 @@
       biometric authentication which include fingerprint verification, voice
       print verification, iris scanning, etc.
 
-      In constrast, an authorisation system's purpose is to decide whether or
+      In contrast, an authorisation system's purpose is to decide whether or
       not an authenticated entity is to be allowed access to resources or not.
       It is therefore in the authorisation sub-system where the access control
       policy is kept and maintained. This is the reason why the term access
@@ -300,7 +300,7 @@
       altogether. In this view, the task of an access control system is limited
       to identifying (authentication) requesting entities and deciding whether
       to grant or deny (authorisation) access requests. Enforcement of these
-      decisions is left to an external enformcement system. 
+      decisions is left to an external enforcement system. 
 
       Figure \ref{figu-intro-acctl} shows how each sub-system fits into the
       overall access control system.
@@ -320,7 +320,7 @@
 
       \subsection{Authorisation Rules}
 
-        Example \ref{exam-intro-poli1} shows a simple example of a parial
+        Example \ref{exam-intro-poli1} shows a simple example of a partial
         policy that defines the authorisation rules of a file system. Note that
         in all three, a rule can be broken up into three general sorts:
         {\em subjects}, {\em access rights} and {\em objects}. In this example,
@@ -328,7 +328,7 @@
         $read$, $write$ and $execute$; while the objects are: $file_0$,
         $file_1$ and $file_2$. From this example, it is easy to see what each
         sort is. Subjects are the entities which are granted or denied access
-        to the resources, access rights are the types of priviledges assigned
+        to the resources, access rights are the types of privileges assigned
         to subjects for resources, and objects are the resources themselves.
         An {\em authorisation rule}, therefore, is a binding of subjects,
         access rights and object.
@@ -352,7 +352,7 @@
         of authorisation policies. Note that it is inaccurate to say that a
         policy base is simply a collection of authorisation rules. In Example
         \ref{exam-intro-poli1} above, the three rules establishes the
-        priviledges granted to subjects $Alice$, $Bob$ and $Charlie$. However,
+        privileges granted to subjects $Alice$, $Bob$ and $Charlie$. However,
         the set of three rules are incomplete: it provides no information as to
         what authorisations are allowed for $Dennis$, nor does it state that
         $Alice$ is not allowed to $write$ to $file_1$. A policy base must
@@ -481,7 +481,7 @@
         typical policy base, however, requires at least a means of changing
         the rules of the policy. A naive authorisation system implementation
         might only have the ability to handle static policies, but this would
-        require a system reset everytime the policy is changed. A robust
+        require a system reset every time the policy is changed. A robust
         authorisation system therefore needs a built-in mechanism that would
         allow its policy base to be changed or updated at run time. We call
         such updates that are performed at run time {\em dynamic updates}.
@@ -636,7 +636,7 @@
           \end{center}
         \end{figure}
 
-        In some situations, it is more convienent to store authorisation
+        In some situations, it is more convenient to store authorisation
         policies in such a way that for each subject, the system maintains
         a {\em capability list} \cite{FAR,LEV} which contains all access rights
         the subject holds for certain objects. Since each subject has its own
@@ -1643,7 +1643,7 @@
               $0$ $\leq$ $j$ $\leq$ $n_1$
           \end{vquote}
 
-          Intuitively, a given langauge ${\cal L}$ policy update definition
+          Intuitively, a given language ${\cal L}$ policy update definition
           will generate $n_0$ policy update rules in language ${\cal L^{*}}$,
           where $n_0$ is the number of facts in the postcondition expression.
           For example, given the following 2 language ${\cal L}$ policy
@@ -2061,7 +2061,7 @@
               \end{enumerate}
 
             \item
-              {\em Intertial Rules.}
+              {\em Inertial Rules.}
               Intuitively, all facts in the current state that are not
               affected by a policy update should be carried over to the
               next state after the update. In language ${\cal L}^{*}$,
@@ -3320,11 +3320,11 @@
                   \cline{2-4}
                                             & $acc$          & String                    & Access Right Entity \\
                   \cline{2-4}
-                                            & $obj$          & String                    & Object Rntity \\
+                                            & $obj$          & String                    & Object Entity \\
                   \hline
-                  {\multirow{3}{*}{member}} & $elt$          & String                    & Single Rntity \\
+                  {\multirow{3}{*}{member}} & $elt$          & String                    & Single Entity \\
                   \cline{2-4}
-                                            & $grp$          & String                    & Group Rntity \\
+                                            & $grp$          & String                    & Group Entity \\
                   \cline{2-4}
                                             & $type$         & \{$sub$$|$$acc$$|$$obj$\} & Type Specifier \\
                   \hline
@@ -3775,7 +3775,7 @@ ENDFUNCTION
           these 6 algorithms work in a similar way: a rule is generated by
           composing every possible combination of either subject, access right
           and object entities to form either a subset or membership fact. As
-          with the contraint rule generating algorithm, each new rule
+          with the constraint rule generating algorithm, each new rule
           generated is replicated for each policy update state.
 
           \begin{valgorithm}{GenInherRules()}{algo-polup-ginhr}
@@ -4083,7 +4083,7 @@ ENDFUNCTION
       entities were added, respectively. Test cases 5 and 6 are similar to test
       case 2, except 100 new initial state facts and constraint rules were
       added, respectively. In test case 7, 100 new policy update definitions
-      were added, and in test case 8, these policy update defintions were
+      were added, and in test case 8, these policy update definitions were
       applied. Test case 9 is similar to test case 2, but this one tries to
       evaluate 100 additional query facts. Test case 11 is a combination of
       test cases 6 and 8. Test case 12 is a combination of test cases 5, 9
@@ -4178,7 +4178,7 @@ ENDFUNCTION
       Test case 12 shows that although large numbers of initial state facts and
       query requests by themselves have little effect on performance, if
       combined together with the effects of a large number of policy updates,
-      computation time is significantly increased, paticularly the query
+      computation time is significantly increased, particularly the query
       evaluation time. Note that the value of $T_{Q}$ for this test is the
       average total time for 104 query evaluations. Using this value, each
       query evaluation takes an average of 5.531135 seconds to complete.
@@ -4713,7 +4713,7 @@ ENDFUNCTION
 
           As described in the definition above, the $NET.Get$() and
           $NET.Replace$() operators are simple $get$() and $set$() operations
-          on arc labels. In constrast, the $NET.AddRel$() operator requires a
+          on arc labels. In contrast, the $NET.AddRel$() operator requires a
           more complex algorithm to perform the propagation. This algorithm is
           discussed in detail in the next section.
 
@@ -4956,7 +4956,7 @@ ENDFUNCTION
             Given a network with three intervals $\iota_0$, $\iota_1$ and
             $\iota_2$ where no relation between any of the intervals are known.
             As no relations are given, each arc in the network as shown in
-            Figurr \ref{figu-tempo-ntwk4} is the default arc.
+            Figure \ref{figu-tempo-ntwk4} is the default arc.
 
             \begin{figure}[tbhp]
               \begin{center}
@@ -7523,12 +7523,12 @@ ENDFUNCTION
       be translated into a extended logic program language ${\cal L^{T^*}}$.
       Since language ${\cal L^{T^*}}$ is semantically similar to language
       ${\cal L^*}$, the same methods shown in Section \ref{subs-langl-trans} is
-      used to translate langauge ${\cal L^{T^*}}$ into a normal logic program
-      for query evaluation. However, one outstanding issue remains for langauge
+      used to translate language ${\cal L^{T^*}}$ into a normal logic program
+      for query evaluation. However, one outstanding issue remains for language
       ${\cal L^T}$: domain consistency.
 
       A language ${\cal L^T}$ domain description ${\cal D}_{\cal L^T}$ without
-      any variable occurences (and therefore without any {\em where} clauses)
+      any variable occurrences (and therefore without any {\em where} clauses)
       may be represented as the following statements:
 
       \begin{vverbatim}
@@ -7546,7 +7546,7 @@ ENDFUNCTION
       \end{vverbatim}
 
       Note that if we disregard the {\em relation} statement and the fact
-      that langauge ${\cal L^T}$ atoms also specify time intervals, language
+      that language ${\cal L^T}$ atoms also specify time intervals, language
       ${\cal L^T}$ statements consisting only of ground expressions as above
       are identical to the language ${\cal L}$ statements shown in Section
       \ref{sect-langl-consi}. As a consequence, Theorem \ref{theo-langl-consi}
@@ -7593,7 +7593,7 @@ ENDFUNCTION
       \footnotetext{Valdez-Perez uses the term {\em unsatisfiable}.}
       One such condition arises in language ${\cal L^T}$ when two or more
       conflicting interval constraint statements exist. This conflict occurs
-      when the consequence of an interval constraint is implictly or explicitly
+      when the consequence of an interval constraint is implicitly or explicitly
       excluded by another interval constraint. For example, the following two
       interval constraint statements are in conflict with each other because
       the second defines a relation that has been explicitly excluded by the
@@ -7605,7 +7605,7 @@ ENDFUNCTION
       \end{vverbatim}
 
       Note that this type of domain inconsistency is detected by the
-      $NET.AddRel$() algorithm. Unfortunately, the second type of inconsisteny
+      $NET.AddRel$() algorithm. Unfortunately, the second type of inconsistency
       is not. To illustrate this type of inconsistency, we use Allen's example
       in \cite{ALE}, shown in Figure \ref{figu-tempo-ntwk7}.
 
@@ -7649,7 +7649,7 @@ ENDFUNCTION
     constraints; and (2) an in-depth discussion on other implementation issues
     not previously covered in the other chapters.
 
-    The source code and other techical information of all the versions of
+    The source code and other technical information of all the versions of
     the {\em PolicyUpdater} core system, {\em vlad}, is available in the
     project website:
 
@@ -7685,7 +7685,7 @@ ENDFUNCTION
       An access control policy, written in language ${\cal L^T}$ syntax, is
       translated into a normal logic program, which in turn is fed to
       {\em SModels} to generate answer sets. From these answer sets, the system
-      can evauate authorisation queries.
+      can evaluate authorisation queries.
 
       What makes {\em PolicyUpdater 2} different from its predecessor is that
       it uses a temporal reasoner to generate a normal logic program. The
@@ -7699,7 +7699,7 @@ ENDFUNCTION
       the only variables that occur in the policy are resolved to all entities
       defined that are of the same type. However, in {\em PolicyUpdater 2},
       the intervals used to ground interval variables are subject to some
-      resrictions defined by {\em where} clauses in policy statements. As a
+      restrictions defined by {\em where} clauses in policy statements. As a
       result, the variable grounding process of {\em PolicyUpdater 2} needs
       some interaction with the temporal reasoner engine.
 
@@ -7906,7 +7906,7 @@ ENDFUNCTION
 
           \begin{itemize}
             \item
-              The {\em Union} between two relation sets is caclulated by
+              The {\em Union} between two relation sets is calculated by
               performing a {\em bitwise and} operation between the two sets.
 
               \begin{vquote}
@@ -8121,7 +8121,7 @@ ENDFUNCTION
         \label{subs-impln-netop}
 
         The following defines the full operator set allowed for the interval
-        network. This definiton supercedes the basic operators shown in
+        network. This definition supersedes the basic operators shown in
         Definition \ref{defn-tempo-netop}.
 
         \begin{vdefinition}
@@ -8291,7 +8291,7 @@ ENDFUNCTION
         \label{subs-impln-dstru}
 
         The policy base is composed of different data structures on which
-        its operators are performed. Table \ref{tabl-impln-polba} sumarises
+        its operators are performed. Table \ref{tabl-impln-polba} summarises
         these structures. These structures are used by the policy base to
         store the different components of the policy prior to the normal logic
         program translation. Note that because of the similarities of
@@ -8412,7 +8412,7 @@ ENDFUNCTION
         composed of the following fields: three authorisation expressions
         (the consequent, and the positive and negative premises) and an
         interval relation expression. Table \ref{tabl-impln-cntab} shows the
-        strucutre of each node of this list.
+        structure of each node of this list.
 
         \begin{table}[tbhp]
           \begin{center}
@@ -9250,7 +9250,7 @@ ENDFUNCTION
         ${\cal L^T}$ domain. In fact, the only major difference is
         that the new functions must support the language ${\cal L^T}$ atoms
         that include an additional temporal interval parameter. This means
-        that most of the rule-generationg functions are extended simply by
+        that most of the rule-generating functions are extended simply by
         the addition of an extra interval loop, which passes intervals to the
         new $Encode$() function discussed in Section \ref{subs-impln-encod}.
 
@@ -10036,7 +10036,7 @@ ENDFUNCTION
                            <memb-fact>
 
 <holds-fact>             : <holds> <open-parent>
-                           <identfier> <comma>
+                           <identifier> <comma>
                            <identifier> <comma>
                            <identifier> <comma>
                            <identifier> <close-parent>
@@ -10131,9 +10131,9 @@ ENDFUNCTION
 
 <close-parent>           : )
 
-<open-bracker>           : [
+<open-bracket>           : [
 
-<close-braket>           : ]
+<close-bracket>          : ]
 
 <comma>                  : ,
 
