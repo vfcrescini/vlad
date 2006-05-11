@@ -577,15 +577,15 @@
         A very simple authorisation system based on the DAC model is the
         {\em access control matrix}, which was first proposed by Lampson
         \cite{LAM}, then subsequently extended in \cite{GRA,CON,HAR}. The
-        access control matrix is a simple yet powerful policy base
-        implementation where every subject's access rights of every object
-        are stored. The matrix is composed of rows that represent the subjects
-        of the system. Each column represents the objects of the system. The
-        subject - object intersection, a cell, contains the access rights held
-        by that subject to that object. An empty cell therefore means that the
-        subject in that row do not possess any access rights to the object in
-        that column. Table \ref{tabl-intro-acmat} shows an access control
-        matrix with the same policy used in Example \ref{exam-intro-poli3}.
+        access control matrix is a simple yet powerful policy base model where
+        every subject's access rights of every object are stored. The matrix
+        is composed of rows that represent the subjects of the system. Each
+        column represents the objects of the system. The subject - object
+        intersection, a cell, contains the access rights held by that subject
+        to that object. An empty cell therefore means that the subject in that
+        row do not possess any access rights to the object in that column. 
+        Table \ref{tabl-intro-acmat} shows an access control matrix with the
+        same policy used in Example \ref{exam-intro-poli3}.
 
         \begin{table}[tbhp]
           \begin{center}
@@ -612,13 +612,19 @@
         intersecting objects and their owners will have access right entries
         stored in them. As a result, some applications of access control
         matrices take up more space that what is actually needed. Another
-        implementation, the {\em access control list}, resolves this issue by
-        storing authorisation rules in individual lists instead of one common
-        matrix. In an access control list implementation, the access control
-        system maintains a list of subjects with access rights for each object
-        in the system. Access control lists are typically used to implement low
-        level authorisation mechanisms like those used in file systems. Figure
-        \ref{figu-intro-aclis} shows a set of access control lists that
+        implementation, the {\em access control list} \cite{LAM}, resolves
+        this issue by storing authorisation rules in individual lists instead
+        of one common matrix. In an access control list implementation, the
+        access control system maintains a list of subjects with access rights
+        for each object in the system. Access control lists are typically used
+        to implement low level authorisation mechanisms like those used in file
+        systems. It should be noted that very few systems actually implement
+        an access control matrix. Indeed, the access control matrix was meant
+        only as a conceptual representation of the policy base, and systems
+        such as those based on access control lists are considered as
+        implementations of the access control matrix model.
+
+        Figure \ref{figu-intro-aclis} shows a set of access control lists that
         contains the same policy stored in the access control matrix in Table
         \ref{tabl-intro-acmat}.
 
@@ -632,13 +638,13 @@
 
         In some situations, it is more convienent to store authorisation
         policies in such a way that for each subject, the system maintains
-        a {\em capability list} which contains all access rights the subject
-        holds for certain objects. Since each subject has its own capability
-        list, there might be cases where a certain subject's capability list
-        is empty. This means the subject is not authorised to access any
-        object. Figure \ref{figu-intro-calis} shows a set of capability lists
-        that contains the same policy stored in the access control list shown
-        in \ref{figu-intro-aclis}.
+        a {\em capability list} \cite{FAR,LEV} which contains all access rights
+        the subject holds for certain objects. Since each subject has its own
+        capability list, there might be cases where a certain subject's
+        capability list is empty. This means the subject is not authorised to
+        access any object. Figure \ref{figu-intro-calis} shows a set of
+        capability lists that contains the same policy stored in the access
+        control list shown in \ref{figu-intro-aclis}.
 
         \begin{figure}[tbhp]
           \begin{center}
@@ -650,6 +656,27 @@
 
       \subsection{Mandatory Access Control}
         \label{subs-intro-macmo}
+
+        The {\em Mandatory Access Control} ({\em MAC}) model introduces the
+        concept of defining different levels of security. These levels are
+        treated as security labels or attributes which represents the level
+        of sensitivity when applied to objects, and define clearance level
+        when applied to subjects. A classical example of security labels is
+        the classification system formalised by Bell and LaPadula
+        \cite{BEL1,BEL2} for the U.S. Department of Defense: (from least to
+        most sensitive) unclassified, confidential, secret, top secret.
+
+        A subject is only allowed to read objects of equal or lower security
+        level than the level assigned to the subject. Conversely, a subject can
+        only write to objects that are of equal or higher security level than
+        the level assigned to the subject. These two conditions are known as
+        the {\em read down} and {\em write up} principles of MAC. They ensure
+        that information can only be passed from a low security level to a high
+        security level and not the other way.
+
+        It is mandatory in the sense that every subject and object are assigned
+        a security level, and as opposed to owner assignments in DAC, this
+        assignment is made by administrators.
 
       \subsection{Role-Based Access Control}
         \label{subs-intro-racmo}
@@ -10150,6 +10177,22 @@ ENDFUNCTION
       pp. 99-100,
       2003.
 
+    \bibitem{BEL1}
+      Bell D. E., LaPadula L. J.,
+      Secure Computer Systems: Mathematical Foundations.
+      {\em Technical Report MTR-2547},
+      Vol. 1,
+      Mitre Corporation,
+      1973.
+
+    \bibitem{BEL2}
+      Bell D. E., LaPadula L. J.,
+      Secure Computer Systems: Mathematical Foundations and Model.
+      {\em Technical Report M74-244},
+      Vol. 1,
+      Mitre Corporation,
+      1974.
+
     \bibitem{CAS}
       Castano S., Fugini M., Martella G., Samarati P.,
       Database Security.
@@ -10183,6 +10226,13 @@ ENDFUNCTION
       In {\em Proceedings of the IADIS International Conference (WWW/Internet 2004)},
       Vol. 2, pp. 945-948,
       2004.
+
+    \bibitem{FAR}
+      Farby R.,
+      Capability-Based Addressing.
+      {\em Communications of the ACM},
+      Vol. 17, No. 7, pp. 403-412,
+      1974.
 
     \bibitem{FRE}
       Freuder E. C.,
@@ -10231,6 +10281,12 @@ ENDFUNCTION
       Apache: The Definitive Guide (3rd Edition).
       O'Reilly \& Associates Inc., CA,
       2003.
+
+    \bibitem{LEV}
+      Levy, H. M.,
+      Capability-Based Computer Systems.
+      DEC Press,
+      1984.
 
     \bibitem{LIN}
       Lin F., Zhao X.,
