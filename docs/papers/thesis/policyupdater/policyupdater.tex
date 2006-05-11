@@ -681,6 +681,32 @@
       \subsection{Role-Based Access Control}
         \label{subs-intro-racmo}
 
+        A recent alternative to the DAC and MAC models is the {\em role-based
+        access control} ({\em RBAC}) model. RBAC was first proposed in
+        \cite{FER1,FER2}, then later, a full RBAC framework in \cite{SAN}.
+        In most organisations, different roles are defined to achieve certain
+        tasks. A person undertaking a particular role is granted access to all
+        resources associated with that role. A person's authorisations gained
+        from assuming a role is revoked once the person has relinquished the
+        role or assumed another role. For example, in a hotel environment, the
+        management role is assigned access to the hotel's accounting files,
+        payroll database etc., while the front desk role's authorisation is
+        limited to the guest and rooms database. A person assuming the role of
+        a hotel manager is granted access to the resources assigned to that
+        role, but the moment the person drops that role to assume the role of a
+        front desk officer, access to these managerial resources are also
+        dropped.
+
+        The goal of the RBAC model is to reflect this organisational
+        authorisation system. In this model, authorisations to access objects
+        are assigned to roles, not the subjects directly. Subjects are then
+        assigned different roles that they are allowed to partake. The strength
+        of the RBAC model lies in its ability to accurately model abstract
+        authorisation policies in real-world organisations. The abstraction of
+        authorisation rules from subjects allows better policy management
+        because the assignment of roles to subjects is easier to perform than
+        direct assignment of authorisations to subjects.
+
       \subsection{Logic-Based Access Control}
         \label{subs-intro-lacmo}
 
@@ -10234,6 +10260,20 @@ ENDFUNCTION
       Vol. 17, No. 7, pp. 403-412,
       1974.
 
+    \bibitem{FER1}
+      Ferraiolo D. F., Kuhn D. R.,
+      Role Based Access Controls,
+      In {\em Proceedings of the 15th National Computer Security Conference},
+      pp. 554-563,
+      1992.
+
+    \bibitem{FER2}
+      Ferraiolo D. F., Cugini J. Kuhn D. R.,
+      Role Based Access Control (RBAC): Features and Motivations.
+      In {\em Proceedings of the 11th Annual Computer Security Applications Conference (CSAC-95)},
+      pp. 241-248,
+      1995.
+
     \bibitem{FRE}
       Freuder E. C.,
       A Sufficient Condition for Backtrack-Free Search.
@@ -10325,6 +10365,13 @@ ENDFUNCTION
       and {\em Lecture Notes in Computer Science},
       Vol. 1265, pp. 421-430,
       1997.
+
+    \bibitem{SAN}
+      Sandhu R. S., Coyne E. J., Feinstein H. L., Youman C. E.,
+      Role-Based Access Control Models.
+      {\em IEEE Computer},
+      Vol. 29, No. 2, pp. 38-47,
+      1996.
 
     \bibitem{SIM1}
       Simons P.,
