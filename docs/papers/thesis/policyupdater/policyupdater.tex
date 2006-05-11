@@ -300,7 +300,7 @@
       altogether. In this view, the task of an access control system is limited
       to identifying (authentication) requesting entities and deciding whether
       to grant or deny (authorisation) access requests. Enforcement of these
-      decisions is left to an external enforcement system. 
+      decisions is left to an external enforcement system.
 
       Figure \ref{figu-intro-acctl} shows how each sub-system fits into the
       overall access control system.
@@ -383,7 +383,7 @@
       \label{sect-intro-keyis}
 
       In this section, we identify the key issues and requirements of the
-      design and implementation of an authorisation system. 
+      design and implementation of an authorisation system.
 
       \subsection{Formal Specification of Policies}
 
@@ -474,7 +474,7 @@
               $True$, $Charlie$, $read$, $file_2$
           \end{itemize}
         \end{vexample}
-         
+
       \subsection{Policy Updates}
 
         Up to this point, we have been dealing only with static policies. A
@@ -572,7 +572,7 @@
         (2) authorisation rules in the policy are bindings of subjects, access
         rights and objects. This access control model is discretionary in the
         sense that object owners (subjects) are capable of granting or revoking
-        other subjects access rights to objects that they own. 
+        other subjects access rights to objects that they own.
 
         A very simple authorisation system based on the DAC model is the
         {\em access control matrix}, which was first proposed by Lampson
@@ -583,7 +583,7 @@
         column represents the objects of the system. The subject - object
         intersection, a cell, contains the access rights held by that subject
         to that object. An empty cell therefore means that the subject in that
-        row do not possess any access rights to the object in that column. 
+        row do not possess any access rights to the object in that column.
         Table \ref{tabl-intro-acmat} shows an access control matrix with the
         same policy used in Example \ref{exam-intro-poli3}.
 
@@ -592,13 +592,13 @@
             \begin{tabular}[t]{|l|l|l|l|}
               \hline
                         & $file_0$    & $file_1$    & $file_2$ \\
-              \hline                  
+              \hline
               $Alice$   & $r$         &             &          \\
-              \hline                  
+              \hline
               $Bob$     &             & $r$,$w$,$x$ &          \\
-              \hline                  
+              \hline
               $Charlie$ & $r$         & $r$         & $r$      \\
-              \hline                  
+              \hline
               $Dennis$  &             &             &          \\
               \hline
             \end{tabular}
@@ -7731,7 +7731,7 @@ ENDFUNCTION
 
       The internal mechanisms of both the temporal reasoner engine and the
       policy base engine shall be discussed in detail in the following
-      sections. However, before we do so, we first formalise a list structure 
+      sections. However, before we do so, we first formalise a list structure
       first introduced in Section \ref{subs-polup-dstru} as the implementation
       of both engines makes use of this structure.
 
@@ -8329,11 +8329,11 @@ ENDFUNCTION
             \begin{tabular}[t]{|l|l|l|}
               \hline
               {\bf Field} & {\bf Type}               & {\bf Description} \\
-              \hline                                 
+              \hline
               $symtab$    & Symbol Table             & List of Entity and Interval Identifiers \\
-              \hline                                 
+              \hline
               $inittab$   & Expression               & List of Initial Facts \\
-              \hline                                 
+              \hline
               $consttab$  & Constraints Table        & List of Constraints \\
               \hline
               $updatetab$ & Update Declaration Table & List of Policy Update Declarations \\
@@ -8445,9 +8445,9 @@ ENDFUNCTION
             \begin{tabular}[t]{|l|l|l|}
               \hline
               \textbf{Field} & \textbf{Type}          & \textbf{Description} \\
-              \hline                                  
+              \hline
               $exp$          & Expression Type        & Consequent \\
-              \hline                                  
+              \hline
               $pcn$          & Expression Type        & Positive Premise \\
               \hline
               $ncn$          & Expression Type        & Negative Premise \\
@@ -8469,9 +8469,9 @@ ENDFUNCTION
             \begin{tabular}[t]{|l|l|l|}
               \hline
               \textbf{Field} & \textbf{Type}          & \textbf{Description} \\
-              \hline                                  
+              \hline
               $int_0$        & String                 & Interval \\
-              \hline                                  
+              \hline
               $int_1$        & String                 & Interval \\
               \hline
               $rs$           & Integer                & Relation Set \\
@@ -8496,11 +8496,11 @@ ENDFUNCTION
               \textbf{Field} & \textbf{Type}          & \textbf{Description} \\
               \hline
               $name$         & String                 & Update Identifier \\
-              \hline                                  
+              \hline
               $vlist$        & Ordered String List    & Variables \\
-              \hline                                  
+              \hline
               $pre$          & Expression Type        & Precondition \\
-              \hline                                  
+              \hline
               $pst$          & Expression Type        & Postcondition \\
               \hline
               $rexp$         & Interval Relation List & {\em where} Clause \\
@@ -8959,7 +8959,7 @@ ENDFUNCTION
         using the given indices of its elements. As discussed above, the
         subject offset of a holds atom is obtained by multiplying the actual
         subject index $sub$ by the total number of access rights by the total
-        number of objects by the total number of intervals defined in the 
+        number of objects by the total number of intervals defined in the
         symbol table. Similarly, the access right offset is calculated by
         multiplying the actual access right index $acc$ by the remaining
         elements: the total number of objects and the total number of
@@ -9224,22 +9224,22 @@ ENDFUNCTION
             \item
               $SM$.$Init$() initialises the object. Any previous operations are
               reset.
- 
+
             \item
               $SM$.$RuleBegin$() marks the beginning of a rule.
- 
+
             \item
               $SM$.$RuleHead$($\alpha$) registers the atom $\alpha$ as the
               head of the rule.
- 
+
             \item
               $SM$.$RuleBody$($\alpha$, $\tau$) registers the atom $\alpha$,
               whose negation-as-failure value is $\tau$, as a body of the
               current rule.
- 
+
             \item
               $SM$.$RuleEnd$() marks the ending of the current rule.
- 
+
             \item
               $SM$.$GetAnswerSets$() returns a list of answer sets.
           \end{enumerate}
@@ -9363,18 +9363,18 @@ ENDFUNCTION
             \item
               $GetVList$($exp$) returns a list of variable identifiers
               that occur in the given expression $exp$.
-         
+
             \item
               $GenTupleList$($vlist$) returns a list of tuples, given a list of
               variables $vlist$. Each tuple in the returned list contains
               entities and intervals of the same type as the corresponding
               variable in $vlist$.
-         
+
             \item
               $CheckTuple$($tuple$, $rlist$, $NET$) returns {\em true} if the
               intervals in $tuple$ satisfy the interval relations specified in
               $rlist$.
-         
+
             \item
               $Replace$($vlist$, $tuple$, $exp$). Given a list of
               variables $vlist$, a list of entities and intervals $tuple$ and
@@ -10245,7 +10245,7 @@ ENDFUNCTION
       In {\em Proceedings of the 17th Australian Joint Conference on Artificial Intelligence (AI 2004, LNCS/LNAI)}
       Vol. 3339, pp. 623-635,
       2004.
-      
+
     \bibitem{CRE3}
       Crescini V. F., Zhang Y., Wang W.,
       Web Server Authorisation with the PolicyUpdater Access Control System.
