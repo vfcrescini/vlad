@@ -710,6 +710,55 @@
       \subsection{Logic-Based Access Control}
         \label{subs-intro-lacmo}
 
+        An effective approach to access control is the {\em logic-based access
+        control} approach. In this approach, instead of explicitly defining all
+        access-rights of all subjects for all objects in a domain, a set of
+        logical facts and rules are used to define the policy base.
+
+        In 1992, Woo and Lam proposed an authorisation approach based on the
+        concept that the semantics of authorisation should be separated from
+        the low-level and system-dependent implementation mechanisms
+        \cite{WOO1,WOO2}. In this approach, the policy is expressed as a set
+        of rules written in terms of a first-order logic authorisation
+        language. In this language, an atom is 3-tuple ($s$, $a$, $o$)
+        representing a binding of a subject $s$, an access right $a$ and an 
+        object $o$. A simplified syntax of the language rule is shown below:
+
+        \begin{vquote}
+          $\frac{f : f'}{g}$
+
+          \hspace{1em}
+          where
+
+          \hspace{1em}
+          $f$ is the prerequisite
+
+          \hspace{1em}
+          $f'$ is the assumption
+
+          \hspace{1em}
+          $g$ is the consequent
+        \end{vquote}
+
+         \noindent
+         The rule above is interpreted as the following statement: "If $f$
+         holds, and there is no reason not to believe that $f'$ also holds,
+         then $g$ is also believed to hold". This rule construct is similar
+         to the {\em default construct} used in {\em default logic} \cite{REI}
+         where the absence of proof may be used as a prerequisite for a rule.
+
+         The rules are evaulated into a policy base. In this approach, the
+         policy base is defined as a 4-tuple: ($P^+$, $P^-$, $N^+$, $N^-$)
+         where each component is a set of atoms. $P^+$ contains a set of atoms
+         that explicitly grant authorisations. For example, to evaluate
+         whether subject $s$ is given access right $a$ to object $o$, one must
+         check whether ($s$, $a$, $o$) $\in$ $P^+$ is true. $N^+$ contains a
+         set of atoms that explicitly deny authorisations. $P^-$ and $N^-$
+         records authorisations that should not be explicitly granted or
+         denied, respectively.
+
+         
+
     \section{Structure of the Thesis}
       \label{sect-intro-struc}
 
@@ -10366,6 +10415,13 @@ ENDFUNCTION
       Vol. 1265, pp. 421-430,
       1997.
 
+    \bibitem{REI}
+      Reiter R.,
+      A Logic for Default Reasoning.
+      {\em Artificial Intelligence},
+      Vol. 13, No. 1-2, pp. 81-132,
+      1980.
+
     \bibitem{SAN}
       Sandhu R. S., Coyne E. J., Feinstein H. L., Youman C. E.,
       Role-Based Access Control Models.
@@ -10416,6 +10472,20 @@ ENDFUNCTION
       In {\em Readings in Qualitative Reasoning about Physical Systems},
       pp. 373-381,
       1989.
+
+    \bibitem{WOO1}
+      Woo T. Y. C., Lam S. S.,
+      Authorization in Distributed Systems: A Formal Approach.
+      In {\em Proceedings of the IEEE Symposium on Research in Security and Privacy},
+      pp. 33-51,
+      1992.
+
+    \bibitem{WOO2}
+      Woo T. Y. C., Lam S. S.,
+      Authorization in Distributed Systems: A New Approach.
+      {\em Journal of Computer Security},
+      Vol. 2, No. 2-3, pp. 107-136,
+      1993.
 
     \bibitem{ZHA}
       Zhang Y.,
