@@ -17,7 +17,7 @@
 # Copyright (c) 2005 Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 progname="speaktime"
-progver="1.0"
+progver="1.1"
 def_snd_dir=/usr/local/share/speaktime
 
 unset thetimeis
@@ -62,6 +62,11 @@ fi
 # get time
 curr_hour=`date | awk {'print $4'} | cut -d":" -f1`
 curr_min=`date | awk {'print $4'} | cut -d":" -f2`
+
+# strip leading zeroes
+if [ ${curr_hour} != "00" ]; then
+  curr_hour=${curr_hour##0}
+fi
 
 # do the hour
 hour=$[${curr_hour} % 12]
