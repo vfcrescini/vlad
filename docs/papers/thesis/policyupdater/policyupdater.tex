@@ -720,9 +720,16 @@
         the low-level and system-dependent implementation mechanisms
         \cite{WOO1,WOO2}. In this approach, the policy is expressed as a set
         of rules written in terms of a first-order logic authorisation
-        language. In this language, an atom is 3-tuple ($s$, $a$, $o$)
-        representing a binding of a subject $s$, an access right $a$ and an 
-        object $o$. A simplified syntax of the language rule is shown below:
+        language. In this language, an atom is a propositional constant of the
+        form $a$($s$, $o$) representing a binding of a subject $s$, an access
+        right $a$ and an object $o$. A {\em positive authorisation atom} is
+        written as $a^+$($s$, $o$), while a {\em negative authorisation atom}
+        is written as  $a^-$($s$, $o$). As it is a first-order logic language,
+        the language includes the usual notations for variables, negation,
+        conjunction and disjunction. A {\em literal} is an atom or its
+        negation, while a {\em formula} is either a literal, a conjunction of
+        literals or a disjunction of literals. {\em Rules} are composed of
+        formulas written in the form shown below:
 
         \begin{vquote}
           $\frac{f : f'}{g}$
@@ -745,17 +752,50 @@
          holds, and there is no reason not to believe that $f'$ also holds,
          then $g$ is also believed to hold". This rule construct is similar
          to the {\em default construct} used in {\em default logic} \cite{REI}
-         where the absence of proof may be used as a prerequisite for a rule.
+         where the absence of proof may be used as a condition for a rule.
 
          The rules are evaulated into a policy base. In this approach, the
          policy base is defined as a 4-tuple: ($P^+$, $P^-$, $N^+$, $N^-$)
-         where each component is a set of atoms. $P^+$ contains a set of atoms
-         that explicitly grant authorisations. For example, to evaluate
-         whether subject $s$ is given access right $a$ to object $o$, one must
-         check whether ($s$, $a$, $o$) $\in$ $P^+$ is true. $N^+$ contains a
-         set of atoms that explicitly deny authorisations. $P^-$ and $N^-$
-         records authorisations that should not be explicitly granted or
-         denied, respectively.
+         where each component is a set of subject-access right-object tuples.
+         $P^+$ contains a set of tuples that explicitly grant authorisations.
+         For example, to evaluate whether subject $s$ is given access right $a$
+         to object $o$, one must check whether ($s$, $a$, $o$) $\in$ $P^+$ is
+         true. $N^+$ contains a set of tuples that explicitly deny
+         authorisations. $P^-$ and $N^-$ records authorisations that should
+         not be explicitly granted or denied, respectively.
+
+         Because the Woo and Lam approach explicitly expresses both positive
+         and negative authorisations as well as conditional rules, it is not
+         difficult to see that this approach provides a more flexible means of
+         expressing authorisaton policies. Example \ref{exam-intro-wooex} shows
+         the logic-based equivalent of the policy represented by the access
+         control matrix shown in Table \ref{tabl-intro-acmat}.
+
+         \begin{vexample}
+           \label{exam-intro-wooex}
+           In this example, the first 7 rules explicitly grant different
+           authorisations to specific subjects for specific objects. The
+           final rule makes use of variables to deny all authorisations that
+           are not explicitly granted.
+
+           \begin{vquote}
+             $\frac{True : True}{r^{+}(Alice, file_0)}$
+
+             $\frac{True : True}{r^{+}(Bob, file_1)}$
+
+             $\frac{True : True}{w^{+}(Bob, file_1)}$
+
+             $\frac{True : True}{x^{+}(Bob, file_1)}$
+
+             $\frac{True : True}{r^{+}(Charlie, file_0)}$
+
+             $\frac{True : True}{r^{+}(Charlie, file_1)}$
+
+             $\frac{True : True}{r^{+}(Charlie, file_2)}$
+
+             $\frac{True : A^{-}(S, O)}{A^{-}(S, O)}$
+           \end{vquote}
+         \end{vexample}
 
          Note that the Woo and Lam model uses a single policy description for
          authorisation. Indeed, several authorisation models and their
