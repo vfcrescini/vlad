@@ -289,7 +289,7 @@
       not an authenticated entity is to be allowed access to resources or not.
       It is therefore in the authorisation sub-system where the access control
       policy is kept and maintained. This is the reason why the term access
-      control is ofter used interchangeably with the term authorisation.
+      control is often used interchangeably with the term authorisation.
 
       Another system that may be considered as an access control sub-system
       is the {\em enforcement} system. The sole task of this system is to
@@ -1174,7 +1174,7 @@
       we now define its formal semantics. The semantics of language
       ${\cal L}$ is based on the well-known answer set (stable model)
       semantics of extended logic programs proposed by Gelfond and Lifschitz
-      \cite{GEL}. The definition below formally defines the answer set of a
+      \cite{GEL1}. The definition below formally defines the answer set of a
       logic program.
 
       \begin{vdefinition}
@@ -1380,10 +1380,11 @@
 
         \subsubsection{Facts}
 
-          A fact is a logical statement that makes a claim that an atom
-          either holds or does not hold at a particular state. The
-          following is the formal definition of fact $\hat{\rho}$ in
-          state $\sigma$:
+          A fact is a logical statement that makes a claim that an atom either
+          holds or does not hold at a particular state. A fact that does not
+          hold is said to be a {\em classically negated} fact \cite{GEL2}. The
+          following is the formal definition of fact $\hat{\rho}$ in state
+          $\sigma$:
 
           \begin{vquote}
             $\hat{\rho}^{\sigma}$ $=$
@@ -10330,12 +10331,19 @@ ENDFUNCTION
       Vol. 29, No. 1, pp. 24-32,
       1982.
 
-    \bibitem{GEL}
+    \bibitem{GEL1}
       Gelfond M., Lifschitz V.,
       The Stable Model Semantics for Logic Programming.
       In {\em Proceedings of the Fifth International Conference on Logic Programming},
       pp. 1070-1080,
       1988.
+
+    \bibitem{GEL2}
+      Gelfond M., Lifschitz V.,
+      Classical Negation in Logic Programs and Disjunctive Databases.
+      {\em New Generation Computing},
+      Vol. 9, No. 3-4, pp. 365-386,
+      1991.
 
     \bibitem{GRA}
       Graham G. S., Denning P. J.,
