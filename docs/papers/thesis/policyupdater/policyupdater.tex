@@ -912,8 +912,51 @@
          permit the assignment of temporal attributes to the authorisation
          rules themselves.
 
-    \section{Structure of the Thesis}
-      \label{sect-intro-struc}
+    \section{About the Thesis}
+      \label{sect-intro-about}
+
+      The work presented in this thesis focuses on the key issues of
+      authorisation systems outlined in Section \ref{sect-intro-keyis}, and
+      at the same time addresses the deficiencies and limitations of the access
+      control models and approaches discussed in the previous section. In
+      a nutshell, the work revolves around the formalisation and implementation
+      of a logic-based authorisation system with support for default
+      propositions, dynamic and conditional policy updates and temporal
+      constraints.
+
+      The rest of the thesis is organised as follows:
+
+      Chapter \ref{chap-langl} introduces language ${\cal L}$, a logic-based
+      authorisation language with dynamic policy updates. The chapter discusses
+      the language's syntax and semantics, and by doing so, addresses the
+      underlying mechanisms by which high level authorisation policies are
+      expressed and evaluated.
+
+      Chapter \ref{chap-polup} introduces the PolicyUpdater authorisation
+      system which uses language ${\cal L}$ to express policies. The chapter
+      gives an overview of the PolicyUpdater system as  a whole, with its
+      internal and external components. The chapter also includes a few
+      algorithms that outline the underlying mechanisms as well as some
+      experimental results that show the relationship between input size and
+      execution time. A case study which describes a web-server application
+      of PolicyUpdater is also included in this chapter.
+
+      Chapter \ref{chap-tempo} first describes an algebra to express
+      relationships between temporal intervals, then introduces language
+      ${\cal L^T}$, a non-trivial extension of language ${\cal L}$ that has
+      enough expressive power to assign temporal attributes to authorisation
+      rules and, by the integration of the temporal algebra, allows the
+      representation of temporal interval relations.
+
+      Chapter \ref{chap-impln} provides a comprehensive implementation
+      discussion of the extended PolicyUpdater system. The chapter firstly
+      outlines full implementation details of a temporal interval relation
+      reasoner, then describes the internal mechanisms of the extended
+      PolicyUpdater system not previously discussed in Chapter
+      \ref{chap-polup}.
+
+      Finally, Chapter \ref{chap-concl} summarises the contributions of the
+      work and outlines several future research directions.
 
   \chapter{Logic-Based Authorisation Language}
     \label{chap-langl}
