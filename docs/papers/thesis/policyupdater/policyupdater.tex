@@ -689,7 +689,7 @@
 
         A recent alternative to the DAC and MAC models is the {\em role-based
         access control} ({\em RBAC}) model. RBAC was first proposed in
-        \cite{FER1,FER2}, then later, a full RBAC framework in \cite{SAN}.
+        \cite{FER1,FER2}, then later, a full RBAC framework in \cite{SAN2}.
         In most organisations, different roles are defined to achieve certain
         tasks. A person undertaking a particular role is granted access to all
         resources associated with that role. A person's authorisations gained
@@ -713,13 +713,19 @@
         because the assignment of roles to subjects is easier to perform than
         direct assignment of authorisations to subjects.
 
-      \subsection{Logic-Based Access Control}
+      \subsection{Logic-Based Approach}
         \label{subs-intro-lacmo}
 
         An effective approach to access control is the {\em logic-based access
         control} approach. In this approach, instead of explicitly defining all
         access-rights of all subjects for all objects in a domain, a set of
         logical facts and rules are used to define the policy base.
+
+        One such model was proposed by Abadi et. al. in \cite{ABA}. Their model
+        is based on a modal logic language designed for access control.
+        However, this language focuses mainly on the delegation of
+        authorisations and the concept of roles, rather than the expression of
+        authorisation policies.
 
         In 1992, Woo and Lam proposed an authorisation approach based on the
         concept that the semantics of authorisation should be separated from
@@ -814,13 +820,97 @@
 
          In response to this problem, Jajodia, et. al. proposed a logic-based
          authorisation language, the {\em Authorization Specification
-         Language} \cite{JAJ1}, Later, the approach was generalised into a full
+         Language} \cite{JAJ1}. Later, the approach was generalised into a full
          authorisation framework, the {\em Flexible Authorisation Framework}
          \cite{JAJ2,JAJ3}. With this framework, it is possible to enforce
          multiple authorisation policies within a single authorisation system.
          The framework itself is based on the logic-based authorisation
          language, through which administrators are allowed to choose, at their
-         discretion, which policy is to be used.
+         discretion, which policy is to be used. Other features of this
+         framework include support for groups and roles, conflict resolution
+         mechanisms and support for different decision strategies.
+
+         Another approach, proposed by Bertino et. al. \cite{BER3}, uses an
+         authorisation mechanism based on ordered logic. This powerful
+         mechanism supports both positive and negative authorisations as well
+         as implicit rule derivations and default propositions. Other notable
+         features of this system include the distinction between weak and
+         strong authorisations, support for administrative authorisation
+         delegation and more importantly, conflict resolution.
+
+         These systems, although effective, lack the details necessary to
+         address the issues involved in the implementation of such systems.
+         Another logic-based authorisation system was proposed by Halpern and
+         Weissman \cite{HAL}. Their approach focuses on the tractability of
+         the policy reasoning mechanism by resricting the expressivness of the
+         policy language. However, although the use of first-order logic
+         provides sufficient expressive power for most applications, this
+         tradeoff means that this approach cannot handle default propositions
+         or policy updates.
+
+       \subsection{Other Approaches and Considerations}
+
+         The {\em Policy Description Language}, or {\em PDL}, developed by
+         Lobo, et. al. \cite{LOB}, is a language for representing event and
+         action oriented generic policies. {\em PDL} is later extended by
+         Chomicki, et. al. \cite{CHO} to include {\em policy monitors} which,
+         in effect, are policy constraints. Bertino, et. al. \cite{BER4,BER5},
+         again took {\em PDL} a step further by extending {\em policy monitors}
+         to allow users to express preferred constraints. While these generic
+         languages are expressive enough to be used for access control systems,
+         systems built for such languages will not have the ability to
+         dynamically update the policies.
+
+         Sandhu et. al. \cite{SAN1,SAN3,SAN4} was first to introduce the
+         concept of {\em transformation}, or more specifically,
+         {\em non-monotonic transformation} of access rights. For all intents
+         and purposes, the term transformation is synonymous with our
+         definition of policy updating. The non-monotonic property allows
+         access rights to be revoked as well as granted in a policy update.
+         Meadows \cite{MEA}, formalised the concept of dynamic upgrading of
+         policies.
+
+         Bai and Varadharajan \cite{BAI1,BAI2,BAI3} extended the concept of
+         dynamic updates by developing an authorisation model based on a
+         language that is not only capable of handling policy updates, but also
+         sequences of policy updates. Because this model is logic-based, other
+         key features include the ability to express default propositions and
+         a mechanism for conflict resolution. However, the major weakness of
+         this framework is its lack of sufficient details for full system
+         implementation.
+
+         Other access control approaches such as those proposed in
+         \cite{RUA1, RUA2, LI} focus on authorisation delegation. Although such
+         systems are useful in distributed or decentralised systems, a common
+         deficiency is their inability to handle default propositions and/or
+         policy updates.
+
+         Bertino et. al. introduced an authorisation model in \cite{BER1} that
+         is capable of expressing temporal information in its policies. By
+         including time interval attributes to rules, the model allows
+         authorisations to be bound by to a specific time period, or hold only
+         for a specific time interval. In addition to this, the model also
+         supports derivation rules based on temporal propositions. This feature
+         allows new temporal authorisations to be valid on the basis of the
+         presence or absence of other temporal authorisations. This model was
+         later extended and revised in \cite{BER2} to support periodic or
+         cyclic temporal authorisations. We note that in these models, the
+         temporal derivation rules consider only the validity of an
+         authorisation that is bound by time. However, the model cannot express
+         relations between the time intervals themselves, instead of the
+         authorisations bound by them, as discussed in Section
+         \ref{subs-intro-tempc}.
+
+         Ruan et. al. \cite{RUA3} developed another logic-based authorisation
+         model with support for delegation of temporal authorisations. Again,
+         the weakness of this model is that relations between time intervals
+         cannot be expressed. The authorisation model proposed by Atluri and
+         Gal \cite{ATL} focuses on securing web portals and the work provides
+         full implementation details. In this model, the authorisations are
+         derived based on the temporal characteristics of the data (objects)
+         and their relationships with other data. However, the model do not
+         permit the assignment of temporal attributes to the authorisation
+         rules themselves.
 
     \section{Structure of the Thesis}
       \label{sect-intro-struc}
@@ -10291,15 +10381,29 @@ ENDFUNCTION
                            <underscore>
     \end{vverbatim}
 
-
-  \begin{thebibliography}{M}
+  \begin{thebibliography}{III}
     \addcontentsline{toc}{chapter}{Bibliography}
+
+    \bibitem{ABA}
+      Abadi M., Burrows M., Lampson B., Plotkin G.,
+      A Calculus for Access Control in Distributed Systems.
+      {\em ACM Transactions on Programming Languages and Systems},
+      Vol. 15, No. 4, pp. 706-734,
+      1993.
+
     \bibitem{ALE}
       Allen J. F.,
       Maintaining Knowledge about Temporal Intervals.
       {\em Communications of the ACM},
       Vol. 26, No. 11, pp. 832-843,
       1983.
+
+    \bibitem{ATL}
+      Atluri V., Gal A.,
+      An Authorization Model for Temporal and Derived Data: Securing Information Portals.
+      {\em ACM Transactions on Information and System Security},
+      Vol. 5, No. 1, pp. 62-94,
+      2002.
 
     \bibitem{AP}
       Apache Software Foundation,
@@ -10308,6 +10412,27 @@ ENDFUNCTION
       2004.
 
       {\tt http://httpd.apache.org/docs-2.1/}
+
+    \bibitem{BAI1}
+      Bai Y., Varadharajan V.,
+      A Language for Specifying Sequences of Authorization Transformations and Its Applications.
+      In {\em Proceedings of the First International Conference on Information and Communication Security},
+      pp. 39-49,
+      1997.
+
+    \bibitem{BAI2}
+      Bai Y., Varadharajan V.,
+      On Formal Languages for Sequences of Authorization Transformations.
+      In {\em Proceedings of Safety, Reliability and Security of Computer Systems (LNCS)},
+      Vol. 1698, pp. 375-384,
+      1999.
+
+    \bibitem{BAI3}
+      Bai Y., Varadharajan V.,
+      On Transformation of Authorization Policies.
+      {\em Data and Knowledge Engineering},
+      Vol. 45, No. 3, pp. 333-357,
+      2003.
 
     \bibitem{BAR}
       Baral C.,
@@ -10332,11 +10457,53 @@ ENDFUNCTION
       Mitre Corporation,
       1974.
 
+    \bibitem{BER1}
+      Bertino E., Bettini C., Samarati P.,
+      A Temporal Authorization Model.
+      In {\em Proceedings of the 2nd ACM Conference on Computer and Communications Security},
+      pp. 26-135,
+      1994.
+
+    \bibitem{BER2}
+      Bertino E., Bettini C., Ferrari E., Samarati P.,
+      An Access Control Model Supporting Periodicity Constraints and Temporal Reasoning.
+      {\em ACM Transactions on Database Systems},
+      Vol. 23, No. 3, pp. 231-285,
+      1999.
+
+    \bibitem{BER3}
+      Bertino E., Buccafurri F., Ferrari E., Rullo P.,
+      A Logic-Based Approach for Enforcing Access Control.
+      {\em Journal of Computer Security},
+      Vol. 8, No. 2-3, pp. 109-140,
+      2000.
+
+    \bibitem{BER4}
+      Bertino E., Mileo A., Provetti A.,
+      Policy Monitoring with User-Preferences in PDL.
+      In {\em Proceedings of IJCAI-03 Workshop for Nonmonotonic Reasoning, Action and Change},
+      pp. 37-44,
+      2003.
+
+    \bibitem{BER5}
+      Bertino E., Mileo A., Provetti A.,
+      PDL with Preferences.
+      In {\em Proceedings of the 6th IEEE International Workshop on Policies for Distributed Systems and Networks (POLICY 2005)},
+      pp. 213-222,
+      2005.
+
     \bibitem{CAS}
       Castano S., Fugini M., Martella G., Samarati P.,
       Database Security.
       Addison-Wesley Publishing Co.,
       1995.
+
+    \bibitem{CHO}
+      Chomicki J., Lobo J., Naqvi S.,
+      A Logic Programming Approach to Conflict Resolution in Policy Management.
+      In {\em Proceedings of the 7th International Conference on Principles of Knowledge Representation and Reasoning (KR2000)},
+      pp. 121-132,
+      2000.
 
     \bibitem{CON}
       Conway R. W., Maxwell W. L., Morgan H. L.,
@@ -10469,6 +10636,13 @@ ENDFUNCTION
       DEC Press,
       1984.
 
+    \bibitem{LI}
+      Li N., Grosof B. N., Feigenbaum J.,
+      Delegation Logic: A Logic-Based Approach to Distributed Authorization.
+      {\em ACM Transactions on Information and System Security (TISSEC)},
+      Vol. 6, No. 1, pp. 128-171,
+      2003.
+
     \bibitem{LIN}
       Lin F., Zhao X.,
       On Odd and Even Cycles in Normal Logic Programs.
@@ -10477,12 +10651,33 @@ ENDFUNCTION
       pp. 80,
       2004.
 
+    \bibitem{LOB}
+      Lobo J., Bhatia R., Naqvi S.,
+      A Policy Description Language.
+      In {\em Proceedings of the 16th AAAI National Conference on Artificial Intelligence and 11th Conference on Innovative Applications of Artificial Intelligence},
+      pp. 291-298,
+      1999.
+
     \bibitem{MAC}
       Mackworth, A.K.,
       Consistency in Networks of Relations.
       {\em Artificial Intelligence},
       Vol. 8, No. 1, pp. 99-118,
       1977.
+
+    \bibitem{MEA}
+      Meadows C.,
+      Policies for Dynamic Upgrading.
+      {\em Database Security, IV: Status and Prospects (DBSec)},
+      pp. 241-250,
+      1990.
+
+    \bibitem{HAL}
+      Halpern J. Y., Weissman V.,
+      Using First-Order Logic to Reason About Policies.
+      In {\em Proceedings of the 16th IEEE Computer Security Foundations Workshop},
+      pp. 187-201,
+      2003.
 
     \bibitem{HTTP1}
       Network Working Group,
@@ -10514,12 +10709,54 @@ ENDFUNCTION
       Vol. 13, No. 1-2, pp. 81-132,
       1980.
 
-    \bibitem{SAN}
+    \bibitem{RUA1}
+      Ruan C., Varadharajan V., Zhang Y.,
+      Logic-Based Reasoning on Delegatable Authorizations.
+      In {\em Proceedings of the 13th International Symposium on Foundations of Intelligent Systems (LNCS)},
+      Vol. 2366, pp. 185-193,
+      2002.
+
+    \bibitem{RUA2}
+      Ruan C., Varadharajan V., Zhang Y.,
+      Evaluation of Authorization with Delegation and Negation.
+      In {\em Proceedings of the International Intelligent Information Processing and Web Mining Conference (IIPWM-03)},
+      pp. 547-551,
+      2003.
+
+    \bibitem{RUA3}
+      Ruan C., Varadharajan V., Zhang Y.,
+      A Logic Model for Temporal Authorization Delegation with Negation.
+      In {\em Proceedings of the 6th International Conference on Information Security (ISC2003)},
+      Vol. 2851, pp. 310-324,
+      2003.
+
+    \bibitem{SAN1}
+      Sandhu R. S.,
+      Transformation of Access Rights.
+      In {\em Proceedings of the IEEE Symposium on Research in Security and Privacy},
+      pp. 259-268,
+      1989.
+
+    \bibitem{SAN2}
       Sandhu R. S., Coyne E. J., Feinstein H. L., Youman C. E.,
       Role-Based Access Control Models.
       {\em IEEE Computer},
       Vol. 29, No. 2, pp. 38-47,
       1996.
+
+    \bibitem{SAN3}
+      Sandhu R. S., Ganta S.,
+      On the Expressive Power of the Unary Transformation Model.
+      In {\em Proceedings of the Third European Symposium on Research in Computer Security},
+      pp. 301-318,
+      1994.
+
+    \bibitem{SAN4}
+      Sandhu R. S., Suri G. S.,
+      Non-Monotonic Transformation of Access Rights.
+      In {\em Proceedings of the IEEE Symposium on Research in Security and Privacy},
+      pp. 148-161,
+      1992.
 
     \bibitem{SIM1}
       Simons P.,
