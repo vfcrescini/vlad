@@ -843,10 +843,10 @@
          Another logic-based authorisation system was proposed by Halpern and
          Weissman \cite{HAL}. Their approach focuses on the tractability of
          the policy reasoning mechanism by resricting the expressivness of the
-         policy language. However, although the use of first-order logic
-         provides sufficient expressive power for most applications, this
-         tradeoff means that this approach cannot handle default propositions
-         or policy updates.
+         policy language. However, this tradeoff means that although the use of
+         a subset of first-order logic provides sufficient expressive power for
+         most applications, this approach cannot handle default propositions or
+         policy updates.
 
        \subsection{Other Approaches and Considerations}
 
@@ -885,10 +885,17 @@
          deficiency is their inability to handle default propositions and/or
          policy updates.
 
+         Recently, Ray \cite{RAY} proposed a formalism for updating access
+         control policies in real-time. Although this formalism provides a set
+         of algorithms aimed at the implementation of an authorisation system
+         capable of performing dynamic policy updates, it only considers
+         simple authorisation policies with no support for negative
+         authorisations, conditional rules or conflict resolution.
+
          Bertino et. al. introduced an authorisation model in \cite{BER1} that
          is capable of expressing temporal information in its policies. By
          including time interval attributes to rules, the model allows
-         authorisations to be bound by to a specific time period, or hold only
+         authorisations to be bound to a specific time period, or hold only
          for a specific time interval. In addition to this, the model also
          supports derivation rules based on temporal propositions. This feature
          allows new temporal authorisations to be valid on the basis of the
@@ -950,7 +957,7 @@
 
       Chapter \ref{chap-impln} provides a full comprehensive implementation
       discussion of the extended PolicyUpdater system. The chapter firstly
-      outlines full implementation details of a temporal interval relation
+      outlines the full implementation details of a temporal interval relation
       reasoner, then describes the internal mechanisms of the extended
       PolicyUpdater system not previously discussed in Chapter
       \ref{chap-polup}.
@@ -959,8 +966,9 @@
       work and outlines several future research directions.
 
       Note that parts of this dissertation have already been published in
-      journals and conference papers \cite{CRE2,CRE1,CRE4} and a paper on the
-      extended PolicyUpdater system \cite{CRE3} will be submitted soon.
+      journals and conference papers \cite{CRE2,CRE1,CRE4}. Furthermore, a
+      paper on the extended PolicyUpdater system \cite{CRE3} will be submitted
+      soon.
 
   \chapter{Logic-Based Authorisation Language}
     \label{chap-langl}
@@ -10575,7 +10583,7 @@ ENDFUNCTION
 
     \bibitem{CRE3}
       Crescini V. F., Zhang Y.,
-      Extending the PolicyUpdater System with Temporal Constraints.
+      Expressing Temporal Constraints with the PolicyUpdater System.
       (to be submitted),
       2006.
 
@@ -10754,6 +10762,13 @@ ENDFUNCTION
       and {\em Lecture Notes in Computer Science},
       Vol. 1265, pp. 421-430,
       1997.
+
+    \bibitem{RAY}
+      Ray I.,
+      Real-Time Update of Access Control Policies.
+      {\em Data \& Knowledge Engineering},
+      Vol. 49, No. 3, pp. 287-309,
+      2004.
 
     \bibitem{REI}
       Reiter R.,
