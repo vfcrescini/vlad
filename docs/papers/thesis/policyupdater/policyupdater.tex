@@ -9786,6 +9786,100 @@ ENDFUNCTION
   \chapter{Conclusion}
     \label{chap-concl}
 
+    Authorisation or access control is an important part of information
+    security systems. Although several access control approaches and models
+    have been proposed and used over the years, very few maintains a good
+    balance between flexibility, expressiveness and implementation. That is,
+    those access control systems with simple implementations often lack the
+    ability to express complex authorisation rules or the flexibility required
+    for policy updates. On the other hand, those models that can handle policy
+    updates, conditional rules or temporal constraints often lack the details
+    necessary for full system implementation.
+
+    In this thesis, we have presented the full implementation details of two
+    authorisation systems: PolicyUpdater and PolicyUpdater2.
+
+    The PolicyUpdater system is an authorisation system that uses a first-order
+    logic language, language ${\cal L}$, to represent the authorisation policy
+    or policy base. A language ${\cal L}$ atom, composed of a subject, an
+    access right and an object, is used to construct authorisation facts and
+    rules. Through the use of this language, the PolicyUpdater system is
+    capable of expressing and evaluating both positive and negative
+    authorisations from policies with conditional logic rules. The two key
+    features of this language, and therefore the system, is its ability to
+    express default authorisations in conditional rules and conditional policy
+    update rules which can be applied in sequence.
+
+    We have also shown from the semantics of language ${\cal L}$ that from a 
+    given policy expressed in this language and a sequence of policy updates,
+    an extended logic program can be generated, which in turn can be translated
+    into a normal logic program. In our implementation, we have shown that
+    through these translations and the stable model semantics, a set of answer
+    sets can be generated from any consistent language ${\cal L}$ policy. The
+    PolicyUpdater system uses these answer sets to evaluate authorisation
+    queries.
+
+    In Chapter \ref{chap-polup}, we have outlined the data structures and
+    algorithms that make up the PolicyUpdater system. The performance analysis
+    of the system shows that, given a realistic input size of policies and
+    queries, our implementation performs reasonably well in terms of
+    computation speed. In the case study, we have shown a simple application
+    in which the PolicyUpdater system is used as an authorisation system for a
+    web server.
+
+    The extended version of the system, PolicyUpdater2, addressed the issue of
+    expressing temporal constraints in the authorisation policy. This is made
+    possible by the integration of the well-established temporal interval
+    algebra into a logic-based authorisation language, language ${\cal L^T}$.
+    This non-trivial extension of language ${\cal L}$ redefines the
+    authorisation atom to include a time interval within which the
+    authorisation is valid. More importantly, the interval algebra gives the
+    language the ability to express relations between the time intervals
+    themselves, thereby permitting the expression of rules that contain these
+    interval relations. For example, language ${\cal LT}$ allows rules such as
+    "If $Alice$ is allowed to $read$ file $f$ at interval $i_0$, then $Bob$
+    should be allowed to $read$ file $f$ at interval $i_1$, where $i_1$ is
+    during $i_0$". As with language ${\cal L}$, we have shown how language
+    ${\cal L^T}$ policies can be translated into normal logic programs for
+    evaluation using the stable model semantics.
+
+    Like the first version, the full implementation details of the extended
+    version of PolicyUpdater was shown in Chapter \ref{chap-impln}, including
+    the implementation of a separate temporal interval relation reasoning
+    engine. The chapter also includes the details of the integration of this
+    engine with the rest of the authorisation system.
+
+    To the best of our knowledge, PolicyUpdater is the first fully implemented
+    logic-based authorisation system that is capable of expressing default
+    authorisation rules and has support for dynamic and conditional policy
+    updates. Similarly, we believe that PolicyUpdater2 is the first
+    logic-based authorisation system with the same capabilities as version 1,
+    and with the ability to support temporal constraints expressed in the
+    interval relation algebra.
+
+    As for future work, there are several possible directions worth pursuing.
+    On the theoretical side, we note that the PolicyUpdater system handles
+    conflicts in authorisation rules by giving negative authorisations a higher
+    precedence over positive ones. Although our tests shows that this
+    conservative discipline is sufficently safe for most applications, other
+    applications or environments may require a more fine-tuned conflict
+    resolution strategy. One such strategy might be to incorporate the
+    expression of prioritised authorisation rules into the authorisation
+    language. This way, a conflict is resolved by giving a higher precedence to
+    rules given a higher priority.
+
+    Another possible future work is to extend the system to allow disjunctive
+    information to be used in authorisation rules.
+
+    On the implementation side, we note that testing a temporal interval
+    relation network for consistency is an intractable problem. Although our
+    tests with small networks have shown negligible effects on computation
+    time, the effects will be a problem for networks with thousands of interval
+    relations. One possible future work is to replace the system's support for
+    the full interval algebra with one of its tractable sub-algebras
+    \cite{KRO} while maintaining equivalent, or near equivalent expressive
+    power.
+
   \appendix
 
   \chapter{Language Specification}
@@ -10670,6 +10764,13 @@ ENDFUNCTION
       {\em ACM Transactions on Database Systems},
       Vol. 26, No. 2, pp. 214-260,
       2001.
+
+    \bibitem{KRO}
+      Krokhin A., Jeavons P., Jonsson P.,
+      Reasoning about Temporal Relations: The Tractable Subalgebras of Allen's Interval Algebra.
+      {\em Journal of the ACM},
+      Vol. 50, No. 5, pp. 591-640,
+      2003.
 
     \bibitem{LAD}
       Ladkin P. B., Reinefeld A.,
