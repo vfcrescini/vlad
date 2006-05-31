@@ -9788,7 +9788,7 @@ ENDFUNCTION
 
     Authorisation or access control is an important part of information
     security systems. Although several access control approaches and models
-    have been proposed and used over the years, very few maintains a good
+    have been proposed and used over the years, very few maintain a good
     balance between flexibility, expressiveness and implementation. That is,
     those access control systems with simple implementations often lack the
     ability to express complex authorisation rules or the flexibility required
@@ -9803,12 +9803,12 @@ ENDFUNCTION
     logic language, language ${\cal L}$, to represent the authorisation policy
     or policy base. A language ${\cal L}$ atom, composed of a subject, an
     access right and an object, is used to construct authorisation facts and
-    rules. Through the use of this language, the PolicyUpdater system is
-    capable of expressing and evaluating both positive and negative
-    authorisations from policies with conditional logic rules. The two key
-    features of this language, and therefore the system, is its ability to
-    express default authorisations in conditional rules and conditional policy
-    update rules which can be applied in sequence.
+    rules, which in turn defines the policy base. Through the use of this
+    language, the PolicyUpdater system is capable of expressing and evaluating
+    both positive and negative authorisations from policies with conditional
+    logic rules. The two key features of this language, and therefore the
+    system, is its ability to express default authorisations in conditional
+    rules and conditional policy update rules which can be applied in sequence.
 
     We have also shown from the semantics of language ${\cal L}$ that from a 
     given policy expressed in this language and a sequence of policy updates,
@@ -9866,7 +9866,7 @@ ENDFUNCTION
     resolution strategy. One such strategy might be to incorporate the
     expression of prioritised authorisation rules into the authorisation
     language. This way, a conflict is resolved by giving a higher precedence to
-    rules given a higher priority.
+    rules with higher priorities.
 
     Another possible future work is to extend the system to allow disjunctive
     information to be used in authorisation rules.
