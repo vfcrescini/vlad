@@ -252,6 +252,44 @@
 
   \chapter*{Abstract}
   \addcontentsline{toc}{chapter}{Abstract}
+    As information systems evolve to cope with the ever increasing demand
+    of today's digital world, so does the need for more effective means of
+    protecting information. In the early days of computing, information
+    security started out as a branch of information technology. Over the years,
+    several advances in information security have been made and, as a result,
+    it is now considered a discipline in its own right. The most fundamental
+    function of information security is to ensure that information flows to
+    authorised entities, and at the same time, prevent unauthorised entities
+    from accessing the protected information. An access control system provides
+    this function.
+
+    Several advances in the field information security have produced several
+    access control models and implementations. However, as information
+    technology evolves, the need for a better access control system increases.
+    This dissertation proposes an effective, yet flexible access control
+    system: the {\em PolicyUpdater} access control system.
+
+    PolicyUpdater is a fully-implemented access control system that provides
+    policy evaluations as well as dynamic policy updates. These functions are
+    achieved by the use of a logic-based language, ${\cal L}$, to represent the
+    underlying access control policies, constraints and policy update rules.
+    The system performs authorisation query evaluations, as well as conditional
+    and dynamic policy updates by translating language $\cal{L}$ policies to
+    normal logic programs in a form suitable for evaluation using the
+    {\em Stable Model} semantics.
+
+    In this thesis, we show the underlying mechanisms that make up the
+    PolicyUpdater system, including the theoretical foundations of its formal
+    language, the system structure, a full discussion of implementation issues
+    and some performance analysis.
+
+    Lastly, the thesis also proposes a non-trivial extension of the
+    PolicyUpdater system that is capable of supporting temporal constraints.
+    This is made possible by the integration of the well-established temporal
+    interval algebra into the extended authorisation language, language
+    ${\cal L^T}$, which is also translated to a normal logic program. The
+    formalisation of this extension, together with the full implementation
+    details, are included in this dissertation.
 
   \tableofcontents
   \listoffigures
