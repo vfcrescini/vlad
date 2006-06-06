@@ -234,7 +234,9 @@
   \begin{vcertificate}
     \noindent
     Except where otherwise indicated, this thesis is my own original work.
-    No part of this thesis has been submitted as part of any other degree.
+    I certify that this thesis contains no material that has been submitted
+    previously, in whole or in part, for the award of any other academic
+    degree.
 
     \vspace{5em}
 
@@ -264,8 +266,8 @@
     parents, without whose encouragements and support this work would not be
     possible.
 
-    Finally, I thank my wife, Huai Zheng, who has been the source of all my
-    inspiration, the sole reason why I wake up in the morning and do what I do.
+    Finally, I thank my wife, Huai Zheng, the source of all my inspiration, the
+    sole reason why I get up in the morning and do what I do.
 
   \chapter*{Abstract}
   \addcontentsline{toc}{chapter}{Abstract}
@@ -277,8 +279,8 @@
     it is now considered a discipline in its own right. The most fundamental
     function of information security is to ensure that information flows to
     authorised entities, and at the same time, prevent unauthorised entities
-    from accessing the protected information. An access control system provides
-    this function.
+    from accessing the protected information. In a typlical information system,
+    an access control system provides this function.
 
     Several advances in the field information security have produced several
     access control models and implementations. However, as information
@@ -288,25 +290,25 @@
 
     PolicyUpdater is a fully-implemented access control system that provides
     policy evaluations as well as dynamic policy updates. These functions are
-    achieved by the use of a logic-based language, ${\cal L}$, to represent the
+    provided by the use of a logic-based language, ${\cal L}$, to represent the
     underlying access control policies, constraints and policy update rules.
     The system performs authorisation query evaluations, as well as conditional
     and dynamic policy updates by translating language $\cal{L}$ policies to
     normal logic programs in a form suitable for evaluation using the
-    {\em Stable Model} semantics.
+    well-known {\em Stable Model} semantics.
 
     In this thesis, we show the underlying mechanisms that make up the
     PolicyUpdater system, including the theoretical foundations of its formal
     language, the system structure, a full discussion of implementation issues
-    and some performance analysis.
+    and a performance analysis.
 
     Lastly, the thesis also proposes a non-trivial extension of the
     PolicyUpdater system that is capable of supporting temporal constraints.
-    This is made possible by the integration of the well-established temporal
-    interval algebra into the extended authorisation language, language
-    ${\cal L^T}$, which is also translated to a normal logic program. The
-    formalisation of this extension, together with the full implementation
-    details, are included in this dissertation.
+    This is made possible by the integration of the well-established
+    {\em Temporal Interval Algebra} into the extended authorisation language,
+    language ${\cal L^T}$, which can also be translated into a normal logic
+    program for evaluation. The formalisation of this extension, together with
+    the full implementation details, are included in this dissertation.
 
   \tableofcontents
   \listoffigures
