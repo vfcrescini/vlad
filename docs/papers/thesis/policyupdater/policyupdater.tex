@@ -1037,9 +1037,10 @@
 
     Language $\cal{L}$\footnotemark is a first-order logic language that
     represents a policy base for an authorisation system. Two key features of
-    the language are: (1) providing a means to conditionally and dynamically
-    update the existing policy base and (2) having a mechanism by which
-    queries may be evaluated from the updated policy base.
+    the language are: (1) the language provides a means to conditionally and
+    dynamically update the policy base and (2) the semantics of the language
+    allows a logic-based evaluation of an updated policy base to support
+    authorisation queries.
 
     \footnotetext{
       The full language ${\cal L}$ specification was first introduced in
@@ -1058,8 +1059,8 @@
       \subsubsection{Components of Language $\cal{L}$}
         \label{subs-langl-compo}
 
-        Each language ${\cal L}$ statement is composed of the following
-        components: identifiers, atoms, facts and expressions.
+        Language ${\cal L}$ statements are made up of one or more of the
+        following components: identifiers, atoms, facts and expressions.
 
         \begin{itemize}
           \item
@@ -3141,6 +3142,7 @@
           \{$\rho_{5_i}$ $\mid$ $0$ $\leq$ $i$ $\leq$ $n_5$\}
       \end{vquote}
 
+      \noindent
       Using these functions, we define the following sets of ground facts:
 
       \begin{vquote}
@@ -3163,9 +3165,9 @@
         \{$\rho$ $\mid$ $\rho$ $\in$ ${\cal F}^{-}_{upd}$($\gamma_{upd}$), $\gamma_{upd}$ $\in$ ${\cal D}_{\cal L}$\}
       \end{vquote}
 
-      Additionally, we use the complementary set notation
-      $\overline{{\cal F}}$ to denote a set containing the negation of
-      facts in set ${\cal F}$.
+      \noindent
+      Additionally, we use the complementary set notation $\overline{{\cal F}}$
+      to denote a set containing the negation of facts in set ${\cal F}$.
 
       \begin{vquote}
         $\overline{{\cal F}}$ =
@@ -4330,15 +4332,16 @@ ENDFUNCTION
       \subsection{Query Evaluation}
         \label{subs-polup-evalu}
 
-        Once a normal logic program has been generated from the policy stored
-        in the storage structure, a set of answer sets may then be generated
-        by using the stable model semantics \cite{SIM1,NIE} with the
-        {\em SModels}\footnotemark program. Query evaluation then becomes
-        possible by checking whether each fact of a given query expression
-        holds in each generated answer set of the normal logic program.
+        Once a normal logic program has been generated from the authorisation
+        policy stored in the storage structure, a set of answer sets may then
+        be generated through the use of the stable model semantics
+        \cite{SIM1,NIE} with the {\em SModels} program\footnotemark. Query
+        evaluation then becomes possible by checking whether each fact of a
+        given query expression holds in each generated answer set of the
+        normal logic program.
 
         \footnotetext{
-          Smodels Package from
+          SModels Package from
           {\tt \scriptsize http://www.tcs.hut.fi/Software/smodels}
         }
 
@@ -4544,7 +4547,7 @@ ENDFUNCTION
       an authorisation module for the {\em Apache}\footnotemark web server.
 
       \footnotetext{
-        Apache Web Server ({\tt \scriptsize http://www.apache.org})
+        Apache Web Server from {\tt \scriptsize http://www.apache.org}
       }
 
       The Apache web server provides a generic access control system as
@@ -7992,8 +7995,8 @@ ENDFUNCTION
 
     This chapter focuses on two issues: (1) the implementation of
     {\em PolicyUpdater} version 2, which includes support for temporal
-    constraints; and (2) an in-depth discussion on other implementation issues
-    not previously covered in the other chapters.
+    constraints; and (2) an in-depth discussion of implementation issues not
+    previously covered in the other chapters.
 
     The source code and other technical information of all the versions of
     the {\em PolicyUpdater} core system, {\em vlad}, is available in the
@@ -8025,8 +8028,8 @@ ENDFUNCTION
       \end{figure}
 
       Figure \ref{figu-impln-flwch} shows the internal processes of the system.
-      The fundamental process of the system is similar to that of the
-      previous version:
+      The overall process of the system is similar to that of the previous
+      version:
 
       An access control policy, written in language ${\cal L^T}$ syntax, is
       translated into a normal logic program, which in turn is fed to
@@ -9830,8 +9833,8 @@ ENDFUNCTION
         \end{valgorithm}
 
         The function $IsFactIn$() simply returns a boolean value to
-        indicate whether or not the given fact index $index$ (as returned
-        by the $Encode$() function) is present in every answer set in
+        indicate whether or not the given fact index $index$, as returned
+        by the $Encode$() function, is present in every answer set in
         $\Lambda$.
 
         \begin{valgorithm}{IsFactIn()}{algo-impln-isinf}
@@ -9844,6 +9847,23 @@ FUNCTION \(IsFactIn\)(\(index\), \(\Lambda\))
   RETURN \(true\)
 ENDFUNCTION
         \end{valgorithm}
+
+    \section{Discussions}
+
+      In this chapter, we have shown the algorithms and data structures that
+      make up the extended PolicyUpdater authorisation system. The
+      specification of the system is described as a hierarchy of objects, with
+      a list of all relevant properties and methods, presented from an
+      implementation point of view. The chapter also includes a detailed
+      description of a temporal reasoner engine implementation that is used by
+      the system to maintain a temporal interval relation network for
+      evaluating temporal constraints.
+
+      The algorithms and data structures shown in this chapter were designed
+      as a compromise between efficiency and simplicity. Although certain
+      algorithms described in this chapter can be optimised for speed or size,
+      these optimisations would introduce another level of complexity that fall
+      beyond the scope of this thesis.
 
   \chapter{Conclusion}
     \label{chap-concl}
@@ -9859,7 +9879,7 @@ ENDFUNCTION
     necessary for full system implementation.
 
     In this thesis, we have presented the full implementation details of two
-    authorisation systems: PolicyUpdater and PolicyUpdater2.
+    authorisation systems: PolicyUpdater and PolicyUpdater 2.
 
     The PolicyUpdater system is an authorisation system that uses a first-order
     logic language, language ${\cal L}$, to represent the authorisation policy
@@ -9889,7 +9909,7 @@ ENDFUNCTION
     in which the PolicyUpdater system is used as an authorisation system for a
     web server.
 
-    The extended version of the system, PolicyUpdater2, addressed the issue of
+    The extended version of the system, PolicyUpdater 2, addressed the issue of
     expressing temporal constraints in the authorisation policy. This is made
     possible by the integration of the well-established temporal interval
     algebra into a logic-based authorisation language, language ${\cal L^T}$.
