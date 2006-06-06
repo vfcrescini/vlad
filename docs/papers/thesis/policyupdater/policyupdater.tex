@@ -338,9 +338,9 @@
       The goal of authentication is to obtain and verify the identity of every
       entity that requests access to protected resources. This may be achieved
       by simple mechanisms like username/password verification, digital
-      certificates, physical/digital keys, or more complex systems like
+      certificates, physical/digital keys, or more advanced methods like
       biometric authentication which include fingerprint verification, voice
-      print verification, iris scanning, etc.
+      print verification, iris/retinal scanning, etc.
 
       In contrast, an authorisation system's purpose is to decide whether or
       not an authenticated entity is to be allowed access to resources or not.
@@ -348,7 +348,7 @@
       policy is kept and maintained. This is the reason why the term access
       control is often used interchangeably with the term authorisation.
 
-      Another system that may be considered as an access control sub-system
+      Another system that may be considered an access control sub-system
       is the {\em enforcement} system. The sole task of this system is to
       ensure that an authenticated and authorised entity is allowed access and
       that all other entities are denied access. While in some literatures
@@ -370,8 +370,8 @@
         \end{center}
       \end{figure}
 
-      In this thesis, we shall focus on the authorisation sub-system,
-      specifically how the policies are expressed, read and maintained. It
+      In this thesis, we shall focus on the authorisation sub-system, or more
+      specifically, how the policies are expressed, read and maintained. It
       therefore assumes that the access control environment in which it is used
       provides adequate authentication and enforcement mechanisms.
 
@@ -418,10 +418,10 @@
         contain a full or complete policy.
 
         To rectify the problem mentioned above, one solution might be to
-        have the policy base adopt a closed discipline where any authorisation
-        requests that are not explicitly addressed by a rule are rejected.
-        The partial policy shown in Example \ref{exam-intro-poli1} need only a
-        a slight modification to make it complete:
+        have the policy base adopt a closed-world discipline where any
+        authorisation requests that are not explicitly addressed by a rule are
+        rejected. The partial policy shown in Example \ref{exam-intro-poli1}
+        need only a slight modification to make it complete:
 
         \begin{vexample}
           \label{exam-intro-poli2}
@@ -478,9 +478,9 @@
         as mentioned before, this example is only a partial policy since it
         does not state the rules that deal with other subjects or other
         objects. Example \ref{exam-intro-poli2} rectified this problem, but
-        note that the format of the first rule does not match the
-        subject-access right-object binding format of the other three rules.
-        This second requirement aims to formalise the definition of each rule.
+        format of the first rule does not match the subject-access right-object
+        binding format of the other three rules. This second requirement aims
+        to formalise the definition of each rule.
 
         For example, to formalise the policy specification of our file system
         policy, we define the following:
@@ -576,16 +576,16 @@
         authorisation rule is to hold. So far, in the examples given in the
         previous sections, we have made the assumption that these rules apply
         at all times. That is, from some time in the past, either from the time
-        the rules were defined or the time the access control system went
-        active, to the time the system is shut down. However, there are special
-        situations where authorisation rules need to specify the time at which
-        is it in effect as well as the usual subject-access right-object
-        binding. Such situations might arise, for example, in a roster-based
-        organisation where one user is granted access to some resource from
-        9AM to 2PM, another user from 2PM to 8PM and so on.
+        the rules were defined or the time the access control system is
+        activated, to the time the system is shut down. However, there are
+        special situations where authorisation rules need to specify the time
+        at which is it in effect as well as the usual subject-access
+        right-object binding. Such situations might arise, for example, in a
+        roster-based organisation where one user is granted access to some
+        resource from 9AM to 2PM, another user from 2PM to 8PM and so forth.
 
-        This need to express time in authorisation rules can be satisfied
-        easily by extending the rule specification to a quadruple binding
+        This need to express time in authorisation rules can be easily
+        satisfied by extending the rule specification to a quadruple binding
         of subjects, access rights, objects and time. For example, the
         rule ($Alice$, $read$, $file_0$, $1PM$ to $2PM$) might be used to
         represent a rule granting $Alice$ $read$ access to $file_0$ at lunch
@@ -624,6 +624,9 @@
     \section{Literature Review}
       \label{sect-intro-litre}
 
+      In this section, we review the different approaches to access control
+      that have been proposed or implemented over the years. 
+
       \subsection{Discretionary Access Control}
         \label{subs-intro-dacmo}
 
@@ -635,7 +638,8 @@
         (2) authorisation rules in the policy are bindings of subjects, access
         rights and objects. This access control model is discretionary in the
         sense that object owners (subjects) are capable of granting or revoking
-        other subjects access rights to objects that they own.
+        other subjects access rights to objects that they own at their
+        discretion.
 
         A very simple authorisation system based on the DAC model is the
         {\em access control matrix}, which was first proposed by Lampson
@@ -643,7 +647,7 @@
         access control matrix is a simple yet powerful policy base model where
         every subject's access rights of every object are stored. The matrix
         is composed of rows that represent the subjects of the system. Each
-        column represents the objects of the system. The subject - object
+        column represents the objects of the system. The subject-object
         intersection, a cell, contains the access rights held by that subject
         to that object. An empty cell therefore means that the subject in that
         row do not possess any access rights to the object in that column.
@@ -722,7 +726,7 @@
 
         The {\em Mandatory Access Control} ({\em MAC}) model introduces the
         concept of defining different levels of security. These levels are
-        treated as security labels or attributes which represents the level
+        treated as security labels or attributes which represent the level
         of sensitivity when applied to objects, and define clearance level
         when applied to subjects. A classical example of security labels is
         the classification system formalised by Bell and LaPadula
@@ -744,31 +748,32 @@
       \subsection{Role-Based Access Control}
         \label{subs-intro-racmo}
 
-        A recent alternative to the DAC and MAC models is the {\em role-based
-        access control} ({\em RBAC}) model. RBAC was first proposed in
-        \cite{FER1,FER2}, then later, a full RBAC framework in \cite{SAN2}.
-        In most organisations, different roles are defined to achieve certain
-        tasks. A person undertaking a particular role is granted access to all
-        resources associated with that role. A person's authorisations gained
-        from assuming a role is revoked once the person has relinquished the
-        role or assumed another role. For example, in a hotel environment, the
-        management role is assigned access to the hotel's accounting files,
-        payroll database etc., while the front desk role's authorisation is
-        limited to the guest and rooms database. A person assuming the role of
-        a hotel manager is granted access to the resources assigned to that
-        role, but the moment the person drops that role to assume the role of a
-        front desk officer, access to these managerial resources are also
-        dropped.
+        A recently proposed alternative to the DAC and MAC models is the
+        {\em role-based access control} ({\em RBAC}) model. RBAC was first
+        proposed in \cite{FER1,FER2}, then later, a full RBAC framework in
+        \cite{SAN2}. In most organisations, different roles are defined to
+        achieve certain tasks. A person undertaking a particular role is
+        granted access to all resources associated with that role. A person's 
+        authorisations gained from assuming a role are revoked once the person
+        has relinquished the role or assumed another role. For example, in a
+        hotel environment, the management role is assigned access to the
+        hotel's accounting files, payroll database etc., while the front desk
+        role's authorisation is limited to the guest and rooms database. A
+        person assuming the role of a hotel manager is granted access to the
+        resources assigned to that role, but the moment the person drops that
+        role to assume the role of a front desk officer, access to these
+        managerial resources are also dropped.
 
-        The goal of the RBAC model is to reflect this organisational
-        authorisation system. In this model, authorisations to access objects
-        are assigned to roles, not the subjects directly. Subjects are then
-        assigned different roles that they are allowed to partake. The strength
-        of the RBAC model lies in its ability to accurately model abstract
-        authorisation policies in real-world organisations. The abstraction of
-        authorisation rules from subjects allows better policy management
-        because the assignment of roles to subjects is easier to perform than
-        direct assignment of authorisations to subjects.
+        The goal of the RBAC model is to closely reflect this organisational
+        structure of policies into an authorisation system. In this model,
+        authorisations to access objects are assigned to roles, not to
+        subjects directly. Subjects are then assigned different roles that they
+        are allowed to partake. The strength of the RBAC model lies in its
+        ability to accurately model abstract authorisation policies in
+        real-world organisations. The abstraction of authorisation rules from
+        subjects allows better policy management because the assignment of
+        roles to subjects is easier to perform than direct assignment of
+        authorisations to subjects.
 
       \subsection{Logic-Based Approach}
         \label{subs-intro-lacmo}
