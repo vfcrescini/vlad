@@ -798,12 +798,12 @@
         form $a$($s$, $o$) representing a binding of a subject $s$, an access
         right $a$ and an object $o$. A {\em positive authorisation atom} is
         written as $a^+$($s$, $o$), while a {\em negative authorisation atom}
-        is written as  $a^-$($s$, $o$). As it is a first-order logic language,
-        the language includes the usual notations for variables, negation,
-        conjunction and disjunction. A {\em literal} is an atom or its
-        negation, while a {\em formula} is either a literal, a conjunction of
-        literals or a disjunction of literals. {\em Rules} are composed of
-        formulas written in the form shown below:
+        is written as  $a^-$($s$, $o$). As a first-order logic language,
+        it includes the usual notions of variables, negation, conjunction and
+        disjunction. A {\em literal} is an atom or its negation, while a
+        {\em formula} is either a literal, a conjunction of literals or a
+        disjunction of literals. {\em Rules} are composed of formulas written
+        in the form shown below:
 
         \begin{vquote}
           $\frac{f : f'}{g}$
@@ -905,8 +905,9 @@
          Another logic-based authorisation system was proposed by Halpern and
          Weissman \cite{HAL}. Their approach focuses on the tractability of
          the policy reasoning mechanism by resricting the expressivness of the
-         policy language. However, this tradeoff means that although the use of
-         a subset of first-order logic provides sufficient expressive power for
+         policy language. This is achieved by using only a subset of
+         first-order logic in the policy language. However, this tradeoff means
+         that although the language provides sufficient expressive power for
          most applications, this approach cannot handle default propositions or
          policy updates.
 
@@ -963,23 +964,22 @@
          allows new temporal authorisations to be valid on the basis of the
          presence or absence of other temporal authorisations. This model was
          later extended and revised in \cite{BER2} to support periodic or
-         cyclic temporal authorisations. We note that in these models, the
-         temporal derivation rules consider only the validity of an
-         authorisation that is bound by time. However, the model cannot express
-         relations between the time intervals themselves, instead of the
-         authorisations bound by them, as discussed in Section
+         cyclic temporal authorisations. In these models, the temporal
+         derivation rules consider the validity of authorisations that
+         are bound by time. However, the model cannot express relations between
+         the time intervals themselves, as discussed in Section
          \ref{subs-intro-tempc}.
 
          Ruan et. al. \cite{RUA3} developed another logic-based authorisation
          model with support for delegation of temporal authorisations. Again,
-         the weakness of this model is that relations between time intervals
-         cannot be expressed. The authorisation model proposed by Atluri and
-         Gal \cite{ATL} focuses on securing web portals and the work provides
-         full implementation details. In this model, the authorisations are
-         derived based on the temporal characteristics of the data (objects)
-         and their relationships with other data. However, the model do not
-         permit the assignment of temporal attributes to the authorisation
-         rules themselves.
+         the main weakness of this model is that relations between time
+         intervals cannot be expressed. Another authorisation model proposed by
+         Atluri and Gal \cite{ATL} focuses on securing web portals. In this
+         model, the authorisations are derived based on the temporal
+         characteristics of the data (objects) and their relationships with
+         other data. Although their work provides full implementation details,
+         the model itself does not permit the assignment of temporal attributes
+         to the authorisation rules.
 
     \section{About the Thesis}
       \label{sect-intro-about}
@@ -989,9 +989,9 @@
       at the same time addresses the deficiencies and limitations of the access
       control models and approaches discussed in the previous section. In
       a nutshell, the work revolves around the formalisation and implementation
-      of a logic-based authorisation system with support for default
-      propositions, dynamic and conditional policy updates and temporal
-      constraints.
+      of a logic-based authorisation system, {\em PolicyUpdater}, with support
+      for constraint rules with default propositions, dynamic and conditional
+      policy updates and temporal constraints.
 
       The rest of the thesis is organised as follows:
 
@@ -1005,16 +1005,16 @@
       system which uses language ${\cal L}$ to express policies. The chapter
       gives an overview of the PolicyUpdater system as  a whole, with its
       internal and external components. The chapter also includes a few
-      algorithms that outline the underlying mechanisms as well as some
-      experimental results that show the relationship between input size and
-      execution time. A case study which describes a web-server application
-      of PolicyUpdater is also included in this chapter.
+      algorithms that outline the system processes as well as some experimental
+      results that show the relationship between input size and execution time.
+      A case study which describes a web-server application of PolicyUpdater is
+      also included in this chapter.
 
-      Chapter \ref{chap-tempo} first describes an algebra to express
+      Chapter \ref{chap-tempo} first describes an interval algebra to express
       relationships between temporal intervals, then introduces language
       ${\cal L^T}$, a non-trivial extension of language ${\cal L}$ that has
       enough expressive power to assign temporal attributes to authorisation
-      rules and, by the integration of the temporal algebra, allows the
+      rules and, by the integration of the interval algebra, allows the
       representation of temporal interval relations.
 
       Chapter \ref{chap-impln} provides a full comprehensive implementation
