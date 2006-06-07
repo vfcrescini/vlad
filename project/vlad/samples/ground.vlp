@@ -1,6 +1,6 @@
 /*
  * grounding test
- * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
  */
 
 entity sub ss0, ss1, ss2;

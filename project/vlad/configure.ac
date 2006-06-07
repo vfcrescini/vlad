@@ -1,7 +1,7 @@
 # This file is part of PolicyUpdater.
 #
 # Copyright (C) 2003, 2004, 2005, 2006 University of Western Sydney
-# by Vino Fernando Crescini <jcrescin@cit.uws.edu.au>
+# by Vino Fernando Crescini <jcrescin@scm.uws.edu.au>
 #
 # PolicyUpdater is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 # along with PolicyUpdater; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-AC_INIT(vlad,2.0.0,jcrescin@cit.uws.edu.au)
+AC_INIT(vlad,2.0.0,jcrescin@scm.uws.edu.au)
 
 AC_CONFIG_HEADERS(lib/config.h)
 
