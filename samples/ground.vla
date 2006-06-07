@@ -1,6 +1,6 @@
 /*
  * grounding test
- * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
  */
 
 seq add f1(ss0, as0, og0, i0);
