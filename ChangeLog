@@ -1,5 +1,10 @@
 2006-06-19  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
+	* test/get_averages.sh :
+	* test/run_test.sh :
+
+	  - Added scripts to compute execution times.
+
 	* samples/test-01.vla :
 	* samples/test-01.vlp :
 	* samples/test-02.vla :
