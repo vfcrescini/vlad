@@ -29,7 +29,7 @@
 #include <vlad/kb.h>
 
 /* vars defined from the scanner */
-extern int programlineno;
+extern unsigned int programlinenum;
 
 /* local vars */
 static FILE *fin = NULL;
@@ -669,7 +669,7 @@ int add_identifier(const char *n, unsigned char t)
 
 int programerror(char *error)
 {
-  fprintf(ferr, "line %d (error %d) %s\n", programlineno, errorcode, error);
+  fprintf(ferr, "line %d (error %d) %s\n", programlinenum, errorcode, error);
 
   return 0;
 }

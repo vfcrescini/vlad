@@ -32,7 +32,7 @@
 #include <vlad/kb.h>
 #include "operation.tab.h"
 
-unsigned int operationlineno = 1;
+unsigned int operationlinenum = 1;
 
 int operationinit(FILE *a_in, FILE *a_out);
 %}
@@ -137,7 +137,7 @@ everything         .
 {whitespace} ;
 
 {newline} {
-  operationlineno++;
+  operationlinenum++;
 }
 
 <COMMENT>{everything} ;

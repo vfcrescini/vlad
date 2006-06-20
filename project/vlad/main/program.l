@@ -32,7 +32,7 @@
 #include <vlad/kb.h>
 #include "program.tab.h"
 
-unsigned int programlineno = 1;
+unsigned int programlinenum = 1;
 
 int programinit(FILE *a_in, FILE *a_out);
 %}
@@ -152,7 +152,7 @@ everything         .
 {whitespace} ;
 
 {newline} {
-  programlineno++;
+  programlinenum++;
 }
 
 <COMMENT>{everything} ;
