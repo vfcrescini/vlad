@@ -1,5 +1,41 @@
 2006-01-17  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
+	* samples/test-01.vla :
+	* samples/test-01.vlp :
+	* samples/test-02.vla :
+	* samples/test-02.vlp :
+	* samples/test-03.vla :
+	* samples/test-03.vlp :
+	* samples/test-04.vla :
+	* samples/test-04.vlp :
+	* samples/test-05.vla :
+	* samples/test-05.vlp :
+	* samples/test-06.vla :
+	* samples/test-06.vlp :
+	* samples/test-07.vla :
+	* samples/test-07.vlp :
+	* samples/test-08.vla :
+	* samples/test-08.vlp :
+	* samples/test-09.vla :
+	* samples/test-09.vlp :
+	* samples/test-10.vla :
+	* samples/test-10.vlp :
+	* samples/test-11.vla :
+	* samples/test-11.vlp :
+	* samples/test-12.vla :
+	* samples/test-12.vlp :
+	* samples/test-13.vla :
+	* samples/test-13.vlp :
+
+	  - Added test cases.
+
+	* test/get_averages.sh :
+	* test/run_test.sh :
+
+	  - Added scripts for testing run times.
+
+2006-01-17  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
+
 	* Tagging vlad-1_2_4
 
 	* lib/mapper.cpp :
