@@ -1,5 +1,11 @@
 2006-06-20  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
+	* VERSION :
+	* configure :
+	* configure.ac :
+
+	  - Incremented version to 1.0.5.
+
 	* test/get_averages.sh :
 	* test/run_test.sh :
 
