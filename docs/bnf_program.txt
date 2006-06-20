@@ -2,7 +2,7 @@
 VLAD: V Logic-based Access-control Database
 BNF for Program
 
-Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 -------------------------------------------------------------------------------
 Started 2002 Dec 08
 Updated 2003 May 05

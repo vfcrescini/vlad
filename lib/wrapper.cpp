@@ -2,7 +2,7 @@
  * This file is part of PolicyUpdater.
  *
  * Copyright (C) 2003, 2004, 2005 University of Western Sydney
- * by Vino Fernando Crescini <jcrescin@cit.uws.edu.au>
+ * by Vino Fernando Crescini <jcrescin@scm.uws.edu.au>
  *
  * PolicyUpdater is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
