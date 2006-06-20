@@ -35,7 +35,7 @@
 #define VLAD_TIME_DIFF(X,Y) ((Y).tv_sec + ((Y).tv_usec / 1000000.0)) - ((X).tv_sec + ((X).tv_usec / 1000000.0))
 
 /* vars defined from the scanner */
-extern int operationlineno;
+extern int operationlinenum;
 
 /* local vars */
 static FILE *fin = NULL;
@@ -508,7 +508,7 @@ memb_atom :
 
 int operationerror(char *error)
 {
-  fprintf(ferr, "line %d (error %d) %s\n", operationlineno, errorcode, error);
+  fprintf(ferr, "line %d (error %d) %s\n", operationlinenum, errorcode, error);
 
   return 0;
 }

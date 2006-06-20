@@ -1,3 +1,13 @@
+2006-06-20  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+
+	* main/operation.l :
+	* main/operation.y :
+	* main/program.l :
+	* main/program.y :
+
+	  - Changed lineno to linenum so it does not clash with that generated
+	    by bison and flex (backport fix from main trunk).
+
 2005-04-15  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
 
 	* VERSION :
