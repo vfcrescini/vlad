@@ -1,5 +1,34 @@
 2006-06-20  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
+	* samples/test-01.ops :
+	* samples/test-01.prg :
+	* samples/test-02.ops :
+	* samples/test-02.prg :
+	* samples/test-03.ops :
+	* samples/test-03.prg :
+	* samples/test-04.ops :
+	* samples/test-04.prg :
+	* samples/test-05.ops :
+	* samples/test-05.prg :
+	* samples/test-06.ops :
+	* samples/test-06.prg :
+	* samples/test-07.ops :
+	* samples/test-07.prg :
+	* samples/test-08.ops :
+	* samples/test-08.prg :
+	* samples/test-09.ops :
+	* samples/test-09.prg :
+	* samples/test-10.ops :
+	* samples/test-10.prg :
+	* samples/test-11.ops :
+	* samples/test-11.prg :
+	* samples/test-12.ops :
+	* samples/test-12.prg :
+	* samples/test-13.ops :
+	* samples/test-13.prg :
+
+	  - Added test case samples.
+
 	* main/operation.l :
 	* main/operation.y :
 	* main/program.l :
