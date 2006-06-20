@@ -2,7 +2,7 @@
  * This file is part of PolicyUpdater.
  *
  * Copyright (C) 2003, 2004, 2005 University of Western Sydney
- * by Vino Fernando Crescini <jcrescin@cit.uws.edu.au>
+ * by Vino Fernando Crescini <jcrescin@scm.uws.edu.au>
  *
  * PolicyUpdater is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
       case 'v' :
         fprintf(stdout, "vLad %s\n", VLAD_VERSION);
         fprintf(stdout, "Copyright (C) 2003, 2004, 2005 University of Western Sydney\n");
-        fprintf(stdout, "by Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>\n");
+        fprintf(stdout, "by Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>\n");
         return VLAD_OK;
       case 'h' :
         print_usage(stdout);

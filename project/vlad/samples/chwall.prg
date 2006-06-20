@@ -1,6 +1,6 @@
 /*
  * Chinese-Wall Policy Example
- * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
  */
 
 /* identifier declarations */

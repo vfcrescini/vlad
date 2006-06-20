@@ -1,6 +1,6 @@
 /*
  * Document Release Example
- * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+ * Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
  */
 
 ident sub Sci, Pat_Off;
