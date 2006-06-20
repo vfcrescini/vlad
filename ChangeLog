@@ -1,4 +1,4 @@
-2006-01-17  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2006-01-17  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Tagging vlad-1_2_4
 
@@ -8,13 +8,13 @@
          - compute_subst() was mistakenly declared to accept unsigned char
            instead of unsigned int.
 
-2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-14  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/Makefile.in :
 
 	  - Forgot to add action for mapper.o rule.
 
-2005-12-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-14  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Tagging vlad-1_2_3
 
@@ -23,7 +23,7 @@
 	  - Fixed rule dumping format so that no rule has more than one fact
 	    in its head.
 
-2005-12-11  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-11  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Tagging vlad-1_2_2
 
@@ -31,7 +31,7 @@
 
 	  - Fixed error in the VLAD_IDENT_IS_*() macros.
 
-2005-12-10  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-10  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Tagging vlad-1_2_1
 
@@ -59,7 +59,7 @@
 
 	  - add_seqtab() is now passed the update table too for extra checking.
 
-2005-12-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-08  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Tagged vlad-1_2_0
 
@@ -86,7 +86,7 @@
 	  - Added a list::traverse() function and an abstract list_trav class
 	    for traversing the list.
 
-2005-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-07  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/numberlist.cpp :
 	* lib/numberlist.h :
@@ -95,7 +95,7 @@
 
 	  - Name cleanup: vlad_{string|number} -> vlad_{string|number}list_item
 
-2005-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-07  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Tagged vlad-1_1_2
 
@@ -145,7 +145,7 @@
 	  - Added delete() calls for the tmp expressions used in the generation
 	    of policy update rules.
 
-2005-12-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-05  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Tagged vlad-1_1_1
 
@@ -169,7 +169,7 @@
 	  - compute_generate() now dumps the actual facts, and not some unique
 	    id.
 
-2005-12-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-04  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/smwrap.cpp :
 
@@ -187,7 +187,7 @@
 
 	  - Added mapper.h as dependencies of polbase.cpp.
 
-2005-12-02  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-02  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/polbase.cpp :
 	* lib/polbase.h :
@@ -286,7 +286,7 @@
 
 	  - Renamed VLAD_IDENT_IS_IDENT to VLAD_IDENT_IS_ENT for clarity.
 
-2005-12-01  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-12-01  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* configure.ac :
 	* configure :
@@ -298,7 +298,7 @@
 
 	  - Included polbase.h.
 
-2005-11-29  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-11-29  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/consttab.cpp :
 	* lib/fact.cpp :
@@ -348,7 +348,7 @@
 
 	  - Added the vlad_ prefix for all classes/
 
-2005-11-23  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-11-23  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/Makefile.in :
 	* lib/consttab.cpp :
@@ -441,19 +441,19 @@
 	    avoid the conflict (yylinenum, i.e. policylinenum and
 	    agentlinenum).
 
-2005-11-22  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-11-22  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* samples/chwall.vlp :
 
 	  - Fixed some typos.
 
-2005-02-21  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2005-02-21  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/list.cpp :
 
 	  - Fixed bug in list::del().
 
-2004-12-17  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2004-12-17  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* main/vlad.cpp :
 
@@ -500,7 +500,7 @@
 
 	  - Added copyright/license notice.
 
-2004-01-14  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2004-01-14  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/expression.cpp :
 	* lib/expression.h :
@@ -511,7 +511,7 @@
 
 	  - Added verify function.
 
-2004-01-08  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2004-01-08  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/vlad.h :
 	* lib/consttab.cpp :
@@ -526,7 +526,7 @@
 
 	  - Added a replace() function to be used for variable grounding.
 
-2004-01-06  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2004-01-06  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Tagged vlad-1_1_0
 
@@ -542,7 +542,7 @@
 	  - Changed file extensions to vlp and vla (VLad Policy and VLad
 	     Agent files).
 
-2004-01-05  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2004-01-05  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.cpp :
 	* lib/kb.h :
@@ -563,7 +563,7 @@
 
 	  - Renamed program to policy and operation to agent.
 
-2004-01-04  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2004-01-04  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/updatetab.cpp :
 	* lib/updatetab.h :
@@ -599,7 +599,7 @@
 
 	  - Cleanup. Modified to keep up with all the name changes.
 
-2003-12-31  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2003-12-31  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/smwrap.cpp :
 	* lib/smwrap.h :
@@ -632,7 +632,7 @@
 	  - Renamed atoms to facts.
 
 
-2003-12-30  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2003-12-30  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/symtab.cpp :
 	* lib/symtab.h :
@@ -646,7 +646,7 @@
  
 	  - Added a policy base class. intended as a rewrite of the kb class.
 
-2003-12-12  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2003-12-12  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/symtab.cpp :
 	* lib/symtab.h :
@@ -657,7 +657,7 @@
 
 	  - Identifier types now made separate from each other.
 
-2003-12-07  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2003-12-07  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Makefile.in :
 	* rules.mk :
@@ -666,14 +666,14 @@
 
 	  - Overhauled build system.
 
-2003-08-27  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2003-08-27  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* rules.mk :
 
 	  - Removed -Wnested-externs as some compilers do not accept such
 	    option.
 
-2003-08-22  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2003-08-22  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.cpp :
 
@@ -681,7 +681,7 @@
 	    "de-variable-ized" expressions are valid. This is a fix to prevent
 	    invalid sequence additions.
 
-2003-07-25  Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+2003-07-25  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.cpp :
 
@@ -702,7 +702,7 @@
 	    therefore true. If at least one model is found, we conclude that
 	    the atom is inconsistent so it is false.
 
-2003-07-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-07-16  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.cpp :
 	* lib/kb.h :
@@ -718,7 +718,7 @@
 	    consistently in one model at a time. Previously, it was possible
 	    for atoms of one expression to be evaluated in different models.
 
-2003-07-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-07-08  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.cpp :
 	* lib/kb.h :
@@ -732,7 +732,7 @@
 
 	  - Added strlist_get().
 
-2003-06-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-25  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.cpp :
 	* lib/kb.h :
@@ -762,7 +762,7 @@
 	  - Added a kb_check_symtab() to see if an identifier is in the symbol
 	    table.
 
-2003-06-20  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-20  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.h :
 	* lib/wrapper.cpp :
@@ -809,7 +809,7 @@
 	  - config.h is now in the lib directory to allow it to be included in
 	    the installation.
 
-2003-06-18  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-18  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/wrapper.h :
 	* lib/wrapper.cpp :
@@ -817,7 +817,7 @@
 	   - Prefixed each function with vlad_ to avoid namespace pollution
 	     of linked apps.
 
-2003-06-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-17  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/wrapper.h :
 	* lib/wrapper.cpp :
@@ -827,7 +827,7 @@
 	  - Fixed the ifdef for smodels dependent function: will now return 
 	    failure if used without smodels support.
 
-2003-06-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-13  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/atom.h :
 	* lib/symtab.h :
@@ -835,7 +835,7 @@
 
 	  - Moved macros to vlad.h to allow non-c++ programs to use them.
 
-2003-06-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-10  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/Makefile.in :
 	* lib/wrapper.cpp :
@@ -843,7 +843,7 @@
 
 	  - Added C interface for kb.
 
-2003-06-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-09  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* config.h.in :
 	* configure :
@@ -860,7 +860,7 @@
 
 	  - Renamed wrapper to smwrap.
 
-2003-06-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-03  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* configure.ac :
 	* lib/Makefile.in :
@@ -878,7 +878,7 @@
 	    share the same kb state.
 
 
-2003-06-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-06-02  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.cpp :
 	* lib/vlad.h :
@@ -917,7 +917,7 @@
 	    note that the negative properties cannot be overridden.
 
 
-2003-05-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-29  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* lib/kb.cpp :
 	* lib/kb.h :
@@ -938,7 +938,7 @@
 
 	  - ask() now checks all possible models.
 
-2003-05-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-28  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* main/vlad.cpp :
 	* lib/Makefile.in :
@@ -957,7 +957,7 @@
 	  - Now parser is not part of the library. Moved parser and scanner
 	    into main directory.
 
-2003-05-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-14  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Makefile.in :
 	* rules.mk :
@@ -966,7 +966,7 @@
 
 	  - Added install and uninstall rules.
 
-2003-05-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-13  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* rules.mk :
 	* lib/Makefile.in :
@@ -994,7 +994,7 @@
 	    unless --enable-static is specified, in which case, it will be
 	    linked against the static lib.
 
-2003-05-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-11  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* configure :
 	* configure.ac :
@@ -1017,7 +1017,7 @@
 	  - Moved all sources to the new lib directory to combine all
 	    objects into one library libvlad.
 
-2003-05-06  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-06  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/Makefile.in :
 	* kb/Makefile.in :
@@ -1032,7 +1032,7 @@
 
 	  - Added a global rules file to centralise makefile rules.
 
-2003-05-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-05  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/sequence.cpp :
 	* kb/sequence.h :
@@ -1062,7 +1062,7 @@
 	  - Renamed query to operation because the parser/scanner is no longer
 	    restricted to queries.
 
-2003-05-02  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-02  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* main/vlad.cpp :
 	* parser/parser.h :
@@ -1074,7 +1074,7 @@
 	  - Some cleanup so we do not propagate the external references from
 	    the code generated by bison and flex.
 
-2003-05-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-05-01  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* parser/program.y :
 	* parser/query.y :
@@ -1091,7 +1091,7 @@
 
 	  - We no longer need to link against libfl.
 
-2003-04-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-29  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* docs/bnf.txt :
 	* docs/bnf_program.txt :
@@ -1128,7 +1128,7 @@
 	  - What used to go to yyout and yyerr now goes to stdout and stderr,
 	    respectively.
 
-2003-04-24  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-24  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* docs/bnf.txt :
 	* docs/langspecs.txt :
@@ -1149,7 +1149,7 @@
 
 	      always <exp1> [implied by <exp2>] [with absence <exp3>]
 
-2003-04-23  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-23  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/wrapper.h :
 	* kb/wrapper.cpp :
@@ -1160,7 +1160,7 @@
 
 	  - Cleanup.
 
-2003-04-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-22  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/vlad.h :
 
@@ -1204,7 +1204,7 @@
 	    b :- x, y, z.
 	    c :- x, y, z.
 
-2003-04-17  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-17  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.cpp :
 
@@ -1262,7 +1262,7 @@
 
 	  - Added functions to register rules of different formats.
 
-2003-04-16  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-16  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.cpp :
 	* kb/wrapper.cpp :
@@ -1312,7 +1312,7 @@
 
 	  - Smodels path now included in C/CXXFLAGS and LDFLAGS.
 
-2003-04-15  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-15  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* README :
 
@@ -1323,7 +1323,7 @@
 
 	  - Fixed smodels checking mechanism.
 
-2003-04-14  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-14  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* configure :
 	* configure.ac :
@@ -1375,7 +1375,7 @@
 
 	  - Now allows users to override CFLAGS, CXXFLAGS and LDFLAGS.
 
-2003-04-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-11  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.h :
 	* kb/kb.cpp :
@@ -1400,7 +1400,7 @@
 
 	  - Now empty lists are stored as NULL pointers to save space.
 
-2003-04-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-10  Vino Crescini  <jcrescin@scm.uws.edu.au>
 	* docs/bnf.txt :
 	* docs/langspecs.txt :
 	* kb/atom.cpp :
@@ -1423,7 +1423,7 @@
 
 	  - Changed "is" to "query".
 
-2003-04-09  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-09  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.cpp :
 	* kb/kb.h :
@@ -1462,7 +1462,7 @@
 
 	  - Cleanup of sequence.
 
-2003-04-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-08  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/atom.cpp :
 	* kb/atom.h :
@@ -1485,7 +1485,7 @@
 
 	  - Cleanup to ensure reinitialised atoms will not leak memory.
 
-2003-04-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-07  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/atom.cpp :
 	* kb/atom.h :
@@ -1514,7 +1514,7 @@
 
 	  - Added initial state in generate_nlp().
 
-2003-04-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-04  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.h :
 	* kb/kb.cpp :
@@ -1548,7 +1548,7 @@
 
 	  - Replaced kb::eval() function with a generate_nlp() stub.
 
-2003-04-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-03  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.cpp :
 	* kb/kb.h :
@@ -1592,7 +1592,7 @@
 	  - Took out debug code from list to keep things simple.
 
 
-2003-04-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-04-01  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.h :
 	* kb/kb.cpp :
@@ -1628,7 +1628,7 @@
 	  - Added a class structure to hold queries with transformation
 	    sequences.
 
-2003-03-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-31  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* docs/bnf.txt :
 	* parser/parser.y :
@@ -1671,7 +1671,7 @@
 	  - cmp() function will now return true if only the name matches.
 
 
-2003-03-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-28  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/Makefile.in :
 
@@ -1706,7 +1706,7 @@
 
 	  - Dupicates are not allowed.
 
-2003-03-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-27  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/atom.cpp :
 	* kb/atom.h :
@@ -1755,7 +1755,7 @@
 	  - Fresh start. Took out code to encode and decode atoms to and
 	    from an unsigned int.
 
-2003-03-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-25  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/Makefile.in :
 	* kb/kb.h :
@@ -1767,7 +1767,7 @@
 	  - Added generic atom and expression classes to be used to
 	    store both ground and non-ground expressions.
 
-2003-03-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-12  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/list.h :
 	* common/list.cpp :
@@ -1789,7 +1789,7 @@
 	  - Added consttab.
 
 
-2003-03-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-11  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/numberlist.cpp :
 	* common/stringlist.cpp :
@@ -1817,7 +1817,7 @@
 	    memory is allocated once for these and only a reference is passed
 	    around.
 
-2003-03-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-10  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.cpp :
 	* kb/kb.h :
@@ -1836,7 +1836,7 @@
 
 	  - Duplicate atoms are ignored and only stored once.
 
-2003-03-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-07  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.cpp :
 
@@ -1848,7 +1848,7 @@
 
 	  - Added debug code to print out encoded and decoded ground atoms.
 
-2003-03-06  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-06  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/vlad.h :
 
@@ -1859,7 +1859,7 @@
 
 	  - Added decode_atom() function
 
-2003-03-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-05  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/Makefile.in :
 	* common/numberlist.h :
@@ -1886,7 +1886,7 @@
 	    instead of the head. This allows retrieval of items in the right
 	    order.
 
-2003-03-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-04  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* parser/parser.y :
 
@@ -1923,7 +1923,7 @@
 
 	  - Simplified some macro definitions.
 
-2003-03-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-03  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/kb.cpp :
 	* kb/kb.h :
@@ -1975,7 +1975,7 @@
 	  - Renamed del_i(), del_d(), get_i() and get_d() to del() and get().
 
 
-2003-03-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-03-01  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/identifier.h :
 	* kb/symtab.cpp :
@@ -2000,7 +2000,7 @@
 	  - Renamed ground-atom-exp and comp-atom-exp to ground-atom
 	    and comp-atom, respectively, for clarity.
 
-2003-02-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-02-27  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/atom.cpp :
 	* kb/atom.h :
@@ -2027,7 +2027,7 @@
 
 	  - A NULL ptr passed to cmp() will always cause false to be returned.
 
-2003-02-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-02-25  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/atom.cpp :
 	* kb/atom.h :
@@ -2044,7 +2044,7 @@
 
 	  - Added verify function to ensure integrity.
 
-2003-02-24  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-02-24  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/Makefile.in :
 	* kb/atomlist.cpp :
@@ -2060,7 +2060,7 @@
 
 	  - Added a cmp() function in atom.
 
-2003-02-18  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-02-18  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* configure :
 	* configure.ac :
@@ -2091,7 +2091,7 @@
 	  - Took out strip --strip-all. Apparently, not all versions of strip
 	    support it.
 
-2003-02-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-02-12  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* README :
 	* configure :
@@ -2106,7 +2106,7 @@
 	  - Sanity checks to ensure that the identifiers given the
 	    init() functions are valid.
 
-2003-02-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-02-11  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/Makefile.in :
 	* kb/atom.h :
@@ -2115,7 +2115,7 @@
 	  - Added atom class.
 
 
-2003-02-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-02-04  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* config.h.in :
 
@@ -2151,7 +2151,7 @@
 	  - All vlad header files are included with <...h> instead of
 	    "...h".
 
-2003-01-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-01-29  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* parser/parser.y :
 
@@ -2179,7 +2179,7 @@
 	  - Added another get() function in symtab to allow an array of
 	    identifier of a particular type/group to be retrieved.
 
-2003-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-10-27  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* kb/identifier.cpp :
 	* kb/identifier.h :
@@ -2188,7 +2188,7 @@
 	  - Renamed the enum identifier type names with an _ident
 	    suffix to avoid name clashes with access() in unistd.h.
 
-2003-01-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-01-26  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/list.cpp :
 
@@ -2200,13 +2200,13 @@
 
 	  - Fixed default constructor to call the proper base constructor.
 
-2003-01-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-01-26  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* sample/chinese_wall :
 
 	  - Added sample program.
 
-2003-01-25  Vino Crescini  <jcrescin@cit.uws.ued.au>
+2003-01-25  Vino Crescini  <jcrescin@scm.uws.ued.au>
 
 	* common/vlad.h :
 
@@ -2227,7 +2227,7 @@
 
 	  - Added functions to return class attributes.
 
-2003-01-24  Vino Crescini  <jcrescin@cit.uws.ued.au>
+2003-01-24  Vino Crescini  <jcrescin@scm.uws.ued.au>
 
 	* kb/Makefile.in :
 	* kb/symtab.h :
@@ -2259,7 +2259,7 @@
 
 	  - Changes to make the main binary link against the new kb lib.
 
-2003-01-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-01-22  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/list.cpp :
 	* common/list.h :
@@ -2278,7 +2278,7 @@
 	    cmp() must be implemented by classes that inherits from this
 	    class.
 
-2003-01-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2003-01-13  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* common/Makefile.in :
 	* common/vlad.h :
@@ -2303,7 +2303,7 @@
 
 	  - Renamed to vlad.cpp.
 
-2002-12-19  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2002-12-19  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Makefile :
 	* common/Makefile :
@@ -2321,7 +2321,7 @@
 
 	  - Updated README file to describe new build procedure.
 
-2002-12-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+2002-12-08  Vino Crescini  <jcrescin@scm.uws.edu.au>
 
 	* parser/parser.y :
 	* scanner/scanner.l :
