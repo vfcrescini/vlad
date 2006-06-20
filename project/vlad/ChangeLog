@@ -1,5 +1,10 @@
 2006-06-20  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
+	* test/get_averages.sh :
+	* test/run_test.sh :
+
+	  - Added scripts for checking runtimes.
+
 	* samples/test-01.ops :
 	* samples/test-01.prg :
 	* samples/test-02.ops :
