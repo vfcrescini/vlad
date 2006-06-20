@@ -1,0 +1,261 @@
+/*
+ * Test Runs
+ * Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
+ */
+
+/* entity declarations */
+
+entity sub alice;
+entity sub-grp grp1, grp2, grp3;
+entity acc read, write;
+entity obj file;
+
+entity obj objs001, objs002, objs003, objs004, objs005, objs006, objs007, objs008, objs009, objs010;
+entity obj objs011, objs012, objs013, objs014, objs015, objs016, objs017, objs018, objs019, objs020;
+entity obj-grp objg001, objg002, objg003, objg004, objg005, objg006, objg007, objg008, objg009, objg010;
+entity obj-grp objg011, objg012, objg013, objg014, objg015, objg016, objg017, objg018, objg019, objg020;
+
+/* interval declarations */
+
+interval work_hours [0900, 1700];
+interval morning_hours;
+interval afternoon_hours;
+
+/* initial fact statement */
+
+initially
+  memb(alice, grp2, work_hours) &&
+  subst(grp2, grp1, morning_hours) &&
+  holds(grp1, read, file, work_hours);
+
+initially memb(objs001, objg001, work_hours);
+initially memb(objs001, objg002, work_hours);
+initially memb(objs001, objg003, work_hours);
+initially memb(objs001, objg004, work_hours);
+initially memb(objs001, objg005, work_hours);
+initially memb(objs001, objg006, work_hours);
+initially memb(objs001, objg007, work_hours);
+initially memb(objs001, objg008, work_hours);
+initially memb(objs001, objg009, work_hours);
+initially memb(objs001, objg010, work_hours);
+initially memb(objs002, objg001, work_hours);
+initially memb(objs002, objg002, work_hours);
+initially memb(objs002, objg003, work_hours);
+initially memb(objs002, objg004, work_hours);
+initially memb(objs002, objg005, work_hours);
+initially memb(objs002, objg006, work_hours);
+initially memb(objs002, objg007, work_hours);
+initially memb(objs002, objg008, work_hours);
+initially memb(objs002, objg009, work_hours);
+initially memb(objs002, objg010, work_hours);
+initially memb(objs003, objg001, work_hours);
+initially memb(objs003, objg002, work_hours);
+initially memb(objs003, objg003, work_hours);
+initially memb(objs003, objg004, work_hours);
+initially memb(objs003, objg005, work_hours);
+initially memb(objs003, objg006, work_hours);
+initially memb(objs003, objg007, work_hours);
+initially memb(objs003, objg008, work_hours);
+initially memb(objs003, objg009, work_hours);
+initially memb(objs003, objg010, work_hours);
+initially memb(objs004, objg001, work_hours);
+initially memb(objs004, objg002, work_hours);
+initially memb(objs004, objg003, work_hours);
+initially memb(objs004, objg004, work_hours);
+initially memb(objs004, objg005, work_hours);
+initially memb(objs004, objg006, work_hours);
+initially memb(objs004, objg007, work_hours);
+initially memb(objs004, objg008, work_hours);
+initially memb(objs004, objg009, work_hours);
+initially memb(objs004, objg010, work_hours);
+initially memb(objs005, objg001, work_hours);
+initially memb(objs005, objg002, work_hours);
+initially memb(objs005, objg003, work_hours);
+initially memb(objs005, objg004, work_hours);
+initially memb(objs005, objg005, work_hours);
+initially memb(objs005, objg006, work_hours);
+initially memb(objs005, objg007, work_hours);
+initially memb(objs005, objg008, work_hours);
+initially memb(objs005, objg009, work_hours);
+initially memb(objs005, objg010, work_hours);
+initially memb(objs006, objg001, work_hours);
+initially memb(objs006, objg002, work_hours);
+initially memb(objs006, objg003, work_hours);
+initially memb(objs006, objg004, work_hours);
+initially memb(objs006, objg005, work_hours);
+initially memb(objs006, objg006, work_hours);
+initially memb(objs006, objg007, work_hours);
+initially memb(objs006, objg008, work_hours);
+initially memb(objs006, objg009, work_hours);
+initially memb(objs006, objg010, work_hours);
+initially memb(objs007, objg001, work_hours);
+initially memb(objs007, objg002, work_hours);
+initially memb(objs007, objg003, work_hours);
+initially memb(objs007, objg004, work_hours);
+initially memb(objs007, objg005, work_hours);
+initially memb(objs007, objg006, work_hours);
+initially memb(objs007, objg007, work_hours);
+initially memb(objs007, objg008, work_hours);
+initially memb(objs007, objg009, work_hours);
+initially memb(objs007, objg010, work_hours);
+initially memb(objs008, objg001, work_hours);
+initially memb(objs008, objg002, work_hours);
+initially memb(objs008, objg003, work_hours);
+initially memb(objs008, objg004, work_hours);
+initially memb(objs008, objg005, work_hours);
+initially memb(objs008, objg006, work_hours);
+initially memb(objs008, objg007, work_hours);
+initially memb(objs008, objg008, work_hours);
+initially memb(objs008, objg009, work_hours);
+initially memb(objs008, objg010, work_hours);
+initially memb(objs009, objg001, work_hours);
+initially memb(objs009, objg002, work_hours);
+initially memb(objs009, objg003, work_hours);
+initially memb(objs009, objg004, work_hours);
+initially memb(objs009, objg005, work_hours);
+initially memb(objs009, objg006, work_hours);
+initially memb(objs009, objg007, work_hours);
+initially memb(objs009, objg008, work_hours);
+initially memb(objs009, objg009, work_hours);
+initially memb(objs009, objg010, work_hours);
+initially memb(objs010, objg001, work_hours);
+initially memb(objs010, objg002, work_hours);
+initially memb(objs010, objg003, work_hours);
+initially memb(objs010, objg004, work_hours);
+initially memb(objs010, objg005, work_hours);
+initially memb(objs010, objg006, work_hours);
+initially memb(objs010, objg007, work_hours);
+initially memb(objs010, objg008, work_hours);
+initially memb(objs010, objg009, work_hours);
+initially memb(objs010, objg010, work_hours);
+
+/* interval constraints */
+
+relation
+  during(morning_hours, work_hours),
+  starts(morning_hours, work_hours);
+
+relation
+  during(afternoon_hours, work_hours),
+  finishes(afternoon_hours, work_hours);
+
+relation
+  before(morning_hours, afternoon_hours);
+
+/* authorisation constraint */
+
+always holds(grp1, write, file, I0)
+  implied by
+    holds(grp1, read, file, I0)
+  with absence
+    !holds(grp3, write, file, I0);
+
+/* policy update declaration */
+
+delete_read(SG0, OS0)
+  causes
+    !holds(SG0, read, OS0, I0)
+  where
+    starts(work_hours, I0),
+    during(work_hours, I0);
+
+u001() causes memb(objs011, objg011, work_hours);
+u002() causes memb(objs011, objg012, work_hours);
+u003() causes memb(objs011, objg013, work_hours);
+u004() causes memb(objs011, objg014, work_hours);
+u005() causes memb(objs011, objg015, work_hours);
+u006() causes memb(objs011, objg016, work_hours);
+u007() causes memb(objs011, objg017, work_hours);
+u008() causes memb(objs011, objg018, work_hours);
+u009() causes memb(objs011, objg019, work_hours);
+u010() causes memb(objs011, objg020, work_hours);
+u011() causes memb(objs012, objg011, work_hours);
+u012() causes memb(objs012, objg012, work_hours);
+u013() causes memb(objs012, objg013, work_hours);
+u014() causes memb(objs012, objg014, work_hours);
+u015() causes memb(objs012, objg015, work_hours);
+u016() causes memb(objs012, objg016, work_hours);
+u017() causes memb(objs012, objg017, work_hours);
+u018() causes memb(objs012, objg018, work_hours);
+u019() causes memb(objs012, objg019, work_hours);
+u020() causes memb(objs012, objg020, work_hours);
+u021() causes memb(objs013, objg011, work_hours);
+u022() causes memb(objs013, objg012, work_hours);
+u023() causes memb(objs013, objg013, work_hours);
+u024() causes memb(objs013, objg014, work_hours);
+u025() causes memb(objs013, objg015, work_hours);
+u026() causes memb(objs013, objg016, work_hours);
+u027() causes memb(objs013, objg017, work_hours);
+u028() causes memb(objs013, objg018, work_hours);
+u029() causes memb(objs013, objg019, work_hours);
+u030() causes memb(objs013, objg020, work_hours);
+u031() causes memb(objs014, objg011, work_hours);
+u032() causes memb(objs014, objg012, work_hours);
+u033() causes memb(objs014, objg013, work_hours);
+u034() causes memb(objs014, objg014, work_hours);
+u035() causes memb(objs014, objg015, work_hours);
+u036() causes memb(objs014, objg016, work_hours);
+u037() causes memb(objs014, objg017, work_hours);
+u038() causes memb(objs014, objg018, work_hours);
+u039() causes memb(objs014, objg019, work_hours);
+u040() causes memb(objs014, objg020, work_hours);
+u041() causes memb(objs015, objg011, work_hours);
+u042() causes memb(objs015, objg012, work_hours);
+u043() causes memb(objs015, objg013, work_hours);
+u044() causes memb(objs015, objg014, work_hours);
+u045() causes memb(objs015, objg015, work_hours);
+u046() causes memb(objs015, objg016, work_hours);
+u047() causes memb(objs015, objg017, work_hours);
+u048() causes memb(objs015, objg018, work_hours);
+u049() causes memb(objs015, objg019, work_hours);
+u050() causes memb(objs015, objg020, work_hours);
+u051() causes memb(objs016, objg011, work_hours);
+u052() causes memb(objs016, objg012, work_hours);
+u053() causes memb(objs016, objg013, work_hours);
+u054() causes memb(objs016, objg014, work_hours);
+u055() causes memb(objs016, objg015, work_hours);
+u056() causes memb(objs016, objg016, work_hours);
+u057() causes memb(objs016, objg017, work_hours);
+u058() causes memb(objs016, objg018, work_hours);
+u059() causes memb(objs016, objg019, work_hours);
+u060() causes memb(objs016, objg020, work_hours);
+u061() causes memb(objs017, objg011, work_hours);
+u062() causes memb(objs017, objg012, work_hours);
+u063() causes memb(objs017, objg013, work_hours);
+u064() causes memb(objs017, objg014, work_hours);
+u065() causes memb(objs017, objg015, work_hours);
+u066() causes memb(objs017, objg016, work_hours);
+u067() causes memb(objs017, objg017, work_hours);
+u068() causes memb(objs017, objg018, work_hours);
+u069() causes memb(objs017, objg019, work_hours);
+u070() causes memb(objs017, objg020, work_hours);
+u071() causes memb(objs018, objg011, work_hours);
+u072() causes memb(objs018, objg012, work_hours);
+u073() causes memb(objs018, objg013, work_hours);
+u074() causes memb(objs018, objg014, work_hours);
+u075() causes memb(objs018, objg015, work_hours);
+u076() causes memb(objs018, objg016, work_hours);
+u077() causes memb(objs018, objg017, work_hours);
+u078() causes memb(objs018, objg018, work_hours);
+u079() causes memb(objs018, objg019, work_hours);
+u080() causes memb(objs018, objg020, work_hours);
+u081() causes memb(objs019, objg011, work_hours);
+u082() causes memb(objs019, objg012, work_hours);
+u083() causes memb(objs019, objg013, work_hours);
+u084() causes memb(objs019, objg014, work_hours);
+u085() causes memb(objs019, objg015, work_hours);
+u086() causes memb(objs019, objg016, work_hours);
+u087() causes memb(objs019, objg017, work_hours);
+u088() causes memb(objs019, objg018, work_hours);
+u089() causes memb(objs019, objg019, work_hours);
+u090() causes memb(objs019, objg020, work_hours);
+u091() causes memb(objs020, objg011, work_hours);
+u092() causes memb(objs020, objg012, work_hours);
+u093() causes memb(objs020, objg013, work_hours);
+u094() causes memb(objs020, objg014, work_hours);
+u095() causes memb(objs020, objg015, work_hours);
+u096() causes memb(objs020, objg016, work_hours);
+u097() causes memb(objs020, objg017, work_hours);
+u098() causes memb(objs020, objg018, work_hours);
+u099() causes memb(objs020, objg019, work_hours);
+u100() causes memb(objs020, objg020, work_hours);

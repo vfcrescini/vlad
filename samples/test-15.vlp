@@ -1,0 +1,163 @@
+/*
+ * Test Runs
+ * Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
+ */
+
+/* entity declarations */
+
+entity sub alice;
+entity sub-grp grp1, grp2, grp3;
+entity acc read, write;
+entity obj file;
+
+entity obj objs01, objs02, objs03, objs04, objs05, objs06, objs07, objs08, objs09, objs10;
+entity obj objs11, objs12, objs13, objs14, objs15, objs16, objs17, objs18, objs19, objs20;
+entity obj-grp objg01, objg02, objg03, objg04, objg05, objg06, objg07, objg08, objg09, objg10;
+entity obj-grp objg11, objg12, objg13, objg14, objg15, objg16, objg17, objg18, objg19, objg20;
+
+/* interval declarations */
+
+interval work_hours [0900, 1700];
+interval morning_hours;
+interval afternoon_hours;
+
+interval int001, int002, int003, int004, int005, int006, int007, int008, int009, int010;
+interval int011, int012, int013, int014, int015, int016, int017, int018, int019, int020;
+
+/* initial fact statement */
+
+initially
+  memb(alice, grp2, work_hours) &&
+  subst(grp2, grp1, morning_hours) &&
+  holds(grp1, read, file, work_hours);
+
+/* interval constraints */
+
+relation
+  during(morning_hours, work_hours),
+  starts(morning_hours, work_hours);
+
+relation
+  during(afternoon_hours, work_hours),
+  finishes(afternoon_hours, work_hours);
+
+relation
+  before(morning_hours, afternoon_hours);
+
+relation before(int001, int011);
+relation before(int001, int012);
+relation before(int001, int013);
+relation before(int001, int014);
+relation before(int001, int015);
+relation before(int001, int016);
+relation before(int001, int017);
+relation before(int001, int018);
+relation before(int001, int019);
+relation before(int001, int020);
+relation before(int002, int011);
+relation before(int002, int012);
+relation before(int002, int013);
+relation before(int002, int014);
+relation before(int002, int015);
+relation before(int002, int016);
+relation before(int002, int017);
+relation before(int002, int018);
+relation before(int002, int019);
+relation before(int002, int020);
+relation before(int003, int011);
+relation before(int003, int012);
+relation before(int003, int013);
+relation before(int003, int014);
+relation before(int003, int015);
+relation before(int003, int016);
+relation before(int003, int017);
+relation before(int003, int018);
+relation before(int003, int019);
+relation before(int003, int020);
+relation before(int004, int011);
+relation before(int004, int012);
+relation before(int004, int013);
+relation before(int004, int014);
+relation before(int004, int015);
+relation before(int004, int016);
+relation before(int004, int017);
+relation before(int004, int018);
+relation before(int004, int019);
+relation before(int004, int020);
+relation before(int005, int011);
+relation before(int005, int012);
+relation before(int005, int013);
+relation before(int005, int014);
+relation before(int005, int015);
+relation before(int005, int016);
+relation before(int005, int017);
+relation before(int005, int018);
+relation before(int005, int019);
+relation before(int005, int020);
+relation before(int006, int011);
+relation before(int006, int012);
+relation before(int006, int013);
+relation before(int006, int014);
+relation before(int006, int015);
+relation before(int006, int016);
+relation before(int006, int017);
+relation before(int006, int018);
+relation before(int006, int019);
+relation before(int006, int020);
+relation before(int007, int011);
+relation before(int007, int012);
+relation before(int007, int013);
+relation before(int007, int014);
+relation before(int007, int015);
+relation before(int007, int016);
+relation before(int007, int017);
+relation before(int007, int018);
+relation before(int007, int019);
+relation before(int007, int020);
+relation before(int008, int011);
+relation before(int008, int012);
+relation before(int008, int013);
+relation before(int008, int014);
+relation before(int008, int015);
+relation before(int008, int016);
+relation before(int008, int017);
+relation before(int008, int018);
+relation before(int008, int019);
+relation before(int008, int020);
+relation before(int009, int011);
+relation before(int009, int012);
+relation before(int009, int013);
+relation before(int009, int014);
+relation before(int009, int015);
+relation before(int009, int016);
+relation before(int009, int017);
+relation before(int009, int018);
+relation before(int009, int019);
+relation before(int009, int020);
+relation before(int010, int011);
+relation before(int010, int012);
+relation before(int010, int013);
+relation before(int010, int014);
+relation before(int010, int015);
+relation before(int010, int016);
+relation before(int010, int017);
+relation before(int010, int018);
+relation before(int010, int019);
+relation before(int010, int020);
+
+/* authorisation constraint */
+
+always holds(grp1, write, file, I0)
+  implied by
+    holds(grp1, read, file, I0)
+  with absence
+    !holds(grp3, write, file, I0);
+
+/* policy update declaration */
+
+delete_read(SG0, OS0)
+  causes
+    !holds(SG0, read, OS0, I0)
+  where
+    starts(work_hours, I0),
+    during(work_hours, I0);
