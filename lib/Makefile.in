@@ -1,0 +1,114 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+DISTDIR = @DISTDIR@
+CURDIR = lib
+CC = @CC@
+CXX = @CXX@
+LEX = @LEX@
+YACC = @YACC@
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS = @LDFLAGS@
+LN_S = @LN_S@
+DEBUG = @DEBUG@
+STRIP = @STRIP@
+BUILDSHARED = @BUILDSHARED@
+SMODELS = @SMODELS@
+STATIC = @STATIC@
+VERSION = @VERSION@
+BINS =
+STATIC_LIBS = libvlad.a
+SHARED_LIBS = libvlad.so.$(VERSION)
+INCLUDES =            \
+  vlad.h              \
+  list.h              \
+  stringlist.h        \
+  numberlist.h        \
+  atom.h              \
+  expression.h        \
+  seqtab.h            \
+  symtab.h            \
+  consttab.h          \
+  transtab.h          \
+  $(SMINCLUDES)       \
+  kb.h                \
+  $(NULL)
+OBJECTS =             \
+  list.o              \
+  stringlist.o        \
+  numberlist.o        \
+  atom.o              \
+  expression.o        \
+  seqtab.o            \
+  symtab.o            \
+  consttab.o          \
+  transtab.o          \
+  $(SMOBJECTS)        \
+  kb.o                \
+  $(NULL)
+TEMP =
+
+ifdef SMODELS
+SMINCLUDES = wrapper.h
+SMOBJECTS = wrapper.o
+SMLIBS = -lsmodels
+endif
+
+ifdef BUILDSHARED
+CXXFLAGS += -f$(BUILDSHARED)
+endif
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+includedir = @includedir@
+
+include $(TOPSRCDIR)/rules.mk
+
+libvlad.a : $(OBJECTS)
+	$(AR) -rcs $(@) $(OBJECTS)
+
+libvlad.so.$(VERSION) : $(OBJECTS)
+	$(CXX) $(LDFLAGS) $(CXXFLAGS) -shared -Wl,-soname,`echo $(@) | cut -d. -f1,2,3` -o $(@) $(OBJECTS) $(SMLIBS)
+ifndef DEBUG
+  ifdef STRIP
+	strip $(@)
+  endif
+endif
+
+list.o : list.h list.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c list.cpp
+
+stringlist.o : stringlist.h stringlist.cpp list.o
+	$(CXX) $(CXXFLAGS) -o $(@) -c stringlist.cpp
+
+numberlist.o : numberlist.h numberlist.cpp list.o
+	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
+
+atom.o : atom.h atom.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c atom.cpp
+
+expression.o : list.o atom.o expression.h expression.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
+
+symtab.o : stringlist.o symtab.h symtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
+
+consttab.o : expression.o consttab.h consttab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c consttab.cpp
+
+transtab.o : stringlist.o expression.o transtab.h transtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c transtab.cpp
+
+seqtab.o : stringlist.o expression.o seqtab.h seqtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c seqtab.cpp
+
+ifdef SMODELS
+wrapper.o : wrapper.h wrapper.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
+endif
+
+kb.o : expression.o symtab.o consttab.o transtab.o $(SM_OBJECTS) kb.h kb.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c kb.cpp
