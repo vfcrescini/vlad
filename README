@@ -1,0 +1,91 @@
+-------------------------------------------------------------------------------
+VLAD : V Logic-based Access-control Database
+Build/Use Instructions
+
+Vino Crescini  <jcrescin@cit.uws.edu.au>
+-------------------------------------------------------------------------------
+Started: 2002 Dec 08
+Updated: 2003 May 15
+-------------------------------------------------------------------------------
+
+1. From the toplevel source directory, run ./configure :
+
+     $ ./configure
+
+     The following configure options are avaliable:
+
+     --with-smodels
+
+       Compile with smodels support (default is without smodels support). This
+       assumes that the smodels library and header files are installed in the
+       system.
+
+     --with-smodels=<path-to-smodels>
+
+       Alternatively, the path to the directory containing the full smodels
+       source tree (compiled) can be specified.
+
+     --enable-strip
+
+       Runs strip against the executable file to reduce disk footprint size.
+
+     --enable-debug
+
+       Compile with -g and enable printing of debug messages.
+
+     --enable-static
+
+       Enable building of statically-linked binaries as opposed to the default
+       dynamic linking. Only available in systems that support dynamic linking.
+
+     --prefix=<path-to-install>
+
+       Install executable, header files and libraries into the specified path.
+       Default is /usr/local. Run ./configure --help for more details.
+
+     --help
+
+       Suppress normal configuration and output help message.
+
+     --version
+
+       Suppress normal configuation and output version number.
+
+2. Then run make :
+
+     $ make
+
+3. Optionally, the package (executable, header files and libraries) may
+   be installed in the system by invoking the make command with the install
+   parameter :
+
+     $ make install
+
+   To uninstall, simply run make with the uninstall parameter:
+
+     $ make uninstall
+
+4. The executable binary will be in dist/bin/vlad. Usage is as follows:
+
+     ./dist/bin/vlad -h|-v|[-e] program-filename [query-filename]
+
+   where:
+
+     program-filename is the name of the file that contains the program.
+     query-filename is the name of the file that contains a list of queries.
+
+   For each query statement in the query file, vLad will print to stdout a
+   normal logic program that models the input program, the translations and
+   the queries. If the -e option is given, vLad will print one of three
+   possible query results:
+
+     TRUE   - query is true
+     FALSE  - query is false
+     ?      - there is no sufficient evidence to conclude that the query is
+              true or false
+
+   Without the query-filename parameter, vLad will read the queries from stdin.
+
+   To use the example program in the samples directory :
+
+     $ ./dist/bin/vlad sample/cwall_prog sample/cwall_query

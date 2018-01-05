@@ -1,0 +1,52 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+DISTDIR = @DISTDIR@
+CURDIR = main
+CC = @CC@
+CXX = @CXX@
+LEX = @LEX@
+YACC = @YACC@
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS = @LDFLAGS@
+LN_S = @LN_S@
+DEBUG = @DEBUG@
+STRIP = @STRIP@
+BUILDSHARED = @BUILDSHARED@
+SMODELS = @SMODELS@
+STATIC = @STATIC@
+VERSION = @VERSION@
+BINS = vlad
+STATIC_LIBS =
+SHARED_LIBS =
+INCLUDES =
+OBJECTS = vlad.o
+TEMP =
+
+ifdef SMODELS
+SMLIBS = -lsmodels
+endif
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+includedir = @includedir@
+
+include $(TOPSRCDIR)/rules.mk
+
+vlad : $(OBJECTS)
+ifdef STATIC
+	$(CXX) $(LDFLAGS) -static -o $(@) vlad.o -lvlad $(SMLIBS)
+else
+	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lvlad $(SMLIBS)
+endif
+ifndef DEBUG
+  ifdef STRIP
+	strip $(@)
+  endif
+endif
+
+vlad.o : vlad.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
