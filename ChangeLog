@@ -1,0 +1,887 @@
+2003-04-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+	* kb/expression.cpp :
+	* kb/expression.h :
+	* kb/transtab.cpp :
+	* kb/transtab.h :
+
+	  - Added transformation rules in generate_nlp(). And thus, we now
+	    begin the lengthy process of cleaning up.
+
+	  - Added replace() functions to replace instances of variables with
+	    identifiers.
+
+	* kb/kb.cpp :
+
+	  - Added constraints in generate_nlp().
+
+	* kb/consttab.h :
+	* kb/consttab.cpp :
+
+	  - Added get() functions.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Added initial state in generate_nlp().
+
+2003-04-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - decode_atom() is now used to generate atom list.
+
+	  - Added decode_atom().
+
+	  - Cleanup so some of the rules are generated mathematically.
+
+	  - Added inertial and complementary rules.
+
+	  - Added inheritance and transitivity rules.
+
+	  - Now generate_nlp() generates a list of possible atoms.
+
+	* kb/symab.h :
+	* kb/symtab.cpp :
+
+	  - Added yet another get() function to give an array of all
+	    identifier matching the given type.
+
+	* common/vlad.h :
+	* common/list.cpp :
+
+	  - Changed macro VLAD_ADT_MALLOC to include a size parameter.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Replaced kb::eval() function with a generate_nlp() stub.
+
+2003-04-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added partial eval() function.
+
+	* kb/Makefile.in :
+	* kb/sequence.h :
+	* kb/sequence.cpp :
+
+	  - New class to store transformation sequences that was previously
+	    present in the querytab.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* kb/querytab.cpp :
+	* parser/parser.y :
+
+	  - Took out querytab. Apparently, there is no reason to store
+	    the queries. They can be evaluated as they are parsed.
+
+	* common/list.cpp :
+	* common/list.h :
+	* common/numberlist.cpp :
+	* common/numberlist.h :
+	* common/stringlist.cpp :
+	* common/stringlist.h :
+	* kb/consttab.cpp :
+	* kb/consttab.h :
+	* kb/expression.cpp :
+	* kb/expression.h :
+	* kb/kb.cpp :
+	* kb/querytab.cpp :
+	* kb/querytab.h :
+	* kb/symtab.cpp :
+	* kb/transtab.cpp :
+	* kb/transtab.h :
+	* parser/parser.y :
+
+	  - Took out debug code from list to keep things simple.
+
+
+2003-04-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Added a verify_transref() function.
+
+	  - Added add_querytab() function.
+
+	* kb/querytab.h :
+	* kb/querytab.cpp :
+
+	  - Added get_*() functions.
+
+	  - Added debug code.
+
+	* kb/transtab.h :
+	* kb/transtab.cpp :
+
+	  - Added get() functions.
+
+	* parser/parser.y :
+
+	  - Now adding queries in kb.
+
+	  - Now storing transref/transreflist.
+
+	* kb/querytab.h :
+	* kb/querytab.cpp :
+	* kb/Makefile.in :
+
+	  - Changed transreflist to add pre-malloc'ed transref.
+
+	  - Added a class structure to hold queries with transformation
+	    sequences.
+
+2003-03-31  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* docs/bnf.txt :
+	* parser/parser.y :
+
+	  - Since the difference between a ground and a non-ground atom /
+	    expression do not exist at parse time, they are now combined
+	    together.
+
+	* common/list.cpp :
+
+	  - Fixed get() and del() to make sure that data is retrieved/deleted
+	    in the right order. Used to be in reverse order, which was carried
+	    over from epilog.
+
+	* kb/kb.cpp :
+
+	  - Now add_transtab() allows precond and varlist to be null.
+
+	  - in verify_atom_member() and verify_atom_subset(), if one ident
+	    is a variable, the type checking is skipped.
+
+	* parser/parser.y :
+
+	  - Added kb::add_transtab().
+
+	* common/stringlist.h :
+	* common/stringlist.cpp :
+
+	  - Added debug function print().
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+
+	  - Fixed add_transtab(). 
+
+	  - verify_atom() now checks both ground and non-ground atoms.
+
+	* kb/transtab.cpp :
+
+	  - cmp() function will now return true if only the name matches.
+
+
+2003-03-28  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/Makefile.in :
+
+	  - Fixed dependencies.
+
+	* kb/transtab.h :
+	* kb/transtab.cpp :
+
+	  - Added a table for storing transformation declarations.
+
+	* kb/consttab.h :
+	* kb/consttab.cpp :
+
+	  - Now stores expressions instead of an integer list.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Fixed stages.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+	* parser/parser.y :
+
+	  - Added support for storing constraints.
+
+	* samples/chinese_wall :
+
+	  - Modified to add constraints.
+
+	* kb/atom.cpp :
+
+	  - Dupicates are not allowed.
+
+2003-03-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+
+	  - Added get_*() functions.
+
+	  - Added init_atom() to effectively copy the contents of a given
+	    atom.
+
+	* kb/expression.cpp :
+	* kb/expression.h :
+
+	  - Added a get() function.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+
+	  - Added init table and add_inittab() function.
+
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+
+	  - Added a function to return the type of an identifier based on
+	    the name.
+
+	* parser/parser.y :
+
+	  - Initial state atoms are now stored in kb.
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+
+	  - Added negate function.
+
+	  - Added a print function for debugging.
+
+	* kb/expression.cpp :
+	* kb/expression.h :
+
+	  - Added a print function for debugging.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Fresh start. Took out code to encode and decode atoms to and
+	    from an unsigned int.
+
+2003-03-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/Makefile.in :
+	* kb/kb.h :
+	* kb/atom.h :
+	* kb/atom.cpp :
+	* kb/expression.h :
+	* kb/expression.cpp :
+
+	  - Added generic atom and expression classes to be used to
+	    store both ground and non-ground expressions.
+
+2003-03-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.h :
+	* common/list.cpp :
+
+	  - Added a list cmp() function.
+
+	* kb/Makefile.in :
+	* kb/consttab.h :
+	* kb/consttab.cpp :
+
+	  - Added a list class for constraints.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+	* parser/parser.h :
+
+	  - Some cleanup.
+
+	  - Added consttab.
+
+
+2003-03-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/numberlist.cpp :
+	* common/stringlist.cpp :
+
+	  - Ensured that dynamic_cast failure will not cause a segfault.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+
+	  - Cleanup.
+
+	  - Separated the encode and decode functions into const, holds,
+	    subst and memb.
+
+	* parser/parser.y :
+
+	  - Changed printf() to fprintf(stderr).
+
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+	* kb/kb.cpp :
+
+	  - Constants true and false are now "built-in" the symbol table.
+	    This is to avoid allocating new memory for the constants. Now
+	    memory is allocated once for these and only a reference is passed
+	    around.
+
+2003-03-10  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added initial state list.
+
+	* common/list.cpp :
+
+	  - List debug output will only be displayed when the list is
+	    given a name.
+
+	* parser/parser.y :
+
+	  - Added code to store ground expressions.
+
+	  - Duplicate atoms are ignored and only stored once.
+
+2003-03-07  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
+
+	  - negate_atom() now works properly.
+
+	  - Fixed decode_atom().
+
+	* parser/parser.y :
+
+	  - Added debug code to print out encoded and decoded ground atoms.
+
+2003-03-06  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/vlad.h :
+
+	  - Added true/false string.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Added decode_atom() function
+
+2003-03-05  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/Makefile.in :
+	* common/numberlist.h :
+	* common/numberlist.cpp :
+
+	  - Added a number list class to be used initially as ground
+	    expressions.
+
+	* samples/atomtest :
+
+	  - Added negative atoms.
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+	* parser/parser.y :
+
+	  - Added provisions for negative atoms.
+
+	* common/list.h :
+	* common/list.cpp :
+
+	  - Added a tail pointer in the list to allow quick access to the
+	    other end. Also, items are now inserted at the end of the tail
+	    instead of the head. This allows retrieval of items in the right
+	    order.
+
+2003-03-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+
+	  - Removed the add_identifier() function. Less neater but at
+	    least we make no exit() calls.
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added code to prevent calls the addition of more identifiers
+	    in the symbol table after a call to a close() function. This
+	    will maintain consistency of the atom ids.
+
+	* common/Makefile.in :
+	* common/stringlist.cpp :
+	* common/stringlist.h :
+
+	  - Added a simple string list class.
+
+	* kb/Makefile.in :
+	* kb/identifier.h :
+	* kb/identifier.cpp :
+
+	  - Removed identifier class. Now identifiers will be stored
+	    simply as a string.
+
+	* kb/kb.cpp :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+
+	  - Took out identlist class and replaced it with stringlist
+	    since identifiers are now stored as strings.
+
+	  - Simplified some macro definitions.
+
+2003-03-03  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/kb.cpp :
+	* kb/kb.h :
+	* parser/parser.y :
+
+	  - Added provisions for constant atoms (true and false);
+
+	* kb/kb.h :
+	* kb/kb.cpp :
+
+	  - Added another class to encapsulate all kb operations.
+
+	* common/list.h :
+	* common/list.cpp :
+	* kb/symtab.h :
+	* kb/symtab.cpp :
+
+	  - Added a get() function to return the index of a particular data
+	    item.
+
+	  - symtab::length() now returns the length, not error codes.
+
+	* kb/identifier.h :
+
+	  - Added macro for checking basetypes.
+
+	* parser/parser.y :
+
+	  - Now uses kb instead of symtab.
+
+	  - Added debug code for atoms.
+
+	* common/list.cpp :
+	* common/list.h :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+
+	  - Added provisions for lists to have a name, entirely optional
+	    but useful for debugging.
+
+	* kb/symtab.cpp :
+
+	  - Fixed bug that allows identifiers of the same name to be entered.
+
+	* common/list.cpp :
+	* common/list.h :
+	* kb/symtab.cpp :
+
+	  - Renamed del_i(), del_d(), get_i() and get_d() to del() and get().
+
+
+2003-03-01  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/identifier.h :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+	* parser/parser.y :
+
+	  - Modified symtab so that identifiers are stored into 6
+	    separate lists (sub, acc, obj, sub grp, etc). This will
+	    make it easier to perform searches.
+
+	* kb/Makefile.in :
+	* kb/atom.h :
+	* kb/atom.cpp :
+	* kb/atomlist.h :
+	* kb/atomlist.cpp :
+
+	  - Removed unnecessary files.
+
+	* docs/bnf.txt :
+	* parser/parser.y :
+
+	  - Renamed ground-atom-exp and comp-atom-exp to ground-atom
+	    and comp-atom, respectively, for clarity.
+
+2003-02-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+
+	  - Took out unnecessary constructors.
+
+	  - Modified the verify() function to allow verification of ground
+	    and non-ground atoms.
+
+	  - A NULL ptr passed to cmp() will always cause false to be returned.
+
+	  - Cleaned up cmp() and verify() functions.
+
+	* kb/atomlist.cpp :
+	* kb/atomlist.h :
+
+	  - Added a ground indicator to allow or disallow non-ground atoms to
+	    be added into the list.
+
+	* kb/identifier.cpp :
+	* kb/identifier.h :
+
+	  - Added a macro to unconditionally compare two identifiers.
+
+	  - A NULL ptr passed to cmp() will always cause false to be returned.
+
+2003-02-25  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+	* kb/atomlist.cpp :
+	* kb/atomlist.h :
+
+	  - Improved cmp functions.
+
+	  - holds_atom, member_atom and subset_atom now inherits from the atom
+	    class. Much cleaner this way.
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+
+	  - Added verify function to ensure integrity.
+
+2003-02-24  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/Makefile.in :
+	* kb/atomlist.cpp :
+	* kb/atomlist.h :
+
+	  - Added atom list class.
+
+	* kb/atom.cpp :
+	* kb/atom.h :
+
+	  - Atom class is now a derived class of list_item. This is to make
+	    way for the atomlist class.
+
+	  - Added a cmp() function in atom.
+
+2003-02-18  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* configure :
+	* configure.ac :
+
+	  - Fixed CFLAGS/CXXFLAGS = -L..\lib to -L../lib
+
+	* common/vlad.h :
+
+	  - Added a macro for new(nothrow)
+
+	  - Changed new(nothrow) to new(std::nothrow) to keep gcc happy.
+
+	* common/list.cpp :
+	* kb/atom.cpp :
+	* kb/identifier.cpp :
+	* kb/symtab.cpp :
+	* main/vlad.cpp :
+	* parser/parser.y :
+	* parser/scanner.l :
+
+	  - Changed include directives to use stdc++ instead of stdc. Was 
+	    causing "deprecated" warnings.
+
+	  - Changed to use new macro.
+
+	* main/Makefile.in :
+
+	  - Took out strip --strip-all. Apparently, not all versions of strip 
+	    support it.
+
+2003-02-12  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* README :
+	* configure :
+	* configure.ac :
+	* main/Makefile.in :
+
+	  - Added --enable-strip configure option to allow final main binary
+	    to be stripped with --strip-all after building.
+
+	* kb/atom.cpp :
+
+	  - Sanity checks to ensure that the identifiers given the 
+	    init() functions are valid.
+
+2003-02-11  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/Makefile.in :
+	* kb/atom.h :
+	* kb/atom.cpp :
+
+	  - Added atom class.
+
+
+2003-02-04  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* config.h.in :
+
+	  - Added a template file for config.h to be generated
+	    by configure.
+
+	  - At the moment only the debug flag and version string are set.
+
+	* Makefile.in :
+	* configure.ac :
+	* common/Makefile.in :
+	* common/vlad.h :
+	* kb/Makefile.in :
+	* main/Makefile.in :
+	* parser/Makefile.in :
+
+	  - Took out -DDEBUG from makefiles.
+
+	  - Cleared out -L and -I from the makefile. Now these options will
+	    be generated by configure and passed into the makefiles via the
+	    CFLAGS and LDFLAGS variables.
+
+	  - Added the current directory in the include path.
+
+	* common/list.cpp :
+	* kb/identifier.cpp :
+	* kb/symtab.cpp :
+	* main/vlad.cpp :
+	* parser/parser.y :
+
+	  - All cpp files now includes config.h
+
+	  - All vlad header files are included with <...h> instead of
+	    "...h".
+
+2003-01-29  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+
+	  - Identifiers are now stored in symtab.
+
+	* common/vlad.h :
+	* common/list.cpp :
+
+	  - VLAD_NOTUNIQUE is a duplicate of VLAD_DUPLICATE (stupid).
+
+	* kb/identifier.cpp :
+	* kb/identifier.h :
+	* kb/symtab.cpp :
+	* kb/symtab.h :
+
+	  - Replaced identifier type and group flag with an integer to
+	    represent both.
+
+	  - Added defines and macros for identifier types.
+
+	  - Modified identifier so that the cmp() function will allow
+	    the use of wildcards (name == NULL and type == 0 will match
+	    anything).
+
+	  - Added another get() function in symtab to allow an array of
+	    identifier of a particular type/group to be retrieved.
+
+2003-10-27  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* kb/identifier.cpp :
+	* kb/identifier.h :
+	* kb/symtab.cpp :
+
+	  - Renamed the enum identifier type names with an _ident
+	    suffix to avoid name clashes with access() in unistd.h.
+
+2003-01-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.cpp :
+
+	  - Fixed default constructor.
+
+	  - Added debug code.
+
+	* kb/symtab.cpp :
+
+	  - Fixed default constructor to call the proper base constructor.
+
+2003-01-26  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* sample/chinese_wall :
+
+	  - Added sample program.
+
+2003-01-25  Vino Crescini  <jcrescin@cit.uws.ued.au>
+
+	* common/vlad.h :
+
+	  - Added a new error code for unique-item lists.
+
+	* common/list.cpp :
+	* common/list.h :
+	* kb/symtab.cpp :
+
+	  - Added a flag to the list to identify whether it should allow
+	    identical items to be added or not. Symtab is set to unique.
+
+	  - Added provisions to allow retrieval of identical items from
+	    the list. Matching nodes are passed through an array.
+
+	* kb/identifier.cpp :
+	* kb/identifier.h :
+
+	  - Added functions to return class attributes.
+
+2003-01-24  Vino Crescini  <jcrescin@cit.uws.ued.au>
+
+	* kb/Makefile.in :
+	* kb/symtab.h :
+	* kb/symtab.cpp :
+	* kb/identifier.h :
+	* kb/identifier.cpp :
+
+	  - Added a class for the symbol table. To be used to store identifier
+	    declarations. Symtab is derived from the list class and uses
+	    the identifier class (which in turn is derived from the abstract
+	    base class list_item).
+
+	* Makefile.in :
+	* configure.ac :
+
+	  - Some changes to generate a Makefile in the kb directory.
+
+	* common/list.cpp :
+	* common/list.h :
+
+	  - Some cleanup.
+
+	  - Added a get function in the list class. Only temporary. This
+	    will be replaced by a function that will retrieve an array
+	    of items that matches instead of just returning the first match.
+
+	* main/Makefile.in :
+	* main/vlad.cpp :
+
+	  - Changes to make the main binary link against the new kb lib.
+
+2003-01-22  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/list.cpp :
+	* common/list.h :
+	* common/vlad.h :
+
+	  - Name cleanup.
+
+	* common/list.cpp :
+	* common/list.h :
+
+	  - Added an abstract class to be used as the base class for the
+	    list item.
+
+	  - Converted the list class to store descendants of the list_item
+	    class instead of void pointers. Note that the destructor and
+	    cmp() must be implemented by classes that inherits from this
+	    class.
+
+2003-01-13  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* common/Makefile.in :
+	* common/vlad.h :
+	* common/list.h :
+	* common/list.cpp :
+	* main/Makefile.in :
+
+	  - Added a simple linked-list structure (void *) for general use.
+
+	* configure.ac :
+
+	  - Took out silly lex/yacc testing. Let it fail in the build
+	    process.
+
+	* main/Makefile.in :
+	* parser/Makefile.in :
+
+	  - Converted build process to C++. Changed lex/yacc output src
+	    to end in .cpp instead of .c.
+
+	* main/vlad.c :
+
+	  - Renamed to vlad.cpp.
+
+2002-12-19  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* Makefile :
+	* common/Makefile :
+	* parser/Makefile :
+	* main/Makefile :
+
+	  - Removed makefiles and replaced them with a corresponding
+	    Makefile.in to be generated by the configure script.
+
+	* configure.ac :
+
+	  - Added configure.ac to generate the configure script.
+
+	* README :
+
+	  - Updated README file to describe new build procedure.
+
+2002-12-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+	* scanner/scanner.l :
+
+	  - Modified to implement changes described below.
+
+	* docs/bnf.txt :
+
+	  - Fixed bug in query statements that prevented transformations
+	    with no paramaters to be queried.
+
+	  - Simplified query rules.
+
+	  - Changed as described below.
+
+	* docs/lanspecs.txt :
+
+	  - Now the if-clause of tranformation definitions are optional.
+
+	  - Dropped the "trans" keyword as it is completely useless.
+
+	* main/Makefile :
+	* main/vlad.c :
+
+	  - Added main file (borrowed from epilog).
+
+	* common/Makefile :
+	* common/vlad.h :
+
+	  - Added a common header file (borrowed from epilog).
+
+	* Makefile :
+
+	  - Added common and main dirs.
+
+	* parser/parser.y :
+	* parser/scannel.l :
+
+	  - Changes to implement the bnf changes below.
+
+	* docs/bnf.txt :
+
+	  - Added constraint statements.
+
+	  - Improvements over old design. First/last parts and other stmt
+	    rules no longer needed.
+
+	* ChangeLog :
+
+	  - Changelog started.
