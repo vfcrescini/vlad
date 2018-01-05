@@ -1,0 +1,55 @@
+/*
+ * document release example
+ * Vino Fernando Crescini  <jcrescin@cit.uws.edu.au>
+ */
+
+/* entity declaration */
+
+entity sub sci, pat_off;
+entity acc own, read, write, review, pat_ok, pat_reject, release;
+entity obj doc;
+
+/* initial facts */
+
+initially holds(sci, own, doc);
+initially holds(sci, read, doc);
+initially holds(sci, write, doc);
+
+/* updates */
+
+request(SS1, SS2, OS1)
+  causes
+    holds(SS2, review, OS1) &&
+    !holds(SS1, write, OS1)
+  if
+    holds(SS1, own, OS1) &&
+    holds(SS1, write, OS1);
+
+get_approval(SS1, SS2, OS1)
+  causes
+    holds(SS1, pat_ok, OS1) &&
+    !holds(SS2, review, OS1)
+  if
+    holds(SS2, review, OS1) &&
+    holds(SS1, own, OS1);
+
+get_rejection(SS1, SS2, OS1)
+  causes
+    holds(SS1, pat_reject, OS1) &&
+    !holds(SS2, review, OS1)
+  if
+    holds(SS2, review, OS1) &&
+    holds(SS1, own, OS1);
+
+release_doc(SS1, OS1)
+  causes
+    holds(SS1, release, OS1) &&
+    !holds(SS1, pat_ok, OS1)
+  if
+    holds(SS1, pat_ok, OS1);
+
+revise_doc(SS1, OS1)
+  causes
+    holds(SS1, write, OS1)
+  if
+    holds(SS1, pat_reject, OS1);
