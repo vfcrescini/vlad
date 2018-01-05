@@ -1,0 +1,47 @@
+-------------------------------------------------------------------------------
+VLAD : V Logic-based Access-control Database
+Build/Use Instructions
+
+Vino Crescini  <jcrescin@cit.uws.edu.au>
+-------------------------------------------------------------------------------
+Started: 2002 Dec 08
+Updated: 2003 Apr 15
+-------------------------------------------------------------------------------
+
+1. From the toplevel source directory, run ./configure :
+
+     $ ./configure
+
+     The following configure options are avaliable:
+
+     --with-smodels
+
+       Compile with smodels support (default is without smodels support). This
+       assumes that the smodels library and header files are installed in the
+       system.
+
+     --with-smodels=<path-to-smodels>
+
+       Alternatively, the path to the directory containing the full smodels
+       source tree (compiled) can be specified.
+
+     --enable-strip
+
+       Runs strip against the executable file to reduce disk footprint size.
+
+     --enable-debug
+
+       Compile with -g and enable printing of debug messages.
+
+2. Then run make :
+
+     $ make
+
+3. The executable binary will be in dist/bin/vlad. Without a filename 
+   argument, the program will read input from stdin. Debug output as well
+   as errors and warning will be dumped to stderr. Program output will be
+   directed to stdout.
+
+   To use the example program in the samples directory :
+
+     $ ./dist/bin/vlad sample/chinese_wall

@@ -1,0 +1,57 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+DISTDIR = @DISTDIR@
+CC = @CC@
+CXX = @CXX@
+LEX = @LEX@
+YACC = @YACC@
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+TARGETS = libparser.a
+INCLUDES = parser.h
+OBJECTS = parser.o scanner.o
+
+all : copy-includes copy-targets
+
+copy-includes : $(INCLUDES)
+	@mkdir -p $(DISTDIR)/include/vlad
+	@for i in $(INCLUDES); do \
+	ln -sf ../../../parser/$$i $(DISTDIR)/include/vlad; \
+	done
+
+copy-targets : $(TARGETS)
+	@mkdir -p $(DISTDIR)/lib/vlad
+	@for i in $(TARGETS); do \
+	ln -sf ../../../parser/$$i $(DISTDIR)/lib/vlad; \
+	done
+
+libparser.a : $(OBJECTS)
+	$(AR) -rcs $(@) $(OBJECTS)
+
+scanner.o : y.tab.h lex.yy.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.yy.cpp
+
+parser.o : y.tab.h y.tab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c y.tab.cpp
+
+lex.yy.cpp : scanner.l
+	$(LEX) scanner.l && mv -f lex.yy.c $(@)
+
+y.tab.cpp : parser.y
+	$(YACC) parser.y && mv -f y.tab.c $(@)
+
+y.tab.h : parser.y
+	$(YACC) -d parser.y
+
+clean :
+	$(RM) $(OBJECTS) lex.yy.cpp y.tab.cpp y.tab.h
+
+distclean : clean
+	$(RM) $(TARGETS) Makefile
+	@for i in $(INCLUDES); do \
+	$(RM) $(DISTDIR)/include/vlad/$$i; \
+	done
+	@for i in $(TARGETS); do \
+	$(RM) $(DISTDIR)/lib/vlad/$$i; \
+	done
