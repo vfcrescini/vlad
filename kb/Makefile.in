@@ -1,0 +1,75 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+DISTDIR = @DISTDIR@
+CC = @CC@
+CXX = @CXX@
+LEX = @LEX@
+YACC = @YACC@
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+SMODELS = @SMODELS@
+TARGETS = libkb.a
+
+ifdef SMODELS
+SMINCLUDES = wrapper.h
+SMOBJECTS = wrapper.o
+endif
+
+INCLUDES = atom.h expression.h sequence.h symtab.h consttab.h transtab.h $(SMINCLUDES) kb.h
+OBJECTS = atom.o expression.o sequence.o symtab.o consttab.o transtab.o $(SMOBJECTS) kb.o
+
+all : copy-includes copy-targets
+
+copy-includes : $(INCLUDES)
+	@mkdir -p $(DISTDIR)/include/vlad
+	@for i in $(INCLUDES); do \
+	ln -sf ../../../kb/$$i $(DISTDIR)/include/vlad; \
+	done
+
+copy-targets : $(TARGETS)
+	@mkdir -p $(DISTDIR)/lib/vlad
+	@for i in $(TARGETS); do \
+	ln -sf ../../../kb/$$i $(DISTDIR)/lib/vlad; \
+	done
+
+libkb.a : $(OBJECTS)
+	$(AR) -rcs $(@) $(OBJECTS)
+
+atom.o : atom.h atom.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c atom.cpp
+
+expression.o : atom.o expression.h expression.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c expression.cpp
+
+sequence.o : sequence.h sequence.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c sequence.cpp
+
+symtab.o : symtab.h symtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c symtab.cpp
+
+consttab.o : expression.o consttab.h consttab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c consttab.cpp
+
+transtab.o : expression.o transtab.h transtab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c transtab.cpp
+
+ifdef SMODELS
+wrapper.o : wrapper.h wrapper.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c wrapper.cpp
+endif
+
+kb.o : expression.o symtab.o consttab.o transtab.o $(SM_OBJECTS) kb.h kb.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c kb.cpp
+
+clean :
+	$(RM) $(OBJECTS)
+
+distclean : clean
+	$(RM) $(TARGETS) Makefile
+	@for i in $(INCLUDES); do \
+	$(RM) $(DISTDIR)/include/vlad/$$i; \
+	done
+	@for i in $(TARGETS); do \
+	$(RM) $(DISTDIR)/lib/vlad/$$i; \
+	done
