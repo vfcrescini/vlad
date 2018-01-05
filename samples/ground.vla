@@ -1,0 +1,9 @@
+/*
+ * grounding test
+ * Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
+ */
+
+seq add f1(ss0, as0, og0);
+compute;
+query holds(ss0, as0, os0);
+query holds(ss1, as1, os1);
