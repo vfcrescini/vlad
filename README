@@ -1,0 +1,33 @@
+-------------------------------------------------------------------------------
+VLAD : V Logic-based Access-control Database
+Build/Use Instructions
+
+Vino Crescini  <jcrescin@cit.uws.edu.au>
+-------------------------------------------------------------------------------
+Started: 2002 Dec 08
+Updated: 2003 Feb 12
+-------------------------------------------------------------------------------
+
+1. From the toplevel source directory, run ./configure, then make :
+
+     $ ./configure
+     $ make
+
+   To minimise disk-footprint size :
+
+     $ ./configure --enable-strip
+     $ make
+
+   For a debug build (lots of output, compiled with -g) :
+
+     $ ./configure --enable-debug
+     $ make
+
+2. The executable binary will be in the top src directory. Without
+   a filename argument, the program will read input from stdin.
+   Debug output as well as errors and warning will be dumped to
+   stderr. Program output will be directed to stdout.
+
+   To use the sample program in example :
+
+     $ ./vlad sample/chinese_wall
