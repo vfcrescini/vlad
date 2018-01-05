@@ -1,0 +1,39 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+CC = @CC@
+CXX = @CXX@
+LEX = @LEX@
+YACC = @YACC@
+LEXLIB = @LEXLIB@
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS = @LDFLAGS@
+DEBUG = @DEBUG@
+STRIP = @STRIP@
+TARGETS = vlad
+
+all : $(TARGETS)
+
+vlad : vlad.o $(TOPSRCDIR)/lib/*
+	$(CXX) $(LDFLAGS) -o $(@) vlad.o -lparser -lkb -lcommon $(LEXLIB)
+ifndef DEBUG
+ifdef STRIP
+	strip $(@)
+endif
+endif
+	@for i in $(TARGETS); do      \
+	ln -sf main/$$i $(TOPSRCDIR); \
+	done
+
+vlad.o : vlad.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c vlad.cpp
+
+clean :
+	$(RM) *.o
+
+distclean : clean
+	$(RM) $(TARGETS) Makefile
+	@for i in $(TARGETS); do \
+	$(RM) $(TOPSRCDIR)/$$i;  \
+	done
