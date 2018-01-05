@@ -1,0 +1,14 @@
+/*
+ * Test Run
+ * Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
+ */
+
+
+seq add delete_read(grp1, file);
+
+compute;
+
+query holds(grp1, write, file);
+query holds(grp1, read, file);
+query holds(alice, write, file);
+query holds(alice, read, file);
