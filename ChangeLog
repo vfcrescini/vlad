@@ -1,0 +1,53 @@
+2002-12-08  Vino Crescini  <jcrescin@cit.uws.edu.au>
+
+	* parser/parser.y :
+	* scanner/scanner.l :
+
+	  - Modified to implement changes described below.
+
+	* docs/bnf.txt :
+
+	  - Fixed bug in query statements that prevented transformations
+	    with no paramaters to be queried.
+
+	  - Simplified query rules.
+
+	  - Changed as described below.
+
+	* docs/lanspecs.txt :
+
+	  - Now the if-clause of tranformation definitions are optional.
+
+	  - Dropped the "trans" keyword as it is completely useless.
+
+	* main/Makefile :
+	* main/vlad.c :
+
+	  - Added main file (borrowed from epilog).
+
+	* common/Makefile :
+	* common/vlad.h :
+
+	  - Added a common header file (borrowed from epilog).
+
+	* Makefile :
+
+	  - Added common and main dirs.
+
+	* parser/parser.y :
+	* parser/scannel.l :
+
+	  - Changes to implement the bnf changes below.
+
+	* docs/bnf.txt :
+
+	  - Added constraint statements.
+
+	  - Improvements over old design. First/last parts and other stmt
+	    rules no longer needed.
+
+	* ChangeLog :
+
+	  - Changelog started.
+
+
