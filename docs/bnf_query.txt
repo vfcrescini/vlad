@@ -1,0 +1,82 @@
+-------------------------------------------------------------------------------
+VLAD: V Logic-based Access-control Database
+BNF Query
+
+Vino Crescini  <jcrescin@cit.uws.edu.au>
+-------------------------------------------------------------------------------
+Started 2002 Dec 08
+Updated 2003 Apr 29
+-------------------------------------------------------------------------------
+
+<start>                 : <program>
+
+<program>               : <init> <body> <destroy>
+
+<init>                  : <nil>
+
+<body>                  : <query-section>
+
+<destroy>               : <nil>
+
+<query-section>         : <nil> | <query-stmt-list>
+
+<query-stmt-list>       : <query-stmt> | <query-stmt-list> <query-stmt>
+                        
+<query-stmt>            : <query> <expression> <after-clause> <semicolon>
+                        
+<after-clause>          : <nil> | <after> <trans-ref-list>
+                        
+<trans-ref-list>        : <trans-ref-def> | <trans-ref-list> <comma>
+                          <trans-ref-def>
+                        
+<trans-ref-def>         : <identifier> <open-parent>
+                          <trans-ref-ident-args> <close-parent>
+
+<trans-ref-ident-args>  : <nil> | <trans-ref-ident-list>
+                        
+<trans-ref-ident-list>  : <identifier> | <trans-ref-ident-list> <comma> 
+                          <identifier>
+
+<expression>            : <expression> <logical-op> <boolean-atom> |
+                          <boolean-atom>
+                        
+<boolean-atom>          : <not> <atom> | <atom>
+                        
+<atom>                  : <holds-atom> | <subst-atom> | <memb-atom>
+                        
+<holds-atom>            : <holds> <open-parent> <identfier> <comma>
+                          <identifier> <comma> <identifier> <close-parent>
+ 
+<subst-atom>            : <subset> <open-parent> <identifier>
+                          <comma> <identifier> <close-parent>
+                        
+<memb-atom>             : <member> <open-parent> <identifier>
+                          <comma> <identifier> <close-parent>
+
+<logical-op>            : <and>
+                        
+<identifier>            : [a-zA-Z][a-zA-Z0-9_]{0,127}
+                        
+<and>                   : &&
+                        
+<not>                   : !
+                        
+<holds>                 : holds
+                        
+<member>                : memb
+                        
+<subset>                : subst
+                        
+<query>                 : query
+                        
+<after>                 : after
+
+<underscore>            : _
+
+<open-parent>           : (
+
+<close-parent>          : )
+
+<comma>                 : ,
+                        
+<semicolon>             : ;

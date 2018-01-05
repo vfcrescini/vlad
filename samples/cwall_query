@@ -1,0 +1,8 @@
+/*
+ * Chinese-Wall Policy Example
+ * Vino Crescini  <jcrescin@cit.uws.edu.au>
+ */
+
+/* queries */
+query holds(S, Accessible, Object2) after Request_Access_Company1(S, Object1);
+query holds(S, Accessible, Object1) after Request_Access_Company2(S, Object2);
