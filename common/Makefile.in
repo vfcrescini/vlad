@@ -1,0 +1,30 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+DISTDIR = @DISTDIR@
+CURDIR = common
+CC = @CC@
+CXX = @CXX@
+LEX = @LEX@
+YACC = @YACC@
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+LN_S = @LN_S@
+BINS =
+LIBS = libcommon.a
+INCLUDES = vlad.h list.h stringlist.h numberlist.h
+OBJECTS = list.o stringlist.o numberlist.o
+
+include $(TOPSRCDIR)/rules.mk
+
+libcommon.a : $(OBJECTS)
+	$(AR) -rcs $(@) $(OBJECTS)
+
+list.o : list.h list.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c list.cpp
+
+stringlist.o : stringlist.h stringlist.cpp list.o
+	$(CXX) $(CXXFLAGS) -o $(@) -c stringlist.cpp
+
+numberlist.o : numberlist.h numberlist.cpp list.o
+	$(CXX) $(CXXFLAGS) -o $(@) -c numberlist.cpp
