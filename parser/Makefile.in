@@ -1,0 +1,66 @@
+# Vino Crescini <jcrescin@cit.uws.edu.au>
+
+TOPSRCDIR = @top_srcdir@
+CC = @CC@
+CXX = @CXX@
+LEX = @LEX@
+YACC = @YACC@
+DEBUG = @enable_debug@
+CFLAGS = -ansi                  \
+         -Wall                  \
+         -Wstrict-prototypes    \
+         -I$(TOPSRCDIR)/include \
+         -L$(TOPSRCDIR)/lib     \
+         $(NULL)
+TARGETS = libparser.a
+INCLUDES = parser.h
+
+ifeq "$(DEBUG)" "yes"
+CFLAGS += -g -DDEBUG
+else
+CFLAGS += -O2
+endif
+
+CXXFLAGS = $(CFLAGS)
+
+all : public
+
+public : $(TARGETS)
+	@mkdir -p $(TOPSRCDIR)/include
+	@mkdir -p $(TOPSRCDIR)/lib
+	@for i in $(INCLUDES); do                  \
+	ln -sf ../parser/$$i $(TOPSRCDIR)/include; \
+	done
+	@for i in $(TARGETS); do               \
+	ln -sf ../parser/$$i $(TOPSRCDIR)/lib; \
+	done
+
+libparser.a : parser.o scanner.o 
+	$(AR) -rcs $(@) parser.o scanner.o
+
+scanner.o : y.tab.h lex.yy.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c lex.yy.cpp
+
+parser.o : y.tab.h y.tab.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) -c y.tab.cpp
+
+lex.yy.cpp : scanner.l
+	$(LEX) scanner.l && mv -f lex.yy.c $(@)
+
+y.tab.cpp : parser.y
+	$(YACC) parser.y && mv -f y.tab.c $(@)
+
+y.tab.h : parser.y
+	$(YACC) -d parser.y
+
+clean :
+	$(RM) *.o lex.yy.cpp y.tab.cpp y.tab.h
+
+distclean : clean
+	$(RM) $(TARGETS) Makefile
+	@for i in $(INCLUDES); do       \
+	$(RM) $(TOPSRCDIR)/include/$$i; \
+	done
+	@for i in $(TARGETS); do    \
+	$(RM) $(TOPSRCDIR)/lib/$$i; \
+	done
