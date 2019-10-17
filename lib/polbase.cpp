@@ -893,7 +893,7 @@ int vlad_polbase::print_fact(vlad_fact *a_fact,
   bool truth;
   char *parm[4];
 
-  if (a_fact == NULL | a_fs == NULL)
+  if (a_fact == NULL || a_fs == NULL)
     return VLAD_NULLPTR;
 
   retval = a_fact->get(&(parm[0]),

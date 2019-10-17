@@ -50,7 +50,7 @@ static bool timer = 0;
 
 /* functions from scanner */
 int agentinit(FILE *a_in, FILE *a_out);
-int agenterror(char *a_error);
+int agenterror(const char *a_error);
 int agentlex();
 
 /* available functions */
@@ -496,7 +496,7 @@ memb_fact :
 
 %%
 
-int agenterror(char *a_error)
+int agenterror(const char *a_error)
 {
   fprintf(ferr, "line %d (error %d) %s\n", agentlinenum, errorcode, a_error);
 

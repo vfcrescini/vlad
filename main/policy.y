@@ -47,7 +47,7 @@ static bool initialised = false;
 
 /* functions from scanner */
 int policyinit(FILE *a_in, FILE *a_out);
-int policyerror(char *a_error);
+int policyerror(const char *a_error);
 int policylex();
 
 /* available functions */
@@ -969,7 +969,7 @@ int add_interval(const char *a_name,
   return VLAD_OK;
 }
 
-int policyerror(char *a_error)
+int policyerror(const char *a_error)
 {
   fprintf(ferr, "line %d (error %d) %s\n", policylinenum, errorcode, a_error);
 

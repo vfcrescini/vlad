@@ -1,3 +1,14 @@
+2019-19-17  Vino Fernando Crescini  <vfcrescini@gmail.com>
+
+	* VERSION :
+	* configure :
+	* configure.ac :
+	* lib/polbase.cpp :
+	* main/agent.y :
+	* main/policy.y :
+
+          - Tidy up to comile cleanly
+
 2006-06-21  Vino Fernando Crescini  <jcrescin@scm.uws.edu.au>
 
 	* Merged with vlad-2_0_1
